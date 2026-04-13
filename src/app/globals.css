@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #0f172a;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,7 +20,23 @@
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-x: clip;
+  background-image:
+    radial-gradient(ellipse 90% 55% at 50% -18%, rgb(204 251 241 / 0.45), transparent 55%),
+    radial-gradient(ellipse 70% 45% at 100% 0%, rgb(224 231 255 / 0.35), transparent 50%),
+    radial-gradient(ellipse 55% 50% at 0% 100%, rgb(248 250 252 / 0.95), transparent 55%),
+    linear-gradient(180deg, rgb(248 250 252) 0%, rgb(241 245 249) 100%);
+  min-height: 100%;
+}
+
+::selection {
+  background-color: rgb(45 212 191 / 0.25);
+  color: rgb(15 23 42);
 }

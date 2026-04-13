@@ -1,0 +1,143 @@
+/**
+ * Singapore employee CPF on monthly ordinary wages (OW).
+ * OW ceiling schedule and Jan 2026 employee rates from CPFB (cpf.gov.sg).
+ *
+ * Annual combined wage ceiling: total OW + AW subject to CPF in a calendar year
+ * is capped (see ANNUAL_WAGE_CEILING_SG). AW ceiling for the year =
+ * that cap minus total OW subject to CPF for the year (CPFB).
+ *
+ * This module prorates monthly OW subject when a flat monthly OW (after the
+ * monthly OW ceiling) would project above the annual cap (OW-only, same every month).
+ * Not modeled: SPR graduated rates, $500–$750 tier, varying salary by month,
+ * exact AW timing, or year-end CPF adjustments.
+ */
+
+export type SgCpfAgeBand =
+  | "below_55"
+  | "above_55_to_60"
+  | "above_60_to_65"
+  | "above_65_to_70"
+  | "above_70";
+
+/** Max combined OW + AW wages subject to CPF in a calendar year (CPFB). */
+export const ANNUAL_WAGE_CEILING_SG = 102_000 as const;
+
+/**
+ * Max total CPF (employee + employer combined) in a calendar year (CPFB).
+ * Not used in employee take-home estimates here.
+ */
+export const ANNUAL_MAX_TOTAL_CPF_CONTRIBUTION_SG = 37_740 as const;
+
+/** Monthly OW subject derived from the annual cap if spread evenly (102k / 12). */
+export const MONTHLY_OW_FROM_ANNUAL_CAP_SG =
+  ANNUAL_WAGE_CEILING_SG / 12;
+
+/** Employee % of OW (wages > $750/mo), from 1 Jan 2026. */
+const EMPLOYEE_RATE: Record<SgCpfAgeBand, number> = {
+  below_55: 0.2,
+  above_55_to_60: 0.18,
+  above_60_to_65: 0.125,
+  above_65_to_70: 0.075,
+  above_70: 0.05,
+};
+
+/**
+ * CPF Ordinary Wage ceiling for a calendar month (`YYYY-MM`).
+ * Schedule: $6k → $6.3k (Sep 2023) → $6.8k (2024) → $7.4k (2025) → $8k (2026).
+ */
+export function ordinaryWageCeilingSg(yearMonth: string): number {
+  if (yearMonth < "2023-09") return 6000;
+  if (yearMonth < "2024-01") return 6300;
+  if (yearMonth < "2025-01") return 6800;
+  if (yearMonth < "2026-01") return 7400;
+  return 8000;
+}
+
+export function employeeCpfRateSg(ageBand: SgCpfAgeBand): number {
+  return EMPLOYEE_RATE[ageBand];
+}
+
+/**
+ * Remaining headroom for Additional Wages (bonuses, etc.) subject to CPF
+ * after total Ordinary Wages subject to CPF in the calendar year so far.
+ * AW ceiling = $102,000 − total OW subject for the year (CPFB).
+ */
+export function additionalWageCeilingRemaining(
+  totalOwSubjectToDateForCalendarYear: number
+): number {
+  const ytd = Math.max(0, totalOwSubjectToDateForCalendarYear);
+  return Math.max(0, ANNUAL_WAGE_CEILING_SG - ytd);
+}
+
+export type MonthlyCpfBreakdown = {
+  grossMonthly: number;
+  /** OW after only the monthly OW ceiling (`min(gross, monthly ceiling)`). */
+  ordinaryWagesAfterMonthlyCeiling: number;
+  /** OW amount employee CPF is calculated on this month (after annual cap proration if any). */
+  ordinaryWagesSubject: number;
+  ordinaryWageCeiling: number;
+  /** True when monthly OW was reduced so 12× steady OW would not exceed the annual cap. */
+  annualCapProratesMonthlyOw: boolean;
+  employeeRate: number;
+  employeeCpfContribution: number;
+  takeHome: number;
+};
+
+function ordinaryWagesSubjectForMonth(
+  grossMonthly: number,
+  monthlyOwCeiling: number
+): {
+  afterMonthlyCeiling: number;
+  subject: number;
+  annualCapProratesMonthlyOw: boolean;
+} {
+  const afterMonthlyCeiling = Math.min(
+    Math.max(0, grossMonthly),
+    monthlyOwCeiling
+  );
+  const annualProjection = 12 * afterMonthlyCeiling;
+  if (annualProjection <= ANNUAL_WAGE_CEILING_SG) {
+    return {
+      afterMonthlyCeiling,
+      subject: afterMonthlyCeiling,
+      annualCapProratesMonthlyOw: false,
+    };
+  }
+  const subject = Math.min(
+    afterMonthlyCeiling,
+    MONTHLY_OW_FROM_ANNUAL_CAP_SG
+  );
+  return {
+    afterMonthlyCeiling,
+    subject,
+    annualCapProratesMonthlyOw: subject < afterMonthlyCeiling,
+  };
+}
+
+/**
+ * Employee CPF = rate × OW subject for gross > $750; OW subject applies
+ * monthly OW ceiling, then annual $102k proration for steady OW-only pay.
+ * Take-home = gross − employee CPF.
+ */
+export function monthlyEmployeeCpfTakeHomeSg(
+  grossMonthly: number,
+  yearMonth: string,
+  ageBand: SgCpfAgeBand
+): MonthlyCpfBreakdown {
+  const ceiling = ordinaryWageCeilingSg(yearMonth);
+  const rate = employeeCpfRateSg(ageBand);
+  const { afterMonthlyCeiling, subject, annualCapProratesMonthlyOw } =
+    ordinaryWagesSubjectForMonth(grossMonthly, ceiling);
+  const contribution = grossMonthly > 750 ? subject * rate : 0;
+  const takeHome = grossMonthly - contribution;
+  return {
+    grossMonthly,
+    ordinaryWagesAfterMonthlyCeiling: afterMonthlyCeiling,
+    ordinaryWagesSubject: subject,
+    ordinaryWageCeiling: ceiling,
+    annualCapProratesMonthlyOw,
+    employeeRate: rate,
+    employeeCpfContribution: Math.round(contribution * 100) / 100,
+    takeHome: Math.round(takeHome * 100) / 100,
+  };
+}
