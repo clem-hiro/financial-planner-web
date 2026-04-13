@@ -7,6 +7,7 @@ import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import type { BudgetLineRow } from "@/data/supabase/types";
 import { BudgetAddForm } from "@/features/budget/BudgetAddForm";
+import { BudgetMonthJump } from "@/features/budget/BudgetMonthJump";
 import { BudgetLineActionsCollapsible } from "@/features/budget/BudgetLineActionsCollapsible";
 import { BudgetLineScheduleForm } from "@/features/budget/BudgetLineScheduleForm";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
@@ -16,6 +17,7 @@ import {
   defaultExpenseDateForBudgetMonth,
   formatYearMonth,
   parseYearMonth,
+  yearFromYearMonth,
 } from "@/lib/dates";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -73,10 +75,11 @@ export default async function BudgetPage({ searchParams }: PageProps) {
   const month =
     sp.month && parseYearMonth(sp.month) ? sp.month : formatYearMonth(new Date());
   const yearParsed = sp.year != null ? Number(sp.year) : NaN;
+  const monthDerivedYear = yearFromYearMonth(month);
   const calendarYear =
     Number.isFinite(yearParsed) && yearParsed >= 2000 && yearParsed <= 2100
       ? yearParsed
-      : new Date().getFullYear();
+      : monthDerivedYear;
 
   const [model, profile, goals] = await Promise.all([
     getBudgetPageModel(supabase, user.id, month, calendarYear),
@@ -153,20 +156,23 @@ export default async function BudgetPage({ searchParams }: PageProps) {
             </MethodologyOpenLink>
           </p>
         </div>
-        <div className="flex flex-wrap gap-3 text-sm">
-          <Link
-            className="text-zinc-600 hover:text-zinc-900"
-            href={`/budget?month=${prevMonth}&year=${calendarYear}`}
-          >
-            Previous month
-          </Link>
-          <span className="font-medium text-zinc-800">{month}</span>
-          <Link
-            className="text-zinc-600 hover:text-zinc-900"
-            href={`/budget?month=${nextMonth}&year=${calendarYear}`}
-          >
-            Next month
-          </Link>
+        <div className="flex flex-col items-end gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
+          <div className="flex flex-wrap items-center gap-3 text-sm">
+            <Link
+              className="text-zinc-600 hover:text-zinc-900"
+              href={`/budget?month=${prevMonth}&year=${yearFromYearMonth(prevMonth)}`}
+            >
+              Previous month
+            </Link>
+            <span className="font-medium text-zinc-800">{month}</span>
+            <Link
+              className="text-zinc-600 hover:text-zinc-900"
+              href={`/budget?month=${nextMonth}&year=${yearFromYearMonth(nextMonth)}`}
+            >
+              Next month
+            </Link>
+          </div>
+          <BudgetMonthJump month={month} />
         </div>
       </div>
 

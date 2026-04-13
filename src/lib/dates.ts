@@ -16,6 +16,11 @@ export function parseYearMonth(ym: string): boolean {
   return /^\d{4}-\d{2}$/.test(ym);
 }
 
+/** Calendar year from `YYYY-MM` (caller should ensure `parseYearMonth`). */
+export function yearFromYearMonth(ym: string): number {
+  return Number(ym.slice(0, 4));
+}
+
 /** Shift `YYYY-MM` by `delta` months (local calendar). */
 export function addMonthsToYearMonth(ym: string, delta: number): string {
   const [y, m] = ym.split("-").map(Number);
