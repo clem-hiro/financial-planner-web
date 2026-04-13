@@ -1,10 +1,10 @@
-/** Default elevated surface (cards, PageSection) — slate, soft lift. */
+/** Default elevated surface — crisp white on slate border, calm depth. */
 export const appCardClass =
-  "rounded-2xl border border-slate-200/80 bg-white/95 shadow-[0_1px_2px_rgba(15,23,42,0.04),0_12px_32px_-12px_rgba(15,23,42,0.1)] ring-1 ring-white/70";
+  "rounded-2xl border border-slate-200/90 bg-white shadow-[0_1px_2px_rgba(12,25,47,0.04),0_16px_48px_-20px_rgba(12,25,47,0.07)]";
 
 /** Standard inner padding for card surfaces. */
-export const appCardPadding = "p-6";
+export const appCardPadding = "p-6 sm:p-8";
 
-/** Growth / retirement emphasis — teal–emerald wash. */
+/** Growth / retirement emphasis — restrained emerald wash (trust + optimism). */
 export const appEmeraldPanelClass =
-  "rounded-2xl border border-teal-200/45 bg-gradient-to-br from-emerald-50/95 via-teal-50/50 to-cyan-50/25 shadow-[0_12px_40px_-14px_rgba(13,148,136,0.25)] ring-1 ring-teal-100/60";
+  "rounded-2xl border border-emerald-100/90 bg-gradient-to-br from-emerald-50/95 via-white to-slate-50/50 shadow-[0_14px_44px_-18px_rgba(4,120,87,0.12)] ring-1 ring-emerald-100/50";

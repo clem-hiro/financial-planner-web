@@ -11,7 +11,7 @@ import {
 import { signOutAction } from "@/server/actions";
 
 const ghostBtn =
-  "rounded-full px-3 py-1.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900";
+  "rounded-full px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 sm:py-1.5";
 
 function MethodologyHeaderButton() {
   const { openMethodology } = useMethodology();
@@ -19,7 +19,7 @@ function MethodologyHeaderButton() {
     <button
       type="button"
       onClick={() => openMethodology(null)}
-      className="rounded-full border border-slate-200/90 bg-white/90 px-3 py-1.5 text-xs font-semibold tracking-wide text-slate-600 shadow-sm transition hover:border-teal-300/60 hover:text-teal-900"
+      className="rounded-full border border-slate-200/90 bg-white px-3 py-2 text-xs font-semibold tracking-wide text-slate-600 shadow-sm transition hover:border-emerald-200/90 hover:text-emerald-900 sm:py-1.5"
     >
       How it works
     </button>
@@ -35,21 +35,21 @@ export function AppShell({
 }) {
   return (
     <MethodologyProvider>
-      <div className="flex min-h-full flex-col text-slate-900">
-        <header className="sticky top-0 z-30 border-b border-slate-200/70 bg-white/80 shadow-sm shadow-slate-900/5 backdrop-blur-xl backdrop-saturate-150">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-4 py-3.5 sm:px-8">
-            <div className="flex min-w-0 flex-1 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:gap-3">
+      <div className="flex min-h-full flex-col text-slate-800">
+        <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 shadow-[0_1px_0_0_rgba(4,120,87,0.08)] backdrop-blur-xl backdrop-saturate-150">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-4 px-4 py-4 sm:px-8 sm:py-5">
+            <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-4">
               <Link
                 href="/dashboard"
-                className="text-lg font-semibold tracking-tight text-slate-900 transition-opacity hover:opacity-80"
+                className="text-lg font-semibold tracking-tight text-[#0c192f] transition-opacity hover:opacity-80 sm:text-xl"
               >
                 Finance Planner
               </Link>
-              <span className="hidden text-[11px] font-medium uppercase tracking-wider text-slate-400 sm:inline">
-                Clarity for your money
+              <span className="hidden max-w-xs text-[11px] font-medium uppercase leading-snug tracking-[0.18em] text-slate-400 sm:inline">
+                Private wealth clarity
               </span>
             </div>
-            <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
+            <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto sm:gap-3">
               <AppShellNav />
               <MethodologyHeaderButton />
               {user ? (
@@ -61,7 +61,7 @@ export function AppShell({
               ) : (
                 <Link
                   href="/login"
-                  className="rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-md shadow-slate-900/20 transition hover:bg-slate-800"
+                  className="rounded-full bg-[#0c192f] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-slate-900/15 transition hover:bg-[#152a45] sm:py-2"
                 >
                   Sign in
                 </Link>
@@ -69,7 +69,7 @@ export function AppShell({
             </div>
           </div>
         </header>
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-8 sm:py-12">
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-8 sm:py-14 lg:py-16">
           {children}
         </main>
       </div>

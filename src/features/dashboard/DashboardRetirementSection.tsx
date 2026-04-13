@@ -190,7 +190,7 @@ export function DashboardRetirementSection({
             <div className="flex flex-col gap-3 border-b border-emerald-200/70 pb-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
               <div className="min-w-0 flex-1">
                 <h3 className="text-sm font-semibold text-emerald-900">
-                  Monthly income at retirement (dividend view)
+                  Retirement income (simplified dividend check)
                 </h3>
                 <p className="mt-1 text-xs leading-relaxed wrap-break-word text-emerald-900/85">
                   {payload.ageProjection.currentAge >=
@@ -303,7 +303,7 @@ export function DashboardRetirementSection({
 
             <div className="mt-4 rounded-lg border border-emerald-200/80 bg-emerald-50/40 px-4 py-3">
               <p className="text-[11px] font-medium uppercase tracking-wide text-emerald-800/90">
-                Estimated passive income from investments
+                Rough monthly income from investments only
               </p>
               <p className="mt-1 text-2xl font-bold tabular-nums tracking-tight text-emerald-950 sm:text-3xl">
                 {formatCurrency(
@@ -316,98 +316,150 @@ export function DashboardRetirementSection({
                   / month
                 </span>
               </p>
-              <p className="mt-2 text-xs leading-relaxed text-emerald-900/85">
-                No salary after retirement in this model. Uses{" "}
-                {formatPercent(
-                  payload.ageProjection.spendCheck.dividendPlan
-                    .dividendYieldAnnual
-                )}{" "}
-                per year on your{" "}
-                <strong>projected investment balance only</strong> (
-                {formatCurrency(
-                  payload.ageProjection.spendCheck.dividendPlan
-                    .projectedInvestmentsAtRetirement,
-                  payload.baseCurrency
-                )}{" "}
-                at that age; cash earns 0% here).
-                {profile?.retirement_dividend_yield_annual != null &&
-                String(profile.retirement_dividend_yield_annual).trim() !== ""
-                  ? " Yield comes from your profile."
-                  : " Yield defaults to 2% until you save one in your profile."}
-              </p>
+              <ul className="mt-3 list-none space-y-2 text-xs leading-relaxed text-emerald-900/90">
+                <li>
+                  <span className="font-semibold text-emerald-950">What it is: </span>
+                  One illustration—imagine your{" "}
+                  <strong>investment accounts</strong> (Goals → investments) reach
+                  about{" "}
+                  {formatCurrency(
+                    payload.ageProjection.spendCheck.dividendPlan
+                      .projectedInvestmentsAtRetirement,
+                    payload.baseCurrency
+                  )}{" "}
+                  at retirement, then pay a steady{" "}
+                  {formatPercent(
+                    payload.ageProjection.spendCheck.dividendPlan
+                      .dividendYieldAnnual
+                  )}{" "}
+                  per year as cash flow. The big number above is that flow ÷ 12.
+                </li>
+                <li>
+                  <span className="font-semibold text-emerald-950">What it is not: </span>
+                  Not your full retirement budget. This path{" "}
+                  <strong>ignores salary</strong> after retirement,{" "}
+                  <strong>ignores CPF withdrawals</strong>, rent, and other income—it
+                  is only this dividend-style math on listed investments.
+                </li>
+                <li>
+                  <span className="font-semibold text-emerald-950">Cash &amp; yield: </span>
+                  Bank <strong>cash</strong> is not earning yield in this line (0%
+                  here). The percentage comes from{" "}
+                  {profile?.retirement_dividend_yield_annual != null &&
+                  String(profile.retirement_dividend_yield_annual).trim() !== ""
+                    ? "your profile (retirement dividend %)."
+                    : "a 2% placeholder until you save a retirement dividend % on your profile."}
+                </li>
+              </ul>
             </div>
 
             {payload.ageProjection.spendCheck.dividendPlan.monthlySpendGoal !=
               null &&
             payload.ageProjection.spendCheck.dividendPlan.monthlySpendGoal >
               0 && (
-              <div className="mt-3 space-y-2 text-sm text-emerald-950">
-                <p>
-                  <span className="text-emerald-900/80">Your spend goal:</span>{" "}
-                  <span className="font-semibold tabular-nums">
-                    {formatCurrency(
-                      payload.ageProjection.spendCheck.dividendPlan
-                        .monthlySpendGoal,
-                      payload.baseCurrency
-                    )}
-                    /month
-                  </span>
-                  {payload.ageProjection.spendCheck.dividendPlan
-                    .requiredInvestedForDividendGoal != null && (
-                    <>
-                      {" "}
-                      <span className="text-emerald-900/80">
-                        · Invested balance needed for dividends alone to match
-                        goal (rough):{" "}
-                      </span>
-                      <span className="font-semibold tabular-nums">
-                        {formatCurrency(
-                          payload.ageProjection.spendCheck.dividendPlan
-                            .requiredInvestedForDividendGoal,
-                          payload.baseCurrency
-                        )}
-                      </span>
-                    </>
-                  )}
+              <div className="mt-3 space-y-3 rounded-lg border border-emerald-200/70 bg-white/70 p-3 text-sm text-emerald-950">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-900/90">
+                  Compared to your monthly spend goal
                 </p>
-                {payload.ageProjection.spendCheck.dividendPlan
-                  .dividendsCoverGoal ? (
-                  <p className="text-xs text-emerald-800">
-                    Dividends meet or exceed that goal in this simplified model.
-                    Yields are nominal; inflation and extra tax on withdrawals or
-                    dividends aren&apos;t calculated here—log tax outflows as
-                    expenses if you want them in spend and surplus.
-                  </p>
-                ) : (
-                  <div className="space-y-1">
-                    <p className="font-medium text-amber-950">
-                      Gap from cash (after dividends): about{" "}
+                <ol className="list-decimal space-y-2 pl-4 text-sm leading-snug">
+                  <li>
+                    <span className="text-emerald-900/85">You want about </span>
+                    <span className="font-semibold tabular-nums">
                       {formatCurrency(
                         payload.ageProjection.spendCheck.dividendPlan
-                          .monthlyCashSupplementNeeded ?? 0,
+                          .monthlySpendGoal,
                         payload.baseCurrency
                       )}
-                      /month
-                    </p>
-                    {payload.ageProjection.spendCheck.dividendPlan
-                      .cashRunwayMonthsAtSupplement != null && (
-                      <p className="text-xs text-emerald-900/90">
-                        Today&apos;s cash (
+                    </span>
+                    <span className="text-emerald-900/85"> / month </span>
+                    <span className="text-emerald-900/85">
+                      in retirement (from your profile).
+                    </span>
+                  </li>
+                  <li>
+                    <span className="text-emerald-900/85">
+                      The dividend-style investments line above covers about{" "}
+                    </span>
+                    <span className="font-semibold tabular-nums">
+                      {formatCurrency(
+                        payload.ageProjection.spendCheck.dividendPlan
+                          .monthlyDividendIncome,
+                        payload.baseCurrency
+                      )}
+                    </span>
+                    <span className="text-emerald-900/85"> / month.</span>
+                  </li>
+                  {payload.ageProjection.spendCheck.dividendPlan
+                    .dividendsCoverGoal ? (
+                    <li className="text-emerald-900/90">
+                      So in this simplified check, dividends meet or beat the goal.
+                      Nominal yields only—no inflation or tax on dividends here; log
+                      taxes as expenses if you want them in your spend picture.
+                    </li>
+                  ) : (
+                    <li>
+                      <span className="text-emerald-900/85">
+                        The difference is about{" "}
+                      </span>
+                      <span className="font-semibold tabular-nums text-amber-950">
                         {formatCurrency(
                           payload.ageProjection.spendCheck.dividendPlan
-                            .currentCashTotal,
+                            .monthlyCashSupplementNeeded ?? 0,
                           payload.baseCurrency
                         )}
-                        ) could cover ~{" "}
+                      </span>
+                      <span className="text-emerald-900/85">
+                        {" "}
+                        / month. The app treats that slice as coming from{" "}
+                        <strong>cash savings</strong> each month (not from selling
+                        investments and not from CPF)—so you can think of it as
+                        &quot;top up from the bank&quot; in this toy model.
+                      </span>
+                    </li>
+                  )}
+                </ol>
+                {payload.ageProjection.spendCheck.dividendPlan
+                  .requiredInvestedForDividendGoal != null &&
+                  !payload.ageProjection.spendCheck.dividendPlan.dividendsCoverGoal && (
+                  <p className="border-t border-emerald-100 pt-2 text-xs text-emerald-900/85">
+                    <span className="font-medium text-emerald-950">Rule-of-thumb: </span>
+                    To hit your goal from dividends alone at this yield, you&apos;d
+                    need roughly{" "}
+                    <span className="font-semibold tabular-nums">
+                      {formatCurrency(
+                        payload.ageProjection.spendCheck.dividendPlan
+                          .requiredInvestedForDividendGoal,
+                        payload.baseCurrency
+                      )}
+                    </span>{" "}
+                    invested (same yield assumption)—illustrative only.
+                  </p>
+                )}
+                {!payload.ageProjection.spendCheck.dividendPlan
+                  .dividendsCoverGoal &&
+                  payload.ageProjection.spendCheck.dividendPlan
+                    .cashRunwayMonthsAtSupplement != null && (
+                    <p className="text-xs leading-relaxed text-emerald-900/90">
+                      <span className="font-medium text-emerald-950">
+                        Cash buffer note:{" "}
+                      </span>
+                      If today&apos;s cash (
+                      {formatCurrency(
+                        payload.ageProjection.spendCheck.dividendPlan
+                          .currentCashTotal,
+                        payload.baseCurrency
+                      )}
+                      ) had to pay only that monthly top-up, it would last about{" "}
+                      <strong>
                         {Math.floor(
                           payload.ageProjection.spendCheck.dividendPlan
                             .cashRunwayMonthsAtSupplement
-                        )}{" "}
-                        months of that extra draw if nothing else changed.
-                      </p>
-                    )}
-                  </div>
-                )}
+                        )}
+                      </strong>{" "}
+                      months before hitting zero—very simplified (no interest, no
+                      other inflows).
+                    </p>
+                  )}
               </div>
             )}
 
@@ -470,6 +522,18 @@ export function DashboardRetirementSection({
                       </InfoTooltip>
                     </span>
                   </th>
+                  <th className="px-2 py-2 font-medium text-right">
+                    <span className="inline-flex items-center gap-1">
+                      Net excl. CPF
+                      <InfoTooltip
+                        variant="emerald"
+                        ariaLabel="Net excluding CPF"
+                        methodologyTopicId="net-worth"
+                      >
+                        <span className="sr-only">Net excluding CPF</span>
+                      </InfoTooltip>
+                    </span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -498,6 +562,12 @@ export function DashboardRetirementSection({
                     </td>
                     <td className="px-2 py-1.5 text-right font-medium tabular-nums">
                       {formatCurrency(row.value, payload.baseCurrency)}
+                    </td>
+                    <td className="px-2 py-1.5 text-right tabular-nums text-emerald-900/90">
+                      {formatCurrency(
+                        row.value - row.cpf,
+                        payload.baseCurrency
+                      )}
                     </td>
                   </tr>
                 ))}

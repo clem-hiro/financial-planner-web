@@ -1,6 +1,7 @@
 import type {
   BudgetLineRow,
   ExpenseRow,
+  FinancialGoalRow,
   InvestmentRow,
   ProfileRow,
   VehicleRow,
@@ -15,6 +16,16 @@ export function num(value: string | null | undefined): number {
   if (value == null || value === "") return 0;
   const n = Number(value);
   return Number.isFinite(n) ? n : 0;
+}
+
+/** Sum of positive `monthly_contribution` across goals (same basis as dashboard). */
+export function sumPlannedMonthlyGoalContributions(
+  goals: FinancialGoalRow[]
+): number {
+  return goals.reduce(
+    (sum, g) => sum + Math.max(0, num(g.monthly_contribution)),
+    0
+  );
 }
 
 export function profileMonthlyIncome(profile: ProfileRow | null): number | null {

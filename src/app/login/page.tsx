@@ -4,21 +4,37 @@ import Link from "next/link";
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-full flex-col items-center justify-center bg-zinc-50 px-4 py-16">
-      {!isSupabaseConfigured() ? (
-        <div className="max-w-md rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
-          Add Supabase keys to <code className="rounded bg-amber-100 px-1">.env.local</code>{" "}
-          to enable auth.
+    <div className="flex min-h-full flex-col items-center justify-center px-4 py-16 sm:py-20">
+      <div className="w-full max-w-md space-y-8 text-center">
+        <div className="space-y-1">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-800/90">
+            Client access
+          </p>
+          <h1 className="text-2xl font-semibold tracking-tight text-[#0c192f] sm:text-3xl">
+            Welcome back
+          </h1>
+          <p className="text-sm leading-relaxed text-slate-600">
+            Sign in to your private workspace.
+          </p>
         </div>
-      ) : (
-        <LoginForm />
-      )}
-      <Link
-        href="/dashboard"
-        className="mt-6 text-sm text-zinc-600 hover:text-zinc-900"
-      >
-        Back to dashboard
-      </Link>
+        {!isSupabaseConfigured() ? (
+          <div className="rounded-2xl border border-amber-200/80 bg-amber-50/95 p-5 text-left text-sm leading-relaxed text-amber-950 shadow-sm sm:p-6">
+            Add Supabase keys to{" "}
+            <code className="rounded bg-amber-100 px-1.5 py-0.5 text-xs">
+              .env.local
+            </code>{" "}
+            to enable auth.
+          </div>
+        ) : (
+          <LoginForm />
+        )}
+        <Link
+          href="/dashboard"
+          className="inline-block text-sm font-medium text-slate-600 underline decoration-slate-300/80 underline-offset-4 transition hover:text-emerald-800 hover:decoration-emerald-300/70"
+        >
+          Back to dashboard
+        </Link>
+      </div>
     </div>
   );
 }

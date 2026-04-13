@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { getBudgetPageModel } from "@/data/budget-summary";
 import { spendRecommendationsForUserMonth } from "@/data/spend-recommendations-from-month";
-import { num } from "@/data/mappers";
+import { num, sumPlannedMonthlyGoalContributions } from "@/data/mappers";
+import { listFinancialGoals } from "@/data/repositories/goals";
 import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import type { BudgetLineRow } from "@/data/supabase/types";
@@ -77,10 +78,12 @@ export default async function BudgetPage({ searchParams }: PageProps) {
       ? yearParsed
       : new Date().getFullYear();
 
-  const [model, profile] = await Promise.all([
+  const [model, profile, goals] = await Promise.all([
     getBudgetPageModel(supabase, user.id, month, calendarYear),
     getProfileById(supabase, user.id),
+    listFinancialGoals(supabase, user.id),
   ]);
+  const plannedGoalMonthlyTotal = sumPlannedMonthlyGoalContributions(goals);
   const currency = profile?.base_currency ?? DEFAULT_BASE_CURRENCY;
 
   const monthlyAll = model.lineRows.filter((l) => l.cadence === "monthly");
@@ -124,6 +127,7 @@ export default async function BudgetPage({ searchParams }: PageProps) {
     overrideByLineId: model.overridesThisMonth,
     yearMonth: month,
     profile,
+    monthlyPlannedGoalContributions: plannedGoalMonthlyTotal,
   });
 
   return (

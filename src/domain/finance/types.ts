@@ -19,6 +19,11 @@ export type NetWorthInput = {
 export type SavingsRateInput = {
   monthlyIncome: Money;
   monthlyExpenses: Money;
+  /**
+   * Sum of planned monthly goal contributions (Goals page). Treated like
+   * committed outflows from take-home for the rate. Default 0.
+   */
+  monthlyPlannedGoalContributions?: Money;
 };
 
 export type ProjectFutureValueParams = {

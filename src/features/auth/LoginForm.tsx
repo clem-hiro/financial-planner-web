@@ -50,35 +50,35 @@ export function LoginForm() {
   return (
     <form
       onSubmit={onSubmit}
-      className="mx-auto max-w-sm space-y-4 rounded-lg border border-zinc-200 bg-white p-6 shadow-sm"
+      className="mx-auto w-full max-w-sm space-y-5 rounded-2xl border border-slate-200/90 border-t-emerald-600 border-t-4 bg-white p-6 text-left shadow-[0_16px_48px_-24px_rgba(12,25,47,0.12)] sm:p-8"
     >
-      <h1 className="text-lg font-semibold text-zinc-900">
+      <h2 className="text-lg font-semibold tracking-tight text-[#0c192f]">
         {mode === "signin" ? "Sign in" : "Create account"}
-      </h1>
+      </h2>
       {error && (
-        <p className="text-sm text-red-600" role="alert">
+        <p className="rounded-lg border border-red-100 bg-red-50/90 px-3 py-2 text-sm text-red-800" role="alert">
           {error}
         </p>
       )}
-      <label className="block text-sm">
-        <span className="text-zinc-600">Email</span>
+      <label className="block text-sm font-medium text-slate-700">
+        <span className="mb-1.5 block">Email</span>
         <input
           type="email"
           autoComplete="email"
           required
-          className="mt-1 w-full rounded border border-zinc-300 px-2 py-1.5"
+          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
       </label>
-      <label className="block text-sm">
-        <span className="text-zinc-600">Password</span>
+      <label className="block text-sm font-medium text-slate-700">
+        <span className="mb-1.5 block">Password</span>
         <input
           type="password"
           autoComplete={mode === "signin" ? "current-password" : "new-password"}
           required
           minLength={6}
-          className="mt-1 w-full rounded border border-zinc-300 px-2 py-1.5"
+          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
@@ -86,13 +86,13 @@ export function LoginForm() {
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-md bg-zinc-900 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
+        className="w-full rounded-full bg-[#0c192f] py-3 text-sm font-semibold text-white shadow-md shadow-slate-900/15 transition hover:bg-[#152a45] disabled:opacity-60 sm:py-2.5"
       >
         {pending ? "Working…" : mode === "signin" ? "Sign in" : "Sign up"}
       </button>
       <button
         type="button"
-        className="w-full text-center text-sm text-zinc-600 hover:text-zinc-900"
+        className="w-full text-center text-sm font-medium text-slate-600 transition hover:text-emerald-800"
         onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
       >
         {mode === "signin"

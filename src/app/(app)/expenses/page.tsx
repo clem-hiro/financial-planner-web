@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { num } from "@/data/mappers";
+import { num, sumPlannedMonthlyGoalContributions } from "@/data/mappers";
 import {
   listBudgetLineOverridesForMonth,
   overridesToLineIdMap,
@@ -7,6 +7,7 @@ import {
 import { listBudgetLines } from "@/data/repositories/budget-lines";
 import { spendRecommendationsForUserMonth } from "@/data/spend-recommendations-from-month";
 import { listExpensesForMonth } from "@/data/repositories/expenses";
+import { listFinancialGoals } from "@/data/repositories/goals";
 import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { BudgetLineExpenseQuickAdd } from "@/features/budget/BudgetLineExpenseQuickAdd";
@@ -71,13 +72,15 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
       ? sp.category.trim()
       : undefined;
 
-  const [expenses, budgetLines, budgetOverrideRows, profile] =
+  const [expenses, budgetLines, budgetOverrideRows, profile, goals] =
     await Promise.all([
       listExpensesForMonth(supabase, user.id, month),
       listBudgetLines(supabase, user.id),
       listBudgetLineOverridesForMonth(supabase, user.id, month),
       getProfileById(supabase, user.id),
+      listFinancialGoals(supabase, user.id),
     ]);
+  const plannedGoalMonthlyTotal = sumPlannedMonthlyGoalContributions(goals);
   const currency = profile?.base_currency ?? DEFAULT_BASE_CURRENCY;
   const total = expenses.reduce((acc, e) => acc + num(e.amount), 0);
   const budgetOverrideByLineId = overridesToLineIdMap(budgetOverrideRows);
@@ -134,6 +137,7 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
     overrideByLineId: budgetOverrideByLineId,
     yearMonth: month,
     profile,
+    monthlyPlannedGoalContributions: plannedGoalMonthlyTotal,
   });
 
   return (

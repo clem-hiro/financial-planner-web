@@ -34,6 +34,7 @@ import {
   profileMonthlyIncome,
   profileCpfAgeBand,
   sumExpenseAmounts,
+  sumPlannedMonthlyGoalContributions,
   vehicleRowToValuationInput,
 } from "@/data/mappers";
 import {
@@ -63,6 +64,11 @@ export type { AgeAssetBreakdownPoint } from "@/data/age-asset-breakdown";
 
 export type DashboardPayload = {
   netWorth: number;
+  /**
+   * Net worth minus tracked CPF (OA+SA+MA+CPFIS notionals). Useful as a
+   * liquidity‑oriented headline; full net still includes CPF.
+   */
+  netWorthExcludingCpf: number;
   netWorthBreakdown: {
     investments: number;
     cash: number;
@@ -137,7 +143,10 @@ export type DashboardPayload = {
     /** Monthly flows for transparency; only account contributions compound in FV. */
     netWorthByAgeModel: {
       fromInvestmentAccountContributions: number;
-      /** Take-home minus expenses (dashboard month); accrues into projected cash, not investment FV. */
+      /**
+       * Take-home minus expenses minus sum of planned monthly goal contributions
+       * (dashboard month); floored at 0. Accrues into projected cash, not investment FV.
+       */
       fromTakeHomeSurplus: number;
       takeHomePerMonth: number | null;
       monthlyExpensesTotal: number;
@@ -168,12 +177,23 @@ export type DashboardPayload = {
     budget: number;
     overBy: number;
   }>;
-  /** Goals with a planned monthly contribution vs implied monthly surplus. */
+  /**
+   * Take-home minus every expense logged for `month` (same basis as savings rate).
+   * Goal plans on the Goals page are not included here—see `discretionaryAfterGoals`.
+   */
+  takeHomeMinusExpenses: number | null;
+  /** Sum of `monthly_contribution` across goals (each term maxed at 0). */
+  totalPlannedGoalContributionsMonthly: number;
+  /**
+   * Take-home minus expenses minus `totalPlannedGoalContributionsMonthly`.
+   * Null when take-home is not set. Can be negative.
+   */
+  discretionaryAfterGoals: number | null;
+  /** Goals with a positive planned monthly contribution (shown next to monthly cash flow). */
   goalBudgetHints: Array<{
     goalId: string;
     title: string;
     plannedMonthly: number;
-    surplus: number | null;
   }>;
 };
 
@@ -262,14 +282,27 @@ export async function getDashboardPayload(
 
   const monthlyExpensesTotal = sumExpenseAmounts(expenses);
   const income = profileMonthlyIncome(profile);
-  /** Same basis as savings rate; accrues into projected cash on the by-age chart, not into investment FV. */
+  const totalPlannedGoalContributionsMonthly =
+    sumPlannedMonthlyGoalContributions(goals);
+  /**
+   * Cash left after living expenses and after planned goal contributions (floored at 0).
+   * Accrues into projected cash on the by-age chart, not into investment FV.
+   */
   const monthlyInvestableSurplus =
-    income != null ? Math.max(0, income - monthlyExpensesTotal) : 0;
+    income != null
+      ? Math.max(
+          0,
+          income -
+            monthlyExpensesTotal -
+            totalPlannedGoalContributionsMonthly
+        )
+      : 0;
   const savingsRate =
     income != null
       ? calculateSavingsRate({
           monthlyIncome: income,
           monthlyExpenses: monthlyExpensesTotal,
+          monthlyPlannedGoalContributions: totalPlannedGoalContributionsMonthly,
         })
       : null;
 
@@ -328,6 +361,7 @@ export async function getDashboardPayload(
     vehicleCount: activeVehicleCount,
     net: netWorth,
   };
+  const netWorthExcludingCpf = netWorth - netWorthBreakdown.cpf;
 
   const baseInsights = buildDashboardInsights({
     monthlyIncome: income,
@@ -613,6 +647,7 @@ export async function getDashboardPayload(
     monthlyTakeHome: income,
     monthlyExpensesTotal,
     savingsRate,
+    monthlyPlannedGoalContributions: totalPlannedGoalContributionsMonthly,
     budgetAggregate: monthlyBudgetAggregate,
     topOverBudget: monthlyBudgetOver.map((o) => ({
       categoryLabel: o.categoryLabel,
@@ -622,34 +657,26 @@ export async function getDashboardPayload(
 
   const currencyCode = profile?.base_currency ?? DEFAULT_BASE_CURRENCY;
   const insights = [...baseInsights];
-  if (
-    ageProjection != null &&
-    monthlyInvestableSurplus > 0 &&
-    income != null
-  ) {
-    const surplusFmt = new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: currencyCode,
-      maximumFractionDigits: 0,
-    }).format(monthlyInvestableSurplus);
-    insights.push(
-      `Projected cash on the by-age chart grows by ${surplusFmt} per month (take-home minus expenses for ${yearMonth}), repeating forward until you change profile or expenses.`
-    );
-  }
 
-  const surplus =
+  const takeHomeMinusExpenses =
     income != null ? income - monthlyExpensesTotal : null;
+  const discretionaryAfterGoals =
+    income != null
+      ? income -
+        monthlyExpensesTotal -
+        totalPlannedGoalContributionsMonthly
+      : null;
   const goalBudgetHints = goals
     .filter((g) => num(g.monthly_contribution) > 0)
     .map((g) => ({
       goalId: g.id,
       title: g.title,
       plannedMonthly: num(g.monthly_contribution),
-      surplus,
     }));
 
   return {
     netWorth,
+    netWorthExcludingCpf,
     netWorthBreakdown,
     savingsRate,
     monthlyExpensesTotal,
@@ -670,6 +697,9 @@ export async function getDashboardPayload(
     monthlyBudgetTotals: monthlyBudget.totals,
     monthlyBudgetAggregate,
     monthlyBudgetOver,
+    takeHomeMinusExpenses,
+    totalPlannedGoalContributionsMonthly,
+    discretionaryAfterGoals,
     goalBudgetHints,
   };
 }

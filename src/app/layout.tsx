@@ -13,14 +13,15 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Personal Finance Planner",
-  description: "Net worth, expenses, goals, and deterministic projections.",
+  title: "Finance Planner",
+  description:
+    "Private wealth clarity — net worth, cash flow, goals, and thoughtful projections.",
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#f8fafc",
+  themeColor: "#f7f8fa",
 };
 
 export default function RootLayout({

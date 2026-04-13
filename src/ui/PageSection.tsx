@@ -26,11 +26,11 @@ export function PageSection({
   const isPlain = variant === "plain";
 
   const titleClass = isEmerald
-    ? "text-lg font-semibold tracking-tight text-teal-950"
-    : "text-lg font-semibold tracking-tight text-slate-900";
+    ? "text-lg font-semibold tracking-tight text-emerald-950"
+    : "text-lg font-semibold tracking-tight text-[#0c192f]";
   const descClass = isEmerald
-    ? "mt-1 text-sm leading-relaxed text-teal-900/85"
-    : "mt-1 text-sm leading-relaxed text-slate-600";
+    ? "mt-2 text-sm leading-relaxed text-emerald-900/85"
+    : "mt-2 text-sm leading-relaxed text-slate-600";
 
   const shell =
     isPlain
@@ -53,16 +53,16 @@ export function PageSection({
   ) : null;
 
   const childBlock = collapsible ? (
-    <details className="group mt-4">
-      <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 rounded-xl bg-slate-100/90 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 [&::-webkit-details-marker]:hidden">
+    <details className="group mt-6">
+      <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 rounded-xl border border-slate-200/80 bg-slate-50/90 px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-white [&::-webkit-details-marker]:hidden">
         <span>Show details</span>
         <span className="text-slate-400 group-open:hidden">▼</span>
         <span className="hidden text-slate-400 group-open:inline">▲</span>
       </summary>
-      <div className="mt-4">{children}</div>
+      <div className="mt-6">{children}</div>
     </details>
   ) : (
-    <div className="mt-4">{children}</div>
+    <div className="mt-6">{children}</div>
   );
 
   if (isPlain) {
@@ -75,13 +75,13 @@ export function PageSection({
         {desc}
         {collapsible ? (
           <details className="group">
-            <summary className="inline-flex cursor-pointer list-none items-center gap-1 rounded-xl bg-slate-100/90 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 [&::-webkit-details-marker]:hidden">
+            <summary className="inline-flex cursor-pointer list-none items-center gap-1 rounded-xl border border-slate-200/80 bg-slate-50/90 px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-white [&::-webkit-details-marker]:hidden">
               Show details <span className="text-slate-400">▼</span>
             </summary>
-            <div className="mt-4">{children}</div>
+            <div className="mt-6">{children}</div>
           </details>
         ) : (
-          <div className="mt-4">{children}</div>
+          <div className="mt-6">{children}</div>
         )}
       </section>
     );
@@ -91,7 +91,7 @@ export function PageSection({
     <section id={id} className={[shell, className].filter(Boolean).join(" ")}>
       {header}
       {desc}
-      {collapsible ? childBlock : <div className="mt-4">{children}</div>}
+      {collapsible ? childBlock : <div className="mt-6">{children}</div>}
     </section>
   );
 }

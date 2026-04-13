@@ -4,6 +4,8 @@ export type SpendRecommendationsInput = {
   monthlyTakeHome: Money | null;
   monthlyExpensesTotal: Money;
   savingsRate: number | null;
+  /** Same sum as dashboard goals; used for surplus copy. */
+  monthlyPlannedGoalContributions?: Money;
   budgetAggregate: { onTrack: boolean; overBy: number };
   topOverBudget: Array<{ categoryLabel: string; overBy: number }>;
 };
@@ -14,8 +16,8 @@ function fmt(n: number): string {
 
 /**
  * Rule-based guidance for whether to spend less this month (no AI).
- * Uses take-home vs all logged expenses in the month, savings rate, and
- * monthly budget lines vs monthly-tagged spend only.
+ * Uses take-home vs logged expenses and planned goal contributions, savings rate,
+ * and monthly budget lines vs monthly-tagged spend only.
  */
 export function buildSpendRecommendationsForMonth(
   input: SpendRecommendationsInput
@@ -25,9 +27,11 @@ export function buildSpendRecommendationsForMonth(
     monthlyTakeHome,
     monthlyExpensesTotal,
     savingsRate,
+    monthlyPlannedGoalContributions = 0,
     budgetAggregate,
     topOverBudget,
   } = input;
+  const goalsOut = Math.max(0, monthlyPlannedGoalContributions);
 
   if (
     monthlyTakeHome != null &&
@@ -67,11 +71,11 @@ export function buildSpendRecommendationsForMonth(
   if (
     monthlyTakeHome != null &&
     monthlyTakeHome > 0 &&
-    monthlyExpensesTotal < monthlyTakeHome
+    monthlyTakeHome - monthlyExpensesTotal - goalsOut > 0
   ) {
-    const surplus = monthlyTakeHome - monthlyExpensesTotal;
+    const surplus = monthlyTakeHome - monthlyExpensesTotal - goalsOut;
     lines.push(
-      `By-age projected cash grows by ~${fmt(surplus)}/mo from this surplus (take-home minus this month’s expenses). If you auto-invest most of it, keep investment “monthly contribution” aligned so you do not double-count the same money in both places.`
+      `By-age projected cash grows by ~${fmt(surplus)}/mo from this surplus (take-home minus this month’s expenses and planned monthly goal contributions). If you auto-invest most of it, keep investment “monthly contribution” aligned so you do not double-count the same money in both places.`
     );
   }
 

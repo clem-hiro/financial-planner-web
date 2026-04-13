@@ -6,10 +6,10 @@ import { appCardClass, appCardPadding } from "@/ui/surface-classes";
 import { formatCurrency, formatPercent } from "@/ui/lib/format";
 
 const labelClass =
-  "text-[11px] font-semibold uppercase tracking-wider text-slate-400";
-const metricCard = `${appCardClass} ${appCardPadding} transition-[box-shadow,transform] duration-200 hover:shadow-lg hover:shadow-slate-900/10`;
+  "text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500";
+const metricCard = `${appCardClass} ${appCardPadding} transition-[box-shadow,transform] duration-200 hover:-translate-y-px hover:shadow-md hover:shadow-slate-900/8`;
 const figureClass =
-  "mt-2 font-mono text-2xl font-semibold tracking-tight text-slate-900 tabular-nums";
+  "mt-3 font-mono text-2xl font-semibold tracking-tight text-[#0c192f] tabular-nums sm:text-[1.65rem]";
 
 export function DashboardOverviewSection({
   payload,
@@ -19,11 +19,11 @@ export function DashboardOverviewSection({
   currency: string;
 }) {
   return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       <div
-        className={`${metricCard} relative overflow-hidden border-l-[3px] border-l-teal-500`}
+        className={`${metricCard} relative overflow-hidden border-l-[3px] border-l-emerald-600`}
       >
-        <div className="pointer-events-none absolute -right-8 -top-12 h-32 w-32 rounded-full bg-teal-400/10 blur-2xl" />
+        <div className="pointer-events-none absolute -right-8 -top-12 h-32 w-32 rounded-full bg-emerald-500/[0.07] blur-2xl" />
         <div className="relative flex flex-wrap items-center gap-1">
           <p className={labelClass}>Net worth</p>
           <InfoTooltip
@@ -36,6 +36,29 @@ export function DashboardOverviewSection({
         <p className={figureClass}>
           {formatCurrency(payload.netWorth, payload.baseCurrency)}
         </p>
+        {payload.netWorthBreakdown.cpf > 0 && (
+          <div className="relative mt-5 border-t border-slate-100 pt-5">
+            <div className="flex flex-wrap items-center gap-1">
+              <p className={labelClass}>Net excluding CPF</p>
+              <InfoTooltip
+                methodologyTopicId="net-worth"
+                ariaLabel="How net excluding CPF relates to full net worth"
+              >
+                <span className="sr-only">Open methodology: net worth</span>
+              </InfoTooltip>
+            </div>
+            <p className="mt-2 font-mono text-xl font-semibold tracking-tight text-slate-800 tabular-nums sm:text-2xl">
+              {formatCurrency(
+                payload.netWorthExcludingCpf,
+                payload.baseCurrency
+              )}
+            </p>
+            <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
+              Investments + cash + vehicles − debts; CPF balances omitted for a
+              more liquid picture.
+            </p>
+          </div>
+        )}
         <details className="relative mt-3 text-xs text-slate-600">
           <summary className="cursor-pointer select-none font-medium text-slate-500 hover:text-slate-800">
             Breakdown
@@ -114,7 +137,7 @@ export function DashboardOverviewSection({
         </div>
         <p className={figureClass}>{formatPercent(payload.savingsRate)}</p>
         <p className="mt-2 text-xs text-slate-500">
-          Take-home − expenses ({currency})
+          Take-home − expenses − planned goals ({currency})
         </p>
       </div>
       <div className={`${metricCard} sm:col-span-2 lg:col-span-1`}>

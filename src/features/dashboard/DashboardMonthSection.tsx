@@ -48,10 +48,13 @@ export function DashboardMonthSection({
 
       {payload.goalBudgetHints.length > 0 && (
         <PageSection
-          title="Goals vs surplus"
+          title="Goals & cash flow"
           description={
             <span className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-600">
-              <span>Planned goal amounts vs take-home minus expenses.</span>
+              <span>
+                Take-home minus expenses, then minus each goal&apos;s planned monthly
+                amount (from Goals—not from your expense list).
+              </span>
               <MethodologyOpenLink topicId="goal-surplus" className={`text-xs ${appInlineLinkClass}`}>
                 How calculated
               </MethodologyOpenLink>
@@ -63,36 +66,66 @@ export function DashboardMonthSection({
             </Link>
           }
         >
-          <ul className="space-y-2 text-sm text-zinc-700">
+          {payload.takeHomeMinusExpenses == null ? (
+            <p className="text-sm text-zinc-600">
+              Set monthly take-home on your profile to show balances after expenses
+              and planned goals.
+            </p>
+          ) : (
+            <div className="space-y-3 text-sm">
+              <p
+                className={
+                  payload.takeHomeMinusExpenses >= 0
+                    ? "text-zinc-700"
+                    : "font-medium text-amber-900"
+                }
+              >
+                {payload.takeHomeMinusExpenses >= 0
+                  ? `After logged expenses for ${payload.month}: ${formatCurrency(
+                      payload.takeHomeMinusExpenses,
+                      payload.baseCurrency
+                    )} left of take-home (goals not subtracted yet).`
+                  : `Expenses exceeded take-home by ${formatCurrency(
+                      -payload.takeHomeMinusExpenses,
+                      payload.baseCurrency
+                    )} for ${payload.month}.`}
+              </p>
+              {payload.totalPlannedGoalContributionsMonthly > 0 &&
+                payload.discretionaryAfterGoals != null && (
+                  <p
+                    className={
+                      payload.discretionaryAfterGoals >= 0
+                        ? "font-medium text-zinc-900"
+                        : "font-medium text-amber-900"
+                    }
+                  >
+                    After planned goal contributions (
+                    {formatCurrency(
+                      payload.totalPlannedGoalContributionsMonthly,
+                      payload.baseCurrency
+                    )}
+                    /mo total):{" "}
+                    {formatCurrency(
+                      payload.discretionaryAfterGoals,
+                      payload.baseCurrency
+                    )}{" "}
+                    <span className="font-normal text-zinc-600">
+                      — your true balance for the month (can be negative).
+                    </span>
+                  </p>
+                )}
+            </div>
+          )}
+          <ul className="mt-4 space-y-2 text-sm text-zinc-700">
             {payload.goalBudgetHints.map((h) => (
               <li
                 key={h.goalId}
                 className="border-b border-zinc-100 pb-2 last:border-0"
               >
                 <span className="font-medium text-zinc-900">{h.title}</span>
-                {": "}
-                plan {formatCurrency(h.plannedMonthly, payload.baseCurrency)}/mo.
-                {h.surplus == null ? (
-                  <span className="text-zinc-600">
-                    {" "}
-                    Set monthly take-home on your profile to compare with
-                    surplus.
-                  </span>
-                ) : h.surplus >= h.plannedMonthly ? (
-                  <span className="text-zinc-600">
-                    {" "}
-                    This month&apos;s surplus (
-                    {formatCurrency(h.surplus, payload.baseCurrency)}) covers this
-                    plan.
-                  </span>
-                ) : (
-                  <span className="text-amber-800">
-                    {" "}
-                    Surplus (
-                    {formatCurrency(h.surplus, payload.baseCurrency)}) is below
-                    this plan.
-                  </span>
-                )}
+                {": planned "}
+                {formatCurrency(h.plannedMonthly, payload.baseCurrency)}
+                /mo on Goals (progress and ETA).
               </li>
             ))}
           </ul>

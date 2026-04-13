@@ -143,6 +143,12 @@ function AssetTooltip({
           <dd className="border-t border-slate-500/50 pt-1.5 text-right font-mono font-semibold tabular-nums text-white">
             {formatMoney(row.value, currency)}
           </dd>
+          <dt className="pt-1 text-[10px] font-medium text-slate-400">
+            Net excl. CPF
+          </dt>
+          <dd className="pt-1 text-right font-mono text-[11px] font-semibold tabular-nums text-slate-200">
+            {formatMoney(row.value - row.cpf, currency)}
+          </dd>
         </dl>
         <p className="mt-2 text-[10px] leading-snug text-slate-500">
           Wider screen: expandable rows in this tooltip. How it works → methodology
@@ -298,6 +304,19 @@ function AssetTooltip({
               above.
             </li>
             <li>Same total as the dark line on the chart for this age.</li>
+          </ul>
+        </TooltipDetail>
+        <TooltipDetail
+          title="Net excluding CPF"
+          amount={formatMoney(row.value - row.cpf, currency)}
+          accentClass="text-slate-200"
+        >
+          <ul className="list-disc space-y-1 pl-3.5">
+            <li>
+              Full net for this age <strong>minus</strong> projected CPF total
+              (OA+SA+MA+CPFIS). A liquidity-style read; rules on actual withdrawals
+              are not modeled here.
+            </li>
           </ul>
         </TooltipDetail>
       </div>

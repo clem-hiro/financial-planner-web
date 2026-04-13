@@ -22,14 +22,18 @@ export function spendRecommendationsForUserMonth(params: {
   overrideByLineId: Record<string, number>;
   yearMonth: string;
   profile: ProfileRow | null;
+  /** Sum of planned monthly goal contributions; aligns with dashboard savings rate. */
+  monthlyPlannedGoalContributions?: number;
 }): string[] {
   const monthlyTakeHome = profileMonthlyIncome(params.profile);
   const monthlyExpensesTotal = sumExpenseAmounts(params.expenses);
+  const goalTotal = Math.max(0, params.monthlyPlannedGoalContributions ?? 0);
   const savingsRate =
     monthlyTakeHome != null && monthlyTakeHome > 0
       ? calculateSavingsRate({
           monthlyIncome: monthlyTakeHome,
           monthlyExpenses: monthlyExpensesTotal,
+          monthlyPlannedGoalContributions: goalTotal,
         })
       : null;
 
@@ -49,6 +53,7 @@ export function spendRecommendationsForUserMonth(params: {
     monthlyTakeHome,
     monthlyExpensesTotal,
     savingsRate,
+    monthlyPlannedGoalContributions: goalTotal,
     budgetAggregate,
     topOverBudget: topOver,
   });
