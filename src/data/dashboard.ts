@@ -107,6 +107,14 @@ export type DashboardPayload = {
   /** True when a `cpf_balances` row exists (even if all buckets are zero). */
   hasCpfBalanceRecord: boolean;
   savingsRate: number | null;
+  /** Sum of expense rows in the dashboard month (all spend types). */
+  monthlyExpensesLoggedTotal: number;
+  /** Planned monthly budget: active monthly lines in that month, with overrides. */
+  monthlyPlannedMonthlyBudgetTotal: number;
+  /**
+   * Spend used for savings rate, discretionary math, and by-age cash accrual:
+   * logged total when any expense exists in the month, otherwise planned monthly budget.
+   */
   monthlyExpensesTotal: number;
   insights: string[];
   /** Rule-based “spend less” / budget guidance for the payload month. */
@@ -149,6 +157,7 @@ export type DashboardPayload = {
        */
       fromTakeHomeSurplus: number;
       takeHomePerMonth: number | null;
+      /** Same basis as dashboard `monthlyExpensesTotal` (logged when present, else planned). */
       monthlyExpensesTotal: number;
     };
     spendCheck: {
@@ -178,8 +187,8 @@ export type DashboardPayload = {
     overBy: number;
   }>;
   /**
-   * Take-home minus every expense logged for `month` (same basis as savings rate).
-   * Goal plans on the Goals page are not included here—see `discretionaryAfterGoals`.
+   * Take-home minus spend basis for `month` (logged when any expense exists, else planned
+   * monthly budget—same as savings rate). Goals not included—see `discretionaryAfterGoals`.
    */
   takeHomeMinusExpenses: number | null;
   /** Sum of `monthly_contribution` across goals (each term maxed at 0). */
@@ -280,12 +289,27 @@ export async function getDashboardPayload(
     listVehicles(supabase, userId),
   ]);
 
-  const monthlyExpensesTotal = sumExpenseAmounts(expenses);
+  const amountOverrideByLineId = overridesToLineIdMap(overrideRows);
+  const domainBudgetLines = budgetLineRows.map(budgetLineRowToDomain);
+  const budgetExpenses = expenses.map(expenseRowToBudgetExpense);
+  const monthlyBudget = monthlyBudgetVsActual(domainBudgetLines, budgetExpenses, {
+    viewingYearMonth: yearMonth,
+    amountOverrideByLineId,
+  });
+
+  const monthlyExpensesLoggedTotal = sumExpenseAmounts(expenses);
+  const monthlyPlannedMonthlyBudgetTotal = monthlyBudget.totals.budget;
+  const monthlyExpensesTotal =
+    monthlyExpensesLoggedTotal > 0
+      ? monthlyExpensesLoggedTotal
+      : monthlyPlannedMonthlyBudgetTotal;
+
   const income = profileMonthlyIncome(profile);
   const totalPlannedGoalContributionsMonthly =
     sumPlannedMonthlyGoalContributions(goals);
   /**
-   * Cash left after living expenses and after planned goal contributions (floored at 0).
+   * Cash left after spend basis (logged when any expense in the month, else planned
+   * monthly budget) and planned goal contributions (floored at 0).
    * Accrues into projected cash on the by-age chart, not into investment FV.
    */
   const monthlyInvestableSurplus =
@@ -622,16 +646,6 @@ export async function getDashboardPayload(
     };
   }
 
-  const domainBudgetLines = budgetLineRows.map(budgetLineRowToDomain);
-  const budgetExpenses = expenses.map(expenseRowToBudgetExpense);
-  const monthlyBudget = monthlyBudgetVsActual(
-    domainBudgetLines,
-    budgetExpenses,
-    {
-      viewingYearMonth: yearMonth,
-      amountOverrideByLineId: overridesToLineIdMap(overrideRows),
-    }
-  );
   const overTop = topOverBudgetCategories(monthlyBudget, 3);
   const monthlyBudgetOver = overTop.map((v) => ({
     categoryLabel: v.categoryLabel,
@@ -679,6 +693,8 @@ export async function getDashboardPayload(
     netWorthExcludingCpf,
     netWorthBreakdown,
     savingsRate,
+    monthlyExpensesLoggedTotal,
+    monthlyPlannedMonthlyBudgetTotal,
     monthlyExpensesTotal,
     insights,
     spendRecommendations,

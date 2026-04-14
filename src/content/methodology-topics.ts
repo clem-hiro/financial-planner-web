@@ -33,7 +33,7 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     bullets: [
       "Investments: we use every investment row you entered: balances, monthly contributions, and expected annual return. Returns are blended by current value across accounts. Take-home minus expenses is **not** merged into investment FV—enter what you invest on each account.",
       "For an age A, we compound for about (A − your age today) × 12 months from today.",
-      "Cash: starts from your cash account balances, then **adds each month** max(0, profile take-home − logged expenses − sum of planned monthly goal contributions for the **dashboard month**), repeated forward (same basis as the savings rate). Vehicle modeled proceeds still apply when configured. Liabilities stay at today’s total.",
+      "Cash: starts from your cash account balances, then **adds each month** max(0, profile take-home − **spend basis** − sum of planned monthly goal contributions for the **dashboard month**), repeated forward (same basis as the savings rate). **Spend basis** = sum of logged expenses in that month when **any** expense exists there; otherwise the sum of **active monthly budget** planned amounts (including month overrides). Vehicle modeled proceeds still apply when configured. Liabilities stay at today’s total.",
       "If you also enter large monthly investment contributions, sanity-check that they fit your real cash flow—the chart does not net contributions against surplus-to-cash automatically.",
       "The line after your target retirement age still rises for illustration only—contributions are not turned off in the chart yet, and we do not model spending down balances.",
       "Total at retirement (headline “simplified path”) is projected investments at that age plus projected cash minus debt (debt held flat), plus projected CPF totals when you have CPF balances saved.",
@@ -97,7 +97,7 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
       "Share of take-home left after this month’s expenses and your planned monthly goal contributions.",
     bullets: [
       "Uses your profile monthly take-home (net) when set.",
-      "Expenses are tracked amounts for the dashboard month.",
+      "Spend side matches by-age cash: **logged** expenses for the dashboard month when you have entered any; otherwise the **planned** total from active monthly budget lines (forecast until expenses confirm).",
       "Subtracts the sum of **monthly contribution** on each financial goal (Goals page). Those amounts are commitments, not read from the expense list—if you also log the same transfer as an expense, you double-count in real life; here goals always reduce the rate when set.",
     ],
   },
@@ -128,7 +128,7 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     title: "Spending guidance (blue panel)",
     summary: "Rule-based hints for the selected month.",
     bullets: [
-      "Uses logged expenses in that month, monthly budget lines, and your stated take-home when set.",
+      "Uses the same monthly spend basis as the dashboard (logged when any expense in the month, else planned monthly budget), budget lines, and your stated take-home when set.",
       "Lines are plain-text suggestions, not predictions of the future.",
     ],
   },
@@ -151,7 +151,7 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
       "Planned monthly amounts come from each financial goal (Goals page)—they are not read from the expense list.",
       "After expenses: take-home minus every expense logged for that month (same basis as savings rate).",
       "True balance for the month: after expenses minus the sum of those planned goal contributions. This figure can be negative.",
-      "Projected cash on the by-age chart accrues using the same idea, floored at zero each month (not investment returns).",
+      "Projected cash on the by-age chart accrues using the same surplus idea (take-home minus spend basis minus goals, floored at zero each month; spend basis = logged when any expense in the month, else planned monthly budget).",
       "If you also log the same cash movement as an expense, you would double-count—pick either expenses or the goal plan for that transfer, not both.",
     ],
   },

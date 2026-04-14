@@ -70,6 +70,7 @@ function AssetTooltip({
   label,
   currency,
   budgetMonth,
+  surplusSpendUsesLogged,
   compact,
 }: {
   active?: boolean;
@@ -78,14 +79,22 @@ function AssetTooltip({
   currency: string;
   /** Expenses month (YYYY-MM) for surplus copy; omit if unknown. */
   budgetMonth?: string;
+  /**
+   * When false, surplus still uses planned monthly budget until any expense is logged
+   * for `budgetMonth`.
+   */
+  surplusSpendUsesLogged?: boolean;
   /** Small screens: flat amounts only (no expandable blocks over the legend). */
   compact?: boolean;
 }) {
   if (!active || !payload?.length) return null;
   const row = payload[0].payload;
-  const monthPhrase = budgetMonth
-    ? `Expenses for ${budgetMonth} come from the Expenses page (used elsewhere on the dashboard).`
-    : "Log expenses on the Expenses page to align spend totals with the dashboard month.";
+  const monthPhrase =
+    budgetMonth == null
+      ? "Log expenses on the Expenses page to align spend totals with the dashboard month."
+      : surplusSpendUsesLogged === false
+        ? `No expenses logged for ${budgetMonth} yet — projected cash uses the sum of active monthly budget lines for that month. After you log any expense in ${budgetMonth}, the chart uses logged totals instead.`
+        : `Expenses for ${budgetMonth} come from the Expenses page (same basis as savings rate and cash surplus here).`;
 
   if (compact) {
     return (
@@ -200,9 +209,10 @@ function AssetTooltip({
           <ul className="list-disc space-y-1 pl-3.5">
             <li>
               <strong>Balances → Cash</strong> today, plus{" "}
-              <strong>take-home minus expenses</strong> for the dashboard month,
-              times months forward (same surplus each month in this model), plus any
-              modeled vehicle cash-in.
+              <strong>take-home minus spend basis</strong> for the dashboard month
+              (logged expenses when any exist in that month, otherwise planned monthly
+              budget), times months forward (same surplus each month in this model),
+              plus any modeled vehicle cash-in.
             </li>
             <li>
               After COE, <strong>modeled net at deregistration</strong> (rebates /
@@ -328,11 +338,14 @@ export function AgeCombinedAssetsProjectionChart({
   data,
   currency,
   budgetMonth,
+  surplusSpendUsesLogged,
 }: {
   data: AgeAssetBreakdownPoint[];
   currency: string;
   /** Dashboard `YYYY-MM` for expense/surplus wording in the tooltip. */
   budgetMonth?: string;
+  /** False when dashboard uses planned budget because no expenses logged yet. */
+  surplusSpendUsesLogged?: boolean;
 }) {
   const narrow = useNarrowScreen();
 
@@ -384,6 +397,7 @@ export function AgeCombinedAssetsProjectionChart({
                 <AssetTooltip
                   currency={currency}
                   budgetMonth={budgetMonth}
+                  surplusSpendUsesLogged={surplusSpendUsesLogged}
                   compact={narrow}
                 />
               }

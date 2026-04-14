@@ -81,6 +81,7 @@ export function DashboardRetirementSection({
               data={payload.ageProjection.points}
               currency={payload.baseCurrency}
               budgetMonth={payload.month}
+              surplusSpendUsesLogged={payload.monthlyExpensesLoggedTotal > 0}
             />
           </div>
           {payload.cpfProjectionByAge &&

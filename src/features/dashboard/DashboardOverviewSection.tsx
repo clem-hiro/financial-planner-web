@@ -137,17 +137,17 @@ export function DashboardOverviewSection({
         </div>
         <p className={figureClass}>{formatPercent(payload.savingsRate)}</p>
         <p className="mt-2 text-xs text-slate-500">
-          Take-home − expenses − planned goals ({currency})
+          Take-home − spend basis − planned goals ({currency})
         </p>
       </div>
       <div className={`${metricCard} sm:col-span-2 lg:col-span-1`}>
         <div className="flex flex-wrap items-center gap-1">
-          <p className={labelClass}>Expenses (this month)</p>
+          <p className={labelClass}>Spend basis (this month)</p>
           <InfoTooltip
-            methodologyTopicId="expenses-month"
-            ariaLabel="How the expenses month works"
+            methodologyTopicId="savings-rate"
+            ariaLabel="How monthly spend basis is calculated"
           >
-            <span className="sr-only">Expenses month methodology</span>
+            <span className="sr-only">Spend basis methodology</span>
           </InfoTooltip>
         </div>
         <p className={figureClass}>
@@ -157,8 +157,26 @@ export function DashboardOverviewSection({
           )}
         </p>
         <p className="mt-2 text-xs text-slate-500">
+          {payload.monthlyExpensesLoggedTotal > 0 ? (
+            <>
+              Logged {formatCurrency(payload.monthlyExpensesLoggedTotal, currency)}
+              . Same total drives savings rate and cash projection.
+            </>
+          ) : payload.monthlyPlannedMonthlyBudgetTotal > 0 ? (
+            <>
+              Forecast from monthly budget (
+              {formatCurrency(payload.monthlyPlannedMonthlyBudgetTotal, currency)}
+              ); logs replace this once you add any expense in {payload.month}.
+            </>
+          ) : (
+            <>No monthly budget lines and no expenses—add either to model spend.</>
+          )}{" "}
           <Link href="/expenses" className={appInlineLinkClass}>
             Log / edit
+          </Link>
+          {" · "}
+          <Link href="/budget" className={appInlineLinkClass}>
+            Budget
           </Link>
         </p>
       </div>

@@ -52,7 +52,8 @@ export function DashboardMonthSection({
           description={
             <span className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-600">
               <span>
-                Take-home minus expenses, then minus each goal&apos;s planned monthly
+                Take-home minus spend basis (logged when any expense in the month,
+                else planned monthly budget), then minus each goal&apos;s planned monthly
                 amount (from Goals—not from your expense list).
               </span>
               <MethodologyOpenLink topicId="goal-surplus" className={`text-xs ${appInlineLinkClass}`}>
@@ -68,7 +69,7 @@ export function DashboardMonthSection({
         >
           {payload.takeHomeMinusExpenses == null ? (
             <p className="text-sm text-zinc-600">
-              Set monthly take-home on your profile to show balances after expenses
+              Set monthly take-home on your profile to show balances after spend basis
               and planned goals.
             </p>
           ) : (
@@ -81,11 +82,11 @@ export function DashboardMonthSection({
                 }
               >
                 {payload.takeHomeMinusExpenses >= 0
-                  ? `After logged expenses for ${payload.month}: ${formatCurrency(
+                  ? `After spend basis for ${payload.month}: ${formatCurrency(
                       payload.takeHomeMinusExpenses,
                       payload.baseCurrency
                     )} left of take-home (goals not subtracted yet).`
-                  : `Expenses exceeded take-home by ${formatCurrency(
+                  : `Spend basis exceeded take-home by ${formatCurrency(
                       -payload.takeHomeMinusExpenses,
                       payload.baseCurrency
                     )} for ${payload.month}.`}

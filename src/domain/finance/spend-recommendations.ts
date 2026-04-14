@@ -16,7 +16,8 @@ function fmt(n: number): string {
 
 /**
  * Rule-based guidance for whether to spend less this month (no AI).
- * Uses take-home vs logged expenses and planned goal contributions, savings rate,
+ * Uses take-home vs monthly spend basis (logged when any expense in the month, else
+ * planned monthly budget) and planned goal contributions, savings rate,
  * and monthly budget lines vs monthly-tagged spend only.
  */
 export function buildSpendRecommendationsForMonth(
@@ -40,7 +41,7 @@ export function buildSpendRecommendationsForMonth(
   ) {
     const over = monthlyExpensesTotal - monthlyTakeHome;
     lines.push(
-      `Spend less or adjust activity: logged expenses (${fmt(monthlyExpensesTotal)}) are above your stated take-home (${fmt(monthlyTakeHome)}) by about ${fmt(over)} this month.`
+      `Spend less or adjust activity: monthly spend basis (${fmt(monthlyExpensesTotal)}) is above your stated take-home (${fmt(monthlyTakeHome)}) by about ${fmt(over)} this month.`
     );
   } else if (savingsRate != null && savingsRate < 0) {
     lines.push(
@@ -75,7 +76,7 @@ export function buildSpendRecommendationsForMonth(
   ) {
     const surplus = monthlyTakeHome - monthlyExpensesTotal - goalsOut;
     lines.push(
-      `By-age projected cash grows by ~${fmt(surplus)}/mo from this surplus (take-home minus this month’s expenses and planned monthly goal contributions). If you auto-invest most of it, keep investment “monthly contribution” aligned so you do not double-count the same money in both places.`
+      `By-age projected cash grows by ~${fmt(surplus)}/mo from this surplus (take-home minus this month’s spend basis and planned monthly goal contributions). If you auto-invest most of it, keep investment “monthly contribution” aligned so you do not double-count the same money in both places.`
     );
   }
 
