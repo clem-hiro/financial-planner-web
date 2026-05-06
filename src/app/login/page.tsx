@@ -2,7 +2,14 @@ import { LoginForm } from "@/features/auth/LoginForm";
 import { isSupabaseConfigured } from "@/lib/env";
 import Link from "next/link";
 
-export default function LoginPage() {
+type PageProps = {
+  searchParams: Promise<{ error?: string }>;
+};
+
+export default async function LoginPage({ searchParams }: PageProps) {
+  const sp = await searchParams;
+  const authError = sp.error?.trim() ? sp.error : undefined;
+
   return (
     <div className="flex min-h-full flex-col items-center justify-center px-4 py-16 sm:py-20">
       <div className="w-full max-w-md space-y-8 text-center">
@@ -26,7 +33,7 @@ export default function LoginPage() {
             to enable auth.
           </div>
         ) : (
-          <LoginForm />
+          <LoginForm initialAuthError={authError} />
         )}
         <Link
           href="/dashboard"
