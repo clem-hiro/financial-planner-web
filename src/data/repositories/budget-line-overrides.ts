@@ -8,7 +8,7 @@ export async function listBudgetLineOverridesForMonth(
   yearMonth: string
 ): Promise<BudgetLineMonthOverrideRow[]> {
   const { data, error } = await supabase
-    .from("budget_line_month_overrides")
+    .from("financial_budget_line_month_overrides")
     .select("*")
     .eq("user_id", userId)
     .eq("year_month", yearMonth);
@@ -36,14 +36,14 @@ export async function upsertBudgetLineMonthOverride(
   }
 ): Promise<void> {
   const { error: delErr } = await supabase
-    .from("budget_line_month_overrides")
+    .from("financial_budget_line_month_overrides")
     .delete()
     .eq("user_id", userId)
     .eq("budget_line_id", input.budget_line_id)
     .eq("year_month", input.year_month);
   if (delErr) throw delErr;
 
-  const { error } = await supabase.from("budget_line_month_overrides").insert({
+  const { error } = await supabase.from("financial_budget_line_month_overrides").insert({
     user_id: userId,
     budget_line_id: input.budget_line_id,
     year_month: input.year_month,
@@ -59,7 +59,7 @@ export async function deleteBudgetLineMonthOverride(
   yearMonth: string
 ): Promise<void> {
   const { error } = await supabase
-    .from("budget_line_month_overrides")
+    .from("financial_budget_line_month_overrides")
     .delete()
     .eq("user_id", userId)
     .eq("budget_line_id", budgetLineId)

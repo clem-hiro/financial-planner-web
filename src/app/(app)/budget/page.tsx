@@ -49,7 +49,7 @@ export default async function BudgetPage({ searchParams }: PageProps) {
   if (!isSupabaseConfigured()) {
     return (
       <p className="text-sm text-zinc-600">
-        Configure Supabase and run migrations (including budget_lines) to use
+        Configure Supabase and run migrations (including financial_budget_lines) to use
         budgets.
       </p>
     );

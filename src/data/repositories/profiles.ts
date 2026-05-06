@@ -6,7 +6,7 @@ export async function getProfileById(
   userId: string
 ): Promise<ProfileRow | null> {
   const { data, error } = await supabase
-    .from("profiles")
+    .from("financial_profiles")
     .select("*")
     .eq("id", userId)
     .maybeSingle();
@@ -30,7 +30,7 @@ export async function updateProfile(
   }
 ): Promise<void> {
   const { error } = await supabase
-    .from("profiles")
+    .from("financial_profiles")
     .update(patch)
     .eq("id", userId);
   if (error) throw error;

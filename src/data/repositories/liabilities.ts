@@ -6,7 +6,7 @@ export async function listLiabilities(
   userId: string
 ): Promise<LiabilityRow[]> {
   const { data, error } = await supabase
-    .from("liabilities")
+    .from("financial_liabilities")
     .select("*")
     .eq("user_id", userId)
     .order("created_at", { ascending: true });
@@ -20,7 +20,7 @@ export async function insertLiability(
   row: { name: string; balance: number }
 ): Promise<LiabilityRow> {
   const { data, error } = await supabase
-    .from("liabilities")
+    .from("financial_liabilities")
     .insert({
       user_id: userId,
       name: row.name,
@@ -39,7 +39,7 @@ export async function updateLiability(
   patch: { name: string; balance: number }
 ): Promise<void> {
   const { error } = await supabase
-    .from("liabilities")
+    .from("financial_liabilities")
     .update(patch)
     .eq("user_id", userId)
     .eq("id", id);
@@ -52,7 +52,7 @@ export async function deleteLiability(
   id: string
 ): Promise<void> {
   const { error } = await supabase
-    .from("liabilities")
+    .from("financial_liabilities")
     .delete()
     .eq("user_id", userId)
     .eq("id", id);

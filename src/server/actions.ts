@@ -1038,7 +1038,7 @@ export async function updateBudgetLineScheduleAction(
   }
 
   const { data: row, error: fetchErr } = await supabase
-    .from("budget_lines")
+    .from("financial_budget_lines")
     .select("cadence")
     .eq("id", id)
     .eq("user_id", user.id)

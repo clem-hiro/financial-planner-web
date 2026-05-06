@@ -6,7 +6,7 @@ export async function getCpfBalanceByUserId(
   userId: string
 ): Promise<CpfBalanceRow | null> {
   const { data, error } = await supabase
-    .from("cpf_balances")
+    .from("financial_cpf_balances")
     .select("*")
     .eq("user_id", userId)
     .maybeSingle();
@@ -30,7 +30,7 @@ export async function upsertCpfBalance(
   }
 ): Promise<CpfBalanceRow> {
   const { data, error } = await supabase
-    .from("cpf_balances")
+    .from("financial_cpf_balances")
     .upsert(
       {
         user_id: userId,
@@ -58,7 +58,7 @@ export async function deleteCpfBalance(
   userId: string
 ): Promise<void> {
   const { error } = await supabase
-    .from("cpf_balances")
+    .from("financial_cpf_balances")
     .delete()
     .eq("user_id", userId);
   if (error) throw error;

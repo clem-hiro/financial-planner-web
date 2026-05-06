@@ -6,7 +6,7 @@ export async function listHousingLoans(
   userId: string
 ): Promise<HousingLoanRow[]> {
   const { data, error } = await supabase
-    .from("housing_loans")
+    .from("financial_housing_loans")
     .select("*")
     .eq("user_id", userId)
     .order("created_at", { ascending: true });
@@ -34,7 +34,7 @@ export async function insertHousingLoan(
   }
 ): Promise<HousingLoanRow> {
   const { data, error } = await supabase
-    .from("housing_loans")
+    .from("financial_housing_loans")
     .insert({
       user_id: userId,
       label: row.label,
@@ -78,7 +78,7 @@ export async function updateHousingLoan(
   }>
 ): Promise<void> {
   const { error } = await supabase
-    .from("housing_loans")
+    .from("financial_housing_loans")
     .update(patch)
     .eq("user_id", userId)
     .eq("id", id);
@@ -91,7 +91,7 @@ export async function deleteHousingLoan(
   id: string
 ): Promise<void> {
   const { error } = await supabase
-    .from("housing_loans")
+    .from("financial_housing_loans")
     .delete()
     .eq("user_id", userId)
     .eq("id", id);

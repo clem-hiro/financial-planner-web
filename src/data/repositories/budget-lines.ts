@@ -7,7 +7,7 @@ export async function listBudgetLines(
   userId: string
 ): Promise<BudgetLineRow[]> {
   const { data, error } = await supabase
-    .from("budget_lines")
+    .from("financial_budget_lines")
     .select("*")
     .eq("user_id", userId)
     .order("cadence", { ascending: true })
@@ -50,7 +50,7 @@ export async function insertBudgetLine(
   }
 
   const { data, error } = await supabase
-    .from("budget_lines")
+    .from("financial_budget_lines")
     .insert(payload)
     .select()
     .single();
@@ -93,7 +93,7 @@ export async function updateBudgetLine(
   if (Object.keys(updatePayload).length === 0) return;
 
   const { error } = await supabase
-    .from("budget_lines")
+    .from("financial_budget_lines")
     .update(updatePayload)
     .eq("id", id)
     .eq("user_id", userId);
@@ -106,7 +106,7 @@ export async function deleteBudgetLine(
   id: string
 ): Promise<void> {
   const { error } = await supabase
-    .from("budget_lines")
+    .from("financial_budget_lines")
     .delete()
     .eq("id", id)
     .eq("user_id", userId);

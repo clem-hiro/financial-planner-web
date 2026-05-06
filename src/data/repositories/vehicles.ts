@@ -6,7 +6,7 @@ export async function listVehicles(
   userId: string
 ): Promise<VehicleRow[]> {
   const { data, error } = await supabase
-    .from("vehicles")
+    .from("financial_vehicles")
     .select("*")
     .eq("user_id", userId)
     .order("display_order", { ascending: true })
@@ -45,7 +45,7 @@ export async function insertVehicle(
   row: VehicleInsert
 ): Promise<VehicleRow> {
   const { data, error } = await supabase
-    .from("vehicles")
+    .from("financial_vehicles")
     .insert({
       user_id: userId,
       label: row.label,
@@ -83,7 +83,7 @@ export async function updateVehicle(
   patch: Partial<VehicleInsert>
 ): Promise<void> {
   const { error } = await supabase
-    .from("vehicles")
+    .from("financial_vehicles")
     .update(patch)
     .eq("user_id", userId)
     .eq("id", id);
@@ -96,7 +96,7 @@ export async function deleteVehicle(
   id: string
 ): Promise<void> {
   const { error } = await supabase
-    .from("vehicles")
+    .from("financial_vehicles")
     .delete()
     .eq("user_id", userId)
     .eq("id", id);

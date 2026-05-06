@@ -6,7 +6,7 @@ export async function listInvestments(
   userId: string
 ): Promise<InvestmentRow[]> {
   const { data, error } = await supabase
-    .from("investments")
+    .from("financial_investments")
     .select("*")
     .eq("user_id", userId)
     .order("created_at", { ascending: true });
@@ -20,7 +20,7 @@ export async function getInvestmentById(
   id: string
 ): Promise<InvestmentRow | null> {
   const { data, error } = await supabase
-    .from("investments")
+    .from("financial_investments")
     .select("*")
     .eq("user_id", userId)
     .eq("id", id)
@@ -42,7 +42,7 @@ export async function insertInvestment(
   row: NewInvestment
 ): Promise<InvestmentRow> {
   const { data, error } = await supabase
-    .from("investments")
+    .from("financial_investments")
     .insert({
       user_id: userId,
       name: row.name,
@@ -70,7 +70,7 @@ export async function updateInvestment(
   patch: InvestmentPatch
 ): Promise<void> {
   const { error } = await supabase
-    .from("investments")
+    .from("financial_investments")
     .update(patch)
     .eq("user_id", userId)
     .eq("id", id);

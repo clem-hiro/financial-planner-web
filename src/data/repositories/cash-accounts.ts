@@ -6,7 +6,7 @@ export async function listCashAccounts(
   userId: string
 ): Promise<CashAccountRow[]> {
   const { data, error } = await supabase
-    .from("cash_accounts")
+    .from("financial_cash_accounts")
     .select("*")
     .eq("user_id", userId)
     .order("created_at", { ascending: true });
@@ -20,7 +20,7 @@ export async function insertCashAccount(
   row: { name: string; balance: number }
 ): Promise<CashAccountRow> {
   const { data, error } = await supabase
-    .from("cash_accounts")
+    .from("financial_cash_accounts")
     .insert({
       user_id: userId,
       name: row.name,
@@ -39,7 +39,7 @@ export async function updateCashAccount(
   patch: { name: string; balance: number }
 ): Promise<void> {
   const { error } = await supabase
-    .from("cash_accounts")
+    .from("financial_cash_accounts")
     .update(patch)
     .eq("user_id", userId)
     .eq("id", id);
@@ -52,7 +52,7 @@ export async function deleteCashAccount(
   id: string
 ): Promise<void> {
   const { error } = await supabase
-    .from("cash_accounts")
+    .from("financial_cash_accounts")
     .delete()
     .eq("user_id", userId)
     .eq("id", id);

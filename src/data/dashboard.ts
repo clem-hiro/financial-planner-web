@@ -104,7 +104,7 @@ export type DashboardPayload = {
    * excludes mortgage in this projection.
    */
   cpfHousingLoanCountInProjection: number;
-  /** True when a `cpf_balances` row exists (even if all buckets are zero). */
+  /** True when a `financial_cpf_balances` row exists (even if all buckets are zero). */
   hasCpfBalanceRecord: boolean;
   savingsRate: number | null;
   /** Sum of expense rows in the dashboard month (all spend types). */

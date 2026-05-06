@@ -16,7 +16,7 @@ export async function listExpensesForMonth(
 ): Promise<ExpenseRow[]> {
   const { start, end } = monthRange(yearMonth);
   const { data, error } = await supabase
-    .from("expenses")
+    .from("financial_expenses")
     .select("*")
     .eq("user_id", userId)
     .gte("spent_at", start)
@@ -34,7 +34,7 @@ export async function listExpensesForYear(
   const start = `${year}-01-01`;
   const end = `${year}-12-31`;
   const { data, error } = await supabase
-    .from("expenses")
+    .from("financial_expenses")
     .select("*")
     .eq("user_id", userId)
     .gte("spent_at", start)
@@ -58,7 +58,7 @@ export async function insertExpense(
   row: NewExpense
 ): Promise<ExpenseRow> {
   const { data, error } = await supabase
-    .from("expenses")
+    .from("financial_expenses")
     .insert({
       user_id: userId,
       amount: row.amount,
@@ -79,7 +79,7 @@ export async function getExpenseById(
   id: string
 ): Promise<ExpenseRow | null> {
   const { data, error } = await supabase
-    .from("expenses")
+    .from("financial_expenses")
     .select("*")
     .eq("id", id)
     .eq("user_id", userId)
@@ -112,7 +112,7 @@ export async function updateExpense(
   }
 
   const { data, error } = await supabase
-    .from("expenses")
+    .from("financial_expenses")
     .update(payload)
     .eq("id", id)
     .eq("user_id", userId)
@@ -128,7 +128,7 @@ export async function deleteExpense(
   id: string
 ): Promise<void> {
   const { error } = await supabase
-    .from("expenses")
+    .from("financial_expenses")
     .delete()
     .eq("id", id)
     .eq("user_id", userId);
