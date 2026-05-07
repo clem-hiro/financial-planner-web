@@ -1,14 +1,16 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { monthlyCpfInflowsFromOwSubject } from "@/domain/finance";
+import { ageCompletedOnDate } from "@/domain/finance/age-projection";
 import type { SgCpfAgeBand } from "@/domain/finance/sg-cpf";
 import {
   ANNUAL_MAX_TOTAL_CPF_CONTRIBUTION_SG,
   ANNUAL_WAGE_CEILING_SG,
   monthlyEmployeeCpfTakeHomeSg,
 } from "@/domain/finance/sg-cpf";
+import { sgCpfAgeBandForCompletedAge } from "@/domain/finance/sg-cpf-contribution-buckets";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import {
@@ -30,6 +32,15 @@ const CPF_BANDS: { value: SgCpfAgeBand; label: string }[] = [
 
 function isSgCpfAgeBand(s: string | null): s is SgCpfAgeBand {
   return s != null && CPF_BANDS.some((b) => b.value === s);
+}
+
+function derivedCpfBandFromBirthDate(
+  birthDate: string
+): SgCpfAgeBand | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) return null;
+  const age = ageCompletedOnDate(birthDate, new Date());
+  if (!Number.isFinite(age) || age < 0 || age > 120) return null;
+  return sgCpfAgeBandForCompletedAge(age);
 }
 
 export function ProfileIncomeForm({
@@ -77,9 +88,6 @@ export function ProfileIncomeForm({
   const [band, setBand] = useState<SgCpfAgeBand | "">(
     isSgCpfAgeBand(initialCpfAgeBand) ? initialCpfAgeBand : ""
   );
-  const [takeHomeRaw, setTakeHomeRaw] = useState(
-    initialIncome != null ? String(initialIncome) : ""
-  );
   const [status, setStatus] = useState<string | null>(null);
   const [birthDate, setBirthDate] = useState(initialBirthDate ?? "");
   const [retAgeRaw, setRetAgeRaw] = useState(
@@ -111,6 +119,15 @@ export function ProfileIncomeForm({
         )
       : ""
   );
+  const hasBirthDate = birthDate.trim() !== "";
+
+  useEffect(() => {
+    if (!hasBirthDate) return;
+    const derived = derivedCpfBandFromBirthDate(birthDate.trim());
+    if (derived != null) {
+      setBand(derived);
+    }
+  }, [birthDate, hasBirthDate]);
 
   const grossNum = useMemo(() => {
     const t = grossRaw.trim();
@@ -229,24 +246,21 @@ export function ProfileIncomeForm({
       retirement_withdrawal_rate_annual,
     };
 
-    if (cpfMode) {
-      if (!band) {
-        setStatus("Select your CPF age band");
-        return;
-      }
-      patchBody.monthly_gross_salary = grossNum;
-      patchBody.cpf_age_band = band;
-    } else {
-      const income =
-        takeHomeRaw.trim() === "" ? null : Number(takeHomeRaw);
-      if (income != null && (!Number.isFinite(income) || income < 0)) {
-        setStatus("Invalid take-home amount");
-        return;
-      }
-      patchBody.monthly_gross_salary = null;
-      patchBody.cpf_age_band = null;
-      patchBody.monthly_income = income;
+    if (!cpfMode || grossNum == null || Number.isNaN(grossNum)) {
+      setStatus("Enter your monthly gross salary to calculate take-home.");
+      return;
     }
+    if (!band) {
+      setStatus("Enter your birth date to auto-set CPF age band.");
+      return;
+    }
+    if (!breakdown) {
+      setStatus("Unable to calculate take-home. Check gross salary and birth date.");
+      return;
+    }
+    patchBody.monthly_gross_salary = grossNum;
+    patchBody.cpf_age_band = band;
+    patchBody.monthly_income = breakdown.takeHome;
 
     const res = await fetch("/api/profile", {
       method: "PATCH",
@@ -279,11 +293,10 @@ export function ProfileIncomeForm({
                 Monthly gross salary ({currencyCode})
                 <InfoTooltip ariaLabel="When to use gross salary">
                   <p className="text-[11px] leading-snug">
-                    Optional for Singapore employees. Uses <strong>employee</strong>{" "}
-                    CPF on ordinary wages up to the OW ceiling for{" "}
+                    Uses <strong>employee</strong> CPF on ordinary wages up to the OW
+                    ceiling for{" "}
                     <span className="font-mono">{cpfYearMonth}</span>. Excludes employer
-                    CPF, tax, and other deductions. Leave empty to enter take-home
-                    only.
+                    CPF, tax, and other deductions.
                   </p>
                 </InfoTooltip>
               </span>
@@ -306,8 +319,8 @@ export function ProfileIncomeForm({
                 CPF age band
                 <InfoTooltip ariaLabel="CPF age band">
                   <p className="text-[11px] leading-snug">
-                    Required when gross is set. Sets employee contribution rates for
-                    the take-home estimate and CPF projection.
+                    Auto-derived from birth date when provided. Used for CPF
+                    contribution rates in take-home and CPF projections.
                   </p>
                 </InfoTooltip>
               </span>
@@ -320,7 +333,7 @@ export function ProfileIncomeForm({
                     (e.target.value || "") as SgCpfAgeBand | ""
                   )
                 }
-                disabled={!cpfMode}
+                disabled={!cpfMode || hasBirthDate}
               >
                 <option value="">—</option>
                 {CPF_BANDS.map((b) => (
@@ -481,8 +494,7 @@ export function ProfileIncomeForm({
                 ) : (
                   <InfoTooltip ariaLabel="Manual take-home">
                     <p className="text-[11px] leading-snug">
-                      Net after payroll deductions for budgeting.{" "}
-                      <strong>Clear gross</strong> above to edit this field.
+                      Auto-calculated from your gross salary and CPF age band.
                     </p>
                   </InfoTooltip>
                 )}
@@ -496,10 +508,10 @@ export function ProfileIncomeForm({
                 value={
                   cpfMode && breakdown
                     ? String(breakdown.takeHome)
-                    : takeHomeRaw
+                    : ""
                 }
-                onChange={(e) => setTakeHomeRaw(e.target.value)}
-                disabled={cpfMode}
+                disabled
+                placeholder="Auto-calculated"
               />
             </label>
           </div>
