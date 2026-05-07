@@ -94,11 +94,11 @@ export default async function GoalsPage() {
         <p className="mt-1 text-sm text-zinc-500">
           Savings targets with their own balances and monthly plans. Time-to-goal
           uses these numbers (not your investment account balances).{" "}
-          <Link href="/balances" className={appInlineLinkClass}>
-            Balances
+          <Link href="/setup" className={appInlineLinkClass}>
+            Setup
           </Link>{" "}
           is for investments, cash, CPF, vehicles, generic debts, and{" "}
-          <Link href="/balances#housing-loans" className={appInlineLinkClass}>
+          <Link href="/setup#housing-loans" className={appInlineLinkClass}>
             housing loans
           </Link>
           .
@@ -108,7 +108,7 @@ export default async function GoalsPage() {
             How goal progress & timing work →
           </MethodologyOpenLink>
           <MethodologyOpenLink topicId="net-worth" className={appInlineLinkClass}>
-            How net worth uses Balances →
+            How net worth uses Setup →
           </MethodologyOpenLink>
         </p>
       </div>

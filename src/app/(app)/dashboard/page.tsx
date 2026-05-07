@@ -107,7 +107,7 @@ export default async function DashboardPage() {
             <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
               Complete your financial profile to improve savings rate and projection quality.
               <div className="mt-2">
-                <Link href="/financial-profile" className="underline">
+                <Link href="/setup" className="underline">
                   Complete your financial profile
                 </Link>
               </div>
@@ -116,7 +116,7 @@ export default async function DashboardPage() {
             <div className="rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-700">
               Global assumptions are managed in Financial Profile.
               <div className="mt-2">
-                <Link href="/financial-profile" className="underline">
+                <Link href="/setup" className="underline">
                   Edit financial profile
                 </Link>
               </div>

@@ -39,11 +39,6 @@ export default async function OnboardingPage() {
             ? num(profile.savings_target_monthly)
             : null
         }
-        initialFixedExpenses={
-          profile?.fixed_expenses_monthly != null
-            ? num(profile.fixed_expenses_monthly)
-            : null
-        }
         initialDebtObligations={
           profile?.debt_obligations_monthly != null
             ? num(profile.debt_obligations_monthly)

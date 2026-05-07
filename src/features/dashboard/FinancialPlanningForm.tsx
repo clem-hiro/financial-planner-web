@@ -9,14 +9,12 @@ export function FinancialPlanningForm({
   initialSalaryFrequency,
   initialAnnualBonus,
   initialSavingsTarget,
-  initialFixedExpenses,
   initialDebtObligations,
 }: {
   initialCurrency: string;
   initialSalaryFrequency: "monthly" | "biweekly" | "weekly" | "annual" | null;
   initialAnnualBonus: number | null;
   initialSavingsTarget: number | null;
-  initialFixedExpenses: number | null;
   initialDebtObligations: number | null;
 }) {
   const router = useRouter();
@@ -30,9 +28,6 @@ export function FinancialPlanningForm({
   );
   const [savingsTarget, setSavingsTarget] = useState(
     initialSavingsTarget != null ? String(initialSavingsTarget) : ""
-  );
-  const [fixedExpenses, setFixedExpenses] = useState(
-    initialFixedExpenses != null ? String(initialFixedExpenses) : ""
   );
   const [debtObligations, setDebtObligations] = useState(
     initialDebtObligations != null ? String(initialDebtObligations) : ""
@@ -50,8 +45,6 @@ export function FinancialPlanningForm({
         annual_bonus: annualBonus.trim() === "" ? null : Number(annualBonus),
         savings_target_monthly:
           savingsTarget.trim() === "" ? null : Number(savingsTarget),
-        fixed_expenses_monthly:
-          fixedExpenses.trim() === "" ? null : Number(fixedExpenses),
         debt_obligations_monthly:
           debtObligations.trim() === "" ? null : Number(debtObligations),
       }),
@@ -91,10 +84,9 @@ export function FinancialPlanningForm({
           </select>
         </label>
       </div>
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2">
         <input className={fpInputClass} placeholder="Annual bonus (optional)" type="number" min={0} step="0.01" value={annualBonus} onChange={(e) => setAnnualBonus(e.target.value)} />
         <input className={fpInputClass} placeholder="Savings target (optional)" type="number" min={0} step="0.01" value={savingsTarget} onChange={(e) => setSavingsTarget(e.target.value)} />
-        <input className={fpInputClass} placeholder="Fixed expenses (optional)" type="number" min={0} step="0.01" value={fixedExpenses} onChange={(e) => setFixedExpenses(e.target.value)} />
       </div>
       <input className={fpInputClass} placeholder="Debt obligations (optional)" type="number" min={0} step="0.01" value={debtObligations} onChange={(e) => setDebtObligations(e.target.value)} />
       <div className="flex items-center gap-3">

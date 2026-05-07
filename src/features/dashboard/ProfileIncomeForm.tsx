@@ -119,6 +119,13 @@ export function ProfileIncomeForm({
         )
       : ""
   );
+  const [showAdvancedSettings, setShowAdvancedSettings] = useState(() => {
+    return (
+      salaryGrowthPctRaw.trim() !== "" ||
+      retDividendYieldPercentRaw.trim() !== "" ||
+      retirementWithdrawalPctRaw.trim() !== ""
+    );
+  });
   const hasBirthDate = birthDate.trim() !== "";
 
   useEffect(() => {
@@ -342,46 +349,6 @@ export function ProfileIncomeForm({
                   </option>
                 ))}
               </select>
-            </label>
-          </div>
-
-          <div>
-            <label className="text-sm">
-              <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
-                Annual salary growth (nominal %)
-                <InfoTooltip ariaLabel="How salary growth is used">
-                  <p>
-                    Each <strong>January</strong> in the CPF projection, gross
-                    is multiplied by <strong>(1 + this rate)</strong>. The first
-                    projection month always uses your entered gross as-is.
-                  </p>
-                  <p className="mt-2 text-slate-400">
-                    Not financial advice. Many plans stress-test at 0% and use
-                    a modest nominal rate (e.g. 0–3%) for a middle case. Does
-                    not change current net worth—only forward CPF inflows.
-                  </p>
-                  <p className="mt-2 border-t border-zinc-600/40 pt-2 text-[11px] text-slate-300">
-                    Blank = no raises in the CPF chart (only when gross is set).{" "}
-                    <MethodologyOpenLink
-                      topicId="cpf-projection"
-                      className={appInlineLinkClass}
-                    >
-                      Full CPF rules
-                    </MethodologyOpenLink>
-                  </p>
-                </InfoTooltip>
-              </span>
-              <input
-                name="annual_salary_growth_pct"
-                type="number"
-                min={0}
-                max={25}
-                step={0.1}
-                className={fpInputNarrowClass}
-                value={salaryGrowthPctRaw}
-                onChange={(e) => setSalaryGrowthPctRaw(e.target.value)}
-                placeholder="0 = flat gross"
-              />
             </label>
           </div>
 
@@ -629,6 +596,65 @@ export function ProfileIncomeForm({
                   placeholder="Optional"
                 />
               </label>
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+            <button
+              type="button"
+              onClick={() => setShowAdvancedSettings((prev) => !prev)}
+              className="flex w-full items-center justify-between rounded-lg px-1 py-1 text-left text-sm font-medium text-slate-700 hover:text-slate-900"
+              aria-expanded={showAdvancedSettings}
+              aria-controls="advanced-settings"
+            >
+              <span>Advanced settings (optional)</span>
+              <span className="text-slate-400">
+                {showAdvancedSettings ? "Hide" : "Show"}
+              </span>
+            </button>
+            <p className="mt-1 px-1 text-xs text-slate-500">
+              Add these only if you want more personalized projections.
+            </p>
+
+            {showAdvancedSettings && (
+              <div id="advanced-settings" className="mt-3 flex flex-wrap gap-4">
+                <label className="text-sm">
+                  <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+                    Annual salary growth (nominal %)
+                    <InfoTooltip ariaLabel="How salary growth is used">
+                      <p>
+                        Each <strong>January</strong> in the CPF projection, gross
+                        is multiplied by <strong>(1 + this rate)</strong>. The first
+                        projection month always uses your entered gross as-is.
+                      </p>
+                      <p className="mt-2 text-slate-400">
+                        Not financial advice. Many plans stress-test at 0% and use
+                        a modest nominal rate (e.g. 0–3%) for a middle case. Does
+                        not change current net worth-only forward CPF inflows.
+                      </p>
+                      <p className="mt-2 border-t border-zinc-600/40 pt-2 text-[11px] text-slate-300">
+                        Blank = no raises in the CPF chart (only when gross is set).{" "}
+                        <MethodologyOpenLink
+                          topicId="cpf-projection"
+                          className={appInlineLinkClass}
+                        >
+                          Full CPF rules
+                        </MethodologyOpenLink>
+                      </p>
+                    </InfoTooltip>
+                  </span>
+                  <input
+                    name="annual_salary_growth_pct"
+                    type="number"
+                    min={0}
+                    max={25}
+                    step={0.1}
+                    className={fpInputNarrowClass}
+                    value={salaryGrowthPctRaw}
+                    onChange={(e) => setSalaryGrowthPctRaw(e.target.value)}
+                    placeholder="0 = flat gross"
+                  />
+                </label>
               <label className="text-sm">
                 <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
                   Dividend yield (% per year)
@@ -675,7 +701,8 @@ export function ProfileIncomeForm({
                   placeholder="4 default"
                 />
               </label>
-            </div>
+              </div>
+            )}
           </div>
         </div>
         <button type="submit" className={fpPrimaryButtonClass}>

@@ -117,10 +117,10 @@ export function DashboardRetirementSection({
                   One line per bucket + total; dashed markers = housing milestones.
                   Housing OA only if saved under{" "}
                   <Link
-                    href="/balances#housing-loans"
+                    href="/setup#housing-loans"
                     className={appInlineLinkClass}
                   >
-                    Balances → Housing loans
+                    Setup → Housing loans
                   </Link>
                   . Full rules: <strong>Assumptions →</strong>
                 </p>
@@ -131,10 +131,10 @@ export function DashboardRetirementSection({
                   <strong>OA for housing</strong> only when you have loan rows
                   under{" "}
                   <Link
-                    href="/balances#housing-loans"
+                    href="/setup#housing-loans"
                     className={appInlineLinkClass}
                   >
-                    Balances → Housing loans
+                    Setup → Housing loans
                   </Link>
                   .
                 </p>
@@ -157,10 +157,10 @@ export function DashboardRetirementSection({
                     <p className="mt-2 text-xs text-indigo-900/90 sm:hidden">
                       <strong>No housing loan in this run</strong> — add one under{" "}
                       <Link
-                        href="/balances#housing-loans"
+                        href="/setup#housing-loans"
                         className={appInlineLinkClass}
                       >
-                        Balances → Housing loans
+                        Setup → Housing loans
                       </Link>{" "}
                       to model OA after instalments.
                     </p>
@@ -169,10 +169,10 @@ export function DashboardRetirementSection({
                       does not include mortgage payments yet. Add or enable a loan
                       under{" "}
                       <Link
-                        href="/balances#housing-loans"
+                        href="/setup#housing-loans"
                         className={appInlineLinkClass}
                       >
-                        Balances → Housing loans
+                        Setup → Housing loans
                       </Link>{" "}
                       to project OA after CPF-funded instalments.
                     </p>
@@ -295,7 +295,7 @@ export function DashboardRetirementSection({
                 )}
               </div>
               <Link
-                href="/financial-profile"
+                href="/setup"
                 className={`inline-flex min-h-10 shrink-0 items-center text-xs font-medium touch-manipulation ${appInlineLinkClass} sm:min-h-0`}
               >
                 Edit profile assumptions →
@@ -470,10 +470,10 @@ export function DashboardRetirementSection({
               <p className="mt-3 text-xs text-emerald-900">
                 Add a <strong>monthly spend in retirement</strong> in{" "}
                 <Link
-                  href="/financial-profile"
+                  href="/setup"
                   className={appInlineLinkClass}
                 >
-                  Financial profile
+                  Setup
                 </Link>{" "}
                 to compare this dividend estimate to the lifestyle you want.
               </p>
@@ -580,10 +580,10 @@ export function DashboardRetirementSection({
         <p className="mt-2 text-sm text-emerald-900">
           Set your <strong>birth date</strong> in{" "}
           <Link
-            href="/financial-profile"
+            href="/setup"
             className={appInlineLinkClass}
           >
-            Financial profile
+            Setup
           </Link>{" "}
           to see projected net worth by age and monthly dividend estimates.
         </p>

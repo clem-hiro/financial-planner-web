@@ -117,8 +117,8 @@ export function DashboardOverviewSection({
           </ul>
         </details>
         <p className="relative mt-2 text-xs text-slate-500">
-          <Link href="/balances#assets-liabilities" className={appInlineLinkClass}>
-            Balances
+          <Link href="/setup#balances-accounts" className={appInlineLinkClass}>
+            Setup
           </Link>
           <span className="text-slate-400"> · </span>
           {payload.investmentSummary.count} linked account

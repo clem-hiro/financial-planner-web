@@ -11,7 +11,6 @@ type Props = {
   initialSalaryFrequency: "monthly" | "biweekly" | "weekly" | "annual" | null;
   initialAnnualBonus: number | null;
   initialSavingsTarget: number | null;
-  initialFixedExpenses: number | null;
   initialDebtObligations: number | null;
   initialStep: number;
 };
@@ -34,9 +33,6 @@ export function OnboardingWizard(props: Props) {
   );
   const [savingsTarget, setSavingsTarget] = useState(
     props.initialSavingsTarget != null ? String(props.initialSavingsTarget) : ""
-  );
-  const [fixedExpenses, setFixedExpenses] = useState(
-    props.initialFixedExpenses != null ? String(props.initialFixedExpenses) : ""
   );
   const [debtObligations, setDebtObligations] = useState(
     props.initialDebtObligations != null ? String(props.initialDebtObligations) : ""
@@ -69,7 +65,6 @@ export function OnboardingWizard(props: Props) {
       } else if (step === 2) {
         await savePatch({
           savings_target_monthly: savingsTarget.trim() === "" ? null : Number(savingsTarget),
-          fixed_expenses_monthly: fixedExpenses.trim() === "" ? null : Number(fixedExpenses),
           debt_obligations_monthly:
             debtObligations.trim() === "" ? null : Number(debtObligations),
           onboarding_step: 3,
@@ -136,15 +131,14 @@ export function OnboardingWizard(props: Props) {
         <div className="space-y-3 rounded-xl border border-slate-200 bg-white p-5">
           <h2 className="text-lg font-semibold text-slate-900">Monthly planning</h2>
           <input className={fpInputClass} placeholder="Savings target (optional)" type="number" min={0} step="0.01" value={savingsTarget} onChange={(e) => setSavingsTarget(e.target.value)} />
-          <input className={fpInputClass} placeholder="Estimated fixed expenses (optional)" type="number" min={0} step="0.01" value={fixedExpenses} onChange={(e) => setFixedExpenses(e.target.value)} />
           <input className={fpInputClass} placeholder="Debt obligations (optional)" type="number" min={0} step="0.01" value={debtObligations} onChange={(e) => setDebtObligations(e.target.value)} />
         </div>
       )}
       {step === 3 && (
         <div className="space-y-2 rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-700">
           <h2 className="text-lg font-semibold text-slate-900">Financial position (optional)</h2>
-          <p>Add cash, investments, CPF, loans, housing, and vehicles later in Balances.</p>
-          <a href="/balances" className="text-emerald-700 underline">Go to Balances</a>
+          <p>Add cash, investments, CPF, loans, housing, and vehicles later in Setup.</p>
+          <a href="/setup" className="text-emerald-700 underline">Go to Setup</a>
         </div>
       )}
       {step === 4 && (
