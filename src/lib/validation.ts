@@ -67,7 +67,31 @@ export function birthDateIsValidPast(iso: string): boolean {
 export const profilePatchSchema = z
   .object({
     monthly_income: z.number().nonnegative().nullable().optional(),
+    salary_frequency: z
+      .enum(["monthly", "biweekly", "weekly", "annual"])
+      .nullable()
+      .optional(),
+    annual_bonus: z.number().nonnegative().max(10_000_000).nullable().optional(),
+    savings_target_monthly: z
+      .number()
+      .nonnegative()
+      .max(10_000_000)
+      .nullable()
+      .optional(),
+    fixed_expenses_monthly: z
+      .number()
+      .nonnegative()
+      .max(10_000_000)
+      .nullable()
+      .optional(),
+    debt_obligations_monthly: z
+      .number()
+      .nonnegative()
+      .max(10_000_000)
+      .nullable()
+      .optional(),
     display_name: z.string().max(200).nullable().optional(),
+    base_currency: z.string().trim().length(3).toUpperCase().optional(),
     monthly_gross_salary: z.number().nonnegative().nullable().optional(),
     cpf_age_band: cpfAgeBandSchema.nullable().optional(),
     birth_date: isoDateOnly.nullable().optional(),
@@ -90,6 +114,12 @@ export const profilePatchSchema = z
       .max(0.25)
       .nullable()
       .optional(),
+    retirement_withdrawal_rate_annual: z
+      .number()
+      .min(0)
+      .max(0.2)
+      .nullable()
+      .optional(),
     /** Nominal per calendar year (e.g. 0.02); null clears. */
     annual_salary_growth_nominal: z
       .number()
@@ -97,6 +127,9 @@ export const profilePatchSchema = z
       .max(0.25)
       .nullable()
       .optional(),
+    onboarding_required: z.boolean().optional(),
+    onboarding_step: z.number().int().min(1).max(4).nullable().optional(),
+    onboarding_completed_at: z.string().datetime().nullable().optional(),
   })
   .superRefine((data, ctx) => {
     if (

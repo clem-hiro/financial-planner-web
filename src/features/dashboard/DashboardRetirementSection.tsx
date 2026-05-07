@@ -295,10 +295,10 @@ export function DashboardRetirementSection({
                 )}
               </div>
               <Link
-                href="/dashboard#retirement-inputs"
+                href="/financial-profile"
                 className={`inline-flex min-h-10 shrink-0 items-center text-xs font-medium touch-manipulation ${appInlineLinkClass} sm:min-h-0`}
               >
-                Edit targets →
+                Edit profile assumptions →
               </Link>
             </div>
 
@@ -470,10 +470,10 @@ export function DashboardRetirementSection({
               <p className="mt-3 text-xs text-emerald-900">
                 Add a <strong>monthly spend in retirement</strong> in{" "}
                 <Link
-                  href="/dashboard#retirement-inputs"
+                  href="/financial-profile"
                   className={appInlineLinkClass}
                 >
-                  Retirement targets
+                  Financial profile
                 </Link>{" "}
                 to compare this dividend estimate to the lifestyle you want.
               </p>
@@ -580,10 +580,10 @@ export function DashboardRetirementSection({
         <p className="mt-2 text-sm text-emerald-900">
           Set your <strong>birth date</strong> in{" "}
           <Link
-            href="/dashboard#retirement-inputs"
+            href="/financial-profile"
             className={appInlineLinkClass}
           >
-            Income &amp; retirement → Retirement targets
+            Financial profile
           </Link>{" "}
           to see projected net worth by age and monthly dividend estimates.
         </p>

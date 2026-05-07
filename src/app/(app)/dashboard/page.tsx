@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { isFinancialProfileIncomplete } from "@/data/financial-profile";
 import { getDashboardPayload } from "@/data/dashboard";
 import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
@@ -7,14 +8,6 @@ import { DashboardMonthSection } from "@/features/dashboard/DashboardMonthSectio
 import { DashboardOverviewSection } from "@/features/dashboard/DashboardOverviewSection";
 import { DashboardRetirementSection } from "@/features/dashboard/DashboardRetirementSection";
 import { DashboardSubnav } from "@/features/dashboard/DashboardSubnav";
-import { ProfileIncomeForm } from "@/features/dashboard/ProfileIncomeForm";
-import {
-  num,
-  profileAnnualSalaryGrowthNominal,
-  profileCpfAgeBand,
-  profileMonthlyGross,
-  profileMonthlyIncome,
-} from "@/data/mappers";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -71,10 +64,8 @@ export default async function DashboardPage() {
     getDashboardPayload(supabase, user.id, month),
     getProfileById(supabase, user.id),
   ]);
-  const income = profileMonthlyIncome(profile);
-  const gross = profileMonthlyGross(profile);
-  const cpfBand = profileCpfAgeBand(profile);
   const currency = profile?.base_currency ?? DEFAULT_BASE_CURRENCY;
+  const profileIncomplete = isFinancialProfileIncomplete(profile);
 
   return (
     <div className="space-y-10 sm:space-y-12">
@@ -109,41 +100,28 @@ export default async function DashboardPage() {
 
       <section id="profile" className="scroll-mt-28 sm:scroll-mt-32">
         <PageSection
-          title="Income & retirement"
+          title="Financial profile"
           actions={<IncomeRetirementSectionActions />}
         >
-          <ProfileIncomeForm
-            key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(profile)}-${profile?.birth_date ?? ""}-${profile?.target_retirement_age ?? ""}-${profile?.retirement_monthly_spend_goal ?? ""}-${profile?.retirement_dividend_yield_annual ?? ""}`}
-            initialIncome={income}
-            initialGross={gross}
-            initialCpfAgeBand={cpfBand}
-            initialAnnualSalaryGrowthPercent={
-              profile?.annual_salary_growth_nominal != null &&
-              String(profile.annual_salary_growth_nominal).trim() !== ""
-                ? num(profile.annual_salary_growth_nominal) * 100
-                : null
-            }
-            initialBirthDate={profile?.birth_date ?? null}
-            initialTargetRetirementAge={
-              profile?.target_retirement_age != null
-                ? Number(profile.target_retirement_age)
-                : null
-            }
-            initialRetirementMonthlySpendGoal={
-              profile?.retirement_monthly_spend_goal != null &&
-              String(profile.retirement_monthly_spend_goal).trim() !== ""
-                ? num(profile.retirement_monthly_spend_goal)
-                : null
-            }
-            initialRetirementDividendYieldPercent={
-              profile?.retirement_dividend_yield_annual != null &&
-              String(profile.retirement_dividend_yield_annual).trim() !== ""
-                ? num(profile.retirement_dividend_yield_annual) * 100
-                : null
-            }
-            cpfYearMonth={month}
-            currencyCode={currency}
-          />
+          {profileIncomplete ? (
+            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
+              Complete your financial profile to improve savings rate and projection quality.
+              <div className="mt-2">
+                <Link href="/financial-profile" className="underline">
+                  Complete your financial profile
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-700">
+              Global assumptions are managed in Financial Profile.
+              <div className="mt-2">
+                <Link href="/financial-profile" className="underline">
+                  Edit financial profile
+                </Link>
+              </div>
+            </div>
+          )}
         </PageSection>
       </section>
 

@@ -56,6 +56,16 @@ export function profileAnnualSalaryGrowthNominal(
   return Math.min(0.25, n);
 }
 
+/** Clamped 0–20% annual withdrawal rate; null/blank in DB uses 4% default at call-site. */
+export function profileRetirementWithdrawalRateAnnual(
+  profile: ProfileRow | null
+): number | null {
+  if (!profile?.retirement_withdrawal_rate_annual) return null;
+  const n = num(profile.retirement_withdrawal_rate_annual);
+  if (!Number.isFinite(n) || n < 0) return null;
+  return Math.min(0.2, n);
+}
+
 export function vehicleRowToValuationInput(row: VehicleRow): VehicleValuationInput {
   const marketRaw = row.current_market_value;
   const arfRaw = row.arf_for_parf;

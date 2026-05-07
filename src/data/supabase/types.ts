@@ -2,6 +2,11 @@ export type ProfileRow = {
   id: string;
   display_name: string | null;
   monthly_income: string | null;
+  salary_frequency: "monthly" | "biweekly" | "weekly" | "annual" | null;
+  annual_bonus: string | null;
+  savings_target_monthly: string | null;
+  fixed_expenses_monthly: string | null;
+  debt_obligations_monthly: string | null;
   monthly_gross_salary: string | null;
   /** Nominal annual raise as decimal (e.g. 0.02); null = no growth in CPF projection. */
   annual_salary_growth_nominal: string | null;
@@ -13,6 +18,11 @@ export type ProfileRow = {
   retirement_monthly_spend_goal: string | null;
   /** Annual dividend yield on investments in retirement (0–0.25); optional. */
   retirement_dividend_yield_annual: string | null;
+  /** Annual withdrawal rate used for simplified retirement spend checks. */
+  retirement_withdrawal_rate_annual: string | null;
+  onboarding_required: boolean;
+  onboarding_step: number | null;
+  onboarding_completed_at: string | null;
   base_currency: string;
   created_at: string;
 };

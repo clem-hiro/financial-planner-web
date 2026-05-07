@@ -27,7 +27,33 @@ export async function middleware(request: NextRequest) {
     },
   });
 
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const pathname = request.nextUrl.pathname;
+  const isOnboardingRoute = pathname.startsWith("/onboarding");
+  const isAppRoute = /^\/(dashboard|expenses|budget|balances|goals|financial-profile|onboarding)/.test(
+    pathname
+  );
+  if (user && isAppRoute) {
+    const { data: profile } = await supabase
+      .from("financial_profiles")
+      .select("onboarding_required,onboarding_completed_at")
+      .eq("id", user.id)
+      .maybeSingle();
+    const needsOnboarding =
+      !!profile?.onboarding_required && !profile?.onboarding_completed_at;
+    if (needsOnboarding && !isOnboardingRoute) {
+      const nextUrl = request.nextUrl.clone();
+      nextUrl.pathname = "/onboarding";
+      return NextResponse.redirect(nextUrl);
+    }
+    if (!needsOnboarding && isOnboardingRoute) {
+      const nextUrl = request.nextUrl.clone();
+      nextUrl.pathname = "/dashboard";
+      return NextResponse.redirect(nextUrl);
+    }
+  }
   return supabaseResponse;
 }
 

@@ -47,17 +47,45 @@ export async function PATCH(request: Request) {
   const patch: {
     display_name?: string | null;
     monthly_income?: number | null;
+    salary_frequency?: "monthly" | "biweekly" | "weekly" | "annual" | null;
+    annual_bonus?: number | null;
+    savings_target_monthly?: number | null;
+    fixed_expenses_monthly?: number | null;
+    debt_obligations_monthly?: number | null;
+    base_currency?: string;
     monthly_gross_salary?: number | null;
     cpf_age_band?: string | null;
     birth_date?: string | null;
     target_retirement_age?: number | null;
     retirement_monthly_spend_goal?: number | null;
     retirement_dividend_yield_annual?: number | null;
+    retirement_withdrawal_rate_annual?: number | null;
     annual_salary_growth_nominal?: number | null;
+    onboarding_required?: boolean;
+    onboarding_step?: number | null;
+    onboarding_completed_at?: string | null;
   } = {};
 
   if (data.display_name !== undefined) {
     patch.display_name = data.display_name;
+  }
+  if (data.salary_frequency !== undefined) {
+    patch.salary_frequency = data.salary_frequency;
+  }
+  if (data.annual_bonus !== undefined) {
+    patch.annual_bonus = data.annual_bonus;
+  }
+  if (data.savings_target_monthly !== undefined) {
+    patch.savings_target_monthly = data.savings_target_monthly;
+  }
+  if (data.fixed_expenses_monthly !== undefined) {
+    patch.fixed_expenses_monthly = data.fixed_expenses_monthly;
+  }
+  if (data.debt_obligations_monthly !== undefined) {
+    patch.debt_obligations_monthly = data.debt_obligations_monthly;
+  }
+  if (data.base_currency !== undefined) {
+    patch.base_currency = data.base_currency;
   }
 
   if (touchCpf) {
@@ -121,8 +149,21 @@ export async function PATCH(request: Request) {
     patch.retirement_dividend_yield_annual =
       data.retirement_dividend_yield_annual;
   }
+  if (data.retirement_withdrawal_rate_annual !== undefined) {
+    patch.retirement_withdrawal_rate_annual =
+      data.retirement_withdrawal_rate_annual;
+  }
   if (data.annual_salary_growth_nominal !== undefined) {
     patch.annual_salary_growth_nominal = data.annual_salary_growth_nominal;
+  }
+  if (data.onboarding_required !== undefined) {
+    patch.onboarding_required = data.onboarding_required;
+  }
+  if (data.onboarding_step !== undefined) {
+    patch.onboarding_step = data.onboarding_step;
+  }
+  if (data.onboarding_completed_at !== undefined) {
+    patch.onboarding_completed_at = data.onboarding_completed_at;
   }
 
   if (Object.keys(patch).length === 0) {

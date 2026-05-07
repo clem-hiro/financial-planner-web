@@ -20,13 +20,23 @@ export async function updateProfile(
   patch: {
     display_name?: string | null;
     monthly_income?: number | null;
+    salary_frequency?: "monthly" | "biweekly" | "weekly" | "annual" | null;
+    annual_bonus?: number | null;
+    savings_target_monthly?: number | null;
+    fixed_expenses_monthly?: number | null;
+    debt_obligations_monthly?: number | null;
     monthly_gross_salary?: number | null;
     cpf_age_band?: string | null;
     birth_date?: string | null;
     target_retirement_age?: number | null;
     retirement_monthly_spend_goal?: number | null;
     retirement_dividend_yield_annual?: number | null;
+    retirement_withdrawal_rate_annual?: number | null;
     annual_salary_growth_nominal?: number | null;
+    onboarding_required?: boolean;
+    onboarding_step?: number | null;
+    onboarding_completed_at?: string | null;
+    base_currency?: string;
   }
 ): Promise<void> {
   const { error } = await supabase

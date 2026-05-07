@@ -9,6 +9,7 @@ const routes = [
   { href: "/budget", label: "Budget" },
   { href: "/balances", label: "Balances" },
   { href: "/goals", label: "Goals" },
+  { href: "/financial-profile", label: "Financial Profile" },
 ] as const;
 
 const pill =

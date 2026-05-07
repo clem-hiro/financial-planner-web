@@ -13,6 +13,7 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [mode, setMode] = useState<Mode>("signin");
   const [error, setError] = useState<string | null>(() =>
     initialAuthError?.trim() ? initialAuthError : null
@@ -46,6 +47,9 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
           password,
           options: {
             emailRedirectTo: `${window.location.origin}/auth/callback`,
+            data: {
+              display_name: displayName.trim() || undefined,
+            },
           },
         });
         if (err) {
@@ -59,7 +63,7 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
           setPassword("");
           return;
         }
-        router.push("/dashboard");
+        router.push("/onboarding");
         router.refresh();
         return;
       }
@@ -162,6 +166,18 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
           onChange={(e) => setPassword(e.target.value)}
         />
       </label>
+      {mode === "signup" && (
+        <label className="block text-sm font-medium text-slate-700">
+          <span className="mb-1.5 block">Display name (optional)</span>
+          <input
+            type="text"
+            autoComplete="name"
+            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+          />
+        </label>
+      )}
       <button
         type="submit"
         disabled={pending}

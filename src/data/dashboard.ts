@@ -32,6 +32,7 @@ import {
   profileAnnualSalaryGrowthNominal,
   profileMonthlyGross,
   profileMonthlyIncome,
+  profileRetirementWithdrawalRateAnnual,
   profileCpfAgeBand,
   sumExpenseAmounts,
   sumPlannedMonthlyGoalContributions,
@@ -585,6 +586,7 @@ export async function getDashboardPayload(
           goalMonthlySpend != null && goalMonthlySpend > 0
             ? goalMonthlySpend
             : null,
+        annualWithdrawalRate: profileRetirementWithdrawalRateAnnual(profile) ?? undefined,
       }),
     };
     const assetPoints: AgeAssetBreakdownPoint[] = nwAgePoints.map((p, i) => {

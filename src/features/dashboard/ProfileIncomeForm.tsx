@@ -41,6 +41,7 @@ export function ProfileIncomeForm({
   initialRetirementMonthlySpendGoal,
   initialRetirementDividendYieldPercent,
   initialAnnualSalaryGrowthPercent = null,
+  initialRetirementWithdrawalRatePercent = null,
   cpfYearMonth,
   currencyCode = DEFAULT_BASE_CURRENCY,
 }: {
@@ -63,6 +64,8 @@ export function ProfileIncomeForm({
    * Null/blank means no raise path.
    */
   initialAnnualSalaryGrowthPercent?: number | null;
+  /** Annual withdrawal rate in percent for simplified retirement checks (e.g. 4 for 4%). */
+  initialRetirementWithdrawalRatePercent?: number | null;
   /** `YYYY-MM` for OW ceiling / rates used in the estimate. */
   cpfYearMonth: string;
   currencyCode?: string;
@@ -98,6 +101,13 @@ export function ProfileIncomeForm({
     initialAnnualSalaryGrowthPercent != null
       ? String(
           Math.round(initialAnnualSalaryGrowthPercent * 1000) / 1000
+        )
+      : ""
+  );
+  const [retirementWithdrawalPctRaw, setRetirementWithdrawalPctRaw] = useState(
+    initialRetirementWithdrawalRatePercent != null
+      ? String(
+          Math.round(initialRetirementWithdrawalRatePercent * 1000) / 1000
         )
       : ""
   );
@@ -197,6 +207,18 @@ export function ProfileIncomeForm({
       }
       annual_salary_growth_nominal = p / 100;
     }
+    const withdrawalTrim = retirementWithdrawalPctRaw.trim();
+    let retirement_withdrawal_rate_annual: number | null = null;
+    if (withdrawalTrim !== "") {
+      const p = Number(withdrawalTrim);
+      if (!Number.isFinite(p) || p < 0 || p > 20) {
+        setStatus(
+          "Retirement withdrawal rate must be between 0% and 20%, or leave blank to use the default."
+        );
+        return;
+      }
+      retirement_withdrawal_rate_annual = p / 100;
+    }
 
     const patchBody: Record<string, unknown> = {
       birth_date: birthPayload,
@@ -204,6 +226,7 @@ export function ProfileIncomeForm({
       retirement_monthly_spend_goal,
       retirement_dividend_yield_annual,
       annual_salary_growth_nominal,
+      retirement_withdrawal_rate_annual,
     };
 
     if (cpfMode) {
@@ -622,6 +645,22 @@ export function ProfileIncomeForm({
                   value={retDividendYieldPercentRaw}
                   onChange={(e) => setRetDividendYieldPercentRaw(e.target.value)}
                   placeholder="2 default"
+                />
+              </label>
+              <label className="text-sm">
+                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+                  Withdrawal rate (% per year)
+                </span>
+                <input
+                  name="retirement_withdrawal_rate_annual"
+                  type="number"
+                  min={0}
+                  max={20}
+                  step="0.1"
+                  className={fpInputNarrowClass}
+                  value={retirementWithdrawalPctRaw}
+                  onChange={(e) => setRetirementWithdrawalPctRaw(e.target.value)}
+                  placeholder="4 default"
                 />
               </label>
             </div>

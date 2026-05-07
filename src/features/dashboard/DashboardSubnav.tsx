@@ -2,7 +2,7 @@
 
 const items = [
   { id: "overview", label: "Overview" },
-  { id: "profile", label: "Profile" },
+  { id: "profile", label: "Financial profile" },
   { id: "retirement", label: "Retirement" },
   { id: "month", label: "This month" },
 ] as const;
