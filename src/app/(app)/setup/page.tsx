@@ -39,9 +39,9 @@ import { ScrollToTopButton } from "@/ui/ScrollToTopButton";
 
 const setupTabs = [
   { id: "profile", label: "Profile" },
-  { id: "add-account", label: "Add account" },
+  { id: "add-account", label: "Investments" },
   { id: "cpf", label: "CPF" },
-  { id: "cash-liabilities", label: "Cash & liabilities" },
+  { id: "cash-liabilities", label: "Cash and debts" },
   { id: "housing-loans", label: "Housing loans" },
   { id: "vehicles", label: "Vehicles" },
 ] as const;
@@ -199,7 +199,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
             content: (
               <PageSection
                 id="add-investment"
-                title="Add account"
+                title="Investments"
                 description="New accounts appear below and in dashboard projections."
               >
                 <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
@@ -243,7 +243,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           {
             id: "cash-liabilities",
             content: (
-              <PageSection id="cash-liabilities" title="Cash &amp; liabilities">
+              <PageSection id="cash-liabilities" title="Cash and debts">
                 <CashAndLiabilitiesPanels
                   cashRows={cashBalanceRows}
                   liabilityRows={liabilityBalanceRows}
