@@ -42,6 +42,19 @@ export function InfoTooltip({
     return () => window.removeEventListener("keydown", onKey);
   }, [open, methodologyTopicId]);
 
+  useEffect(() => {
+    if (!open || methodologyTopicId) return;
+    const onPointerDown = (e: PointerEvent) => {
+      const root = rootRef.current;
+      if (!root) return;
+      if (!root.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    window.addEventListener("pointerdown", onPointerDown);
+    return () => window.removeEventListener("pointerdown", onPointerDown);
+  }, [open, methodologyTopicId]);
+
   const opensSheet = methodologyTopicId != null;
 
   return (
@@ -68,7 +81,7 @@ export function InfoTooltip({
         <span
           id={panelId}
           role="tooltip"
-          className="absolute left-1/2 top-full z-[60] mt-1.5 w-[min(20rem,calc(100vw-2.5rem))] -translate-x-1/2 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-left text-[11px] leading-snug text-zinc-100 shadow-xl sm:left-0 sm:translate-x-0"
+          className="absolute left-1/2 top-full z-60 mt-1.5 w-[min(20rem,calc(100vw-2.5rem))] -translate-x-1/2 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-left text-[11px] leading-snug text-zinc-100 shadow-xl sm:left-0 sm:translate-x-0"
         >
           <span className="block max-h-[min(70vh,22rem)] overflow-y-auto pr-0.5 [&_strong]:font-semibold [&_strong]:text-white">
             {children}
