@@ -286,12 +286,14 @@ function HousingLoanManualAddForm({
           />
         </label>
       </div>
-      <button
-        type="submit"
-        className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800"
-      >
-        Save loan
-      </button>
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800"
+        >
+          Save loan
+        </button>
+      </div>
     </form>
   );
 }
@@ -629,12 +631,14 @@ function HousingLoanEditForm({ L }: { L: HousingLoanRow }) {
             />
           </label>
         </div>
-        <button
-          type="submit"
-          className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800"
-        >
-          Update loan
-        </button>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800"
+          >
+            Update loan
+          </button>
+        </div>
       </form>
     </details>
   );

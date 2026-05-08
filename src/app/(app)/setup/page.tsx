@@ -14,7 +14,6 @@ import { listLiabilities } from "@/data/repositories/liabilities";
 import { getProfileById } from "@/data/repositories/profiles";
 import { listVehicles } from "@/data/repositories/vehicles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
-import { FinancialPlanningForm } from "@/features/dashboard/FinancialPlanningForm";
 import { ProfileIncomeForm } from "@/features/dashboard/ProfileIncomeForm";
 import {
   CashAndLiabilitiesPanels,
@@ -131,10 +130,10 @@ export default async function SetupPage() {
             Profile
           </a>
           <a href="#add-investment" className="rounded-full px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100">
-            Add investment
+            Add account
           </a>
           <a href="#investment-accounts" className="rounded-full px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100">
-            Investments
+            Accounts
           </a>
           <a href="#cpf-balances" className="rounded-full px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100">
             CPF
@@ -151,23 +150,12 @@ export default async function SetupPage() {
         </div>
       </nav>
 
-      <PageSection id="profile-assumptions" title="Profile assumptions">
+      <PageSection
+        id="profile-assumptions"
+        title="Profile basics"
+        description="Gross salary, birth date, and retirement targets. Currency is SGD."
+      >
         <div className="space-y-6">
-          <FinancialPlanningForm
-            initialCurrency={currency}
-            initialSalaryFrequency={profile?.salary_frequency ?? null}
-            initialAnnualBonus={profile?.annual_bonus != null ? num(profile.annual_bonus) : null}
-            initialSavingsTarget={
-              profile?.savings_target_monthly != null
-                ? num(profile.savings_target_monthly)
-                : null
-            }
-            initialDebtObligations={
-              profile?.debt_obligations_monthly != null
-                ? num(profile.debt_obligations_monthly)
-                : null
-            }
-          />
           <ProfileIncomeForm
             key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(profile)}-${profile?.birth_date ?? ""}-${profile?.target_retirement_age ?? ""}-${profile?.retirement_monthly_spend_goal ?? ""}-${profile?.retirement_dividend_yield_annual ?? ""}`}
             initialIncome={income}
@@ -216,13 +204,13 @@ export default async function SetupPage() {
 
         <PageSection
           id="add-investment"
-          title="Add investment account"
+          title="Add account"
           description="New accounts appear below and in dashboard projections."
         >
           <InvestmentForm />
         </PageSection>
 
-        <PageSection id="investment-accounts" title="Investment accounts">
+        <PageSection id="investment-accounts" title="Accounts">
           <InvestmentBalancesList
             items={investmentBalanceRows}
             currencyCode={currency}

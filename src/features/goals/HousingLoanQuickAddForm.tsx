@@ -254,7 +254,7 @@ export function HousingLoanQuickAddForm({
                 step={0.05}
                 value={bankRatePct}
                 onChange={(e) => setBankRatePct(e.target.value)}
-                className="w-full max-w-[12rem] rounded border border-zinc-300 bg-white px-2 py-1.5"
+                className="w-full max-w-48 rounded border border-zinc-300 bg-white px-2 py-1.5"
               />
             </label>
           )}
@@ -343,12 +343,14 @@ export function HousingLoanQuickAddForm({
         )}
       </div>
 
-      <button
-        type="submit"
-        className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800"
-      >
-        Save quick loan
-      </button>
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800"
+        >
+          Save quick loan
+        </button>
+      </div>
     </form>
   );
 }

@@ -75,12 +75,14 @@ function AddCashForm({ currencyCode }: { currencyCode: string }) {
             className="w-28 rounded border border-zinc-300 px-2 py-1"
           />
         </label>
-        <button
-          type="submit"
-          className="rounded-md bg-zinc-800 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-700"
-        >
-          Add
-        </button>
+        <div className="w-full flex justify-end">
+          <button
+            type="submit"
+            className="rounded-md bg-zinc-800 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-700"
+          >
+            Add
+          </button>
+        </div>
       </div>
     </form>
   );
@@ -137,12 +139,14 @@ function CashAccountRow({
               className="w-28 rounded border border-zinc-300 px-2 py-1"
             />
           </label>
-          <button
-            type="submit"
-            className="rounded-md bg-zinc-900 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-800"
-          >
-            Save
-          </button>
+          <div className="w-full flex justify-end">
+            <button
+              type="submit"
+              className="rounded-md bg-zinc-900 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-800"
+            >
+              Save
+            </button>
+          </div>
         </div>
       </form>
       <button
@@ -208,12 +212,14 @@ function AddLiabilityForm({ currencyCode }: { currencyCode: string }) {
             className="w-28 rounded border border-zinc-300 px-2 py-1"
           />
         </label>
-        <button
-          type="submit"
-          className="rounded-md bg-zinc-800 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-700"
-        >
-          Add
-        </button>
+        <div className="w-full flex justify-end">
+          <button
+            type="submit"
+            className="rounded-md bg-zinc-800 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-700"
+          >
+            Add
+          </button>
+        </div>
       </div>
     </form>
   );
@@ -270,12 +276,14 @@ function LiabilityRow({
               className="w-28 rounded border border-zinc-300 px-2 py-1"
             />
           </label>
-          <button
-            type="submit"
-            className="rounded-md bg-zinc-900 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-800"
-          >
-            Save
-          </button>
+          <div className="w-full flex justify-end">
+            <button
+              type="submit"
+              className="rounded-md bg-zinc-900 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-800"
+            >
+              Save
+            </button>
+          </div>
         </div>
       </form>
       <button

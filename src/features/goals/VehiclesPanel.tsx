@@ -550,9 +550,11 @@ function VehicleEditForm({
         <PurchaseToCoeTerminalFields row={row} currencyCode={currencyCode} />
         <AdvancedModelFields row={row} />
       </div>
-      <button type="submit" className={fpPrimaryButtonClass}>
-        Save vehicle
-      </button>
+      <div className="flex justify-end">
+        <button type="submit" className={fpPrimaryButtonClass}>
+          Save vehicle
+        </button>
+      </div>
     </form>
   );
 }
@@ -596,9 +598,11 @@ function AddVehicleForm({ currencyCode }: { currencyCode: string }) {
         <PurchaseToCoeTerminalFields currencyCode={currencyCode} />
         <AdvancedModelFields />
       </div>
-      <button type="submit" className={`mt-3 ${fpPrimaryButtonClass}`}>
-        Add vehicle
-      </button>
+      <div className="mt-3 flex justify-end">
+        <button type="submit" className={fpPrimaryButtonClass}>
+          Add vehicle
+        </button>
+      </div>
     </form>
   );
 }

@@ -2,13 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { fpInputClass, fpPrimaryButtonClass, fpSelectClass } from "@/ui/input-classes";
+import { fpInputClass, fpPrimaryButtonClass } from "@/ui/input-classes";
 
 type Props = {
   initialDisplayName: string;
   initialMonthlyIncome: number | null;
   initialBaseCurrency: string;
-  initialSalaryFrequency: "monthly" | "biweekly" | "weekly" | "annual" | null;
   initialAnnualBonus: number | null;
   initialSavingsTarget: number | null;
   initialDebtObligations: number | null;
@@ -25,9 +24,6 @@ export function OnboardingWizard(props: Props) {
     props.initialMonthlyIncome != null ? String(props.initialMonthlyIncome) : ""
   );
   const [currency, setCurrency] = useState(props.initialBaseCurrency);
-  const [salaryFrequency, setSalaryFrequency] = useState(
-    props.initialSalaryFrequency ?? "monthly"
-  );
   const [annualBonus, setAnnualBonus] = useState(
     props.initialAnnualBonus != null ? String(props.initialAnnualBonus) : ""
   );
@@ -57,7 +53,7 @@ export function OnboardingWizard(props: Props) {
           display_name: displayName.trim() || null,
           monthly_income: monthlyIncome.trim() === "" ? null : Number(monthlyIncome),
           base_currency: currency.trim().toUpperCase(),
-          salary_frequency: salaryFrequency,
+          salary_frequency: "monthly",
           annual_bonus: annualBonus.trim() === "" ? null : Number(annualBonus),
           onboarding_step: 2,
         });
@@ -115,15 +111,7 @@ export function OnboardingWizard(props: Props) {
           <h2 className="text-lg font-semibold text-slate-900">Income</h2>
           <input className={fpInputClass} placeholder="Display name (optional)" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
           <input className={fpInputClass} placeholder="Monthly take-home income" type="number" min={0} step="0.01" value={monthlyIncome} onChange={(e) => setMonthlyIncome(e.target.value)} />
-          <div className="grid gap-3 sm:grid-cols-2">
-            <input className={fpInputClass} placeholder="Currency (e.g. SGD)" maxLength={3} value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} />
-            <select className={fpSelectClass} value={salaryFrequency} onChange={(e) => setSalaryFrequency(e.target.value as Props["initialSalaryFrequency"])}>
-              <option value="monthly">Monthly</option>
-              <option value="biweekly">Biweekly</option>
-              <option value="weekly">Weekly</option>
-              <option value="annual">Annual</option>
-            </select>
-          </div>
+          <input className={fpInputClass} placeholder="Currency (e.g. SGD)" maxLength={3} value={currency} onChange={(e) => setCurrency(e.target.value.toUpperCase())} />
           <input className={fpInputClass} placeholder="Annual bonus (optional)" type="number" min={0} step="0.01" value={annualBonus} onChange={(e) => setAnnualBonus(e.target.value)} />
         </div>
       )}

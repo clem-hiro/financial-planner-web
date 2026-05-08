@@ -48,7 +48,7 @@ function InvestmentUpdateRow({
       )}
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm sm:col-span-2">
-          <span className="mb-1 block text-zinc-600">Asset name</span>
+          <span className="mb-1 block text-zinc-600">Account name</span>
           <input
             name="name"
             type="text"
@@ -87,7 +87,7 @@ function InvestmentUpdateRow({
         </label>
         <label className="text-sm sm:col-span-2">
           <span className="mb-1 block text-zinc-600">
-            Expected annual return (decimal, e.g. 0.07 for 7%)
+            Expected annual return / interest (decimal, e.g. 0.07 for 7%)
           </span>
           <input
             name="expected_annual_return"
@@ -133,10 +133,10 @@ export function InvestmentBalancesList({
     <section className="space-y-3">
       <div>
         <h2 className="text-sm font-semibold text-zinc-900">
-          Your investments &amp; assets
+          Your accounts
         </h2>
         <p className="mt-1 text-xs text-zinc-500">
-          Update how much you hold today in each account. Amounts are in{" "}
+          Track investments, savings, or cash-like accounts. Amounts are in{" "}
           {currencyCode}.
         </p>
         <p className="mt-2 text-sm text-zinc-700">

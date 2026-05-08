@@ -2,12 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
-import { monthlyCpfInflowsFromOwSubject } from "@/domain/finance";
 import { ageCompletedOnDate } from "@/domain/finance/age-projection";
 import type { SgCpfAgeBand } from "@/domain/finance/sg-cpf";
 import {
-  ANNUAL_MAX_TOTAL_CPF_CONTRIBUTION_SG,
-  ANNUAL_WAGE_CEILING_SG,
   monthlyEmployeeCpfTakeHomeSg,
 } from "@/domain/finance/sg-cpf";
 import { sgCpfAgeBandForCompletedAge } from "@/domain/finance/sg-cpf-contribution-buckets";
@@ -17,7 +14,6 @@ import {
   fpInputClass,
   fpInputNarrowClass,
   fpPrimaryButtonClass,
-  fpSelectClass,
 } from "@/ui/input-classes";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { InfoTooltip } from "@/ui/InfoTooltip";
@@ -126,15 +122,14 @@ export function ProfileIncomeForm({
       retirementWithdrawalPctRaw.trim() !== ""
     );
   });
-  const hasBirthDate = birthDate.trim() !== "";
 
   useEffect(() => {
-    if (!hasBirthDate) return;
+    if (birthDate.trim() === "") return;
     const derived = derivedCpfBandFromBirthDate(birthDate.trim());
     if (derived != null) {
       setBand(derived);
     }
-  }, [birthDate, hasBirthDate]);
+  }, [birthDate]);
 
   const grossNum = useMemo(() => {
     const t = grossRaw.trim();
@@ -150,41 +145,14 @@ export function ProfileIncomeForm({
     return monthlyEmployeeCpfTakeHomeSg(grossNum, cpfYearMonth, band);
   }, [cpfMode, band, grossNum, cpfYearMonth]);
 
-  /** Employee + employer on same OW subject; OA/SA/MA split matches CPF projection (gross > $750 only). */
-  const bucketInflows = useMemo(() => {
-    if (!breakdown || band === "" || grossNum == null || grossNum <= 750) {
-      return null;
-    }
-    return monthlyCpfInflowsFromOwSubject(
-      breakdown.ordinaryWagesSubject,
-      band
-    );
-  }, [breakdown, band, grossNum]);
-
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus(null);
+    const nativeEvt = e.nativeEvent as SubmitEvent;
+    const submitter = nativeEvt.submitter as HTMLButtonElement | null;
+    const section = submitter?.value === "retirement" ? "retirement" : "income";
 
-    const retTrim = retAgeRaw.trim();
-    let targetRetirementAge: number | null = null;
-    if (retTrim !== "") {
-      const n = Number(retTrim);
-      if (
-        !Number.isFinite(n) ||
-        !Number.isInteger(n) ||
-        n < 50 ||
-        n > 80
-      ) {
-        setStatus(
-          "Target retirement age must be a whole number from 50 to 80, or leave blank to use 65 in projections."
-        );
-        return;
-      }
-      targetRetirementAge = n;
-    }
-
-    const birthPayload =
-      birthDate.trim() === "" ? null : birthDate.trim();
+    const birthPayload = birthDate.trim() === "" ? null : birthDate.trim();
     if (
       birthPayload != null &&
       !/^\d{4}-\d{2}-\d{2}$/.test(birthPayload)
@@ -192,82 +160,98 @@ export function ProfileIncomeForm({
       setStatus("Birth date must be YYYY-MM-DD.");
       return;
     }
+    const patchBody: Record<string, unknown> = {};
 
-    const spendTrim = retirementSpendGoalRaw.trim();
-    let retirement_monthly_spend_goal: number | null = null;
-    if (spendTrim !== "") {
-      const n = Number(spendTrim);
-      if (!Number.isFinite(n) || n < 0 || n > 1_000_000) {
-        setStatus(
-          "Retirement spend goal must be between 0 and 1,000,000, or leave blank to clear."
-        );
+    if (section === "income") {
+      if (!cpfMode || grossNum == null || Number.isNaN(grossNum)) {
+        setStatus("Enter your monthly gross salary to calculate take-home.");
         return;
       }
-      retirement_monthly_spend_goal = n;
-    }
-
-    const divTrim = retDividendYieldPercentRaw.trim();
-    let retirement_dividend_yield_annual: number | null = null;
-    if (divTrim !== "") {
-      const p = Number(divTrim);
-      if (!Number.isFinite(p) || p < 0 || p > 25) {
-        setStatus(
-          "Retirement dividend yield must be between 0% and 25%, or leave blank to clear (dashboard then uses 2% default)."
-        );
+      if (!band) {
+        setStatus("Enter your birth date to auto-set CPF age band.");
         return;
       }
-      retirement_dividend_yield_annual = p / 100;
-    }
-
-    const growthTrim = salaryGrowthPctRaw.trim();
-    let annual_salary_growth_nominal: number | null = null;
-    if (growthTrim !== "") {
-      const p = Number(growthTrim);
-      if (!Number.isFinite(p) || p < 0 || p > 25) {
-        setStatus(
-          "Annual salary growth must be between 0% and 25%, or leave blank for no growth in the CPF chart."
-        );
+      if (!breakdown) {
+        setStatus("Unable to calculate take-home. Check gross salary and birth date.");
         return;
       }
-      annual_salary_growth_nominal = p / 100;
-    }
-    const withdrawalTrim = retirementWithdrawalPctRaw.trim();
-    let retirement_withdrawal_rate_annual: number | null = null;
-    if (withdrawalTrim !== "") {
-      const p = Number(withdrawalTrim);
-      if (!Number.isFinite(p) || p < 0 || p > 20) {
-        setStatus(
-          "Retirement withdrawal rate must be between 0% and 20%, or leave blank to use the default."
-        );
-        return;
+      patchBody.birth_date = birthPayload;
+      patchBody.salary_frequency = "monthly";
+      patchBody.monthly_gross_salary = grossNum;
+      patchBody.cpf_age_band = band;
+      patchBody.monthly_income = breakdown.takeHome;
+    } else {
+      const retTrim = retAgeRaw.trim();
+      let targetRetirementAge: number | null = null;
+      if (retTrim !== "") {
+        const n = Number(retTrim);
+        if (!Number.isFinite(n) || !Number.isInteger(n) || n < 50 || n > 80) {
+          setStatus(
+            "Target retirement age must be a whole number from 50 to 80, or leave blank to use 65 in projections."
+          );
+          return;
+        }
+        targetRetirementAge = n;
       }
-      retirement_withdrawal_rate_annual = p / 100;
-    }
 
-    const patchBody: Record<string, unknown> = {
-      birth_date: birthPayload,
-      target_retirement_age: targetRetirementAge,
-      retirement_monthly_spend_goal,
-      retirement_dividend_yield_annual,
-      annual_salary_growth_nominal,
-      retirement_withdrawal_rate_annual,
-    };
+      const spendTrim = retirementSpendGoalRaw.trim();
+      let retirement_monthly_spend_goal: number | null = null;
+      if (spendTrim !== "") {
+        const n = Number(spendTrim);
+        if (!Number.isFinite(n) || n < 0 || n > 1_000_000) {
+          setStatus(
+            "Retirement spend goal must be between 0 and 1,000,000, or leave blank to clear."
+          );
+          return;
+        }
+        retirement_monthly_spend_goal = n;
+      }
 
-    if (!cpfMode || grossNum == null || Number.isNaN(grossNum)) {
-      setStatus("Enter your monthly gross salary to calculate take-home.");
-      return;
+      const divTrim = retDividendYieldPercentRaw.trim();
+      let retirement_dividend_yield_annual: number | null = null;
+      if (divTrim !== "") {
+        const p = Number(divTrim);
+        if (!Number.isFinite(p) || p < 0 || p > 25) {
+          setStatus(
+            "Retirement dividend yield must be between 0% and 25%, or leave blank to clear (dashboard then uses 2% default)."
+          );
+          return;
+        }
+        retirement_dividend_yield_annual = p / 100;
+      }
+
+      const growthTrim = salaryGrowthPctRaw.trim();
+      let annual_salary_growth_nominal: number | null = null;
+      if (growthTrim !== "") {
+        const p = Number(growthTrim);
+        if (!Number.isFinite(p) || p < 0 || p > 25) {
+          setStatus(
+            "Annual salary growth must be between 0% and 25%, or leave blank for no growth in the CPF chart."
+          );
+          return;
+        }
+        annual_salary_growth_nominal = p / 100;
+      }
+
+      const withdrawalTrim = retirementWithdrawalPctRaw.trim();
+      let retirement_withdrawal_rate_annual: number | null = null;
+      if (withdrawalTrim !== "") {
+        const p = Number(withdrawalTrim);
+        if (!Number.isFinite(p) || p < 0 || p > 20) {
+          setStatus(
+            "Retirement withdrawal rate must be between 0% and 20%, or leave blank to use the default."
+          );
+          return;
+        }
+        retirement_withdrawal_rate_annual = p / 100;
+      }
+
+      patchBody.target_retirement_age = targetRetirementAge;
+      patchBody.retirement_monthly_spend_goal = retirement_monthly_spend_goal;
+      patchBody.retirement_dividend_yield_annual = retirement_dividend_yield_annual;
+      patchBody.annual_salary_growth_nominal = annual_salary_growth_nominal;
+      patchBody.retirement_withdrawal_rate_annual = retirement_withdrawal_rate_annual;
     }
-    if (!band) {
-      setStatus("Enter your birth date to auto-set CPF age band.");
-      return;
-    }
-    if (!breakdown) {
-      setStatus("Unable to calculate take-home. Check gross salary and birth date.");
-      return;
-    }
-    patchBody.monthly_gross_salary = grossNum;
-    patchBody.cpf_age_band = band;
-    patchBody.monthly_income = breakdown.takeHome;
 
     const res = await fetch("/api/profile", {
       method: "PATCH",
@@ -291,10 +275,10 @@ export function ProfileIncomeForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-end gap-3">
-        <div className="min-w-0 max-w-xl flex-1 space-y-3">
-          <div>
+    <form onSubmit={onSubmit} className="max-w-xl space-y-5">
+      <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+        <p className="text-sm font-semibold text-slate-900">Income & CPF</p>
+        <div>
             <label className="text-sm">
               <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
                 Monthly gross salary ({currencyCode})
@@ -318,182 +302,60 @@ export function ProfileIncomeForm({
                 placeholder="Leave empty for manual take-home only"
               />
             </label>
-          </div>
+            {cpfMode && breakdown && (
+              <p className="mt-2 text-xs text-slate-600">
+                Estimated monthly take-home:{" "}
+                <span className="font-medium text-slate-800">
+                  {currencyCode}{" "}
+                  {breakdown.takeHome.toLocaleString("en-SG", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </span>
+              </p>
+            )}
+        <label className="text-sm">
+          <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+            Birth date
+            <InfoTooltip ariaLabel="Why birth date matters">
+              <p>
+                Used to map calendar years to <strong>your age</strong> on projection
+                charts and to auto-set CPF age band.
+              </p>
+            </InfoTooltip>
+          </span>
+          <input
+            name="birth_date"
+            type="date"
+            className={fpInputClass}
+            value={birthDate}
+            onChange={(e) => setBirthDate(e.target.value)}
+          />
+        </label>
+        </div>
+        <div className="flex items-center justify-end gap-3">
+          {status && (
+            <span className="text-sm text-slate-600" role="status">
+              {status}
+            </span>
+          )}
+          <button type="submit" value="income" className={fpPrimaryButtonClass}>
+            Save income
+          </button>
+        </div>
+      </section>
 
-          <div>
-            <label className="text-sm">
-              <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
-                CPF age band
-                <InfoTooltip ariaLabel="CPF age band">
-                  <p className="text-[11px] leading-snug">
-                    Auto-derived from birth date when provided. Used for CPF
-                    contribution rates in take-home and CPF projections.
-                  </p>
-                </InfoTooltip>
-              </span>
-              <select
-                name="cpf_age_band"
-                className={fpSelectClass}
-                value={band}
-                onChange={(e) =>
-                  setBand(
-                    (e.target.value || "") as SgCpfAgeBand | ""
-                  )
-                }
-                disabled={!cpfMode || hasBirthDate}
-              >
-                <option value="">—</option>
-                {CPF_BANDS.map((b) => (
-                  <option key={b.value} value={b.value}>
-                    {b.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div>
-            <label className="text-sm">
-              <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
-                Monthly take-home ({currencyCode})
-                {cpfMode && breakdown ? (
-                  <InfoTooltip ariaLabel="CPF-based take-home breakdown">
-                    <p className="text-[11px] leading-snug text-zinc-200">
-                      Computed from gross and band. Tap for ceilings, employee CPF,
-                      and illustrative OA/SA/MA split.
-                    </p>
-                    <div className="mt-2 space-y-2 border-t border-zinc-600/40 pt-2 text-[11px] leading-snug text-zinc-200">
-                      <p>
-                        Monthly OW ceiling {currencyCode}{" "}
-                        {breakdown.ordinaryWageCeiling.toLocaleString("en-SG")}
-                        {breakdown.annualCapProratesMonthlyOw ? (
-                          <>
-                            . The {currencyCode}{" "}
-                            {ANNUAL_WAGE_CEILING_SG.toLocaleString("en-SG")} annual
-                            cap prorates steady monthly OW to {currencyCode}{" "}
-                            {breakdown.ordinaryWagesSubject.toLocaleString("en-SG")}
-                            /mo (OW-only estimate).
-                          </>
-                        ) : (
-                          <>
-                            ; OW subject to CPF this month {currencyCode}{" "}
-                            {breakdown.ordinaryWagesAfterMonthlyCeiling.toLocaleString(
-                              "en-SG"
-                            )}
-                            .
-                          </>
-                        )}
-                      </p>
-                      <p>
-                        Employee CPF at {(breakdown.employeeRate * 100).toFixed(1)}%
-                        on {currencyCode}{" "}
-                        {breakdown.ordinaryWagesSubject.toLocaleString("en-SG")} →{" "}
-                        {currencyCode}{" "}
-                        {breakdown.employeeCpfContribution.toLocaleString("en-SG", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
-                        .
-                      </p>
-                      {bucketInflows && (
-                        <div className="rounded-md border border-zinc-600/50 bg-zinc-800/80 px-2 py-2 text-zinc-100">
-                          <p className="font-medium text-white">
-                            Estimated crediting (this month)
-                          </p>
-                          <p className="mt-1">
-                            Total CPF (employee + employer) ≈ {currencyCode}{" "}
-                            {bucketInflows.totalContribution.toLocaleString("en-SG", {
-                              minimumFractionDigits: 2,
-                              maximumFractionDigits: 2,
-                            })}
-                            . Illustrative OA / SA / MA:
-                          </p>
-                          <ul className="mt-1 list-inside list-disc space-y-0.5">
-                            <li>
-                              OA ≈ {currencyCode}{" "}
-                              {bucketInflows.oa.toLocaleString("en-SG", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })}
-                            </li>
-                            <li>
-                              SA ≈ {currencyCode}{" "}
-                              {bucketInflows.sa.toLocaleString("en-SG", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })}
-                            </li>
-                            <li>
-                              MA ≈ {currencyCode}{" "}
-                              {bucketInflows.ma.toLocaleString("en-SG", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                              })}
-                            </li>
-                          </ul>
-                          <p className="mt-1.5 text-zinc-400">
-                            Model only—not your CPF statement.{" "}
-                            <MethodologyOpenLink
-                              topicId="cpf-projection"
-                              className={appInlineLinkClass}
-                            >
-                              CPF methodology
-                            </MethodologyOpenLink>
-                          </p>
-                        </div>
-                      )}
-                      <p className="text-zinc-400">
-                        Annual OW+AW cap {currencyCode}{" "}
-                        {ANNUAL_WAGE_CEILING_SG.toLocaleString("en-SG")}. Max total CPF
-                        / year ≈ {currencyCode}{" "}
-                        {ANNUAL_MAX_TOTAL_CPF_CONTRIBUTION_SG.toLocaleString("en-SG")}.
-                        Bonuses not modeled.
-                      </p>
-                    </div>
-                  </InfoTooltip>
-                ) : cpfMode && !breakdown ? (
-                  <InfoTooltip ariaLabel="Complete CPF inputs">
-                    <p className="text-[11px] leading-snug">
-                      Select your <strong>CPF age band</strong> to estimate take-home
-                      from gross.
-                    </p>
-                  </InfoTooltip>
-                ) : (
-                  <InfoTooltip ariaLabel="Manual take-home">
-                    <p className="text-[11px] leading-snug">
-                      Auto-calculated from your gross salary and CPF age band.
-                    </p>
-                  </InfoTooltip>
-                )}
-              </span>
-              <input
-                name="monthly_income"
-                type="number"
-                min={0}
-                step="0.01"
-                className={fpInputClass}
-                value={
-                  cpfMode && breakdown
-                    ? String(breakdown.takeHome)
-                    : ""
-                }
-                disabled
-                placeholder="Auto-calculated"
-              />
-            </label>
-          </div>
-
-          <div
-            id="retirement-inputs"
-            className="scroll-mt-24 border-t border-slate-100 pt-5"
-          >
+      <section
+        id="retirement-inputs"
+        className="scroll-mt-24 space-y-3 rounded-xl border border-slate-200 bg-white p-4"
+      >
+        <div className="min-w-0 space-y-3">
             <div className="mb-3 flex flex-wrap items-center gap-1.5">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+              <p className="text-sm font-semibold text-slate-900">
                 Retirement targets
               </p>
               <InfoTooltip ariaLabel="How retirement fields are used">
                 <p className="text-[11px] leading-snug">
-                  <strong>Birth date</strong> turns on age-based charts.{" "}
                   <strong>Retire at</strong>, <strong>spend goal</strong>, and{" "}
                   <strong>dividend %</strong> feed the retirement section below
                   on this page. Fill what you know.
@@ -513,27 +375,6 @@ export function ProfileIncomeForm({
               </InfoTooltip>
             </div>
             <div className="flex flex-wrap gap-4">
-              <label className="text-sm">
-                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
-                  Birth date
-                  <InfoTooltip ariaLabel="Why birth date matters">
-                    <p>
-                      Used to map calendar years to <strong>your age</strong>{" "}
-                      on the dashboard chart and in the retirement snapshot.
-                    </p>
-                    <p className="mt-2 text-slate-400">
-                      Without it, age-based rows and labels are hidden.
-                    </p>
-                  </InfoTooltip>
-                </span>
-                <input
-                  name="birth_date"
-                  type="date"
-                  className={fpInputClass}
-                  value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
-                />
-              </label>
               <label className="text-sm">
                 <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
                   Retire at age (optional)
@@ -655,7 +496,7 @@ export function ProfileIncomeForm({
                     placeholder="0 = flat gross"
                   />
                 </label>
-              <label className="text-sm">
+                <label className="text-sm">
                 <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
                   Dividend yield (% per year)
                   <InfoTooltip ariaLabel="How dividend yield is used">
@@ -684,8 +525,8 @@ export function ProfileIncomeForm({
                   onChange={(e) => setRetDividendYieldPercentRaw(e.target.value)}
                   placeholder="2 default"
                 />
-              </label>
-              <label className="text-sm">
+                </label>
+                <label className="text-sm">
                 <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
                   Withdrawal rate (% per year)
                 </span>
@@ -700,20 +541,21 @@ export function ProfileIncomeForm({
                   onChange={(e) => setRetirementWithdrawalPctRaw(e.target.value)}
                   placeholder="4 default"
                 />
-              </label>
+                </label>
               </div>
             )}
           </div>
+        <div className="flex items-center justify-end gap-3">
+          {status && (
+            <span className="text-sm text-slate-600" role="status">
+              {status}
+            </span>
+          )}
+          <button type="submit" value="retirement" className={fpPrimaryButtonClass}>
+            Save retirement targets
+          </button>
         </div>
-        <button type="submit" className={fpPrimaryButtonClass}>
-          Save profile
-        </button>
-        {status && (
-          <span className="text-sm text-slate-600" role="status">
-            {status}
-          </span>
-        )}
-      </div>
+      </section>
     </form>
   );
 }

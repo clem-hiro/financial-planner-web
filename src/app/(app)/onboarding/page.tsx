@@ -32,7 +32,6 @@ export default async function OnboardingPage() {
           profile?.monthly_income != null ? num(profile.monthly_income) : null
         }
         initialBaseCurrency={profile?.base_currency ?? DEFAULT_BASE_CURRENCY}
-        initialSalaryFrequency={profile?.salary_frequency ?? null}
         initialAnnualBonus={profile?.annual_bonus != null ? num(profile.annual_bonus) : null}
         initialSavingsTarget={
           profile?.savings_target_monthly != null

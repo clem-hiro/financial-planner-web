@@ -13,7 +13,7 @@ export function InvestmentForm() {
       action={formAction}
       className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4"
     >
-      <h2 className="text-sm font-semibold text-zinc-900">Add investment</h2>
+      <h2 className="text-sm font-semibold text-zinc-900">Add account</h2>
       {state.error && (
         <p className="text-sm text-red-600" role="alert">
           {state.error}
@@ -21,13 +21,13 @@ export function InvestmentForm() {
       )}
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm sm:col-span-2">
-          <span className="mb-1 block text-zinc-600">Name</span>
+          <span className="mb-1 block text-zinc-600">Account name</span>
           <input
             name="name"
             type="text"
             required
             className="w-full rounded border border-zinc-300 px-2 py-1.5"
-            placeholder="Brokerage"
+            placeholder="Brokerage / Savings"
           />
         </label>
         <label className="text-sm">
@@ -56,7 +56,7 @@ export function InvestmentForm() {
         </label>
         <label className="text-sm sm:col-span-2">
           <span className="mb-1 block text-zinc-600">
-            Expected annual return (decimal, e.g. 0.07 for 7%)
+            Expected annual return / interest (decimal, e.g. 0.07 for 7%)
           </span>
           <input
             name="expected_annual_return"
@@ -70,12 +70,14 @@ export function InvestmentForm() {
           />
         </label>
       </div>
-      <button
-        type="submit"
-        className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800"
-      >
-        Save investment
-      </button>
+      <div className="flex justify-end">
+        <button
+          type="submit"
+          className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800"
+        >
+          Save account
+        </button>
+      </div>
     </form>
   );
 }

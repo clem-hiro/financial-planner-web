@@ -164,12 +164,14 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
             </label>
           </div>
         </div>
-        <button
-          type="submit"
-          className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800"
-        >
-          Save CPF balances
-        </button>
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800"
+          >
+            Save CPF balances
+          </button>
+        </div>
       </form>
       {row && (
         <form action={clearCpfBalanceAction}>
