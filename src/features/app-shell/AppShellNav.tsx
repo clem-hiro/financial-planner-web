@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 type NavRoute = {
   href: string;
@@ -44,43 +46,103 @@ const pill =
 
 export function AppShellNav() {
   const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = mobileOpen ? "hidden" : previousOverflow;
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileOpen]);
+
+  const routes: readonly NavRoute[] = [...primaryRoutes, ...secondaryRoutes];
+  const isActive = (route: NavRoute) =>
+    route.activeMatch
+      ? route.activeMatch(pathname)
+      : pathname === route.href || pathname.startsWith(`${route.href}/`);
 
   return (
-    <nav className="w-full sm:w-auto" aria-label="Main">
-      <div className="-mx-1 overflow-x-auto px-1 pb-0.5 sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
+    <nav className="relative w-full sm:w-auto" aria-label="Main">
+      <div className="sm:hidden">
+        <button
+          type="button"
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-main-nav-menu"
+          aria-label="Toggle navigation menu"
+          onClick={() => setMobileOpen((v) => !v)}
+          className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-full border border-slate-200/90 bg-slate-50/90 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100"
+        >
+          <span className="inline-flex flex-col gap-1" aria-hidden>
+            <span className="block h-0.5 w-4 rounded-full bg-slate-700" />
+            <span className="block h-0.5 w-4 rounded-full bg-slate-700" />
+            <span className="block h-0.5 w-4 rounded-full bg-slate-700" />
+          </span>
+        </button>
+        {mobileOpen &&
+          createPortal(
+            <div
+              id="mobile-main-nav-menu"
+              className="fixed inset-0 z-100 bg-white"
+            >
+              <div className="mx-auto flex h-full w-full max-w-6xl flex-col px-6 pb-10 pt-6">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                    Navigation
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setMobileOpen(false)}
+                    className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-sm"
+                    aria-label="Close navigation menu"
+                  >
+                    <span aria-hidden className="text-2xl leading-none">
+                      ×
+                    </span>
+                  </button>
+                </div>
+                <div className="mt-8 flex flex-1 items-start">
+                  <ul className="w-full space-y-2.5">
+                    {routes.map((route) => {
+                      const active = isActive(route);
+                      return (
+                        <li key={route.href}>
+                          <Link
+                            href={route.href}
+                            onClick={() => setMobileOpen(false)}
+                            className={`flex min-h-14 items-center rounded-2xl px-5 py-3 text-3xl font-semibold tracking-tight transition ${
+                              active
+                                ? "bg-[#0c192f] text-white shadow-md shadow-slate-900/20"
+                                : "text-[#0c192f] hover:bg-slate-100"
+                            }`}
+                          >
+                            {route.label}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              </div>
+            </div>,
+            document.body
+          )}
+      </div>
+      <div className="hidden sm:block">
         <div className="flex min-w-max snap-x items-center gap-1 rounded-full border border-slate-200/90 bg-slate-50/90 p-1 shadow-inner shadow-slate-900/3 sm:min-w-0 sm:flex-wrap">
-          {primaryRoutes.map(({ href, label }) => {
-            const active =
-              pathname === href || (href !== "/dashboard" && pathname.startsWith(href));
+          {routes.map((route) => {
+            const active = isActive(route);
             return (
               <Link
-                key={href}
-                href={href}
+                key={route.href}
+                href={route.href}
                 className={`${pill} ${
                   active
                     ? "bg-[#0c192f] text-white shadow-sm shadow-slate-900/20"
                     : "text-slate-600 hover:bg-white hover:text-slate-900"
                 }`}
               >
-                {label}
-              </Link>
-            );
-          })}
-          {secondaryRoutes.map(({ href, label, activeMatch }) => {
-            const active = activeMatch
-              ? activeMatch(pathname)
-              : pathname === href || pathname.startsWith(`${href}/`);
-            return (
-              <Link
-                key={href}
-                href={href}
-                className={`${pill} ${
-                  active
-                    ? "bg-[#0c192f] text-white shadow-sm shadow-slate-900/20"
-                    : "text-slate-600 hover:bg-white hover:text-slate-900"
-                }`}
-              >
-                {label}
+                {route.label}
               </Link>
             );
           })}
