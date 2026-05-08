@@ -2,6 +2,7 @@
 
 import { useEffect, useId, useRef } from "react";
 import { METHODOLOGY_TOPICS } from "@/content/methodology-topics";
+import { lockBodyScroll } from "@/lib/body-scroll-lock";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { useMethodology } from "./methodology-context";
 
@@ -13,15 +14,14 @@ export function MethodologySheet() {
 
   useEffect(() => {
     if (!isOpen) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const unlock = lockBodyScroll();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") closeMethodology();
     };
     window.addEventListener("keydown", onKey);
     closeBtnRef.current?.focus();
     return () => {
-      document.body.style.overflow = prev;
+      unlock();
       window.removeEventListener("keydown", onKey);
     };
   }, [isOpen, closeMethodology]);

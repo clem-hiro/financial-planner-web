@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
+import { useEffect } from "react";
 import { AppShellNav } from "@/features/app-shell/AppShellNav";
 import { MethodologySheet } from "@/features/help/MethodologySheet";
 import {
@@ -33,6 +34,15 @@ export function AppShell({
   user: User | null;
   children: React.ReactNode;
 }) {
+  useEffect(() => {
+    // Defensive reset for stale dev/HMR body lock state.
+    document.body.removeAttribute("data-body-scroll-lock-count");
+    document.body.removeAttribute("data-body-scroll-lock-prev-overflow");
+    if (document.body.style.overflow === "hidden") {
+      document.body.style.overflow = "";
+    }
+  }, []);
+
   return (
     <MethodologyProvider>
       <div className="flex min-h-full flex-col text-slate-800">

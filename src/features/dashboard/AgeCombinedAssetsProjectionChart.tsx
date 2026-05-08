@@ -356,7 +356,7 @@ export function AgeCombinedAssetsProjectionChart({
       className="h-64 min-h-[220px] sm:h-80 sm:min-h-0"
       clipContent={false}
     >
-      <div className="h-full w-full min-h-0 touch-pan-x touch-pan-y">
+      <div className="h-full w-full min-h-0">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={data}
@@ -402,7 +402,7 @@ export function AgeCombinedAssetsProjectionChart({
                 />
               }
               allowEscapeViewBox={{ x: true, y: false }}
-              wrapperStyle={{ zIndex: 80, outline: "none" }}
+              wrapperStyle={{ zIndex: 80, outline: "none", pointerEvents: "none" }}
               cursor={{ stroke: "#94a3b8", strokeWidth: 1, strokeDasharray: "4 4" }}
               isAnimationActive={false}
             />

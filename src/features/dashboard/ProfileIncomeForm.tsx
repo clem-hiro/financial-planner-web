@@ -275,10 +275,10 @@ export function ProfileIncomeForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="max-w-xl space-y-5">
-      <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+    <form onSubmit={onSubmit} className="max-w-2xl space-y-5">
+      <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
         <p className="text-sm font-semibold text-slate-900">Income & CPF</p>
-        <div>
+        <div className="space-y-4">
             <label className="text-sm">
               <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
                 Monthly gross salary ({currencyCode})
@@ -333,13 +333,17 @@ export function ProfileIncomeForm({
           />
         </label>
         </div>
-        <div className="flex items-center justify-end gap-3">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
           {status && (
-            <span className="text-sm text-slate-600" role="status">
+            <span className="text-sm text-slate-600 sm:text-right" role="status">
               {status}
             </span>
           )}
-          <button type="submit" value="income" className={fpPrimaryButtonClass}>
+          <button
+            type="submit"
+            value="income"
+            className={`${fpPrimaryButtonClass} w-full sm:w-auto`}
+          >
             Save income
           </button>
         </div>
@@ -347,10 +351,10 @@ export function ProfileIncomeForm({
 
       <section
         id="retirement-inputs"
-        className="scroll-mt-24 space-y-3 rounded-xl border border-slate-200 bg-white p-4"
+        className="scroll-mt-24 space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
       >
-        <div className="min-w-0 space-y-3">
-            <div className="mb-3 flex flex-wrap items-center gap-1.5">
+        <div className="min-w-0 space-y-4">
+            <div className="flex flex-wrap items-center gap-1.5">
               <p className="text-sm font-semibold text-slate-900">
                 Retirement targets
               </p>
@@ -374,8 +378,8 @@ export function ProfileIncomeForm({
                 </p>
               </InfoTooltip>
             </div>
-            <div className="flex flex-wrap gap-4">
-              <label className="text-sm">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="text-sm sm:min-w-0">
                 <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
                   Retire at age (optional)
                   <InfoTooltip ariaLabel="How retirement age is used">
@@ -404,7 +408,7 @@ export function ProfileIncomeForm({
                   placeholder="65 (default)"
                 />
               </label>
-              <label className="text-sm">
+              <label className="text-sm sm:min-w-0">
                 <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
                   Monthly spend in retirement ({currencyCode})
                   <InfoTooltip ariaLabel="How spend goal is used">
@@ -440,7 +444,7 @@ export function ProfileIncomeForm({
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3">
+          <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
             <button
               type="button"
               onClick={() => setShowAdvancedSettings((prev) => !prev)}
@@ -458,8 +462,8 @@ export function ProfileIncomeForm({
             </p>
 
             {showAdvancedSettings && (
-              <div id="advanced-settings" className="mt-3 flex flex-wrap gap-4">
-                <label className="text-sm">
+              <div id="advanced-settings" className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <label className="text-sm sm:min-w-0">
                   <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
                     Annual salary growth (nominal %)
                     <InfoTooltip ariaLabel="How salary growth is used">
@@ -496,7 +500,7 @@ export function ProfileIncomeForm({
                     placeholder="0 = flat gross"
                   />
                 </label>
-                <label className="text-sm">
+                <label className="text-sm sm:min-w-0">
                 <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
                   Dividend yield (% per year)
                   <InfoTooltip ariaLabel="How dividend yield is used">
@@ -526,7 +530,7 @@ export function ProfileIncomeForm({
                   placeholder="2 default"
                 />
                 </label>
-                <label className="text-sm">
+                <label className="text-sm sm:min-w-0">
                 <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
                   Withdrawal rate (% per year)
                 </span>
@@ -545,13 +549,17 @@ export function ProfileIncomeForm({
               </div>
             )}
           </div>
-        <div className="flex items-center justify-end gap-3">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
           {status && (
-            <span className="text-sm text-slate-600" role="status">
+            <span className="text-sm text-slate-600 sm:text-right" role="status">
               {status}
             </span>
           )}
-          <button type="submit" value="retirement" className={fpPrimaryButtonClass}>
+          <button
+            type="submit"
+            value="retirement"
+            className={`${fpPrimaryButtonClass} w-full sm:w-auto`}
+          >
             Save retirement targets
           </button>
         </div>

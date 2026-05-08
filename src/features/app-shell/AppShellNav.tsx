@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { lockBodyScroll } from "@/lib/body-scroll-lock";
 
 type NavRoute = {
   href: string;
@@ -49,11 +50,9 @@ export function AppShellNav() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = mobileOpen ? "hidden" : previousOverflow;
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
+    if (!mobileOpen) return;
+    const unlock = lockBodyScroll();
+    return unlock;
   }, [mobileOpen]);
 
   const routes: readonly NavRoute[] = [...primaryRoutes, ...secondaryRoutes];

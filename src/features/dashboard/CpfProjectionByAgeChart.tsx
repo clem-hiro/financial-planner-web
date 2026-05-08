@@ -97,7 +97,7 @@ export function CpfProjectionByAgeChart({
           <Tooltip
             {...fpChartTooltipProps}
             allowEscapeViewBox={{ x: true, y: false }}
-            wrapperStyle={{ zIndex: 80, outline: "none" }}
+            wrapperStyle={{ zIndex: 80, outline: "none", pointerEvents: "none" }}
             formatter={(value, name) => {
               const v = Array.isArray(value) ? value[0] : value;
               return [fmt(Number(v)), String(name)];

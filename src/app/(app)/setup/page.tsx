@@ -155,7 +155,6 @@ export default async function SetupPage() {
       <PageSection
         id="profile-assumptions"
         title="Profile basics"
-        description="Gross salary, birth date, and retirement targets. Currency is SGD."
       >
         <div className="space-y-6">
           <ProfileIncomeForm

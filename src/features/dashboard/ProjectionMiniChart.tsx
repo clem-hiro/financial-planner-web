@@ -62,6 +62,7 @@ export function ProjectionMiniChart({
           />
           <Tooltip
             {...fpChartTooltipProps}
+            wrapperStyle={{ pointerEvents: "none" }}
             formatter={(value) =>
               new Intl.NumberFormat(undefined, {
                 style: "currency",
