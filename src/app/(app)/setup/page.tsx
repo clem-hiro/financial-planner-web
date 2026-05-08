@@ -275,7 +275,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
                 title="Vehicles (Singapore)"
                 description={
                   <span className="text-xs text-zinc-600">
-                    Market estimate, PARF/COE + terminal ramp, or OTR→terminal.
+                    Fill market value for the quickest setup. Use other fields only if needed.
                   </span>
                 }
               >

@@ -208,10 +208,7 @@ function MarketValueFields({
         />
       </label>
       <p className="mt-2 text-[11px] leading-relaxed text-sky-900/85">
-        <strong>Easiest for bikes:</strong> one number from what similar machines
-        sell for now (e.g. $14.3k). Gross asset = that amount. Leave PARF/COE blank;
-        optional OTR in Advanced is only for your notes. COE years left does not need
-        to be entered for this path — update the figure when the market moves.
+        Enter one current resale estimate. Leave PARF/COE blank if using this method.
       </p>
     </div>
   );
@@ -263,9 +260,7 @@ function OneMotoringFields({
             className={fpInputClass}
           />
           <span className="mt-0.5 block text-[10px] leading-snug text-zinc-500">
-            LTA / OneMotoring figure is the <strong>ARF-based PARF rebate</strong> only
-            — it does <strong>not</strong> include scrap or exporter &quot;body&quot;
-            value. Dealer &quot;PARF + body&quot; quotes go partly in the next field.
+            Use the PARF value shown in OneMotoring.
           </span>
         </label>
         <label className="text-xs sm:col-span-2">
@@ -281,9 +276,7 @@ function OneMotoringFields({
             className={fpInputClass}
           />
           <span className="mt-0.5 block text-[10px] leading-snug text-zinc-500">
-            Exporter or scrap component on top of LTA PARF — e.g. if your realistic
-            &quot;PARF + body&quot; is ~6k but OneMotoring PARF alone is ~5.8k, enter
-            the difference here (~200).
+            Optional. Add scrap/export value not included in PARF.
           </span>
         </label>
         <label className="text-xs sm:col-span-2">
@@ -326,11 +319,7 @@ function OneMotoringFields({
             className={fpInputClass}
           />
           <span className="mt-0.5 block text-[10px] text-zinc-500">
-            <strong>Default:</strong> outstanding loan is <strong>PV</strong> from
-            instalment + loan end (or months left) + rate — this field is{" "}
-            <strong>not</strong> used unless you tick statement mode below. Dealer
-            &quot;~6k back&quot; is usually <strong>rebates</strong> (gross / terminal
-            fields), not this loan box.
+            Optional. Fill only if you want to use the exact statement balance.
           </span>
         </label>
         <label className="flex cursor-pointer items-center gap-2 text-xs sm:col-span-2">
@@ -343,8 +332,7 @@ function OneMotoringFields({
             className="size-3.5 rounded border-zinc-300 enabled:cursor-pointer disabled:opacity-40"
           />
           <span className="text-zinc-600">
-            Outstanding loan = <strong>instalment × months left</strong> (no PV /
-            interest discount). Rough match to &quot;about 4 × monthly payment&quot;.
+            Simple estimate: instalment x months left.
           </span>
         </label>
         <label className="flex cursor-pointer items-center gap-2 text-xs sm:col-span-2">
@@ -377,11 +365,7 @@ function PurchaseToCoeTerminalFields({
         OTR → COE expiry (optional)
       </p>
       <p className="mb-2 text-[11px] leading-relaxed text-violet-900/80">
-        Use this only when you are <strong>not</strong> filling PARF+COE “today”
-        above. If PARF+COE <strong>and</strong> this terminal <strong>and</strong>{" "}
-        first reg + COE expiry are all set, the app uses a <strong>rebate-based</strong>{" "}
-        ramp (remaining months to COE) instead of this OTR line. Otherwise: OTR at
-        first reg month → terminal at COE expiry in a straight line.
+        Optional. Use when you want to model value from purchase price to COE expiry.
       </p>
       <label className="text-xs">
         <span className="mb-0.5 block text-zinc-600">
@@ -408,10 +392,7 @@ function AdvancedModelFields({ row }: { row?: VehicleRow }) {
         Advanced (OTR / first reg / fallback model)
       </summary>
       <p className="mt-2 text-[11px] leading-relaxed text-zinc-500">
-        <strong>First reg</strong> and <strong>OTR / paid</strong> are also used when
-        you set &quot;Expected total back at COE expiry&quot; above. Otherwise, if
-        PARF+COE &quot;today&quot; are both empty, we estimate PARF from ARF + first
-        registration and straight-line body over the years you set (default 10).
+        Optional fields for detailed modelling.
       </p>
       <div className="mt-2 grid gap-2 sm:grid-cols-2">
         <label className="text-xs">
@@ -617,26 +598,15 @@ export function VehiclesPanel({
   return (
     <div className="space-y-4">
       <div className="rounded-lg border border-amber-200/80 bg-amber-50/50 p-3 text-xs text-amber-950">
-        <strong className="font-semibold">Avoid double-counting:</strong> this panel
-        adds <strong>vehicle net equity</strong> (market estimate when set, else
-        PARF+COE ramp to terminal, else OTR→terminal, else PARF+COE snapshot, else
-        modelled; minus loan) to net
-        worth. If the same car loan
-        is also under
-        Debts, remove one.{" "}
+        <strong className="font-semibold">Tip:</strong> keep each vehicle loan in one place only
+        (here or Debts) to avoid double-counting.{" "}
         <MethodologyOpenLink topicId="vehicles-sg" className={appInlineLinkClass}>
           Methodology →
         </MethodologyOpenLink>
       </div>
       <p className="text-xs text-zinc-600">
-        <strong>Easiest:</strong> <strong>Motorcycles</strong> — one{" "}
-        <strong>current market estimate</strong> (clear PARF/COE). <strong>Cars</strong>{" "}
-        — PARF + COE <em>if deregistered today</em>, optional body/scrap, first reg,
-        COE expiry, and expected total back at COE expiry for the monthly ramp to
-        ~$6k (instalment does not change gross). Or OTR + first reg + terminal + COE
-        if you skip rebates. Tick <strong>use typed loan balance</strong> only when
-        you want the statement figure instead of PV from instalment + loan end.
-        Expense tags for vehicle payments do not update these fields automatically.
+        Quick start: enter <strong>current market estimate</strong> and monthly loan instalment.
+        Add PARF/COE or advanced fields only if you want a more detailed model.
       </p>
       <AddVehicleForm currencyCode={currencyCode} />
       {vehicles.length > 0 && (
