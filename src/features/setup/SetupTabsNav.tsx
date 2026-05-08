@@ -1,7 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 type SetupTab = {
   id: string;
@@ -11,13 +10,12 @@ type SetupTab = {
 export function SetupTabsNav({
   tabs,
   activeTab,
+  onSelectTab,
 }: {
   tabs: readonly SetupTab[];
   activeTab: string;
+  onSelectTab: (tabId: string) => void;
 }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const [isPending, startTransition] = useTransition();
   const [optimisticTab, setOptimisticTab] = useState(activeTab);
   const [indicatorStyle, setIndicatorStyle] = useState<{
     left: number;
@@ -30,7 +28,7 @@ export function SetupTabsNav({
   });
   const containerRef = useRef<HTMLDivElement | null>(null);
   const buttonRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const shownTab = isPending ? optimisticTab : activeTab;
+  const shownTab = optimisticTab;
 
   useEffect(() => {
     setOptimisticTab(activeTab);
@@ -96,9 +94,7 @@ export function SetupTabsNav({
               onClick={() => {
                 if (tab.id === shownTab) return;
                 setOptimisticTab(tab.id);
-                startTransition(() => {
-                  router.replace(`${pathname}?tab=${tab.id}`, { scroll: false });
-                });
+                onSelectTab(tab.id);
               }}
               aria-current={shownTab === tab.id ? "page" : undefined}
               className={`relative z-10 inline-flex min-h-10 snap-start items-center whitespace-nowrap rounded-xl px-4 py-2 text-sm font-medium transition-colors ${
