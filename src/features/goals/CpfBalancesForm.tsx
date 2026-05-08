@@ -6,6 +6,8 @@ import type { CpfBalanceRow } from "@/data/supabase/types";
 import { num } from "@/data/mappers";
 
 const initial = { error: null as string | null };
+const numberInputClass =
+  "w-full rounded border border-zinc-300 px-2 py-1.5 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
 
 export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
   const [state, action] = useActionState(upsertCpfBalanceAction, initial);
@@ -38,7 +40,7 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
               step="0.01"
               required
               defaultValue={row ? num(row.oa) : 0}
-              className="w-full rounded border border-zinc-300 px-2 py-1.5"
+              className={numberInputClass}
             />
           </label>
           <label className="text-sm">
@@ -50,7 +52,7 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
               step="0.01"
               required
               defaultValue={row ? num(row.sa) : 0}
-              className="w-full rounded border border-zinc-300 px-2 py-1.5"
+              className={numberInputClass}
             />
           </label>
           <label className="text-sm">
@@ -62,7 +64,7 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
               step="0.01"
               required
               defaultValue={row ? num(row.ma) : 0}
-              className="w-full rounded border border-zinc-300 px-2 py-1.5"
+              className={numberInputClass}
             />
           </label>
         </div>
@@ -80,7 +82,7 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
                   ? num(row.oa_annual_rate)
                   : ""
               }
-              className="w-full rounded border border-zinc-300 px-2 py-1.5"
+              className={numberInputClass}
             />
           </label>
           <label className="text-sm">
@@ -96,7 +98,7 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
                   ? num(row.sa_annual_rate)
                   : ""
               }
-              className="w-full rounded border border-zinc-300 px-2 py-1.5"
+              className={numberInputClass}
             />
           </label>
           <label className="text-sm">
@@ -112,7 +114,7 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
                   ? num(row.ma_annual_rate)
                   : ""
               }
-              className="w-full rounded border border-zinc-300 px-2 py-1.5"
+              className={numberInputClass}
             />
           </label>
         </div>
@@ -134,7 +136,7 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
                 step="0.01"
                 required
                 defaultValue={row ? num(row.cpfis_monthly_from_oa) : 0}
-                className="w-full rounded border border-zinc-300 px-2 py-1.5"
+                className={numberInputClass}
               />
             </label>
             <label className="text-sm">
@@ -146,7 +148,7 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
                 step="0.01"
                 required
                 defaultValue={row ? num(row.cpfis_notional_balance) : 0}
-                className="w-full rounded border border-zinc-300 px-2 py-1.5"
+                className={numberInputClass}
               />
             </label>
             <label className="text-sm">
@@ -159,7 +161,7 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
                 step="0.01"
                 required
                 defaultValue={row ? num(row.cpfis_annual_return) : 0.04}
-                className="w-full rounded border border-zinc-300 px-2 py-1.5"
+                className={numberInputClass}
               />
             </label>
           </div>

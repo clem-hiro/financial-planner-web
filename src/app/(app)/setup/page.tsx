@@ -91,6 +91,7 @@ export default async function SetupPage() {
     monthly_contribution: num(i.monthly_contribution),
     expected_annual_return: num(i.expected_annual_return),
   }));
+  const hasInvestmentAccounts = investmentBalanceRows.length > 0;
 
   const cashBalanceRows: CashAccountBalanceRow[] = cashAccounts.map((r) => ({
     id: r.id,
@@ -133,9 +134,11 @@ export default async function SetupPage() {
             <a href="#add-investment" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
               Add account
             </a>
-            <a href="#investment-accounts" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
-              Accounts
-            </a>
+            {hasInvestmentAccounts ? (
+              <a href="#investment-accounts" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
+                Accounts
+              </a>
+            ) : null}
             <a href="#cpf-balances" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
               CPF
             </a>
@@ -211,12 +214,14 @@ export default async function SetupPage() {
           <InvestmentForm />
         </PageSection>
 
-        <PageSection id="investment-accounts" title="Accounts">
-          <InvestmentBalancesList
-            items={investmentBalanceRows}
-            currencyCode={currency}
-          />
-        </PageSection>
+        {hasInvestmentAccounts ? (
+          <PageSection id="investment-accounts" title="Accounts">
+            <InvestmentBalancesList
+              items={investmentBalanceRows}
+              currencyCode={currency}
+            />
+          </PageSection>
+        ) : null}
 
         <PageSection
           id="cpf-balances"
