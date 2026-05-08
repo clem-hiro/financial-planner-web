@@ -29,6 +29,7 @@ import {
 import { InvestmentForm } from "@/features/goals/InvestmentForm";
 import { VehiclesPanel } from "@/features/goals/VehiclesPanel";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
+import { SetupTabsNav } from "@/features/setup/SetupTabsNav";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -36,7 +37,26 @@ import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { PageSection } from "@/ui/PageSection";
 import { ScrollToTopButton } from "@/ui/ScrollToTopButton";
 
-export default async function SetupPage() {
+const setupTabs = [
+  { id: "profile", label: "Profile" },
+  { id: "add-account", label: "Add account" },
+  { id: "cpf", label: "CPF" },
+  { id: "cash-liabilities", label: "Cash & liabilities" },
+  { id: "housing-loans", label: "Housing loans" },
+  { id: "vehicles", label: "Vehicles" },
+] as const;
+
+type SetupTabId = (typeof setupTabs)[number]["id"];
+
+type PageProps = {
+  searchParams: Promise<{ tab?: string }>;
+};
+
+function isSetupTabId(value: string | undefined): value is SetupTabId {
+  return setupTabs.some((tab) => tab.id === value);
+}
+
+export default async function SetupPage({ searchParams }: PageProps) {
   if (!isSupabaseConfigured()) {
     return (
       <p className="text-sm text-zinc-600">
@@ -61,49 +81,56 @@ export default async function SetupPage() {
     );
   }
 
-  const [
-    investments,
-    cashAccounts,
-    liabilityRows,
-    profile,
-    vehicleRows,
-    cpfRow,
-    housingLoans,
-  ] = await Promise.all([
-    listInvestments(supabase, user.id),
-    listCashAccounts(supabase, user.id),
-    listLiabilities(supabase, user.id),
-    getProfileById(supabase, user.id),
-    listVehicles(supabase, user.id),
-    getCpfBalanceByUserId(supabase, user.id),
-    listHousingLoans(supabase, user.id),
-  ]);
+  const sp = await searchParams;
+  const activeTab: SetupTabId = isSetupTabId(sp.tab) ? sp.tab : "profile";
+  const profile = await getProfileById(supabase, user.id);
 
   const income = profileMonthlyIncome(profile);
   const gross = profileMonthlyGross(profile);
   const cpfBand = profileCpfAgeBand(profile);
   const currency = profile?.base_currency ?? DEFAULT_BASE_CURRENCY;
+  let investmentBalanceRows: InvestmentBalanceRow[] = [];
+  let cashBalanceRows: CashAccountBalanceRow[] = [];
+  let liabilityBalanceRows: LiabilityBalanceRow[] = [];
+  let cpfRow: Awaited<ReturnType<typeof getCpfBalanceByUserId>> = null;
+  let housingLoans: Awaited<ReturnType<typeof listHousingLoans>> = [];
+  let vehicleRows: Awaited<ReturnType<typeof listVehicles>> = [];
 
-  const investmentBalanceRows: InvestmentBalanceRow[] = investments.map((i) => ({
-    id: i.id,
-    name: i.name,
-    current_value: num(i.current_value),
-    monthly_contribution: num(i.monthly_contribution),
-    expected_annual_return: num(i.expected_annual_return),
-  }));
-  const hasInvestmentAccounts = investmentBalanceRows.length > 0;
-
-  const cashBalanceRows: CashAccountBalanceRow[] = cashAccounts.map((r) => ({
-    id: r.id,
-    name: r.name,
-    balance: num(r.balance),
-  }));
-
-  const liabilityBalanceRows: LiabilityBalanceRow[] = liabilityRows.map((r) => ({
-    id: r.id,
-    name: r.name,
-    balance: num(r.balance),
-  }));
+  if (activeTab === "add-account") {
+    const investments = await listInvestments(supabase, user.id);
+    investmentBalanceRows = investments.map((i) => ({
+      id: i.id,
+      name: i.name,
+      current_value: num(i.current_value),
+      monthly_contribution: num(i.monthly_contribution),
+      expected_annual_return: num(i.expected_annual_return),
+    }));
+  }
+  if (activeTab === "cash-liabilities") {
+    const [cashAccounts, liabilityRows] = await Promise.all([
+      listCashAccounts(supabase, user.id),
+      listLiabilities(supabase, user.id),
+    ]);
+    cashBalanceRows = cashAccounts.map((r) => ({
+      id: r.id,
+      name: r.name,
+      balance: num(r.balance),
+    }));
+    liabilityBalanceRows = liabilityRows.map((r) => ({
+      id: r.id,
+      name: r.name,
+      balance: num(r.balance),
+    }));
+  }
+  if (activeTab === "cpf") {
+    cpfRow = await getCpfBalanceByUserId(supabase, user.id);
+  }
+  if (activeTab === "housing-loans") {
+    housingLoans = await listHousingLoans(supabase, user.id);
+  }
+  if (activeTab === "vehicles") {
+    vehicleRows = await listVehicles(supabase, user.id);
+  }
 
   return (
     <div className="space-y-8">
@@ -122,107 +149,72 @@ export default async function SetupPage() {
         </p>
       </div>
 
-      <nav
-        aria-label="Setup sections"
-        className="sticky top-2 z-20 rounded-xl border border-slate-200/90 bg-white/95 py-1 shadow-sm backdrop-blur"
-      >
-        <div className="-mx-1 overflow-x-auto px-1 pb-0.5 sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
-          <div className="flex min-w-max snap-x gap-1">
-            <a href="#profile-assumptions" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
-              Profile
-            </a>
-            <a href="#add-investment" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
-              Add account
-            </a>
-            {hasInvestmentAccounts ? (
-              <a href="#investment-accounts" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
-                Accounts
-              </a>
-            ) : null}
-            <a href="#cpf-balances" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
-              CPF
-            </a>
-            <a href="#cash-liabilities" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
-              Cash & liabilities
-            </a>
-            <a href="#housing-loans" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
-              Housing loans
-            </a>
-            <a href="#vehicles" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
-              Vehicles
-            </a>
+      <SetupTabsNav tabs={setupTabs} activeTab={activeTab} />
+
+      {activeTab === "profile" ? (
+        <PageSection id="profile-assumptions" title="Profile basics">
+          <div className="space-y-6">
+            <ProfileIncomeForm
+              key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(profile)}-${profile?.birth_date ?? ""}-${profile?.target_retirement_age ?? ""}-${profile?.retirement_monthly_spend_goal ?? ""}-${profile?.retirement_dividend_yield_annual ?? ""}`}
+              initialIncome={income}
+              initialGross={gross}
+              initialCpfAgeBand={cpfBand}
+              initialAnnualSalaryGrowthPercent={
+                profile?.annual_salary_growth_nominal != null &&
+                String(profile.annual_salary_growth_nominal).trim() !== ""
+                  ? num(profile.annual_salary_growth_nominal) * 100
+                  : null
+              }
+              initialBirthDate={profile?.birth_date ?? null}
+              initialTargetRetirementAge={
+                profile?.target_retirement_age != null
+                  ? Number(profile.target_retirement_age)
+                  : null
+              }
+              initialRetirementMonthlySpendGoal={
+                profile?.retirement_monthly_spend_goal != null &&
+                String(profile.retirement_monthly_spend_goal).trim() !== ""
+                  ? num(profile.retirement_monthly_spend_goal)
+                  : null
+              }
+              initialRetirementDividendYieldPercent={
+                profile?.retirement_dividend_yield_annual != null &&
+                String(profile.retirement_dividend_yield_annual).trim() !== ""
+                  ? num(profile.retirement_dividend_yield_annual) * 100
+                  : null
+              }
+              initialRetirementWithdrawalRatePercent={
+                profile?.retirement_withdrawal_rate_annual != null &&
+                String(profile.retirement_withdrawal_rate_annual).trim() !== ""
+                  ? num(profile.retirement_withdrawal_rate_annual) * 100
+                  : null
+              }
+              cpfYearMonth={formatYearMonth(new Date())}
+              currencyCode={currency}
+            />
           </div>
-        </div>
-      </nav>
+        </PageSection>
+      ) : null}
 
-      <PageSection
-        id="profile-assumptions"
-        title="Profile basics"
-      >
-        <div className="space-y-6">
-          <ProfileIncomeForm
-            key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(profile)}-${profile?.birth_date ?? ""}-${profile?.target_retirement_age ?? ""}-${profile?.retirement_monthly_spend_goal ?? ""}-${profile?.retirement_dividend_yield_annual ?? ""}`}
-            initialIncome={income}
-            initialGross={gross}
-            initialCpfAgeBand={cpfBand}
-            initialAnnualSalaryGrowthPercent={
-              profile?.annual_salary_growth_nominal != null &&
-              String(profile.annual_salary_growth_nominal).trim() !== ""
-                ? num(profile.annual_salary_growth_nominal) * 100
-                : null
-            }
-            initialBirthDate={profile?.birth_date ?? null}
-            initialTargetRetirementAge={
-              profile?.target_retirement_age != null
-                ? Number(profile.target_retirement_age)
-                : null
-            }
-            initialRetirementMonthlySpendGoal={
-              profile?.retirement_monthly_spend_goal != null &&
-              String(profile.retirement_monthly_spend_goal).trim() !== ""
-                ? num(profile.retirement_monthly_spend_goal)
-                : null
-            }
-            initialRetirementDividendYieldPercent={
-              profile?.retirement_dividend_yield_annual != null &&
-              String(profile.retirement_dividend_yield_annual).trim() !== ""
-                ? num(profile.retirement_dividend_yield_annual) * 100
-                : null
-            }
-            initialRetirementWithdrawalRatePercent={
-              profile?.retirement_withdrawal_rate_annual != null &&
-              String(profile.retirement_withdrawal_rate_annual).trim() !== ""
-                ? num(profile.retirement_withdrawal_rate_annual) * 100
-                : null
-            }
-            cpfYearMonth={formatYearMonth(new Date())}
-            currencyCode={currency}
-          />
-        </div>
-      </PageSection>
-
-      <section id="balances-accounts" className="scroll-mt-24 space-y-6">
-        <h2 className="text-lg font-semibold tracking-tight text-zinc-900">
-          Balances & accounts
-        </h2>
-
+      {activeTab === "add-account" ? (
         <PageSection
           id="add-investment"
           title="Add account"
           description="New accounts appear below and in dashboard projections."
         >
-          <InvestmentForm />
+          <div className="space-y-6">
+            <InvestmentForm />
+            {investmentBalanceRows.length > 0 ? (
+              <InvestmentBalancesList
+                items={investmentBalanceRows}
+                currencyCode={currency}
+              />
+            ) : null}
+          </div>
         </PageSection>
+      ) : null}
 
-        {hasInvestmentAccounts ? (
-          <PageSection id="investment-accounts" title="Accounts">
-            <InvestmentBalancesList
-              items={investmentBalanceRows}
-              currencyCode={currency}
-            />
-          </PageSection>
-        ) : null}
-
+      {activeTab === "cpf" ? (
         <PageSection
           id="cpf-balances"
           title="CPF &amp; CPFIS"
@@ -237,7 +229,9 @@ export default async function SetupPage() {
         >
           <CpfBalancesForm row={cpfRow} />
         </PageSection>
+      ) : null}
 
+      {activeTab === "cash-liabilities" ? (
         <PageSection id="cash-liabilities" title="Cash &amp; liabilities">
           <CashAndLiabilitiesPanels
             cashRows={cashBalanceRows}
@@ -245,7 +239,9 @@ export default async function SetupPage() {
             currencyCode={currency}
           />
         </PageSection>
+      ) : null}
 
+      {activeTab === "housing-loans" ? (
         <PageSection
           id="housing-loans"
           title="Housing loans"
@@ -263,7 +259,9 @@ export default async function SetupPage() {
         >
           <HousingLoansPanel loans={housingLoans} currencyCode={currency} />
         </PageSection>
+      ) : null}
 
+      {activeTab === "vehicles" ? (
         <PageSection
           id="vehicles"
           title="Vehicles (Singapore)"
@@ -275,7 +273,7 @@ export default async function SetupPage() {
         >
           <VehiclesPanel vehicles={vehicleRows} currencyCode={currency} />
         </PageSection>
-      </section>
+      ) : null}
       <ScrollToTopButton />
     </div>
   );
