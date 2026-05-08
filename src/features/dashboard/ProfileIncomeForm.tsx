@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ageCompletedOnDate } from "@/domain/finance/age-projection";
 import type { SgCpfAgeBand } from "@/domain/finance/sg-cpf";
 import {
-  monthlyEmployeeCpfTakeHomeSg,
+  annualEmployeeCpfTakeHomeWithBonusSg,
 } from "@/domain/finance/sg-cpf";
 import { sgCpfAgeBandForCompletedAge } from "@/domain/finance/sg-cpf-contribution-buckets";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
@@ -48,6 +48,7 @@ export function ProfileIncomeForm({
   initialRetirementMonthlySpendGoal,
   initialRetirementDividendYieldPercent,
   initialAnnualSalaryGrowthPercent = null,
+  initialAnnualBonus = null,
   initialRetirementWithdrawalRatePercent = null,
   cpfYearMonth,
   currencyCode = DEFAULT_BASE_CURRENCY,
@@ -71,6 +72,8 @@ export function ProfileIncomeForm({
    * Null/blank means no raise path.
    */
   initialAnnualSalaryGrowthPercent?: number | null;
+  /** Annual bonus before employee CPF (optional). */
+  initialAnnualBonus?: number | null;
   /** Annual withdrawal rate in percent for simplified retirement checks (e.g. 4 for 4%). */
   initialRetirementWithdrawalRatePercent?: number | null;
   /** `YYYY-MM` for OW ceiling / rates used in the estimate. */
@@ -108,6 +111,9 @@ export function ProfileIncomeForm({
         )
       : ""
   );
+  const [annualBonusRaw, setAnnualBonusRaw] = useState(
+    initialAnnualBonus != null ? String(initialAnnualBonus) : ""
+  );
   const [retirementWithdrawalPctRaw, setRetirementWithdrawalPctRaw] = useState(
     initialRetirementWithdrawalRatePercent != null
       ? String(
@@ -142,8 +148,15 @@ export function ProfileIncomeForm({
 
   const breakdown = useMemo(() => {
     if (!cpfMode || !band) return null;
-    return monthlyEmployeeCpfTakeHomeSg(grossNum, cpfYearMonth, band);
-  }, [cpfMode, band, grossNum, cpfYearMonth]);
+    const annualBonus = annualBonusRaw.trim() === "" ? 0 : Number(annualBonusRaw);
+    if (!Number.isFinite(annualBonus) || annualBonus < 0) return null;
+    return annualEmployeeCpfTakeHomeWithBonusSg(
+      grossNum,
+      annualBonus,
+      cpfYearMonth,
+      band
+    );
+  }, [annualBonusRaw, cpfMode, band, grossNum, cpfYearMonth]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -167,6 +180,16 @@ export function ProfileIncomeForm({
         setStatus("Enter your monthly gross salary to calculate take-home.");
         return;
       }
+      const annualBonusTrim = annualBonusRaw.trim();
+      let annualBonus: number | null = null;
+      if (annualBonusTrim !== "") {
+        const n = Number(annualBonusTrim);
+        if (!Number.isFinite(n) || n < 0 || n > 10_000_000) {
+          setStatus("Annual bonus must be between 0 and 10,000,000.");
+          return;
+        }
+        annualBonus = n;
+      }
       if (!band) {
         setStatus("Enter your birth date to auto-set CPF age band.");
         return;
@@ -178,8 +201,9 @@ export function ProfileIncomeForm({
       patchBody.birth_date = birthPayload;
       patchBody.salary_frequency = "monthly";
       patchBody.monthly_gross_salary = grossNum;
+      patchBody.annual_bonus = annualBonus;
       patchBody.cpf_age_band = band;
-      patchBody.monthly_income = breakdown.takeHome;
+      patchBody.monthly_income = breakdown.takeHomeMonthlyEquivalent;
     } else {
       const retTrim = retAgeRaw.trim();
       let targetRetirementAge: number | null = null;
@@ -307,16 +331,32 @@ export function ProfileIncomeForm({
             </label>
             {cpfMode && breakdown && (
               <p className="mt-2 text-xs text-slate-600">
-                Estimated monthly take-home:{" "}
+                Estimated monthly take-home (incl. bonus, net of CPF):{" "}
                 <span className="font-medium text-slate-800">
                   {currencyCode}{" "}
-                  {breakdown.takeHome.toLocaleString("en-SG", {
+                  {breakdown.takeHomeMonthlyEquivalent.toLocaleString("en-SG", {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
                 </span>
               </p>
             )}
+            <label className="text-sm">
+              <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+                Annual bonus ({currencyCode}, optional)
+              </span>
+              <input
+                name="annual_bonus"
+                type="number"
+                min={0}
+                max={10_000_000}
+                step="0.01"
+                className={fpInputClass}
+                value={annualBonusRaw}
+                onChange={(e) => setAnnualBonusRaw(e.target.value)}
+                placeholder="0"
+              />
+            </label>
         <label className="text-sm">
           <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
             Birth date

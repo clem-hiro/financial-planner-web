@@ -40,6 +40,13 @@ export function profileMonthlyGross(profile: ProfileRow | null): number | null {
   return n > 0 ? n : null;
 }
 
+export function profileAnnualBonus(profile: ProfileRow | null): number {
+  if (!profile?.annual_bonus) return 0;
+  const n = num(profile.annual_bonus);
+  if (!Number.isFinite(n) || n < 0) return 0;
+  return n;
+}
+
 export function profileCpfAgeBand(
   profile: ProfileRow | null
 ): string | null {

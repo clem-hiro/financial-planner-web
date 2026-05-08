@@ -7,6 +7,7 @@ import {
   sgCpfAgeBandForCompletedAge,
 } from "./sg-cpf-contribution-buckets";
 import { addMonthsToYearMonth } from "@/lib/dates";
+import { additionalWageCeilingRemaining } from "./sg-cpf";
 
 export const DEFAULT_CPF_OA_CREDITING_ANNUAL = 0.025;
 export const DEFAULT_CPF_SA_CREDITING_ANNUAL = 0.04;
@@ -72,6 +73,10 @@ export function buildCpfMonthlyProjectionSeries(params: {
    * strictly after `startYearMonth` (baseline month uses `grossMonthly` as-is).
    */
   annualSalaryGrowthNominal?: number;
+  /** Annual bonus paid once a year (default assumed in December). */
+  annualBonus?: number;
+  /** Month number (1-12) bonus is assumed to be paid. */
+  annualBonusPayoutMonth?: number;
   initial: CpfBalanceSnapshot;
   housingLoans: HousingLoanProjectionInput[];
 }): CpfMonthPoint[] {
@@ -82,6 +87,8 @@ export function buildCpfMonthlyProjectionSeries(params: {
     fixedCpfAgeBand,
     grossMonthly,
     annualSalaryGrowthNominal = 0,
+    annualBonus = 0,
+    annualBonusPayoutMonth = 12,
     initial,
     housingLoans,
   } = params;
@@ -114,6 +121,11 @@ export function buildCpfMonthlyProjectionSeries(params: {
 
   const out: CpfMonthPoint[] = [];
   let ytdOw = 0;
+  const annualBonusSafe = Math.max(0, Number(annualBonus) || 0);
+  const payoutMonth = Math.max(
+    1,
+    Math.min(12, Math.trunc(Number(annualBonusPayoutMonth) || 12))
+  );
   const growth = Math.min(
     0.25,
     Math.max(0, Number(annualSalaryGrowthNominal) || 0)
@@ -152,6 +164,19 @@ export function buildCpfMonthlyProjectionSeries(params: {
       oa += flows.oa;
       sa += flows.sa;
       ma += flows.ma;
+    }
+
+    if (annualBonusSafe > 0 && Number(ym.slice(5, 7)) === payoutMonth) {
+      const awSubject = Math.min(
+        annualBonusSafe,
+        additionalWageCeilingRemaining(ytdOw)
+      );
+      if (awSubject > 0) {
+        const awFlows = monthlyCpfInflowsFromOwSubject(awSubject, band);
+        oa += awFlows.oa;
+        sa += awFlows.sa;
+        ma += awFlows.ma;
+      }
     }
 
     for (const { loan } of paymentByYmByLoan) {

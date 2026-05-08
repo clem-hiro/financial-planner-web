@@ -147,10 +147,16 @@ export default async function SetupPage({ searchParams }: PageProps) {
               <PageSection id="profile-assumptions" title="Profile basics">
                 <div className="space-y-6">
                   <ProfileIncomeForm
-                    key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(profile)}-${profile?.birth_date ?? ""}-${profile?.target_retirement_age ?? ""}-${profile?.retirement_monthly_spend_goal ?? ""}-${profile?.retirement_dividend_yield_annual ?? ""}`}
+                    key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(profile)}-${profile?.annual_bonus ?? ""}-${profile?.birth_date ?? ""}-${profile?.target_retirement_age ?? ""}-${profile?.retirement_monthly_spend_goal ?? ""}-${profile?.retirement_dividend_yield_annual ?? ""}`}
                     initialIncome={income}
                     initialGross={gross}
                     initialCpfAgeBand={cpfBand}
+                    initialAnnualBonus={
+                      profile?.annual_bonus != null &&
+                      String(profile.annual_bonus).trim() !== ""
+                        ? num(profile.annual_bonus)
+                        : null
+                    }
                     initialAnnualSalaryGrowthPercent={
                       profile?.annual_salary_growth_nominal != null &&
                       String(profile.annual_salary_growth_nominal).trim() !== ""

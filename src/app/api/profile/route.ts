@@ -3,7 +3,7 @@ import { num } from "@/data/mappers";
 import { getProfileById, updateProfile } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import type { SgCpfAgeBand } from "@/domain/finance/sg-cpf";
-import { monthlyEmployeeCpfTakeHomeSg } from "@/domain/finance/sg-cpf";
+import { annualEmployeeCpfTakeHomeWithBonusSg } from "@/domain/finance/sg-cpf";
 import { formatYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
 import { profilePatchSchema } from "@/lib/validation";
@@ -42,7 +42,8 @@ export async function PATCH(request: Request) {
   const data = parsed.data;
   const touchCpf =
     data.monthly_gross_salary !== undefined ||
-    data.cpf_age_band !== undefined;
+    data.cpf_age_band !== undefined ||
+    data.annual_bonus !== undefined;
 
   const patch: {
     display_name?: string | null;
@@ -97,6 +98,8 @@ export async function PATCH(request: Request) {
     if (gross === 0) gross = null;
 
     let band = (existing?.cpf_age_band as SgCpfAgeBand | null) ?? null;
+    let annualBonus =
+      existing?.annual_bonus != null ? num(existing.annual_bonus) : 0;
 
     if (data.monthly_gross_salary !== undefined) {
       const g = data.monthly_gross_salary;
@@ -104,6 +107,9 @@ export async function PATCH(request: Request) {
     }
     if (data.cpf_age_band !== undefined) {
       band = data.cpf_age_band;
+    }
+    if (data.annual_bonus !== undefined) {
+      annualBonus = data.annual_bonus ?? 0;
     }
 
     if (gross != null && gross > 0) {
@@ -117,10 +123,15 @@ export async function PATCH(request: Request) {
         );
       }
       const ym = formatYearMonth(new Date());
-      const { takeHome } = monthlyEmployeeCpfTakeHomeSg(gross, ym, band);
+      const { takeHomeMonthlyEquivalent } = annualEmployeeCpfTakeHomeWithBonusSg(
+        gross,
+        annualBonus,
+        ym,
+        band
+      );
       patch.monthly_gross_salary = gross;
       patch.cpf_age_band = band;
-      patch.monthly_income = takeHome;
+      patch.monthly_income = takeHomeMonthlyEquivalent;
     } else {
       if (data.monthly_gross_salary !== undefined) {
         patch.monthly_gross_salary = null;

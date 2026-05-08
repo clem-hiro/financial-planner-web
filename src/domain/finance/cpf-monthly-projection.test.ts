@@ -107,4 +107,77 @@ describe("buildCpfMonthlyProjectionSeries", () => {
     });
     expect(raised[13].totalCpf).toBeGreaterThan(flat[13].totalCpf);
   });
+
+  it("adds annual bonus CPF in the payout month", () => {
+    const series = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-01",
+      horizonMonths: 12,
+      birthDate: "1990-01-15",
+      grossMonthly: 5_000,
+      annualBonus: 20_000,
+      annualBonusPayoutMonth: 12,
+      annualSalaryGrowthNominal: 0,
+      initial: {
+        oa: 0,
+        sa: 0,
+        ma: 0,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [],
+    });
+    const nov = series.find((p) => p.yearMonth === "2026-11");
+    const dec = series.find((p) => p.yearMonth === "2026-12");
+    expect(dec?.totalCpf ?? 0).toBeGreaterThan(nov?.totalCpf ?? 0);
+  });
+
+  it("respects annual wage cap when bonus exceeds AW headroom", () => {
+    const noBonus = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-01",
+      horizonMonths: 12,
+      birthDate: "1990-01-15",
+      grossMonthly: 8_000,
+      annualBonus: 0,
+      initial: {
+        oa: 0,
+        sa: 0,
+        ma: 0,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [],
+    });
+    const hugeBonus = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-01",
+      horizonMonths: 12,
+      birthDate: "1990-01-15",
+      grossMonthly: 8_000,
+      annualBonus: 1_000_000,
+      initial: {
+        oa: 0,
+        sa: 0,
+        ma: 0,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [],
+    });
+    // At 8k monthly OW for 12 months, only 6k AW remains under 102k annual wage cap.
+    expect((hugeBonus[11]?.totalCpf ?? 0) - (noBonus[11]?.totalCpf ?? 0)).toBeCloseTo(
+      2_220,
+      1
+    );
+  });
 });

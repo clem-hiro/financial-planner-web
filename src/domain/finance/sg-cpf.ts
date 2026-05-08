@@ -83,6 +83,21 @@ export type MonthlyCpfBreakdown = {
   takeHome: number;
 };
 
+export type AnnualCpfBreakdownWithBonus = {
+  grossMonthly: number;
+  grossAnnualBonus: number;
+  ordinaryWageCeiling: number;
+  ordinaryWagesSubjectAnnual: number;
+  additionalWagesSubjectAnnual: number;
+  annualWageCapApplied: boolean;
+  employeeRate: number;
+  employeeCpfOnOwAnnual: number;
+  employeeCpfOnAwAnnual: number;
+  employeeCpfContributionAnnual: number;
+  takeHomeAnnual: number;
+  takeHomeMonthlyEquivalent: number;
+};
+
 function ordinaryWagesSubjectForMonth(
   grossMonthly: number,
   monthlyOwCeiling: number
@@ -139,5 +154,60 @@ export function monthlyEmployeeCpfTakeHomeSg(
     employeeRate: rate,
     employeeCpfContribution: Math.round(contribution * 100) / 100,
     takeHome: Math.round(takeHome * 100) / 100,
+  };
+}
+
+/**
+ * Annualized employee CPF for a steady monthly gross salary plus annual bonus.
+ * OW is bounded by monthly OW ceiling and annual wage cap; AW (bonus) is then
+ * bounded by the remaining annual headroom.
+ */
+export function annualEmployeeCpfTakeHomeWithBonusSg(
+  grossMonthly: number,
+  grossAnnualBonus: number,
+  yearMonth: string,
+  ageBand: SgCpfAgeBand
+): AnnualCpfBreakdownWithBonus {
+  const monthlyGross = Math.max(0, grossMonthly);
+  const annualBonus = Math.max(0, grossAnnualBonus);
+  const ordinaryWageCeiling = ordinaryWageCeilingSg(yearMonth);
+  const owSubjectPerMonth = Math.min(monthlyGross, ordinaryWageCeiling);
+  const ordinaryWagesSubjectAnnual = Math.min(
+    ANNUAL_WAGE_CEILING_SG,
+    owSubjectPerMonth * 12
+  );
+  const additionalWagesSubjectAnnual = Math.min(
+    annualBonus,
+    additionalWageCeilingRemaining(ordinaryWagesSubjectAnnual)
+  );
+  const annualWageCapApplied =
+    ordinaryWagesSubjectAnnual < owSubjectPerMonth * 12 ||
+    additionalWagesSubjectAnnual < annualBonus;
+
+  const employeeRate = employeeCpfRateSg(ageBand);
+  const employeeCpfOnOwAnnual =
+    monthlyGross > 750 ? ordinaryWagesSubjectAnnual * employeeRate : 0;
+  const employeeCpfOnAwAnnual =
+    monthlyGross > 750 ? additionalWagesSubjectAnnual * employeeRate : 0;
+  const employeeCpfContributionAnnual = employeeCpfOnOwAnnual + employeeCpfOnAwAnnual;
+  const grossAnnual = monthlyGross * 12 + annualBonus;
+  const takeHomeAnnual = grossAnnual - employeeCpfContributionAnnual;
+  const takeHomeMonthlyEquivalent = takeHomeAnnual / 12;
+
+  return {
+    grossMonthly: monthlyGross,
+    grossAnnualBonus: annualBonus,
+    ordinaryWageCeiling,
+    ordinaryWagesSubjectAnnual: Math.round(ordinaryWagesSubjectAnnual * 100) / 100,
+    additionalWagesSubjectAnnual:
+      Math.round(additionalWagesSubjectAnnual * 100) / 100,
+    annualWageCapApplied,
+    employeeRate,
+    employeeCpfOnOwAnnual: Math.round(employeeCpfOnOwAnnual * 100) / 100,
+    employeeCpfOnAwAnnual: Math.round(employeeCpfOnAwAnnual * 100) / 100,
+    employeeCpfContributionAnnual:
+      Math.round(employeeCpfContributionAnnual * 100) / 100,
+    takeHomeAnnual: Math.round(takeHomeAnnual * 100) / 100,
+    takeHomeMonthlyEquivalent: Math.round(takeHomeMonthlyEquivalent * 100) / 100,
   };
 }

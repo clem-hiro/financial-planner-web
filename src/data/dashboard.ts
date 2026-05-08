@@ -29,6 +29,7 @@ import {
   expenseRowToBudgetExpense,
   investmentValues,
   num,
+  profileAnnualBonus,
   profileAnnualSalaryGrowthNominal,
   profileMonthlyGross,
   profileMonthlyIncome,
@@ -486,6 +487,7 @@ export async function getDashboardPayload(
         birthDate: birthRaw,
         fixedCpfAgeBand: fixedBand,
         grossMonthly,
+        annualBonus: profileAnnualBonus(profile),
         annualSalaryGrowthNominal: profileAnnualSalaryGrowthNominal(profile),
         initial: {
           oa: num(cpfRow.oa),
