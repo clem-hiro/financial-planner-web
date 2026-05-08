@@ -123,30 +123,32 @@ export default async function SetupPage() {
 
       <nav
         aria-label="Setup sections"
-        className="sticky top-2 z-20 -mx-1 overflow-x-auto rounded-xl border border-slate-200/90 bg-white/95 px-1 py-1 shadow-sm backdrop-blur"
+        className="sticky top-2 z-20 rounded-xl border border-slate-200/90 bg-white/95 py-1 shadow-sm backdrop-blur"
       >
-        <div className="flex min-w-max gap-1">
-          <a href="#profile-assumptions" className="rounded-full px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100">
-            Profile
-          </a>
-          <a href="#add-investment" className="rounded-full px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100">
-            Add account
-          </a>
-          <a href="#investment-accounts" className="rounded-full px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100">
-            Accounts
-          </a>
-          <a href="#cpf-balances" className="rounded-full px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100">
-            CPF
-          </a>
-          <a href="#cash-liabilities" className="rounded-full px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100">
-            Cash & liabilities
-          </a>
-          <a href="#housing-loans" className="rounded-full px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100">
-            Housing loans
-          </a>
-          <a href="#vehicles" className="rounded-full px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-100">
-            Vehicles
-          </a>
+        <div className="-mx-1 overflow-x-auto px-1 pb-0.5 sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
+          <div className="flex min-w-max snap-x gap-1">
+            <a href="#profile-assumptions" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
+              Profile
+            </a>
+            <a href="#add-investment" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
+              Add account
+            </a>
+            <a href="#investment-accounts" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
+              Accounts
+            </a>
+            <a href="#cpf-balances" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
+              CPF
+            </a>
+            <a href="#cash-liabilities" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
+              Cash & liabilities
+            </a>
+            <a href="#housing-loans" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
+              Housing loans
+            </a>
+            <a href="#vehicles" className="min-h-10 snap-start whitespace-nowrap rounded-full px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-slate-100">
+              Vehicles
+            </a>
+          </div>
         </div>
       </nav>
 

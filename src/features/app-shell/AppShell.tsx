@@ -11,7 +11,7 @@ import {
 import { signOutAction } from "@/server/actions";
 
 const ghostBtn =
-  "rounded-full px-3 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 sm:py-1.5";
+  "inline-flex min-h-10 items-center justify-center rounded-full px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 sm:min-h-0 sm:py-1.5";
 
 function MethodologyHeaderButton() {
   const { openMethodology } = useMethodology();
@@ -19,7 +19,7 @@ function MethodologyHeaderButton() {
     <button
       type="button"
       onClick={() => openMethodology(null)}
-      className="rounded-full border border-slate-200/90 bg-white px-3 py-2 text-xs font-semibold tracking-wide text-slate-600 shadow-sm transition hover:border-emerald-200/90 hover:text-emerald-900 sm:py-1.5"
+      className="inline-flex min-h-10 items-center justify-center rounded-full border border-slate-200/90 bg-white px-3.5 py-2 text-xs font-semibold tracking-wide text-slate-600 shadow-sm transition hover:border-emerald-200/90 hover:text-emerald-900 sm:min-h-0 sm:py-1.5"
     >
       How it works
     </button>
@@ -37,7 +37,7 @@ export function AppShell({
     <MethodologyProvider>
       <div className="flex min-h-full flex-col text-slate-800">
         <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 shadow-[0_1px_0_0_rgba(4,120,87,0.08)] backdrop-blur-xl backdrop-saturate-150">
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-4 px-4 py-4 sm:px-8 sm:py-5">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-3 px-4 py-4 sm:gap-y-4 sm:px-8 sm:py-5">
             <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-4">
               <Link
                 href="/dashboard"
@@ -49,23 +49,25 @@ export function AppShell({
                 Private wealth clarity
               </span>
             </div>
-            <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto sm:gap-3">
+            <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:justify-end sm:gap-3">
               <AppShellNav />
-              <MethodologyHeaderButton />
-              {user ? (
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                <MethodologyHeaderButton />
+                {user ? (
                 <form action={signOutAction} className="inline">
                   <button type="submit" className={`${ghostBtn} text-slate-500`}>
                     Sign out
                   </button>
                 </form>
-              ) : (
-                <Link
-                  href="/login"
-                  className="rounded-full bg-[#0c192f] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-slate-900/15 transition hover:bg-[#152a45] sm:py-2"
-                >
-                  Sign in
-                </Link>
-              )}
+                ) : (
+                  <Link
+                    href="/login"
+                    className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#0c192f] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-slate-900/15 transition hover:bg-[#152a45] sm:min-h-0 sm:py-2"
+                  >
+                    Sign in
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         </header>
