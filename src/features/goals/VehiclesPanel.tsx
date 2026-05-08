@@ -596,21 +596,25 @@ export function VehiclesPanel({
   currencyCode: string;
 }) {
   return (
-    <div className="space-y-4">
-      <div className="rounded-lg border border-amber-200/80 bg-amber-50/50 p-3 text-xs text-amber-950">
+    <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
+      <div className="space-y-3 p-4 sm:p-5">
+        <div className="rounded-lg border border-amber-200/80 bg-amber-50/50 p-3 text-xs text-amber-950">
         <strong className="font-semibold">Tip:</strong> keep each vehicle loan in one place only
         (here or Debts) to avoid double-counting.{" "}
         <MethodologyOpenLink topicId="vehicles-sg" className={appInlineLinkClass}>
           Methodology →
         </MethodologyOpenLink>
+        </div>
+        <p className="text-xs text-zinc-600">
+          Quick start: enter <strong>current market estimate</strong> and monthly loan instalment.
+          Add PARF/COE or advanced fields only if you want a more detailed model.
+        </p>
       </div>
-      <p className="text-xs text-zinc-600">
-        Quick start: enter <strong>current market estimate</strong> and monthly loan instalment.
-        Add PARF/COE or advanced fields only if you want a more detailed model.
-      </p>
-      <AddVehicleForm currencyCode={currencyCode} />
+      <div className="p-4 sm:p-5">
+        <AddVehicleForm currencyCode={currencyCode} />
+      </div>
       {vehicles.length > 0 && (
-        <ul className="space-y-3">
+        <ul className="space-y-3 p-4 sm:p-5">
           {vehicles.map((row) => (
             <li
               key={row.id}

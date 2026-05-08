@@ -134,9 +134,6 @@ export default async function SetupPage({ searchParams }: PageProps) {
           <MethodologyOpenLink topicId="net-worth" className={appInlineLinkClass}>
             Net worth methodology →
           </MethodologyOpenLink>
-          <MethodologyOpenLink topicId="cpf-projection" className={appInlineLinkClass}>
-            CPF projection →
-          </MethodologyOpenLink>
         </p>
       </div>
 
@@ -199,13 +196,17 @@ export default async function SetupPage({ searchParams }: PageProps) {
                 title="Add account"
                 description="New accounts appear below and in dashboard projections."
               >
-                <div className="space-y-6">
-                  <InvestmentForm />
+                <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
+                  <div className="p-4 sm:p-5">
+                    <InvestmentForm />
+                  </div>
                   {investmentBalanceRows.length > 0 ? (
-                    <InvestmentBalancesList
-                      items={investmentBalanceRows}
-                      currencyCode={currency}
-                    />
+                    <div className="p-4 sm:p-5">
+                      <InvestmentBalancesList
+                        items={investmentBalanceRows}
+                        currencyCode={currency}
+                      />
+                    </div>
                   ) : null}
                 </div>
               </PageSection>

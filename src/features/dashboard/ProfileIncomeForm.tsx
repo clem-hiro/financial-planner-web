@@ -275,8 +275,11 @@ export function ProfileIncomeForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5">
-      <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+    <form
+      onSubmit={onSubmit}
+      className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm divide-y divide-slate-200"
+    >
+      <section className="space-y-4 p-5">
         <p className="text-sm font-semibold text-slate-900">Income & CPF</p>
         <div className="space-y-4">
             <label className="text-sm">
@@ -349,10 +352,7 @@ export function ProfileIncomeForm({
         </div>
       </section>
 
-      <section
-        id="retirement-inputs"
-        className="scroll-mt-24 space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm"
-      >
+      <section id="retirement-inputs" className="scroll-mt-24 space-y-4 p-5">
         <div className="min-w-0 space-y-4">
             <div className="flex flex-wrap items-center gap-1.5">
               <p className="text-sm font-semibold text-slate-900">

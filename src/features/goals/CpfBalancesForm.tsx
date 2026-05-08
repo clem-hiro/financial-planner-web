@@ -14,10 +14,7 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
 
   return (
     <div className="space-y-3">
-      <form
-        action={action}
-        className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4"
-      >
+      <form action={action} className="space-y-4">
         <h2 className="text-sm font-semibold text-zinc-900">
           CPF balances (OA / SA / MA)
         </h2>
@@ -118,7 +115,7 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
             />
           </label>
         </div>
-        <div className="rounded-md border border-zinc-100 bg-zinc-50/80 p-3">
+        <div className="border-t border-zinc-200 pt-4">
           <p className="text-xs font-medium text-zinc-700">
             Optional: CPF investment (notional)
           </p>

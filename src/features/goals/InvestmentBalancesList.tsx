@@ -36,10 +36,7 @@ function InvestmentUpdateRow({
   const [state, formAction] = useActionState(wrapped, initial);
 
   return (
-    <form
-      action={formAction}
-      className="rounded-lg border border-zinc-200 bg-white p-4"
-    >
+    <form action={formAction} className="py-4 first:pt-0 last:pb-0">
       <input type="hidden" name="id" value={investment.id} />
       {state.error && (
         <p className="mb-2 text-sm text-red-600" role="alert">
@@ -146,7 +143,7 @@ export function InvestmentBalancesList({
           </span>
         </p>
       </div>
-      <ul className="space-y-3">
+      <ul className="divide-y divide-zinc-200 border-t border-zinc-200">
         {items.map((inv) => (
           <li key={inv.id}>
             <InvestmentUpdateRow investment={inv} currencyCode={currencyCode} />

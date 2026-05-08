@@ -79,16 +79,9 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
   {
     id: "net-worth",
     title: "Net worth",
-    summary: "Sum of what you track in this app.",
-    bullets: [
-      "Investments: sum of current values from your investment accounts on the Goals page.",
-      "Cash: sum of cash account balances.",
-      "CPF: when you save OA/SA/MA (and optional CPFIS notional) on Goals, that total is added as a separate bucket—not liquid cash.",
-      "**Net excluding CPF** (dashboard headline): full net worth minus that CPF total—investments + cash + vehicles − generic debts in this app’s sign convention. Illustrative for liquidity thinking; CPF access rules are not modeled.",
-      "Liabilities: debts you entered are subtracted.",
-      "Monthly salary is not added as its own asset line—salary is income. Counting salary plus the cash and CPF you already hold from past pay would double-count.",
-      "Motor vehicles (optional): active vehicles on Balances add illustrative body + PARF minus loan to net worth. Do not also list the same car loan under Debts, or you double-count the liability.",
-    ],
+    summary:
+      "Net worth here is investments + cash + optional CPF and vehicle equity minus debts, while the dashboard headline shows the same figure excluding CPF.",
+    bullets: [],
   },
   {
     id: "savings-rate",
@@ -167,16 +160,9 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
   {
     id: "cpf-projection",
     title: "CPF projection (OA / SA / MA)",
-    summary: "Month-step simulation from balances you enter—not CPFB statements.",
-    bullets: [
-      "Contributions use your profile gross salary and CPF age band; OW ceilings and the $102k annual ordinary-wage cap are applied month by month within each calendar year.",
-      "Optional nominal annual salary growth (profile): on each January strictly after the first projection month, gross is multiplied by (1 + rate). The baseline month always uses your entered gross. This only affects forward CPF inflows—not today’s net worth. Not financial advice; stress-test with 0% if unsure.",
-      "Employer plus employee flows are split into OA, SA, and MA using a simplified allocation shape scaled by total contribution rate for your band (approximation).",
-      "Bucket crediting: optional annual rates per account; defaults are about OA 2.5% and SA/MA 4% when you leave rates blank.",
-      "Optional “CPFIS” block: a fixed monthly transfer from OA into a notional balance with its own return—illustrative only.",
-      "Dashboard chart: one line per bucket (OA, SA, MA), optional CPFIS and a dashed total; vertical markers show housing keys / repayment start months mapped to age.",
-      "Not modeled: Additional Wages, SPR tiers, RA redirection after 55, MA shielding, or CPF LIFE.",
-    ],
+    summary:
+      "This is a simplified CPF forecast using your entered balances, salary assumptions, and contribution settings to project OA/SA/MA over time.",
+    bullets: [],
     footnote: "Educational illustration only—not tax, legal, or financial advice.",
   },
   {

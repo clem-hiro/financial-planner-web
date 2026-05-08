@@ -654,10 +654,13 @@ export function HousingLoansPanel({
   const [state, action] = useActionState(createHousingLoanAction, initial);
 
   return (
-    <div className="space-y-6">
-      <HousingLoanQuickAddForm currencyCode={currencyCode} />
+    <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
+      <div className="p-4 sm:p-5">
+        <HousingLoanQuickAddForm currencyCode={currencyCode} />
+      </div>
 
-      <details className="group">
+      <div className="p-4 sm:p-5">
+        <details className="group">
         <summary className="cursor-pointer text-sm font-medium text-zinc-700 hover:text-zinc-900">
           Manual loan entry (edge cases)
         </summary>
@@ -666,11 +669,13 @@ export function HousingLoansPanel({
           principal repaid to date — same data as quick add, without the purchase
           price shortcut.
         </p>
-        <HousingLoanManualAddForm formError={state.error} action={action} />
-      </details>
+          <HousingLoanManualAddForm formError={state.error} action={action} />
+        </details>
+      </div>
 
       {loans.length > 0 && (
-        <ul className="space-y-2 text-sm">
+        <div className="p-4 sm:p-5">
+          <ul className="space-y-2 text-sm">
           {loans.map((L) => {
             const orig =
               L.original_loan_principal != null &&
@@ -731,7 +736,8 @@ export function HousingLoansPanel({
               </li>
             );
           })}
-        </ul>
+          </ul>
+        </div>
       )}
     </div>
   );

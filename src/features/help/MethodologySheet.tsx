@@ -107,11 +107,13 @@ export function MethodologySheet() {
                 <p className="mt-2 text-sm leading-relaxed text-slate-600">
                   {t.summary}
                 </p>
-                <ul className="mt-3 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-slate-700">
-                  {t.bullets.map((b, i) => (
-                    <li key={i}>{b}</li>
-                  ))}
-                </ul>
+                {t.bullets.length > 0 && (
+                  <ul className="mt-3 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-slate-700">
+                    {t.bullets.map((b, i) => (
+                      <li key={i}>{b}</li>
+                    ))}
+                  </ul>
+                )}
                 {t.formulas && t.formulas.length > 0 && (
                   <ul className="mt-3 space-y-1 rounded-lg bg-slate-50 px-3 py-2 font-mono text-[11px] text-slate-600">
                     {t.formulas.map((f, i) => (
