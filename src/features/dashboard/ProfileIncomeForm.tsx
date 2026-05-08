@@ -275,7 +275,7 @@ export function ProfileIncomeForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="max-w-2xl space-y-5">
+    <form onSubmit={onSubmit} className="space-y-5">
       <section className="space-y-4 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
         <p className="text-sm font-semibold text-slate-900">Income & CPF</p>
         <div className="space-y-4">
