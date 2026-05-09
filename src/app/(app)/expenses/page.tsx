@@ -161,15 +161,12 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
             Custom categories first (any name, multiple entries). Budget
             shortcuts below are optional for planned lines.
           </p>
-          <p className="mt-2 flex flex-wrap gap-x-3 text-xs text-zinc-600">
-            <MethodologyOpenLink topicId="expenses-month" className={appInlineLinkClass}>
-              How this month view works →
-            </MethodologyOpenLink>
+          <p className="mt-2 text-xs text-zinc-500">
             <MethodologyOpenLink
-              topicId="monthly-budget-check"
-              className={appInlineLinkClass}
+              topicId="expenses-month"
+              className="text-zinc-500 underline decoration-zinc-300/90 underline-offset-2 transition-colors hover:text-zinc-700"
             >
-              Budget vs monthly expenses →
+              How this month view works
             </MethodologyOpenLink>
           </p>
         </div>
@@ -204,25 +201,24 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
             href="#expenses-budget-shortcuts"
             className="hover:text-zinc-900 hover:underline"
           >
-            Budget shortcuts
+            From budget
+          </a>
+        )}
+        <a href="#expenses-list" className="hover:text-zinc-900 hover:underline">
+          This month
+        </a>
+        {spendRecommendations.length > 0 && (
+          <a
+            href="#expenses-guidance"
+            className="hover:text-zinc-900 hover:underline"
+          >
+            Spending guidance
           </a>
         )}
         <a href="#expenses-chart" className="hover:text-zinc-900 hover:underline">
           By category
         </a>
-        <a href="#expenses-list" className="hover:text-zinc-900 hover:underline">
-          This month list
-        </a>
       </nav>
-
-      {spendRecommendations.length > 0 && (
-        <div className="flex justify-end">
-          <MethodologyOpenLink topicId="spend-guidance" className="text-xs">
-            How spending guidance is built →
-          </MethodologyOpenLink>
-        </div>
-      )}
-      <SpendGuidancePanel month={month} lines={spendRecommendations} />
 
       <PageSection id="expenses-form" title="Add expense" className="scroll-mt-4">
       {categoryPrefillBlocked ? (
@@ -376,26 +372,6 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
       )}
 
       <PageSection
-        id="expenses-chart"
-        className="scroll-mt-4"
-        title="By category"
-        actions={
-          <p className="text-sm text-zinc-600">
-            Total:{" "}
-            <span className="font-medium text-zinc-900">
-              {formatCurrency(total, currency)}
-            </span>
-          </p>
-        }
-      >
-        {chartData.length ? (
-          <CategoryBarChart data={chartData} currency={currency} />
-        ) : (
-          <p className="text-sm text-zinc-500">No expenses this month yet.</p>
-        )}
-      </PageSection>
-
-      <PageSection
         id="expenses-list"
         className="scroll-mt-4"
         title="This month"
@@ -427,6 +403,41 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
               </ul>
             </div>
           </div>
+        )}
+      </PageSection>
+
+      {spendRecommendations.length > 0 && (
+        <PageSection
+          id="expenses-guidance"
+          className="scroll-mt-4"
+          title="Spending guidance"
+          description={
+            <MethodologyOpenLink topicId="spend-guidance" className={appInlineLinkClass}>
+              How spending guidance is built →
+            </MethodologyOpenLink>
+          }
+        >
+          <SpendGuidancePanel month={month} lines={spendRecommendations} />
+        </PageSection>
+      )}
+
+      <PageSection
+        id="expenses-chart"
+        className="scroll-mt-4"
+        title="By category"
+        actions={
+          <p className="text-sm text-zinc-600">
+            Total:{" "}
+            <span className="font-medium text-zinc-900">
+              {formatCurrency(total, currency)}
+            </span>
+          </p>
+        }
+      >
+        {chartData.length ? (
+          <CategoryBarChart data={chartData} currency={currency} />
+        ) : (
+          <p className="text-sm text-zinc-500">No expenses this month yet.</p>
         )}
       </PageSection>
     </div>
