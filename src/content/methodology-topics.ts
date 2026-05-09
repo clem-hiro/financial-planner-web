@@ -187,16 +187,12 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     summary:
       "Optional motor vehicles: **current market estimate** (e.g. motorcycles), or PARF+COE ramping to a fixed total at COE expiry, or OTR→terminal, or rough PARF+body. Loan netted for net worth—not binding quotes.",
     bullets: [
-      "**Motorcycles / no PARF:** set **Current market / listing estimate** — gross asset equals that amount until you change it (check Carousell etc. periodically). PARF/COE and COE-month math are skipped when this field is set.",
-      "When gross is **only** from that market field (not PARF+COE / OTR→terminal), **projections do not move the listing into cash at COE**—the vehicle net goes to zero after expiry without a one‑time cash inflow, so charts do not assume a rebate you may not get.",
-      "**No OneMotoring PARF/COE and ARF for PARF blank** (with first registration + COE expiry, and no market shortcut): modelled gross is **tapered to zero by COE** and **no cash** is added to projections at COE — so bikes without PARF-style cash back are not treated as if you bank sale proceeds.",
-      "Recommended when you have OneMotoring figures: **PARF + COE (+ scrap) today**, **first registration**, **COE expiry**, and **expected total back at COE expiry** (e.g. ~$6k rebates+body). Gross asset = terminal + (rebates today − terminal) × (months remaining to COE expiry ÷ months from first reg to COE expiry). Each calendar month remaining drops by one, so the asset moves toward terminal; **instalment does not drive this** (it only affects loan PV / net equity).",
-      "If you do not use PARF/COE rows: optional purchase schedule from **OTR / paid** at first reg to the same terminal at COE expiry (straight line). When PARF+COE+terminal+first reg+COE expiry are all set, the rebate ramp above wins over the OTR line.",
-      "Loan: monthly instalment + **loan end month** (or months remaining) → **PV** for net equity (rate blank ≈ 2.78% nominal), or tick **instalment × months left** to skip PV and use payment × months (closer to mental math). **Typed loan balance** is only used when you tick that mode. Dealer “cash back” / ~6k quotes are **rebates** (PARF+COE / terminal at COE), separate from the loan side.",
-      "Fallback when both PARF and COE “today” are left blank: illustrative PARF from ARF + first registration (10% per full year, up to 10 years) plus body value straight‑lined over the years you set (default 10). “Body depreciate years” only applies to this fallback.",
-      "Net vehicle equity (gross − loan) is added to headline net worth and to the simplified by‑age chart as a flat offset.",
-      "Planned future vehicles: stored for notes and budget OTR; they do not affect net worth until you switch status to Active.",
-      "Expenses you tag as car loan payments are cash‑flow only—they do not automatically reduce the loan balance here; update loan end month or balance periodically.",
+      "**Motorcycle / no PARF:** use **Current market / listing estimate**. That value is used as gross asset until you update it. PARF/COE math is skipped.",
+      "If value comes only from listing estimate, the model **does not add a cash payout at COE**. Vehicle value goes to zero after expiry unless you entered rebate-style fields.",
+      "Best setup (if you have OneMotoring data): fill **PARF+COE today**, **first registration**, **COE expiry**, and **expected total back at COE expiry**. Value then steps down toward terminal value month by month.",
+      "If PARF/COE is not filled, you can use **OTR/paid to terminal** as a simple straight-line estimate.",
+      "**Loan side is separate:** instalment + months left gives estimated loan (PV by default, or instalment x months). Loan payments logged in Expenses do not auto-reduce this balance.",
+      "Dashboard uses **net vehicle equity = gross - loan**. Planned/future vehicles do not count until status is Active.",
     ],
     footnote:
       "Educational model only—real deregistration rebates, COE recovery, and market prices differ. Not tax, legal, or financial advice.",
