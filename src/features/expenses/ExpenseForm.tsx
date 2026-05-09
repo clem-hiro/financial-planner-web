@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { normalizeCategory } from "@/domain/finance/budget";
 
 export function ExpenseForm({
@@ -18,6 +18,8 @@ export function ExpenseForm({
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [isRefreshing, startTransition] = useTransition();
+  const isBusy = pending || isRefreshing;
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -71,7 +73,9 @@ export function ExpenseForm({
         return;
       }
       form.reset();
-      router.refresh();
+      startTransition(() => {
+        router.refresh();
+      });
     } finally {
       setPending(false);
     }
@@ -157,11 +161,16 @@ export function ExpenseForm({
       </div>
       <button
         type="submit"
-        disabled={pending}
+        disabled={isBusy}
         className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
       >
-        {pending ? "Saving…" : "Add custom expense"}
+        {isBusy ? "Saving…" : "Add custom expense"}
       </button>
+      {isBusy && (
+        <p className="text-xs text-zinc-500" role="status" aria-live="polite">
+          Updating expenses...
+        </p>
+      )}
     </form>
   );
 }

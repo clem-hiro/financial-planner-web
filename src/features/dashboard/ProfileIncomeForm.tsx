@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { ageCompletedOnDate } from "@/domain/finance/age-projection";
 import type { SgCpfAgeBand } from "@/domain/finance/sg-cpf";
 import {
@@ -88,6 +88,9 @@ export function ProfileIncomeForm({
     isSgCpfAgeBand(initialCpfAgeBand) ? initialCpfAgeBand : ""
   );
   const [status, setStatus] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [isRefreshing, startTransition] = useTransition();
+  const isBusy = submitting || isRefreshing;
   const [birthDate, setBirthDate] = useState(initialBirthDate ?? "");
   const [retAgeRaw, setRetAgeRaw] = useState(
     initialTargetRetirementAge != null
@@ -161,6 +164,7 @@ export function ProfileIncomeForm({
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus(null);
+    setSubmitting(true);
     const nativeEvt = e.nativeEvent as SubmitEvent;
     const submitter = nativeEvt.submitter as HTMLButtonElement | null;
     const section = submitter?.value === "retirement" ? "retirement" : "income";
@@ -171,6 +175,7 @@ export function ProfileIncomeForm({
       !/^\d{4}-\d{2}-\d{2}$/.test(birthPayload)
     ) {
       setStatus("Birth date must be YYYY-MM-DD.");
+      setSubmitting(false);
       return;
     }
     const patchBody: Record<string, unknown> = {};
@@ -178,6 +183,7 @@ export function ProfileIncomeForm({
     if (section === "income") {
       if (!cpfMode || grossNum == null || Number.isNaN(grossNum)) {
         setStatus("Enter your monthly gross salary to calculate take-home.");
+        setSubmitting(false);
         return;
       }
       const annualBonusTrim = annualBonusRaw.trim();
@@ -186,16 +192,19 @@ export function ProfileIncomeForm({
         const n = Number(annualBonusTrim);
         if (!Number.isFinite(n) || n < 0 || n > 10_000_000) {
           setStatus("Annual bonus must be between 0 and 10,000,000.");
+          setSubmitting(false);
           return;
         }
         annualBonus = n;
       }
       if (!band) {
         setStatus("Enter your birth date to auto-set CPF age band.");
+        setSubmitting(false);
         return;
       }
       if (!breakdown) {
         setStatus("Unable to calculate take-home. Check gross salary and birth date.");
+        setSubmitting(false);
         return;
       }
       patchBody.birth_date = birthPayload;
@@ -213,6 +222,7 @@ export function ProfileIncomeForm({
           setStatus(
             "Target retirement age must be a whole number from 50 to 80, or leave blank to use 65 in projections."
           );
+          setSubmitting(false);
           return;
         }
         targetRetirementAge = n;
@@ -226,6 +236,7 @@ export function ProfileIncomeForm({
           setStatus(
             "Retirement spend goal must be between 0 and 1,000,000, or leave blank to clear."
           );
+          setSubmitting(false);
           return;
         }
         retirement_monthly_spend_goal = n;
@@ -239,6 +250,7 @@ export function ProfileIncomeForm({
           setStatus(
             "Retirement dividend yield must be between 0% and 25%, or leave blank to clear (dashboard then uses 2% default)."
           );
+          setSubmitting(false);
           return;
         }
         retirement_dividend_yield_annual = p / 100;
@@ -252,6 +264,7 @@ export function ProfileIncomeForm({
           setStatus(
             "Annual salary growth must be between 0% and 25%, or leave blank for no growth in the CPF chart."
           );
+          setSubmitting(false);
           return;
         }
         annual_salary_growth_nominal = p / 100;
@@ -265,6 +278,7 @@ export function ProfileIncomeForm({
           setStatus(
             "Retirement withdrawal rate must be between 0% and 20%, or leave blank to use the default."
           );
+          setSubmitting(false);
           return;
         }
         retirement_withdrawal_rate_annual = p / 100;
@@ -277,25 +291,33 @@ export function ProfileIncomeForm({
       patchBody.retirement_withdrawal_rate_annual = retirement_withdrawal_rate_annual;
     }
 
-    const res = await fetch("/api/profile", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(patchBody),
-      credentials: "include",
-    });
-    if (!res.ok) {
-      const j = (await res.json().catch(() => null)) as {
-        error?: string;
-        details?: { fieldErrors?: Record<string, string[]> };
-      } | null;
-      const zod =
-        j?.details?.fieldErrors &&
-        Object.values(j.details.fieldErrors).flat().join(" ");
-      setStatus(zod || j?.error || "Failed to save");
-      return;
+    try {
+      const res = await fetch("/api/profile", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patchBody),
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const j = (await res.json().catch(() => null)) as {
+          error?: string;
+          details?: { fieldErrors?: Record<string, string[]> };
+        } | null;
+        const zod =
+          j?.details?.fieldErrors &&
+          Object.values(j.details.fieldErrors).flat().join(" ");
+        setStatus(zod || j?.error || "Failed to save");
+        return;
+      }
+      setStatus("Saved");
+      startTransition(() => {
+        router.refresh();
+      });
+    } catch {
+      setStatus("Network error. Please try again.");
+    } finally {
+      setSubmitting(false);
     }
-    setStatus("Saved");
-    router.refresh();
   }
 
   return (
@@ -373,9 +395,10 @@ export function ProfileIncomeForm({
           <button
             type="submit"
             value="income"
+            disabled={isBusy}
             className={`${fpPrimaryButtonClass} w-full sm:w-auto`}
           >
-            Save income
+            {isBusy ? "Saving..." : "Save income"}
           </button>
         </div>
       </section>
@@ -604,9 +627,10 @@ export function ProfileIncomeForm({
           <button
             type="submit"
             value="retirement"
+            disabled={isBusy}
             className={`${fpPrimaryButtonClass} w-full sm:w-auto`}
           >
-            Save retirement targets
+            {isBusy ? "Saving..." : "Save retirement targets"}
           </button>
         </div>
       </section>

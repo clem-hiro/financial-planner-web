@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 
 type Props = {
   category: string;
@@ -23,6 +23,8 @@ export function BudgetLineExpenseQuickAdd({
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [isRefreshing, startTransition] = useTransition();
+  const isBusy = pending || isRefreshing;
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -77,7 +79,9 @@ export function BudgetLineExpenseQuickAdd({
       } else {
         amtEl.value = "";
       }
-      router.refresh();
+      startTransition(() => {
+        router.refresh();
+      });
     } finally {
       setPending(false);
     }
@@ -129,12 +133,17 @@ export function BudgetLineExpenseQuickAdd({
         </label>
         <button
           type="submit"
-          disabled={pending}
+          disabled={isBusy}
           className="rounded bg-zinc-800 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-700 disabled:opacity-60"
         >
-          {pending ? "…" : "Add"}
+          {isBusy ? "…" : "Add"}
         </button>
       </div>
+      {isBusy && (
+        <p className="mt-1 text-xs text-zinc-500" role="status" aria-live="polite">
+          Updating expenses...
+        </p>
+      )}
     </form>
   );
 }

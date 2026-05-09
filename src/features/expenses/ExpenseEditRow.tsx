@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import type { ExpenseRow } from "@/data/supabase/types";
 import { num } from "@/data/mappers";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
@@ -20,6 +20,8 @@ export function ExpenseEditRow({
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [isRefreshing, startTransition] = useTransition();
+  const isBusy = pending || deleting || isRefreshing;
 
   async function onSave(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -68,7 +70,9 @@ export function ExpenseEditRow({
         return;
       }
       setEditing(false);
-      router.refresh();
+      startTransition(() => {
+        router.refresh();
+      });
     } finally {
       setPending(false);
     }
@@ -88,7 +92,9 @@ export function ExpenseEditRow({
         setError(typeof j.error === "string" ? j.error : "Delete failed");
         return;
       }
-      router.refresh();
+      startTransition(() => {
+        router.refresh();
+      });
     } finally {
       setDeleting(false);
     }
@@ -116,6 +122,7 @@ export function ExpenseEditRow({
           <button
             type="button"
             onClick={() => setEditing(true)}
+            disabled={isBusy}
             className={`text-sm ${appInlineLinkClass}`}
           >
             Edit
@@ -123,12 +130,17 @@ export function ExpenseEditRow({
           <button
             type="button"
             onClick={onDelete}
-            disabled={deleting}
+            disabled={isBusy}
             className="text-red-600 hover:underline disabled:opacity-50"
           >
-            {deleting ? "…" : "Delete"}
+            {deleting ? "…" : isRefreshing ? "Updating…" : "Delete"}
           </button>
         </div>
+        {isRefreshing && (
+          <p className="w-full text-zinc-500" role="status" aria-live="polite">
+            Refreshing list...
+          </p>
+        )}
         {error && (
           <p className="w-full text-red-600" role="alert">
             {error}
@@ -205,10 +217,10 @@ export function ExpenseEditRow({
       <div className="flex gap-2">
         <button
           type="submit"
-          disabled={pending}
+          disabled={isBusy}
           className="rounded bg-zinc-800 px-2 py-1 text-white hover:bg-zinc-700 disabled:opacity-50"
         >
-          {pending ? "Saving…" : "Save"}
+          {pending ? "Saving…" : isRefreshing ? "Updating…" : "Save"}
         </button>
         <button
           type="button"
@@ -216,11 +228,17 @@ export function ExpenseEditRow({
             setEditing(false);
             setError(null);
           }}
+          disabled={isBusy}
           className="rounded border border-zinc-300 px-2 py-1 hover:bg-zinc-50"
         >
           Cancel
         </button>
       </div>
+      {isRefreshing && (
+        <p className="text-zinc-500" role="status" aria-live="polite">
+          Refreshing list...
+        </p>
+      )}
     </form>
   );
 }
