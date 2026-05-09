@@ -42,9 +42,16 @@ function AddCashForm({ currencyCode }: { currencyCode: string }) {
   return (
     <form
       action={formAction}
-      className="rounded-lg border border-dashed border-zinc-300 bg-zinc-50/50 p-3"
+      className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50/80 p-3.5"
     >
-      <p className="mb-2 text-xs font-medium text-zinc-700">Add cash account</p>
+      <div className="mb-2 flex items-center justify-between">
+        <p className="text-xs font-semibold uppercase tracking-wide text-zinc-600">
+          New cash account
+        </p>
+        <span className="rounded-full bg-zinc-200 px-2 py-0.5 text-[10px] font-medium text-zinc-700">
+          Draft
+        </span>
+      </div>
       {state.error && (
         <p className="mb-2 text-sm text-red-600" role="alert">
           {state.error}
@@ -106,9 +113,17 @@ function CashAccountRow({
   };
   const [state, formAction] = useActionState(wrapped, initial);
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-3">
+    <div className="rounded-xl border border-zinc-200 bg-white p-3.5 shadow-sm ring-1 ring-zinc-100">
       <form action={formAction} className="space-y-2">
         <input type="hidden" name="id" value={row.id} />
+        <div className="flex items-center justify-between rounded-lg bg-emerald-50 px-2 py-1">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
+            Saved account
+          </p>
+          <p className="text-xs font-semibold text-zinc-800">
+            {formatCurrency(row.balance, currencyCode)}
+          </p>
+        </div>
         {state.error && (
           <p className="text-sm text-red-600" role="alert">
             {state.error}
@@ -179,9 +194,16 @@ function AddLiabilityForm({ currencyCode }: { currencyCode: string }) {
   return (
     <form
       action={formAction}
-      className="rounded-lg border border-dashed border-zinc-300 bg-zinc-50/50 p-3"
+      className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50/80 p-3.5"
     >
-      <p className="mb-2 text-xs font-medium text-zinc-700">Add debt</p>
+      <div className="mb-2 flex items-center justify-between">
+        <p className="text-xs font-semibold uppercase tracking-wide text-zinc-600">
+          New debt
+        </p>
+        <span className="rounded-full bg-zinc-200 px-2 py-0.5 text-[10px] font-medium text-zinc-700">
+          Draft
+        </span>
+      </div>
       {state.error && (
         <p className="mb-2 text-sm text-red-600" role="alert">
           {state.error}
@@ -243,9 +265,17 @@ function LiabilityRow({
   };
   const [state, formAction] = useActionState(wrapped, initial);
   return (
-    <div className="rounded-lg border border-zinc-200 bg-white p-3">
+    <div className="rounded-xl border border-zinc-200 bg-white p-3.5 shadow-sm ring-1 ring-zinc-100">
       <form action={formAction} className="space-y-2">
         <input type="hidden" name="id" value={row.id} />
+        <div className="flex items-center justify-between rounded-lg bg-rose-50 px-2 py-1">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-rose-700">
+            Saved debt
+          </p>
+          <p className="text-xs font-semibold text-rose-900">
+            {formatCurrency(row.balance, currencyCode)}
+          </p>
+        </div>
         {state.error && (
           <p className="text-sm text-red-600" role="alert">
             {state.error}
@@ -316,7 +346,7 @@ export function CashAndLiabilitiesPanels({
 
   return (
     <div className="grid gap-8 lg:grid-cols-2">
-      <section className="space-y-3">
+      <section className="space-y-3 rounded-2xl border border-zinc-200 bg-zinc-50/30 p-4">
         <div>
           <h2 className="text-sm font-semibold text-zinc-900">Cash accounts</h2>
           <p className="mt-1 text-xs text-zinc-500">
@@ -331,7 +361,7 @@ export function CashAndLiabilitiesPanels({
           </p>
         </div>
         <AddCashForm currencyCode={currencyCode} />
-        <ul className="space-y-2">
+        <ul className="space-y-3">
           {cashRows.map((row) => (
             <li key={row.id}>
               <CashAccountRow row={row} currencyCode={currencyCode} />
@@ -340,7 +370,7 @@ export function CashAndLiabilitiesPanels({
         </ul>
       </section>
 
-      <section className="space-y-3">
+      <section className="space-y-3 rounded-2xl border border-zinc-200 bg-zinc-50/30 p-4">
         <div>
           <h2 className="text-sm font-semibold text-zinc-900">Debts</h2>
           <p className="mt-1 text-xs text-zinc-500">
@@ -355,7 +385,7 @@ export function CashAndLiabilitiesPanels({
           </p>
         </div>
         <AddLiabilityForm currencyCode={currencyCode} />
-        <ul className="space-y-2">
+        <ul className="space-y-3">
           {liabilityRows.map((row) => (
             <li key={row.id}>
               <LiabilityRow row={row} currencyCode={currencyCode} />
