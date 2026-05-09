@@ -329,18 +329,6 @@ export function ProfileIncomeForm({
                 placeholder="Leave empty for manual take-home only"
               />
             </label>
-            {cpfMode && breakdown && (
-              <p className="mt-2 text-xs text-slate-600">
-                Estimated monthly take-home (incl. bonus, net of CPF):{" "}
-                <span className="font-medium text-slate-800">
-                  {currencyCode}{" "}
-                  {breakdown.takeHomeMonthlyEquivalent.toLocaleString("en-SG", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </span>
-              </p>
-            )}
             <label className="text-sm">
               <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
                 Annual bonus ({currencyCode}, optional)
@@ -357,7 +345,7 @@ export function ProfileIncomeForm({
                 placeholder="0"
               />
             </label>
-        <label className="text-sm">
+        <label className="mt-1 text-sm">
           <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
             Birth date
             <InfoTooltip ariaLabel="Why birth date matters">
@@ -488,13 +476,31 @@ export function ProfileIncomeForm({
             <button
               type="button"
               onClick={() => setShowAdvancedSettings((prev) => !prev)}
-              className="flex w-full items-center justify-between rounded-lg px-1 py-1 text-left text-sm font-medium text-slate-700 hover:text-slate-900"
+              className="flex w-fit items-center gap-1.5 rounded-lg px-1 py-1 text-left text-sm font-medium text-slate-700 hover:text-slate-900"
               aria-expanded={showAdvancedSettings}
               aria-controls="advanced-settings"
             >
               <span>Advanced settings (optional)</span>
-              <span className="text-slate-400">
-                {showAdvancedSettings ? "Hide" : "Show"}
+              <span
+                className={`inline-flex text-slate-400 transition-transform ${
+                  showAdvancedSettings ? "rotate-180" : "rotate-0"
+                }`}
+                aria-hidden="true"
+              >
+                <svg
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                >
+                  <path
+                    d="M4 6.5L8 10.5L12 6.5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </span>
             </button>
             <p className="mt-1 px-1 text-xs text-slate-500">
