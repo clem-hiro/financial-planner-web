@@ -3,7 +3,6 @@ import { isFinancialProfileIncomplete } from "@/data/financial-profile";
 import { getDashboardPayload } from "@/data/dashboard";
 import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
-import { IncomeRetirementSectionActions } from "@/features/dashboard/IncomeRetirementSectionActions";
 import { DashboardMonthSection } from "@/features/dashboard/DashboardMonthSection";
 import { DashboardOverviewSection } from "@/features/dashboard/DashboardOverviewSection";
 import { DashboardRetirementSection } from "@/features/dashboard/DashboardRetirementSection";
@@ -11,7 +10,6 @@ import { DashboardSubnav } from "@/features/dashboard/DashboardSubnav";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
-import { PageSection } from "@/ui/PageSection";
 
 export default async function DashboardPage() {
   if (!isSupabaseConfigured()) {
@@ -93,36 +91,21 @@ export default async function DashboardPage() {
         <DashboardSubnav />
       </header>
 
+      {profileIncomplete ? (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
+          Complete your financial profile to improve savings rate and projection
+          quality.
+          <div className="mt-2">
+            <Link href="/setup" className="underline">
+              Complete your financial profile
+            </Link>
+          </div>
+        </div>
+      ) : null}
+
       <section id="overview" className="scroll-mt-28 space-y-3 sm:scroll-mt-32">
         <h2 className="sr-only">Overview</h2>
         <DashboardOverviewSection payload={payload} currency={currency} />
-      </section>
-
-      <section id="profile" className="scroll-mt-28 sm:scroll-mt-32">
-        <PageSection
-          title="Financial profile"
-          actions={<IncomeRetirementSectionActions />}
-        >
-          {profileIncomplete ? (
-            <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
-              Complete your financial profile to improve savings rate and projection quality.
-              <div className="mt-2">
-                <Link href="/setup" className="underline">
-                  Complete your financial profile
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <div className="rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-700">
-              Global assumptions are managed in Financial Profile.
-              <div className="mt-2">
-                <Link href="/setup" className="underline">
-                  Edit financial profile
-                </Link>
-              </div>
-            </div>
-          )}
-        </PageSection>
       </section>
 
       <section id="retirement" className="scroll-mt-28 sm:scroll-mt-32">

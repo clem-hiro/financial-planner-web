@@ -21,18 +21,9 @@ export function DashboardRetirementSection({
       className={`${appEmeraldPanelClass} max-w-full p-4 text-emerald-950 sm:p-5 md:p-6`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-1.5">
-          <h2 className="text-base font-semibold text-emerald-950">
-            Projected wealth
-          </h2>
-          <InfoTooltip
-            variant="emerald"
-            ariaLabel="Open methodology: retirement projection"
-            methodologyTopicId="retirement-fv"
-          >
-            <span className="sr-only">Open methodology for retirement path</span>
-          </InfoTooltip>
-        </div>
+        <h2 className="text-base font-semibold text-emerald-950">
+          Projected wealth
+        </h2>
         <MethodologyOpenLink
           topicId="retirement-fv"
           className="text-xs font-medium text-teal-900 underline decoration-teal-300/60 underline-offset-2 hover:text-teal-950"
@@ -55,25 +46,10 @@ export function DashboardRetirementSection({
             <h3 className="text-sm font-semibold text-emerald-900">
               Combined assets by age
             </h3>
-            <p className="flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-emerald-200/60 bg-white/85 px-3 py-2 text-xs leading-snug text-emerald-900 shadow-sm">
-              <span className="text-emerald-900/95">
-                Stacked investments, cash, CPF (same as blue chart), and vehicles; net
-                line subtracts <strong>Cash &amp; liabilities</strong> debts only (not
-                housing loans).
-              </span>
-              <InfoTooltip
-                variant="emerald"
-                ariaLabel="Open methodology: projection"
-                methodologyTopicId="retirement-fv"
-              >
-                <span className="sr-only">Projection methodology</span>
-              </InfoTooltip>
-              <MethodologyOpenLink
-                topicId="retirement-fv"
-                className="shrink-0 text-xs font-medium text-emerald-900 underline decoration-emerald-400/60 underline-offset-2"
-              >
-                Full detail →
-              </MethodologyOpenLink>
+            <p className="rounded-lg border border-emerald-200/60 bg-white/85 px-3 py-2 text-xs leading-snug text-emerald-900/95 shadow-sm">
+              Stacked investments, cash, CPF (same as blue chart), and vehicles; net
+              line subtracts <strong>Cash &amp; liabilities</strong> debts only (not
+              housing loans).
             </p>
           </div>
           <div className="mt-3">

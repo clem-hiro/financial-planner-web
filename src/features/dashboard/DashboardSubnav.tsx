@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 
 const items = [
   { id: "overview", label: "Overview" },
-  { id: "profile", label: "Financial profile" },
   { id: "retirement", label: "Retirement" },
   { id: "month", label: "This month" },
 ] as const;
