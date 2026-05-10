@@ -15,6 +15,15 @@ import { listFinancialGoals } from "@/data/repositories/goals";
 import { getProfileById } from "@/data/repositories/profiles";
 import { listVehicles } from "@/data/repositories/vehicles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
+import type {
+  CashAccountRow,
+  CpfBalanceRow,
+  FinancialGoalRow,
+  HousingLoanRow,
+  InvestmentRow,
+  LiabilityRow,
+  VehicleRow,
+} from "@/data/supabase/types";
 import { ProfileIncomeForm } from "@/features/dashboard/ProfileIncomeForm";
 import {
   CashAndLiabilitiesPanels,
@@ -85,25 +94,6 @@ export default async function SetupPage({ searchParams }: PageProps) {
     );
   }
 
-  const [
-    investments,
-    cashAccounts,
-    liabilityRows,
-    profile,
-    vehicleRows,
-    cpfRow,
-    housingLoans,
-    goals,
-  ] = await Promise.all([
-    listInvestments(supabase, user.id),
-    listCashAccounts(supabase, user.id),
-    listLiabilities(supabase, user.id),
-    getProfileById(supabase, user.id),
-    listVehicles(supabase, user.id),
-    getCpfBalanceByUserId(supabase, user.id),
-    listHousingLoans(supabase, user.id),
-    listFinancialGoals(supabase, user.id),
-  ]);
   const sp = await searchParams;
   const activeTab: SetupTabId = isSetupTabId(sp.tab) ? sp.tab : "profile";
   const budgetMonth =
@@ -118,10 +108,52 @@ export default async function SetupPage({ searchParams }: PageProps) {
       ? budgetYearParsed
       : yearFromYearMonth(budgetMonth);
 
-  const income = profileMonthlyIncome(profile);
-  const gross = profileMonthlyGross(profile);
-  const cpfBand = profileCpfAgeBand(profile);
-  const currency = profile?.base_currency ?? DEFAULT_BASE_CURRENCY;
+  const needProfile =
+    activeTab === "profile" ||
+    activeTab === "add-account" ||
+    activeTab === "cash-liabilities" ||
+    activeTab === "housing-loans" ||
+    activeTab === "vehicles" ||
+    activeTab === "goals";
+
+  const [
+    financialProfile,
+    investments,
+    cashAccounts,
+    liabilityRows,
+    vehicleRows,
+    cpfRow,
+    housingLoans,
+    goals,
+  ] = await Promise.all([
+    needProfile ? getProfileById(supabase, user.id) : Promise.resolve(null),
+    activeTab === "add-account" || activeTab === "goals"
+      ? listInvestments(supabase, user.id)
+      : Promise.resolve([] as InvestmentRow[]),
+    activeTab === "cash-liabilities"
+      ? listCashAccounts(supabase, user.id)
+      : Promise.resolve([] as CashAccountRow[]),
+    activeTab === "cash-liabilities"
+      ? listLiabilities(supabase, user.id)
+      : Promise.resolve([] as LiabilityRow[]),
+    activeTab === "vehicles"
+      ? listVehicles(supabase, user.id)
+      : Promise.resolve([] as VehicleRow[]),
+    activeTab === "cpf"
+      ? getCpfBalanceByUserId(supabase, user.id)
+      : Promise.resolve(null),
+    activeTab === "housing-loans"
+      ? listHousingLoans(supabase, user.id)
+      : Promise.resolve([] as HousingLoanRow[]),
+    activeTab === "goals"
+      ? listFinancialGoals(supabase, user.id)
+      : Promise.resolve([] as FinancialGoalRow[]),
+  ]);
+
+  const income = profileMonthlyIncome(financialProfile);
+  const gross = profileMonthlyGross(financialProfile);
+  const cpfBand = profileCpfAgeBand(financialProfile);
+  const currency = financialProfile?.base_currency ?? DEFAULT_BASE_CURRENCY;
   const investmentBalanceRows: InvestmentBalanceRow[] = investments.map((i) => ({
     id: i.id,
     name: i.name,
@@ -165,44 +197,44 @@ export default async function SetupPage({ searchParams }: PageProps) {
           <PageSection id="profile-assumptions" title="Profile basics">
             <div className="space-y-6">
               <ProfileIncomeForm
-                key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(profile)}-${profile?.annual_bonus ?? ""}-${profile?.birth_date ?? ""}-${profile?.target_retirement_age ?? ""}-${profile?.retirement_monthly_spend_goal ?? ""}-${profile?.retirement_dividend_yield_annual ?? ""}`}
+                key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.target_retirement_age ?? ""}-${financialProfile?.retirement_monthly_spend_goal ?? ""}-${financialProfile?.retirement_dividend_yield_annual ?? ""}`}
                 initialIncome={income}
                 initialGross={gross}
                 initialCpfAgeBand={cpfBand}
                 initialAnnualBonus={
-                  profile?.annual_bonus != null &&
-                  String(profile.annual_bonus).trim() !== ""
-                    ? num(profile.annual_bonus)
+                  financialProfile?.annual_bonus != null &&
+                  String(financialProfile.annual_bonus).trim() !== ""
+                    ? num(financialProfile.annual_bonus)
                     : null
                 }
                 initialAnnualSalaryGrowthPercent={
-                  profile?.annual_salary_growth_nominal != null &&
-                  String(profile.annual_salary_growth_nominal).trim() !== ""
-                    ? num(profile.annual_salary_growth_nominal) * 100
+                  financialProfile?.annual_salary_growth_nominal != null &&
+                  String(financialProfile.annual_salary_growth_nominal).trim() !== ""
+                    ? num(financialProfile.annual_salary_growth_nominal) * 100
                     : null
                 }
-                initialBirthDate={profile?.birth_date ?? null}
+                initialBirthDate={financialProfile?.birth_date ?? null}
                 initialTargetRetirementAge={
-                  profile?.target_retirement_age != null
-                    ? Number(profile.target_retirement_age)
+                  financialProfile?.target_retirement_age != null
+                    ? Number(financialProfile.target_retirement_age)
                     : null
                 }
                 initialRetirementMonthlySpendGoal={
-                  profile?.retirement_monthly_spend_goal != null &&
-                  String(profile.retirement_monthly_spend_goal).trim() !== ""
-                    ? num(profile.retirement_monthly_spend_goal)
+                  financialProfile?.retirement_monthly_spend_goal != null &&
+                  String(financialProfile.retirement_monthly_spend_goal).trim() !== ""
+                    ? num(financialProfile.retirement_monthly_spend_goal)
                     : null
                 }
                 initialRetirementDividendYieldPercent={
-                  profile?.retirement_dividend_yield_annual != null &&
-                  String(profile.retirement_dividend_yield_annual).trim() !== ""
-                    ? num(profile.retirement_dividend_yield_annual) * 100
+                  financialProfile?.retirement_dividend_yield_annual != null &&
+                  String(financialProfile.retirement_dividend_yield_annual).trim() !== ""
+                    ? num(financialProfile.retirement_dividend_yield_annual) * 100
                     : null
                 }
                 initialRetirementWithdrawalRatePercent={
-                  profile?.retirement_withdrawal_rate_annual != null &&
-                  String(profile.retirement_withdrawal_rate_annual).trim() !== ""
-                    ? num(profile.retirement_withdrawal_rate_annual) * 100
+                  financialProfile?.retirement_withdrawal_rate_annual != null &&
+                  String(financialProfile.retirement_withdrawal_rate_annual).trim() !== ""
+                    ? num(financialProfile.retirement_withdrawal_rate_annual) * 100
                     : null
                 }
                 cpfYearMonth={formatYearMonth(new Date())}

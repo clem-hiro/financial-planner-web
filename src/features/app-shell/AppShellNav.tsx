@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { lockBodyScroll } from "@/lib/body-scroll-lock";
@@ -24,7 +24,7 @@ const primaryRoutes = [
 
 const secondaryRoutes: readonly NavRoute[] = [
   {
-    href: "/spending",
+    href: "/expenses",
     label: "Spending",
     activeMatch: (pathname) =>
       pathname === "/spending" ||
@@ -47,9 +47,18 @@ const secondaryRoutes: readonly NavRoute[] = [
   },
 ] as const;
 
+const prefetchMainAppRoutes = ["/dashboard", "/expenses", "/setup"] as const;
+
 export function AppShellNav() {
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    for (const href of prefetchMainAppRoutes) {
+      router.prefetch(href);
+    }
+  }, [router]);
 
   useEffect(() => {
     if (!mobileOpen) return;
