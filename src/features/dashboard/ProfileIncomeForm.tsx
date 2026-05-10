@@ -124,9 +124,11 @@ export function ProfileIncomeForm({
         )
       : ""
   );
+  const [showCpfSalaryPath, setShowCpfSalaryPath] = useState(
+    () => salaryGrowthPctRaw.trim() !== ""
+  );
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(() => {
     return (
-      salaryGrowthPctRaw.trim() !== "" ||
       retDividendYieldPercentRaw.trim() !== "" ||
       retirementWithdrawalPctRaw.trim() !== ""
     );
@@ -213,6 +215,21 @@ export function ProfileIncomeForm({
       patchBody.annual_bonus = annualBonus;
       patchBody.cpf_age_band = band;
       patchBody.monthly_income = breakdown.takeHomeMonthlyEquivalent;
+
+      const growthTrim = salaryGrowthPctRaw.trim();
+      let annual_salary_growth_nominal: number | null = null;
+      if (growthTrim !== "") {
+        const p = Number(growthTrim);
+        if (!Number.isFinite(p) || p < 0 || p > 25) {
+          setStatus(
+            "Annual salary growth must be between 0% and 25%, or leave blank for no growth in the CPF chart."
+          );
+          setSubmitting(false);
+          return;
+        }
+        annual_salary_growth_nominal = p / 100;
+      }
+      patchBody.annual_salary_growth_nominal = annual_salary_growth_nominal;
     } else {
       const retTrim = retAgeRaw.trim();
       let targetRetirementAge: number | null = null;
@@ -256,20 +273,6 @@ export function ProfileIncomeForm({
         retirement_dividend_yield_annual = p / 100;
       }
 
-      const growthTrim = salaryGrowthPctRaw.trim();
-      let annual_salary_growth_nominal: number | null = null;
-      if (growthTrim !== "") {
-        const p = Number(growthTrim);
-        if (!Number.isFinite(p) || p < 0 || p > 25) {
-          setStatus(
-            "Annual salary growth must be between 0% and 25%, or leave blank for no growth in the CPF chart."
-          );
-          setSubmitting(false);
-          return;
-        }
-        annual_salary_growth_nominal = p / 100;
-      }
-
       const withdrawalTrim = retirementWithdrawalPctRaw.trim();
       let retirement_withdrawal_rate_annual: number | null = null;
       if (withdrawalTrim !== "") {
@@ -287,7 +290,6 @@ export function ProfileIncomeForm({
       patchBody.target_retirement_age = targetRetirementAge;
       patchBody.retirement_monthly_spend_goal = retirement_monthly_spend_goal;
       patchBody.retirement_dividend_yield_annual = retirement_dividend_yield_annual;
-      patchBody.annual_salary_growth_nominal = annual_salary_growth_nominal;
       patchBody.retirement_withdrawal_rate_annual = retirement_withdrawal_rate_annual;
     }
 
@@ -333,46 +335,48 @@ export function ProfileIncomeForm({
           </p>
         </div>
         <div className="space-y-4">
-            <label className="text-sm">
-              <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
-                Monthly gross salary ({currencyCode})
-                <InfoTooltip ariaLabel="When to use gross salary">
-                  <p className="text-[11px] leading-snug">
-                    Uses <strong>employee</strong> CPF on ordinary wages up to the OW
-                    ceiling for{" "}
-                    <span className="font-mono">{cpfYearMonth}</span>. Excludes employer
-                    CPF, tax, and other deductions.
-                  </p>
-                </InfoTooltip>
-              </span>
-              <input
-                name="monthly_gross_salary"
-                type="number"
-                min={0}
-                step="0.01"
-                className={fpInputClass}
-                value={grossRaw}
-                onChange={(e) => setGrossRaw(e.target.value)}
-                placeholder="Leave empty for manual take-home only"
-              />
-            </label>
-            <label className="text-sm">
-              <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
-                Annual bonus ({currencyCode}, optional)
-              </span>
-              <input
-                name="annual_bonus"
-                type="number"
-                min={0}
-                max={10_000_000}
-                step="0.01"
-                className={fpInputClass}
-                value={annualBonusRaw}
-                onChange={(e) => setAnnualBonusRaw(e.target.value)}
-                placeholder="0"
-              />
-            </label>
-        <label className="mt-1 text-sm">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <label className="text-sm sm:min-w-0">
+                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+                  Monthly gross salary ({currencyCode})
+                  <InfoTooltip ariaLabel="When to use gross salary">
+                    <p className="text-[11px] leading-snug">
+                      Uses <strong>employee</strong> CPF on ordinary wages up to the OW
+                      ceiling for{" "}
+                      <span className="font-mono">{cpfYearMonth}</span>. Excludes employer
+                      CPF, tax, and other deductions.
+                    </p>
+                  </InfoTooltip>
+                </span>
+                <input
+                  name="monthly_gross_salary"
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  className={fpInputClass}
+                  value={grossRaw}
+                  onChange={(e) => setGrossRaw(e.target.value)}
+                  placeholder="Leave empty for manual take-home only"
+                />
+              </label>
+              <label className="text-sm sm:min-w-0">
+                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+                  Annual bonus ({currencyCode}, optional)
+                </span>
+                <input
+                  name="annual_bonus"
+                  type="number"
+                  min={0}
+                  max={10_000_000}
+                  step="0.01"
+                  className={fpInputClass}
+                  value={annualBonusRaw}
+                  onChange={(e) => setAnnualBonusRaw(e.target.value)}
+                  placeholder="0"
+                />
+              </label>
+            </div>
+        <label className="pt-6 text-sm sm:pt-8">
           <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
             Birth date
             <InfoTooltip ariaLabel="Why birth date matters">
@@ -390,6 +394,84 @@ export function ProfileIncomeForm({
             onChange={(e) => setBirthDate(e.target.value)}
           />
         </label>
+
+        <div className="rounded-xl border border-slate-200 bg-linear-to-r from-slate-50/90 to-sky-50/40 p-3.5">
+          <button
+            type="button"
+            onClick={() => setShowCpfSalaryPath((prev) => !prev)}
+            className="flex w-fit items-center gap-1.5 rounded-lg px-1 py-1 text-left text-sm font-medium text-slate-700 hover:text-slate-900"
+            aria-expanded={showCpfSalaryPath}
+            aria-controls="income-cpf-projection"
+          >
+            <span>CPF chart: salary path (optional)</span>
+            <span
+              className={`inline-flex text-slate-400 transition-transform ${
+                showCpfSalaryPath ? "rotate-180" : "rotate-0"
+              }`}
+              aria-hidden="true"
+            >
+              <svg
+                viewBox="0 0 16 16"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+              >
+                <path
+                  d="M4 6.5L8 10.5L12 6.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </span>
+          </button>
+          <p className="mt-1 px-1 text-xs text-slate-500">
+            Only affects projected CPF inflows when gross salary is set—not net worth
+            today.
+          </p>
+          {showCpfSalaryPath && (
+            <div id="income-cpf-projection" className="mt-3 max-w-md">
+              <label className="text-sm sm:min-w-0">
+                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+                  Annual salary growth (nominal %)
+                  <InfoTooltip ariaLabel="How salary growth is used">
+                    <p>
+                      Each <strong>January</strong> in the CPF projection, gross is
+                      multiplied by <strong>(1 + this rate)</strong>. The first
+                      projection month always uses your entered gross as-is.
+                    </p>
+                    <p className="mt-2 text-slate-400">
+                      Not financial advice. Many plans stress-test at 0% and use a
+                      modest nominal rate (e.g. 0–3%) for a middle case. Does not
+                      change current net worth—only forward CPF inflows.
+                    </p>
+                    <p className="mt-2 border-t border-zinc-600/40 pt-2 text-[11px] text-slate-300">
+                      Blank = no raises in the CPF chart (only when gross is set).{" "}
+                      <MethodologyOpenLink
+                        topicId="cpf-projection"
+                        className={appInlineLinkClass}
+                      >
+                        Full CPF rules
+                      </MethodologyOpenLink>
+                    </p>
+                  </InfoTooltip>
+                </span>
+                <input
+                  name="annual_salary_growth_pct"
+                  type="number"
+                  min={0}
+                  max={25}
+                  step={0.1}
+                  className={fpInputNarrowClass}
+                  value={salaryGrowthPctRaw}
+                  onChange={(e) => setSalaryGrowthPctRaw(e.target.value)}
+                  placeholder="0 = flat gross"
+                />
+              </label>
+            </div>
+          )}
+        </div>
         </div>
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
           {status && (
@@ -416,9 +498,9 @@ export function ProfileIncomeForm({
               </p>
               <InfoTooltip ariaLabel="How retirement fields are used">
                 <p className="text-[11px] leading-snug">
-                  <strong>Retire at</strong>, <strong>spend goal</strong>, and{" "}
-                  <strong>dividend %</strong> feed the retirement section below
-                  on this page. Fill what you know.
+                  <strong>Retire at</strong>, <strong>spend goal</strong>,{" "}
+                  <strong>dividend %</strong>, and <strong>withdrawal %</strong>{" "}
+                  feed the retirement checks on your dashboard. Fill what you know.
                 </p>
                 <p className="mt-2 border-t border-zinc-600/40 pt-2 text-[11px] text-slate-300">
                   <MethodologyOpenLink
@@ -535,48 +617,12 @@ export function ProfileIncomeForm({
               </span>
             </button>
             <p className="mt-1 px-1 text-xs text-slate-500">
-              Add these only if you want more personalized projections.
+              Optional lenses on retirement income from investments—not CPF salary
+              path (that&apos;s under <strong>Income &amp; CPF</strong>).
             </p>
 
             {showAdvancedSettings && (
-              <div id="advanced-settings" className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                <label className="text-sm sm:min-w-0">
-                  <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
-                    Annual salary growth (nominal %)
-                    <InfoTooltip ariaLabel="How salary growth is used">
-                      <p>
-                        Each <strong>January</strong> in the CPF projection, gross
-                        is multiplied by <strong>(1 + this rate)</strong>. The first
-                        projection month always uses your entered gross as-is.
-                      </p>
-                      <p className="mt-2 text-slate-400">
-                        Not financial advice. Many plans stress-test at 0% and use
-                        a modest nominal rate (e.g. 0–3%) for a middle case. Does
-                        not change current net worth-only forward CPF inflows.
-                      </p>
-                      <p className="mt-2 border-t border-zinc-600/40 pt-2 text-[11px] text-slate-300">
-                        Blank = no raises in the CPF chart (only when gross is set).{" "}
-                        <MethodologyOpenLink
-                          topicId="cpf-projection"
-                          className={appInlineLinkClass}
-                        >
-                          Full CPF rules
-                        </MethodologyOpenLink>
-                      </p>
-                    </InfoTooltip>
-                  </span>
-                  <input
-                    name="annual_salary_growth_pct"
-                    type="number"
-                    min={0}
-                    max={25}
-                    step={0.1}
-                    className={fpInputNarrowClass}
-                    value={salaryGrowthPctRaw}
-                    onChange={(e) => setSalaryGrowthPctRaw(e.target.value)}
-                    placeholder="0 = flat gross"
-                  />
-                </label>
+              <div id="advanced-settings" className="mt-3 grid gap-4 sm:grid-cols-2">
                 <label className="text-sm sm:min-w-0">
                 <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
                   Dividend yield (% per year)
