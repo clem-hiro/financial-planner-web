@@ -10,6 +10,7 @@ import {
   useMethodology,
 } from "@/features/help/methodology-context";
 import { signOutAction } from "@/server/actions";
+import { ScrollToTopButton } from "@/ui/ScrollToTopButton";
 
 const ghostBtn =
   "inline-flex min-h-10 items-center justify-center rounded-full px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 sm:min-h-0 sm:py-1.5";
@@ -84,6 +85,7 @@ export function AppShell({
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-8 sm:py-14 lg:py-16">
           {children}
         </main>
+        <ScrollToTopButton />
       </div>
       <MethodologySheet />
     </MethodologyProvider>

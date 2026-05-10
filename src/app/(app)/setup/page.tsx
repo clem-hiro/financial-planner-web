@@ -35,8 +35,6 @@ import { formatYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { PageSection } from "@/ui/PageSection";
-import { ScrollToTopButton } from "@/ui/ScrollToTopButton";
-
 const setupTabs = [
   { id: "profile", label: "Profile" },
   { id: "add-account", label: "Investments" },
@@ -292,7 +290,6 @@ export default async function SetupPage({ searchParams }: PageProps) {
           },
         ]}
       />
-      <ScrollToTopButton />
     </div>
   );
 }
