@@ -64,6 +64,7 @@ export async function POST(request: Request) {
     });
     revalidatePath("/expenses");
     revalidatePath("/budget");
+    revalidatePath("/setup");
     revalidatePath("/dashboard");
     return NextResponse.json(row, { status: 201 });
   } catch (e) {

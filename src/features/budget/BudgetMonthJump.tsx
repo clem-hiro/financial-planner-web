@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { yearFromYearMonth } from "@/lib/dates";
+import { setupBudgetPath } from "@/lib/setup-urls";
 
 type Props = {
   month: string;
@@ -27,7 +28,7 @@ export function BudgetMonthJump({ month }: Props) {
           if (!v) return;
           const y = yearFromYearMonth(v);
           startTransition(() => {
-            router.push(`/budget?month=${encodeURIComponent(v)}&year=${y}`);
+            router.push(setupBudgetPath(v, y));
           });
         }}
       />

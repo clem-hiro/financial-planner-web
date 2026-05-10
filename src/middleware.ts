@@ -32,9 +32,10 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser();
   const pathname = request.nextUrl.pathname;
   const isOnboardingRoute = pathname.startsWith("/onboarding");
-  const isAppRoute = /^\/(dashboard|expenses|budget|balances|goals|financial-profile|onboarding)/.test(
-    pathname
-  );
+  const isAppRoute =
+    /^\/(dashboard|expenses|budget|setup|balances|goals|financial-profile|onboarding)/.test(
+      pathname
+    );
   if (user && isAppRoute) {
     const { data: profile } = await supabase
       .from("financial_profiles")

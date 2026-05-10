@@ -30,9 +30,7 @@ const secondaryRoutes: readonly NavRoute[] = [
       pathname === "/spending" ||
       pathname.startsWith("/spending/") ||
       pathname === "/expenses" ||
-      pathname.startsWith("/expenses/") ||
-      pathname === "/budget" ||
-      pathname.startsWith("/budget/"),
+      pathname.startsWith("/expenses/"),
   },
   {
     href: "/setup",
@@ -43,7 +41,9 @@ const secondaryRoutes: readonly NavRoute[] = [
       pathname === "/balances" ||
       pathname.startsWith("/balances/") ||
       pathname === "/financial-profile" ||
-      pathname.startsWith("/financial-profile/"),
+      pathname.startsWith("/financial-profile/") ||
+      pathname === "/budget" ||
+      pathname.startsWith("/budget/"),
   },
 ] as const;
 

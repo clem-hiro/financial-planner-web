@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { DashboardPayload } from "@/data/dashboard";
+import { yearFromYearMonth } from "@/lib/dates";
+import { setupBudgetPath } from "@/lib/setup-urls";
 import { ProjectionMiniChart } from "@/features/dashboard/ProjectionMiniChart";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { SpendGuidancePanel } from "@/features/spend/SpendGuidancePanel";
@@ -145,7 +147,7 @@ export function DashboardMonthSection({
         }
         actions={
           <Link
-            href={`/budget?month=${encodeURIComponent(payload.month)}`}
+            href={setupBudgetPath(payload.month, yearFromYearMonth(payload.month))}
             className={`text-xs ${appInlineLinkClass}`}
           >
             Manage budgets
@@ -183,7 +185,7 @@ export function DashboardMonthSection({
             {payload.monthlyBudgetTotals.budget > 0 ||
             payload.monthlyBudgetTotals.spent > 0
               ? "No single category is over its own budget cap (top overs would appear here)."
-              : "No monthly budget activity yet—add lines on the budget page."}
+              : "No monthly budget activity yet—add lines under Setup → Budget."}
           </p>
         ) : (
           <ul className="mt-3 space-y-2 text-sm">

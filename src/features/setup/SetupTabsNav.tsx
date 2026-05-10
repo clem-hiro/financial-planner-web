@@ -1,6 +1,4 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   appTabPillActiveClass,
   appTabPillClass,
@@ -16,40 +14,33 @@ type SetupTab = {
 export function SetupTabsNav({
   tabs,
   activeTab,
-  onSelectTab,
+  buildHref,
 }: {
   tabs: readonly SetupTab[];
   activeTab: string;
-  onSelectTab: (tabId: string) => void;
+  buildHref: (tabId: string) => string;
 }) {
-  const [optimisticTab, setOptimisticTab] = useState(activeTab);
-  const shownTab = optimisticTab;
-
-  useEffect(() => {
-    setOptimisticTab(activeTab);
-  }, [activeTab]);
-
   return (
     <nav aria-label="Setup sections" className="sticky top-2 z-20">
       <div className="-mx-1 overflow-x-auto px-1 pb-0.5 scroll-smooth sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
         <div className={appTabRailClass}>
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => {
-                if (tab.id === shownTab) return;
-                setOptimisticTab(tab.id);
-                onSelectTab(tab.id);
-              }}
-              aria-current={shownTab === tab.id ? "page" : undefined}
-              className={`${appTabPillClass} ${
-                shownTab === tab.id ? appTabPillActiveClass : appTabPillInactiveClass
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
+          {tabs.map((tab) => {
+            const href = buildHref(tab.id);
+            const isActive = activeTab === tab.id;
+            return (
+              <Link
+                key={tab.id}
+                href={href}
+                scroll={false}
+                aria-current={isActive ? "page" : undefined}
+                className={`${appTabPillClass} ${
+                  isActive ? appTabPillActiveClass : appTabPillInactiveClass
+                }`}
+              >
+                {tab.label}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </nav>

@@ -175,7 +175,7 @@ export function DashboardOverviewSection({
             Log / edit
           </Link>
           {" · "}
-          <Link href="/budget" className={appInlineLinkClass}>
+          <Link href="/setup?tab=budget" className={appInlineLinkClass}>
             Budget
           </Link>
         </p>

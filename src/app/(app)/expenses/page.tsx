@@ -15,7 +15,6 @@ import { CategoryBarChart } from "@/features/expenses/CategoryBarChart";
 import { ExpenseEditRow } from "@/features/expenses/ExpenseEditRow";
 import { ExpenseForm } from "@/features/expenses/ExpenseForm";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
-import { SpendingRouteNav } from "@/features/spend/SpendingRouteNav";
 import { SpendGuidancePanel } from "@/features/spend/SpendGuidancePanel";
 import { isMonthlyBudgetLineApplicable, normalizeCategory } from "@/domain/finance/budget";
 import {
@@ -29,6 +28,7 @@ import {
   parseYearMonth,
   yearFromYearMonth,
 } from "@/lib/dates";
+import { setupBudgetPath } from "@/lib/setup-urls";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { isSupabaseConfigured } from "@/lib/env";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
@@ -152,18 +152,14 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-zinc-900">Expenses</h1>
-          <p className="mt-1 text-sm text-zinc-500">
-            Month <span className="font-medium text-zinc-800">{month}</span>
-            {categoryPrefill && (
-              <>
-                {" "}
-                · category{" "}
-                <span className="font-medium text-zinc-800">
-                  {categoryPrefill}
-                </span>
-              </>
-            )}
-          </p>
+          {categoryPrefill ? (
+            <p className="mt-1 text-sm text-zinc-500">
+              Category{" "}
+              <span className="font-medium text-zinc-800">
+                {categoryPrefill}
+              </span>
+            </p>
+          ) : null}
           <p className="mt-1 max-w-xl text-xs text-zinc-500">
             Custom categories first (any name, multiple entries). Budget
             shortcuts below are optional for planned lines.
@@ -177,13 +173,14 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
             </MethodologyOpenLink>
           </p>
         </div>
-        <div className="flex flex-wrap gap-3 text-sm">
+        <div className="flex flex-wrap items-center gap-3 text-sm">
           <Link
             className="text-zinc-600 hover:text-zinc-900"
             href={`/expenses?month=${prevMonth}${catQs}`}
           >
             Previous month
           </Link>
+          <span className="font-medium text-zinc-800">{month}</span>
           <Link
             className="text-zinc-600 hover:text-zinc-900"
             href={`/expenses?month=${nextMonth}${catQs}`}
@@ -194,12 +191,14 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
       </div>
 
       <div className="space-y-4">
-        <SpendingRouteNav
-          active="expenses"
-          month={month}
-          budgetCalendarYear={yearFromYearMonth(month)}
-          category={categoryPrefill}
-        />
+        <p className="text-sm text-zinc-600">
+          <Link
+            href={setupBudgetPath(month, yearFromYearMonth(month))}
+            className={appInlineLinkClass}
+          >
+            Edit budget lines (Setup)
+          </Link>
+        </p>
         <nav aria-label="On this page" className="sm:mx-0">
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
             On this page

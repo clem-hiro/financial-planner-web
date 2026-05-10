@@ -893,6 +893,7 @@ export async function createBudgetLineAction(
   }
 
   revalidatePath("/budget");
+  revalidatePath("/setup");
   revalidatePath("/dashboard");
   return { error: null };
 }
@@ -922,6 +923,7 @@ export async function updateBudgetLineAmountAction(
   }
 
   revalidatePath("/budget");
+  revalidatePath("/setup");
   revalidatePath("/dashboard");
   return { error: null };
 }
@@ -943,6 +945,7 @@ export async function deleteBudgetLineAction(formData: FormData) {
   }
 
   revalidatePath("/budget");
+  revalidatePath("/setup");
   revalidatePath("/dashboard");
 }
 
@@ -978,6 +981,7 @@ export async function setBudgetMonthOverrideAction(
   }
 
   revalidatePath("/budget");
+  revalidatePath("/setup");
   revalidatePath("/dashboard");
   return { error: null };
 }
@@ -1005,6 +1009,7 @@ export async function clearBudgetMonthOverrideAction(formData: FormData) {
   }
 
   revalidatePath("/budget");
+  revalidatePath("/setup");
   revalidatePath("/dashboard");
 }
 
@@ -1061,6 +1066,7 @@ export async function updateBudgetLineScheduleAction(
   }
 
   revalidatePath("/budget");
+  revalidatePath("/setup");
   revalidatePath("/dashboard");
   return { error: null };
 }
