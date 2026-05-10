@@ -3,6 +3,11 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { normalizeCategory } from "@/domain/finance/budget";
+import {
+  fpInputClass,
+  fpPrimaryButtonClass,
+  fpSelectClass,
+} from "@/ui/input-classes";
 
 export function ExpenseForm({
   defaultDate,
@@ -84,12 +89,12 @@ export function ExpenseForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4"
+      className="space-y-3 rounded-2xl border border-slate-200/90 bg-linear-to-br from-white via-white to-sky-50/35 p-4 shadow-sm"
     >
-      <h2 className="text-sm font-semibold text-zinc-900">
+      <h2 className="text-sm font-semibold text-slate-900">
         Custom expenses
       </h2>
-      <p className="text-xs text-zinc-500">
+      <p className="rounded-xl border border-emerald-100/80 bg-emerald-50/60 px-3 py-2 text-xs leading-relaxed text-slate-600">
         Use <strong>any category name</strong> you want—gifts, one-offs, ad-hoc
         spend, etc. You can add <strong>as many rows as you need</strong> for
         categories that are <strong>not</strong> on your monthly budget, or
@@ -104,50 +109,50 @@ export function ExpenseForm({
       )}
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm">
-          <span className="mb-1 block text-zinc-600">Amount</span>
+          <span className="mb-1 block text-slate-600">Amount</span>
           <input
             name="amount"
             type="number"
             min="0.01"
             step="0.01"
             required
-            className="w-full rounded border border-zinc-300 px-2 py-1.5"
+            className={`${fpInputClass} max-w-none`}
           />
         </label>
         <label className="text-sm">
-          <span className="mb-1 block text-zinc-600">Category</span>
+          <span className="mb-1 block text-slate-600">Category</span>
           <input
             name="category"
             type="text"
             required
             defaultValue={defaultCategory ?? ""}
-            className="w-full rounded border border-zinc-300 px-2 py-1.5"
+            className={`${fpInputClass} max-w-none`}
             placeholder="e.g. Wedding gift, Vet bill, Cash spending"
           />
         </label>
         <label className="text-sm">
-          <span className="mb-1 block text-zinc-600">Date</span>
+          <span className="mb-1 block text-slate-600">Date</span>
           <input
             name="spent_at"
             type="date"
             defaultValue={defaultDate}
             required
-            className="w-full rounded border border-zinc-300 px-2 py-1.5"
+            className={`${fpInputClass} max-w-none`}
           />
         </label>
         <label className="text-sm sm:col-span-2">
-          <span className="mb-1 block text-zinc-600">Note (optional)</span>
+          <span className="mb-1 block text-slate-600">Note (optional)</span>
           <input
             name="note"
             type="text"
-            className="w-full rounded border border-zinc-300 px-2 py-1.5"
+            className="w-full rounded-xl border border-slate-200/90 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition-[border-color,box-shadow,background-color] placeholder:text-slate-400 focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/15"
           />
         </label>
         <label className="text-sm sm:col-span-2">
-          <span className="mb-1 block text-zinc-600">Spend type</span>
+          <span className="mb-1 block text-slate-600">Spend type</span>
           <select
             name="spend_period"
-            className="w-full rounded border border-zinc-300 px-2 py-1.5"
+            className={`${fpSelectClass} max-w-none`}
             defaultValue="monthly"
           >
             <option value="monthly">
@@ -162,12 +167,12 @@ export function ExpenseForm({
       <button
         type="submit"
         disabled={isBusy}
-        className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
+        className={`${fpPrimaryButtonClass} disabled:opacity-60`}
       >
         {isBusy ? "Saving…" : "Add custom expense"}
       </button>
       {isBusy && (
-        <p className="text-xs text-zinc-500" role="status" aria-live="polite">
+        <p className="text-xs text-slate-500" role="status" aria-live="polite">
           Updating expenses...
         </p>
       )}

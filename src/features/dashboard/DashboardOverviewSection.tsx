@@ -125,7 +125,7 @@ export function DashboardOverviewSection({
           {payload.investmentSummary.count === 1 ? "" : "s"}
         </p>
       </div>
-      <div className={metricCard}>
+      <div className={`${metricCard} bg-linear-to-br from-white via-white to-sky-50/45`}>
         <div className="flex flex-wrap items-center gap-1">
           <p className={labelClass}>Savings rate</p>
           <InfoTooltip
@@ -140,7 +140,7 @@ export function DashboardOverviewSection({
           Take-home − spend basis − planned goals ({currency})
         </p>
       </div>
-      <div className={`${metricCard} sm:col-span-2 lg:col-span-1`}>
+      <div className={`${metricCard} bg-linear-to-br from-white via-white to-amber-50/35 sm:col-span-2 lg:col-span-1`}>
         <div className="flex flex-wrap items-center gap-1">
           <p className={labelClass}>Spend basis (this month)</p>
           <InfoTooltip

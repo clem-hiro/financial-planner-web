@@ -69,7 +69,7 @@ export function DashboardSubnav() {
         data-dashboard-subnav-scroll
         className="-mx-1 overflow-x-auto px-1 pb-0.5 scroll-smooth sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0"
       >
-        <ul className="inline-flex min-w-max snap-x snap-mandatory gap-1 rounded-xl border border-slate-200/90 bg-white p-1 shadow-sm sm:min-w-0 sm:max-w-full sm:flex-wrap">
+        <ul className="inline-flex min-w-max snap-x snap-mandatory gap-1 rounded-xl border border-slate-200/90 bg-linear-to-r from-white via-slate-50/80 to-sky-50/85 p-1 shadow-sm sm:min-w-0 sm:max-w-full sm:flex-wrap">
           {items.map(({ id, label }) => (
             <li key={id} className="snap-start">
               <a
@@ -89,8 +89,8 @@ export function DashboardSubnav() {
                 aria-current={activeId === id ? "page" : undefined}
                 className={`block min-h-10 whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium transition-colors sm:min-h-0 sm:py-2.5 ${
                   activeId === id
-                    ? "bg-[#0c192f] text-white shadow-sm shadow-slate-900/10"
-                    : "text-slate-600 hover:bg-slate-50 hover:text-[#0c192f]"
+                    ? "bg-linear-to-r from-[#0c192f] via-[#133359] to-[#047857] text-white shadow-sm shadow-slate-900/10"
+                    : "text-slate-600 hover:bg-white hover:text-[#0c192f]"
                 }`}
               >
                 {label}

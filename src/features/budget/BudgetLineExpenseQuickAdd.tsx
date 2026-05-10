@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { fpInputClass, fpPrimaryButtonClass } from "@/ui/input-classes";
 
 type Props = {
   category: string;
@@ -90,10 +91,10 @@ export function BudgetLineExpenseQuickAdd({
   return (
     <form
       onSubmit={onSubmit}
-      className="mt-2 rounded border border-zinc-100 bg-zinc-50/80 p-2"
+      className="mt-2 rounded-xl border border-slate-200/90 bg-linear-to-r from-white to-emerald-50/45 p-2.5 shadow-sm"
     >
       {!compact && (
-        <p className="mb-1 text-[10px] font-medium uppercase tracking-wide text-zinc-500">
+        <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
           Log actual (monthly)
         </p>
       )}
@@ -104,7 +105,7 @@ export function BudgetLineExpenseQuickAdd({
       )}
       <div className="flex flex-wrap items-end gap-2">
         <label className="text-xs">
-          <span className="mb-0.5 block text-zinc-600">Amount</span>
+          <span className="mb-0.5 block text-slate-600">Amount</span>
           <input
             name="amount"
             type="number"
@@ -118,29 +119,29 @@ export function BudgetLineExpenseQuickAdd({
                 ? suggestedAmount
                 : undefined
             }
-            className="w-24 rounded border border-zinc-300 px-1.5 py-1"
+            className={`${fpInputClass} w-28 max-w-none py-1.5 text-xs`}
           />
         </label>
         <label className="text-xs">
-          <span className="mb-0.5 block text-zinc-600">Date</span>
+          <span className="mb-0.5 block text-slate-600">Date</span>
           <input
             name="spent_at"
             type="date"
             defaultValue={defaultSpentAt}
             required
-            className="rounded border border-zinc-300 px-1.5 py-1"
+            className={`${fpInputClass} max-w-none py-1.5 text-xs`}
           />
         </label>
         <button
           type="submit"
           disabled={isBusy}
-          className="rounded bg-zinc-800 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-700 disabled:opacity-60"
+          className={`${fpPrimaryButtonClass} px-3 py-1.5 text-xs disabled:opacity-60`}
         >
           {isBusy ? "…" : "Add"}
         </button>
       </div>
       {isBusy && (
-        <p className="mt-1 text-xs text-zinc-500" role="status" aria-live="polite">
+        <p className="mt-1 text-xs text-slate-500" role="status" aria-live="polite">
           Updating expenses...
         </p>
       )}

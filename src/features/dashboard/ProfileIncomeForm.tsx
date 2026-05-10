@@ -323,10 +323,15 @@ export function ProfileIncomeForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm divide-y divide-slate-200"
+      className="overflow-hidden rounded-2xl border border-slate-200/90 bg-linear-to-br from-white via-white to-sky-50/30 shadow-sm divide-y divide-slate-200"
     >
       <section className="space-y-4 p-5">
-        <p className="text-sm font-semibold text-slate-900">Income & CPF</p>
+        <div className="space-y-1">
+          <p className="text-sm font-semibold text-slate-900">Income & CPF</p>
+          <p className="text-xs text-slate-500">
+            Keep this up to date so your monthly plan and projections stay realistic.
+          </p>
+        </div>
         <div className="space-y-4">
             <label className="text-sm">
               <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
@@ -429,6 +434,9 @@ export function ProfileIncomeForm({
                 </p>
               </InfoTooltip>
             </div>
+            <p className="-mt-1 text-xs text-slate-500">
+              Start simple: set just target age and monthly spend goal first.
+            </p>
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="text-sm sm:min-w-0">
                 <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
@@ -495,7 +503,7 @@ export function ProfileIncomeForm({
             </div>
           </div>
 
-          <div className="rounded-xl border border-slate-200 bg-slate-50/70 p-3.5">
+          <div className="rounded-xl border border-slate-200 bg-linear-to-r from-slate-50/90 to-emerald-50/50 p-3.5">
             <button
               type="button"
               onClick={() => setShowAdvancedSettings((prev) => !prev)}

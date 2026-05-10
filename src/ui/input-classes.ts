@@ -7,4 +7,4 @@ export const fpInputNarrowClass = `w-full max-w-[8rem] ${base}`;
 export const fpSelectClass = `w-full max-w-xs ${base} cursor-pointer bg-white`;
 
 export const fpPrimaryButtonClass =
-  "rounded-full bg-[#0c192f] px-5 py-2.5 text-sm font-semibold tracking-tight text-white shadow-md shadow-slate-900/20 transition hover:bg-[#152a45] active:scale-[0.99]";
+  "rounded-full bg-linear-to-r from-[#0c192f] via-[#133359] to-[#047857] px-5 py-2.5 text-sm font-semibold tracking-tight text-white shadow-md shadow-slate-900/20 transition hover:brightness-105 active:scale-[0.99] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/35";

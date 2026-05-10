@@ -70,7 +70,7 @@ export function AppShellNav() {
           aria-controls="mobile-main-nav-menu"
           aria-label="Toggle navigation menu"
           onClick={() => setMobileOpen((v) => !v)}
-          className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-full border border-slate-200/90 bg-slate-50/90 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100"
+          className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-full border border-slate-200/90 bg-linear-to-br from-white to-sky-50/80 px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:from-sky-50 hover:to-emerald-50/70"
         >
           <span className="inline-flex flex-col gap-1" aria-hidden>
             <span className="block h-0.5 w-4 rounded-full bg-slate-700" />
@@ -111,8 +111,8 @@ export function AppShellNav() {
                             onClick={() => setMobileOpen(false)}
                             className={`flex min-h-14 items-center rounded-2xl px-5 py-3 text-3xl font-semibold tracking-tight transition ${
                               active
-                                ? "bg-[#0c192f] text-white shadow-md shadow-slate-900/20"
-                                : "text-[#0c192f] hover:bg-slate-100"
+                                ? "bg-linear-to-r from-[#0c192f] via-[#133359] to-[#047857] text-white shadow-md shadow-slate-900/20"
+                                : "text-[#0c192f] hover:bg-sky-50"
                             }`}
                           >
                             {route.label}
@@ -128,7 +128,7 @@ export function AppShellNav() {
           )}
       </div>
       <div className="hidden sm:block">
-        <div className="flex min-w-max snap-x items-center gap-1 rounded-full border border-slate-200/90 bg-slate-50/90 p-1 shadow-inner shadow-slate-900/3 sm:min-w-0 sm:flex-wrap">
+        <div className="flex min-w-max snap-x items-center gap-1 rounded-full border border-slate-200/90 bg-linear-to-r from-slate-50/95 via-white to-sky-50/90 p-1 shadow-inner shadow-slate-900/3 sm:min-w-0 sm:flex-wrap">
           {routes.map((route) => {
             const active = isActive(route);
             return (
@@ -137,7 +137,7 @@ export function AppShellNav() {
                 href={route.href}
                 className={`${pill} ${
                   active
-                    ? "bg-[#0c192f] text-white shadow-sm shadow-slate-900/20"
+                    ? "bg-linear-to-r from-[#0c192f] via-[#133359] to-[#047857] text-white shadow-sm shadow-slate-900/20"
                     : "text-slate-600 hover:bg-white hover:text-slate-900"
                 }`}
               >

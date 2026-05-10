@@ -6,6 +6,7 @@ import type { ExpenseRow } from "@/data/supabase/types";
 import { num } from "@/data/mappers";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
+import { fpInputClass, fpPrimaryButtonClass, fpSelectClass } from "@/ui/input-classes";
 import { formatCurrency } from "@/ui/lib/format";
 
 export function ExpenseEditRow({
@@ -102,21 +103,21 @@ export function ExpenseEditRow({
 
   if (!editing) {
     return (
-      <div className="mt-2 flex flex-wrap items-center gap-2 rounded border border-zinc-200 bg-white px-2 py-1.5 text-xs">
-        <span className="font-medium capitalize text-zinc-900">
+      <div className="mt-2 flex flex-wrap items-center gap-2 rounded-xl border border-slate-200/90 bg-linear-to-r from-white to-sky-50/40 px-3 py-2 text-xs shadow-sm">
+        <span className="font-medium capitalize text-slate-900">
           {expense.category}
         </span>
-        <span className="font-medium text-zinc-800">
+        <span className="font-medium text-slate-800">
           {formatCurrency(num(expense.amount), currency)}
         </span>
-        <span className="text-zinc-500">{expense.spent_at}</span>
+        <span className="text-slate-500">{expense.spent_at}</span>
         {(expense.spend_period ?? "monthly") === "annual" && (
           <span className="rounded bg-amber-100 px-1 py-0.5 text-amber-900">
             Annual
           </span>
         )}
         {expense.note && (
-          <span className="w-full text-zinc-500">{expense.note}</span>
+          <span className="w-full text-slate-500">{expense.note}</span>
         )}
         <div className="ml-auto flex gap-2">
           <button
@@ -137,7 +138,7 @@ export function ExpenseEditRow({
           </button>
         </div>
         {isRefreshing && (
-          <p className="w-full text-zinc-500" role="status" aria-live="polite">
+          <p className="w-full text-slate-500" role="status" aria-live="polite">
             Refreshing list...
           </p>
         )}
@@ -153,7 +154,7 @@ export function ExpenseEditRow({
   return (
     <form
       onSubmit={onSave}
-      className="mt-2 space-y-2 rounded border border-zinc-200 bg-white p-2 text-xs"
+      className="mt-2 space-y-2 rounded-xl border border-slate-200/90 bg-white p-3 text-xs shadow-sm"
     >
       {error && (
         <p className="text-red-600" role="alert">
@@ -162,7 +163,7 @@ export function ExpenseEditRow({
       )}
       <div className="grid gap-2 sm:grid-cols-2">
         <label>
-          <span className="mb-0.5 block text-zinc-600">Amount</span>
+          <span className="mb-0.5 block text-slate-600">Amount</span>
           <input
             name="amount"
             type="number"
@@ -170,43 +171,43 @@ export function ExpenseEditRow({
             step="0.01"
             required
             defaultValue={num(expense.amount)}
-            className="w-full rounded border border-zinc-300 px-1.5 py-1"
+            className={`${fpInputClass} max-w-none py-1.5 text-xs`}
           />
         </label>
         <label>
-          <span className="mb-0.5 block text-zinc-600">Category</span>
+          <span className="mb-0.5 block text-slate-600">Category</span>
           <input
             name="category"
             type="text"
             required
             defaultValue={expense.category}
-            className="w-full rounded border border-zinc-300 px-1.5 py-1"
+            className={`${fpInputClass} max-w-none py-1.5 text-xs`}
           />
         </label>
         <label>
-          <span className="mb-0.5 block text-zinc-600">Date</span>
+          <span className="mb-0.5 block text-slate-600">Date</span>
           <input
             name="spent_at"
             type="date"
             required
             defaultValue={expense.spent_at}
-            className="w-full rounded border border-zinc-300 px-1.5 py-1"
+            className={`${fpInputClass} max-w-none py-1.5 text-xs`}
           />
         </label>
         <label className="sm:col-span-2">
-          <span className="mb-0.5 block text-zinc-600">Note</span>
+          <span className="mb-0.5 block text-slate-600">Note</span>
           <input
             name="note"
             type="text"
             defaultValue={expense.note ?? ""}
-            className="w-full rounded border border-zinc-300 px-1.5 py-1"
+            className={`${fpInputClass} max-w-none py-1.5 text-xs`}
           />
         </label>
         <label className="sm:col-span-2">
-          <span className="mb-0.5 block text-zinc-600">Spend type</span>
+          <span className="mb-0.5 block text-slate-600">Spend type</span>
           <select
             name="spend_period"
-            className="w-full rounded border border-zinc-300 px-1.5 py-1"
+            className={`${fpSelectClass} max-w-none py-1.5 text-xs`}
             defaultValue={expense.spend_period ?? "monthly"}
           >
             <option value="monthly">Monthly</option>
@@ -218,7 +219,7 @@ export function ExpenseEditRow({
         <button
           type="submit"
           disabled={isBusy}
-          className="rounded bg-zinc-800 px-2 py-1 text-white hover:bg-zinc-700 disabled:opacity-50"
+          className={`${fpPrimaryButtonClass} px-3 py-1.5 text-xs disabled:opacity-50`}
         >
           {pending ? "Saving…" : isRefreshing ? "Updating…" : "Save"}
         </button>
@@ -229,13 +230,13 @@ export function ExpenseEditRow({
             setError(null);
           }}
           disabled={isBusy}
-          className="rounded border border-zinc-300 px-2 py-1 hover:bg-zinc-50"
+          className="rounded-full border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50"
         >
           Cancel
         </button>
       </div>
       {isRefreshing && (
-        <p className="text-zinc-500" role="status" aria-live="polite">
+        <p className="text-slate-500" role="status" aria-live="polite">
           Refreshing list...
         </p>
       )}
