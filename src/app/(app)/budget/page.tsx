@@ -11,6 +11,7 @@ import { BudgetMonthJump } from "@/features/budget/BudgetMonthJump";
 import { BudgetLineActionsCollapsible } from "@/features/budget/BudgetLineActionsCollapsible";
 import { BudgetLineScheduleForm } from "@/features/budget/BudgetLineScheduleForm";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
+import { SpendingRouteNav } from "@/features/spend/SpendingRouteNav";
 import { SpendGuidancePanel } from "@/features/spend/SpendGuidancePanel";
 import {
   addMonthsToYearMonth,
@@ -30,6 +31,11 @@ import {
 } from "@/domain/finance/budget";
 import { monthlyExpensesForBudgetCategory } from "@/domain/finance/expense-budget-lock";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
+import {
+  appTabPillClass,
+  appTabPillInactiveClass,
+  appTabRailClass,
+} from "@/ui/app-tab-styles";
 import { PageSection } from "@/ui/PageSection";
 import { formatCurrency } from "@/ui/lib/format";
 
@@ -176,34 +182,54 @@ export default async function BudgetPage({ searchParams }: PageProps) {
         </div>
       </div>
 
-      <nav
-        className="flex flex-wrap gap-x-4 gap-y-1 border-b border-zinc-200 pb-3 text-sm text-zinc-600"
-        aria-label="On this page"
-      >
-        <a href="#budget-add" className="hover:text-zinc-900 hover:underline">
-          Add line
-        </a>
-        <a href="#budget-monthly" className="hover:text-zinc-900 hover:underline">
-          Monthly
-        </a>
-        <a
-          href="#budget-unbudgeted"
-          className="hover:text-zinc-900 hover:underline"
-        >
-          Unbudgeted
-        </a>
-        <a href="#budget-annual" className="hover:text-zinc-900 hover:underline">
-          Annual
-        </a>
-        {inactiveMonthly.length > 0 && (
-          <a
-            href="#budget-inactive"
-            className="hover:text-zinc-900 hover:underline"
-          >
-            Inactive lines
-          </a>
-        )}
-      </nav>
+      <div className="space-y-4">
+        <SpendingRouteNav
+          active="budget"
+          month={month}
+          budgetCalendarYear={calendarYear}
+        />
+        <nav aria-label="On this page" className="sm:mx-0">
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+            On this page
+          </p>
+          <div className="-mx-1 overflow-x-auto px-1 pb-0.5 scroll-smooth sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
+            <div className={appTabRailClass}>
+              <a
+                href="#budget-add"
+                className={`${appTabPillClass} ${appTabPillInactiveClass}`}
+              >
+                Add line
+              </a>
+              <a
+                href="#budget-monthly"
+                className={`${appTabPillClass} ${appTabPillInactiveClass}`}
+              >
+                Monthly
+              </a>
+              <a
+                href="#budget-unbudgeted"
+                className={`${appTabPillClass} ${appTabPillInactiveClass}`}
+              >
+                Unbudgeted
+              </a>
+              <a
+                href="#budget-annual"
+                className={`${appTabPillClass} ${appTabPillInactiveClass}`}
+              >
+                Annual
+              </a>
+              {inactiveMonthly.length > 0 && (
+                <a
+                  href="#budget-inactive"
+                  className={`${appTabPillClass} ${appTabPillInactiveClass}`}
+                >
+                  Inactive lines
+                </a>
+              )}
+            </div>
+          </div>
+        </nav>
+      </div>
 
       <PageSection id="budget-add" title="Add a budget line" className="scroll-mt-4">
         <BudgetAddForm defaultYear={calendarYear} />

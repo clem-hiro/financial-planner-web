@@ -15,6 +15,7 @@ import { CategoryBarChart } from "@/features/expenses/CategoryBarChart";
 import { ExpenseEditRow } from "@/features/expenses/ExpenseEditRow";
 import { ExpenseForm } from "@/features/expenses/ExpenseForm";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
+import { SpendingRouteNav } from "@/features/spend/SpendingRouteNav";
 import { SpendGuidancePanel } from "@/features/spend/SpendGuidancePanel";
 import { isMonthlyBudgetLineApplicable, normalizeCategory } from "@/domain/finance/budget";
 import {
@@ -26,10 +27,16 @@ import {
   defaultExpenseDateForBudgetMonth,
   formatYearMonth,
   parseYearMonth,
+  yearFromYearMonth,
 } from "@/lib/dates";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { isSupabaseConfigured } from "@/lib/env";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
+import {
+  appTabPillClass,
+  appTabPillInactiveClass,
+  appTabRailClass,
+} from "@/ui/app-tab-styles";
 import { PageSection } from "@/ui/PageSection";
 import { formatCurrency } from "@/ui/lib/format";
 
@@ -183,42 +190,60 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
           >
             Next month
           </Link>
-          <Link className={appInlineLinkClass} href={`/budget?month=${month}`}>
-            Budget for {month}
-          </Link>
         </div>
       </div>
 
-      <nav
-        className="flex flex-wrap gap-x-4 gap-y-1 border-b border-zinc-200 pb-3 text-sm text-zinc-600"
-        aria-label="On this page"
-      >
-        <a href="#expenses-form" className="hover:text-zinc-900 hover:underline">
-          Add expense
-        </a>
-        {monthlyBudgetShortcuts.length > 0 && (
-          <a
-            href="#expenses-budget-shortcuts"
-            className="hover:text-zinc-900 hover:underline"
-          >
-            From budget
-          </a>
-        )}
-        <a href="#expenses-list" className="hover:text-zinc-900 hover:underline">
-          This month
-        </a>
-        {spendRecommendations.length > 0 && (
-          <a
-            href="#expenses-guidance"
-            className="hover:text-zinc-900 hover:underline"
-          >
-            Spending guidance
-          </a>
-        )}
-        <a href="#expenses-chart" className="hover:text-zinc-900 hover:underline">
-          By category
-        </a>
-      </nav>
+      <div className="space-y-4">
+        <SpendingRouteNav
+          active="expenses"
+          month={month}
+          budgetCalendarYear={yearFromYearMonth(month)}
+          category={categoryPrefill}
+        />
+        <nav aria-label="On this page" className="sm:mx-0">
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+            On this page
+          </p>
+          <div className="-mx-1 overflow-x-auto px-1 pb-0.5 scroll-smooth sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
+            <div className={appTabRailClass}>
+              <a
+                href="#expenses-form"
+                className={`${appTabPillClass} ${appTabPillInactiveClass}`}
+              >
+                Add expense
+              </a>
+              {monthlyBudgetShortcuts.length > 0 && (
+                <a
+                  href="#expenses-budget-shortcuts"
+                  className={`${appTabPillClass} ${appTabPillInactiveClass}`}
+                >
+                  From budget
+                </a>
+              )}
+              <a
+                href="#expenses-list"
+                className={`${appTabPillClass} ${appTabPillInactiveClass}`}
+              >
+                This month
+              </a>
+              {spendRecommendations.length > 0 && (
+                <a
+                  href="#expenses-guidance"
+                  className={`${appTabPillClass} ${appTabPillInactiveClass}`}
+                >
+                  Spending guidance
+                </a>
+              )}
+              <a
+                href="#expenses-chart"
+                className={`${appTabPillClass} ${appTabPillInactiveClass}`}
+              >
+                By category
+              </a>
+            </div>
+          </div>
+        </nav>
+      </div>
 
       <PageSection id="expenses-form" title="Add expense" className="scroll-mt-4">
       {categoryPrefillBlocked ? (

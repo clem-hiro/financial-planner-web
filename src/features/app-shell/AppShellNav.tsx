@@ -5,6 +5,12 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { lockBodyScroll } from "@/lib/body-scroll-lock";
+import {
+  appTabPillActiveClass,
+  appTabPillClass,
+  appTabPillInactiveClass,
+  appTabRailClass,
+} from "@/ui/app-tab-styles";
 
 type NavRoute = {
   href: string;
@@ -40,9 +46,6 @@ const secondaryRoutes: readonly NavRoute[] = [
       pathname.startsWith("/financial-profile/"),
   },
 ] as const;
-
-const pill =
-  "inline-flex min-h-10 shrink-0 snap-start items-center justify-center whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-[background-color,color,box-shadow] duration-200 touch-manipulation sm:min-h-0 sm:px-3.5 sm:py-1.5";
 
 export function AppShellNav() {
   const pathname = usePathname();
@@ -127,17 +130,15 @@ export function AppShellNav() {
           )}
       </div>
       <div className="hidden sm:block">
-        <div className="flex min-w-max snap-x items-center gap-1 rounded-full border border-slate-200/90 bg-linear-to-r from-slate-50/95 via-white to-sky-50/90 p-1 shadow-inner shadow-slate-900/3 sm:min-w-0 sm:flex-wrap">
+        <div className={appTabRailClass}>
           {routes.map((route) => {
             const active = isActive(route);
             return (
               <Link
                 key={route.href}
                 href={route.href}
-                className={`${pill} ${
-                  active
-                    ? "bg-linear-to-r from-[#0c192f] via-[#133359] to-[#047857] text-white shadow-sm shadow-slate-900/20"
-                    : "text-slate-600 hover:bg-white hover:text-slate-900"
+                className={`${appTabPillClass} ${
+                  active ? appTabPillActiveClass : appTabPillInactiveClass
                 }`}
               >
                 {route.label}
