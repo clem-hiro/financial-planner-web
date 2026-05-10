@@ -376,7 +376,7 @@ export function ProfileIncomeForm({
                 />
               </label>
             </div>
-        <label className="pt-6 text-sm sm:pt-8">
+        <label className="mb-6 block pt-6 text-sm sm:mb-8 sm:pt-8">
           <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
             Birth date
             <InfoTooltip ariaLabel="Why birth date matters">
