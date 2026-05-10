@@ -39,7 +39,6 @@ const secondaryRoutes: readonly NavRoute[] = [
       pathname === "/financial-profile" ||
       pathname.startsWith("/financial-profile/"),
   },
-  { href: "/goals", label: "Goals" },
 ] as const;
 
 const pill =

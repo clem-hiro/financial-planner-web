@@ -297,7 +297,8 @@ export function DashboardRetirementSection({
                 <li>
                   <span className="font-semibold text-emerald-950">What it is: </span>
                   One illustration—imagine your{" "}
-                  <strong>investment accounts</strong> (Goals → investments) reach
+                  <strong>investment accounts</strong> (Setup → Goals tab, optional
+                  links to investments) reach
                   about{" "}
                   {formatCurrency(
                     payload.ageProjection.spendCheck.dividendPlan

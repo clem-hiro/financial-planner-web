@@ -20,7 +20,7 @@ export type SavingsRateInput = {
   monthlyIncome: Money;
   monthlyExpenses: Money;
   /**
-   * Sum of planned monthly goal contributions (Goals page). Treated like
+   * Sum of planned monthly goal contributions (Setup → Goals). Treated like
    * committed outflows from take-home for the rate. Default 0.
    */
   monthlyPlannedGoalContributions?: Money;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReactNode } from "react";
 import { SetupTabsNav } from "@/features/setup/SetupTabsNav";
 
@@ -24,6 +24,11 @@ export function SetupTabsClient({
   panels: readonly Panel[];
 }) {
   const [activeTab, setActiveTab] = useState(initialTab);
+
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
+
   const activePanel =
     panels.find((panel) => panel.id === activeTab) ??
     panels.find((panel) => panel.id === "profile") ??

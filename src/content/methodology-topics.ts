@@ -91,7 +91,7 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     bullets: [
       "Uses your profile monthly take-home (net) when set.",
       "Spend side matches by-age cash: **logged** expenses for the dashboard month when you have entered any; otherwise the **planned** total from active monthly budget lines (forecast until expenses confirm).",
-      "Subtracts the sum of **monthly contribution** on each financial goal (Goals page). Those amounts are commitments, not read from the expense list—if you also log the same transfer as an expense, you double-count in real life; here goals always reduce the rate when set.",
+      "Subtracts the sum of **monthly contribution** on each financial goal (Setup → Goals tab). Those amounts are commitments, not read from the expense list—if you also log the same transfer as an expense, you double-count in real life; here goals always reduce the rate when set.",
     ],
   },
   {
@@ -113,7 +113,7 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
       "Each line has a category, cadence (**monthly** or **annual**), and amount. Monthly lines can set **start** and **end** months (`YYYY-MM`); annual lines set the **calendar year** they apply to.",
       "Month overrides can replace the default amount for a specific month (monthly lines only).",
       "The month view includes monthly lines that apply to the month you’re viewing; the annual section for a calendar year includes annual lines for that year vs **annual**-tagged expenses in matching categories.",
-      "Planned trip (**spend cap**): prefer a **monthly** line (e.g. travel) with start/end around the months you save or spend, so it matches usual **monthly** expenses. Use an **annual** line only if you will log trip costs as **annual** spend in that category and year. A savings **target** by date belongs on **Goals**, not budget—you can combine a goal with budget caps if you like.",
+      "Planned trip (**spend cap**): prefer a **monthly** line (e.g. travel) with start/end around the months you save or spend, so it matches usual **monthly** expenses. Use an **annual** line only if you will log trip costs as **annual** spend in that category and year. A savings **target** by date belongs under **Setup → Goals**, not budget—you can combine a goal with budget caps if you like.",
     ],
   },
   {
@@ -141,7 +141,7 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     summary:
       "Take-home minus logged expenses, then minus the sum of planned monthly amounts on your goals.",
     bullets: [
-      "Planned monthly amounts come from each financial goal (Goals page)—they are not read from the expense list.",
+      "Planned monthly amounts come from each financial goal (Setup → Goals tab)—they are not read from the expense list.",
       "After expenses: take-home minus every expense logged for that month (same basis as savings rate).",
       "True balance for the month: after expenses minus the sum of those planned goal contributions. This figure can be negative.",
       "Projected cash on the by-age chart accrues using the same surplus idea (take-home minus spend basis minus goals, floored at zero each month; spend basis = logged when any expense in the month, else planned monthly budget).",
@@ -151,7 +151,7 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
   {
     id: "goals-eta",
     title: "Goal progress and time-to-goal",
-    summary: "Standalone goal math on the Goals page.",
+    summary: "Standalone goal math on the Setup → Goals tab.",
     bullets: [
       "Progress uses current saved amount vs target where applicable.",
       "Time estimates use your entered contributions and return assumptions on that goal or linked investment—simplified and not guaranteed.",

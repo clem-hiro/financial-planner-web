@@ -11,6 +11,7 @@ import { listCashAccounts } from "@/data/repositories/cash-accounts";
 import { listHousingLoans } from "@/data/repositories/housing-loans";
 import { listInvestments } from "@/data/repositories/investments";
 import { listLiabilities } from "@/data/repositories/liabilities";
+import { listFinancialGoals } from "@/data/repositories/goals";
 import { getProfileById } from "@/data/repositories/profiles";
 import { listVehicles } from "@/data/repositories/vehicles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
@@ -27,6 +28,7 @@ import {
   type InvestmentBalanceRow,
 } from "@/features/goals/InvestmentBalancesList";
 import { InvestmentForm } from "@/features/goals/InvestmentForm";
+import { FinancialGoalsPanels } from "@/features/goals/FinancialGoalsPanels";
 import { VehiclesPanel } from "@/features/goals/VehiclesPanel";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { SetupTabsClient } from "@/features/setup/SetupTabsClient";
@@ -42,6 +44,7 @@ const setupTabs = [
   { id: "cash-liabilities", label: "Cash and debts" },
   { id: "housing-loans", label: "Housing loans" },
   { id: "vehicles", label: "Vehicles" },
+  { id: "goals", label: "Goals" },
 ] as const;
 
 type SetupTabId = (typeof setupTabs)[number]["id"];
@@ -87,6 +90,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
     vehicleRows,
     cpfRow,
     housingLoans,
+    goals,
   ] = await Promise.all([
     listInvestments(supabase, user.id),
     listCashAccounts(supabase, user.id),
@@ -95,6 +99,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
     listVehicles(supabase, user.id),
     getCpfBalanceByUserId(supabase, user.id),
     listHousingLoans(supabase, user.id),
+    listFinancialGoals(supabase, user.id),
   ]);
   const sp = await searchParams;
   const activeTab: SetupTabId = isSetupTabId(sp.tab) ? sp.tab : "profile";
@@ -126,7 +131,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
       <div>
         <h1 className="text-2xl font-semibold text-zinc-900">Financial setup</h1>
         <p className="mt-1 text-sm text-zinc-600">
-          Keep your balances and profile assumptions in one place.
+          Keep balances, savings goals, and profile assumptions in one place.
         </p>
         <p className="mt-2 flex flex-wrap gap-x-3 text-xs text-zinc-600">
           <MethodologyOpenLink topicId="net-worth" className={appInlineLinkClass}>
@@ -286,6 +291,16 @@ export default async function SetupPage({ searchParams }: PageProps) {
               >
                 <VehiclesPanel vehicles={vehicleRows} currencyCode={currency} />
               </PageSection>
+            ),
+          },
+          {
+            id: "goals",
+            content: (
+              <FinancialGoalsPanels
+                goals={goals}
+                investments={investments}
+                currency={currency}
+              />
             ),
           },
         ]}

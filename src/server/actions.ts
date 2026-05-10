@@ -753,6 +753,7 @@ export async function createGoalAction(
   });
 
   revalidatePath("/goals");
+  revalidatePath("/setup");
   revalidatePath("/dashboard");
   return { error: null as string | null };
 }
@@ -815,6 +816,7 @@ export async function updateGoalAction(
   }
 
   revalidatePath("/goals");
+  revalidatePath("/setup");
   revalidatePath("/dashboard");
   return { error: null as string | null };
 }

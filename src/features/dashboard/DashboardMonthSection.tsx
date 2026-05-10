@@ -54,7 +54,7 @@ export function DashboardMonthSection({
               <span>
                 Take-home minus spend basis (logged when any expense in the month,
                 else planned monthly budget), then minus each goal&apos;s planned monthly
-                amount (from Goals—not from your expense list).
+                amount (from Setup → Goals—not from your expense list).
               </span>
               <MethodologyOpenLink topicId="goal-surplus" className={`text-xs ${appInlineLinkClass}`}>
                 How calculated
@@ -62,7 +62,7 @@ export function DashboardMonthSection({
             </span>
           }
           actions={
-            <Link href="/goals" className={`text-xs ${appInlineLinkClass}`}>
+            <Link href="/setup?tab=goals" className={`text-xs ${appInlineLinkClass}`}>
               Edit goals
             </Link>
           }
@@ -126,7 +126,7 @@ export function DashboardMonthSection({
                 <span className="font-medium text-zinc-900">{h.title}</span>
                 {": planned "}
                 {formatCurrency(h.plannedMonthly, payload.baseCurrency)}
-                /mo on Goals (progress and ETA).
+                /mo on Setup → Goals (progress and ETA).
               </li>
             ))}
           </ul>

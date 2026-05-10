@@ -133,7 +133,7 @@ export function OnboardingWizard(props: Props) {
         <div className="space-y-2 rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-700">
           <h2 className="text-lg font-semibold text-slate-900">Goals (optional)</h2>
           <p>Add emergency fund, retirement, travel, or house goals now or later.</p>
-          <a href="/goals" className="text-emerald-700 underline">Go to Goals</a>
+          <a href="/setup?tab=goals" className="text-emerald-700 underline">Open Goals in Setup</a>
         </div>
       )}
       <div className="flex items-center gap-3">
