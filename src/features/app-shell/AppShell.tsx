@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
+import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { AppShellNav } from "@/features/app-shell/AppShellNav";
 import { MethodologySheet } from "@/features/help/MethodologySheet";
@@ -35,6 +36,10 @@ export function AppShell({
   user: User | null;
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const showMainAppNav =
+    Boolean(user) && !pathname.startsWith("/onboarding");
+
   useEffect(() => {
     // Defensive reset for stale dev/HMR body lock state.
     document.body.removeAttribute("data-body-scroll-lock-count");
@@ -60,8 +65,14 @@ export function AppShell({
                 Private wealth clarity
               </span>
             </div>
-            <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:justify-end sm:gap-3">
-              <AppShellNav />
+            <div
+              className={`flex w-full items-center gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:gap-3 ${
+                showMainAppNav
+                  ? "justify-between sm:justify-end"
+                  : "justify-end"
+              }`}
+            >
+              {showMainAppNav ? <AppShellNav /> : null}
               <div className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-2">
                 <MethodologyHeaderButton />
                 {user ? (
