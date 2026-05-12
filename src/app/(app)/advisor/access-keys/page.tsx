@@ -28,11 +28,10 @@ export default async function AdvisorAccessKeysPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-semibold text-zinc-900">Access keys</h1>
-        <p className="mt-1 text-sm text-zinc-600">
-          Invite clients with one-time keys. POC batches are free; billing hooks can replace the
-          generator later.
+      <div className="rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm sm:px-6">
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900">Access keys</h1>
+        <p className="mt-1 text-sm text-slate-600">
+          Invite clients with one-time keys. POC Free Credits are active now; Billing Coming Soon.
         </p>
       </div>
       <AdvisorAccessKeysSection supabase={supabase} userId={user.id} />

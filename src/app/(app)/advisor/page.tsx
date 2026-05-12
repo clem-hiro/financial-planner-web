@@ -15,11 +15,11 @@ function StatCard({
   value: string | number;
 }) {
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white px-4 py-4 shadow-sm">
-      <p className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">
+    <div className="rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm">
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
         {label}
       </p>
-      <p className="mt-1 text-2xl font-semibold tabular-nums text-zinc-900">
+      <p className="mt-1 text-2xl font-semibold tabular-nums tracking-tight text-slate-900">
         {value}
       </p>
     </div>
@@ -50,12 +50,17 @@ export default async function AdvisorDashboardPage() {
   const data = await getAdvisorDashboardData(supabase, user.id);
 
   return (
-    <div className="space-y-10">
-      <div>
-        <h1 className="text-2xl font-semibold text-zinc-900">Advisor overview</h1>
-        <p className="mt-1 text-sm text-zinc-600">
-          Operational snapshot of clients and invite keys. Personal finance tools stay on the client
-          app.
+    <div className="space-y-8">
+      <div className="rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm sm:px-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+          Advisor Workspace
+        </p>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-900">
+          Operations overview
+        </h1>
+        <p className="mt-2 max-w-3xl text-sm text-slate-600">
+          Operational snapshot of client onboarding and access keys. Personal planning tools remain
+          in the client experience.
         </p>
       </div>
 
@@ -69,18 +74,27 @@ export default async function AdvisorDashboardPage() {
           <StatCard label="Pending onboarding" value={data.clientsPendingOnboarding} />
           <StatCard label="Keys available" value={data.keyCounts.available} />
           <StatCard label="Keys claimed" value={data.keyCounts.claimed} />
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              Recent client activity
+            </p>
+            <p className="mt-2 text-sm font-medium text-slate-700">Work in Progress</p>
+            <p className="mt-1 text-xs text-slate-500">
+              Timeline and interaction feeds are being designed for a future release.
+            </p>
+          </div>
         </div>
       </section>
 
-      <section className="space-y-3">
+      <section className="space-y-3 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
         <div className="flex flex-wrap items-end justify-between gap-2">
-          <h2 className="text-lg font-semibold text-zinc-900">Recently joined clients</h2>
+          <h2 className="text-lg font-semibold text-slate-900">Recently joined clients</h2>
           <Link href="/advisor/clients" className={`text-sm ${appInlineLinkClass}`}>
             View all →
           </Link>
         </div>
         {data.recentlyJoinedClients.length === 0 ? (
-          <p className="text-sm text-zinc-600">
+          <p className="text-sm text-slate-600">
             No clients yet. Generate keys under{" "}
             <Link href="/advisor/access-keys" className={appInlineLinkClass}>
               Access keys
@@ -88,18 +102,18 @@ export default async function AdvisorDashboardPage() {
             and share one per signup.
           </p>
         ) : (
-          <ul className="divide-y divide-zinc-100 rounded-xl border border-zinc-200 bg-white">
+          <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
             {data.recentlyJoinedClients.map((c) => (
-              <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3">
+              <li key={c.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3.5">
                 <div>
-                  <p className="font-medium text-zinc-900">
+                  <p className="font-medium text-slate-900">
                     {c.display_name?.trim() || "Unnamed client"}
                   </p>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-slate-500">
                     Joined {new Date(c.created_at).toLocaleDateString()}
                   </p>
                 </div>
-                <p className="text-xs font-medium text-zinc-600">
+                <p className="text-xs font-medium text-slate-600">
                   {c.onboarding_completed_at
                     ? "Onboarded"
                     : c.onboarding_required

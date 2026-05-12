@@ -18,22 +18,14 @@ type NavRoute = {
   activeMatch?: (pathname: string) => boolean;
 };
 
-const clientPrimaryRoutes = [{ href: "/dashboard", label: "Dashboard" }] as const;
-
-const clientSecondaryRoutes: readonly NavRoute[] = [
+const clientRoutes: readonly NavRoute[] = [
+  { href: "/dashboard", label: "Home" },
   {
-    href: "/expenses",
-    label: "Spending",
+    href: "/goals",
+    label: "Planning",
     activeMatch: (pathname) =>
-      pathname === "/spending" ||
-      pathname.startsWith("/spending/") ||
-      pathname === "/expenses" ||
-      pathname.startsWith("/expenses/"),
-  },
-  {
-    href: "/setup",
-    label: "Setup",
-    activeMatch: (pathname) =>
+      pathname === "/goals" ||
+      pathname.startsWith("/goals/") ||
       pathname === "/setup" ||
       pathname.startsWith("/setup/") ||
       pathname === "/balances" ||
@@ -43,38 +35,27 @@ const clientSecondaryRoutes: readonly NavRoute[] = [
       pathname === "/budget" ||
       pathname.startsWith("/budget/"),
   },
-  { href: "/goals", label: "Goals" },
-] as const;
-
-const advisorRoutes: readonly NavRoute[] = [
   {
-    href: "/advisor",
-    label: "Overview",
-    activeMatch: (pathname) => pathname === "/advisor",
+    href: "/expenses",
+    label: "Activity",
+    activeMatch: (pathname) =>
+      pathname === "/spending" ||
+      pathname.startsWith("/spending/") ||
+      pathname === "/expenses" ||
+      pathname.startsWith("/expenses/"),
   },
   {
-    href: "/advisor/clients",
-    label: "Clients",
+    href: "/setup?tab=profile",
+    label: "Profile",
     activeMatch: (pathname) =>
-      pathname === "/advisor/clients" ||
-      pathname.startsWith("/advisor/clients/") ||
-      pathname.startsWith("/advisor/client/"),
-  },
-  {
-    href: "/advisor/access-keys",
-    label: "Access keys",
-    activeMatch: (pathname) =>
-      pathname === "/advisor/access-keys" ||
-      pathname.startsWith("/advisor/access-keys/"),
+      pathname === "/setup" ||
+      pathname.startsWith("/setup/") ||
+      pathname === "/account-issue" ||
+      pathname.startsWith("/account-issue/"),
   },
 ] as const;
 
 const prefetchClientRoutes = ["/dashboard", "/expenses", "/setup", "/goals"] as const;
-const prefetchAdvisorRoutes = [
-  "/advisor",
-  "/advisor/clients",
-  "/advisor/access-keys",
-] as const;
 
 export function AppShellNav({
   workspace,
@@ -86,12 +67,10 @@ export function AppShellNav({
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const prefetch =
-      workspace === "advisor" ? prefetchAdvisorRoutes : prefetchClientRoutes;
-    for (const href of prefetch) {
+    for (const href of prefetchClientRoutes) {
       router.prefetch(href);
     }
-  }, [router, workspace]);
+  }, [router]);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -99,10 +78,11 @@ export function AppShellNav({
     return unlock;
   }, [mobileOpen]);
 
-  const routes: readonly NavRoute[] =
-    workspace === "advisor"
-      ? advisorRoutes
-      : [...clientPrimaryRoutes, ...clientSecondaryRoutes];
+  if (workspace === "advisor") {
+    return null;
+  }
+
+  const routes: readonly NavRoute[] = clientRoutes;
 
   const isActive = (route: NavRoute) =>
     route.activeMatch

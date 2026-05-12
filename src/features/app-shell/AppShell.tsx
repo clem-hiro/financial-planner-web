@@ -41,7 +41,9 @@ export function AppShell({
 }) {
   const pathname = usePathname();
   const showMainAppNav =
-    Boolean(user) && !pathname.startsWith("/onboarding");
+    Boolean(user) &&
+    workspace === "client" &&
+    !pathname.startsWith("/onboarding");
   const brandHref = workspace === "advisor" ? "/advisor" : "/dashboard";
 
   useEffect(() => {
@@ -55,8 +57,18 @@ export function AppShell({
 
   return (
     <MethodologyProvider>
-      <div className="flex min-h-full flex-col text-slate-800">
-        <header className="sticky top-0 z-30 border-b border-slate-200/80 bg-white/95 shadow-[0_1px_0_0_rgba(4,120,87,0.08)] backdrop-blur-xl backdrop-saturate-150">
+      <div
+        className={`flex min-h-full flex-col ${
+          workspace === "advisor" ? "bg-slate-50 text-slate-800" : "text-slate-800"
+        }`}
+      >
+        <header
+          className={`sticky top-0 z-30 border-b backdrop-blur-xl backdrop-saturate-150 ${
+            workspace === "advisor"
+              ? "border-slate-200 bg-slate-50/95"
+              : "border-slate-200/80 bg-white/95 shadow-[0_1px_0_0_rgba(4,120,87,0.08)]"
+          }`}
+        >
           <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 sm:gap-y-4 sm:px-8 sm:py-5">
             <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-4">
               <Link
@@ -66,7 +78,9 @@ export function AppShell({
                 Finance Planner
               </Link>
               <span className="hidden max-w-xs text-[11px] font-medium uppercase leading-snug tracking-[0.18em] text-slate-400 sm:inline">
-                {workspace === "advisor" ? "Advisor workspace" : "Private wealth clarity"}
+                {workspace === "advisor"
+                  ? "Advisor workspace"
+                  : "Private wealth clarity"}
               </span>
             </div>
             <div
@@ -80,13 +94,18 @@ export function AppShell({
                 <AppShellNav workspace={workspace} />
               ) : null}
               <div className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-2">
+                {workspace === "advisor" ? (
+                  <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+                    Operations
+                  </span>
+                ) : null}
                 <MethodologyHeaderButton />
                 {user ? (
-                <form action={signOutAction} className="inline">
-                  <button type="submit" className={`${ghostBtn} text-slate-500`}>
-                    Sign out
-                  </button>
-                </form>
+                  <form action={signOutAction} className="inline">
+                    <button type="submit" className={`${ghostBtn} text-slate-500`}>
+                      Sign out
+                    </button>
+                  </form>
                 ) : (
                   <Link
                     href="/login"
@@ -99,7 +118,11 @@ export function AppShell({
             </div>
           </div>
         </header>
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-8 sm:py-14 lg:py-16">
+        <main
+          className={`mx-auto w-full flex-1 px-4 py-10 sm:px-8 sm:py-14 lg:py-16 ${
+            workspace === "advisor" ? "max-w-7xl" : "max-w-6xl"
+          }`}
+        >
           {children}
         </main>
         <ScrollToTopButton />

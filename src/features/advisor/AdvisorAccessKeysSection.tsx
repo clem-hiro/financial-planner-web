@@ -48,10 +48,10 @@ export async function AdvisorAccessKeysSection({
     >
       <div className="space-y-6">
         <div className="rounded-xl border border-amber-200/90 bg-amber-50/80 px-4 py-3 text-sm text-amber-950">
-          <p className="font-semibold">POC free keys</p>
+          <p className="font-semibold">POC Free Credits</p>
           <p className="mt-1 text-xs text-amber-900/90">
             Give each key to one client. A key can only be used once.{" "}
-            <span className="font-medium">Future paid feature:</span> purchase extra keys or invite
+            <span className="font-medium">Billing Coming Soon:</span> purchase extra keys or invite
             clients by email from this area.
           </p>
         </div>

@@ -10,6 +10,7 @@ import { DashboardSubnav } from "@/features/dashboard/DashboardSubnav";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
+import { formatCurrency } from "@/ui/lib/format";
 
 export default async function DashboardPage() {
   if (!isSupabaseConfigured()) {
@@ -67,26 +68,72 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-10 sm:space-y-12">
-      <header className="space-y-4 border-b border-slate-200/80 pb-8 sm:space-y-5 sm:pb-10">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div className="max-w-2xl space-y-2">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-800/90">
-              Your position
-            </p>
-            <h1 className="text-3xl font-semibold tracking-tight text-[#0c192f] sm:text-4xl">
-              Dashboard
-            </h1>
-            <p className="text-base leading-relaxed text-slate-600 sm:text-[1.05rem]">
-              A steady read on net worth, savings, and this month&apos;s
-              activity — built for clarity, not noise.
+      <header className="space-y-6 border-b border-slate-200/80 pb-8 sm:pb-10">
+        <div className="rounded-3xl border border-slate-200/80 bg-linear-to-br from-[#0c192f] via-[#10213a] to-[#123355] p-6 text-white shadow-[0_16px_44px_-20px_rgba(12,25,47,0.55)] sm:p-8">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <div className="max-w-2xl space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200/90">
+                Financial clarity
+              </p>
+              <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+                Your money, simplified.
+              </h1>
+              <p className="text-sm leading-relaxed text-slate-200 sm:text-base">
+                A calm overview of your progress, spending control, and retirement path.
+              </p>
+            </div>
+            <p className="shrink-0 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-center font-mono text-xs font-medium tabular-nums text-white/90 sm:text-sm">
+              <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-300">
+                Period
+              </span>
+              {month}
             </p>
           </div>
-          <p className="shrink-0 rounded-lg border border-slate-200/90 bg-white px-3 py-2 text-center font-mono text-xs font-medium tabular-nums text-slate-600 shadow-sm sm:text-sm">
-            <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-              Period
-            </span>
-            {month}
-          </p>
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="rounded-2xl border border-emerald-200/70 bg-emerald-50/80 p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-800">
+              Safe to Spend
+            </p>
+            <p className="mt-1 text-2xl font-semibold tracking-tight text-emerald-950">
+              {payload.discretionaryAfterGoals != null
+                ? formatCurrency(
+                    Math.max(0, payload.discretionaryAfterGoals),
+                    payload.baseCurrency
+                  )
+                : "Set income"}
+            </p>
+            <p className="mt-1 text-xs text-emerald-900/90">
+              Monthly buffer after spend basis and planned goals.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              Monthly health
+            </p>
+            <p className="mt-1 text-lg font-semibold text-slate-900">
+              {payload.savingsRate != null ? "On track" : "Needs setup"}
+            </p>
+            <p className="mt-1 text-xs text-slate-500">Based on income, spend, and goals.</p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              Spending control
+            </p>
+            <p className="mt-1 text-lg font-semibold text-slate-900">
+              {payload.monthlyBudgetAggregate.onTrack ? "Within plan" : "Over plan"}
+            </p>
+            <p className="mt-1 text-xs text-slate-500">Top categories and guidance below.</p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+              Retirement progress
+            </p>
+            <p className="mt-1 text-lg font-semibold text-slate-900">
+              {payload.ageProjection ? "Projection ready" : "Add birth date"}
+            </p>
+            <p className="mt-1 text-xs text-slate-500">Long-term view from your current plan.</p>
+          </div>
         </div>
         <DashboardSubnav />
       </header>

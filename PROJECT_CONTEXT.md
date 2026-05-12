@@ -31,6 +31,10 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 | `/` | Redirects to `/dashboard` (advisors are then sent to `/advisor` by middleware). |
 | `/login` | Standalone sign-in / sign-up (`src/app/login/page.tsx`, `LoginForm`). Not wrapped in `(app)` shell. |
 | `/dashboard` | **Client** overview: net worth, savings, month activity, retirement/CPF (`(app)/dashboard`). Advisors hitting client routes are redirected to `/advisor`. |
+| `/home` | **Client alias** redirect to `/dashboard` (new grouped IA label). |
+| `/planning` | **Client alias** redirect to `/goals` (new grouped IA label). |
+| `/activity` | **Client alias** redirect to `/expenses` (new grouped IA label). |
+| `/profile` | **Client alias** redirect to `/setup?tab=profile` (new grouped IA label). |
 | `/advisor` | **Advisor** workspace home: client/key snapshot cards (`(app)/advisor/page.tsx`). |
 | `/advisor/clients` | **Advisor** client roster (non-financial summary columns only for now). |
 | `/advisor/access-keys` | **Advisor** access key management (moved out of client Setup). |
@@ -53,7 +57,7 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
 - **Supabase Auth** via server client (`src/data/supabase/server.ts`) and browser client (`browser.ts`).
 - **`(app)/layout.tsx`**: Loads user and **`financial_profiles`** row, resolves **`workspace`**: `advisor` vs `client`, passes into **`AppShell`** for role-appropriate chrome.
-- **`src/middleware.ts`**: If Supabase env is set, reads session. For logged-in users on **gated** paths — **client app** (`dashboard`, `expenses`, `spending`, `budget`, `setup`, `balances`, `goals`, `financial-profile`, `onboarding`, `account-issue`) or **`/advisor/**`**:
+- **`src/middleware.ts`**: If Supabase env is set, reads session. For logged-in users on **gated** paths — **client app** (`dashboard`, `home`, `planning`, `activity`, `profile`, `expenses`, `spending`, `budget`, `setup`, `balances`, `goals`, `financial-profile`, `onboarding`, `account-issue`) or **`/advisor/**`**:
   - **Advisors** on any **client** path above (including **`/onboarding`**) → redirect **`/advisor`** (they do not use client onboarding or personal finance surfaces).
   - **Clients** on **`/advisor/**`** → redirect to **`/account-issue`**, **`/onboarding`**, or **`/dashboard`** depending on profile flags (same rules as post-login routing).
   - If the profile is a **client** but **`advisor_user_id` is null** → **`/account-issue`** (except when already there).
@@ -69,7 +73,8 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 **`src/features/app-shell/AppShell.tsx`**
 
 - Header: brand link ( **`/dashboard`** for clients, **`/advisor`** for advisors ), subtitle (“Private wealth clarity” vs “Advisor workspace”), optional **main nav**, **How it works**, **Sign in** / **Sign out**.
-- **`AppShellNav`** receives **`workspace`**: **client** nav (Dashboard, Spending, Setup, Goals) vs **advisor** nav (Overview, Clients, Access keys).
+- **`AppShellNav`** receives **`workspace`**: **client** nav only with grouped labels (**Home**, **Planning**, **Activity**, **Profile**) mapped to existing routes.
+- Advisor navigation is now rendered in a dedicated sidebar under `src/app/(app)/advisor/layout.tsx` using `AdvisorWorkspaceSidebar`, giving `/advisor/**` pages a workspace-style layout.
 - **Main app nav is shown only when** the user is signed in **and** the path does **not** start with `/onboarding`.
 
 **`AppShellNav.tsx`**: Prefetches routes for the active workspace.
@@ -124,4 +129,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 3. If you introduce a new top-level domain concept (e.g. “tax estimates”), add a **Code map** row and point to the main module.
 4. Keep claims aligned with **code**; avoid marketing copy that does not match the UI.
 
-_Last reviewed: split advisor vs client routes and shell, `/advisor` workspace pages, advisor dashboard repositories, RLS for advisor read of linked clients, login redirects by role._
+_Last reviewed: grouped client IA aliases (`/home`, `/planning`, `/activity`, `/profile`), advisor sidebar layout, dashboard/setup visual refresh, advisor workspace placeholders (Work in Progress / Coming Soon), role redirects preserved._
