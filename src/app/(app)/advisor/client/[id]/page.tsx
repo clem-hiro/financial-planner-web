@@ -1,8 +1,12 @@
-import Link from "next/link";
+import { getDashboardPayload } from "@/data/dashboard";
 import { getClientProfileForAdvisor } from "@/data/repositories/advisor-clients";
+import { listBudgetLines } from "@/data/repositories/budget-lines";
+import { listFinancialGoals } from "@/data/repositories/goals";
+import { listInvestments } from "@/data/repositories/investments";
 import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
-import { appInlineLinkClass } from "@/ui/app-link-styles";
+import { AdvisorClientWorkspace } from "@/features/advisor/AdvisorClientWorkspace";
+import { formatYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
 import { isAdvisor } from "@/lib/profile-role";
 import { redirect, notFound } from "next/navigation";
@@ -27,44 +31,39 @@ export default async function AdvisorClientDetailPage({ params }: PageProps) {
     redirect("/login");
   }
 
-  const profile = await getProfileById(supabase, user.id);
-  if (!isAdvisor(profile)) {
+  const advisorProfile = await getProfileById(supabase, user.id);
+  if (!isAdvisor(advisorProfile)) {
     redirect("/dashboard");
   }
 
-  const clientRow = await getClientProfileForAdvisor(supabase, user.id, clientId);
-  if (!clientRow) {
+  const linkOk = await getClientProfileForAdvisor(supabase, user.id, clientId);
+  if (!linkOk) {
+    notFound();
+  }
+
+  const month = formatYearMonth(new Date());
+
+  const [clientProfile, payload, goals, budgetLines, investments] = await Promise.all([
+    getProfileById(supabase, clientId),
+    getDashboardPayload(supabase, clientId, month),
+    listFinancialGoals(supabase, clientId),
+    listBudgetLines(supabase, clientId),
+    listInvestments(supabase, clientId),
+  ]);
+
+  if (!clientProfile) {
     notFound();
   }
 
   return (
-    <div className="space-y-8">
-      <p className="text-sm">
-        <Link href="/advisor/clients" className={appInlineLinkClass}>
-          ← Clients
-        </Link>
-      </p>
-      <div>
-        <h1 className="text-2xl font-semibold text-zinc-900">
-          {clientRow.display_name?.trim() || "Client"}
-        </h1>
-        <p className="mt-1 text-sm text-zinc-600">
-          Placeholder workspace for future portfolio reviews, notes, and meetings. No financial
-          detail surface yet.
-        </p>
-      </div>
-      <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50/50 px-4 py-8 text-center text-sm text-zinc-600">
-        <p className="font-medium text-zinc-800">Client workspace</p>
-        <p className="mt-2 max-w-md mx-auto">
-          Onboarding:{" "}
-          {clientRow.onboarding_completed_at
-            ? "complete"
-            : clientRow.onboarding_required
-              ? "in progress"
-              : "—"}
-          . Aggregated insights and vault will plug in here.
-        </p>
-      </div>
-    </div>
+    <AdvisorClientWorkspace
+      clientId={clientId}
+      profile={clientProfile}
+      payload={payload}
+      goals={goals}
+      budgetLines={budgetLines}
+      investments={investments}
+      month={month}
+    />
   );
 }

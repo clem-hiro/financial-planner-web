@@ -24,6 +24,16 @@ const advisorNavItems: readonly AdvisorNavItem[] = [
       pathname.startsWith("/advisor/client/"),
   },
   {
+    href: "/advisor/opportunities",
+    label: "Opportunities",
+    activeMatch: (pathname) => pathname.startsWith("/advisor/opportunities"),
+  },
+  {
+    href: "/advisor/activity",
+    label: "Activity",
+    activeMatch: (pathname) => pathname.startsWith("/advisor/activity"),
+  },
+  {
     href: "/advisor/access-keys",
     label: "Access keys",
     activeMatch: (pathname) =>
@@ -68,7 +78,8 @@ export function AdvisorWorkspaceSidebar() {
           Coming Soon
         </p>
         <p className="mt-1 text-xs leading-relaxed text-slate-600">
-          Advisor analytics, CRM workflows, team permissions, and billing controls.
+          Teams, assistants, segmentation, AI briefs, and billing — architecture stays
+          advisor-scoped until those modules ship.
         </p>
       </div>
     </aside>
