@@ -28,9 +28,13 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
 | Path | Role |
 |------|------|
-| `/` | Redirects to `/dashboard`. |
+| `/` | Redirects to `/dashboard` (advisors are then sent to `/advisor` by middleware). |
 | `/login` | Standalone sign-in / sign-up (`src/app/login/page.tsx`, `LoginForm`). Not wrapped in `(app)` shell. |
-| `/dashboard` | Primary overview: net worth, savings, month activity, retirement/CPF sections (`(app)/dashboard`). Unsigned: CTA to sign in. |
+| `/dashboard` | **Client** overview: net worth, savings, month activity, retirement/CPF (`(app)/dashboard`). Advisors hitting client routes are redirected to `/advisor`. |
+| `/advisor` | **Advisor** workspace home: client/key snapshot cards (`(app)/advisor/page.tsx`). |
+| `/advisor/clients` | **Advisor** client roster (non-financial summary columns only for now). |
+| `/advisor/access-keys` | **Advisor** access key management (moved out of client Setup). |
+| `/advisor/client/[id]` | **Advisor** placeholder detail route for future CRM-style workflows. |
 | `/expenses` | **Spending** hub: add/list expenses, charts, spend guidance (`(app)/expenses`). Nav label “Spending”. |
 | `/spending` | **Alias**: server redirect to `/expenses`. |
 | `/setup` | **Financial setup** hub with tabs: profile, balances, budget, goals shortcuts (`(app)/setup`). Nav “Setup”; sub-routes like `/balances`, `/budget`, `/financial-profile` count as Setup for nav highlighting (`AppShellNav`). |
@@ -48,15 +52,15 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 ## Auth, onboarding, and gating
 
 - **Supabase Auth** via server client (`src/data/supabase/server.ts`) and browser client (`browser.ts`).
-- **`(app)/layout.tsx`**: Loads user, wraps children in **`AppShell`** (global header + main + scroll affordances).
-- **`src/middleware.ts`**: If Supabase env is set, reads session. For logged-in users on “app” paths (`dashboard`, `expenses`, `budget`, `setup`, `balances`, `goals`, `financial-profile`, `onboarding`, `account-issue`):
-  - If the profile is a **client** (`profile_type = client`) but **`advisor_user_id` is null** → redirect **`/account-issue`** (except when already there). This avoids trapping users in onboarding when the advisor link is missing.
-  - **Advisors** never use the onboarding wizard: middleware only enforces onboarding for **`profile_type = client`** with `onboarding_required` and no `onboarding_completed_at`.
-  - If `financial_profiles` indicates onboarding required and not completed → force **`/onboarding`** for **clients** (except when already on onboarding, and not when the client-advisor check above applies).
+- **`(app)/layout.tsx`**: Loads user and **`financial_profiles`** row, resolves **`workspace`**: `advisor` vs `client`, passes into **`AppShell`** for role-appropriate chrome.
+- **`src/middleware.ts`**: If Supabase env is set, reads session. For logged-in users on **gated** paths — **client app** (`dashboard`, `expenses`, `spending`, `budget`, `setup`, `balances`, `goals`, `financial-profile`, `onboarding`, `account-issue`) or **`/advisor/**`**:
+  - **Advisors** on any **client** path above (including **`/onboarding`**) → redirect **`/advisor`** (they do not use client onboarding or personal finance surfaces).
+  - **Clients** on **`/advisor/**`** → redirect to **`/account-issue`**, **`/onboarding`**, or **`/dashboard`** depending on profile flags (same rules as post-login routing).
+  - If the profile is a **client** but **`advisor_user_id` is null** → **`/account-issue`** (except when already there).
+  - **Onboarding** is enforced only for **clients** with `onboarding_required` and no `onboarding_completed_at`.
   - If onboarding not required and user hits **`/onboarding`** → redirect **`/dashboard`**.
-- **Note:** `/spending` is not in the middleware regex; it only redirects to `/expenses`. If onboarding enforcement must cover every entry point, consider aligning middleware with `/spending` (or keep redirect-only behavior).
 
-**LoginForm** (`src/features/auth/LoginForm.tsx`): sign-in pushes `/dashboard`. **Sign up**: user chooses **Financial advisor** (normal signup, `profile_type = advisor`) or **Client** (requires a valid **advisor access key** in user metadata; DB trigger validates, claims the key, and sets `profile_type = client`, `advisor_user_id`). Optional RPC `validate_client_access_key_for_signup` gives early feedback. With an immediate session, **advisors** go to **`/dashboard`**; **clients** go to **`/onboarding`**. **Sign out**: server action `signOutAction` → `/login`.
+**LoginForm** (`src/features/auth/LoginForm.tsx`): **Sign-in** loads `financial_profiles` and sends **advisors** to **`/advisor`**, **clients** to **`/onboarding`** or **`/dashboard`** (or **`/account-issue`** if `advisor_user_id` is missing). **Sign up**: **Financial advisor** → **`/advisor`** when a session exists immediately; **Client** → **`/onboarding`**. **Sign out**: server action `signOutAction` → `/login`.
 
 ---
 
@@ -64,10 +68,11 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
 **`src/features/app-shell/AppShell.tsx`**
 
-- Header: brand link, optional **main nav** (`AppShellNav`: Dashboard, Spending, Setup), **How it works** (methodology sheet), **Sign in** or **Sign out**.
-- **Main app nav is shown only when** the user is signed in **and** the path does **not** start with `/onboarding`. Unsigned users and onboarding users get a minimal header (no Dashboard / Spending / Setup tabs or mobile menu for those routes).
+- Header: brand link ( **`/dashboard`** for clients, **`/advisor`** for advisors ), subtitle (“Private wealth clarity” vs “Advisor workspace”), optional **main nav**, **How it works**, **Sign in** / **Sign out**.
+- **`AppShellNav`** receives **`workspace`**: **client** nav (Dashboard, Spending, Setup, Goals) vs **advisor** nav (Overview, Clients, Access keys).
+- **Main app nav is shown only when** the user is signed in **and** the path does **not** start with `/onboarding`.
 
-**`AppShellNav.tsx`**: Prefetches `/dashboard`, `/expenses`, `/setup` when mounted.
+**`AppShellNav.tsx`**: Prefetches routes for the active workspace.
 
 ---
 
@@ -79,7 +84,7 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 | App chrome | `src/features/app-shell/` |
 | Onboarding | `src/features/onboarding/`, `(app)/onboarding/page.tsx` |
 | Auth UI | `src/features/auth/` |
-| Advisor client keys (POC) | `src/features/advisor/`, `src/data/repositories/advisor-access-keys.ts`, `src/server/advisor-access-key-actions.ts`, `src/lib/profile-role.ts`, `src/lib/advisor-access-key-token.ts` |
+| Advisor workspace (POC) | `src/app/(app)/advisor/**`, `src/features/advisor/`, `src/data/repositories/advisor-access-keys.ts`, `advisor-clients.ts`, `advisor-dashboard.ts`, `src/server/advisor-access-key-actions.ts`, `src/lib/profile-role.ts`, `src/lib/advisor-access-key-token.ts` |
 | Dashboard | `src/features/dashboard/`, `src/data/dashboard.ts` |
 | Expenses / spending UI | `src/features/expenses/`, `src/features/spend/`, `src/data/repositories/expenses.ts`, spend recommendations data |
 | Budget | `src/features/budget/`, `src/data/repositories/budget-lines.ts`, overrides, `src/domain/finance/budget.ts` |
@@ -96,7 +101,8 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
 - **Migrations:** `supabase/migrations/` (evolved from early `profiles` / `expenses` / `investments` / `financial_goals` toward **`financial_*`** tables and richer profile/onboarding/budget/vehicle/housing/CPF fields).
 - **Types:** `src/data/supabase/types.ts` should reflect the schema your app expects; regenerate or edit when migrations add columns.
-- **Advisor / client (POC):** `financial_profiles.profile_type` (`advisor` \| `client`), optional `advisor_user_id` → `auth.users` for clients. **Advisors** are created with `onboarding_required = false` (no wizard). **Clients** keep `onboarding_required = true` until they finish onboarding. Table **`advisor_access_keys`**: unique `access_key`, `status` (`available` \| `claimed` \| `expired`), `claimed_by_user_id`, timestamps. **`handle_new_user`** reads `raw_user_meta_data.profile_type` and `access_key` for clients, claims the key in the same transaction, and sets the profile row. **`validate_client_access_key_for_signup`** (RPC, `SECURITY DEFINER`) is executable by `anon` for pre-checks only. RLS: advisors **select/insert/update** only rows where `advisor_user_id = auth.uid()`.
+- **Advisor / client (POC):** `financial_profiles.profile_type` (`advisor` \| `client`), optional `advisor_user_id` → `auth.users` for clients. **Advisors** are created with `onboarding_required = false` (no wizard). **Clients** keep `onboarding_required = true` until they finish onboarding. Table **`advisor_access_keys`**: unique `access_key`, `status` (`available` \| `claimed` \| `expired`), `claimed_by_user_id`, timestamps. **`handle_new_user`** reads `raw_user_meta_data.profile_type` and `access_key` for clients, claims the key in the same transaction, and sets the profile row. **`validate_client_access_key_for_signup`** (RPC, `SECURITY DEFINER`) is executable by `anon` for pre-checks only. RLS: on **`advisor_access_keys`**, advisors **select/insert/update** only rows where `advisor_user_id = auth.uid()`. On **`financial_profiles`**, an additional **`financial_profiles_select_advisor_clients`** policy lets advisors **read** linked client rows (`profile_type = client` and `advisor_user_id = auth.uid()`) for workspace lists — still no access to other advisors’ clients.
+- **Role helpers:** `src/lib/profile-role.ts` — `getCurrentUserRole`, `isAdvisor`, `isClient`, `normalizeFinancialProfileType`, `clientAdvisorRelationshipOk` (keep role checks centralized).
 
 When you add a table, policy, or column: **update this doc’s “Routes” or “Database” bullets** and any **middleware** or **RLS** implications.
 
@@ -118,4 +124,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 3. If you introduce a new top-level domain concept (e.g. “tax estimates”), add a **Code map** row and point to the main module.
 4. Keep claims aligned with **code**; avoid marketing copy that does not match the UI.
 
-_Last reviewed: advisor/client signup gating, `advisor_access_keys`, Setup “Client access keys” tab (advisors only), `/account-issue`, middleware client-advisor check._
+_Last reviewed: split advisor vs client routes and shell, `/advisor` workspace pages, advisor dashboard repositories, RLS for advisor read of linked clients, login redirects by role._

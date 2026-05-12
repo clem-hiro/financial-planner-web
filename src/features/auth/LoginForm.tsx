@@ -123,7 +123,7 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
           setAccessKey("");
           return;
         }
-        router.push(role === "advisor" ? "/dashboard" : "/onboarding");
+        router.push(role === "advisor" ? "/advisor" : "/onboarding");
         router.refresh();
         return;
       }
@@ -136,7 +136,47 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
         setError(err.message);
         return;
       }
-      router.push("/dashboard");
+
+      const {
+        data: { user: signedInUser },
+      } = await supabase.auth.getUser();
+      if (!signedInUser) {
+        setError("Signed in but could not load session.");
+        return;
+      }
+
+      const { data: finProfile, error: profileErr } = await supabase
+        .from("financial_profiles")
+        .select(
+          "profile_type, advisor_user_id, onboarding_required, onboarding_completed_at"
+        )
+        .eq("id", signedInUser.id)
+        .maybeSingle();
+
+      if (profileErr) {
+        setError(profileErr.message);
+        return;
+      }
+
+      const role = finProfile?.profile_type === "client" ? "client" : "advisor";
+      if (role === "advisor") {
+        router.push("/advisor");
+        router.refresh();
+        return;
+      }
+
+      const missingAdvisor =
+        finProfile?.advisor_user_id == null ||
+        String(finProfile.advisor_user_id).trim() === "";
+      if (missingAdvisor) {
+        router.push("/account-issue");
+        router.refresh();
+        return;
+      }
+
+      const needsOnboarding =
+        !!finProfile?.onboarding_required && !finProfile?.onboarding_completed_at;
+      router.push(needsOnboarding ? "/onboarding" : "/dashboard");
       router.refresh();
     } finally {
       setPending(false);

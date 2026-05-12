@@ -18,11 +18,9 @@ type NavRoute = {
   activeMatch?: (pathname: string) => boolean;
 };
 
-const primaryRoutes = [
-  { href: "/dashboard", label: "Dashboard" },
-] as const;
+const clientPrimaryRoutes = [{ href: "/dashboard", label: "Dashboard" }] as const;
 
-const secondaryRoutes: readonly NavRoute[] = [
+const clientSecondaryRoutes: readonly NavRoute[] = [
   {
     href: "/expenses",
     label: "Spending",
@@ -45,20 +43,55 @@ const secondaryRoutes: readonly NavRoute[] = [
       pathname === "/budget" ||
       pathname.startsWith("/budget/"),
   },
+  { href: "/goals", label: "Goals" },
 ] as const;
 
-const prefetchMainAppRoutes = ["/dashboard", "/expenses", "/setup"] as const;
+const advisorRoutes: readonly NavRoute[] = [
+  {
+    href: "/advisor",
+    label: "Overview",
+    activeMatch: (pathname) => pathname === "/advisor",
+  },
+  {
+    href: "/advisor/clients",
+    label: "Clients",
+    activeMatch: (pathname) =>
+      pathname === "/advisor/clients" ||
+      pathname.startsWith("/advisor/clients/") ||
+      pathname.startsWith("/advisor/client/"),
+  },
+  {
+    href: "/advisor/access-keys",
+    label: "Access keys",
+    activeMatch: (pathname) =>
+      pathname === "/advisor/access-keys" ||
+      pathname.startsWith("/advisor/access-keys/"),
+  },
+] as const;
 
-export function AppShellNav() {
+const prefetchClientRoutes = ["/dashboard", "/expenses", "/setup", "/goals"] as const;
+const prefetchAdvisorRoutes = [
+  "/advisor",
+  "/advisor/clients",
+  "/advisor/access-keys",
+] as const;
+
+export function AppShellNav({
+  workspace,
+}: {
+  workspace: "client" | "advisor";
+}) {
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    for (const href of prefetchMainAppRoutes) {
+    const prefetch =
+      workspace === "advisor" ? prefetchAdvisorRoutes : prefetchClientRoutes;
+    for (const href of prefetch) {
       router.prefetch(href);
     }
-  }, [router]);
+  }, [router, workspace]);
 
   useEffect(() => {
     if (!mobileOpen) return;
@@ -66,7 +99,11 @@ export function AppShellNav() {
     return unlock;
   }, [mobileOpen]);
 
-  const routes: readonly NavRoute[] = [...primaryRoutes, ...secondaryRoutes];
+  const routes: readonly NavRoute[] =
+    workspace === "advisor"
+      ? advisorRoutes
+      : [...clientPrimaryRoutes, ...clientSecondaryRoutes];
+
   const isActive = (route: NavRoute) =>
     route.activeMatch
       ? route.activeMatch(pathname)

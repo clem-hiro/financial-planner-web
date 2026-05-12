@@ -40,11 +40,9 @@ import { InvestmentForm } from "@/features/goals/InvestmentForm";
 import { FinancialGoalsPanels } from "@/features/goals/FinancialGoalsPanels";
 import { VehiclesPanel } from "@/features/goals/VehiclesPanel";
 import { BudgetPlanningView } from "@/features/budget/BudgetPlanningView";
-import { AdvisorAccessKeysSection } from "@/features/advisor/AdvisorAccessKeysSection";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { SetupTabsNav } from "@/features/setup/SetupTabsNav";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
-import { isAdvisorProfile } from "@/lib/profile-role";
 import { formatYearMonth, parseYearMonth, yearFromYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
 import { setupTabPath } from "@/lib/setup-urls";
@@ -53,10 +51,9 @@ import { PageSection } from "@/ui/PageSection";
 
 type SetupTabDef = { id: string; label: string };
 
-function buildSetupTabs(isAdvisor: boolean): readonly SetupTabDef[] {
+function buildSetupTabs(): readonly SetupTabDef[] {
   return [
     { id: "profile", label: "Profile" },
-    ...(isAdvisor ? [{ id: "advisor-access-keys", label: "Client access keys" }] : []),
     { id: "add-account", label: "Investments" },
     { id: "cpf", label: "CPF" },
     { id: "cash-liabilities", label: "Cash and debts" },
@@ -97,8 +94,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
   }
 
   const financialProfile = await getProfileById(supabase, user.id);
-  const isAdvisor = isAdvisorProfile(financialProfile);
-  const setupTabs = buildSetupTabs(isAdvisor);
+  const setupTabs = buildSetupTabs();
 
   const sp = await searchParams;
   const activeTab =
@@ -188,12 +184,6 @@ export default async function SetupPage({ searchParams }: PageProps) {
         activeTab={activeTab}
         buildHref={(tabId) => setupTabPath(tabId, sp)}
       />
-
-      {activeTab === "advisor-access-keys" && isAdvisor ? (
-        <div className="transition-opacity duration-150 ease-out">
-          <AdvisorAccessKeysSection supabase={supabase} userId={user.id} />
-        </div>
-      ) : null}
 
       {activeTab === "profile" ? (
         <div className="transition-opacity duration-150 ease-out">

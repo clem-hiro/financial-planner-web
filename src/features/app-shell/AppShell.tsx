@@ -31,14 +31,18 @@ function MethodologyHeaderButton() {
 
 export function AppShell({
   user,
+  workspace,
   children,
 }: {
   user: User | null;
+  /** Which product surface the signed-in user should see in the shell. */
+  workspace: "client" | "advisor";
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
   const showMainAppNav =
     Boolean(user) && !pathname.startsWith("/onboarding");
+  const brandHref = workspace === "advisor" ? "/advisor" : "/dashboard";
 
   useEffect(() => {
     // Defensive reset for stale dev/HMR body lock state.
@@ -56,13 +60,13 @@ export function AppShell({
           <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 sm:gap-y-4 sm:px-8 sm:py-5">
             <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-4">
               <Link
-                href="/dashboard"
+                href={brandHref}
                 className="text-lg font-semibold tracking-tight text-[#0c192f] transition-opacity hover:opacity-80 sm:text-xl"
               >
                 Finance Planner
               </Link>
               <span className="hidden max-w-xs text-[11px] font-medium uppercase leading-snug tracking-[0.18em] text-slate-400 sm:inline">
-                Private wealth clarity
+                {workspace === "advisor" ? "Advisor workspace" : "Private wealth clarity"}
               </span>
             </div>
             <div
@@ -72,7 +76,9 @@ export function AppShell({
                   : "justify-end"
               }`}
             >
-              {showMainAppNav ? <AppShellNav /> : null}
+              {showMainAppNav ? (
+                <AppShellNav workspace={workspace} />
+              ) : null}
               <div className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-2">
                 <MethodologyHeaderButton />
                 {user ? (

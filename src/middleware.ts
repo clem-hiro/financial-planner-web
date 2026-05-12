@@ -1,8 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const appRouteRegex =
-  /^\/(dashboard|expenses|budget|setup|balances|goals|financial-profile|onboarding|account-issue)/;
+const clientAppRouteRegex =
+  /^\/(dashboard|expenses|spending|budget|setup|balances|goals|financial-profile|onboarding|account-issue)/;
+
+const advisorAppRouteRegex = /^\/advisor(\/|$)/;
 
 export async function middleware(request: NextRequest) {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -36,8 +38,11 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isOnboardingRoute = pathname.startsWith("/onboarding");
   const isAccountIssueRoute = pathname.startsWith("/account-issue");
-  const isAppRoute = appRouteRegex.test(pathname);
-  if (user && isAppRoute) {
+  const isClientAppRoute = clientAppRouteRegex.test(pathname);
+  const isAdvisorRoute = advisorAppRouteRegex.test(pathname);
+  const isGatedAppRoute = isClientAppRoute || isAdvisorRoute;
+
+  if (user && isGatedAppRoute) {
     const { data: profile } = await supabase
       .from("financial_profiles")
       .select(
@@ -53,6 +58,30 @@ export async function middleware(request: NextRequest) {
       (profile?.advisor_user_id == null ||
         String(profile.advisor_user_id).trim() === "");
 
+    if (profileType === "advisor") {
+      if (isOnboardingRoute || isClientAppRoute) {
+        const nextUrl = request.nextUrl.clone();
+        nextUrl.pathname = "/advisor";
+        return NextResponse.redirect(nextUrl);
+      }
+      return supabaseResponse;
+    }
+
+    if (isAdvisorRoute) {
+      const nextUrl = request.nextUrl.clone();
+      if (clientMissingAdvisor) {
+        nextUrl.pathname = "/account-issue";
+      } else if (
+        !!profile?.onboarding_required &&
+        !profile?.onboarding_completed_at
+      ) {
+        nextUrl.pathname = "/onboarding";
+      } else {
+        nextUrl.pathname = "/dashboard";
+      }
+      return NextResponse.redirect(nextUrl);
+    }
+
     if (clientMissingAdvisor && !isAccountIssueRoute) {
       const nextUrl = request.nextUrl.clone();
       nextUrl.pathname = "/account-issue";
@@ -60,9 +89,7 @@ export async function middleware(request: NextRequest) {
     }
 
     const needsOnboarding =
-      profileType === "client" &&
-      !!profile?.onboarding_required &&
-      !profile?.onboarding_completed_at;
+      !!profile?.onboarding_required && !profile?.onboarding_completed_at;
     if (needsOnboarding && !isOnboardingRoute && !clientMissingAdvisor) {
       const nextUrl = request.nextUrl.clone();
       nextUrl.pathname = "/onboarding";

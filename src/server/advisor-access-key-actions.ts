@@ -11,7 +11,7 @@ import {
   ADVISOR_ACCESS_KEY_BATCH_POC,
   generateUniqueAdvisorAccessKeys,
 } from "@/lib/advisor-access-key-token";
-import { isAdvisorProfile } from "@/lib/profile-role";
+import { isAdvisor } from "@/lib/profile-role";
 
 export type GenerateAdvisorKeysFormState = {
   error: string | null;
@@ -46,7 +46,7 @@ export async function generateAdvisorAccessKeysPocAction(): Promise<{
   }
 
   const profile = await getProfileById(supabase, user.id);
-  if (!isAdvisorProfile(profile)) {
+  if (!isAdvisor(profile)) {
     return { ok: false, error: "Only financial advisors can generate keys.", generated: 0 };
   }
 
@@ -61,6 +61,7 @@ export async function generateAdvisorAccessKeysPocAction(): Promise<{
     return { ok: false, error: message, generated: 0 };
   }
 
-  revalidatePath("/setup");
+  revalidatePath("/advisor/access-keys");
+  revalidatePath("/advisor");
   return { ok: true, error: null, generated: batch.length };
 }
