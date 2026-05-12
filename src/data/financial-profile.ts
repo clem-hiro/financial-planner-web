@@ -1,7 +1,9 @@
 import type { ProfileRow } from "@/data/supabase/types";
+import { isClientProfile } from "@/lib/profile-role";
 
 export function needsOnboarding(profile: ProfileRow | null): boolean {
   if (!profile) return false;
+  if (!isClientProfile(profile)) return false;
   return profile.onboarding_required && !profile.onboarding_completed_at;
 }
 

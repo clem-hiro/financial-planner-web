@@ -40,34 +40,36 @@ import { InvestmentForm } from "@/features/goals/InvestmentForm";
 import { FinancialGoalsPanels } from "@/features/goals/FinancialGoalsPanels";
 import { VehiclesPanel } from "@/features/goals/VehiclesPanel";
 import { BudgetPlanningView } from "@/features/budget/BudgetPlanningView";
+import { AdvisorAccessKeysSection } from "@/features/advisor/AdvisorAccessKeysSection";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { SetupTabsNav } from "@/features/setup/SetupTabsNav";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
+import { isAdvisorProfile } from "@/lib/profile-role";
 import { formatYearMonth, parseYearMonth, yearFromYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
 import { setupTabPath } from "@/lib/setup-urls";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { PageSection } from "@/ui/PageSection";
-const setupTabs = [
-  { id: "profile", label: "Profile" },
-  { id: "add-account", label: "Investments" },
-  { id: "cpf", label: "CPF" },
-  { id: "cash-liabilities", label: "Cash and debts" },
-  { id: "housing-loans", label: "Housing loans" },
-  { id: "vehicles", label: "Vehicles" },
-  { id: "budget", label: "Budget" },
-  { id: "goals", label: "Goals" },
-] as const;
 
-type SetupTabId = (typeof setupTabs)[number]["id"];
+type SetupTabDef = { id: string; label: string };
+
+function buildSetupTabs(isAdvisor: boolean): readonly SetupTabDef[] {
+  return [
+    { id: "profile", label: "Profile" },
+    ...(isAdvisor ? [{ id: "advisor-access-keys", label: "Client access keys" }] : []),
+    { id: "add-account", label: "Investments" },
+    { id: "cpf", label: "CPF" },
+    { id: "cash-liabilities", label: "Cash and debts" },
+    { id: "housing-loans", label: "Housing loans" },
+    { id: "vehicles", label: "Vehicles" },
+    { id: "budget", label: "Budget" },
+    { id: "goals", label: "Goals" },
+  ] as const;
+}
 
 type PageProps = {
   searchParams: Promise<{ tab?: string; month?: string; year?: string }>;
 };
-
-function isSetupTabId(value: string | undefined): value is SetupTabId {
-  return setupTabs.some((tab) => tab.id === value);
-}
 
 export default async function SetupPage({ searchParams }: PageProps) {
   if (!isSupabaseConfigured()) {
@@ -94,8 +96,13 @@ export default async function SetupPage({ searchParams }: PageProps) {
     );
   }
 
+  const financialProfile = await getProfileById(supabase, user.id);
+  const isAdvisor = isAdvisorProfile(financialProfile);
+  const setupTabs = buildSetupTabs(isAdvisor);
+
   const sp = await searchParams;
-  const activeTab: SetupTabId = isSetupTabId(sp.tab) ? sp.tab : "profile";
+  const activeTab =
+    sp.tab && setupTabs.some((t) => t.id === sp.tab) ? sp.tab : "profile";
   const budgetMonth =
     sp.month && parseYearMonth(sp.month)
       ? sp.month
@@ -108,16 +115,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
       ? budgetYearParsed
       : yearFromYearMonth(budgetMonth);
 
-  const needProfile =
-    activeTab === "profile" ||
-    activeTab === "add-account" ||
-    activeTab === "cash-liabilities" ||
-    activeTab === "housing-loans" ||
-    activeTab === "vehicles" ||
-    activeTab === "goals";
-
   const [
-    financialProfile,
     investments,
     cashAccounts,
     liabilityRows,
@@ -126,7 +124,6 @@ export default async function SetupPage({ searchParams }: PageProps) {
     housingLoans,
     goals,
   ] = await Promise.all([
-    needProfile ? getProfileById(supabase, user.id) : Promise.resolve(null),
     activeTab === "add-account" || activeTab === "goals"
       ? listInvestments(supabase, user.id)
       : Promise.resolve([] as InvestmentRow[]),
@@ -191,6 +188,12 @@ export default async function SetupPage({ searchParams }: PageProps) {
         activeTab={activeTab}
         buildHref={(tabId) => setupTabPath(tabId, sp)}
       />
+
+      {activeTab === "advisor-access-keys" && isAdvisor ? (
+        <div className="transition-opacity duration-150 ease-out">
+          <AdvisorAccessKeysSection supabase={supabase} userId={user.id} />
+        </div>
+      ) : null}
 
       {activeTab === "profile" ? (
         <div className="transition-opacity duration-150 ease-out">

@@ -172,3 +172,19 @@ export const goalImportBodySchema = z
 export const yearMonthSchema = z.string().regex(/^\d{4}-\d{2}$/);
 
 export const housingLenderTypeSchema = z.enum(["hdb", "bank", "other"]);
+
+/** Sign-up role selection on the login page. */
+export const signupFinancialRoleSchema = z.enum(["advisor", "client"]);
+
+/** Client access key from advisor (stored uppercase hex in DB). */
+export const clientAccessKeyInputSchema = z
+  .string()
+  .trim()
+  .transform((s) => s.toUpperCase())
+  .pipe(
+    z
+      .string()
+      .min(8, "Access key is too short")
+      .max(64, "Access key is too long")
+      .regex(/^[A-F0-9]+$/, "Invalid access key format")
+  );

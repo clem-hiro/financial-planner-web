@@ -11,7 +11,13 @@ export async function getProfileById(
     .eq("id", userId)
     .maybeSingle();
   if (error) throw error;
-  return data as ProfileRow | null;
+  if (!data) return null;
+  const row = data as ProfileRow;
+  return {
+    ...row,
+    profile_type: row.profile_type === "client" ? "client" : "advisor",
+    advisor_user_id: row.advisor_user_id ?? null,
+  };
 }
 
 export async function updateProfile(

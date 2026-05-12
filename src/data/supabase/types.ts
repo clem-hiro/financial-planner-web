@@ -1,5 +1,11 @@
+export type FinancialProfileType = "advisor" | "client";
+
 export type ProfileRow = {
   id: string;
+  /** `advisor` (default) or `client` (signup via advisor access key). */
+  profile_type: FinancialProfileType;
+  /** For clients: issuing advisor's auth user id. */
+  advisor_user_id: string | null;
   display_name: string | null;
   monthly_income: string | null;
   salary_frequency: "monthly" | "biweekly" | "weekly" | "annual" | null;
@@ -24,6 +30,17 @@ export type ProfileRow = {
   onboarding_step: number | null;
   onboarding_completed_at: string | null;
   base_currency: string;
+  created_at: string;
+};
+
+export type AdvisorAccessKeyRow = {
+  id: string;
+  advisor_user_id: string;
+  access_key: string;
+  status: "available" | "claimed" | "expired";
+  claimed_by_user_id: string | null;
+  claimed_at: string | null;
+  expires_at: string | null;
   created_at: string;
 };
 
