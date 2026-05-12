@@ -38,11 +38,11 @@ export function BudgetLineActionsCollapsible(
   if (props.variant === "annual") {
     return (
       <details className="group">
-        <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-blue-700 hover:underline [&::-webkit-details-marker]:hidden">
+        <summary className="flex min-h-10 cursor-pointer list-none items-center gap-1 text-xs font-medium text-teal-800 hover:underline [&::-webkit-details-marker]:hidden">
           <span className="inline-block transition-transform group-open:rotate-90">
             ▸
           </span>
-          Manage line
+          Edit category
         </summary>
         <div className="mt-2 flex flex-col gap-2 border-t border-zinc-100 pt-2 sm:flex-row sm:items-center">
           <BudgetUpdateAmountForm id={props.lineId} amount={props.budgetAmount} />
@@ -63,12 +63,12 @@ export function BudgetLineActionsCollapsible(
   const p = props;
   return (
     <details className="group">
-      <summary className="flex cursor-pointer list-none items-center gap-1 text-xs font-medium text-blue-700 hover:underline [&::-webkit-details-marker]:hidden">
-        <span className="inline-block transition-transform group-open:rotate-90">
-          ▸
-        </span>
-        Manage line &amp; expenses
-      </summary>
+        <summary className="flex min-h-10 cursor-pointer list-none items-center gap-1 text-xs font-medium text-teal-800 hover:underline [&::-webkit-details-marker]:hidden">
+          <span className="inline-block transition-transform group-open:rotate-90">
+            ▸
+          </span>
+          Edit budget &amp; spending
+        </summary>
       <div className="mt-2 space-y-2 border-t border-zinc-100 pt-2">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <BudgetUpdateAmountForm id={p.lineId} amount={p.baseAmount} />

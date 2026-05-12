@@ -32,7 +32,9 @@ export default async function OnboardingPage() {
           profile?.monthly_income != null ? num(profile.monthly_income) : null
         }
         initialBaseCurrency={profile?.base_currency ?? DEFAULT_BASE_CURRENCY}
-        initialAnnualBonus={profile?.annual_bonus != null ? num(profile.annual_bonus) : null}
+        initialAnnualBonus={
+          profile?.annual_bonus != null ? num(profile.annual_bonus) : null
+        }
         initialSavingsTarget={
           profile?.savings_target_monthly != null
             ? num(profile.savings_target_monthly)
@@ -44,6 +46,11 @@ export default async function OnboardingPage() {
             : null
         }
         initialStep={profile?.onboarding_step ?? 1}
+        initialLifestyleProfile={profile?.lifestyle_profile ?? null}
+        initialBudgetingStrategy={profile?.budgeting_strategy ?? null}
+        initialConfidenceLevel={profile?.onboarding_confidence_level ?? null}
+        initialFoodSpendBand={profile?.food_spend_band ?? null}
+        initialEstimatedBudgetMode={profile?.estimated_budget_mode ?? false}
       />
     </div>
   );

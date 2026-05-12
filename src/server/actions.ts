@@ -9,9 +9,18 @@ import {
 import {
   deleteBudgetLine,
   insertBudgetLine,
+  listBudgetLines,
   updateBudgetLine,
 } from "@/data/repositories/budget-lines";
+import { getProfileById, updateProfile } from "@/data/repositories/profiles";
+import { profileMonthlyIncome } from "@/data/mappers";
 import { isValidYearMonth } from "@/domain/finance";
+import {
+  generateGuidedMonthlyBudgetLines,
+  type BudgetingStrategyId,
+  type FoodSpendBandId,
+  type LifestyleProfileId,
+} from "@/domain/finance/budget-guided-setup";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import {
   insertFinancialGoal,
@@ -895,6 +904,133 @@ export async function createBudgetLineAction(
   revalidatePath("/budget");
   revalidatePath("/setup");
   revalidatePath("/dashboard");
+  return { error: null };
+}
+
+const LIFESTYLE_IDS: LifestyleProfileId[] = [
+  "student",
+  "fresh_graduate",
+  "young_professional",
+  "married_couple",
+  "young_family",
+  "high_saver",
+  "flexible_lifestyle",
+  "freelancer",
+  "business_owner",
+];
+
+const STRATEGY_IDS: BudgetingStrategyId[] = [
+  "balanced",
+  "aggressive_saver",
+  "flexible_lifestyle",
+  "custom",
+];
+
+function coerceLifestyle(
+  raw: string | null | undefined
+): LifestyleProfileId {
+  return LIFESTYLE_IDS.includes(raw as LifestyleProfileId)
+    ? (raw as LifestyleProfileId)
+    : "young_professional";
+}
+
+function coerceStrategy(
+  raw: string | null | undefined
+): BudgetingStrategyId {
+  return STRATEGY_IDS.includes(raw as BudgetingStrategyId)
+    ? (raw as BudgetingStrategyId)
+    : "balanced";
+}
+
+function coerceFoodBand(
+  raw: string | null | undefined
+): FoodSpendBandId | null {
+  if (!raw || raw === "unknown") return null;
+  const bands: FoodSpendBandId[] = [
+    "under_300",
+    "range_300_600",
+    "range_600_1000",
+    "above_1000",
+    "unknown",
+  ];
+  return bands.includes(raw as FoodSpendBandId)
+    ? (raw as FoodSpendBandId)
+    : null;
+}
+
+/**
+ * Seeds monthly `financial_budget_lines` from guided-setup heuristics.
+ * Skips when any monthly lines already exist (avoid duplicates / unique index).
+ */
+export async function applyGuidedBudgetLinesAction(
+  _prev: { error: string | null },
+  _formData: FormData
+): Promise<{ error: string | null }> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sign in required" };
+
+  const [profile, existingLines] = await Promise.all([
+    getProfileById(supabase, user.id),
+    listBudgetLines(supabase, user.id),
+  ]);
+
+  const monthlyExisting = existingLines.filter((l) => l.cadence === "monthly");
+  if (monthlyExisting.length > 0) {
+    return {
+      error:
+        "You already have monthly budget lines. Adjust or add categories on the Budget page instead.",
+    };
+  }
+
+  const income = profileMonthlyIncome(profile);
+  if (income == null || income <= 0) {
+    return {
+      error: "Set a positive monthly income first, then try again.",
+    };
+  }
+
+  const drafts = generateGuidedMonthlyBudgetLines({
+    monthlyIncome: income,
+    lifestyle: coerceLifestyle(profile?.lifestyle_profile),
+    strategy: coerceStrategy(profile?.budgeting_strategy),
+    foodSpendBand: coerceFoodBand(profile?.food_spend_band),
+  });
+
+  if (drafts.length === 0) {
+    return {
+      error: "Could not build a plan from your income. Check your profile.",
+    };
+  }
+
+  try {
+    for (const row of drafts) {
+      await insertBudgetLine(supabase, user.id, {
+        category: row.category,
+        cadence: "monthly",
+        amount: row.amount,
+        calendar_year: null,
+        start_year_month: null,
+        end_year_month: null,
+      });
+    }
+    await updateProfile(supabase, user.id, {
+      budget_generation_source: "guided_setup",
+    });
+  } catch (e) {
+    console.error(e);
+    return {
+      error:
+        "Could not save all budget lines. If some were created, finish editing on the Budget page.",
+    };
+  }
+
+  revalidatePath("/budget");
+  revalidatePath("/setup");
+  revalidatePath("/dashboard");
+  revalidatePath("/onboarding");
   return { error: null };
 }
 

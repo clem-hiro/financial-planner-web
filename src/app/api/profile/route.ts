@@ -65,6 +65,12 @@ export async function PATCH(request: Request) {
     onboarding_required?: boolean;
     onboarding_step?: number | null;
     onboarding_completed_at?: string | null;
+    lifestyle_profile?: string | null;
+    budgeting_strategy?: string | null;
+    onboarding_confidence_level?: string | null;
+    budget_generation_source?: string | null;
+    estimated_budget_mode?: boolean;
+    food_spend_band?: string | null;
   } = {};
 
   if (data.display_name !== undefined) {
@@ -175,6 +181,24 @@ export async function PATCH(request: Request) {
   }
   if (data.onboarding_completed_at !== undefined) {
     patch.onboarding_completed_at = data.onboarding_completed_at;
+  }
+  if (data.lifestyle_profile !== undefined) {
+    patch.lifestyle_profile = data.lifestyle_profile;
+  }
+  if (data.budgeting_strategy !== undefined) {
+    patch.budgeting_strategy = data.budgeting_strategy;
+  }
+  if (data.onboarding_confidence_level !== undefined) {
+    patch.onboarding_confidence_level = data.onboarding_confidence_level;
+  }
+  if (data.budget_generation_source !== undefined) {
+    patch.budget_generation_source = data.budget_generation_source;
+  }
+  if (data.estimated_budget_mode !== undefined) {
+    patch.estimated_budget_mode = data.estimated_budget_mode;
+  }
+  if (data.food_spend_band !== undefined) {
+    patch.food_spend_band = data.food_spend_band;
   }
 
   if (Object.keys(patch).length === 0) {

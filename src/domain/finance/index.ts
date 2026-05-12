@@ -102,4 +102,21 @@ export {
 } from "./vehicle-sg";
 export type { VehicleStatus, VehicleValuationInput } from "./vehicle-sg";
 export type { MonthlyBudgetVsActualOptions } from "./budget";
+export {
+  BUDGET_STRATEGY_PRESETS,
+  LIFESTYLE_PRESETS,
+  budgetBucketForCategoryLabel,
+  generateGuidedMonthlyBudgetLines,
+  strategyNeedsWantsSavings,
+  sumBucketAmounts,
+} from "./budget-guided-setup";
+export type {
+  BudgetSpendBucket,
+  BudgetingStrategyId,
+  FoodSpendBandId,
+  GenerateGuidedBudgetParams,
+  GuidedBudgetLineDraft,
+  LifestyleProfileId,
+  OnboardingConfidenceLevel,
+} from "./budget-guided-setup";
 export type * from "./types";

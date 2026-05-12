@@ -88,12 +88,14 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 |------|-----------|
 | Pages (RSC-heavy) | `src/app/(app)/`, `src/app/(app)/(client)/` (IA alias redirects), `src/app/login/`, `src/app/page.tsx` |
 | App chrome | `src/features/app-shell/` |
-| Onboarding | `src/features/onboarding/`, `(app)/onboarding/page.tsx` |
+| Onboarding | `src/features/onboarding/`, `(app)/onboarding/page.tsx` — guided income → lifestyle → strategy → optional **recommended budget lines** (server `applyGuidedBudgetLinesAction`); profile stores `lifestyle_profile`, `budgeting_strategy`, `onboarding_confidence_level`, `food_spend_band`, `estimated_budget_mode`, `budget_generation_source` |
+| Budget lens (Setup) | `src/features/setup/BudgetLensProfileForm.tsx` — edit lifestyle/strategy after onboarding (PATCH `/api/profile`) |
+| Budget strategy & guided templates | `src/domain/finance/budget-guided-setup.ts` — lifestyle presets, 50/30/20-style splits, SG-oriented line generator, category→needs/wants/savings heuristics for visuals |
 | Auth UI | `src/features/auth/` |
 | Advisor workspace (POC) | `src/app/(app)/advisor/**`, `src/features/advisor/`, `src/data/repositories/advisor-access-keys.ts`, `advisor-clients.ts`, `advisor-dashboard.ts`, `src/server/advisor-access-key-actions.ts`, `src/lib/profile-role.ts`, `src/lib/advisor-access-key-token.ts` |
 | Dashboard | `src/features/dashboard/`, `src/data/dashboard.ts` |
 | Expenses / spending UI | `src/features/expenses/`, `src/features/spend/`, `src/data/repositories/expenses.ts`, spend recommendations data |
-| Budget | `src/features/budget/`, `src/data/repositories/budget-lines.ts`, overrides, `src/domain/finance/budget.ts` |
+| Budget | `src/features/budget/` (`BudgetPlanningView`, `BudgetStrategyInsightPanel` for target vs line mix + placeholders), `src/data/repositories/budget-lines.ts`, overrides, `src/domain/finance/budget.ts` |
 | Setup tabs | `src/features/setup/SetupTabsNav.tsx`, `src/lib/setup-urls.ts` |
 | Goals / balances / loans / vehicles / CPF | `src/features/goals/`, related `src/data/repositories/*` |
 | Help / methodology | `src/features/help/`, `src/content/methodology-topics.ts` |
@@ -106,6 +108,7 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 ## Database
 
 - **Migrations:** `supabase/migrations/` (evolved from early `profiles` / `expenses` / `investments` / `financial_goals` toward **`financial_*`** tables and richer profile/onboarding/budget/vehicle/housing/CPF fields).
+- **Budget onboarding extensions (`20260512000002_budget_onboarding_profile_extensions.sql`):** nullable `lifestyle_profile`, `budgeting_strategy`, `onboarding_confidence_level`, `budget_generation_source`, `food_spend_band` on `financial_profiles`; `estimated_budget_mode` boolean default false — all constrained to allowed enum-like values; no change to existing onboarding step range (1–4).
 - **Types:** `src/data/supabase/types.ts` should reflect the schema your app expects; regenerate or edit when migrations add columns.
 - **Advisor / client (POC):** `financial_profiles.profile_type` (`advisor` \| `client`), optional `advisor_user_id` → `auth.users` for clients. **`handle_new_user`** inserts **advisors** with `onboarding_required = false` and **`onboarding_step` null** (no client wizard); **clients** get `onboarding_required = true`, `onboarding_step = 1`, and `advisor_user_id` from the claimed key. Migration **`20260512000001_advisor_skip_onboarding.sql`** also sets `onboarding_required = false` and clears `onboarding_step` for **existing** advisor rows (fixes advisors stuck on onboarding from earlier defaults). Table **`advisor_access_keys`**: unique `access_key`, `status` (`available` \| `claimed` \| `expired`), `claimed_by_user_id`, optional `expires_at`, timestamps. **`handle_new_user`** reads `raw_user_meta_data.profile_type` and `access_key` for clients, claims the key in the same transaction, and sets the profile row. **`validate_client_access_key_for_signup`** (RPC, `SECURITY DEFINER`) is executable by `anon` for pre-checks only. RLS: on **`advisor_access_keys`**, advisors **select/insert/update** only rows where `advisor_user_id = auth.uid()`. On **`financial_profiles`**, an additional **`financial_profiles_select_advisor_clients`** policy lets advisors **read** linked client rows (`profile_type = client` and `advisor_user_id = auth.uid()`) for workspace lists — still no access to other advisors’ clients.
 - **Role helpers:** `src/lib/profile-role.ts` — `getCurrentUserRole`, `isAdvisor`, `isClient`, `normalizeFinancialProfileType`, `clientAdvisorRelationshipOk` (keep role checks centralized).
@@ -130,4 +133,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 3. If you introduce a new top-level domain concept (e.g. “tax estimates”), add a **Code map** row and point to the main module.
 4. Keep claims aligned with **code**; avoid marketing copy that does not match the UI.
 
-_Last reviewed (2026-05-12): stack versions from `package.json`; client alias pages under `(app)/(client)/`; `AppShellNav` active paths; advisor onboarding DB behavior and `20260512000001` backfill; signup `emailRedirectTo` → `/auth/callback`._
+_Last reviewed (2026-05-12): guided budget onboarding (`lifestyle_profile`, `budgeting_strategy`, etc.), `budget-guided-setup` domain module, `applyGuidedBudgetLinesAction`, `BudgetStrategyInsightPanel`, Setup **Budget lens** form, migration `20260512000002_budget_onboarding_profile_extensions.sql`._

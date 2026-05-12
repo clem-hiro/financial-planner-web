@@ -41,6 +41,7 @@ import { VehiclesPanel } from "@/features/goals/VehiclesPanel";
 import { BudgetPlanningView } from "@/features/budget/BudgetPlanningView";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { SetupTabsNav } from "@/features/setup/SetupTabsNav";
+import { BudgetLensProfileForm } from "@/features/setup/BudgetLensProfileForm";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth, parseYearMonth, yearFromYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -250,6 +251,13 @@ export default async function SetupPage({ searchParams }: PageProps) {
                 }
                 cpfYearMonth={formatYearMonth(new Date())}
                 currencyCode={currency}
+              />
+              <BudgetLensProfileForm
+                initialLifestyle={financialProfile?.lifestyle_profile ?? null}
+                initialStrategy={financialProfile?.budgeting_strategy ?? null}
+                initialConfidence={
+                  financialProfile?.onboarding_confidence_level ?? null
+                }
               />
             </div>
           </PageSection>

@@ -130,6 +130,48 @@ export const profilePatchSchema = z
     onboarding_required: z.boolean().optional(),
     onboarding_step: z.number().int().min(1).max(4).nullable().optional(),
     onboarding_completed_at: z.string().datetime().nullable().optional(),
+    lifestyle_profile: z
+      .enum([
+        "student",
+        "fresh_graduate",
+        "young_professional",
+        "married_couple",
+        "young_family",
+        "high_saver",
+        "flexible_lifestyle",
+        "freelancer",
+        "business_owner",
+      ])
+      .nullable()
+      .optional(),
+    budgeting_strategy: z
+      .enum(["balanced", "aggressive_saver", "flexible_lifestyle", "custom"])
+      .nullable()
+      .optional(),
+    onboarding_confidence_level: z
+      .enum(["rough", "moderate", "detailed"])
+      .nullable()
+      .optional(),
+    budget_generation_source: z
+      .enum([
+        "user_manual",
+        "guided_setup",
+        "advisor_recommended",
+        "ai_suggested",
+      ])
+      .nullable()
+      .optional(),
+    estimated_budget_mode: z.boolean().optional(),
+    food_spend_band: z
+      .enum([
+        "under_300",
+        "range_300_600",
+        "range_600_1000",
+        "above_1000",
+        "unknown",
+      ])
+      .nullable()
+      .optional(),
   })
   .superRefine((data, ctx) => {
     if (

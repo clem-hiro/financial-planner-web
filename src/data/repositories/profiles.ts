@@ -43,6 +43,12 @@ export async function updateProfile(
     onboarding_step?: number | null;
     onboarding_completed_at?: string | null;
     base_currency?: string;
+    lifestyle_profile?: string | null;
+    budgeting_strategy?: string | null;
+    onboarding_confidence_level?: string | null;
+    budget_generation_source?: string | null;
+    estimated_budget_mode?: boolean;
+    food_spend_band?: string | null;
   }
 ): Promise<void> {
   const { error } = await supabase
