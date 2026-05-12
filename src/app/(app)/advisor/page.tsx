@@ -49,6 +49,9 @@ export default async function AdvisorDashboardPage() {
 
   const data = await getAdvisorDashboardData(supabase, user.id);
 
+  const keysClaimedButNoClientsVisible =
+    data.totalClients === 0 && data.keyCounts.claimed > 0;
+
   return (
     <div className="space-y-8">
       <div className="rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm sm:px-6">
@@ -63,6 +66,46 @@ export default async function AdvisorDashboardPage() {
           in the client experience.
         </p>
       </div>
+
+      {keysClaimedButNoClientsVisible ? (
+        <div
+          className="rounded-2xl border border-amber-200 bg-amber-50/95 px-4 py-4 text-sm leading-relaxed text-amber-950 sm:px-5"
+          role="status"
+        >
+          <p className="font-semibold text-amber-950">
+            Keys show claimed signups, but this session cannot read any linked client profiles.
+          </p>
+          <p className="mt-2">
+            Counts and lists load from <code className="rounded bg-white/90 px-1.5 py-0.5 text-xs">financial_profiles</code>{" "}
+            using your <strong>logged-in</strong> Supabase user. The dashboard SQL / Table Editor
+            often runs with privileges that <strong>bypass Row Level Security</strong>, so rows can
+            appear there while the app still gets an empty list.
+          </p>
+          <ul className="mt-3 list-disc space-y-2 pl-5">
+            <li>
+              In Supabase → <strong>Database → Policies</strong> on{" "}
+              <code className="rounded bg-white/90 px-1 py-0.5 text-xs">financial_profiles</code>,
+              confirm a <strong>SELECT</strong> policy named{" "}
+              <code className="rounded bg-white/90 px-1 py-0.5 text-xs">
+                financial_profiles_select_advisor_clients
+              </code>{" "}
+              exists (from migration{" "}
+              <code className="rounded bg-white/90 px-1 py-0.5 text-xs">
+                20260512000002_advisor_select_linked_clients.sql
+              </code>
+              ). Without it, advisors only see their own profile row, not clients.
+            </li>
+            <li>
+              Confirm you are signed in as the advisor whose Auth user id matches{" "}
+              <code className="rounded bg-white/90 px-1 py-0.5 text-[11px] break-all">
+                advisor_user_id
+              </code>{" "}
+              on those client rows. <span className="font-medium">Your current session id:</span>{" "}
+              <code className="rounded bg-white/90 px-1 py-0.5 text-[11px] break-all">{user.id}</code>
+            </li>
+          </ul>
+        </div>
+      ) : null}
 
       <section aria-labelledby="advisor-metrics">
         <h2 id="advisor-metrics" className="sr-only">
@@ -94,13 +137,20 @@ export default async function AdvisorDashboardPage() {
           </Link>
         </div>
         {data.recentlyJoinedClients.length === 0 ? (
-          <p className="text-sm text-slate-600">
-            No clients yet. Generate keys under{" "}
-            <Link href="/advisor/access-keys" className={appInlineLinkClass}>
-              Access keys
-            </Link>{" "}
-            and share one per signup.
-          </p>
+          keysClaimedButNoClientsVisible ? (
+            <p className="text-sm text-slate-600">
+              No client rows returned for this session. Use the troubleshooting note above (RLS
+              policy and matching Auth user id).
+            </p>
+          ) : (
+            <p className="text-sm text-slate-600">
+              No clients yet. Generate keys under{" "}
+              <Link href="/advisor/access-keys" className={appInlineLinkClass}>
+                Access keys
+              </Link>{" "}
+              and share one per signup.
+            </p>
+          )
         ) : (
           <ul className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
             {data.recentlyJoinedClients.map((c) => (

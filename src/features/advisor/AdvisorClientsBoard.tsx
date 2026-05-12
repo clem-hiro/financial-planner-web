@@ -89,7 +89,50 @@ export function AdvisorClientsBoard({
       </form>
 
       {rows.length === 0 ? (
-        <p className="text-sm text-slate-600">No clients match this filter.</p>
+        <div className="rounded-2xl border border-slate-200 bg-slate-50/60 px-5 py-6 text-sm leading-relaxed text-slate-700">
+          {q.trim() ? (
+            <p className="font-medium text-slate-900">No clients match this search.</p>
+          ) : totalCount === 0 ? (
+            <>
+              <p className="font-semibold text-slate-900">
+                No clients are linked to the advisor account you are signed in with.
+              </p>
+              <p className="mt-3">
+                This list only includes profiles where{" "}
+                <code className="rounded bg-white px-1.5 py-0.5 text-xs text-slate-800">
+                  financial_profiles.profile_type
+                </code>{" "}
+                is{" "}
+                <code className="rounded bg-white px-1.5 py-0.5 text-xs text-slate-800">client</code>{" "}
+                and{" "}
+                <code className="rounded bg-white px-1.5 py-0.5 text-xs text-slate-800">
+                  advisor_user_id
+                </code>{" "}
+                equals <strong>your</strong> Supabase user id (not your email). That id is set
+                automatically when someone signs up as a client using an access key you created
+                while logged in as <em>this same</em> advisor.
+              </p>
+              <ul className="mt-4 list-disc space-y-2 pl-5 text-slate-600">
+                <li>
+                  If the keys were created under a different login (or a different Supabase
+                  project), those clients will not appear here.
+                </li>
+                <li>
+                  Clients who registered before keys existed, or without a valid key, may have
+                  empty <code className="rounded bg-white px-1 text-xs">advisor_user_id</code> and
+                  will not show up.
+                </li>
+                <li>
+                  In Supabase: Table Editor → <code className="rounded bg-white px-1 text-xs">financial_profiles</code>{" "}
+                  on each client row — confirm <code className="rounded bg-white px-1 text-xs">advisor_user_id</code>{" "}
+                  matches Auth → Users → id for the advisor you expect.
+                </li>
+              </ul>
+            </>
+          ) : (
+            <p className="font-medium text-slate-900">No clients on this page.</p>
+          )}
+        </div>
       ) : (
         <>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
