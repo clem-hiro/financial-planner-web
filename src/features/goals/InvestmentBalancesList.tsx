@@ -1,10 +1,15 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useActionState, useMemo, useState } from "react";
-import { updateInvestmentAction } from "@/server/actions";
+import { useActionState, useMemo, useRef, useState } from "react";
+import {
+  deleteAdvisorClientInvestmentAction,
+  updateAdvisorClientInvestmentAction,
+} from "@/server/advisor-client-actions";
+import { deleteInvestmentAction, updateInvestmentAction } from "@/server/actions";
 import { ageCompletedOnDate } from "@/domain/finance";
 import { InfoTooltip } from "@/ui/InfoTooltip";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { fpInputClass, fpPrimaryButtonClass } from "@/ui/input-classes";
 import { formatCurrency } from "@/ui/lib/format";
 
@@ -100,11 +105,17 @@ function InvestmentSummary({
   currencyCode,
   planningContext,
   onEdit,
+  onDelete,
+  deleteError,
+  deletePending,
 }: {
   investment: InvestmentBalanceRow;
   currencyCode: string;
   planningContext: InvestmentPlanningContext | null;
   onEdit: () => void;
+  onDelete: () => void;
+  deleteError: string | null;
+  deletePending: boolean;
 }) {
   const returnPct = (investment.expected_annual_return * 100).toFixed(1);
   const flowSummary = contributionSummaryLine(investment, currencyCode);
@@ -127,13 +138,31 @@ function InvestmentSummary({
         <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">
           Current
         </p>
-        <button
-          type="button"
-          onClick={onEdit}
-          className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500/30"
-        >
-          Edit
-        </button>
+        <div className="flex flex-col items-end gap-1.5">
+          <div className="flex flex-wrap justify-end gap-1.5">
+            <button
+              type="button"
+              onClick={onEdit}
+              disabled={deletePending}
+              className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              onClick={onDelete}
+              disabled={deletePending}
+              className="rounded-full border border-red-200 bg-white px-3 py-1 text-xs font-medium text-red-700 transition hover:border-red-300 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500/25 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {deletePending ? "Removing…" : "Delete"}
+            </button>
+          </div>
+          {deleteError ? (
+            <p className="max-w-56 text-right text-[11px] text-red-600" role="alert">
+              {deleteError}
+            </p>
+          ) : null}
+        </div>
       </div>
     </div>
   );
@@ -143,12 +172,15 @@ function InvestmentEditForm({
   investment,
   currencyCode,
   onClose,
+  advisorClientId,
 }: {
   investment: InvestmentBalanceRow;
   currencyCode: string;
   onClose: () => void;
+  advisorClientId?: string;
 }) {
   const router = useRouter();
+  const submitLockRef = useRef(false);
   const [name, setName] = useState(investment.name);
   const [currentValueRaw, setCurrentValueRaw] = useState(
     String(investment.current_value)
@@ -177,12 +209,20 @@ function InvestmentEditForm({
     prev: typeof initial,
     formData: FormData
   ): Promise<typeof initial> => {
-    const res = await updateInvestmentAction(prev, formData);
-    if (res.error === null) {
-      router.refresh();
-      onClose();
+    if (submitLockRef.current) return prev;
+    submitLockRef.current = true;
+    try {
+      const res = advisorClientId
+        ? await updateAdvisorClientInvestmentAction(prev, formData)
+        : await updateInvestmentAction(prev, formData);
+      if (res.error === null) {
+        router.refresh();
+        onClose();
+      }
+      return res;
+    } finally {
+      submitLockRef.current = false;
     }
-    return res;
   };
   const [state, formAction, pending] = useActionState(wrapped, initial);
 
@@ -193,8 +233,17 @@ function InvestmentEditForm({
   }, [returnPctRaw]);
 
   return (
-    <form action={formAction} className="space-y-4 border-t border-slate-100 py-4">
+    <>
+      <BlockingSubmitOverlay active={pending} message="Saving changes…" />
+      <form
+        action={formAction}
+        {...(pending ? { inert: true } : {})}
+        className="space-y-4 border-t border-slate-100 py-4"
+      >
       <input type="hidden" name="id" value={investment.id} />
+      {advisorClientId ? (
+        <input type="hidden" name="client_id" value={advisorClientId} />
+      ) : null}
       {state.error && (
         <p
           className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
@@ -391,6 +440,7 @@ function InvestmentEditForm({
         </button>
       </div>
     </form>
+    </>
   );
 }
 
@@ -398,21 +448,63 @@ function InvestmentRow({
   investment,
   currencyCode,
   planningContext,
+  advisorClientId,
 }: {
   investment: InvestmentBalanceRow;
   currencyCode: string;
   planningContext: InvestmentPlanningContext | null;
+  advisorClientId?: string;
 }) {
+  const router = useRouter();
   const [editing, setEditing] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deletePending, setDeletePending] = useState(false);
+  const deleteLockRef = useRef(false);
+
+  const runDelete = async () => {
+    if (deleteLockRef.current) return;
+    if (
+      !window.confirm(
+        `Remove “${investment.name}” from the plan? This cannot be undone.`
+      )
+    ) {
+      return;
+    }
+    deleteLockRef.current = true;
+    setDeleteError(null);
+    setDeletePending(true);
+    try {
+      const fd = new FormData();
+      fd.set("id", investment.id);
+      if (advisorClientId) fd.set("client_id", advisorClientId);
+      const res = advisorClientId
+        ? await deleteAdvisorClientInvestmentAction({ error: null }, fd)
+        : await deleteInvestmentAction({ error: null }, fd);
+      if (res.error) {
+        setDeleteError(res.error);
+        return;
+      }
+      router.refresh();
+    } finally {
+      setDeletePending(false);
+      deleteLockRef.current = false;
+    }
+  };
 
   if (!editing) {
     return (
-      <InvestmentSummary
-        investment={investment}
-        currencyCode={currencyCode}
-        planningContext={planningContext}
-        onEdit={() => setEditing(true)}
-      />
+      <>
+        <BlockingSubmitOverlay active={deletePending} message="Removing account…" />
+        <InvestmentSummary
+          investment={investment}
+          currencyCode={currencyCode}
+          planningContext={planningContext}
+          onEdit={() => setEditing(true)}
+          onDelete={runDelete}
+          deleteError={deleteError}
+          deletePending={deletePending}
+        />
+      </>
     );
   }
   return (
@@ -420,6 +512,7 @@ function InvestmentRow({
       investment={investment}
       currencyCode={currencyCode}
       onClose={() => setEditing(false)}
+      advisorClientId={advisorClientId}
     />
   );
 }
@@ -428,11 +521,16 @@ export function InvestmentBalancesList({
   items,
   currencyCode,
   planningContext,
+  advisorClientId,
+  accountsHeading = "Your accounts",
 }: {
   items: InvestmentBalanceRow[];
   currencyCode: string;
   /** When birth date + retirement age are set, show an illustrative contribution timeline. */
   planningContext?: InvestmentPlanningContext | null;
+  /** When set, create/update/delete run as the linked advisor for that client profile id. */
+  advisorClientId?: string;
+  accountsHeading?: string;
 }) {
   const total = items.reduce((acc, i) => acc + i.current_value, 0);
 
@@ -443,7 +541,7 @@ export function InvestmentBalancesList({
   return (
     <section className="space-y-3">
       <div>
-        <h2 className="text-sm font-semibold text-zinc-900">Your accounts</h2>
+        <h2 className="text-sm font-semibold text-zinc-900">{accountsHeading}</h2>
         <p className="mt-1 text-xs text-zinc-500">
           Investments and savings-style accounts. Amounts are in {currencyCode}. Monthly
           contributions can stop while balances keep growing in projections.
@@ -462,6 +560,7 @@ export function InvestmentBalancesList({
               investment={inv}
               currencyCode={currencyCode}
               planningContext={planningContext ?? null}
+              advisorClientId={advisorClientId}
             />
           </li>
         ))}

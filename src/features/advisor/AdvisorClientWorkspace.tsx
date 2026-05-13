@@ -8,9 +8,15 @@ import { AdvisorBadge, AdvisorComingSoonPanel, AdvisorSection } from "@/features
 import { AdvisorBudgetLineAmountForm } from "@/features/advisor/forms/AdvisorBudgetLineAmountForm";
 import { AdvisorGoalContributionForm } from "@/features/advisor/forms/AdvisorGoalContributionForm";
 import { AdvisorProfilePatchForm } from "@/features/advisor/forms/AdvisorProfilePatchForm";
+import {
+  InvestmentBalancesList,
+  type InvestmentBalanceRow,
+} from "@/features/goals/InvestmentBalancesList";
+import { InvestmentForm } from "@/features/goals/InvestmentForm";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
+import { birthDateIsValidPast } from "@/lib/validation";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
-import { formatCurrency, formatPercent } from "@/ui/lib/format";
+import { formatCurrency } from "@/ui/lib/format";
 
 function onboardingLabel(profile: ProfileRow) {
   if (profile.onboarding_completed_at) return "Complete";
@@ -36,6 +42,29 @@ export function AdvisorClientWorkspace({
   month: string;
 }) {
   const currency = profile.base_currency ?? DEFAULT_BASE_CURRENCY;
+  const investmentBalanceRows: InvestmentBalanceRow[] = investments.map((i) => ({
+    id: i.id,
+    name: i.name,
+    current_value: num(i.current_value),
+    monthly_contribution: num(i.monthly_contribution),
+    expected_annual_return: num(i.expected_annual_return),
+    contribution_type: i.contribution_type ?? null,
+    contribution_duration_years:
+      i.contribution_duration_years != null &&
+      String(i.contribution_duration_years).trim() !== ""
+        ? num(i.contribution_duration_years as string)
+        : null,
+  }));
+  const investmentPlanningContext =
+    profile.birth_date &&
+    typeof profile.birth_date === "string" &&
+    birthDateIsValidPast(profile.birth_date) &&
+    profile.target_retirement_age != null
+      ? {
+          birthDate: profile.birth_date,
+          targetRetirementAge: Number(profile.target_retirement_age),
+        }
+      : null;
   const signals = advisorClientWorkspaceSignals(profile, payload);
   const monthlyBudgetLines = budgetLines.filter((b) => b.cadence === "monthly");
 
@@ -309,30 +338,24 @@ export function AdvisorClientWorkspace({
           <AdvisorSection
             id="investments"
             title="Investments & savings"
-            description="Read-only snapshot; balance edits use the client Setup flows for now."
+            description="Add, edit, or remove investment accounts for this client. Changes apply immediately to their projections."
           >
-            {investments.length === 0 ? (
-              <p className="text-sm text-slate-600">No investment accounts tracked.</p>
-            ) : (
-              <ul className="divide-y divide-slate-100 rounded-xl border border-slate-100">
-                {investments.map((inv) => (
-                  <li
-                    key={inv.id}
-                    className="flex items-center justify-between gap-4 px-4 py-3 text-sm"
-                  >
-                    <span className="font-medium text-slate-900">{inv.name}</span>
-                    <span className="tabular-nums text-slate-700">
-                      {formatCurrency(num(inv.current_value), currency)} ·{" "}
-                      {formatPercent(num(inv.expected_annual_return))} p.a.
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-            <p className="mt-4 text-xs font-medium text-slate-500">
-              Inline investment edits —{" "}
-              <span className="text-slate-800">Coming Soon</span> (side panel editor).
-            </p>
+            <div className="overflow-hidden rounded-xl border border-slate-100 bg-white divide-y divide-slate-100">
+              <div className="p-4 sm:p-5">
+                <InvestmentForm advisorClientId={clientId} />
+              </div>
+              {investmentBalanceRows.length > 0 ? (
+                <div className="p-4 sm:p-5">
+                  <InvestmentBalancesList
+                    items={investmentBalanceRows}
+                    currencyCode={currency}
+                    planningContext={investmentPlanningContext}
+                    advisorClientId={clientId}
+                    accountsHeading="Client accounts"
+                  />
+                </div>
+              ) : null}
+            </div>
           </AdvisorSection>
 
           <AdvisorSection

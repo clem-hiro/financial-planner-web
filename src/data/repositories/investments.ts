@@ -165,3 +165,16 @@ export async function updateInvestment(
 
   if (error) throw error;
 }
+
+export async function deleteInvestment(
+  supabase: SupabaseClient,
+  userId: string,
+  id: string
+): Promise<void> {
+  const { error } = await supabase
+    .from("financial_investments")
+    .delete()
+    .eq("user_id", userId)
+    .eq("id", id);
+  if (error) throw error;
+}

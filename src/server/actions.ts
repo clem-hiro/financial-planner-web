@@ -52,6 +52,7 @@ import {
   updateHousingLoan,
 } from "@/data/repositories/housing-loans";
 import {
+  deleteInvestment,
   insertInvestment,
   updateInvestment,
 } from "@/data/repositories/investments";
@@ -224,6 +225,37 @@ export async function updateInvestmentAction(
       contribution_type,
       contribution_duration_years,
     });
+  } catch (e) {
+    return { error: toClientErrorMessage(e) };
+  }
+
+  revalidatePath("/balances");
+  revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
+  revalidatePath("/planning/future");
+  return { error: null as string | null };
+}
+
+export async function deleteInvestmentAction(
+  _prev: { error: string | null },
+  formData: FormData
+): Promise<{ error: string | null }> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "Sign in required" };
+  }
+
+  const idRaw = String(formData.get("id") ?? "").trim();
+  const idParsed = z.string().uuid().safeParse(idRaw);
+  if (!idParsed.success) {
+    return { error: "Invalid investment" };
+  }
+
+  try {
+    await deleteInvestment(supabase, user.id, idParsed.data);
   } catch (e) {
     return { error: toClientErrorMessage(e) };
   }

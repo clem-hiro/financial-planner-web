@@ -5,9 +5,24 @@ import { revalidateSetupAndPlanning } from "@/lib/planning-revalidate";
 import { updateBudgetLine } from "@/data/repositories/budget-lines";
 import { getClientProfileForAdvisor } from "@/data/repositories/advisor-clients";
 import { updateFinancialGoal } from "@/data/repositories/goals";
+import {
+  deleteInvestment,
+  insertInvestment,
+  updateInvestment,
+} from "@/data/repositories/investments";
 import { getProfileById, updateProfile } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { isAdvisor } from "@/lib/profile-role";
+import { z } from "zod";
+
+function clientErrorFromUnknown(e: unknown): string {
+  if (e instanceof Error && e.message.trim()) return e.message;
+  if (e && typeof e === "object" && "message" in e) {
+    const m = (e as { message?: unknown }).message;
+    if (typeof m === "string" && m.trim()) return m;
+  }
+  return "Something went wrong while saving. Please try again.";
+}
 
 function revalidateAdvisorClientViews(clientId: string) {
   revalidatePath("/advisor/clients");
@@ -150,6 +165,175 @@ export async function patchAdvisorClientGoalMonthlyContributionAction(
   } catch (e) {
     console.error(e);
     return { error: "Could not update goal" };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null };
+}
+
+export async function createAdvisorClientInvestmentAction(
+  _prev: { error: string | null },
+  formData: FormData
+): Promise<{ error: string | null }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase } = ctx;
+
+  const name = String(formData.get("name") ?? "").trim();
+  const currentValue = Number(formData.get("current_value"));
+  const monthlyContribution = Number(formData.get("monthly_contribution"));
+  const expectedAnnualReturn = Number(formData.get("expected_annual_return"));
+
+  if (!name) return { error: "Name is required" };
+  if (!Number.isFinite(currentValue) || currentValue < 0) {
+    return { error: "Invalid current value" };
+  }
+  if (!Number.isFinite(monthlyContribution) || monthlyContribution < 0) {
+    return { error: "Invalid monthly contribution" };
+  }
+  if (
+    !Number.isFinite(expectedAnnualReturn) ||
+    expectedAnnualReturn < 0 ||
+    expectedAnnualReturn > 1
+  ) {
+    return { error: "Invalid expected return (use 0–1, e.g. 0.07)" };
+  }
+
+  const contributionTypeRaw = String(
+    formData.get("contribution_type") ?? ""
+  ).trim();
+  const isFixed = contributionTypeRaw === "fixed_duration";
+
+  let contribution_type: string | null = null;
+  let contribution_duration_years: number | null = null;
+  if (isFixed) {
+    const y = Number(formData.get("contribution_duration_years"));
+    if (!Number.isFinite(y) || y <= 0 || y > 80) {
+      return {
+        error: "Enter contribution duration in years (between 0.25 and 80)",
+      };
+    }
+    contribution_type = "fixed_duration";
+    contribution_duration_years = y;
+  } else if (contributionTypeRaw === "until_retirement") {
+    contribution_type = "until_retirement";
+  }
+
+  try {
+    await insertInvestment(supabase, clientId, {
+      name,
+      current_value: currentValue,
+      monthly_contribution: monthlyContribution,
+      expected_annual_return: expectedAnnualReturn,
+      contribution_type,
+      contribution_duration_years,
+    });
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null };
+}
+
+export async function updateAdvisorClientInvestmentAction(
+  _prev: { error: string | null },
+  formData: FormData
+): Promise<{ error: string | null }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase } = ctx;
+
+  const idRaw = String(formData.get("id") ?? "").trim();
+  const idParsed = z.string().uuid().safeParse(idRaw);
+  if (!idParsed.success) {
+    return { error: "Invalid investment" };
+  }
+
+  const name = String(formData.get("name") ?? "").trim();
+  const currentValue = Number(formData.get("current_value"));
+  const monthlyContribution = Number(formData.get("monthly_contribution"));
+  const expectedAnnualReturn = Number(formData.get("expected_annual_return"));
+
+  if (!name) return { error: "Name is required" };
+  if (!Number.isFinite(currentValue) || currentValue < 0) {
+    return { error: "Invalid current value" };
+  }
+  if (!Number.isFinite(monthlyContribution) || monthlyContribution < 0) {
+    return { error: "Invalid monthly contribution" };
+  }
+  if (
+    !Number.isFinite(expectedAnnualReturn) ||
+    expectedAnnualReturn < 0 ||
+    expectedAnnualReturn > 1
+  ) {
+    return { error: "Invalid expected return (use 0–1, e.g. 0.07)" };
+  }
+
+  const contributionTypeRaw = String(
+    formData.get("contribution_type") ?? ""
+  ).trim();
+  const isFixed = contributionTypeRaw === "fixed_duration";
+
+  let contribution_type: string | null = null;
+  let contribution_duration_years: number | null = null;
+  if (isFixed) {
+    const y = Number(formData.get("contribution_duration_years"));
+    if (!Number.isFinite(y) || y <= 0 || y > 80) {
+      return {
+        error: "Enter contribution duration in years (between 0.25 and 80)",
+      };
+    }
+    contribution_type = "fixed_duration";
+    contribution_duration_years = y;
+  } else if (contributionTypeRaw === "until_retirement") {
+    contribution_type = "until_retirement";
+  }
+
+  try {
+    await updateInvestment(supabase, clientId, idParsed.data, {
+      name,
+      current_value: currentValue,
+      monthly_contribution: monthlyContribution,
+      expected_annual_return: expectedAnnualReturn,
+      contribution_type,
+      contribution_duration_years,
+    });
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null };
+}
+
+export async function deleteAdvisorClientInvestmentAction(
+  _prev: { error: string | null },
+  formData: FormData
+): Promise<{ error: string | null }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase } = ctx;
+
+  const idRaw = String(formData.get("id") ?? "").trim();
+  const idParsed = z.string().uuid().safeParse(idRaw);
+  if (!idParsed.success) {
+    return { error: "Invalid investment" };
+  }
+
+  try {
+    await deleteInvestment(supabase, clientId, idParsed.data);
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
   }
 
   revalidateAdvisorClientViews(clientId);

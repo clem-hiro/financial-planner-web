@@ -1,18 +1,50 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useActionState, useRef, useState } from "react";
+import { createAdvisorClientInvestmentAction } from "@/server/advisor-client-actions";
 import { createInvestmentAction } from "@/server/actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };
 
-export function InvestmentForm() {
-  const [state, formAction] = useActionState(createInvestmentAction, initial);
+export function InvestmentForm(props: { advisorClientId?: string } = {}) {
+  const { advisorClientId } = props;
+  const router = useRouter();
+  const submitLockRef = useRef(false);
+  const saveAction = advisorClientId
+    ? createAdvisorClientInvestmentAction
+    : createInvestmentAction;
+  const wrapped = async (
+    prev: typeof initial,
+    fd: FormData
+  ): Promise<typeof initial> => {
+    if (submitLockRef.current) return prev;
+    submitLockRef.current = true;
+    try {
+      const res = await saveAction(prev, fd);
+      if (res.error === null) router.refresh();
+      return res;
+    } finally {
+      submitLockRef.current = false;
+    }
+  };
+  const [state, formAction, pending] = useActionState(wrapped, initial);
   const [contributionMode, setContributionMode] = useState<
     "until_retirement" | "fixed_duration"
   >("until_retirement");
 
   return (
-    <form action={formAction} className="space-y-5">
+    <>
+      <BlockingSubmitOverlay active={pending} message="Saving account…" />
+      <form
+        action={formAction}
+        {...(pending ? { inert: true } : {})}
+        className="space-y-5"
+      >
+      {advisorClientId ? (
+        <input type="hidden" name="client_id" value={advisorClientId} />
+      ) : null}
       <div>
         <h2 className="text-sm font-semibold text-slate-900">Add an account</h2>
         <p className="mt-1 text-xs leading-relaxed text-slate-500">
@@ -172,11 +204,13 @@ export function InvestmentForm() {
       <div className="flex justify-end pt-1">
         <button
           type="submit"
-          className="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-slate-800"
+          disabled={pending}
+          className="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Save account
+          {pending ? "Saving…" : "Save account"}
         </button>
       </div>
     </form>
+    </>
   );
 }
