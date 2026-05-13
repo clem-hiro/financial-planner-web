@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { revalidateSetupAndPlanning } from "@/lib/planning-revalidate";
 import { updateBudgetLine } from "@/data/repositories/budget-lines";
 import { getClientProfileForAdvisor } from "@/data/repositories/advisor-clients";
 import { updateFinancialGoal } from "@/data/repositories/goals";
@@ -13,8 +14,8 @@ function revalidateAdvisorClientViews(clientId: string) {
   revalidatePath(`/advisor/client/${clientId}`);
   revalidatePath("/dashboard");
   revalidatePath("/budget");
-  revalidatePath("/goals");
-  revalidatePath("/setup");
+  revalidatePath("/planning/future");
+  revalidateSetupAndPlanning();
 }
 
 async function requireAdvisorLinkedClient(

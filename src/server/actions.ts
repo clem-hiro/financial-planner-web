@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { revalidateSetupAndPlanning } from "@/lib/planning-revalidate";
 import { redirect } from "next/navigation";
 import {
   deleteBudgetLineMonthOverride,
@@ -69,6 +70,15 @@ import {
 } from "@/lib/validation";
 import { z } from "zod";
 
+function toClientErrorMessage(e: unknown): string {
+  if (e instanceof Error && e.message.trim()) return e.message;
+  if (e && typeof e === "object" && "message" in e) {
+    const m = (e as { message?: unknown }).message;
+    if (typeof m === "string" && m.trim()) return m;
+  }
+  return "Something went wrong while saving. Please try again.";
+}
+
 export async function signOutAction() {
   const supabase = await createSupabaseServerClient();
   await supabase.auth.signOut();
@@ -123,19 +133,27 @@ export async function createInvestmentAction(
     }
     contribution_type = "fixed_duration";
     contribution_duration_years = y;
+  } else if (contributionTypeRaw === "until_retirement") {
+    contribution_type = "until_retirement";
   }
 
-  await insertInvestment(supabase, user.id, {
-    name,
-    current_value: currentValue,
-    monthly_contribution: monthlyContribution,
-    expected_annual_return: expectedAnnualReturn,
-    contribution_type,
-    contribution_duration_years,
-  });
+  try {
+    await insertInvestment(supabase, user.id, {
+      name,
+      current_value: currentValue,
+      monthly_contribution: monthlyContribution,
+      expected_annual_return: expectedAnnualReturn,
+      contribution_type,
+      contribution_duration_years,
+    });
+  } catch (e) {
+    return { error: toClientErrorMessage(e) };
+  }
 
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
+  revalidatePath("/planning/future");
   return { error: null as string | null };
 }
 
@@ -193,19 +211,27 @@ export async function updateInvestmentAction(
     }
     contribution_type = "fixed_duration";
     contribution_duration_years = y;
+  } else if (contributionTypeRaw === "until_retirement") {
+    contribution_type = "until_retirement";
   }
 
-  await updateInvestment(supabase, user.id, idParsed.data, {
-    name,
-    current_value: currentValue,
-    monthly_contribution: monthlyContribution,
-    expected_annual_return: expectedAnnualReturn,
-    contribution_type,
-    contribution_duration_years,
-  });
+  try {
+    await updateInvestment(supabase, user.id, idParsed.data, {
+      name,
+      current_value: currentValue,
+      monthly_contribution: monthlyContribution,
+      expected_annual_return: expectedAnnualReturn,
+      contribution_type,
+      contribution_duration_years,
+    });
+  } catch (e) {
+    return { error: toClientErrorMessage(e) };
+  }
 
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
+  revalidatePath("/planning/future");
   return { error: null as string | null };
 }
 
@@ -808,8 +834,8 @@ export async function createGoalAction(
     expected_annual_return: expectedAnnualReturn,
   });
 
-  revalidatePath("/goals");
-  revalidatePath("/setup");
+  revalidatePath("/planning/future");
+  revalidateSetupAndPlanning();
   revalidatePath("/dashboard");
   return { error: null as string | null };
 }
@@ -871,8 +897,8 @@ export async function updateGoalAction(
     return { error: "Could not update goal" };
   }
 
-  revalidatePath("/goals");
-  revalidatePath("/setup");
+  revalidatePath("/planning/future");
+  revalidateSetupAndPlanning();
   revalidatePath("/dashboard");
   return { error: null as string | null };
 }
@@ -949,7 +975,7 @@ export async function createBudgetLineAction(
   }
 
   revalidatePath("/budget");
-  revalidatePath("/setup");
+  revalidateSetupAndPlanning();
   revalidatePath("/dashboard");
   return { error: null };
 }
@@ -1075,7 +1101,7 @@ export async function applyGuidedBudgetLinesAction(
   }
 
   revalidatePath("/budget");
-  revalidatePath("/setup");
+  revalidateSetupAndPlanning();
   revalidatePath("/dashboard");
   revalidatePath("/onboarding");
   return { error: null };
@@ -1106,7 +1132,7 @@ export async function updateBudgetLineAmountAction(
   }
 
   revalidatePath("/budget");
-  revalidatePath("/setup");
+  revalidateSetupAndPlanning();
   revalidatePath("/dashboard");
   return { error: null };
 }
@@ -1128,7 +1154,7 @@ export async function deleteBudgetLineAction(formData: FormData) {
   }
 
   revalidatePath("/budget");
-  revalidatePath("/setup");
+  revalidateSetupAndPlanning();
   revalidatePath("/dashboard");
 }
 
@@ -1164,7 +1190,7 @@ export async function setBudgetMonthOverrideAction(
   }
 
   revalidatePath("/budget");
-  revalidatePath("/setup");
+  revalidateSetupAndPlanning();
   revalidatePath("/dashboard");
   return { error: null };
 }
@@ -1192,7 +1218,7 @@ export async function clearBudgetMonthOverrideAction(formData: FormData) {
   }
 
   revalidatePath("/budget");
-  revalidatePath("/setup");
+  revalidateSetupAndPlanning();
   revalidatePath("/dashboard");
 }
 
@@ -1249,7 +1275,7 @@ export async function updateBudgetLineScheduleAction(
   }
 
   revalidatePath("/budget");
-  revalidatePath("/setup");
+  revalidateSetupAndPlanning();
   revalidatePath("/dashboard");
   return { error: null };
 }

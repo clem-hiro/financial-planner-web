@@ -5,29 +5,10 @@ import type { User } from "@supabase/supabase-js";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { AppShellNav } from "@/features/app-shell/AppShellNav";
+import { AppShellUserMenu } from "@/features/app-shell/AppShellUserMenu";
 import { MethodologySheet } from "@/features/help/MethodologySheet";
-import {
-  MethodologyProvider,
-  useMethodology,
-} from "@/features/help/methodology-context";
-import { signOutAction } from "@/server/actions";
+import { MethodologyProvider } from "@/features/help/methodology-context";
 import { ScrollToTopButton } from "@/ui/ScrollToTopButton";
-
-const ghostBtn =
-  "inline-flex min-h-10 items-center justify-center rounded-full px-3.5 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 sm:min-h-0 sm:py-1.5";
-
-function MethodologyHeaderButton() {
-  const { openMethodology } = useMethodology();
-  return (
-    <button
-      type="button"
-      onClick={() => openMethodology(null)}
-      className="inline-flex min-h-10 items-center justify-center rounded-full border border-slate-200/90 bg-white px-3.5 py-2 text-xs font-semibold tracking-wide text-slate-600 shadow-sm transition hover:border-emerald-200/90 hover:text-emerald-900 sm:min-h-0 sm:py-1.5"
-    >
-      How it works
-    </button>
-  );
-}
 
 export function AppShell({
   user,
@@ -99,13 +80,8 @@ export function AppShell({
                     Operations
                   </span>
                 ) : null}
-                <MethodologyHeaderButton />
                 {user ? (
-                  <form action={signOutAction} className="inline">
-                    <button type="submit" className={`${ghostBtn} text-slate-500`}>
-                      Sign out
-                    </button>
-                  </form>
+                  <AppShellUserMenu user={user} />
                 ) : (
                   <Link
                     href="/login"

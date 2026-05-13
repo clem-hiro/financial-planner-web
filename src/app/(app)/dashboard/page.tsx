@@ -73,13 +73,14 @@ export default async function DashboardPage() {
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-2xl space-y-2">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200/90">
-                Financial clarity
+                Today&apos;s command center
               </p>
               <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-                Your money, simplified.
+                Your financial day at a glance.
               </h1>
               <p className="text-sm leading-relaxed text-slate-200 sm:text-base">
-                A calm overview of your progress, spending control, and retirement path.
+                Safe to spend, recent rhythm, and alerts — with deeper planning one tap
+                away in Workspaces.
               </p>
             </div>
             <p className="shrink-0 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-center font-mono text-xs font-medium tabular-nums text-white/90 sm:text-sm">

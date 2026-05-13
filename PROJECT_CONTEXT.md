@@ -4,9 +4,82 @@ Living reference for what this app does, how it is structured, and where to chan
 
 ---
 
-## Product intent
+## Product vision
 
-Private **wealth and cash-flow clarity**: net worth, monthly spending vs budget, savings rate, goals, Singapore-specific angles (CPF, housing, vehicles where modeled), and projections/methodology surfaced in the UI—not a bank link aggregator.
+The product is evolving from a **feature-tab financial tracker** into a **calm, premium, modular private wealth operating system**: a workspace that helps users understand **position**, **cash flow**, **balance sheet**, **protection gaps**, and **long-horizon decisions** — without feeling like a spreadsheet, accounting package, admin console, or cluttered consumer fintech UI.
+
+**Design direction:** premium minimal, calm information density, soft surfaces, modular cards, progressive disclosure, Apple-like hierarchy, spacious layouts, and strong typographic hierarchy. Avoid over-tabbed navigation, heavy borders, crowded dashboards, and feature explosion in the top bar.
+
+**Important framing:** this product should evolve toward a **calm private wealth operating system** rather than a traditional expense tracker. Calculations and methodology remain explicit and user-trustable (not a black-box “score”).
+
+---
+
+## Client UI versioning (generations)
+
+The **client** product surface is tracked as a **UI / information-architecture generation** (independent of `package.json` semver unless you intentionally align them).
+
+| Generation | Summary |
+|------------|---------|
+| **Version 1** | Earlier shell: fuller top navigation (e.g. Profile as a primary tab), planning centered on **Financial setup** tabs and related redirects without modular **`/planning/**`** workspaces. |
+| **Version 2** (current) | **Major UI / IA change:** compact top nav (**Home**, **Planning**, **Activity**, **More**), **`/planning/**`** section workspaces (Overview, Cash Flow, Wealth, Protection, Future), **`/more`** hub + account menu for secondary actions, roadmap **placeholder** cards, and Home framed as a **command center**. Business logic, APIs, and most routes were kept compatible using **adapters** and redirects. |
+
+**Where it is defined in code:** `src/lib/client-release.ts` (`CLIENT_UI_VERSION`, `CLIENT_UI_VERSION_LABEL`). Shown on **`/more`**. Optional override: **`NEXT_PUBLIC_CLIENT_UI_VERSION`** (e.g. `2.1`) in env at build time.
+
+---
+
+## Information architecture & navigation philosophy
+
+**Top navigation (client shell)** is intentionally small: **Home**, **Planning**, **Activity**, **More**. Deep or secondary destinations (profile assumptions, methodology, sign out) live in the **account menu** and the **More** hub so the header stays quiet and scalable.
+
+**Home vs Planning vs Activity vs More**
+
+| Surface | Role |
+|--------|------|
+| **Home** (`/dashboard`) | **Today’s financial command center**: safe to spend, monthly health, spending control, retirement headline, overview sections, and anchors into this month — prioritized metrics and workflows, not every module. |
+| **Planning** (`/planning/...`) | **Modular planning workspaces** composed by section: Overview, Cash Flow, Wealth, Protection, Future. Uses the **same business logic and forms** as Financial setup where real data exists; adds **roadmap placeholder cards** for upcoming modules. |
+| **Activity** (`/expenses`) | **Cash activity & spending**: expenses, charts, and month-scoped guidance tied to the budget model. |
+| **More** (`/more`) | **Secondary destinations**: profile deep link, planning entry, activity hub, methodology launcher — keeps the top bar from becoming a junk drawer. |
+
+**Classic routes** (`/setup` with tabs, `/goals`, `/balances`, `/budget`, `/financial-profile`) remain valid: many redirect into the new IA for continuity and bookmarks.
+
+---
+
+## Modular card architecture & progressive disclosure
+
+**Direction:** move away from “one noisy page per micro-feature” toward **section-based composition** and **reusable surface components** (`InsightCard`, `RecommendationCard`, `PlaceholderModuleCard`, dashboard sections). **Level 1** is a simple summary; **Level 2** is the planning workspace; **Level 3** is advanced assumptions (often behind disclosure, e.g. collapsible income blocks on Cash Flow).
+
+Shared numeric flows still come from **`src/data/dashboard.ts`**, **`src/domain/finance/**`, and existing repositories — new UI is largely **routing + composition**, not duplicate calculators.
+
+---
+
+## AI insight philosophy
+
+There is **no standalone “AI page”**. Intelligence is modeled as **contextual overlays** (insight and recommendation cards) that can attach to Home, Planning, or Activity surfaces over time. Placeholder roadmap cards describe an **AI insights layer** as **embedded** analysis, not a separate chat product.
+
+---
+
+## Placeholder / roadmap module strategy
+
+**`PlaceholderModuleCard`** (`src/components/placeholders/PlaceholderModuleCard.tsx`) is the standard surface for **planned** capabilities: title, description, status badge (`planned` \| `work_in_progress` \| `beta` \| `complete`), optional tags, optional phase copy, optional icon, and a **disabled, premium** visual treatment (not error/empty states).
+
+Roadmap examples surfaced in-app include: **Insurance**, **Retirement planning**, **Scenario simulator**, **Dependents planning**, **Advisor workspace (client view)**, **Estate planning**, **Tax estimation**, **Reports**, **Documents vault**, **Risk profiling**, **Account syncing**, and **AI insights layer** (see `src/features/planning/roadmap-modules.tsx`).
+
+---
+
+## Long-term scalability goals
+
+- **Registry-friendly modules:** new domains should plug in as **section cards** + optional **repository** layers, not new top-level tabs by default.
+- **Adapter-first migration:** prefer **URL adapters**, **shared loaders** (e.g. `loadSetupTabBundle`), and **href builders** (`setupBudgetPath` vs `planningCashFlowBudgetPath`) over destructive rewrites.
+- **Revalidation:** `revalidateSetupAndPlanning()` (`src/lib/planning-revalidate.ts`) keeps `/setup` and `/planning/**` coherent after mutations.
+
+---
+
+## UX / design principles (engineering-facing)
+
+1. **Key metrics** win the viewport first (safe to spend, net worth, month status).
+2. **Active workflows** (budget, expenses, setup forms) stay one or two taps deep.
+3. **Contextual actions** (methodology, cross-links) are visible but quieter.
+4. **Secondary information** uses softer type, spacing, and surfaces — fewer hard boxes.
 
 ---
 
@@ -31,24 +104,30 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 |------|------|
 | `/` | Redirects to `/dashboard` (advisors are then sent to `/advisor` by middleware). |
 | `/login` | Standalone sign-in / sign-up (`src/app/login/page.tsx`, `LoginForm`). Not wrapped in `(app)` shell. |
-| `/dashboard` | **Client** overview: net worth, savings, month activity, retirement/CPF (`(app)/dashboard`). Advisors hitting client routes are redirected to `/advisor`. |
+| `/dashboard` | **Client Home / command center**: net worth, savings, month activity, retirement/CPF (`(app)/dashboard`). Advisors hitting client routes are redirected to `/advisor`. |
 | `/home` | **Client alias** → `/dashboard` (`(app)/(client)/home/page.tsx`). |
-| `/planning` | **Client alias** → `/goals` (`(app)/(client)/planning/page.tsx`). |
+| `/planning` | Redirect → `/planning/overview` (`(app)/planning/page.tsx`). |
+| `/planning/overview` | Planning workspace: snapshot-style overview + dashboard overview reuse + roadmap card(s). |
+| `/planning/cash-flow` | Budget workspace + progressive “Advanced” income & assumptions (`BudgetPlanningView` + profile forms). |
+| `/planning/wealth` | Balance sheet workspace: investments, CPF, cash/debts, housing, vehicles (same components as Setup). |
+| `/planning/protection` | Protection roadmap + emergency-fund recommendation (liquidity still edited under Wealth). |
+| `/planning/future` | Goals plus retirement/scenario/tax/report placeholders. |
 | `/activity` | **Client alias** → `/expenses` (`(app)/(client)/activity/page.tsx`). |
 | `/profile` | **Client alias** → `/setup?tab=profile` (`(app)/(client)/profile/page.tsx`). |
+| `/more` | Secondary hub: profile, planning entry, activity, methodology, and **Client UI version** strip (`(app)/more/page.tsx`, `src/lib/client-release.ts`). |
 | `/advisor` | **Advisor** workspace home: client/key snapshot cards (`(app)/advisor/page.tsx`). |
 | `/advisor/clients` | **Advisor** client roster: search, sort, pagination, card grid with health signals (`advisor_client_list_metrics` RPC when migrated). |
 | `/advisor/opportunities` | **Advisor** placeholder hub for future product/opportunity workflows (`Coming Soon`). |
 | `/advisor/activity` | **Advisor** placeholder cross-client activity feed (`Work in Progress`). |
 | `/advisor/access-keys` | **Advisor** access key management (moved out of client Setup). |
 | `/advisor/client/[id]` | **Advisor** client workspace: profile edits, goals/budget quick edits, dashboard-month cashflow readouts, RLS-backed data (`AdvisorClientWorkspace`). |
-| `/expenses` | **Spending** hub: add/list expenses, charts, spend guidance (`(app)/expenses`). Nav label “Spending”. |
+| `/expenses` | **Activity / spending** hub: add/list expenses, charts, spend guidance (`(app)/expenses`). |
 | `/spending` | **Alias**: server redirect to `/expenses`. |
-| `/setup` | **Financial setup** hub with tabs: profile, balances, budget, goals shortcuts (`(app)/setup`). Nav “Setup”; sub-routes like `/balances`, `/budget`, `/financial-profile` count as Setup for nav highlighting (`AppShellNav`). |
-| `/balances` | Cash, liabilities, investments, CPF balances, vehicles, housing loans (under goals/balances flows). |
-| `/budget` | Budget planning for a month (`BudgetPlanningView`). |
-| `/financial-profile` | Income, retirement assumptions, profile fields. |
-| `/goals` | Financial goals, linked investments, housing/vehicle panels. |
+| `/setup` | **Financial setup** hub with tabs: profile, investments, CPF, cash/debts, housing, vehicles, budget, goals (`(app)/setup`). Still fully supported. |
+| `/balances` | Redirect → `/planning/wealth` (wealth workspace). |
+| `/budget` | Redirect → `/planning/cash-flow` with month/year query (same budget UI). |
+| `/financial-profile` | Redirect → `/setup?tab=profile`. |
+| `/goals` | Redirect → `/planning/future` (goals live in Future workspace). |
 | `/onboarding` | Post-auth wizard when profile requires onboarding (`OnboardingWizard`). |
 | `/account-issue` | Shown when a **client** profile has no `advisor_user_id` (data integrity / support path). |
 
@@ -60,14 +139,14 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
 - **Supabase Auth** via server client (`src/data/supabase/server.ts`) and browser client (`browser.ts`).
 - **`(app)/layout.tsx`**: Loads user and **`financial_profiles`** row, resolves **`workspace`**: `advisor` vs `client`, passes into **`AppShell`** for role-appropriate chrome.
-- **`src/middleware.ts`**: If Supabase env is set, reads session. For logged-in users on **gated** paths — **client app** (`dashboard`, `home`, `planning`, `activity`, `profile`, `expenses`, `spending`, `budget`, `setup`, `balances`, `goals`, `financial-profile`, `onboarding`, `account-issue`) or **`/advisor/**`**:
+- **`src/middleware.ts`**: If Supabase env is set, reads session. For logged-in users on **gated** paths — **client app** (`dashboard`, `home`, `planning`, `activity`, `profile`, `expenses`, `spending`, `budget`, `setup`, `balances`, `goals`, `financial-profile`, `more`, `onboarding`, `account-issue`) or **`/advisor/**`**:
   - **Advisors** on any **client** path above (including **`/onboarding`**) → redirect **`/advisor`** (they do not use client onboarding or personal finance surfaces).
   - **Clients** on **`/advisor/**`** → redirect to **`/account-issue`**, **`/onboarding`**, or **`/dashboard`** depending on profile flags (same rules as post-login routing).
   - If the profile is a **client** but **`advisor_user_id` is null** → **`/account-issue`** (except when already there).
   - **Onboarding** is enforced only for **clients** with `onboarding_required` and no `onboarding_completed_at`.
   - If onboarding not required and user hits **`/onboarding`** → redirect **`/dashboard`**.
 
-**LoginForm** (`src/features/auth/LoginForm.tsx`): **Sign-in** loads `financial_profiles` and sends **advisors** to **`/advisor`**, **clients** to **`/onboarding`** or **`/dashboard`** (or **`/account-issue`** if `advisor_user_id` is missing). **Sign up**: **Financial advisor** → **`/advisor`** when a session exists immediately; **Client** → **`/onboarding`**. Supabase **signUp** sets `emailRedirectTo` to **`/auth/callback`** on the current origin (add that App Router route and allow the URL in Supabase if you rely on email confirmation). **Sign out**: server action `signOutAction` → `/login`.
+**LoginForm** (`src/features/auth/LoginForm.tsx`): **Sign-in** loads `financial_profiles` and sends **advisors** to **`/advisor`**, **clients** to **`/onboarding`** or **`/dashboard`** (or **`/account-issue`** if `advisor_user_id` is missing). **Sign up**: **Financial advisor** → **`/advisor`** when a session exists immediately; **Client** → **`/onboarding`**. Supabase **signUp** sets `emailRedirectTo` to **`/auth/callback`** on the current origin (add that App Router route and allow the URL in Supabase if you rely on email confirmation). **Sign out**: server action `signOutAction` → `/login` (also available from the account menu).
 
 ---
 
@@ -75,12 +154,13 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
 **`src/features/app-shell/AppShell.tsx`**
 
-- Header: brand link ( **`/dashboard`** for clients, **`/advisor`** for advisors ), subtitle (“Private wealth clarity” vs “Advisor workspace”), optional **main nav**, **How it works**, **Sign in** / **Sign out**.
-- **`AppShellNav`** receives **`workspace`**: **client** nav uses labels **Home**, **Planning**, **Activity**, **Profile** with primary links **`/dashboard`**, **`/goals`**, **`/expenses`**, **`/setup?tab=profile`**; **Planning** / **Activity** / **Profile** tabs stay highlighted on related paths (e.g. setup sub-routes, `/balances`, `/budget`, `/financial-profile`, `/spending`, `/account-issue`) via `activeMatch` in `AppShellNav.tsx`.
-- Advisor navigation is now rendered in a dedicated sidebar under `src/app/(app)/advisor/layout.tsx` using `AdvisorWorkspaceSidebar`, giving `/advisor/**` pages a workspace-style layout.
+- Header: brand link ( **`/dashboard`** for clients, **`/advisor`** for advisors ), subtitle (“Private wealth clarity” vs “Advisor workspace”), optional **main nav**, **account menu** (signed-in) or **Sign in**.
+- **`AppShellNav`** (**client** only): **Home** → `/dashboard`; **Planning** → `/planning/overview` (active on `/planning/**`, `/setup/**`, `/balances`, `/budget`, `/financial-profile`, `/goals`); **Activity** → `/expenses` (active on `/expenses`, `/spending`); **More** → `/more` (active on `/more`, `/account-issue`).
+- **`AppShellUserMenu`**: avatar + email, links to profile (`/setup?tab=profile`), **More**, **How it works** (methodology sheet), **Sign out**.
+- Advisor navigation is rendered in a dedicated sidebar under `src/app/(app)/advisor/layout.tsx` using `AdvisorWorkspaceSidebar`, giving `/advisor/**` pages a workspace-style layout.
 - **Main app nav is shown only when** the user is signed in **and** the path does **not** start with `/onboarding`.
 
-**`AppShellNav.tsx`**: Renders **only** for **`workspace === "client"`** (advisors use the sidebar). On mount it prefetches `/dashboard`, `/expenses`, `/setup`, and `/goals`.
+**`AppShellNav.tsx`**: Prefetches `/dashboard`, `/expenses`, `/planning/overview`, and `/more`.
 
 ---
 
@@ -89,7 +169,11 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 | Area | Location |
 |------|-----------|
 | Pages (RSC-heavy) | `src/app/(app)/`, `src/app/(app)/(client)/` (IA alias redirects), `src/app/login/`, `src/app/page.tsx` |
-| App chrome | `src/features/app-shell/` |
+| App chrome | `src/features/app-shell/` (`AppShell`, `AppShellNav`, `AppShellUserMenu`) |
+| Planning workspace | `src/app/(app)/planning/**`, `src/features/planning/` (`load-setup-tab-bundle`, `PlanningSectionNav`, `sections/*`, `roadmap-modules`) |
+| Shared planning constants | `src/lib/planning-sections.ts`, `src/lib/planning-revalidate.ts` |
+| Client UI generation label | `src/lib/client-release.ts` (shown on `/more`; optional `NEXT_PUBLIC_CLIENT_UI_VERSION`) |
+| Placeholder & insight surfaces | `src/components/placeholders/`, `src/components/insights/` |
 | Onboarding | `src/features/onboarding/`, `(app)/onboarding/page.tsx` — guided income → lifestyle → strategy → optional **recommended budget lines** (server `applyGuidedBudgetLinesAction`); profile stores `lifestyle_profile`, `budgeting_strategy`, `onboarding_confidence_level`, `food_spend_band`, `estimated_budget_mode`, `budget_generation_source` |
 | Budget lens (Setup) | `src/features/setup/BudgetLensProfileForm.tsx` — edit lifestyle/strategy after onboarding (PATCH `/api/profile`) |
 | Budget strategy & guided templates | `src/domain/finance/budget-guided-setup.ts` — lifestyle presets, 50/30/20-style splits, SG-oriented line generator, category→needs/wants/savings heuristics for visuals |
@@ -98,12 +182,12 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 | Dashboard | `src/features/dashboard/`, `src/data/dashboard.ts` |
 | Expenses / spending UI | `src/features/expenses/`, `src/features/spend/`, `src/data/repositories/expenses.ts`, spend recommendations data |
 | Budget | `src/features/budget/` (`BudgetPlanningView`, `BudgetStrategyInsightPanel` for target vs line mix + placeholders), `src/data/repositories/budget-lines.ts`, overrides, `src/domain/finance/budget.ts` |
-| Setup tabs | `src/features/setup/SetupTabsNav.tsx`, `src/lib/setup-urls.ts` |
+| Setup tabs | `src/features/setup/SetupTabsNav.tsx`, `src/lib/setup-urls.ts` (`setupBudgetPath` for classic `/setup` budget tab; `planningCashFlowBudgetPath` for `/planning/cash-flow`) |
 | Goals / balances / loans / vehicles / CPF | `src/features/goals/`, related `src/data/repositories/*` |
-| Help / methodology | `src/features/help/`, `src/content/methodology-topics.ts` |
+| Help / methodology | `src/features/help/`, `src/content/methodology-topics.ts`, `OpenMethodologyButton.tsx` |
 | Pure finance logic | `src/domain/finance/` (projections, net worth, SG CPF/vehicle/housing helpers, tests alongside) |
 | DB access patterns | `src/data/repositories/*.ts`, `src/data/mappers.ts`, `src/data/supabase/types.ts` |
-| Server mutations | `src/server/actions.ts` (large file: forms call these; uses `revalidatePath`) |
+| Server mutations | `src/server/actions.ts` (large file: forms call these; uses `revalidatePath` + `revalidateSetupAndPlanning` where setup/planning overlap) |
 
 ---
 
@@ -138,4 +222,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 3. If you introduce a new top-level domain concept (e.g. “tax estimates”), add a **Code map** row and point to the main module.
 4. Keep claims aligned with **code**; avoid marketing copy that does not match the UI.
 
-_Last reviewed (2026-05-13): migration `20260516100000_housing_loan_property_planning.sql` (guided property affordability fields on `financial_housing_loans`); prior `20260514000000_invited_client_profile_type_repair.sql` and `20260513000000_advisor_linked_client_rls.sql`._
+_Last reviewed (2026-05-14): **Client UI v2** documented; `client-release.ts` + `/more` version strip; modular `/planning/**` workspaces, `/more` hub, top-nav IA refresh, `PlaceholderModuleCard` / insight cards, `loadSetupTabBundle` adapter, `revalidateSetupAndPlanning`, budget href split (`budgetPathVariant` / `budgetMonthHref`)._

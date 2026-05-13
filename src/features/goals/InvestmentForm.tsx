@@ -21,11 +21,13 @@ export function InvestmentForm() {
           stop—closer to real policies and plans.
         </p>
       </div>
-      {state.error && (
+      {state.error ? (
         <p className="text-sm text-red-600" role="alert">
-          {state.error}
+          {typeof state.error === "string"
+            ? state.error
+            : "Could not save this account."}
         </p>
-      )}
+      ) : null}
 
       <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-4">
         <label className="block text-sm">

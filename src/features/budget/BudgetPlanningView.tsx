@@ -27,7 +27,10 @@ import {
   parseYearMonth,
   yearFromYearMonth,
 } from "@/lib/dates";
-import { setupBudgetPath } from "@/lib/setup-urls";
+import {
+  type BudgetPathVariant,
+  budgetMonthHref,
+} from "@/lib/setup-urls";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { deleteBudgetLineAction } from "@/server/actions";
 import {
@@ -55,9 +58,11 @@ function varianceForLine(
 export async function BudgetPlanningView({
   month: monthParam,
   calendarYear: calendarYearParam,
+  budgetPathVariant = "setup",
 }: {
   month: string;
   calendarYear: number;
+  budgetPathVariant?: BudgetPathVariant;
 }) {
   const supabase = await createSupabaseServerClient();
   const {
@@ -134,6 +139,7 @@ export async function BudgetPlanningView({
         activeMonthlyLines={activeMonthly}
         prevMonth={prevMonth}
         nextMonth={nextMonth}
+        budgetPathVariant={budgetPathVariant}
       />
 
       <nav aria-label="On this page" className="scroll-mt-4 sm:mx-0">
@@ -456,13 +462,21 @@ export async function BudgetPlanningView({
           <div className="flex flex-wrap items-center gap-3 text-xs">
             <Link
               className="font-medium text-zinc-600 hover:text-zinc-900"
-              href={setupBudgetPath(month, calendarYear - 1)}
+              href={budgetMonthHref(
+                budgetPathVariant,
+                month,
+                calendarYear - 1
+              )}
             >
               Previous year
             </Link>
             <Link
               className="font-medium text-zinc-600 hover:text-zinc-900"
-              href={setupBudgetPath(month, calendarYear + 1)}
+              href={budgetMonthHref(
+                budgetPathVariant,
+                month,
+                calendarYear + 1
+              )}
             >
               Next year
             </Link>

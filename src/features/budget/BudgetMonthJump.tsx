@@ -3,13 +3,20 @@
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { yearFromYearMonth } from "@/lib/dates";
-import { setupBudgetPath } from "@/lib/setup-urls";
+import {
+  type BudgetPathVariant,
+  budgetMonthHref,
+} from "@/lib/setup-urls";
 
 type Props = {
   month: string;
+  budgetPathVariant?: BudgetPathVariant;
 };
 
-export function BudgetMonthJump({ month }: Props) {
+export function BudgetMonthJump({
+  month,
+  budgetPathVariant = "setup",
+}: Props) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -28,7 +35,7 @@ export function BudgetMonthJump({ month }: Props) {
           if (!v) return;
           const y = yearFromYearMonth(v);
           startTransition(() => {
-            router.push(setupBudgetPath(v, y));
+            router.push(budgetMonthHref(budgetPathVariant, v, y));
           });
         }}
       />

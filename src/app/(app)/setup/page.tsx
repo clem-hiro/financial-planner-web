@@ -6,23 +6,8 @@ import {
   profileMonthlyGross,
   profileMonthlyIncome,
 } from "@/data/mappers";
-import { getCpfBalanceByUserId } from "@/data/repositories/cpf-balances";
-import { listCashAccounts } from "@/data/repositories/cash-accounts";
-import { listHousingLoans } from "@/data/repositories/housing-loans";
-import { listInvestments } from "@/data/repositories/investments";
-import { listLiabilities } from "@/data/repositories/liabilities";
-import { listFinancialGoals } from "@/data/repositories/goals";
 import { getProfileById } from "@/data/repositories/profiles";
-import { listVehicles } from "@/data/repositories/vehicles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
-import type {
-  CashAccountRow,
-  FinancialGoalRow,
-  HousingLoanRow,
-  InvestmentRow,
-  LiabilityRow,
-  VehicleRow,
-} from "@/data/supabase/types";
 import { ProfileIncomeForm } from "@/features/dashboard/ProfileIncomeForm";
 import {
   CashAndLiabilitiesPanels,
@@ -39,6 +24,7 @@ import { InvestmentForm } from "@/features/goals/InvestmentForm";
 import { FinancialGoalsPanels } from "@/features/goals/FinancialGoalsPanels";
 import { VehiclesPanel } from "@/features/goals/VehiclesPanel";
 import { BudgetPlanningView } from "@/features/budget/BudgetPlanningView";
+import { loadSetupTabBundle } from "@/features/planning/load-setup-tab-bundle";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { SetupTabsNav } from "@/features/setup/SetupTabsNav";
 import { BudgetLensProfileForm } from "@/features/setup/BudgetLensProfileForm";
@@ -112,7 +98,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
       ? budgetYearParsed
       : yearFromYearMonth(budgetMonth);
 
-  const [
+  const {
     investments,
     cashAccounts,
     liabilityRows,
@@ -120,29 +106,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
     cpfRow,
     housingLoans,
     goals,
-  ] = await Promise.all([
-    activeTab === "add-account" || activeTab === "goals"
-      ? listInvestments(supabase, user.id)
-      : Promise.resolve([] as InvestmentRow[]),
-    activeTab === "cash-liabilities"
-      ? listCashAccounts(supabase, user.id)
-      : Promise.resolve([] as CashAccountRow[]),
-    activeTab === "cash-liabilities"
-      ? listLiabilities(supabase, user.id)
-      : Promise.resolve([] as LiabilityRow[]),
-    activeTab === "vehicles"
-      ? listVehicles(supabase, user.id)
-      : Promise.resolve([] as VehicleRow[]),
-    activeTab === "cpf"
-      ? getCpfBalanceByUserId(supabase, user.id)
-      : Promise.resolve(null),
-    activeTab === "housing-loans"
-      ? listHousingLoans(supabase, user.id)
-      : Promise.resolve([] as HousingLoanRow[]),
-    activeTab === "goals"
-      ? listFinancialGoals(supabase, user.id)
-      : Promise.resolve([] as FinancialGoalRow[]),
-  ]);
+  } = await loadSetupTabBundle(supabase, user.id, new Set([activeTab]));
 
   const income = profileMonthlyIncome(financialProfile);
   const gross = profileMonthlyGross(financialProfile);

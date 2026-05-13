@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import { revalidateSetupAndPlanning } from "@/lib/planning-revalidate";
 import { NextResponse } from "next/server";
 import { hasBudgetCategoryMonthlyConflict } from "@/data/expense-budget-guard";
 import { insertExpense } from "@/data/repositories/expenses";
@@ -64,7 +65,7 @@ export async function POST(request: Request) {
     });
     revalidatePath("/expenses");
     revalidatePath("/budget");
-    revalidatePath("/setup");
+    revalidateSetupAndPlanning();
     revalidatePath("/dashboard");
     return NextResponse.json(row, { status: 201 });
   } catch (e) {

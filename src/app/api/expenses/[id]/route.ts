@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import { revalidateSetupAndPlanning } from "@/lib/planning-revalidate";
 import { NextResponse } from "next/server";
 import { hasBudgetCategoryMonthlyConflict } from "@/data/expense-budget-guard";
 import {
@@ -81,7 +82,7 @@ export async function PATCH(request: Request, context: RouteContext) {
     const row = await updateExpense(supabase, user.id, id, parsed.data);
     revalidatePath("/expenses");
     revalidatePath("/budget");
-    revalidatePath("/setup");
+    revalidateSetupAndPlanning();
     revalidatePath("/dashboard");
     return NextResponse.json(row);
   } catch (e) {
@@ -123,7 +124,7 @@ export async function DELETE(_request: Request, context: RouteContext) {
     await deleteExpense(supabase, user.id, id);
     revalidatePath("/expenses");
     revalidatePath("/budget");
-    revalidatePath("/setup");
+    revalidateSetupAndPlanning();
     revalidatePath("/dashboard");
     return NextResponse.json({ ok: true });
   } catch (e) {

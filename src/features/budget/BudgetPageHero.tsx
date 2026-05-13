@@ -5,7 +5,10 @@ import { num } from "@/data/mappers";
 import type { BudgetLineRow } from "@/data/supabase/types";
 import { BudgetMonthJump } from "@/features/budget/BudgetMonthJump";
 import { yearFromYearMonth } from "@/lib/dates";
-import { setupBudgetPath } from "@/lib/setup-urls";
+import {
+  type BudgetPathVariant,
+  budgetMonthHref,
+} from "@/lib/setup-urls";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { formatCurrency } from "@/ui/lib/format";
 
@@ -66,6 +69,7 @@ type Props = {
   activeMonthlyLines: BudgetLineRow[];
   prevMonth: string;
   nextMonth: string;
+  budgetPathVariant?: BudgetPathVariant;
 };
 
 export function BudgetPageHero({
@@ -75,6 +79,7 @@ export function BudgetPageHero({
   activeMonthlyLines,
   prevMonth,
   nextMonth,
+  budgetPathVariant = "setup",
 }: Props) {
   const title = formatPlanMonthTitle(month);
   const agg = monthlyBudgetAggregateOverspend(totals);
@@ -133,18 +138,29 @@ export function BudgetPageHero({
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-zinc-600">
             <Link
               className={`${appInlineLinkClass} font-medium`}
-              href={setupBudgetPath(prevMonth, yearFromYearMonth(prevMonth))}
+              href={budgetMonthHref(
+                budgetPathVariant,
+                prevMonth,
+                yearFromYearMonth(prevMonth)
+              )}
             >
               Previous month
             </Link>
             <span className="font-mono text-xs text-zinc-400">{month}</span>
             <Link
               className={`${appInlineLinkClass} font-medium`}
-              href={setupBudgetPath(nextMonth, yearFromYearMonth(nextMonth))}
+              href={budgetMonthHref(
+                budgetPathVariant,
+                nextMonth,
+                yearFromYearMonth(nextMonth)
+              )}
             >
               Next month
             </Link>
-            <BudgetMonthJump month={month} />
+            <BudgetMonthJump
+              month={month}
+              budgetPathVariant={budgetPathVariant}
+            />
           </div>
         </div>
 

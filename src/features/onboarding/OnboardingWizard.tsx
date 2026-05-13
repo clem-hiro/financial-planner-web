@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import {
@@ -526,18 +527,18 @@ export function OnboardingWizard(props: Props) {
             </li>
           </ul>
           <div className="flex flex-wrap gap-3 text-sm">
-            <a
-              href="/setup?tab=goals"
+            <Link
+              href="/planning/future"
               className="font-medium text-emerald-800 underline decoration-emerald-600/40 underline-offset-2"
             >
               Open Goals
-            </a>
-            <a
+            </Link>
+            <Link
               href="/budget"
               className="font-medium text-emerald-800 underline decoration-emerald-600/40 underline-offset-2"
             >
               Review Budget
-            </a>
+            </Link>
           </div>
         </div>
       )}

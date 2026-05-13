@@ -28,7 +28,7 @@ import {
   parseYearMonth,
   yearFromYearMonth,
 } from "@/lib/dates";
-import { setupBudgetPath } from "@/lib/setup-urls";
+import { planningCashFlowBudgetPath } from "@/lib/setup-urls";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { isSupabaseConfigured } from "@/lib/env";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
@@ -193,7 +193,7 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
       <div className="space-y-4">
         <p className="text-sm text-zinc-600">
           <Link
-            href={setupBudgetPath(month, yearFromYearMonth(month))}
+            href={planningCashFlowBudgetPath(month, yearFromYearMonth(month))}
             className={appInlineLinkClass}
           >
             Edit budget lines (Setup)

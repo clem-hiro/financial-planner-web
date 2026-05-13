@@ -21,9 +21,11 @@ type NavRoute = {
 const clientRoutes: readonly NavRoute[] = [
   { href: "/dashboard", label: "Home" },
   {
-    href: "/goals",
+    href: "/planning/overview",
     label: "Planning",
     activeMatch: (pathname) =>
+      pathname === "/planning" ||
+      pathname.startsWith("/planning/") ||
       pathname === "/goals" ||
       pathname.startsWith("/goals/") ||
       pathname === "/setup" ||
@@ -45,17 +47,22 @@ const clientRoutes: readonly NavRoute[] = [
       pathname.startsWith("/expenses/"),
   },
   {
-    href: "/setup?tab=profile",
-    label: "Profile",
+    href: "/more",
+    label: "More",
     activeMatch: (pathname) =>
-      pathname === "/setup" ||
-      pathname.startsWith("/setup/") ||
+      pathname === "/more" ||
+      pathname.startsWith("/more/") ||
       pathname === "/account-issue" ||
       pathname.startsWith("/account-issue/"),
   },
 ] as const;
 
-const prefetchClientRoutes = ["/dashboard", "/expenses", "/setup", "/goals"] as const;
+const prefetchClientRoutes = [
+  "/dashboard",
+  "/expenses",
+  "/planning/overview",
+  "/more",
+] as const;
 
 export function AppShellNav({
   workspace,

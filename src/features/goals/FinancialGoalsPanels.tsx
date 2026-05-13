@@ -64,18 +64,27 @@ export function FinancialGoalsPanels({ goals, investments, currency }: Props) {
           Savings targets with their own balances and monthly plans. Time-to-goal
           uses these numbers (not your investment account balances). Other balances
           live in this page&apos;s{" "}
-          <Link href="/setup?tab=add-account" className={appInlineLinkClass}>
-            Investments
-          </Link>
-          ,{" "}
-          <Link href="/setup?tab=cash-liabilities" className={appInlineLinkClass}>
-            Cash and debts
-          </Link>
-          , and{" "}
-          <Link href="/setup?tab=housing-loans" className={appInlineLinkClass}>
-            Housing loans
-          </Link>{" "}
-          tabs.
+            <Link
+              href="/planning/wealth#wealth-investments"
+              className={appInlineLinkClass}
+            >
+              Investments
+            </Link>
+            ,{" "}
+            <Link
+              href="/planning/wealth#wealth-cash-debts"
+              className={appInlineLinkClass}
+            >
+              Cash and debts
+            </Link>
+            , and{" "}
+            <Link
+              href="/planning/wealth#wealth-housing"
+              className={appInlineLinkClass}
+            >
+              Housing loans
+            </Link>{" "}
+            in the Wealth workspace.
         </p>
         <p className="mt-2 flex flex-wrap gap-x-3 text-xs text-zinc-600">
           <MethodologyOpenLink topicId="goals-eta" className={appInlineLinkClass}>

@@ -6,7 +6,7 @@ import {
   parseYearMonth,
   yearFromYearMonth,
 } from "@/lib/dates";
-import { setupBudgetPath } from "@/lib/setup-urls";
+import { planningCashFlowBudgetPath } from "@/lib/setup-urls";
 import { isSupabaseConfigured } from "@/lib/env";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 
@@ -50,5 +50,7 @@ export default async function BudgetPage({ searchParams }: PageProps) {
       ? yearParsed
       : monthDerivedYear;
 
-  redirect(setupBudgetPath(month, calendarYear));
+  redirect(
+    planningCashFlowBudgetPath(month, calendarYear)
+  );
 }

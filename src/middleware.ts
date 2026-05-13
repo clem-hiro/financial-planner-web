@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 const clientAppRouteRegex =
-  /^\/(dashboard|home|planning|activity|profile|expenses|spending|budget|setup|balances|goals|financial-profile|onboarding|account-issue)/;
+  /^\/(dashboard|home|planning|activity|profile|expenses|spending|budget|setup|balances|goals|financial-profile|more|onboarding|account-issue)/;
 
 const advisorAppRouteRegex = /^\/advisor(\/|$)/;
 

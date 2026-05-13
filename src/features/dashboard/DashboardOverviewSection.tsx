@@ -1,5 +1,7 @@
 import Link from "next/link";
 import type { DashboardPayload } from "@/data/dashboard";
+import { yearFromYearMonth } from "@/lib/dates";
+import { planningCashFlowBudgetPath } from "@/lib/setup-urls";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { InfoTooltip } from "@/ui/InfoTooltip";
 import { appCardClass, appCardPadding } from "@/ui/surface-classes";
@@ -175,7 +177,13 @@ export function DashboardOverviewSection({
             Log / edit
           </Link>
           {" · "}
-          <Link href="/setup?tab=budget" className={appInlineLinkClass}>
+          <Link
+            href={planningCashFlowBudgetPath(
+              payload.month,
+              yearFromYearMonth(payload.month)
+            )}
+            className={appInlineLinkClass}
+          >
             Budget
           </Link>
         </p>

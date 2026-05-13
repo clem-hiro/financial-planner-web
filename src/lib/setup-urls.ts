@@ -4,13 +4,38 @@ import {
   yearFromYearMonth,
 } from "@/lib/dates";
 
-/** Query string for the budget editor under Financial setup. */
+/** Query string for the budget editor under Financial setup (classic tab URL). */
 export function setupBudgetSearch(month: string, calendarYear: number): string {
   return `tab=budget&month=${encodeURIComponent(month)}&year=${String(calendarYear)}`;
 }
 
+/** Classic Financial setup → Budget tab (keeps the tab rail on `/setup`). */
 export function setupBudgetPath(month: string, calendarYear: number): string {
   return `/setup?${setupBudgetSearch(month, calendarYear)}`;
+}
+
+/** Planning workspace → Cash Flow (same budget UI, modular shell). */
+export function planningCashFlowBudgetPath(
+  month: string,
+  calendarYear: number
+): string {
+  return `/planning/cash-flow?month=${encodeURIComponent(month)}&year=${String(calendarYear)}`;
+}
+
+/**
+ * Serializable budget URL mode for Server → Client boundaries.
+ * Use `budgetMonthHref(variant, …)` in both RSC and client components instead of passing path functions as props.
+ */
+export type BudgetPathVariant = "setup" | "planning";
+
+export function budgetMonthHref(
+  variant: BudgetPathVariant,
+  month: string,
+  calendarYear: number
+): string {
+  return variant === "planning"
+    ? planningCashFlowBudgetPath(month, calendarYear)
+    : setupBudgetPath(month, calendarYear);
 }
 
 /** Resolves the setup URL for a tab, including default month/year for Budget. */

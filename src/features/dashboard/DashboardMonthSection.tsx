@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { DashboardPayload } from "@/data/dashboard";
 import { yearFromYearMonth } from "@/lib/dates";
-import { setupBudgetPath } from "@/lib/setup-urls";
+import { planningCashFlowBudgetPath } from "@/lib/setup-urls";
 import { ProjectionMiniChart } from "@/features/dashboard/ProjectionMiniChart";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { SpendGuidancePanel } from "@/features/spend/SpendGuidancePanel";
@@ -64,7 +64,7 @@ export function DashboardMonthSection({
             </span>
           }
           actions={
-            <Link href="/setup?tab=goals" className={`text-xs ${appInlineLinkClass}`}>
+            <Link href="/planning/future" className={`text-xs ${appInlineLinkClass}`}>
               Edit goals
             </Link>
           }
@@ -147,7 +147,10 @@ export function DashboardMonthSection({
         }
         actions={
           <Link
-            href={setupBudgetPath(payload.month, yearFromYearMonth(payload.month))}
+            href={planningCashFlowBudgetPath(
+              payload.month,
+              yearFromYearMonth(payload.month)
+            )}
             className={`text-xs ${appInlineLinkClass}`}
           >
             Manage budgets

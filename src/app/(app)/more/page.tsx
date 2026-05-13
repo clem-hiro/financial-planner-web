@@ -1,0 +1,101 @@
+import Link from "next/link";
+import { OpenMethodologyButton } from "@/features/help/OpenMethodologyButton";
+import { CLIENT_UI_VERSION_LABEL } from "@/lib/client-release";
+import { appInlineLinkClass } from "@/ui/app-link-styles";
+
+export default function MorePage() {
+  return (
+    <div className="space-y-10">
+      <header className="max-w-2xl space-y-3">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+          More
+        </p>
+        <h1 className="text-3xl font-semibold tracking-tight text-[#0c192f] sm:text-4xl">
+          Account &amp; reference
+        </h1>
+        <p className="text-sm leading-relaxed text-slate-600 sm:text-base">
+          Secondary destinations stay here so the top bar stays calm. Nothing on this
+          page changes your financial data.
+        </p>
+      </header>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Link
+          href="/setup?tab=profile"
+          className="rounded-2xl bg-linear-to-br from-white via-slate-50/50 to-sky-50/20 p-5 ring-1 ring-slate-200/70 transition hover:ring-slate-300/90"
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            Profile
+          </p>
+          <p className="mt-2 text-lg font-semibold text-[#0c192f]">
+            Assumptions &amp; identity
+          </p>
+          <p className="mt-1 text-sm text-slate-600">
+            Income, retirement targets, and budget lens — same editor as before.
+          </p>
+          <p className={`mt-4 text-sm font-semibold ${appInlineLinkClass}`}>Open →</p>
+        </Link>
+
+        <Link
+          href="/planning/overview"
+          className="rounded-2xl bg-linear-to-br from-white via-slate-50/50 to-emerald-50/15 p-5 ring-1 ring-slate-200/70 transition hover:ring-slate-300/90"
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            Planning
+          </p>
+          <p className="mt-2 text-lg font-semibold text-[#0c192f]">
+            Workspace overview
+          </p>
+          <p className="mt-1 text-sm text-slate-600">
+            Jump back into modular planning without hunting tabs.
+          </p>
+          <p className={`mt-4 text-sm font-semibold ${appInlineLinkClass}`}>Open →</p>
+        </Link>
+
+        <Link
+          href="/expenses"
+          className="rounded-2xl bg-linear-to-br from-white via-slate-50/50 to-sky-50/20 p-5 ring-1 ring-slate-200/70 transition hover:ring-slate-300/90"
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            Activity
+          </p>
+          <p className="mt-2 text-lg font-semibold text-[#0c192f]">Spending hub</p>
+          <p className="mt-1 text-sm text-slate-600">
+            Expenses, charts, and monthly guidance.
+          </p>
+          <p className={`mt-4 text-sm font-semibold ${appInlineLinkClass}`}>Open →</p>
+        </Link>
+
+        <div className="rounded-2xl bg-linear-to-br from-[#0c192f] via-[#10213a] to-[#123355] p-5 text-white ring-1 ring-white/10">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-200/90">
+            Methodology
+          </p>
+          <p className="mt-2 text-lg font-semibold">How numbers are built</p>
+          <p className="mt-1 text-sm text-slate-200">
+            Transparent explanations for net worth, CPF, housing, and budgets.
+          </p>
+          <div className="mt-4">
+            <OpenMethodologyButton
+              label="Open methodology"
+              className="inline-flex w-full items-center justify-center rounded-full bg-white/10 px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-white/25 transition hover:bg-white/15 sm:w-auto"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-2 border-t border-slate-200/80 pt-8">
+        <p className="text-xs text-slate-500">
+          Sign out lives in the account menu on the top bar for quick access anywhere in
+          the app.
+        </p>
+        <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-400">
+          {CLIENT_UI_VERSION_LABEL}
+        </p>
+        <p className="max-w-md text-xs leading-relaxed text-slate-500">
+          Version 2 reflects a major navigation and planning workspace redesign; core
+          calculations and data models stayed compatible with version 1.
+        </p>
+      </div>
+    </div>
+  );
+}
