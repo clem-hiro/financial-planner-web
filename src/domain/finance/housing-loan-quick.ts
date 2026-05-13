@@ -1,6 +1,7 @@
 import { addMonthsToYearMonth } from "@/lib/dates";
 import { yearMonthSchema } from "@/lib/validation";
 import type { HousingLoanRow } from "@/data/supabase/types";
+import { estimateFinancingNeed } from "@/domain/finance/property-financing-plan";
 
 /** HDB concessionary loan — common planning figure; confirm with your LO. */
 export const HDB_CONCESSIONARY_RATE_ANNUAL = 0.026;
@@ -66,6 +67,13 @@ export function deriveQuickHousingLoanRow(input: {
   /** Decimal annual, e.g. 0.034; only used when lender is bank/other. */
   bankAnnualRate: number | null;
   oaShareOfPayment: number;
+  /**
+   * Estimated residential BSD (SGD). Defaults to 0 — legacy behaviour is
+   * financed amount = purchase − deposit only.
+   */
+  buyersStampDuty?: number;
+  /** When true, financed amount subtracts `buyersStampDuty` from purchase after deposit. */
+  includeBuyersStampDutyInLoan?: boolean;
 }): QuickHousingLoanDerived {
   const {
     label,
@@ -78,6 +86,8 @@ export function deriveQuickHousingLoanRow(input: {
     lenderType,
     bankAnnualRate,
     oaShareOfPayment,
+    buyersStampDuty = 0,
+    includeBuyersStampDutyInLoan = false,
   } = input;
 
   if (!yearMonthSchema.safeParse(firstPaymentMonth).success) {
@@ -105,13 +115,16 @@ export function deriveQuickHousingLoanRow(input: {
     return { ok: false, error: "Loan length must be 1–50 years" };
   }
   const term_months = Math.min(600, Math.max(1, Math.round(loanTermYears * 12)));
-  const loan = purchasePrice - depositTotal;
-  if (!Number.isFinite(loan) || loan <= 0) {
-    return {
-      ok: false,
-      error: "Financed amount must be positive (lower deposit or check price)",
-    };
+  const financing = estimateFinancingNeed({
+    purchasePrice,
+    cashDownpayment: depositTotal,
+    buyersStampDuty,
+    includeBuyersStampDutyInLoan,
+  });
+  if (!financing.ok) {
+    return { ok: false, error: financing.error };
   }
+  const loan = financing.loanPrincipal;
   if (
     !Number.isFinite(oaShareOfPayment) ||
     oaShareOfPayment < 0 ||

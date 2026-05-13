@@ -677,6 +677,21 @@ export function HousingLoansPanel({
         <div className="p-4 sm:p-5">
           <ul className="space-y-2 text-sm">
           {loans.map((L) => {
+            const planningPrice =
+              L.property_purchase_price != null &&
+              String(L.property_purchase_price).trim() !== "";
+            const presetLabel = (() => {
+              const p = L.downpayment_guidance_preset;
+              if (p === "pct_20") return "20% guidance";
+              if (p === "pct_25") return "25% guidance";
+              if (p === "custom") return "Custom downpayment";
+              return null;
+            })();
+            const bsdSaved =
+              L.buyers_stamp_duty != null && String(L.buyers_stamp_duty).trim() !== ""
+                ? num(L.buyers_stamp_duty)
+                : null;
+            const incBsd = Boolean(L.financing_includes_bsd);
             const orig =
               L.original_loan_principal != null &&
               String(L.original_loan_principal).trim() !== ""
@@ -705,6 +720,34 @@ export function HousingLoansPanel({
                       {L.term_months} mo left · {oaInstalmentNote} · completion{" "}
                       {L.completion_month} · first pay {L.first_payment_month}
                     </p>
+                    {planningPrice && (
+                      <p className="mt-1 text-xs text-emerald-900/90">
+                        Planned purchase{" "}
+                        {formatCurrency(
+                          num(L.property_purchase_price ?? "0"),
+                          currencyCode
+                        )}
+                        {presetLabel ? ` · ${presetLabel}` : ""}
+                        {bsdSaved != null && (
+                          <>
+                            {" "}
+                            · est. BSD {formatCurrency(bsdSaved, currencyCode)}
+                          </>
+                        )}
+                        {bsdSaved != null && (
+                          <span className="text-zinc-500">
+                            {" "}
+                            ({incBsd ? "included in loan" : "paid in cash / not in loan"})
+                          </span>
+                        )}
+                        {L.property_kind ? (
+                          <span className="text-zinc-500">
+                            {" "}
+                            · {L.property_kind.toUpperCase()}
+                          </span>
+                        ) : null}
+                      </p>
+                    )}
                     {(orig != null || repaid > 0) && (
                       <p className="mt-0.5 text-xs text-zinc-500">
                         {orig != null && (

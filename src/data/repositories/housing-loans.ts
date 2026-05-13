@@ -31,6 +31,13 @@ export async function insertHousingLoan(
     lender_type: HousingLoanRow["lender_type"];
     original_loan_principal: number | null;
     principal_repaid_before_schedule: number;
+    property_purchase_price?: number | null;
+    property_kind?: string | null;
+    downpayment_guidance_preset?: string | null;
+    downpayment_guidance_custom_percent?: number | null;
+    downpayment_guidance_custom_amount?: number | null;
+    buyers_stamp_duty?: number | null;
+    financing_includes_bsd?: boolean;
   }
 ): Promise<HousingLoanRow> {
   const { data, error } = await supabase
@@ -50,6 +57,15 @@ export async function insertHousingLoan(
       lender_type: row.lender_type,
       original_loan_principal: row.original_loan_principal,
       principal_repaid_before_schedule: row.principal_repaid_before_schedule,
+      property_purchase_price: row.property_purchase_price ?? null,
+      property_kind: row.property_kind ?? null,
+      downpayment_guidance_preset: row.downpayment_guidance_preset ?? null,
+      downpayment_guidance_custom_percent:
+        row.downpayment_guidance_custom_percent ?? null,
+      downpayment_guidance_custom_amount:
+        row.downpayment_guidance_custom_amount ?? null,
+      buyers_stamp_duty: row.buyers_stamp_duty ?? null,
+      financing_includes_bsd: row.financing_includes_bsd ?? false,
     })
     .select()
     .single();
@@ -75,6 +91,13 @@ export async function updateHousingLoan(
     lender_type: HousingLoanRow["lender_type"];
     original_loan_principal: number | null;
     principal_repaid_before_schedule: number;
+    property_purchase_price?: number | null;
+    property_kind?: string | null;
+    downpayment_guidance_preset?: string | null;
+    downpayment_guidance_custom_percent?: number | null;
+    downpayment_guidance_custom_amount?: number | null;
+    buyers_stamp_duty?: number | null;
+    financing_includes_bsd?: boolean;
   }>
 ): Promise<void> {
   const { error } = await supabase

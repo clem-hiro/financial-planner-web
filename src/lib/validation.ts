@@ -215,6 +215,19 @@ export const yearMonthSchema = z.string().regex(/^\d{4}-\d{2}$/);
 
 export const housingLenderTypeSchema = z.enum(["hdb", "bank", "other"]);
 
+export const housingPropertyKindSchema = z.enum([
+  "hdb",
+  "condo",
+  "ec",
+  "landed",
+]);
+
+export const housingDownpaymentGuidancePresetSchema = z.enum([
+  "pct_20",
+  "pct_25",
+  "custom",
+]);
+
 /** Sign-up role selection on the login page. */
 export const signupFinancialRoleSchema = z.enum(["advisor", "client"]);
 

@@ -66,4 +66,27 @@ describe("deriveQuickHousingLoanRow", () => {
     if (!r.ok) return;
     expect(r.completion_month).toBe("2026-01");
   });
+
+  it("subtracts BSD from financed amount when flag is on", () => {
+    const purchase = 1_000_000;
+    const deposit = 250_000;
+    const bsd = 24_600;
+    const r = deriveQuickHousingLoanRow({
+      label: "bsd",
+      purchasePrice: purchase,
+      depositTotal: deposit,
+      depositFromOa: 0,
+      feesFromOa: 0,
+      loanTermYears: 25,
+      firstPaymentMonth: "2026-03",
+      lenderType: "hdb",
+      bankAnnualRate: null,
+      oaShareOfPayment: 1,
+      buyersStampDuty: bsd,
+      includeBuyersStampDutyInLoan: true,
+    });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.principal).toBe(purchase - deposit - bsd);
+  });
 });

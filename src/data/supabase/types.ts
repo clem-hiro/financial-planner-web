@@ -203,4 +203,12 @@ export type HousingLoanRow = {
   original_loan_principal: string | null;
   principal_repaid_before_schedule: string;
   created_at: string;
+  /** Present when saved via guided property flow (migration `20260516000000`). */
+  property_purchase_price?: string | null;
+  property_kind?: string | null;
+  downpayment_guidance_preset?: string | null;
+  downpayment_guidance_custom_percent?: string | null;
+  downpayment_guidance_custom_amount?: string | null;
+  buyers_stamp_duty?: string | null;
+  financing_includes_bsd?: boolean;
 };

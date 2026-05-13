@@ -59,7 +59,14 @@ import {
   HDB_CONCESSIONARY_RATE_ANNUAL,
   oaInstalmentShareFromPreset,
 } from "@/domain/finance/housing-loan-quick";
-import { housingLenderTypeSchema, yearMonthSchema } from "@/lib/validation";
+import { resolveGuidedCashDownpayment } from "@/domain/finance/property-financing-plan";
+import { computeSingaporeResidentialBuyersStampDuty } from "@/domain/finance/singapore-residential-bsd";
+import {
+  housingDownpaymentGuidancePresetSchema,
+  housingLenderTypeSchema,
+  housingPropertyKindSchema,
+  yearMonthSchema,
+} from "@/lib/validation";
 import { z } from "zod";
 
 export async function signOutAction() {
@@ -1438,7 +1445,6 @@ export async function createHousingLoanQuickAction(
 
   const label = String(formData.get("label") ?? "").trim();
   const purchasePrice = Number(formData.get("purchase_price"));
-  const depositTotal = Number(formData.get("deposit_total"));
   const depositFromOaRaw = String(formData.get("deposit_from_oa") ?? "").trim();
   const feesFromOaRaw = String(formData.get("fees_from_oa") ?? "").trim();
   const depositFromOa =
@@ -1457,6 +1463,26 @@ export async function createHousingLoanQuickAction(
   const shareRaw = String(formData.get("oa_inst_share") ?? "cpf100").trim();
   const oaShareOfPayment = oaInstalmentShareFromPreset(shareRaw);
 
+  const guidedPresetRaw = String(formData.get("guided_dp_preset") ?? "").trim();
+  const depositTotalLegacyRaw = String(formData.get("deposit_total") ?? "").trim();
+  const includeBsdRaw = String(formData.get("financing_include_bsd") ?? "").trim();
+  const financing_include_bsd =
+    includeBsdRaw === "1" || includeBsdRaw === "true" || includeBsdRaw === "on";
+
+  const propertyKindRaw = String(formData.get("property_kind") ?? "").trim();
+  let property_kind: string | null = null;
+  if (propertyKindRaw !== "") {
+    const pk = housingPropertyKindSchema.safeParse(propertyKindRaw);
+    if (!pk.success) {
+      return { error: "Invalid property type" };
+    }
+    property_kind = pk.data;
+  }
+
+  if (!Number.isFinite(purchasePrice) || purchasePrice <= 0) {
+    return { error: "Purchase price must be positive" };
+  }
+
   if (
     lenderType !== "hdb" &&
     bankAnnualRate != null &&
@@ -1470,6 +1496,90 @@ export async function createHousingLoanQuickAction(
   }
   if (!Number.isFinite(feesFromOa) || feesFromOa < 0) {
     return { error: "Invalid fees from OA" };
+  }
+
+  const bsdComputed = computeSingaporeResidentialBuyersStampDuty(purchasePrice);
+
+  let depositTotal: number;
+  let planning:
+    | {
+        property_purchase_price: number;
+        property_kind: typeof property_kind;
+        downpayment_guidance_preset: string;
+        downpayment_guidance_custom_percent: number | null;
+        downpayment_guidance_custom_amount: number | null;
+        buyers_stamp_duty: number;
+        financing_includes_bsd: boolean;
+      }
+    | undefined;
+
+  if (guidedPresetRaw === "") {
+    const depositTotalLegacy =
+      depositTotalLegacyRaw === "" ? NaN : Number(depositTotalLegacyRaw);
+    if (!Number.isFinite(depositTotalLegacy) || depositTotalLegacy < 0) {
+      return { error: "Total deposit must be a valid number ≥ 0" };
+    }
+    depositTotal = depositTotalLegacy;
+    planning = undefined;
+  } else {
+    const presetParsed =
+      housingDownpaymentGuidancePresetSchema.safeParse(guidedPresetRaw);
+    if (!presetParsed.success) {
+      return { error: "Invalid downpayment option" };
+    }
+    const preset = presetParsed.data;
+    const customMode = String(formData.get("guided_dp_custom_mode") ?? "percent")
+      .trim()
+      .toLowerCase();
+    const preferAmount = customMode === "amount";
+
+    const customPctField = String(
+      formData.get("guided_dp_custom_percent") ?? ""
+    ).trim();
+    const customAmtField = String(
+      formData.get("guided_dp_custom_amount") ?? ""
+    ).trim();
+    const customPercentDec =
+      customPctField === "" || preferAmount
+        ? null
+        : Number(customPctField) / 100;
+    const customAmountVal =
+      customAmtField === "" || !preferAmount
+        ? null
+        : Number(customAmtField);
+
+    const resolved = resolveGuidedCashDownpayment({
+      purchasePrice,
+      preset,
+      customPercent: customPercentDec,
+      customAmount: customAmountVal,
+    });
+    if (!resolved.ok) {
+      return { error: resolved.error };
+    }
+    depositTotal = resolved.depositTotal;
+
+    planning = {
+      property_purchase_price: purchasePrice,
+      property_kind,
+      downpayment_guidance_preset: preset,
+      downpayment_guidance_custom_percent:
+        preset === "custom" &&
+        !preferAmount &&
+        customPercentDec != null &&
+        Number.isFinite(customPercentDec)
+          ? customPercentDec
+          : null,
+      downpayment_guidance_custom_amount:
+        preset === "custom" &&
+        preferAmount &&
+        customAmountVal != null &&
+        Number.isFinite(customAmountVal)
+          ? customAmountVal
+          : null,
+      buyers_stamp_duty: bsdComputed.total,
+      financing_includes_bsd: financing_include_bsd,
+    };
   }
 
   const derived = deriveQuickHousingLoanRow({
@@ -1488,6 +1598,9 @@ export async function createHousingLoanQuickAction(
           ? bankAnnualRate
           : null,
     oaShareOfPayment,
+    buyersStampDuty: bsdComputed.total,
+    includeBuyersStampDutyInLoan:
+      planning != null ? planning.financing_includes_bsd : false,
   });
 
   if (!derived.ok) {
@@ -1508,6 +1621,15 @@ export async function createHousingLoanQuickAction(
     lender_type: derived.lender_type,
     original_loan_principal: derived.original_loan_principal,
     principal_repaid_before_schedule: derived.principal_repaid_before_schedule,
+    property_purchase_price: planning?.property_purchase_price ?? null,
+    property_kind: planning?.property_kind ?? null,
+    downpayment_guidance_preset: planning?.downpayment_guidance_preset ?? null,
+    downpayment_guidance_custom_percent:
+      planning?.downpayment_guidance_custom_percent ?? null,
+    downpayment_guidance_custom_amount:
+      planning?.downpayment_guidance_custom_amount ?? null,
+    buyers_stamp_duty: planning?.buyers_stamp_duty ?? null,
+    financing_includes_bsd: planning?.financing_includes_bsd ?? false,
   });
   revalidatePath("/dashboard");
   revalidatePath("/balances");
