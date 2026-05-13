@@ -1,6 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   calculateTimeToGoal,
+  calculateTimeToGoalInvestmentPortfolio,
+  futureValueInvestmentPortfolioAtMonth,
   projectFutureValue,
 } from "@/domain/finance";
 import { num } from "@/data/mappers";
@@ -82,10 +84,43 @@ export function buildProjectionSeries(
   return out;
 }
 
+/** Per-account contributions (with optional phase caps), summed each month. */
+export function buildInvestmentProjectionSeries(
+  rows: InvestmentRow[],
+  horizonMonths: number,
+  opts: { monthsToRetirementFromNow: number | null }
+): ProjectionSeriesPoint[] {
+  const cap = Math.min(Math.max(horizonMonths, 1), 600);
+  const out: ProjectionSeriesPoint[] = [];
+  for (let m = 0; m <= cap; m++) {
+    out.push({
+      month: m,
+      value: futureValueInvestmentPortfolioAtMonth(
+        rows,
+        m,
+        opts.monthsToRetirementFromNow
+      ),
+    });
+  }
+  return out;
+}
+
 export function timeToGoalForTarget(
   snap: ProjectionSnapshot,
-  targetAmount: number
+  targetAmount: number,
+  options?: {
+    investmentRows?: InvestmentRow[];
+    monthsToRetirementFromNow?: number | null;
+  }
 ) {
+  const rows = options?.investmentRows;
+  if (rows && rows.length > 0) {
+    return calculateTimeToGoalInvestmentPortfolio(
+      rows,
+      targetAmount,
+      options?.monthsToRetirementFromNow ?? null
+    );
+  }
   return calculateTimeToGoal({
     currentValue: snap.currentValue,
     monthlyContribution: snap.monthlyContribution,

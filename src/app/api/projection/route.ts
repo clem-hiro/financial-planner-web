@@ -1,12 +1,15 @@
 import { NextResponse } from "next/server";
 import {
-  buildProjectionSeries,
-  resolveProjectionSnapshot,
+  buildInvestmentProjectionSeries,
+  projectionSnapshotFromInvestmentRows,
   timeToGoalForTarget,
 } from "@/data/projection";
+import { getInvestmentById, listInvestments } from "@/data/repositories/investments";
+import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
+import { ageCompletedOnDate } from "@/domain/finance";
 import { isSupabaseConfigured } from "@/lib/env";
-import { projectionQuerySchema } from "@/lib/validation";
+import { birthDateIsValidPast, projectionQuerySchema } from "@/lib/validation";
 
 export async function GET(request: Request) {
   if (!isSupabaseConfigured()) {
@@ -47,11 +50,17 @@ export async function GET(request: Request) {
   const { targetAmount, investmentId, horizonMonths } = parsed.data;
 
   try {
-    const snap = await resolveProjectionSnapshot(
-      supabase,
-      user.id,
-      investmentId ?? null
-    );
+    const asOf = new Date();
+    const [rows, profile] = await Promise.all([
+      investmentId
+        ? getInvestmentById(supabase, user.id, investmentId).then((r) =>
+            r ? [r] : []
+          )
+        : listInvestments(supabase, user.id),
+      getProfileById(supabase, user.id),
+    ]);
+
+    const snap = projectionSnapshotFromInvestmentRows(rows);
     if (!snap) {
       return NextResponse.json(
         { error: "No investments to project" },
@@ -59,9 +68,31 @@ export async function GET(request: Request) {
       );
     }
 
+    const birthRaw = profile?.birth_date;
+    const rawTarget =
+      profile?.target_retirement_age != null
+        ? Math.round(Number(profile.target_retirement_age))
+        : 65;
+    const targetRetirementAgeResolved = Math.min(80, Math.max(50, rawTarget));
+    const monthsToRetirementFromNow =
+      birthRaw &&
+      typeof birthRaw === "string" &&
+      birthDateIsValidPast(birthRaw)
+        ? Math.max(
+            0,
+            (targetRetirementAgeResolved - ageCompletedOnDate(birthRaw, asOf)) *
+              12
+          )
+        : null;
+
     const horizon = horizonMonths ?? 120;
-    const series = buildProjectionSeries(snap, horizon);
-    const timeToGoal = timeToGoalForTarget(snap, targetAmount);
+    const series = buildInvestmentProjectionSeries(rows, horizon, {
+      monthsToRetirementFromNow,
+    });
+    const timeToGoal = timeToGoalForTarget(snap, targetAmount, {
+      investmentRows: rows,
+      monthsToRetirementFromNow,
+    });
 
     return NextResponse.json({
       snapshot: snap,

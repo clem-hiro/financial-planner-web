@@ -100,11 +100,31 @@ export async function createInvestmentAction(
     return { error: "Invalid expected return (use 0–1, e.g. 0.07)" };
   }
 
+  const contributionTypeRaw = String(
+    formData.get("contribution_type") ?? ""
+  ).trim();
+  const isFixed = contributionTypeRaw === "fixed_duration";
+
+  let contribution_type: string | null = null;
+  let contribution_duration_years: number | null = null;
+  if (isFixed) {
+    const y = Number(formData.get("contribution_duration_years"));
+    if (!Number.isFinite(y) || y <= 0 || y > 80) {
+      return {
+        error: "Enter contribution duration in years (between 0.25 and 80)",
+      };
+    }
+    contribution_type = "fixed_duration";
+    contribution_duration_years = y;
+  }
+
   await insertInvestment(supabase, user.id, {
     name,
     current_value: currentValue,
     monthly_contribution: monthlyContribution,
     expected_annual_return: expectedAnnualReturn,
+    contribution_type,
+    contribution_duration_years,
   });
 
   revalidatePath("/balances");
@@ -150,11 +170,31 @@ export async function updateInvestmentAction(
     return { error: "Invalid expected return (use 0–1, e.g. 0.07)" };
   }
 
+  const contributionTypeRaw = String(
+    formData.get("contribution_type") ?? ""
+  ).trim();
+  const isFixed = contributionTypeRaw === "fixed_duration";
+
+  let contribution_type: string | null = null;
+  let contribution_duration_years: number | null = null;
+  if (isFixed) {
+    const y = Number(formData.get("contribution_duration_years"));
+    if (!Number.isFinite(y) || y <= 0 || y > 80) {
+      return {
+        error: "Enter contribution duration in years (between 0.25 and 80)",
+      };
+    }
+    contribution_type = "fixed_duration";
+    contribution_duration_years = y;
+  }
+
   await updateInvestment(supabase, user.id, idParsed.data, {
     name,
     current_value: currentValue,
     monthly_contribution: monthlyContribution,
     expected_annual_return: expectedAnnualReturn,
+    contribution_type,
+    contribution_duration_years,
   });
 
   revalidatePath("/balances");

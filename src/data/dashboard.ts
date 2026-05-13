@@ -12,9 +12,9 @@ import {
   DEFAULT_RETIREMENT_DIVIDEND_YIELD_ANNUAL,
   cumulativeVehicleProceedsToCash,
   effectiveLoanBalance,
+  futureValueInvestmentPortfolioAtMonth,
   monthlyBudgetAggregateOverspend,
   monthlyBudgetVsActual,
-  projectFutureValue,
   topOverBudgetCategories,
   vehicleGrossAssetEstimate,
   vehicleNetListedBeforeLiquidation,
@@ -55,7 +55,7 @@ import { listExpensesForMonth } from "@/data/repositories/expenses";
 import { listInvestments } from "@/data/repositories/investments";
 import type { HousingLoanRow } from "@/data/supabase/types";
 import {
-  buildProjectionSeries,
+  buildInvestmentProjectionSeries,
   projectionSnapshotFromInvestmentRows,
 } from "@/data/projection";
 import type { ProjectionSeriesPoint } from "@/data/projection";
@@ -342,6 +342,27 @@ export async function getDashboardPayload(
       num(cpfRow.cpfis_notional_balance)
     : 0;
   const dashboardAsOf = new Date();
+  const birthRaw = profile?.birth_date;
+  const rawTargetRetirement =
+    profile?.target_retirement_age != null
+      ? Math.round(Number(profile.target_retirement_age))
+      : 65;
+  const targetRetirementAgeResolved = Math.min(
+    80,
+    Math.max(50, rawTargetRetirement)
+  );
+  const birthValidForAge =
+    birthRaw &&
+    typeof birthRaw === "string" &&
+    birthDateIsValidPast(birthRaw);
+  const monthsToRetirementHorizon: number | null = birthValidForAge
+    ? Math.max(
+        0,
+        (targetRetirementAgeResolved -
+          ageCompletedOnDate(birthRaw as string, dashboardAsOf)) *
+          12
+      )
+    : null;
   const vehicleValuationInputs = vehicleRows.map(vehicleRowToValuationInput);
   const vehicleProceedsCashNow = cumulativeVehicleProceedsToCash(
     vehicleValuationInputs,
@@ -399,15 +420,13 @@ export async function getDashboardPayload(
   const totalValue = investmentsTotal;
 
   const snap = projectionSnapshotFromInvestmentRows(investments);
-  const snapBaseForProjection = snap ?? {
-    currentValue: 0,
-    monthlyContribution: 0,
-    annualReturn: 0,
-  };
   const projectionPreview =
-    snap != null ? buildProjectionSeries(snapBaseForProjection, 36) : [];
+    snap != null
+      ? buildInvestmentProjectionSeries(investments, 36, {
+          monthsToRetirementFromNow: monthsToRetirementHorizon,
+        })
+      : [];
 
-  const birthRaw = profile?.birth_date;
   let ageProjection: DashboardPayload["ageProjection"] = null;
   let cpfProjectionByAge: DashboardPayload["cpfProjectionByAge"] = null;
   let cpfHousingMarkers: DashboardPayload["cpfHousingMarkers"] = [];
@@ -418,33 +437,30 @@ export async function getDashboardPayload(
   ) {
     const asOf = dashboardAsOf;
     const currentAge = ageCompletedOnDate(birthRaw, asOf);
-    const rawTarget =
-      profile?.target_retirement_age != null
-        ? Math.round(Number(profile.target_retirement_age))
-        : 65;
-    const targetRetirementAge = Math.min(80, Math.max(50, rawTarget));
+    const targetRetirementAge = targetRetirementAgeResolved;
     const snapForAgeBase = snap ?? {
       currentValue: 0,
       monthlyContribution: 0,
       annualReturn: 0,
     };
     const cashMinusLiab = cashTotal - liabilitiesTotal;
+    const monthsToRet = monthsToRetirementHorizon ?? 0;
     const nwAgePoints = buildNetWorthByAgeProjection({
       birthDate: birthRaw,
       asOf,
       investmentSnapshot: snapForAgeBase,
+      investmentRows: investments,
+      monthsToRetirementFromNow: monthsToRetirementHorizon,
       cashTotal,
       liabilitiesTotal,
       ageStep: 1,
       emphasizeAge: targetRetirementAge,
     });
-    const monthsToRet = Math.max(0, (targetRetirementAge - currentAge) * 12);
-    const invAtRet = projectFutureValue({
-      currentValue: snapForAgeBase.currentValue,
-      monthlyContribution: snapForAgeBase.monthlyContribution,
-      annualReturn: snapForAgeBase.annualReturn,
-      months: monthsToRet,
-    });
+    const invAtRet = futureValueInvestmentPortfolioAtMonth(
+      investments,
+      monthsToRet,
+      monthsToRetirementHorizon
+    );
     const asOfRetirement = addCalendarMonths(dashboardAsOf, monthsToRet);
     const vehicleSaleCashAtRet = cumulativeVehicleProceedsToCash(
       vehicleValuationInputs,

@@ -34,6 +34,8 @@ export type NewInvestment = {
   current_value: number;
   monthly_contribution: number;
   expected_annual_return: number;
+  contribution_type?: string | null;
+  contribution_duration_years?: number | null;
 };
 
 export async function insertInvestment(
@@ -49,6 +51,8 @@ export async function insertInvestment(
       current_value: row.current_value,
       monthly_contribution: row.monthly_contribution,
       expected_annual_return: row.expected_annual_return,
+      contribution_type: row.contribution_type ?? null,
+      contribution_duration_years: row.contribution_duration_years ?? null,
     })
     .select()
     .single();
@@ -61,6 +65,8 @@ export type InvestmentPatch = {
   current_value?: number;
   monthly_contribution?: number;
   expected_annual_return?: number;
+  contribution_type?: string | null;
+  contribution_duration_years?: number | null;
 };
 
 export async function updateInvestment(

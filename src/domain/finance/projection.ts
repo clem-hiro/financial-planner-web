@@ -7,20 +7,59 @@ import type {
 
 const MAX_PROJECTION_MONTHS = 12 * 150;
 
-/**
- * Future value with lump sum + end-of-month contributions.
- * When annualReturn is 0, FV = PV + PMT * n.
- */
-export function projectFutureValue(params: ProjectFutureValueParams): Money {
-  const { currentValue, monthlyContribution, annualReturn, months } = params;
-  if (months <= 0) return currentValue;
-  const n = months;
+function futureValueEndOfMonthWindow(
+  currentValue: Money,
+  monthlyContribution: Money,
+  annualReturn: number,
+  months: number
+): Money {
+  const n = Math.max(0, Math.floor(months));
+  if (n <= 0) return currentValue;
   const r = annualReturn / 12;
   if (r === 0) {
     return currentValue + monthlyContribution * n;
   }
   const growth = (1 + r) ** n;
   return currentValue * growth + monthlyContribution * ((growth - 1) / r);
+}
+
+/**
+ * Future value with lump sum + end-of-month contributions for an initial window,
+ * then growth only (same rate) for any remaining months.
+ * When annualReturn is 0, FV = PV + PMT * n over the contribution window, then add 0.
+ */
+export function projectFutureValue(params: ProjectFutureValueParams): Money {
+  const { currentValue, monthlyContribution, annualReturn, months } = params;
+  const n = Math.max(0, Math.floor(months));
+  if (n <= 0) return currentValue;
+
+  let contributionWindow = n;
+  if (
+    params.contributionMonthsLimit != null &&
+    Number.isFinite(params.contributionMonthsLimit)
+  ) {
+    contributionWindow = Math.max(
+      0,
+      Math.min(n, Math.floor(params.contributionMonthsLimit))
+    );
+  }
+
+  if (contributionWindow >= n) {
+    return futureValueEndOfMonthWindow(
+      currentValue,
+      monthlyContribution,
+      annualReturn,
+      n
+    );
+  }
+
+  const mid = futureValueEndOfMonthWindow(
+    currentValue,
+    monthlyContribution,
+    annualReturn,
+    contributionWindow
+  );
+  return futureValueEndOfMonthWindow(mid, 0, annualReturn, n - contributionWindow);
 }
 
 /**
@@ -31,8 +70,13 @@ export function projectFutureValue(params: ProjectFutureValueParams): Money {
 export function calculateTimeToGoal(
   params: TimeToGoalParams
 ): TimeToGoalResult | null {
-  const { currentValue, monthlyContribution, annualReturn, targetAmount } =
-    params;
+  const {
+    currentValue,
+    monthlyContribution,
+    annualReturn,
+    targetAmount,
+    contributionMonthsLimit,
+  } = params;
 
   if (targetAmount <= currentValue) {
     return { months: 0 };
@@ -43,6 +87,7 @@ export function calculateTimeToGoal(
     monthlyContribution,
     annualReturn,
     months: MAX_PROJECTION_MONTHS,
+    contributionMonthsLimit,
   });
   if (fvAtMax < targetAmount) {
     return null;
@@ -57,6 +102,7 @@ export function calculateTimeToGoal(
       monthlyContribution,
       annualReturn,
       months: mid,
+      contributionMonthsLimit,
     });
     if (fv >= targetAmount) {
       high = mid;

@@ -95,6 +95,14 @@ export type InvestmentRow = {
   current_value: string;
   monthly_contribution: string;
   expected_annual_return: string;
+  /** until_retirement | fixed_duration; null = legacy / same as until retirement. */
+  contribution_type?: string | null;
+  /** Years of monthly contributions when type is fixed_duration. */
+  contribution_duration_years?: string | null;
+  /** Reserved for future age-based contribution end. */
+  contribution_end_age?: number | null;
+  /** Reserved for calendar-based contribution end. */
+  contribution_end_date?: string | null;
   created_at: string;
   updated_at: string;
 };

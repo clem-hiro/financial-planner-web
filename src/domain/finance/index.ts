@@ -5,6 +5,13 @@ export {
   calculateTimeToGoal,
 } from "./projection";
 export {
+  futureValueInvestmentPortfolioAtMonth,
+  calculateTimeToGoalInvestmentPortfolio,
+} from "./investment-portfolio-fv";
+export {
+  contributionMonthsLimitFromInvestmentRow,
+} from "./investment-contribution";
+export {
   goalProgressRatio,
   estimateTimeToGoalStandalone,
 } from "./goal-standalone";

@@ -32,6 +32,11 @@ export type ProjectFutureValueParams = {
   annualReturn: number;
   /** Number of months; payments at end of each month. */
   months: number;
+  /**
+   * Months from the start of the horizon during which contributions apply (then growth only).
+   * Omitted or null = contributions for the full `months` window (legacy behavior).
+   */
+  contributionMonthsLimit?: number | null;
 };
 
 export type TimeToGoalParams = {
@@ -39,6 +44,8 @@ export type TimeToGoalParams = {
   monthlyContribution: Money;
   annualReturn: number;
   targetAmount: Money;
+  /** Optional cap on contribution months (same semantics as `ProjectFutureValueParams`). */
+  contributionMonthsLimit?: number | null;
 };
 
 export type TimeToGoalResult = {

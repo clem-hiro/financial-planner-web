@@ -46,6 +46,7 @@ import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth, parseYearMonth, yearFromYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
 import { setupTabPath } from "@/lib/setup-urls";
+import { birthDateIsValidPast } from "@/lib/validation";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { PageSection } from "@/ui/PageSection";
 
@@ -153,7 +154,23 @@ export default async function SetupPage({ searchParams }: PageProps) {
     current_value: num(i.current_value),
     monthly_contribution: num(i.monthly_contribution),
     expected_annual_return: num(i.expected_annual_return),
+    contribution_type: i.contribution_type ?? null,
+    contribution_duration_years:
+      i.contribution_duration_years != null &&
+      String(i.contribution_duration_years).trim() !== ""
+        ? num(i.contribution_duration_years as string)
+        : null,
   }));
+  const investmentPlanningContext =
+    financialProfile?.birth_date &&
+    typeof financialProfile.birth_date === "string" &&
+    birthDateIsValidPast(financialProfile.birth_date) &&
+    financialProfile.target_retirement_age != null
+      ? {
+          birthDate: financialProfile.birth_date,
+          targetRetirementAge: Number(financialProfile.target_retirement_age),
+        }
+      : null;
   const cashBalanceRows: CashAccountBalanceRow[] = cashAccounts.map((r) => ({
     id: r.id,
     name: r.name,
@@ -280,6 +297,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
                   <InvestmentBalancesList
                     items={investmentBalanceRows}
                     currencyCode={currency}
+                    planningContext={investmentPlanningContext}
                   />
                 </div>
               ) : null}

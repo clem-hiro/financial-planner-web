@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useActionState, useMemo, useState } from "react";
 import { updateInvestmentAction } from "@/server/actions";
+import { ageCompletedOnDate } from "@/domain/finance";
 import { InfoTooltip } from "@/ui/InfoTooltip";
 import { fpInputClass, fpPrimaryButtonClass } from "@/ui/input-classes";
 import { formatCurrency } from "@/ui/lib/format";
@@ -13,41 +14,118 @@ export type InvestmentBalanceRow = {
   current_value: number;
   monthly_contribution: number;
   expected_annual_return: number;
+  contribution_type?: string | null;
+  contribution_duration_years?: number | null;
+};
+
+export type InvestmentPlanningContext = {
+  birthDate: string;
+  targetRetirementAge: number;
 };
 
 const initial = { error: null as string | null };
 
 const fieldClass = `${fpInputClass} max-w-none`;
 
+function contributionSummaryLine(
+  investment: InvestmentBalanceRow,
+  currencyCode: string
+): string {
+  const pmt = investment.monthly_contribution;
+  const pmtLabel = `${formatCurrency(pmt, currencyCode)}/mo`;
+  if (
+    investment.contribution_type === "fixed_duration" &&
+    investment.contribution_duration_years != null &&
+    investment.contribution_duration_years > 0
+  ) {
+    const y = investment.contribution_duration_years;
+    const yLabel = Number.isInteger(y) ? String(y) : String(y);
+    return `${pmtLabel} for ${yLabel} years, then growth only`;
+  }
+  return `${pmtLabel} until retirement`;
+}
+
+function ContributionTimelineHint({
+  investment,
+  ctx,
+}: {
+  investment: InvestmentBalanceRow;
+  ctx: InvestmentPlanningContext;
+}) {
+  const asOf = new Date();
+  const age0 = ageCompletedOnDate(ctx.birthDate, asOf);
+  const targetAge = Math.min(80, Math.max(50, Math.round(ctx.targetRetirementAge)));
+
+  if (
+    investment.contribution_type === "fixed_duration" &&
+    investment.contribution_duration_years != null &&
+    investment.contribution_duration_years > 0
+  ) {
+    const y = investment.contribution_duration_years;
+    const endContribAge = age0 + y;
+    const endLabel =
+      Math.abs(endContribAge - Math.round(endContribAge)) < 1e-6
+        ? String(Math.round(endContribAge))
+        : endContribAge.toFixed(1);
+    return (
+      <div className="mt-2 rounded-lg border border-emerald-100 bg-emerald-50/50 px-2.5 py-2 text-[11px] leading-relaxed text-emerald-950/90">
+        <p className="font-semibold text-emerald-950">Timeline (illustrative)</p>
+        <p className="mt-1">
+          Age {age0} → {endLabel}: contributing monthly
+        </p>
+        <p className="mt-0.5">
+          Thereafter through age {targetAge}: balance keeps compounding without new
+          monthly deposits in this model
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-2 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-2 text-[11px] leading-relaxed text-slate-700">
+      <p className="font-semibold text-slate-800">Timeline (illustrative)</p>
+      <p className="mt-1">
+        Age {age0} → {targetAge}: contributing monthly (aligned with your retirement
+        age in profile)
+      </p>
+      <p className="mt-0.5 text-slate-600">
+        Projections still grow the balance after contributions stop at retirement.
+      </p>
+    </div>
+  );
+}
+
 function InvestmentSummary({
   investment,
   currencyCode,
+  planningContext,
   onEdit,
 }: {
   investment: InvestmentBalanceRow;
   currencyCode: string;
+  planningContext: InvestmentPlanningContext | null;
   onEdit: () => void;
 }) {
   const returnPct = (investment.expected_annual_return * 100).toFixed(1);
+  const flowSummary = contributionSummaryLine(investment, currencyCode);
   return (
     <div className="flex items-start justify-between gap-3 py-3.5">
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-slate-900">
-          {investment.name}
+        <p className="truncate text-sm font-medium text-slate-900">{investment.name}</p>
+        <p className="mt-1 text-xs text-slate-600">{flowSummary}</p>
+        <p className="mt-0.5 text-xs text-slate-500">
+          <span>{returnPct}% yearly growth (nominal)</span>
         </p>
-        <p className="mt-1 text-xs text-slate-500">
-          <span>
-            +{formatCurrency(investment.monthly_contribution, currencyCode)}/mo
-          </span>
-          <span aria-hidden className="px-1.5 text-slate-300">
-            ·
-          </span>
-          <span>{returnPct}% return</span>
-        </p>
+        {planningContext ? (
+          <ContributionTimelineHint investment={investment} ctx={planningContext} />
+        ) : null}
       </div>
       <div className="flex shrink-0 flex-col items-end gap-1.5">
         <p className="text-sm font-semibold tabular-nums text-slate-900">
           {formatCurrency(investment.current_value, currencyCode)}
+        </p>
+        <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">
+          Current
         </p>
         <button
           type="button"
@@ -79,9 +157,20 @@ function InvestmentEditForm({
     String(investment.monthly_contribution)
   );
   const [returnPctRaw, setReturnPctRaw] = useState(
-    String(
-      Math.round(investment.expected_annual_return * 1000) / 10
-    )
+    String(Math.round(investment.expected_annual_return * 1000) / 10)
+  );
+  const [contributionMode, setContributionMode] = useState<
+    "until_retirement" | "fixed_duration"
+  >(
+    investment.contribution_type === "fixed_duration"
+      ? "fixed_duration"
+      : "until_retirement"
+  );
+  const [durationYearsRaw, setDurationYearsRaw] = useState(
+    investment.contribution_type === "fixed_duration" &&
+      investment.contribution_duration_years != null
+      ? String(investment.contribution_duration_years)
+      : "15"
   );
 
   const wrapped = async (
@@ -104,7 +193,7 @@ function InvestmentEditForm({
   }, [returnPctRaw]);
 
   return (
-    <form action={formAction} className="space-y-4 py-4">
+    <form action={formAction} className="space-y-4 border-t border-slate-100 py-4">
       <input type="hidden" name="id" value={investment.id} />
       {state.error && (
         <p
@@ -115,22 +204,27 @@ function InvestmentEditForm({
         </p>
       )}
 
-      <label className="block text-sm">
-        <span className="mb-1 block font-medium text-slate-700">Account name</span>
-        <input
-          name="name"
-          type="text"
-          required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className={fieldClass}
-        />
-      </label>
+      <div className="rounded-lg border border-slate-100 bg-slate-50/60 p-3">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Basics
+        </p>
+        <label className="mt-2 block text-sm">
+          <span className="mb-1 block font-medium text-slate-700">Account name</span>
+          <input
+            name="name"
+            type="text"
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className={fieldClass}
+          />
+        </label>
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block text-sm">
           <span className="mb-1 block font-medium text-slate-700">
-            Current value{" "}
+            Current invested amount{" "}
             <span className="font-normal text-slate-500">({currencyCode})</span>
           </span>
           <input
@@ -164,9 +258,72 @@ function InvestmentEditForm({
         </label>
       </div>
 
+      <fieldset className="rounded-lg border border-slate-200 bg-white p-3">
+        <legend className="text-sm font-medium text-slate-800">
+          How long will you contribute monthly?
+        </legend>
+        <p className="mt-1 text-xs text-slate-500">
+          After this window, the balance can keep compounding—we only stop adding new
+          monthly deposits.
+        </p>
+        <div className="mt-3 space-y-2.5">
+          <label className="flex cursor-pointer items-start gap-2.5 text-sm text-slate-700">
+            <input
+              type="radio"
+              name="contribution_type"
+              value="until_retirement"
+              className="mt-0.5"
+              checked={contributionMode === "until_retirement"}
+              onChange={() => setContributionMode("until_retirement")}
+            />
+            <span>
+              <span className="font-medium text-slate-900">Until retirement</span>
+              <span className="mt-0.5 block text-xs font-normal text-slate-500">
+                Matches your profile retirement age when available.
+              </span>
+            </span>
+          </label>
+          <label className="flex cursor-pointer items-start gap-2.5 text-sm text-slate-700">
+            <input
+              type="radio"
+              name="contribution_type"
+              value="fixed_duration"
+              className="mt-0.5"
+              checked={contributionMode === "fixed_duration"}
+              onChange={() => setContributionMode("fixed_duration")}
+            />
+            <span>
+              <span className="font-medium text-slate-900">Fixed duration</span>
+              <span className="mt-0.5 block text-xs font-normal text-slate-500">
+                For time-bound premiums or savings phases.
+              </span>
+            </span>
+          </label>
+        </div>
+        {contributionMode === "fixed_duration" ? (
+          <label className="mt-3 block text-sm">
+            <span className="mb-1 block font-medium text-slate-700">
+              Contribution duration (years)
+            </span>
+            <input
+              name="contribution_duration_years"
+              type="number"
+              inputMode="decimal"
+              min={0.25}
+              max={80}
+              step={0.25}
+              required
+              value={durationYearsRaw}
+              onChange={(e) => setDurationYearsRaw(e.target.value)}
+              className={`${fieldClass} max-w-xs`}
+            />
+          </label>
+        ) : null}
+      </fieldset>
+
       <label className="block text-sm">
         <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
-          Expected annual return
+          Expected yearly growth
           <InfoTooltip ariaLabel="What to enter for expected return">
             <p>
               Long-run nominal yield for this account. Rough ranges:{" "}
@@ -174,8 +331,8 @@ function InvestmentEditForm({
               <strong>6–9%</strong> diversified equities.
             </p>
             <p className="mt-2 text-slate-300">
-              Type a percent — e.g. <strong>7</strong> for 7%. Used in
-              projections only; not financial advice.
+              Type a percent — e.g. <strong>7</strong> for 7%. Used in projections
+              only; not financial advice.
             </p>
           </InfoTooltip>
         </span>
@@ -205,6 +362,17 @@ function InvestmentEditForm({
         />
       </label>
 
+      <details className="rounded-lg border border-dashed border-slate-200 bg-slate-50/60 px-3 py-2 text-xs text-slate-600">
+        <summary className="cursor-pointer select-none font-medium text-slate-700">
+          Advanced planning
+        </summary>
+        <p className="mt-2 leading-relaxed">
+          Optional fields like contribution end age, calendar stop dates, pauses, and
+          withdrawals are reserved for later—your advisor view stays uncluttered for
+          now.
+        </p>
+      </details>
+
       <div className="flex flex-col-reverse items-stretch gap-2 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
         <button
           type="button"
@@ -229,9 +397,11 @@ function InvestmentEditForm({
 function InvestmentRow({
   investment,
   currencyCode,
+  planningContext,
 }: {
   investment: InvestmentBalanceRow;
   currencyCode: string;
+  planningContext: InvestmentPlanningContext | null;
 }) {
   const [editing, setEditing] = useState(false);
 
@@ -240,6 +410,7 @@ function InvestmentRow({
       <InvestmentSummary
         investment={investment}
         currencyCode={currencyCode}
+        planningContext={planningContext}
         onEdit={() => setEditing(true)}
       />
     );
@@ -256,9 +427,12 @@ function InvestmentRow({
 export function InvestmentBalancesList({
   items,
   currencyCode,
+  planningContext,
 }: {
   items: InvestmentBalanceRow[];
   currencyCode: string;
+  /** When birth date + retirement age are set, show an illustrative contribution timeline. */
+  planningContext?: InvestmentPlanningContext | null;
 }) {
   const total = items.reduce((acc, i) => acc + i.current_value, 0);
 
@@ -271,8 +445,8 @@ export function InvestmentBalancesList({
       <div>
         <h2 className="text-sm font-semibold text-zinc-900">Your accounts</h2>
         <p className="mt-1 text-xs text-zinc-500">
-          Track investments, savings, or cash-like accounts. Amounts are in{" "}
-          {currencyCode}.
+          Investments and savings-style accounts. Amounts are in {currencyCode}. Monthly
+          contributions can stop while balances keep growing in projections.
         </p>
         <p className="mt-2 text-sm text-zinc-700">
           Combined current value:{" "}
@@ -283,8 +457,12 @@ export function InvestmentBalancesList({
       </div>
       <ul className="divide-y divide-slate-200 border-t border-slate-200">
         {items.map((inv) => (
-          <li key={inv.id}>
-            <InvestmentRow investment={inv} currencyCode={currencyCode} />
+          <li key={inv.id} className="px-0 sm:px-0">
+            <InvestmentRow
+              investment={inv}
+              currencyCode={currencyCode}
+              planningContext={planningContext ?? null}
+            />
           </li>
         ))}
       </ul>
