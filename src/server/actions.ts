@@ -1523,9 +1523,10 @@ export async function createHousingLoanQuickAction(
 
   const guidedPresetRaw = String(formData.get("guided_dp_preset") ?? "").trim();
   const depositTotalLegacyRaw = String(formData.get("deposit_total") ?? "").trim();
-  const includeBsdRaw = String(formData.get("financing_include_bsd") ?? "").trim();
-  const financing_include_bsd =
-    includeBsdRaw === "1" || includeBsdRaw === "true" || includeBsdRaw === "on";
+  const bsdPaymentRaw = String(formData.get("bsd_payment") ?? "cpf_oa")
+    .trim()
+    .toLowerCase();
+  const buyers_stamp_duty_paid_from_cpf_oa = bsdPaymentRaw !== "cash";
 
   const propertyKindRaw = String(formData.get("property_kind") ?? "").trim();
   let property_kind: string | null = null;
@@ -1567,7 +1568,7 @@ export async function createHousingLoanQuickAction(
         downpayment_guidance_custom_percent: number | null;
         downpayment_guidance_custom_amount: number | null;
         buyers_stamp_duty: number;
-        financing_includes_bsd: boolean;
+        buyers_stamp_duty_paid_from_cpf_oa: boolean;
       }
     | undefined;
 
@@ -1636,7 +1637,7 @@ export async function createHousingLoanQuickAction(
           ? customAmountVal
           : null,
       buyers_stamp_duty: bsdComputed.total,
-      financing_includes_bsd: financing_include_bsd,
+      buyers_stamp_duty_paid_from_cpf_oa,
     };
   }
 
@@ -1657,8 +1658,8 @@ export async function createHousingLoanQuickAction(
           : null,
     oaShareOfPayment,
     buyersStampDuty: bsdComputed.total,
-    includeBuyersStampDutyInLoan:
-      planning != null ? planning.financing_includes_bsd : false,
+    payBuyersStampDutyFromCpfOa:
+      planning != null ? planning.buyers_stamp_duty_paid_from_cpf_oa : false,
   });
 
   if (!derived.ok) {
@@ -1687,7 +1688,9 @@ export async function createHousingLoanQuickAction(
     downpayment_guidance_custom_amount:
       planning?.downpayment_guidance_custom_amount ?? null,
     buyers_stamp_duty: planning?.buyers_stamp_duty ?? null,
-    financing_includes_bsd: planning?.financing_includes_bsd ?? false,
+    financing_includes_bsd: false,
+    buyers_stamp_duty_paid_from_cpf_oa:
+      planning?.buyers_stamp_duty_paid_from_cpf_oa ?? false,
   });
   revalidatePath("/dashboard");
   revalidatePath("/balances");

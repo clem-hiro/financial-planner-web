@@ -211,4 +211,6 @@ export type HousingLoanRow = {
   downpayment_guidance_custom_amount?: string | null;
   buyers_stamp_duty?: string | null;
   financing_includes_bsd?: boolean;
+  /** When true, estimated BSD was saved as paid from OA (rolled into fees_from_oa). */
+  buyers_stamp_duty_paid_from_cpf_oa?: boolean;
 };

@@ -62,18 +62,14 @@ export function resolveGuidedCashDownpayment(input: {
   };
 }
 
-/** Financing need from purchase, cash downpayment, and optional BSD inclusion. */
+/** Loan principal from purchase and cash downpayment (BSD is separate from the facility). */
 export function estimateFinancingNeed(input: {
   purchasePrice: number;
   cashDownpayment: number;
-  /** Pre-computed BSD for this purchase (see `computeSingaporeResidentialBuyersStampDuty`). */
-  buyersStampDuty: number;
-  includeBuyersStampDutyInLoan: boolean;
 }):
   | { ok: true; loanPrincipal: number }
   | { ok: false; error: string } {
-  const { purchasePrice, cashDownpayment, buyersStampDuty, includeBuyersStampDutyInLoan } =
-    input;
+  const { purchasePrice, cashDownpayment } = input;
 
   if (!Number.isFinite(purchasePrice) || purchasePrice <= 0) {
     return { ok: false, error: "Purchase price must be positive" };
@@ -84,20 +80,14 @@ export function estimateFinancingNeed(input: {
   if (cashDownpayment > purchasePrice + 1e-6) {
     return { ok: false, error: "Downpayment cannot exceed purchase price" };
   }
-  if (!Number.isFinite(buyersStampDuty) || buyersStampDuty < 0) {
-    return { ok: false, error: "Invalid BSD estimate" };
-  }
 
-  const loan =
-    purchasePrice -
-    cashDownpayment -
-    (includeBuyersStampDutyInLoan ? buyersStampDuty : 0);
+  const loan = purchasePrice - cashDownpayment;
 
   if (!Number.isFinite(loan) || loan <= 0) {
     return {
       ok: false,
       error:
-        "Estimated loan must be positive — lower downpayment, turn off “include BSD in loan”, or check purchase price",
+        "Estimated loan must be positive — lower the downpayment or check purchase price",
     };
   }
 

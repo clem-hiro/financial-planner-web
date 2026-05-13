@@ -691,7 +691,8 @@ export function HousingLoansPanel({
               L.buyers_stamp_duty != null && String(L.buyers_stamp_duty).trim() !== ""
                 ? num(L.buyers_stamp_duty)
                 : null;
-            const incBsd = Boolean(L.financing_includes_bsd);
+            const bsdFromOa = Boolean(L.buyers_stamp_duty_paid_from_cpf_oa);
+            const legacyBsdInLoan = Boolean(L.financing_includes_bsd);
             const orig =
               L.original_loan_principal != null &&
               String(L.original_loan_principal).trim() !== ""
@@ -737,7 +738,13 @@ export function HousingLoansPanel({
                         {bsdSaved != null && (
                           <span className="text-zinc-500">
                             {" "}
-                            ({incBsd ? "included in loan" : "paid in cash / not in loan"})
+                            (
+                            {bsdFromOa
+                              ? "BSD from CPF OA"
+                              : legacyBsdInLoan
+                                ? "BSD was inside loan principal (legacy)"
+                                : "BSD outside OA (e.g. cash)"}
+                            )
                           </span>
                         )}
                         {L.property_kind ? (

@@ -36,21 +36,11 @@ describe("resolveGuidedCashDownpayment", () => {
 });
 
 describe("estimateFinancingNeed", () => {
-  it("subtracts BSD only when flag is on", () => {
+  it("loan principal is purchase minus cash downpayment only", () => {
     expect(
       estimateFinancingNeed({
         purchasePrice: 1_000_000,
         cashDownpayment: 250_000,
-        buyersStampDuty: 24_600,
-        includeBuyersStampDutyInLoan: true,
-      })
-    ).toEqual({ ok: true, loanPrincipal: 725_400 });
-    expect(
-      estimateFinancingNeed({
-        purchasePrice: 1_000_000,
-        cashDownpayment: 250_000,
-        buyersStampDuty: 24_600,
-        includeBuyersStampDutyInLoan: false,
       })
     ).toEqual({ ok: true, loanPrincipal: 750_000 });
   });

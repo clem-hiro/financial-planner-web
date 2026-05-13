@@ -41,7 +41,8 @@ export function HousingLoanQuickAddForm({
   );
   const [customDpPercent, setCustomDpPercent] = useState("30");
   const [customDpAmount, setCustomDpAmount] = useState("");
-  const [includeBsdInLoan, setIncludeBsdInLoan] = useState(true);
+  /** BSD is always separate from the loan; this only affects CPF OA in projection. */
+  const [bsdPayment, setBsdPayment] = useState<"cpf_oa" | "cash">("cpf_oa");
   const [propertyKind, setPropertyKind] = useState("");
   const [depositFromOa, setDepositFromOa] = useState("");
   const [feesFromOa, setFeesFromOa] = useState("");
@@ -121,7 +122,7 @@ export function HousingLoanQuickAddForm({
       bankAnnualRate: lender === "hdb" ? null : bankDecimal,
       oaShareOfPayment: oaInstalmentShareFromPreset(oaInstMode),
       buyersStampDuty: bsdResult.total,
-      includeBuyersStampDutyInLoan: includeBsdInLoan,
+      payBuyersStampDutyFromCpfOa: bsdPayment === "cpf_oa",
     });
     if (!derived.ok) {
       return { kind: "error" as const, message: derived.error };
@@ -154,7 +155,7 @@ export function HousingLoanQuickAddForm({
     depositFromOa,
     feesFromOa,
     bsdResult.total,
-    includeBsdInLoan,
+    bsdPayment,
   ]);
 
   return (
@@ -168,7 +169,7 @@ export function HousingLoanQuickAddForm({
       <input type="hidden" name="guided_dp_custom_mode" value={customDpMode} />
       <input type="hidden" name="guided_dp_custom_percent" value={customDpPercent} />
       <input type="hidden" name="guided_dp_custom_amount" value={customDpAmount} />
-      <input type="hidden" name="financing_include_bsd" value={includeBsdInLoan ? "1" : "0"} />
+      <input type="hidden" name="bsd_payment" value={bsdPayment} />
       <input type="hidden" name="property_kind" value={propertyKind} />
 
       <div>
@@ -177,7 +178,8 @@ export function HousingLoanQuickAddForm({
         </h2>
         <p className="mt-1 text-xs leading-relaxed text-zinc-600">
           Start with a purchase price. We estimate your downpayment, Buyer&apos;s
-          Stamp Duty (BSD), and loan size — then run the same amortization the CPF
+          Stamp Duty (BSD, an extra upfront tax on top of the price), and loan size
+          (price minus downpayment) — then run the same amortization the CPF
           projection uses. Figures are <strong>planning estimates</strong>, not
           bank offers.
         </p>
@@ -301,23 +303,45 @@ export function HousingLoanQuickAddForm({
           )}
         </div>
 
-        <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-zinc-100 bg-white/80 px-3 py-2.5 text-sm sm:col-span-2">
-          <input
-            type="checkbox"
-            className="mt-0.5 rounded border-zinc-300"
-            checked={includeBsdInLoan}
-            onChange={(e) => setIncludeBsdInLoan(e.target.checked)}
-          />
-          <span>
-            <span className="font-medium text-zinc-800">
-              Include estimated BSD in the loan
-            </span>
-            <span className="mt-0.5 block text-xs font-normal text-zinc-500">
-              When on, financed amount ≈ price − downpayment − BSD. Turn off if
-              you pay BSD fully in cash.
-            </span>
-          </span>
-        </label>
+        <fieldset className="rounded-lg border border-zinc-100 bg-white/80 px-3 py-2.5 text-sm sm:col-span-2">
+          <legend className="font-medium text-zinc-800">
+            Estimated BSD: how do you pay it?
+          </legend>
+          <p className="mt-1 text-xs text-zinc-500">
+            BSD is separate from the mortgage. The loan is always{" "}
+            <span className="font-medium text-zinc-700">price − downpayment</span>.
+            Choose whether we reduce your OA in the projection by the estimated BSD.
+          </p>
+          <div className="mt-2 flex flex-col gap-2">
+            <label className="inline-flex cursor-pointer items-start gap-2 rounded-md border border-zinc-100 bg-zinc-50/80 px-2.5 py-2">
+              <input
+                type="radio"
+                className="mt-0.5"
+                name="bsd_payment_ui"
+                checked={bsdPayment === "cpf_oa"}
+                onChange={() => setBsdPayment("cpf_oa")}
+              />
+              <span className="text-xs">
+                <strong>From CPF OA</strong> — typical for first-time buyers; we
+                deduct the estimated BSD from OA in the completion month (same as
+                other OA fees).
+              </span>
+            </label>
+            <label className="inline-flex cursor-pointer items-start gap-2 rounded-md border border-zinc-100 bg-zinc-50/80 px-2.5 py-2">
+              <input
+                type="radio"
+                className="mt-0.5"
+                name="bsd_payment_ui"
+                checked={bsdPayment === "cash"}
+                onChange={() => setBsdPayment("cash")}
+              />
+              <span className="text-xs">
+                <strong>Cash</strong> — we do not reduce OA for BSD (useful if you
+                pay stamp duty outside CPF).
+              </span>
+            </label>
+          </div>
+        </fieldset>
 
         {Number.isFinite(pp) && pp > 0 && (
           <div className="grid gap-2 sm:col-span-2 sm:grid-cols-3">
@@ -368,9 +392,7 @@ export function HousingLoanQuickAddForm({
                   ? formatCurrency(preview.derived.principal, currencyCode)
                   : "—"}
               </p>
-              <p className="mt-1 text-[10px] text-zinc-500">
-                {includeBsdInLoan ? "After BSD" : "Price − downpayment"}
-              </p>
+              <p className="mt-1 text-[10px] text-zinc-500">Price − downpayment</p>
             </div>
           </div>
         )}
@@ -455,6 +477,12 @@ export function HousingLoanQuickAddForm({
                 className="w-full rounded-lg border border-zinc-200 px-2 py-1.5 text-sm"
                 placeholder="0"
               />
+              {bsdPayment === "cpf_oa" && Number.isFinite(pp) && pp > 0 && (
+                <p className="mt-1 text-[11px] text-zinc-500">
+                  Estimated BSD is added to this OA lump automatically when you pay BSD
+                  from OA (do not type BSD here again).
+                </p>
+              )}
             </label>
           </div>
 

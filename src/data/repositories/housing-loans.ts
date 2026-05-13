@@ -38,6 +38,7 @@ export async function insertHousingLoan(
     downpayment_guidance_custom_amount?: number | null;
     buyers_stamp_duty?: number | null;
     financing_includes_bsd?: boolean;
+    buyers_stamp_duty_paid_from_cpf_oa?: boolean;
   }
 ): Promise<HousingLoanRow> {
   const { data, error } = await supabase
@@ -66,6 +67,8 @@ export async function insertHousingLoan(
         row.downpayment_guidance_custom_amount ?? null,
       buyers_stamp_duty: row.buyers_stamp_duty ?? null,
       financing_includes_bsd: row.financing_includes_bsd ?? false,
+      buyers_stamp_duty_paid_from_cpf_oa:
+        row.buyers_stamp_duty_paid_from_cpf_oa ?? false,
     })
     .select()
     .single();
@@ -98,6 +101,7 @@ export async function updateHousingLoan(
     downpayment_guidance_custom_amount?: number | null;
     buyers_stamp_duty?: number | null;
     financing_includes_bsd?: boolean;
+    buyers_stamp_duty_paid_from_cpf_oa?: boolean;
   }>
 ): Promise<void> {
   const { error } = await supabase

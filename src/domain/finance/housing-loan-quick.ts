@@ -67,13 +67,13 @@ export function deriveQuickHousingLoanRow(input: {
   /** Decimal annual, e.g. 0.034; only used when lender is bank/other. */
   bankAnnualRate: number | null;
   oaShareOfPayment: number;
-  /**
-   * Estimated residential BSD (SGD). Defaults to 0 — legacy behaviour is
-   * financed amount = purchase − deposit only.
-   */
+  /** Estimated residential BSD (SGD). Defaults to 0. */
   buyersStampDuty?: number;
-  /** When true, financed amount subtracts `buyersStampDuty` from purchase after deposit. */
-  includeBuyersStampDutyInLoan?: boolean;
+  /**
+   * When true, BSD is assumed paid from CPF OA and merged into `fees_from_oa` for the
+   * completion-month OA deduction. When false, BSD is cash and does not reduce OA here.
+   */
+  payBuyersStampDutyFromCpfOa?: boolean;
 }): QuickHousingLoanDerived {
   const {
     label,
@@ -87,7 +87,7 @@ export function deriveQuickHousingLoanRow(input: {
     bankAnnualRate,
     oaShareOfPayment,
     buyersStampDuty = 0,
-    includeBuyersStampDutyInLoan = false,
+    payBuyersStampDutyFromCpfOa = false,
   } = input;
 
   if (!yearMonthSchema.safeParse(firstPaymentMonth).success) {
@@ -111,6 +111,9 @@ export function deriveQuickHousingLoanRow(input: {
   if (!Number.isFinite(feesFromOa) || feesFromOa < 0) {
     return { ok: false, error: "Fees from OA must be ≥ 0" };
   }
+  if (!Number.isFinite(buyersStampDuty) || buyersStampDuty < 0) {
+    return { ok: false, error: "Invalid BSD estimate" };
+  }
   if (!Number.isFinite(loanTermYears) || loanTermYears <= 0 || loanTermYears > 50) {
     return { ok: false, error: "Loan length must be 1–50 years" };
   }
@@ -118,13 +121,13 @@ export function deriveQuickHousingLoanRow(input: {
   const financing = estimateFinancingNeed({
     purchasePrice,
     cashDownpayment: depositTotal,
-    buyersStampDuty,
-    includeBuyersStampDutyInLoan,
   });
   if (!financing.ok) {
     return { ok: false, error: financing.error };
   }
   const loan = financing.loanPrincipal;
+  const feesFromOaTotal =
+    feesFromOa + (payBuyersStampDutyFromCpfOa ? buyersStampDuty : 0);
   if (
     !Number.isFinite(oaShareOfPayment) ||
     oaShareOfPayment < 0 ||
@@ -134,7 +137,7 @@ export function deriveQuickHousingLoanRow(input: {
   }
 
   const annual_nominal_rate = annualRateForQuickLender(lenderType, bankAnnualRate);
-  const lump = depositFromOa + feesFromOa;
+  const lump = depositFromOa + feesFromOaTotal;
   const completion_month =
     lump > 0
       ? addMonthsToYearMonth(firstPaymentMonth, -1)
@@ -149,7 +152,7 @@ export function deriveQuickHousingLoanRow(input: {
     completion_month,
     first_payment_month: firstPaymentMonth,
     downpayment_from_oa: depositFromOa,
-    fees_from_oa: feesFromOa,
+    fees_from_oa: feesFromOaTotal,
     oa_share_of_payment: oaShareOfPayment,
     max_oa_per_month: null,
     lender_type: lenderType,

@@ -67,7 +67,7 @@ describe("deriveQuickHousingLoanRow", () => {
     expect(r.completion_month).toBe("2026-01");
   });
 
-  it("subtracts BSD from financed amount when flag is on", () => {
+  it("keeps loan at price minus deposit and adds BSD to OA fees when paid from OA", () => {
     const purchase = 1_000_000;
     const deposit = 250_000;
     const bsd = 24_600;
@@ -83,10 +83,35 @@ describe("deriveQuickHousingLoanRow", () => {
       bankAnnualRate: null,
       oaShareOfPayment: 1,
       buyersStampDuty: bsd,
-      includeBuyersStampDutyInLoan: true,
+      payBuyersStampDutyFromCpfOa: true,
     });
     expect(r.ok).toBe(true);
     if (!r.ok) return;
-    expect(r.principal).toBe(purchase - deposit - bsd);
+    expect(r.principal).toBe(purchase - deposit);
+    expect(r.fees_from_oa).toBe(bsd);
+  });
+
+  it("does not add BSD to OA fees when BSD is paid in cash", () => {
+    const purchase = 1_000_000;
+    const deposit = 250_000;
+    const bsd = 24_600;
+    const r = deriveQuickHousingLoanRow({
+      label: "bsd-cash",
+      purchasePrice: purchase,
+      depositTotal: deposit,
+      depositFromOa: 0,
+      feesFromOa: 5_000,
+      loanTermYears: 25,
+      firstPaymentMonth: "2026-03",
+      lenderType: "hdb",
+      bankAnnualRate: null,
+      oaShareOfPayment: 1,
+      buyersStampDuty: bsd,
+      payBuyersStampDutyFromCpfOa: false,
+    });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.principal).toBe(purchase - deposit);
+    expect(r.fees_from_oa).toBe(5_000);
   });
 });
