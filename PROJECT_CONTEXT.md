@@ -1,6 +1,6 @@
 # Finance Planner — project context
 
-Living reference for what this app does, how it is structured, and where to change things. **Update this file whenever you add or materially change a user-facing feature, route, data model, or cross-cutting behavior** (auth, onboarding, shell, middleware).
+Living reference for what this app does, how it is structured, and where to change things. **Update this file whenever you add or materially change a user-facing feature, route, data model, or cross-cutting behavior** (auth, onboarding, shell, middleware). For **what is built versus roadmap**, start with [Feature inventory (shipped vs planned)](#feature-inventory-shipped-vs-planned).
 
 ---
 
@@ -44,6 +44,88 @@ The **client** product surface is tracked as a **UI / information-architecture g
 
 ---
 
+## Feature inventory (shipped vs planned)
+
+Use this as the source of truth for **what exists today** versus **UI placeholders / roadmap**. In-app roadmap cards (`PlaceholderModuleCard`, `src/features/planning/roadmap-modules.tsx`) carry marketing copy and phase hints; **this table reflects actual wiring**.
+
+**Legend**
+
+| Status | Meaning |
+|--------|---------|
+| **Shipped** | End-to-end in the app for normal users (subject to profile data and migrations). |
+| **Partial** | Real data or workflows plus explicit gaps, or a thin surface with most scope still roadmap. |
+| **Planned** | Placeholder UI, copy-only cards, or routes that explain future intent — not a finished product module. |
+| **Not in repo** | Referenced from code or docs but no App Router implementation yet. |
+
+### Client — core & shell
+
+| Capability | Status | Notes |
+|------------|--------|--------|
+| Sign-in / sign-up (Supabase Auth) | **Shipped** | `LoginForm`, `/login`. |
+| Advisor vs client profiles + middleware gating | **Shipped** | `middleware.ts`, `(app)/layout.tsx`, `financial_profiles.profile_type`. |
+| Client onboarding wizard | **Shipped** | Income → lifestyle → strategy → optional guided budget lines. |
+| Invite-only **client** signup via advisor **access key** | **Shipped** | Claim flow in `handle_new_user`; `validate_client_access_key_for_signup` RPC. |
+| `/account-issue` when client `advisor_user_id` missing | **Shipped** | Data-integrity / support path. |
+| **Client UI v2** shell: Home, Planning, Activity, More | **Shipped** | `AppShell`, `AppShellNav`; version label `src/lib/client-release.ts`, shown on `/more`. |
+| Classic URL redirects to v2 IA | **Shipped** | `/balances` → wealth, `/budget` → cash-flow, etc. |
+| Email confirmation redirect `/auth/callback` | **Not in repo** | `LoginForm` sets `emailRedirectTo` to `/auth/callback`; add an App Router handler and allow the URL in Supabase if you rely on confirmed-email signup. |
+
+### Client — Home (`/dashboard`)
+
+| Capability | Status | Notes |
+|------------|--------|--------|
+| Net worth, savings, month-scoped metrics | **Shipped** | `getDashboardPayload` (`src/data/dashboard.ts`). |
+| Safe to spend / discretionary after goals | **Shipped** | Requires income/profile where applicable. |
+| Spending vs budget / month health | **Shipped** | Tied to budget lines + expenses. |
+| **Illustrative** long-horizon projections (investments, cash surplus, CPF, vehicles, combined charts) | **Shipped** | `DashboardRetirementSection`, domain finance modules; methodology links — not advice. |
+| Embedded “AI insights” as generative product | **Planned** | Roadmap card only; static `InsightCard` / copy where used. |
+
+### Client — Planning (`/planning/...`)
+
+| Section | Status | Notes |
+|---------|--------|--------|
+| **Overview** | **Partial** | Live snapshot metrics from dashboard payload; roadmap cards for advisor collaboration extensions and AI layer are **planned**. |
+| **Cash flow** | **Shipped** | Budget workspace + progressive income/assumptions (`CashFlowPlanningSection`, `BudgetPlanningView`). |
+| **Wealth** | **Shipped** | Same underlying data as Setup: investments, CPF, cash/debts, housing, vehicles. |
+| **Protection** | **Partial** | Emergency-fund **recommendation** + link to Wealth for cash; insurance, dependents, estate, risk cards are **planned** (`ProtectionPlanningSection`). |
+| **Future** | **Partial** | **Goals** CRUD is **shipped** (`FinancialGoalsPanels`); dedicated “retirement studio”, scenario compare, tax lens, exports, vault are **planned** cards (Home already shows projection **charts**). |
+
+### Client — Activity & setup
+
+| Capability | Status | Notes |
+|------------|--------|--------|
+| Expenses list / add / charts / month guidance | **Shipped** | `/expenses` (and `/activity` alias); APIs under `src/app/api/expenses/`. |
+| Financial Setup tabs (profile → goals) | **Shipped** | `/setup`; mirrored in Planning where noted. |
+| Budget lines, overrides, strategy insights | **Shipped** | Repositories + `src/domain/finance/budget*.ts`. |
+| SG-oriented guided budget templates (onboarding + domain) | **Shipped** | `budget-guided-setup.ts`, onboarding actions. |
+| Investments with contribution phase (until retirement / fixed duration) | **Shipped** | DB migration `20260516000000_*`; Setup → Investments; FV helpers. |
+| Housing quick-add / guided property + BSD context; loan amortization | **Shipped** | Domain + Setup → Housing; see Database section. |
+| Methodology / “How it works” | **Shipped** | `src/features/help/`, `methodology-topics.ts`. |
+
+### Client — APIs
+
+| Route | Status | Notes |
+|-------|--------|--------|
+| `/api/budget`, `/api/dashboard`, `/api/expenses`, `/api/profile`, `/api/projection` | **Shipped** | Keep aligned with RSC loaders. |
+
+### Advisor workspace (`/advisor/**`)
+
+| Capability | Status | Notes |
+|------------|--------|--------|
+| Advisor home / operations snapshot (keys, client counts) | **Shipped** | `getAdvisorDashboardData`; mismatch hints if keys claimed but roster empty. |
+| Client roster (search, sort, pagination, health signals) | **Shipped** | RPC-backed list when migrated (`advisor_client_list_metrics`). |
+| Per-client workspace (profile, goals, budget edits, month readouts) | **Shipped** | RLS-backed; `AdvisorClientWorkspace`. |
+| Access key create/list/revoke | **Shipped** | `/advisor/access-keys`, server actions. |
+| **Opportunities** hub | **Planned** | `/advisor/opportunities` — “Coming Soon” panel only. |
+| Cross-client **Activity** feed | **Planned** | `/advisor/activity` — “Work in Progress” panel only. |
+| Shared briefs / approvals / commentary | **Planned** | Roadmap card (`AdvisorWorkspaceRoadmapCard`, `beta` badge) — not separate from roster + workspace features above. |
+
+### Roadmap modules (Planning cards only)
+
+These match `roadmap-modules.tsx` — all **Planned** as standalone modules unless already covered as **Shipped** above: insurance map, scenario simulator, dependents planning, estate checklist, tax estimation lens, quarterly reports, documents vault, risk profiling, bank **account syncing**. **Retirement planning studio** and **AI insights layer** cards are marked `work_in_progress` in UI but remain **Partial / Planned** as dedicated products (projection **visualizations** on Home are **Shipped**).
+
+---
+
 ## Modular card architecture & progressive disclosure
 
 **Direction:** move away from “one noisy page per micro-feature” toward **section-based composition** and **reusable surface components** (`InsightCard`, `RecommendationCard`, `PlaceholderModuleCard`, dashboard sections). **Level 1** is a simple summary; **Level 2** is the planning workspace; **Level 3** is advanced assumptions (often behind disclosure, e.g. collapsible income blocks on Cash Flow).
@@ -54,7 +136,7 @@ Shared numeric flows still come from **`src/data/dashboard.ts`**, **`src/domain/
 
 ## AI insight philosophy
 
-There is **no standalone “AI page”**. Intelligence is modeled as **contextual overlays** (insight and recommendation cards) that can attach to Home, Planning, or Activity surfaces over time. Placeholder roadmap cards describe an **AI insights layer** as **embedded** analysis, not a separate chat product.
+There is **no standalone “AI page”**. Intelligence is modeled as **contextual overlays** (insight and recommendation cards) that can attach to Home, Planning, or Activity surfaces over time. Placeholder roadmap cards describe an **AI insights layer** as **embedded** analysis, not a separate chat product. **Today those cards are not backed by a generative or LLM pipeline** — see [Feature inventory](#feature-inventory-shipped-vs-planned) (Home / Planning rows).
 
 ---
 
@@ -62,7 +144,7 @@ There is **no standalone “AI page”**. Intelligence is modeled as **contextua
 
 **`PlaceholderModuleCard`** (`src/components/placeholders/PlaceholderModuleCard.tsx`) is the standard surface for **planned** capabilities: title, description, status badge (`planned` \| `work_in_progress` \| `beta` \| `complete`), optional tags, optional phase copy, optional icon, and a **disabled, premium** visual treatment (not error/empty states).
 
-Roadmap examples surfaced in-app include: **Insurance**, **Retirement planning**, **Scenario simulator**, **Dependents planning**, **Advisor workspace (client view)**, **Estate planning**, **Tax estimation**, **Reports**, **Documents vault**, **Risk profiling**, **Account syncing**, and **AI insights layer** (see `src/features/planning/roadmap-modules.tsx`).
+Card badges describe product **intent**, not implementation depth — use **[Feature inventory (shipped vs planned)](#feature-inventory-shipped-vs-planned)** for engineering truth. Module titles still map to `src/features/planning/roadmap-modules.tsx`.
 
 ---
 
@@ -110,8 +192,8 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 | `/planning/overview` | Planning workspace: snapshot-style overview + dashboard overview reuse + roadmap card(s). |
 | `/planning/cash-flow` | Budget workspace + progressive “Advanced” income & assumptions (`BudgetPlanningView` + profile forms). |
 | `/planning/wealth` | Balance sheet workspace: investments, CPF, cash/debts, housing, vehicles (same components as Setup). |
-| `/planning/protection` | Protection roadmap + emergency-fund recommendation (liquidity still edited under Wealth). |
-| `/planning/future` | Goals plus retirement/scenario/tax/report placeholders. |
+| `/planning/protection` | **Partial:** emergency-fund recommendation + roadmap placeholder cards; edit cash under Wealth. |
+| `/planning/future` | **Partial:** goals (CRUD) **shipped**; retirement/scenario/tax/report/vault cards are placeholders (Home has projection charts). |
 | `/activity` | **Client alias** → `/expenses` (`(app)/(client)/activity/page.tsx`). |
 | `/profile` | **Client alias** → `/setup?tab=profile` (`(app)/(client)/profile/page.tsx`). |
 | `/more` | Secondary hub: profile, planning entry, activity, methodology, and **Client UI version** strip (`(app)/more/page.tsx`, `src/lib/client-release.ts`). |
@@ -196,6 +278,7 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - **Migrations:** `supabase/migrations/` (evolved from early `profiles` / `expenses` / `investments` / `financial_goals` toward **`financial_*`** tables and richer profile/onboarding/budget/vehicle/housing/CPF fields).
 - **Investment contribution phases (`20260516000000_investment_contribution_phases.sql`):** nullable `contribution_type` (`until_retirement` \| `fixed_duration`), `contribution_duration_years`, and reserved `contribution_end_age` / `contribution_end_date` on **`financial_investments`**. Nulls keep legacy behavior (monthly deposits through the retirement horizon when birth + target age exist; otherwise the full chart horizon). Domain: `projectFutureValue` optional `contributionMonthsLimit`, portfolio sum helpers in `src/domain/finance/investment-portfolio-fv.ts`, UI on Setup → Investments.
 - **Housing loan property planning (`20260516100000_housing_loan_property_planning.sql`):** nullable **`financial_housing_loans`** columns: `property_purchase_price`, `property_kind` (`hdb` \| `condo` \| `ec` \| `landed`), `downpayment_guidance_preset` (`pct_20` \| `pct_25` \| `custom`), optional `downpayment_guidance_custom_percent` / `downpayment_guidance_custom_amount`, snapshot `buyers_stamp_duty`, and `financing_includes_bsd` (default `false` for legacy rows). **CPF amortization still uses `principal` + rate + term**; new fields are affordability context. Domain: `singapore-residential-bsd.ts` (IRAS-style residential BSD tiers), `property-financing-plan.ts` (guided deposit + financing toggle), extended `deriveQuickHousingLoanRow` in `housing-loan-quick.ts`. UI: Setup → Housing **`HousingLoanQuickAddForm`** guided planner + list hints in **`HousingLoansPanel`**. **`createHousingLoanQuickAction`** accepts `guided_dp_preset` (omit + `deposit_total` for legacy quick-add); zod: `housingPropertyKindSchema`, `housingDownpaymentGuidancePresetSchema` in `src/lib/validation.ts`.
+- **Housing BSD paid from CPF OA (`20260517000000_housing_loan_bsd_paid_from_cpf_oa.sql`):** boolean **`financial_housing_loans.buyers_stamp_duty_paid_from_cpf_oa`** (default `false`). When true, estimated BSD is treated as paid from CPF OA (feeds OA fee / projection paths); when false, BSD is cash. Ensures **`financing_includes_bsd`** exists if an older DB skipped the prior migration. **`financing_includes_bsd`** remains a legacy “BSD rolled into financed principal” flag; new saves prefer the OA-vs-cash BSD flag.
 - **Types:** `src/data/supabase/types.ts` should reflect the schema your app expects; regenerate or edit when migrations add columns.
 - **Advisor / client (POC):** `financial_profiles.profile_type` (`advisor` \| `client`), optional `advisor_user_id` → `auth.users` for clients. **`handle_new_user`** inserts **advisors** with `onboarding_required = false` and **`onboarding_step` null** (no client wizard); **clients** get `onboarding_required = true`, `onboarding_step = 1`, and `advisor_user_id` from the claimed key. Migration **`20260512000001_advisor_skip_onboarding.sql`** also sets `onboarding_required = false` and clears `onboarding_step` for **existing** advisor rows (fixes advisors stuck on onboarding from earlier defaults). Table **`advisor_access_keys`**: unique `access_key`, `status` (`available` \| `claimed` \| `expired`), `claimed_by_user_id`, optional `expires_at`, timestamps. **`handle_new_user`** reads `raw_user_meta_data.profile_type` and `access_key` for clients, claims the key in the same transaction, and sets the profile row. **`validate_client_access_key_for_signup`** (RPC, `SECURITY DEFINER`) is executable by `anon` for pre-checks only. RLS: on **`advisor_access_keys`**, advisors **select/insert/update** only rows where `advisor_user_id = auth.uid()`. On **`financial_profiles`**, **`financial_profiles_select_advisor_clients`** lets advisors **read** linked client rows (`profile_type = client` and `advisor_user_id = auth.uid()`). Migration **`20260513000000_advisor_linked_client_rls.sql`**: index on `(advisor_user_id)` for client rows; **`financial_profiles_update_advisor_linked_clients`** so advisors can **update** linked client profile rows while **`WITH CHECK`** keeps `profile_type` and `advisor_user_id` stable; parallel **`_select/_insert/_update/_delete_advisor_clients`** policies on **`financial_expenses`**, **`financial_investments`**, **`financial_goals`**, **`financial_budget_lines`**, **`financial_budget_line_month_overrides`**, **`financial_cash_accounts`**, **`financial_liabilities`**, **`financial_cpf_balances`**, **`financial_housing_loans`**, **`financial_vehicles`** (each uses `EXISTS` on `financial_profiles` for the same link rule). RPCs **`advisor_client_list_metrics`** (paginated roster + last expense aggregate) and **`advisor_client_list_count`** (`SECURITY INVOKER`, authenticated only) for scalable client lists. Advisors still cannot read other advisors’ clients.
 - **Invited client `profile_type` repair (`20260514000000_invited_client_profile_type_repair.sql`):** updates rows that are still `financial_profiles.profile_type = 'advisor'` but have a **claimed** `advisor_access_keys` row with `claimed_by_user_id = financial_profiles.id` — sets them to **`client`** and restores client onboarding fields when onboarding is not completed. Replaces **`handle_new_user`** so any **non-empty `access_key`** in signup metadata always runs the **client** insert path (claim key + `profile_type = 'client'`), even if `profile_type` in metadata says `advisor`, preventing invitees from being stored as advisors.
@@ -217,9 +300,9 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 
 ## How to maintain this file
 
-1. After shipping a feature, add or adjust a **row in Routes** or a **paragraph under Code map / Database** (one or two lines is enough).
+1. After shipping a feature, update the **[Feature inventory](#feature-inventory-shipped-vs-planned)** row (status + notes), then add or adjust a **row in Routes** or a **paragraph under Code map / Database** (one or two lines is enough).
 2. If behavior changes globally (middleware, shell, login redirect), update **Auth, onboarding, and gating** or **App shell UX**.
 3. If you introduce a new top-level domain concept (e.g. “tax estimates”), add a **Code map** row and point to the main module.
-4. Keep claims aligned with **code**; avoid marketing copy that does not match the UI.
+4. Keep claims aligned with **code**; avoid marketing copy that does not match the UI. Roadmap **`PlaceholderModuleCard`** badges can stay aspirational; the inventory table should stay factual.
 
-_Last reviewed (2026-05-14): **Client UI v2** documented; `client-release.ts` + `/more` version strip; modular `/planning/**` workspaces, `/more` hub, top-nav IA refresh, `PlaceholderModuleCard` / insight cards, `loadSetupTabBundle` adapter, `revalidateSetupAndPlanning`, budget href split (`budgetPathVariant` / `budgetMonthHref`)._
+_Last reviewed (2026-05-14): added **Feature inventory (shipped vs planned)**; housing **`buyers_stamp_duty_paid_from_cpf_oa`** migration note; clarified roadmap cards vs implementation; `/auth/callback` called out as not in repo._
