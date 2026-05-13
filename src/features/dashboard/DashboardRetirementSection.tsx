@@ -58,6 +58,8 @@ export function DashboardRetirementSection({
               currency={payload.baseCurrency}
               budgetMonth={payload.month}
               surplusSpendUsesLogged={payload.monthlyExpensesLoggedTotal > 0}
+              annualBonusTakeHomeNet={payload.ageProjection.annualBonusTakeHomeNet}
+              annualBonusPayoutMonth={payload.ageProjection.annualBonusPayoutMonth}
             />
           </div>
           {payload.cpfProjectionByAge &&
@@ -463,8 +465,9 @@ export function DashboardRetirementSection({
             </summary>
             <p className="mt-2 text-xs leading-relaxed text-emerald-900/90">
               Same numbers as the chart: investments (growing), cash (balances +
-              monthly surplus × months + vehicle proceeds when modeled), vehicles, CPF
-              when projected, debts subtracted in the Net column.
+              monthly surplus × months + modeled annual bonus take-home to cash when
+              applicable + vehicle proceeds when modeled), vehicles, CPF when
+              projected, debts subtracted in the Net column.
             </p>
             <table className="mt-3 min-w-full text-left text-xs">
               <thead>

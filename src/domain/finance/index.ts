@@ -60,8 +60,16 @@ export {
   ordinaryWageCeilingSg,
   monthlyEmployeeCpfTakeHomeSg,
   employeeCpfRateSg,
+  annualEmployeeCpfTakeHomeWithBonusSg,
+  countAnnualBonusPayoutsInHorizon,
+  DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
+  isSgCpfAgeBand,
 } from "./sg-cpf";
-export type { SgCpfAgeBand, MonthlyCpfBreakdown } from "./sg-cpf";
+export type {
+  SgCpfAgeBand,
+  MonthlyCpfBreakdown,
+  AnnualCpfBreakdownWithBonus,
+} from "./sg-cpf";
 export {
   employerCpfRateSg,
   totalCpfContributionRateSg,

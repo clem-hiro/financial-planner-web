@@ -7,6 +7,11 @@ import type {
   VehicleRow,
 } from "@/data/supabase/types";
 import type { VehicleValuationInput } from "@/domain/finance/vehicle-sg";
+import {
+  annualEmployeeCpfTakeHomeWithBonusSg,
+  isSgCpfAgeBand,
+  monthlyEmployeeCpfTakeHomeSg,
+} from "@/domain/finance/sg-cpf";
 import type {
   BudgetLineForDomain,
   ExpenseForBudget,
@@ -32,6 +37,62 @@ export function profileMonthlyIncome(profile: ProfileRow | null): number | null 
   if (!profile?.monthly_income) return null;
   const n = num(profile.monthly_income);
   return n > 0 ? n : null;
+}
+
+/**
+ * Monthly take-home used for budgeting and cash-flow summaries: salary only after
+ * employee CPF when gross + age band are set; otherwise stored `monthly_income`.
+ */
+export function profileSalaryTakeHomeMonthly(
+  profile: ProfileRow | null,
+  cpfReferenceYearMonth: string
+): number | null {
+  const gross = profileMonthlyGross(profile);
+  const bandRaw = profileCpfAgeBand(profile);
+  if (
+    gross != null &&
+    gross > 0 &&
+    bandRaw != null &&
+    isSgCpfAgeBand(bandRaw) &&
+    /^\d{4}-\d{2}$/.test(cpfReferenceYearMonth)
+  ) {
+    const { takeHome } = monthlyEmployeeCpfTakeHomeSg(
+      gross,
+      cpfReferenceYearMonth,
+      bandRaw
+    );
+    return takeHome > 0 ? takeHome : null;
+  }
+  return profileMonthlyIncome(profile);
+}
+
+/**
+ * Annual bonus as cash after employee CPF on AW (lump). When gross/CPF band are
+ * missing, returns gross bonus unchanged (no AW CPF estimate).
+ */
+export function profileAnnualBonusTakeHomeCash(
+  profile: ProfileRow | null,
+  cpfReferenceYearMonth: string
+): number {
+  const bonus = profileAnnualBonus(profile);
+  if (bonus <= 0) return 0;
+  const gross = profileMonthlyGross(profile);
+  const bandRaw = profileCpfAgeBand(profile);
+  if (
+    gross == null ||
+    gross <= 0 ||
+    bandRaw == null ||
+    !isSgCpfAgeBand(bandRaw) ||
+    !/^\d{4}-\d{2}$/.test(cpfReferenceYearMonth)
+  ) {
+    return bonus;
+  }
+  return annualEmployeeCpfTakeHomeWithBonusSg(
+    gross,
+    bonus,
+    cpfReferenceYearMonth,
+    bandRaw
+  ).takeHomeFromBonusNetAnnual;
 }
 
 export function profileMonthlyGross(profile: ProfileRow | null): number | null {

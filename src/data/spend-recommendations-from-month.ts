@@ -9,7 +9,7 @@ import { calculateSavingsRate } from "@/domain/finance/savings-rate";
 import {
   budgetLineRowToDomain,
   expenseRowToBudgetExpense,
-  profileMonthlyIncome,
+  profileSalaryTakeHomeMonthly,
   sumExpenseAmounts,
 } from "@/data/mappers";
 
@@ -25,7 +25,10 @@ export function spendRecommendationsForUserMonth(params: {
   /** Sum of planned monthly goal contributions; aligns with dashboard savings rate. */
   monthlyPlannedGoalContributions?: number;
 }): string[] {
-  const monthlyTakeHome = profileMonthlyIncome(params.profile);
+  const monthlyTakeHome = profileSalaryTakeHomeMonthly(
+    params.profile,
+    params.yearMonth
+  );
   const monthlyExpensesTotal = sumExpenseAmounts(params.expenses);
   const goalTotal = Math.max(0, params.monthlyPlannedGoalContributions ?? 0);
   const savingsRate =

@@ -4,7 +4,7 @@ import {
   profileAnnualSalaryGrowthNominal,
   profileCpfAgeBand,
   profileMonthlyGross,
-  profileMonthlyIncome,
+  profileSalaryTakeHomeMonthly,
 } from "@/data/mappers";
 import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
@@ -51,7 +51,7 @@ export async function CashFlowPlanningSection({
       ? budgetYearParsed
       : yearFromYearMonth(budgetMonth);
 
-  const income = profileMonthlyIncome(financialProfile);
+  const income = profileSalaryTakeHomeMonthly(financialProfile, budgetMonth);
   const gross = profileMonthlyGross(financialProfile);
   const cpfBand = profileCpfAgeBand(financialProfile);
   const currency = financialProfile?.base_currency ?? DEFAULT_BASE_CURRENCY;

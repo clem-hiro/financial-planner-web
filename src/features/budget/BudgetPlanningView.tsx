@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getBudgetPageModel } from "@/data/budget-summary";
 import { spendRecommendationsForUserMonth } from "@/data/spend-recommendations-from-month";
-import { num, sumPlannedMonthlyGoalContributions, profileMonthlyIncome } from "@/data/mappers";
+import { num, sumPlannedMonthlyGoalContributions, profileSalaryTakeHomeMonthly } from "@/data/mappers";
 import { listFinancialGoals } from "@/data/repositories/goals";
 import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
@@ -95,7 +95,7 @@ export async function BudgetPlanningView({
   ]);
   const plannedGoalMonthlyTotal = sumPlannedMonthlyGoalContributions(goals);
   const currency = profile?.base_currency ?? DEFAULT_BASE_CURRENCY;
-  const monthlyIncome = profileMonthlyIncome(profile);
+  const monthlyIncome = profileSalaryTakeHomeMonthly(profile, month);
 
   const monthlyAll = model.lineRows.filter((l) => l.cadence === "monthly");
   const { active: activeMonthly, inactive: inactiveMonthly } =

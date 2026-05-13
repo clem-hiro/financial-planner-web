@@ -214,7 +214,7 @@ export function ProfileIncomeForm({
       patchBody.monthly_gross_salary = grossNum;
       patchBody.annual_bonus = annualBonus;
       patchBody.cpf_age_band = band;
-      patchBody.monthly_income = breakdown.takeHomeMonthlyEquivalent;
+      patchBody.monthly_income = breakdown.takeHomeFromSalaryMonthly;
 
       const growthTrim = salaryGrowthPctRaw.trim();
       let annual_salary_growth_nominal: number | null = null;
@@ -362,6 +362,15 @@ export function ProfileIncomeForm({
               <label className="text-sm sm:min-w-0">
                 <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
                   Annual bonus ({currencyCode}, optional)
+                  <InfoTooltip ariaLabel="How bonus is used in the app">
+                    <p className="text-[11px] leading-snug">
+                      Gross bonus before employee CPF. Your <strong>monthly</strong> plan
+                      uses salary take-home only. Bonus is modeled as{" "}
+                      <strong>cash savings</strong> once per year (December), after
+                      employee CPF on additional wages (same AW ceiling logic as the CPF
+                      chart). Not tax advice.
+                    </p>
+                  </InfoTooltip>
                 </span>
                 <input
                   name="annual_bonus"
@@ -376,6 +385,46 @@ export function ProfileIncomeForm({
                 />
               </label>
             </div>
+            {breakdown &&
+              annualBonusRaw.trim() !== "" &&
+              Number.isFinite(Number(annualBonusRaw.trim())) &&
+              Number(annualBonusRaw.trim()) > 0 && (
+              <div className="rounded-lg border border-sky-200/80 bg-sky-50/50 px-3 py-2.5 text-xs leading-relaxed text-slate-700">
+                <p className="font-medium text-slate-800">Estimated take-home</p>
+                <p className="mt-1">
+                  <span className="text-slate-500">Salary (monthly): </span>
+                  <span className="font-mono tabular-nums font-semibold text-slate-900">
+                    {currencyCode}{" "}
+                    {breakdown.takeHomeFromSalaryMonthly.toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
+                  <span className="text-slate-500"> — used for your monthly budget.</span>
+                </p>
+                <p className="mt-1">
+                  <span className="text-slate-500">Bonus (once per year, after employee CPF on AW): </span>
+                  <span className="font-mono tabular-nums font-semibold text-slate-900">
+                    {currencyCode}{" "}
+                    {breakdown.takeHomeFromBonusNetAnnual.toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    })}
+                  </span>
+                  <span className="text-slate-500">
+                    {" "}
+                    — added to projected cash (not spread into monthly income).
+                  </span>
+                </p>
+                {breakdown.employeeCpfOnAwAnnual > 0 && (
+                  <p className="mt-1 text-slate-500">
+                    Employee CPF on bonus (annual): {currencyCode}{" "}
+                    {breakdown.employeeCpfOnAwAnnual.toLocaleString(undefined, {
+                      maximumFractionDigits: 2,
+                    })}{" "}
+                    — also reflected in the CPF projection with your monthly contributions.
+                  </p>
+                )}
+              </div>
+            )}
         <label className="mb-6 block pt-6 text-sm sm:mb-8 sm:pt-8">
           <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
             Birth date

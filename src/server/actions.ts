@@ -14,8 +14,9 @@ import {
   updateBudgetLine,
 } from "@/data/repositories/budget-lines";
 import { getProfileById, updateProfile } from "@/data/repositories/profiles";
-import { profileMonthlyIncome } from "@/data/mappers";
+import { profileSalaryTakeHomeMonthly } from "@/data/mappers";
 import { isValidYearMonth } from "@/domain/finance";
+import { formatYearMonth } from "@/lib/dates";
 import {
   generateGuidedMonthlyBudgetLines,
   type BudgetingStrategyId,
@@ -1090,7 +1091,10 @@ export async function applyGuidedBudgetLinesAction(
     };
   }
 
-  const income = profileMonthlyIncome(profile);
+  const income = profileSalaryTakeHomeMonthly(
+    profile,
+    formatYearMonth(new Date())
+  );
   if (income == null || income <= 0) {
     return {
       error: "Set a positive monthly income first, then try again.",

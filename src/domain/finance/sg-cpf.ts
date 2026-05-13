@@ -1,3 +1,5 @@
+import { addMonthsToYearMonth } from "@/lib/dates";
+
 /**
  * Singapore employee CPF on monthly ordinary wages (OW).
  * OW ceiling schedule and Jan 2026 employee rates from CPFB (cpf.gov.sg).
@@ -95,8 +97,51 @@ export type AnnualCpfBreakdownWithBonus = {
   employeeCpfOnAwAnnual: number;
   employeeCpfContributionAnnual: number;
   takeHomeAnnual: number;
+  /**
+   * Legacy smoothed figure: (annual salary + bonus gross − annual employee CPF) ÷ 12.
+   * Prefer `takeHomeFromSalaryMonthly` for monthly budgeting and
+   * `takeHomeFromBonusNetAnnual` for lump-sum cash savings.
+   */
   takeHomeMonthlyEquivalent: number;
+  /** Monthly take-home from salary only (employee CPF on OW for this month). */
+  takeHomeFromSalaryMonthly: number;
+  /** One year’s bonus cash after employee CPF on AW (lump; not spread into monthly income). */
+  takeHomeFromBonusNetAnnual: number;
 };
+
+const SG_CPF_AGE_BANDS: readonly SgCpfAgeBand[] = [
+  "below_55",
+  "above_55_to_60",
+  "above_60_to_65",
+  "above_65_to_70",
+  "above_70",
+] as const;
+
+export function isSgCpfAgeBand(s: string | null): s is SgCpfAgeBand {
+  return s != null && (SG_CPF_AGE_BANDS as readonly string[]).includes(s);
+}
+
+/** Matches default in `buildCpfMonthlyProjectionSeries` (bonus paid once per calendar year). */
+export const DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH = 12 as const;
+
+/**
+ * Counts how many times `payoutMonth` (1–12) occurs in the first `horizonMonths`
+ * consecutive calendar months starting from `startYearMonth` (`YYYY-MM`).
+ */
+export function countAnnualBonusPayoutsInHorizon(
+  startYearMonth: string,
+  horizonMonths: number,
+  payoutMonth1To12: number = DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH
+): number {
+  if (horizonMonths <= 0 || !/^\d{4}-\d{2}$/.test(startYearMonth)) return 0;
+  const payout = Math.max(1, Math.min(12, Math.trunc(payoutMonth1To12)));
+  let n = 0;
+  for (let i = 0; i < horizonMonths; i++) {
+    const ym = addMonthsToYearMonth(startYearMonth, i);
+    if (Number(ym.slice(5, 7)) === payout) n += 1;
+  }
+  return n;
+}
 
 function ordinaryWagesSubjectForMonth(
   grossMonthly: number,
@@ -193,6 +238,14 @@ export function annualEmployeeCpfTakeHomeWithBonusSg(
   const grossAnnual = monthlyGross * 12 + annualBonus;
   const takeHomeAnnual = grossAnnual - employeeCpfContributionAnnual;
   const takeHomeMonthlyEquivalent = takeHomeAnnual / 12;
+  const salaryMonthly = monthlyEmployeeCpfTakeHomeSg(
+    monthlyGross,
+    yearMonth,
+    ageBand
+  );
+  const takeHomeFromSalaryMonthly = salaryMonthly.takeHome;
+  const takeHomeFromBonusNetAnnual =
+    Math.round((annualBonus - employeeCpfOnAwAnnual) * 100) / 100;
 
   return {
     grossMonthly: monthlyGross,
@@ -209,5 +262,7 @@ export function annualEmployeeCpfTakeHomeWithBonusSg(
       Math.round(employeeCpfContributionAnnual * 100) / 100,
     takeHomeAnnual: Math.round(takeHomeAnnual * 100) / 100,
     takeHomeMonthlyEquivalent: Math.round(takeHomeMonthlyEquivalent * 100) / 100,
+    takeHomeFromSalaryMonthly,
+    takeHomeFromBonusNetAnnual,
   };
 }

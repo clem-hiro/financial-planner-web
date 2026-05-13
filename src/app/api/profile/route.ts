@@ -129,7 +129,7 @@ export async function PATCH(request: Request) {
         );
       }
       const ym = formatYearMonth(new Date());
-      const { takeHomeMonthlyEquivalent } = annualEmployeeCpfTakeHomeWithBonusSg(
+      const { takeHomeFromSalaryMonthly } = annualEmployeeCpfTakeHomeWithBonusSg(
         gross,
         annualBonus,
         ym,
@@ -137,7 +137,7 @@ export async function PATCH(request: Request) {
       );
       patch.monthly_gross_salary = gross;
       patch.cpf_age_band = band;
-      patch.monthly_income = takeHomeMonthlyEquivalent;
+      patch.monthly_income = takeHomeFromSalaryMonthly;
     } else {
       if (data.monthly_gross_salary !== undefined) {
         patch.monthly_gross_salary = null;

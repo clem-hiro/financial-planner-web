@@ -7,7 +7,10 @@ import {
   sgCpfAgeBandForCompletedAge,
 } from "./sg-cpf-contribution-buckets";
 import { addMonthsToYearMonth } from "@/lib/dates";
-import { additionalWageCeilingRemaining } from "./sg-cpf";
+import {
+  additionalWageCeilingRemaining,
+  DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
+} from "./sg-cpf";
 
 export const DEFAULT_CPF_OA_CREDITING_ANNUAL = 0.025;
 export const DEFAULT_CPF_SA_CREDITING_ANNUAL = 0.04;
@@ -88,7 +91,7 @@ export function buildCpfMonthlyProjectionSeries(params: {
     grossMonthly,
     annualSalaryGrowthNominal = 0,
     annualBonus = 0,
-    annualBonusPayoutMonth = 12,
+    annualBonusPayoutMonth = DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
     initial,
     housingLoans,
   } = params;

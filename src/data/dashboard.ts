@@ -20,8 +20,12 @@ import {
   vehicleNetListedBeforeLiquidation,
 } from "@/domain/finance";
 import type { HousingLoanProjectionInput } from "@/domain/finance";
-import type { SgCpfAgeBand } from "@/domain/finance/sg-cpf";
 import type { RetirementDividendVsSpendResult } from "@/domain/finance";
+import {
+  type SgCpfAgeBand,
+  countAnnualBonusPayoutsInHorizon,
+  DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
+} from "@/domain/finance/sg-cpf";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { addCalendarMonths } from "@/lib/dates";
 import {
@@ -30,9 +34,10 @@ import {
   investmentValues,
   num,
   profileAnnualBonus,
+  profileAnnualBonusTakeHomeCash,
   profileAnnualSalaryGrowthNominal,
   profileMonthlyGross,
-  profileMonthlyIncome,
+  profileSalaryTakeHomeMonthly,
   profileRetirementWithdrawalRateAnnual,
   profileCpfAgeBand,
   sumExpenseAmounts,
@@ -139,6 +144,13 @@ export type DashboardPayload = {
     targetRetirementAge: number;
     projectedAtRetirement: number;
     /**
+     * One year’s bonus as cash after employee CPF on AW; modeled as paid once per
+     * `annualBonusPayoutMonth` (calendar). Null when no bonus or amount is zero.
+     */
+    annualBonusTakeHomeNet: number | null;
+    /** 1–12; aligns with CPF projection default (December). */
+    annualBonusPayoutMonth: number;
+    /**
      * CPF notionals at the age used for the headline retirement path (target
      * age, or today’s age when you are already at/past target). Null without CPF data.
      */
@@ -161,6 +173,10 @@ export type DashboardPayload = {
       takeHomePerMonth: number | null;
       /** Same basis as dashboard `monthlyExpensesTotal` (logged when present, else planned). */
       monthlyExpensesTotal: number;
+      /**
+       * Annual bonus take-home (after employee CPF on AW) used for lump cash adds on the path.
+       */
+      annualBonusTakeHomeNet: number | null;
     };
     spendCheck: {
       goalMonthlySpend: number | null;
@@ -306,7 +322,11 @@ export async function getDashboardPayload(
       ? monthlyExpensesLoggedTotal
       : monthlyPlannedMonthlyBudgetTotal;
 
-  const income = profileMonthlyIncome(profile);
+  const income = profileSalaryTakeHomeMonthly(profile, yearMonth);
+  const annualBonusTakeHomeNet = profileAnnualBonusTakeHomeCash(
+    profile,
+    yearMonth
+  );
   const totalPlannedGoalContributionsMonthly =
     sumPlannedMonthlyGoalContributions(goals);
   /**
@@ -472,7 +492,16 @@ export async function getDashboardPayload(
         (s, vi) => s + vehicleNetListedBeforeLiquidation(vi, asOfRetirement),
         0
       );
-    const surplusAccrualToRet = monthlyInvestableSurplus * monthsToRet;
+    const surplusAccrualToRet =
+      monthlyInvestableSurplus * monthsToRet +
+      (annualBonusTakeHomeNet > 0
+        ? annualBonusTakeHomeNet *
+          countAnnualBonusPayoutsInHorizon(
+            yearMonth,
+            monthsToRet,
+            DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH
+          )
+        : 0);
     const cashAtRetirementHorizon =
       cashTotal + vehicleSaleCashAtRet + surplusAccrualToRet;
     let projectedAtRetirement =
@@ -620,7 +649,15 @@ export async function getDashboardPayload(
           0
         );
       const surplusAccrualHorizon =
-        monthlyInvestableSurplus * p.monthsFromToday;
+        monthlyInvestableSurplus * p.monthsFromToday +
+        (annualBonusTakeHomeNet > 0
+          ? annualBonusTakeHomeNet *
+            countAnnualBonusPayoutsInHorizon(
+              yearMonth,
+              p.monthsFromToday,
+              DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH
+            )
+          : 0);
       const cashRow =
         cashTotal +
         vehicleSaleCashHorizon +
@@ -654,6 +691,9 @@ export async function getDashboardPayload(
       currentAge,
       targetRetirementAge,
       projectedAtRetirement,
+      annualBonusTakeHomeNet:
+        annualBonusTakeHomeNet > 0 ? annualBonusTakeHomeNet : null,
+      annualBonusPayoutMonth: DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
       cpfBucketsAtTargetRetirement,
       netWorthByAgeModel: {
         fromInvestmentAccountContributions:
@@ -661,6 +701,8 @@ export async function getDashboardPayload(
         fromTakeHomeSurplus: monthlyInvestableSurplus,
         takeHomePerMonth: income,
         monthlyExpensesTotal,
+        annualBonusTakeHomeNet:
+          annualBonusTakeHomeNet > 0 ? annualBonusTakeHomeNet : null,
       },
       spendCheck,
     };

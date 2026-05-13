@@ -1,6 +1,7 @@
 import type { DashboardPayload } from "@/data/dashboard";
 import type { ProfileRow } from "@/data/supabase/types";
-import { profileMonthlyGross, profileMonthlyIncome } from "@/data/mappers";
+import { profileMonthlyGross, profileSalaryTakeHomeMonthly } from "@/data/mappers";
+import { formatYearMonth } from "@/lib/dates";
 
 /** Lightweight labels for roster cards (no heavy dashboard fetch). */
 export type AdvisorClientRosterSignals = {
@@ -145,7 +146,9 @@ export function advisorClientWorkspaceSignals(
     expense_count: hasSpend ? 1 : 0,
   });
 
-  const income = profileMonthlyIncome(profile) ?? profileMonthlyGross(profile);
+  const refYm = payload?.month ?? formatYearMonth(new Date());
+  const income =
+    profileSalaryTakeHomeMonthly(profile, refYm) ?? profileMonthlyGross(profile);
   const savingsRate =
     payload?.savingsRate != null && Number.isFinite(payload.savingsRate)
       ? Math.round(payload.savingsRate * 1000) / 10

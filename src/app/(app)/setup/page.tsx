@@ -4,7 +4,7 @@ import {
   profileAnnualSalaryGrowthNominal,
   profileCpfAgeBand,
   profileMonthlyGross,
-  profileMonthlyIncome,
+  profileSalaryTakeHomeMonthly,
 } from "@/data/mappers";
 import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
@@ -108,7 +108,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
     goals,
   } = await loadSetupTabBundle(supabase, user.id, new Set([activeTab]));
 
-  const income = profileMonthlyIncome(financialProfile);
+  const income = profileSalaryTakeHomeMonthly(financialProfile, budgetMonth);
   const gross = profileMonthlyGross(financialProfile);
   const cpfBand = profileCpfAgeBand(financialProfile);
   const currency = financialProfile?.base_currency ?? DEFAULT_BASE_CURRENCY;

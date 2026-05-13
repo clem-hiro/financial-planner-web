@@ -72,6 +72,8 @@ function AssetTooltip({
   budgetMonth,
   surplusSpendUsesLogged,
   compact,
+  annualBonusTakeHomeNet,
+  annualBonusPayoutMonth,
 }: {
   active?: boolean;
   payload?: Array<{ payload: AgeAssetBreakdownPoint }>;
@@ -86,9 +88,22 @@ function AssetTooltip({
   surplusSpendUsesLogged?: boolean;
   /** Small screens: flat amounts only (no expandable blocks over the legend). */
   compact?: boolean;
+  /** When set, cash path includes this amount once per payout month each year. */
+  annualBonusTakeHomeNet?: number | null;
+  annualBonusPayoutMonth?: number;
 }) {
   if (!active || !payload?.length) return null;
   const row = payload[0].payload;
+  const bonusMonthLabel =
+    annualBonusPayoutMonth != null &&
+    annualBonusPayoutMonth >= 1 &&
+    annualBonusPayoutMonth <= 12
+      ? new Date(2020, annualBonusPayoutMonth - 1, 15).toLocaleString(undefined, {
+          month: "long",
+        })
+      : null;
+  const hasBonusCashModel =
+    (annualBonusTakeHomeNet ?? 0) > 0 && bonusMonthLabel != null;
   const monthPhrase =
     budgetMonth == null
       ? "Log expenses on the Expenses page to align spend totals with the dashboard month."
@@ -163,6 +178,15 @@ function AssetTooltip({
           Wider screen: expandable rows in this tooltip. How it works → methodology
           for full rules.
         </p>
+        {hasBonusCashModel && annualBonusTakeHomeNet != null ? (
+          <p className="mt-1.5 text-[10px] leading-snug text-slate-400">
+            Cash path: annual bonus take-home{" "}
+            <span className="font-mono text-slate-300">
+              {formatMoney(annualBonusTakeHomeNet, currency)}
+            </span>{" "}
+            added once each {bonusMonthLabel} (not in monthly income).
+          </p>
+        ) : null}
       </div>
     );
   }
@@ -220,6 +244,15 @@ function AssetTooltip({
               gross is <strong>listing-only</strong> (typical motorcycles), so cash
               does not jump for a sale the model does not assume.
             </li>
+            {hasBonusCashModel && annualBonusTakeHomeNet != null ? (
+              <li>
+                If you entered an <strong>annual bonus</strong> on Setup → Income, its
+                take-home after employee CPF on additional wages is added once each{" "}
+                <strong>{bonusMonthLabel}</strong> (
+                {formatMoney(annualBonusTakeHomeNet, currency)} per year in this
+                model), on top of the repeating monthly surplus.
+              </li>
+            ) : null}
           </ul>
         </TooltipDetail>
         <div className="border-b border-slate-600/50 py-1.5 last:border-b-0">
@@ -339,6 +372,8 @@ export function AgeCombinedAssetsProjectionChart({
   currency,
   budgetMonth,
   surplusSpendUsesLogged,
+  annualBonusTakeHomeNet,
+  annualBonusPayoutMonth,
 }: {
   data: AgeAssetBreakdownPoint[];
   currency: string;
@@ -346,6 +381,8 @@ export function AgeCombinedAssetsProjectionChart({
   budgetMonth?: string;
   /** False when dashboard uses planned budget because no expenses logged yet. */
   surplusSpendUsesLogged?: boolean;
+  annualBonusTakeHomeNet?: number | null;
+  annualBonusPayoutMonth?: number;
 }) {
   const narrow = useNarrowScreen();
 
@@ -399,6 +436,8 @@ export function AgeCombinedAssetsProjectionChart({
                   budgetMonth={budgetMonth}
                   surplusSpendUsesLogged={surplusSpendUsesLogged}
                   compact={narrow}
+                  annualBonusTakeHomeNet={annualBonusTakeHomeNet}
+                  annualBonusPayoutMonth={annualBonusPayoutMonth}
                 />
               }
               allowEscapeViewBox={{ x: true, y: false }}
