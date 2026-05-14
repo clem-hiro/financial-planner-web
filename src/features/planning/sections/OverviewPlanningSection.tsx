@@ -38,8 +38,8 @@ export async function OverviewPlanningSection() {
 
   return (
     <div className="space-y-10">
-      <div className="grid gap-5 lg:grid-cols-3">
-        <div className="rounded-3xl bg-linear-to-br from-white via-slate-50/60 to-sky-50/30 p-6 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.35)] ring-1 ring-slate-200/60 lg:col-span-2">
+      <div className="grid gap-6 xl:grid-cols-3">
+        <div className="rounded-3xl bg-linear-to-br from-white via-slate-50/60 to-sky-50/30 p-6 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.35)] ring-1 ring-slate-200/60 xl:col-span-2">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
             Level 1 · Snapshot
           </p>
