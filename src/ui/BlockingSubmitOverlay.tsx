@@ -1,7 +1,9 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
+
+const subscribeNoop = () => () => {};
 
 /**
  * Full-viewport blocking layer while an async server action runs.
@@ -14,11 +16,12 @@ export function BlockingSubmitOverlay({
   active: boolean;
   message?: string;
 }) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  // SSR-safe hydration gate: portal needs document.body, which doesn't exist during SSR.
+  const mounted = useSyncExternalStore(
+    subscribeNoop,
+    () => true,
+    () => false,
+  );
 
   useEffect(() => {
     if (!active) return;

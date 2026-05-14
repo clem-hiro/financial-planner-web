@@ -1,7 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
+import { markInboxItemReadByDedupeKeyAction } from "@/server/inbox-actions";
 import { ageCompletedOnDate } from "@/domain/finance/age-projection";
 import type { SgCpfAgeBand } from "@/domain/finance/sg-cpf";
 import {
@@ -17,6 +18,7 @@ import {
 } from "@/ui/input-classes";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { InfoTooltip } from "@/ui/InfoTooltip";
+import { appCardClass } from "@/ui/surface-classes";
 
 const CPF_BANDS: { value: SgCpfAgeBand; label: string }[] = [
   { value: "below_55", label: "Below 55" },
@@ -25,6 +27,14 @@ const CPF_BANDS: { value: SgCpfAgeBand; label: string }[] = [
   { value: "above_65_to_70", label: "65 to below 70" },
   { value: "above_70", label: "70 and above" },
 ];
+
+const MONTH_OPTIONS: { value: string; label: string }[] = Array.from(
+  { length: 12 },
+  (_, i) => ({
+    value: String(i + 1),
+    label: new Date(2000, i, 1).toLocaleString(undefined, { month: "long" }),
+  })
+);
 
 function isSgCpfAgeBand(s: string | null): s is SgCpfAgeBand {
   return s != null && CPF_BANDS.some((b) => b.value === s);
@@ -50,6 +60,7 @@ export function ProfileIncomeForm({
   initialAnnualSalaryGrowthPercent = null,
   initialAnnualBonus = null,
   initialRetirementWithdrawalRatePercent = null,
+  initialSalaryIncrementMonth = null,
   cpfYearMonth,
   currencyCode = DEFAULT_BASE_CURRENCY,
 }: {
@@ -76,11 +87,21 @@ export function ProfileIncomeForm({
   initialAnnualBonus?: number | null;
   /** Annual withdrawal rate in percent for simplified retirement checks (e.g. 4 for 4%). */
   initialRetirementWithdrawalRatePercent?: number | null;
+  /** Calendar month (1-12) the user expects their salary review; null = opt-out. */
+  initialSalaryIncrementMonth?: number | null;
   /** `YYYY-MM` for OW ceiling / rates used in the estimate. */
   cpfYearMonth: string;
   currencyCode?: string;
 }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isSalaryReviewMode = searchParams?.get("from") === "salary-review";
+  const currentYear = new Date().getFullYear();
+  const [salaryIncrementMonth, setSalaryIncrementMonth] = useState<string>(
+    initialSalaryIncrementMonth != null
+      ? String(initialSalaryIncrementMonth)
+      : ""
+  );
   const [grossRaw, setGrossRaw] = useState(
     initialGross != null ? String(initialGross) : ""
   );
@@ -169,7 +190,13 @@ export function ProfileIncomeForm({
     setSubmitting(true);
     const nativeEvt = e.nativeEvent as SubmitEvent;
     const submitter = nativeEvt.submitter as HTMLButtonElement | null;
-    const section = submitter?.value === "retirement" ? "retirement" : "income";
+    const submitterValue = submitter?.value ?? "income";
+    const section =
+      submitterValue === "retirement"
+        ? "retirement"
+        : submitterValue === "salary-confirm"
+          ? "salary-confirm"
+          : "income";
 
     const birthPayload = birthDate.trim() === "" ? null : birthDate.trim();
     if (
@@ -182,7 +209,9 @@ export function ProfileIncomeForm({
     }
     const patchBody: Record<string, unknown> = {};
 
-    if (section === "income") {
+    if (section === "salary-confirm") {
+      patchBody.last_salary_review_at = new Date().toISOString();
+    } else if (section === "income") {
       if (!cpfMode || grossNum == null || Number.isNaN(grossNum)) {
         setStatus("Enter your monthly gross salary to calculate take-home.");
         setSubmitting(false);
@@ -230,6 +259,22 @@ export function ProfileIncomeForm({
         annual_salary_growth_nominal = p / 100;
       }
       patchBody.annual_salary_growth_nominal = annual_salary_growth_nominal;
+
+      const monthTrim = salaryIncrementMonth.trim();
+      if (monthTrim === "") {
+        patchBody.salary_increment_month = null;
+      } else {
+        const m = Number(monthTrim);
+        if (!Number.isInteger(m) || m < 1 || m > 12) {
+          setStatus("Salary increment month must be a whole number 1–12, or blank.");
+          setSubmitting(false);
+          return;
+        }
+        patchBody.salary_increment_month = m;
+      }
+      if (isSalaryReviewMode) {
+        patchBody.last_salary_review_at = new Date().toISOString();
+      }
     } else {
       const retTrim = retAgeRaw.trim();
       let targetRetirementAge: number | null = null;
@@ -312,6 +357,12 @@ export function ProfileIncomeForm({
         return;
       }
       setStatus("Saved");
+      if (isSalaryReviewMode && section !== "retirement") {
+        // Best-effort clear of the matching inbox row; ignore errors so save UX stays clean.
+        markInboxItemReadByDedupeKeyAction(
+          `salary_review_due:${currentYear}`
+        ).catch(() => undefined);
+      }
       startTransition(() => {
         router.refresh();
       });
@@ -327,13 +378,22 @@ export function ProfileIncomeForm({
       onSubmit={onSubmit}
       className="overflow-hidden rounded-2xl border border-slate-200/90 bg-linear-to-br from-white via-white to-sky-50/30 shadow-sm divide-y divide-slate-200"
     >
-      <section className="space-y-4 p-5">
+      <section id="salary" className="space-y-4 p-5">
         <div className="space-y-1">
           <p className="text-sm font-semibold text-slate-900">Income & CPF</p>
           <p className="text-xs text-slate-500">
             Keep this up to date so your monthly plan and projections stay realistic.
           </p>
         </div>
+        {isSalaryReviewMode ? (
+          <div className={`${appCardClass} border-emerald-200/80 bg-emerald-50/70 p-4 text-sm text-emerald-900`}>
+            <p className="font-semibold">Reviewing for {currentYear}</p>
+            <p className="mt-1 text-emerald-900/85">
+              Update your salary if it changed, otherwise confirm unchanged.
+              Either action clears the reminder.
+            </p>
+          </div>
+        ) : null}
         <div className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="text-sm sm:min-w-0">
@@ -518,6 +578,33 @@ export function ProfileIncomeForm({
                   placeholder="0 = flat gross"
                 />
               </label>
+              <label className="mt-3 block text-sm sm:min-w-0">
+                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+                  Salary increment month (optional)
+                  <InfoTooltip ariaLabel="How salary increment month is used">
+                    <p>
+                      Once a year, starting in this month, we&apos;ll drop an
+                      inbox reminder to confirm whether your salary changed.
+                    </p>
+                    <p className="mt-2 text-slate-400">
+                      Leave as &quot;Not set / None&quot; to skip the reminder.
+                    </p>
+                  </InfoTooltip>
+                </span>
+                <select
+                  name="salary_increment_month"
+                  value={salaryIncrementMonth}
+                  onChange={(e) => setSalaryIncrementMonth(e.target.value)}
+                  className={fpInputNarrowClass}
+                >
+                  <option value="">Not set / None</option>
+                  {MONTH_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
           )}
         </div>
@@ -528,6 +615,16 @@ export function ProfileIncomeForm({
               {status}
             </span>
           )}
+          {isSalaryReviewMode ? (
+            <button
+              type="submit"
+              value="salary-confirm"
+              disabled={isBusy}
+              className="rounded-full border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 w-full sm:w-auto"
+            >
+              {isBusy ? "Saving..." : "Confirm unchanged"}
+            </button>
+          ) : null}
           <button
             type="submit"
             value="income"

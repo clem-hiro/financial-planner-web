@@ -198,7 +198,7 @@ function distributeRemainder(
   }
   const scaled = parts.map((p) => (p / sum) * total);
   const rounded = scaled.map((x) => roundMoney(x));
-  let drift = roundMoney(total - rounded.reduce((a, b) => a + b, 0));
+  const drift = roundMoney(total - rounded.reduce((a, b) => a + b, 0));
   if (Math.abs(drift) < 0.005) {
     rounded[rounded.length - 1] = roundMoney(rounded[rounded.length - 1]! + drift);
     return rounded;

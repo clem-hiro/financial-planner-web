@@ -68,6 +68,8 @@ describe("advisorClientWorkspaceSignals", () => {
       budget_generation_source: null,
       estimated_budget_mode: false,
       food_spend_band: null,
+      salary_increment_month: null,
+      last_salary_review_at: null,
       base_currency: "SGD",
       created_at: "2026-01-01",
     } satisfies ProfileRow;
