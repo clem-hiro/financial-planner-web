@@ -40,6 +40,13 @@ const advisorNavItems: readonly AdvisorNavItem[] = [
       pathname === "/advisor/access-keys" ||
       pathname.startsWith("/advisor/access-keys/"),
   },
+  {
+    href: "/advisor/buy-keys",
+    label: "Buy keys",
+    activeMatch: (pathname) =>
+      pathname === "/advisor/buy-keys" ||
+      pathname.startsWith("/advisor/buy-keys/"),
+  },
 ];
 
 export function AdvisorWorkspaceSidebar() {
@@ -78,7 +85,7 @@ export function AdvisorWorkspaceSidebar() {
           Coming Soon
         </p>
         <p className="mt-1 text-xs leading-relaxed text-slate-600">
-          Teams, assistants, segmentation, AI briefs, and billing — architecture stays
+          Teams, assistants, segmentation, and AI briefs — architecture stays
           advisor-scoped until those modules ship.
         </p>
       </div>

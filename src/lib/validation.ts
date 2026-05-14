@@ -243,3 +243,18 @@ export const clientAccessKeyInputSchema = z
       .max(64, "Access key is too long")
       .regex(/^[A-F0-9]+$/, "Invalid access key format")
   );
+
+export const advisorAccessKeyPurchaseQuantitySchema = z.coerce
+  .number()
+  .int()
+  .min(1)
+  .max(1000);
+
+export const couponCodeInputSchema = z
+  .string()
+  .trim()
+  .toUpperCase()
+  .max(64)
+  .regex(/^[A-Z0-9_-]*$/, "Coupon codes can only use letters, numbers, underscores, or hyphens")
+  .optional()
+  .default("");

@@ -2,6 +2,8 @@
 
 This document states **what the product must do** for users. It is the place to add or update requirements when scope changes. It intentionally avoids implementation (stack, APIs, database).
 
+> **Engineering reference:** see [`docs/engineering-handbook.md`](docs/engineering-handbook.md) for the system architecture, workflows, and cross-cutting design. Decision history lives in [`docs/adr/`](docs/adr/).
+
 ---
 
 ## Purpose
@@ -12,7 +14,7 @@ Give a **single private workspace** where an individual can see **financial posi
 
 ## Principles
 
-- **Private**: Each user’s data belongs to them; no multi-tenant “advisor view” is required unless specified later.
+- **Private**: Each user’s data belongs to them; advisor/client sharing is limited to explicitly linked client relationships and controlled contact flows.
 - **Transparent**: Users can understand **how numbers are derived** via in-product explanations (“How it works”).
 - **Illustrative**: Projections and checks are **educational simplifications**, not tax, legal, or investment recommendations.
 
@@ -23,7 +25,7 @@ Give a **single private workspace** where an individual can see **financial posi
 ### Identity and session
 
 - Users can **sign in** to access their workspace and **sign out** when finished.
-- New sign-up remains lightweight (email, password, optional display name).
+- New sign-up remains lightweight (email, password, optional display name). Advisors provide a WhatsApp-capable phone number; clients sign up with an advisor-issued access key.
 - New users are guided through a **post-login onboarding wizard** with optional/skip steps and resumable progress.
 - Unauthenticated visitors are guided to sign in where personal data is required.
 
@@ -71,6 +73,12 @@ Give a **single private workspace** where an individual can see **financial posi
 ### Help
 
 - Users can open **methodology** content that explains, in plain language, how major numbers are calculated and what is **not** modeled.
+
+### Advisor workspace
+
+- Advisors can purchase one-time client signup keys through a coupon-backed flow.
+- Advisors can verify a WhatsApp contact number for linked clients.
+- Clients can contact their linked advisor only through the app’s contact surface.
 
 ---
 

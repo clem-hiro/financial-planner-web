@@ -4,18 +4,24 @@ import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import type { ProfileRow } from "@/data/supabase/types";
+import { AdvisorPhonePromptBanner } from "@/features/app-shell/AdvisorPhonePromptBanner";
 import { AppShellNav } from "@/features/app-shell/AppShellNav";
 import { AppShellUserMenu } from "@/features/app-shell/AppShellUserMenu";
+import { ContactAdvisorButton } from "@/features/app-shell/ContactAdvisorButton";
 import { MethodologySheet } from "@/features/help/MethodologySheet";
 import { MethodologyProvider } from "@/features/help/methodology-context";
+import { OpenMethodologyButton } from "@/features/help/OpenMethodologyButton";
 import { ScrollToTopButton } from "@/ui/ScrollToTopButton";
 
 export function AppShell({
   user,
+  profile,
   workspace,
   children,
 }: {
   user: User | null;
+  profile: ProfileRow | null;
   /** Which product surface the signed-in user should see in the shell. */
   workspace: "client" | "advisor";
   children: React.ReactNode;
@@ -80,6 +86,10 @@ export function AppShell({
                     Operations
                   </span>
                 ) : null}
+                {showMainAppNav && workspace === "client" ? (
+                  <ContactAdvisorButton />
+                ) : null}
+                <OpenMethodologyButton className="inline-flex min-h-10 items-center justify-center rounded-full border border-slate-200/90 bg-white px-3.5 py-2 text-xs font-semibold tracking-wide text-slate-600 shadow-sm transition hover:border-emerald-200/90 hover:text-emerald-900 sm:min-h-0 sm:py-1.5" />
                 {user ? (
                   <AppShellUserMenu user={user} />
                 ) : (
@@ -93,6 +103,9 @@ export function AppShell({
               </div>
             </div>
           </div>
+          {user && workspace === "advisor" ? (
+            <AdvisorPhonePromptBanner user={user} />
+          ) : null}
         </header>
         <main
           className={`mx-auto w-full flex-1 px-4 py-10 sm:px-8 sm:py-14 lg:py-16 ${

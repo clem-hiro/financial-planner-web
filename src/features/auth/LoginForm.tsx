@@ -15,6 +15,11 @@ type SignupRole = "advisor" | "client";
 const tabBase =
   "flex-1 rounded-lg py-2.5 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/35 focus-visible:ring-offset-2";
 
+const authInputClass =
+  "min-h-11 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20";
+
+const authLabelClass = "block text-sm font-medium text-slate-700";
+
 function formatSignupError(message: string): string {
   if (message.includes("Invalid, already used")) return message;
   if (message.includes("expired access key")) return message;
@@ -280,31 +285,31 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
         </fieldset>
       ) : null}
 
-      <label className="block text-sm font-medium text-slate-700">
+      <label className={authLabelClass}>
         <span className="mb-1.5 block">Email</span>
         <input
           type="email"
           autoComplete="email"
           required
-          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20"
+          className={authInputClass}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
       </label>
-      <label className="block text-sm font-medium text-slate-700">
+      <label className={authLabelClass}>
         <span className="mb-1.5 block">Password</span>
         <input
           type="password"
           autoComplete={mode === "signin" ? "current-password" : "new-password"}
           required
           minLength={6}
-          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20"
+          className={authInputClass}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </label>
       {mode === "signup" && signupRole === "client" ? (
-        <label className="block text-sm font-medium text-slate-700">
+        <label className={authLabelClass}>
           <span className="mb-1.5 block">Advisor access key</span>
           <input
             type="text"
@@ -312,19 +317,19 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
             spellCheck={false}
             required
             placeholder="Paste the key from your advisor"
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 font-mono text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20"
+            className={`${authInputClass} font-mono`}
             value={accessKey}
             onChange={(e) => setAccessKey(e.target.value)}
           />
         </label>
       ) : null}
       {mode === "signup" && (
-        <label className="block text-sm font-medium text-slate-700">
+        <label className={authLabelClass}>
           <span className="mb-1.5 block">Display name (optional)</span>
           <input
             type="text"
             autoComplete="name"
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20"
+            className={authInputClass}
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
           />

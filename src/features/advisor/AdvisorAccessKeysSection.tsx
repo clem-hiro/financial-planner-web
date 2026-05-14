@@ -4,8 +4,9 @@ import {
   listAdvisorAccessKeysForAdvisor,
 } from "@/data/repositories/advisor-access-keys";
 import type { AdvisorAccessKeyRow } from "@/data/supabase/types";
-import { AdvisorAccessKeysGenerateForm } from "@/features/advisor/AdvisorAccessKeysGenerateForm";
 import { PageSection } from "@/ui/PageSection";
+import { appInlineLinkClass } from "@/ui/app-link-styles";
+import Link from "next/link";
 
 function KeyStatusBadge({ status }: { status: AdvisorAccessKeyRow["status"] }) {
   const cls =
@@ -42,17 +43,19 @@ export async function AdvisorAccessKeysSection({
       title="Client access keys"
       description={
         <span className="text-xs text-zinc-600">
-          POC: keys are free. Paid key packs and subscriptions will plug in here later.
+          Keys are issued through the advisor purchase and coupon workflow.
         </span>
       }
     >
       <div className="space-y-6">
-        <div className="rounded-xl border border-amber-200/90 bg-amber-50/80 px-4 py-3 text-sm text-amber-950">
-          <p className="font-semibold">POC Free Credits</p>
-          <p className="mt-1 text-xs text-amber-900/90">
+        <div className="rounded-xl border border-emerald-200/90 bg-emerald-50/80 px-4 py-3 text-sm text-emerald-950">
+          <p className="font-semibold">Coupon-backed key purchase</p>
+          <p className="mt-1 text-xs text-emerald-900/90">
             Give each key to one client. A key can only be used once.{" "}
-            <span className="font-medium">Billing Coming Soon:</span> purchase extra keys or invite
-            clients by email from this area.
+            <Link href="/advisor/buy-keys" className={appInlineLinkClass}>
+              Buy more keys
+            </Link>
+            .
           </p>
         </div>
 
@@ -77,23 +80,19 @@ export async function AdvisorAccessKeysSection({
           ))}
         </dl>
 
-        <div className="rounded-xl border border-zinc-200 bg-zinc-50/50 p-4 sm:p-5">
-          <h3 className="text-sm font-semibold text-zinc-900">Generate more keys</h3>
-          <p className="mt-1 text-xs text-zinc-600">
-            Adds ten unused keys at once. No payment in this POC.
-          </p>
-          <div className="mt-4">
-            <AdvisorAccessKeysGenerateForm />
-          </div>
-        </div>
-
         <div>
           <h3 className="text-sm font-semibold text-zinc-900">Recent keys</h3>
           <p className="mt-0.5 text-xs text-zinc-600">
             Showing up to 40 most recent. Copy a key and send it securely to your client.
           </p>
           {recent.length === 0 ? (
-            <p className="mt-3 text-sm text-zinc-600">No keys yet. Generate a batch above.</p>
+            <p className="mt-3 text-sm text-zinc-600">
+              No keys yet.{" "}
+              <Link href="/advisor/buy-keys" className={appInlineLinkClass}>
+                Buy your first batch
+              </Link>
+              .
+            </p>
           ) : (
             <div className="mt-3 overflow-x-auto rounded-xl border border-zinc-200 bg-white">
               <table className="min-w-full text-left text-sm">
