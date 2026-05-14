@@ -1,11 +1,32 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getMyAdvisorContactAction } from "@/server/advisor-key-purchase-actions";
 
 export function ContactAdvisorButton() {
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!message) {
+      return;
+    }
+
+    function dismissOnOutsidePointerDown(event: PointerEvent) {
+      if (
+        event.target instanceof Node &&
+        !containerRef.current?.contains(event.target)
+      ) {
+        setMessage(null);
+      }
+    }
+
+    document.addEventListener("pointerdown", dismissOnOutsidePointerDown);
+    return () => {
+      document.removeEventListener("pointerdown", dismissOnOutsidePointerDown);
+    };
+  }, [message]);
 
   async function openAdvisorContact() {
     setPending(true);
@@ -32,7 +53,7 @@ export function ContactAdvisorButton() {
   }
 
   return (
-    <div className="relative inline-flex">
+    <div ref={containerRef} className="relative inline-flex">
       <button
         type="button"
         onClick={openAdvisorContact}
