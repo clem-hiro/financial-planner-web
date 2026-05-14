@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { normalizeE164 } from "@/lib/phone-format";
 
 export const spendPeriodSchema = z.enum(["monthly", "annual"]);
 
@@ -244,12 +243,6 @@ export const clientAccessKeyInputSchema = z
       .max(64, "Access key is too long")
       .regex(/^[A-F0-9]+$/, "Invalid access key format")
   );
-
-export const e164PhoneSchema = z
-  .string()
-  .trim()
-  .transform((s) => normalizeE164(s))
-  .pipe(z.string({ error: "Enter a valid phone number with country code" }));
 
 export const advisorAccessKeyPurchaseQuantitySchema = z.coerce
   .number()

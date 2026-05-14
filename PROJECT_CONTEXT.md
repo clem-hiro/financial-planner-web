@@ -68,7 +68,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | `/account-issue` when client `advisor_user_id` missing | **Shipped** | Data-integrity / support path. |
 | **Client UI v2** shell: Home, Planning, Activity, More | **Shipped** | `AppShell`, `AppShellNav`; version label `src/lib/client-release.ts`, shown on `/more`. |
 | Classic URL redirects to v2 IA | **Shipped** | `/balances` → wealth, `/budget` → cash-flow, etc. |
-| Email confirmation redirect `/auth/callback` | **Not in repo** | `LoginForm` sets `emailRedirectTo` to `/auth/callback`; add an App Router handler and allow the URL in Supabase if you rely on confirmed-email signup. |
+| Email confirmation redirect `/auth/callback` | **Shipped** | `src/app/auth/callback/route.ts` — exchanges the one-time `code` for a session via `supabase.auth.exchangeCodeForSession`, then redirects (default `/dashboard`; middleware then routes by role). Required when Supabase **Confirm Email** is ON. Doubles as the landing for magic-link / OAuth flows if those are added later. |
 
 ### Client — Home (`/dashboard`)
 
@@ -230,7 +230,7 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
   - **Onboarding** is enforced only for **clients** with `onboarding_required` and no `onboarding_completed_at`.
   - If onboarding not required and user hits **`/onboarding`** → redirect **`/dashboard`**.
 
-**LoginForm** (`src/features/auth/LoginForm.tsx`): **Sign-in** loads `financial_profiles` and sends **advisors** to **`/advisor`**, **clients** to **`/onboarding`** or **`/dashboard`** (or **`/account-issue`** if `advisor_user_id` is missing). **Sign up**: **Financial advisor** collects a WhatsApp phone and goes to **`/advisor`** when a session exists immediately; **Client** → **`/onboarding`**. Supabase **signUp** sets `emailRedirectTo` to **`/auth/callback`** on the current origin (add that App Router route and allow the URL in Supabase if you rely on email confirmation). **Sign out**: server action `signOutAction` → `/login` (also available from the account menu).
+**LoginForm** (`src/features/auth/LoginForm.tsx`): **Sign-in** loads `financial_profiles` and sends **advisors** to **`/advisor`**, **clients** to **`/onboarding`** or **`/dashboard`** (or **`/account-issue`** if `advisor_user_id` is missing). **Sign up**: email + password + display name + role; phone is **not** collected at signup (advisors verify their WhatsApp number opt-in via `/advisor/profile` later). Supabase **signUp** sets `emailRedirectTo` to **`/auth/callback`** (`src/app/auth/callback/route.ts`), which exchanges the one-time code for a session and redirects to `/dashboard` for middleware to finish routing by role. Required only when the Supabase project has **Confirm Email** enabled. **Sign out**: server action `signOutAction` → `/login` (also available from the account menu).
 
 ---
 
@@ -308,4 +308,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 3. If you introduce a new top-level domain concept (e.g. “tax estimates”), add a **Code map** row and point to the main module.
 4. Keep claims aligned with **code**; avoid marketing copy that does not match the UI. Roadmap **`PlaceholderModuleCard`** badges can stay aspirational; the inventory table should stay factual.
 
-_Last reviewed (2026-05-14): added **Feature inventory (shipped vs planned)**; housing **`buyers_stamp_duty_paid_from_cpf_oa`** migration note; clarified roadmap cards vs implementation; `/auth/callback` called out as not in repo; cherry-picked advisor key purchase / coupon workflow, verified WhatsApp contact RPC, and advisor phone verification from `main`._
+_Last reviewed (2026-05-14): added **Feature inventory (shipped vs planned)**; housing **`buyers_stamp_duty_paid_from_cpf_oa`** migration note; clarified roadmap cards vs implementation; cherry-picked advisor key purchase / coupon workflow, verified WhatsApp contact RPC, and advisor phone verification from `main`; **collapsed advisor phone to auth.users single-source-of-truth (Option C)** — dropped `financial_profiles.phone_e164` mirror, removed signup-time phone capture, deleted `syncAdvisorVerifiedPhoneAction`; added `/auth/callback` route handler; pruned dead `e164PhoneSchema` and `buildWhatsAppChatUrl` helpers._

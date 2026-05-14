@@ -3,8 +3,7 @@
 import type { User } from "@supabase/supabase-js";
 import Link from "next/link";
 
-export function AdvisorPhonePromptBanner({ user }: { user: User | null }) {
-  if (!user) return null;
+export function AdvisorPhonePromptBanner({ user }: { user: User }) {
   if (user.phone && user.phone_confirmed_at) return null;
 
   return (
