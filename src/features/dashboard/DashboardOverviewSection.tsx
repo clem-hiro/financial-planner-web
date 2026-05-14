@@ -21,7 +21,7 @@ export function DashboardOverviewSection({
   currency: string;
 }) {
   return (
-    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
       <div
         className={`${metricCard} relative overflow-hidden border-l-[3px] border-l-emerald-600`}
       >
@@ -142,7 +142,7 @@ export function DashboardOverviewSection({
           Take-home − spend basis − planned goals ({currency})
         </p>
       </div>
-      <div className={`${metricCard} bg-linear-to-br from-white via-white to-amber-50/35 sm:col-span-2 lg:col-span-1`}>
+      <div className={`${metricCard} bg-linear-to-br from-white via-white to-amber-50/35 sm:col-span-2 xl:col-span-1`}>
         <div className="flex flex-wrap items-center gap-1">
           <p className={labelClass}>Spend basis (this month)</p>
           <InfoTooltip
