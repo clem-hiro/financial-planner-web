@@ -197,7 +197,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           <PageSection id="profile-assumptions" title="Profile basics">
             <div className="space-y-6">
               <ProfileIncomeForm
-                key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.target_retirement_age ?? ""}-${financialProfile?.retirement_monthly_spend_goal ?? ""}-${financialProfile?.retirement_dividend_yield_annual ?? ""}`}
+                key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.target_retirement_age ?? ""}-${financialProfile?.retirement_monthly_spend_goal ?? ""}-${financialProfile?.retirement_dividend_yield_annual ?? ""}-${financialProfile?.salary_increment_month ?? ""}`}
                 initialIncome={income}
                 initialGross={gross}
                 initialCpfAgeBand={cpfBand}
@@ -236,6 +236,9 @@ export default async function SetupPage({ searchParams }: PageProps) {
                   String(financialProfile.retirement_withdrawal_rate_annual).trim() !== ""
                     ? num(financialProfile.retirement_withdrawal_rate_annual) * 100
                     : null
+                }
+                initialSalaryIncrementMonth={
+                  financialProfile?.salary_increment_month ?? null
                 }
                 cpfYearMonth={formatYearMonth(new Date())}
                 currencyCode={currency}

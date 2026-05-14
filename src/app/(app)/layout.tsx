@@ -5,6 +5,7 @@ import { createSupabaseServerClient } from "@/data/supabase/server";
 import { AppShell } from "@/features/app-shell/AppShell";
 import { isSupabaseConfigured } from "@/lib/env";
 import { isAdvisor } from "@/lib/profile-role";
+import { ensureSalaryReviewNotification } from "@/server/inbox/ensure-salary-review-notification";
 
 export const dynamic = "force-dynamic";
 
@@ -23,12 +24,15 @@ export default async function AppLayout({
     const { data } = await supabase.auth.getUser();
     user = data.user;
     if (user) {
-      const [profileRow, initialItems] = await Promise.all([
-        getProfileById(supabase, user.id),
-        listUnreadByUser(supabase, user.id, 10),
-      ]);
-      profile = profileRow;
+      profile = await getProfileById(supabase, user.id);
       workspace = isAdvisor(profile) ? "advisor" : "client";
+      // Must run before listUnreadByUser so a freshly-written reminder is visible
+      // in the same request's inbox snapshot. Helper short-circuits without DB I/O
+      // when no reminder is due, so the cost is one field read in the steady state.
+      if (profile) {
+        await ensureSalaryReviewNotification(supabase, profile);
+      }
+      const initialItems = await listUnreadByUser(supabase, user.id, 10);
       inbox = { unreadCount: initialItems.length, initialItems };
     }
   }

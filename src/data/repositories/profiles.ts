@@ -49,6 +49,8 @@ export async function updateProfile(
     budget_generation_source?: string | null;
     estimated_budget_mode?: boolean;
     food_spend_band?: string | null;
+    salary_increment_month?: number | null;
+    last_salary_review_at?: string | null;
   }
 ): Promise<void> {
   const { error } = await supabase

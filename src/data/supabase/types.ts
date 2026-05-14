@@ -42,6 +42,10 @@ export type ProfileRow = {
   /** Optional rough monthly food spend band (SGD-oriented labels in UI). */
   food_spend_band: string | null;
   base_currency: string;
+  /** Calendar month (1-12) when the user expects their salary review; null = opt-out. */
+  salary_increment_month: number | null;
+  /** ISO timestamp of the most recent salary-review acknowledgement. */
+  last_salary_review_at: string | null;
   created_at: string;
 };
 

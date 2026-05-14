@@ -172,6 +172,14 @@ export const profilePatchSchema = z
       ])
       .nullable()
       .optional(),
+    salary_increment_month: z
+      .number()
+      .int()
+      .min(1)
+      .max(12)
+      .nullable()
+      .optional(),
+    last_salary_review_at: z.string().datetime().nullable().optional(),
   })
   .superRefine((data, ctx) => {
     if (
