@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useState } from "react";
 import {
   createHousingLoanAction,
   deleteHousingLoanAction,
@@ -315,7 +315,15 @@ function HousingLoanEditForm({ L }: { L: HousingLoanRow }) {
   );
   const [oaShare, setOaShare] = useState(() => num(L.oa_share_of_payment));
 
-  useEffect(() => {
+  // Reset-during-render: keep local state in sync when the loan being edited swaps to
+  // another row (parent doesn't remount on id change). React-19 idiom — avoids the
+  // setState-in-effect anti-pattern flagged by react-hooks/set-state-in-effect.
+  const [lastSig, setLastSig] = useState(
+    () => `${L.id}|${L.lender_type ?? ""}|${L.annual_nominal_rate ?? ""}|${L.oa_share_of_payment ?? ""}`
+  );
+  const sig = `${L.id}|${L.lender_type ?? ""}|${L.annual_nominal_rate ?? ""}|${L.oa_share_of_payment ?? ""}`;
+  if (sig !== lastSig) {
+    setLastSig(sig);
     const l = (L.lender_type ?? "hdb") as "hdb" | "bank" | "other";
     setLender(l);
     setBankPct(
@@ -327,12 +335,7 @@ function HousingLoanEditForm({ L }: { L: HousingLoanRow }) {
     const s = num(L.oa_share_of_payment);
     setOaShare(s);
     setInstPreset(instalmentPresetFromShare(s));
-  }, [
-    L.id,
-    L.lender_type,
-    L.annual_nominal_rate,
-    L.oa_share_of_payment,
-  ]);
+  }
 
   const annualEff =
     lender === "hdb"
