@@ -134,4 +134,23 @@ export type {
   LifestyleProfileId,
   OnboardingConfidenceLevel,
 } from "./budget-guided-setup";
+export {
+  EARNED_INCOME_RELIEF_BY_AGE,
+  INCOME_TAX_YA_2026,
+  TOTAL_RELIEF_CAP_SGD,
+  applyRebate,
+  chargeableIncomeFromReliefs,
+  computeAnnualTax,
+  earnedIncomeReliefForAge,
+  grossTaxForChargeableIncome,
+  monthlyGiroFromNetTax,
+} from "./sg-income-tax";
+export type {
+  ChargeableIncomeBreakdown,
+  IncomeTaxBracket,
+  IncomeTaxComputeBreakdown,
+  IncomeTaxComputeInput,
+  IncomeTaxReliefBundle,
+  RebateBreakdown,
+} from "./sg-income-tax";
 export type * from "./types";

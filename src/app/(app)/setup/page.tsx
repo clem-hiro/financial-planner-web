@@ -6,9 +6,11 @@ import {
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
 } from "@/data/mappers";
+import { getIncomeTaxConfig } from "@/data/repositories/income-tax-configs";
 import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { ProfileIncomeForm } from "@/features/dashboard/ProfileIncomeForm";
+import { IncomeTaxSection } from "@/features/income-tax/IncomeTaxSection";
 import {
   CashAndLiabilitiesPanels,
   type CashAccountBalanceRow,
@@ -48,6 +50,7 @@ function buildSetupTabs(): readonly SetupTabDef[] {
     { id: "vehicles", label: "Vehicles" },
     { id: "budget", label: "Budget" },
     { id: "goals", label: "Goals" },
+    { id: "income_tax", label: "Income tax" },
   ] as const;
 }
 
@@ -86,6 +89,10 @@ export default async function SetupPage({ searchParams }: PageProps) {
   const sp = await searchParams;
   const activeTab =
     sp.tab && setupTabs.some((t) => t.id === sp.tab) ? sp.tab : "profile";
+  const incomeTaxConfig =
+    activeTab === "income_tax"
+      ? await getIncomeTaxConfig(supabase, user.id)
+      : null;
   const budgetMonth =
     sp.month && parseYearMonth(sp.month)
       ? sp.month
@@ -357,6 +364,16 @@ export default async function SetupPage({ searchParams }: PageProps) {
             goals={goals}
             investments={investments}
             currency={currency}
+          />
+        </div>
+      ) : null}
+
+      {activeTab === "income_tax" ? (
+        <div className="transition-opacity duration-150 ease-out">
+          <IncomeTaxSection
+            profile={financialProfile}
+            config={incomeTaxConfig}
+            referenceYearMonth={budgetMonth}
           />
         </div>
       ) : null}

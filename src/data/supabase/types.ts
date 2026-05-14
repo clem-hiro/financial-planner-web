@@ -253,6 +253,37 @@ export type CpfBalanceRow = {
   updated_at: string;
 };
 
+/** Singapore income tax inputs (migration `20260518000000`). One row per user. */
+export type IncomeTaxConfigRow = {
+  id: string;
+  user_id: string;
+  year_of_assessment: number;
+  spouse_relief_sgd: string;
+  qualifying_child_relief_sgd: string;
+  handicapped_child_relief_sgd: string;
+  working_mother_child_relief_sgd: string;
+  parent_relief_sgd: string;
+  grandparent_caregiver_relief_sgd: string;
+  handicapped_sibling_relief_sgd: string;
+  cpf_cash_topup_self_sgd: string;
+  cpf_cash_topup_family_sgd: string;
+  srs_contribution_sgd: string;
+  cpf_medisave_voluntary_sgd: string;
+  nsman_self_relief_sgd: string;
+  nsman_wife_relief_sgd: string;
+  nsman_parent_relief_sgd: string;
+  course_fees_relief_sgd: string;
+  life_insurance_relief_sgd: string;
+  other_reliefs_amount_sgd: string;
+  other_reliefs_notes: string | null;
+  /** Both rebate fields are set together or both null (DB CHECK + Zod superRefine). */
+  tax_rebate_percent: string | null;
+  tax_rebate_cap_sgd: string | null;
+  payment_method: "monthly_giro" | "one_time";
+  created_at: string;
+  updated_at: string;
+};
+
 export type HousingLoanRow = {
   id: string;
   user_id: string;

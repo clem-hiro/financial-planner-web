@@ -13,7 +13,8 @@ export type MethodologyTopicId =
   | "budget-lines"
   | "cpf-projection"
   | "cpf-housing-mortgage"
-  | "vehicles-sg";
+  | "vehicles-sg"
+  | "sg-income-tax-ya2026";
 
 export type MethodologyTopic = {
   id: MethodologyTopicId;
@@ -197,6 +198,26 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     ],
     footnote:
       "Illustrative only; real rebates and resale prices differ. Not tax, legal, or financial advice.",
+  },
+  {
+    id: "sg-income-tax-ya2026",
+    title: "Singapore income tax (YA 2026)",
+    summary:
+      "How the calculator turns your reliefs and rebate choice into a monthly GIRO or one-time tax burden.",
+    bullets: [
+      "Annual income = monthly gross salary × 12 + annual bonus.",
+      "Total reliefs = earned-income relief (auto from age: <55 $1k, 55–59 $6k, 60+ $8k) + mandatory employee CPF + your typed reliefs.",
+      "Total reliefs are capped at $80,000; chargeable income = annual income − reliefs (after cap).",
+      "Gross tax uses the resident progressive bracket table in force from YA 2024 ($0–20k @ 0% up to >$1M @ 24%).",
+      "Optional rebate: percent × gross tax, capped at the dollar cap you set. Net tax = max(gross − rebate, 0).",
+      "Payment method controls cashflow: monthly GIRO = net tax ÷ 12; one-time = net tax shown as a single annual outflow.",
+    ],
+    formulas: [
+      "chargeable = max(annual_income − min(total_reliefs, $80k), 0)",
+      "net_tax = max(gross_tax − min(percent × gross_tax, cap), 0)",
+    ],
+    footnote:
+      "IRAS bracket table YA 2024+ stays in force for YA 2025 and YA 2026. Not tax advice.",
   },
   {
     id: "expenses-month",
