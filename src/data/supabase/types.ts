@@ -253,6 +253,23 @@ export type CpfBalanceRow = {
   updated_at: string;
 };
 
+/** Generic inbox row (migration `20260519000000`). Dedupe-keyed per user. */
+export type InboxNotificationRow = {
+  id: string;
+  user_id: string;
+  /** Producer label; consumers use this to know which mark-as-read action to call. */
+  kind: string;
+  title: string;
+  body: string | null;
+  cta_label: string | null;
+  cta_href: string | null;
+  /** Unique per `user_id`; producers re-upsert idempotently with `ignoreDuplicates`. */
+  dedupe_key: string;
+  read_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 /** Singapore income tax inputs (migration `20260518000000`). One row per user. */
 export type IncomeTaxConfigRow = {
   id: string;

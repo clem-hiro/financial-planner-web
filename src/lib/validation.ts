@@ -250,6 +250,8 @@ export const advisorAccessKeyPurchaseQuantitySchema = z.coerce
   .min(1)
   .max(1000);
 
+export const markInboxItemReadSchema = z.object({ id: z.string().uuid() });
+
 export const incomeTaxPaymentMethodSchema = z.enum(["monthly_giro", "one_time"]);
 
 /**
