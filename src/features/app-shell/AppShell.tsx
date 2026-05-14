@@ -104,7 +104,7 @@ export function AppShell({
             </div>
           </div>
           {user && workspace === "advisor" ? (
-            <AdvisorPhonePromptBanner profile={profile} />
+            <AdvisorPhonePromptBanner user={user} />
           ) : null}
         </header>
         <main

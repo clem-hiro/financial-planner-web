@@ -3,12 +3,10 @@
 import { createSupabaseBrowserClient } from "@/data/supabase/browser";
 import {
   clientAccessKeyInputSchema,
-  e164PhoneSchema,
   signupFinancialRoleSchema,
 } from "@/lib/validation";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { PhoneInputField } from "@/features/auth/PhoneInputField";
 
 type Mode = "signin" | "signup";
 
@@ -38,7 +36,6 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [signupRole, setSignupRole] = useState<SignupRole>("advisor");
-  const [advisorPhone, setAdvisorPhone] = useState("");
   const [accessKey, setAccessKey] = useState("");
   const [mode, setMode] = useState<Mode>("signin");
   const [error, setError] = useState<string | null>(() =>
@@ -53,7 +50,6 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
     setSignupInfo(null);
     if (next === "signin") {
       setSignupRole("advisor");
-      setAdvisorPhone("");
       setAccessKey("");
     }
   }
@@ -106,13 +102,6 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
             return;
           }
           userMeta.access_key = normalizedKey;
-        } else {
-          const phoneParsed = e164PhoneSchema.safeParse(advisorPhone);
-          if (!phoneParsed.success) {
-            setError("Enter a valid phone number with country code.");
-            return;
-          }
-          userMeta.phone_e164 = phoneParsed.data;
         }
 
         const { data, error: err } = await supabase.auth.signUp({
@@ -124,7 +113,6 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
               display_name?: string;
               profile_type: string;
               access_key?: string;
-              phone_e164?: string;
             },
           },
         });
@@ -138,7 +126,6 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
           );
           setPassword("");
           setAccessKey("");
-          setAdvisorPhone("");
           return;
         }
         router.push(role === "advisor" ? "/advisor" : "/onboarding");
@@ -333,17 +320,6 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
             className={`${authInputClass} font-mono`}
             value={accessKey}
             onChange={(e) => setAccessKey(e.target.value)}
-          />
-        </label>
-      ) : null}
-      {mode === "signup" && signupRole === "advisor" ? (
-        <label className={authLabelClass}>
-          <span className="mb-1.5 block">WhatsApp phone</span>
-          <PhoneInputField
-            value={advisorPhone}
-            onChange={setAdvisorPhone}
-            required
-            variant="auth"
           />
         </label>
       ) : null}

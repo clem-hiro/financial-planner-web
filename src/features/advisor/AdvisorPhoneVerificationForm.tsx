@@ -1,30 +1,24 @@
 "use client";
 
+import type { User } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { createSupabaseBrowserClient } from "@/data/supabase/browser";
-import type { ProfileRow } from "@/data/supabase/types";
 import { PhoneInputField } from "@/features/auth/PhoneInputField";
 import { normalizeE164 } from "@/lib/phone-format";
-import {
-  saveAdvisorPhoneForVerificationAction,
-  syncAdvisorVerifiedPhoneAction,
-} from "@/server/advisor-key-purchase-actions";
 import { PageSection } from "@/ui/PageSection";
 
-export function AdvisorPhoneVerificationForm({
-  profile,
-}: {
-  profile: ProfileRow;
-}) {
+export function AdvisorPhoneVerificationForm({ user }: { user: User }) {
   const router = useRouter();
-  const [phone, setPhone] = useState(profile.phone_e164 ?? "");
+  const [phone, setPhone] = useState(user.phone ? `+${user.phone}` : "");
   const [otp, setOtp] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+
   const verified =
-    profile.phone_e164 === phone && profile.phone_verified_at != null;
+    user.phone_confirmed_at != null &&
+    user.phone === phone.replace(/^\+/, "");
 
   async function sendCode() {
     if (pending) return;
@@ -46,12 +40,6 @@ export function AdvisorPhoneVerificationForm({
         setError(
           `Could not send verification code. Check that Supabase Auth Phone is enabled with an SMS provider. Supabase returned: ${updateErr.message}`
         );
-        return;
-      }
-
-      const saved = await saveAdvisorPhoneForVerificationAction(normalized);
-      if (!saved.ok) {
-        setError(saved.error ?? "Could not save phone number.");
         return;
       }
 
@@ -90,12 +78,8 @@ export function AdvisorPhoneVerificationForm({
         return;
       }
 
-      const synced = await syncAdvisorVerifiedPhoneAction(normalized);
-      if (!synced.ok) {
-        setError(synced.error ?? "Could not verify phone number.");
-        return;
-      }
-
+      // router.refresh() re-runs the parent server component, which re-reads
+      // auth.getUser() and feeds a fresh `user` prop in with phone_confirmed_at set.
       setOtp("");
       setInfo("Phone number verified.");
       router.refresh();

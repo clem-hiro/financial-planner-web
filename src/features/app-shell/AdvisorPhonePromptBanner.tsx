@@ -1,15 +1,11 @@
 "use client";
 
+import type { User } from "@supabase/supabase-js";
 import Link from "next/link";
-import type { ProfileRow } from "@/data/supabase/types";
 
-export function AdvisorPhonePromptBanner({
-  profile,
-}: {
-  profile: ProfileRow | null;
-}) {
-  if (!profile || profile.profile_type !== "advisor") return null;
-  if (profile.phone_e164 && profile.phone_verified_at) return null;
+export function AdvisorPhonePromptBanner({ user }: { user: User | null }) {
+  if (!user) return null;
+  if (user.phone && user.phone_confirmed_at) return null;
 
   return (
     <div className="border-b border-amber-200/80 bg-amber-50/90">

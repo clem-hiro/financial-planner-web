@@ -69,8 +69,6 @@ describe("advisorClientWorkspaceSignals", () => {
       estimated_budget_mode: false,
       food_spend_band: null,
       base_currency: "SGD",
-      phone_e164: null,
-      phone_verified_at: null,
       created_at: "2026-01-01",
     } satisfies ProfileRow;
 

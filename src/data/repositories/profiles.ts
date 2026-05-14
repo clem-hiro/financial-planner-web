@@ -17,8 +17,6 @@ export async function getProfileById(
     ...row,
     profile_type: row.profile_type === "client" ? "client" : "advisor",
     advisor_user_id: row.advisor_user_id ?? null,
-    phone_e164: row.phone_e164 ?? null,
-    phone_verified_at: row.phone_verified_at ?? null,
   };
 }
 
@@ -51,8 +49,6 @@ export async function updateProfile(
     budget_generation_source?: string | null;
     estimated_budget_mode?: boolean;
     food_spend_band?: string | null;
-    phone_e164?: string | null;
-    phone_verified_at?: string | null;
   }
 ): Promise<void> {
   const { error } = await supabase

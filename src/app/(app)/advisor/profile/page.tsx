@@ -34,7 +34,7 @@ export default async function AdvisorProfilePage() {
           Manage the contact details clients can use from their workspace.
         </p>
       </div>
-      <AdvisorPhoneVerificationForm profile={profile} />
+      <AdvisorPhoneVerificationForm user={user} />
     </div>
   );
 }

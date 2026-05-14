@@ -6,10 +6,6 @@ export type ProfileRow = {
   profile_type: FinancialProfileType;
   /** For clients: issuing advisor's auth user id. */
   advisor_user_id: string | null;
-  /** Advisor contact number in E.164 format. Clients receive only a derived WhatsApp link. */
-  phone_e164: string | null;
-  /** Set after Supabase phone OTP verification succeeds. */
-  phone_verified_at: string | null;
   display_name: string | null;
   monthly_income: string | null;
   salary_frequency: "monthly" | "biweekly" | "weekly" | "annual" | null;

@@ -9,14 +9,13 @@ import {
   type AdvisorContactResult,
 } from "@/data/repositories/coupons";
 import { ACCESS_KEY_PRODUCT_CODE } from "@/data/repositories/pricing";
-import { getProfileById, updateProfile } from "@/data/repositories/profiles";
+import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { isAdvisor } from "@/lib/profile-role";
 import { formatSupabaseError } from "@/lib/supabase-error";
 import {
   advisorAccessKeyPurchaseQuantitySchema,
   couponCodeInputSchema,
-  e164PhoneSchema,
 } from "@/lib/validation";
 
 export type BuyAccessKeysFormState = {
@@ -24,11 +23,6 @@ export type BuyAccessKeysFormState = {
   info: string | null;
   purchaseId: string | null;
   keys: string[];
-};
-
-export type AdvisorPhoneFormResult = {
-  ok: boolean;
-  error: string | null;
 };
 
 async function requireAdvisorSession() {
@@ -183,72 +177,6 @@ export async function buyAdvisorAccessKeysAction(
       info: null,
       purchaseId: null,
       keys: [],
-    };
-  }
-}
-
-export async function saveAdvisorPhoneForVerificationAction(
-  phoneRaw: string
-): Promise<AdvisorPhoneFormResult> {
-  const session = await requireAdvisorSession();
-  if (session.error || !session.user) {
-    return { ok: false, error: session.error ?? "Sign in required" };
-  }
-
-  const parsed = e164PhoneSchema.safeParse(phoneRaw);
-  if (!parsed.success) {
-    return { ok: false, error: "Enter a valid phone number with country code." };
-  }
-
-  try {
-    await updateProfile(session.supabase, session.user.id, {
-      phone_e164: parsed.data,
-      phone_verified_at: null,
-    });
-    revalidatePath("/advisor");
-    revalidatePath("/advisor/profile");
-    return { ok: true, error: null };
-  } catch (e) {
-    return {
-      ok: false,
-      error: formatSupabaseError(e, "Could not save phone number."),
-    };
-  }
-}
-
-export async function syncAdvisorVerifiedPhoneAction(
-  phoneRaw: string
-): Promise<AdvisorPhoneFormResult> {
-  const session = await requireAdvisorSession();
-  if (session.error || !session.user) {
-    return { ok: false, error: session.error ?? "Sign in required" };
-  }
-
-  const parsed = e164PhoneSchema.safeParse(phoneRaw);
-  if (!parsed.success) {
-    return { ok: false, error: "Enter a valid phone number with country code." };
-  }
-
-  const {
-    data: { user },
-  } = await session.supabase.auth.getUser();
-  const confirmedAt = user?.phone_confirmed_at ?? null;
-  if (user?.phone !== parsed.data || !confirmedAt) {
-    return { ok: false, error: "Verify this phone number before saving it." };
-  }
-
-  try {
-    await updateProfile(session.supabase, session.user.id, {
-      phone_e164: parsed.data,
-      phone_verified_at: confirmedAt,
-    });
-    revalidatePath("/advisor");
-    revalidatePath("/advisor/profile");
-    return { ok: true, error: null };
-  } catch (e) {
-    return {
-      ok: false,
-      error: formatSupabaseError(e, "Could not verify phone number."),
     };
   }
 }
