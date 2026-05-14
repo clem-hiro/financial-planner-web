@@ -144,9 +144,9 @@ export default async function AdvisorDashboardPage() {
             </p>
           ) : (
             <p className="text-sm text-slate-600">
-              No clients yet. Generate keys under{" "}
-              <Link href="/advisor/access-keys" className={appInlineLinkClass}>
-                Access keys
+              No clients yet. Buy keys under{" "}
+              <Link href="/advisor/buy-keys" className={appInlineLinkClass}>
+                Buy keys
               </Link>{" "}
               and share one per signup.
             </p>

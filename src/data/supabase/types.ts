@@ -6,6 +6,10 @@ export type ProfileRow = {
   profile_type: FinancialProfileType;
   /** For clients: issuing advisor's auth user id. */
   advisor_user_id: string | null;
+  /** Advisor contact number in E.164 format. Clients receive only a derived WhatsApp link. */
+  phone_e164: string | null;
+  /** Set after Supabase phone OTP verification succeeds. */
+  phone_verified_at: string | null;
   display_name: string | null;
   monthly_income: string | null;
   salary_frequency: "monthly" | "biweekly" | "weekly" | "annual" | null;
@@ -48,12 +52,80 @@ export type ProfileRow = {
 export type AdvisorAccessKeyRow = {
   id: string;
   advisor_user_id: string;
+  purchase_id: string | null;
   access_key: string;
   status: "available" | "claimed" | "expired";
   claimed_by_user_id: string | null;
   claimed_at: string | null;
   expires_at: string | null;
   created_at: string;
+};
+
+export type PurchaseStatus =
+  | "pending"
+  | "paid"
+  | "fulfilled"
+  | "failed"
+  | "refunded";
+
+export type PaymentProvider = "mock" | "stripe";
+
+export type PricingRow = {
+  product_code: string;
+  price_cents: number;
+  currency: string;
+  updated_at: string;
+};
+
+export type CouponKind = "discount_percent" | "free_keys";
+
+export type CouponRow = {
+  id: string;
+  advisor_user_id: string | null;
+  code: string;
+  kind: CouponKind;
+  discount_percent: number;
+  free_key_quantity: number | null;
+  remaining_redemptions: number | null;
+  expires_at: string | null;
+  archived_at: string | null;
+  created_at: string;
+};
+
+export type PurchaseRow = {
+  id: string;
+  advisor_user_id: string;
+  product_code: string;
+  idempotency_key: string;
+  requested_quantity: number;
+  free_key_quantity: number;
+  paid_key_quantity: number;
+  unit_price_cents: number;
+  gross_cents: number;
+  discount_cents: number;
+  net_cents: number;
+  currency: string;
+  coupon_id: string | null;
+  payment_provider: PaymentProvider;
+  payment_intent_id: string | null;
+  status: PurchaseStatus;
+  created_at: string;
+  paid_at: string | null;
+  fulfilled_at: string | null;
+};
+
+export type CouponRedemptionRow = {
+  id: string;
+  advisor_user_id: string;
+  coupon_id: string;
+  purchase_id: string;
+  redeemed_at: string;
+};
+
+export type CouponValidationAttemptRow = {
+  id: string;
+  advisor_user_id: string;
+  attempted_at: string;
 };
 
 export type ExpenseRow = {
