@@ -1,0 +1,42 @@
+---
+description: Keep Notion BYOFA Features tables aligned with PROJECT_CONTEXT.md (adds, removes, status).
+globs: PROJECT_CONTEXT.md
+alwaysApply: false
+---
+
+# PROJECT_CONTEXT → Notion BYOFA Features
+
+When you **materially edit** `PROJECT_CONTEXT.md` (feature inventory **rows added/removed**, status changes, routes, database bullets, or the “Last reviewed” line), **also reconcile the Notion page** [BYOFA Features](https://www.notion.so/BYOFA-Features-35fa694147bf8093be2fc57673cee41a) using the **Notion MCP** (`user-notion`).
+
+If the user asks to **“sync BYOFA”**, **“verify the BYOFA table”**, or **“make sure Notion matches PROJECT_CONTEXT”**, do the same **full pass** below even when `PROJECT_CONTEXT.md` was edited earlier.
+
+## Diff mindset (keep the table complete)
+
+Treat `PROJECT_CONTEXT.md` as source of truth for **what exists in the product narrative** (especially **[Feature inventory (shipped vs planned)]**, plus **Routes** and **Database** bullets where they imply user-visible capabilities).
+
+1. **Fetch** the BYOFA hub page (URL above). Note each inline database’s **`collection://…` data source id** (Core Platform, Dashboard / Home, Planning Workspace, etc.).
+2. For each relevant section in the doc, **search** Notion (`notion-search` with `data_source_url: "collection://<uuid>"` or `page_url` set to the hub) so you find existing rows by **Feature**, **Feature Area**, or **Notes** keywords—avoid blind duplicates.
+3. **Adds (new capability in the doc, no matching row):** create a row with **`notion-create-pages`**, `parent: { "type": "data_source_id", "data_source_id": "<uuid-without-collection-prefix>" }`, and `properties` for that data source’s schema:
+   - **`Feature Area`** (title): short area name (e.g. match a subsection or table group).
+   - **`Feature`**: the capability name as in the doc table.
+   - **`BYOFA`**: emoji from the mapping below.
+   - **`Notes`**: pointers from the doc (routes, files, migrations)—keep concise.
+   - Leave **Competitor A/B/C** empty unless the user asked.
+4. **Updates (row exists):** **`notion-update-page`**, `command: "update_properties"`, with the row’s **`page_id`**—adjust **`BYOFA`**, **`Feature`**, **`Feature Area`**, and **`Notes`** as needed.
+5. **Removals (capability dropped from the doc, row still in Notion):** the MCP has **no trash/delete** for rows. Default: **update** that row’s **`BYOFA`** to **❌** and set **`Notes`** to a one-line trail such as `Removed from PROJECT_CONTEXT — delete this row in Notion if you want it gone.` If the user explicitly wants the row **gone**, say they should delete/archive it in the Notion UI (or ask for a dedicated archive database to **move** rows into via `notion-move-pages`).
+
+## Status mapping (`BYOFA` column)
+
+| `PROJECT_CONTEXT` status | `BYOFA` value |
+|--------------------------|---------------|
+| **Shipped** | ✅ |
+| **Partial** | 🟡 |
+| **Planned** | ⚪ |
+| **Not in repo** | ❌ |
+
+## Hygiene
+
+- Prefer **one row per capability**; merge duplicates if search finds two matches for the same doc line.
+- After edits, bump alignment with the doc’s **“Last reviewed”** line when it changed.
+
+Do not change **Competitor** columns unless the user asked.
