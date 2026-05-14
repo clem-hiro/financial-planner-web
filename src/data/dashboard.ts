@@ -56,8 +56,10 @@ import { listHousingLoans } from "@/data/repositories/housing-loans";
 import { listLiabilities } from "@/data/repositories/liabilities";
 import { listVehicles } from "@/data/repositories/vehicles";
 import { getProfileById } from "@/data/repositories/profiles";
+import { getIncomeTaxConfig } from "@/data/repositories/income-tax-configs";
 import { listExpensesForMonth } from "@/data/repositories/expenses";
 import { listInvestments } from "@/data/repositories/investments";
+import { buildSyntheticTaxExpense } from "@/data/income-tax-synthetic-expense";
 import type { HousingLoanRow } from "@/data/supabase/types";
 import {
   buildInvestmentProjectionSeries,
@@ -293,6 +295,7 @@ export async function getDashboardPayload(
     cpfRow,
     housingLoanRows,
     vehicleRows,
+    incomeTaxConfig,
   ] = await Promise.all([
     getProfileById(supabase, userId),
     listExpensesForMonth(supabase, userId, yearMonth),
@@ -305,11 +308,22 @@ export async function getDashboardPayload(
     getCpfBalanceByUserId(supabase, userId),
     listHousingLoans(supabase, userId),
     listVehicles(supabase, userId),
+    getIncomeTaxConfig(supabase, userId),
   ]);
 
   const amountOverrideByLineId = overridesToLineIdMap(overrideRows);
   const domainBudgetLines = budgetLineRows.map(budgetLineRowToDomain);
-  const budgetExpenses = expenses.map(expenseRowToBudgetExpense);
+  const baseBudgetExpenses = expenses.map(expenseRowToBudgetExpense);
+  const syntheticTax = buildSyntheticTaxExpense(
+    incomeTaxConfig,
+    profile,
+    yearMonth
+  );
+  // Prepend so the synthetic tax line appears first in any debug listing; order
+  // doesn't affect `monthlyBudgetVsActual` because it aggregates by category.
+  const budgetExpenses = syntheticTax
+    ? [syntheticTax.expense, ...baseBudgetExpenses]
+    : baseBudgetExpenses;
   const monthlyBudget = monthlyBudgetVsActual(domainBudgetLines, budgetExpenses, {
     viewingYearMonth: yearMonth,
     amountOverrideByLineId,

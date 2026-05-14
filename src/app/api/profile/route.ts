@@ -71,6 +71,8 @@ export async function PATCH(request: Request) {
     budget_generation_source?: string | null;
     estimated_budget_mode?: boolean;
     food_spend_band?: string | null;
+    salary_increment_month?: number | null;
+    last_salary_review_at?: string | null;
   } = {};
 
   if (data.display_name !== undefined) {
@@ -199,6 +201,12 @@ export async function PATCH(request: Request) {
   }
   if (data.food_spend_band !== undefined) {
     patch.food_spend_band = data.food_spend_band;
+  }
+  if (data.salary_increment_month !== undefined) {
+    patch.salary_increment_month = data.salary_increment_month;
+  }
+  if (data.last_salary_review_at !== undefined) {
+    patch.last_salary_review_at = data.last_salary_review_at;
   }
 
   if (Object.keys(patch).length === 0) {

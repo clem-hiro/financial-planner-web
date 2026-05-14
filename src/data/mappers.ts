@@ -2,6 +2,7 @@ import type {
   BudgetLineRow,
   ExpenseRow,
   FinancialGoalRow,
+  IncomeTaxConfigRow,
   InvestmentRow,
   ProfileRow,
   VehicleRow,
@@ -16,6 +17,7 @@ import type {
   BudgetLineForDomain,
   ExpenseForBudget,
 } from "@/domain/finance/budget";
+import type { IncomeTaxReliefBundle } from "@/domain/finance/sg-income-tax";
 
 export function num(value: string | null | undefined): number {
   if (value == null || value === "") return 0;
@@ -203,6 +205,50 @@ export function expenseRowToBudgetExpense(row: ExpenseRow): ExpenseForBudget {
     category: row.category,
     amount: num(row.amount),
     spendPeriod: row.spend_period ?? "monthly",
+  };
+}
+
+/**
+ * Camelcase relief bundle + rebate pair derived from a stored config row. Numeric
+ * columns come back as strings from Supabase; `num()` parses them once at the seam
+ * so the domain layer never deals with string-numerics. Annual income, age, and
+ * CPF relief are added by callers — they live on the profile, not on this row.
+ */
+export type IncomeTaxConfigDomain = {
+  yearOfAssessment: number;
+  reliefs: IncomeTaxReliefBundle;
+  rebatePercent: number | null;
+  rebateCapSgd: number | null;
+  paymentMethod: "monthly_giro" | "one_time";
+};
+
+export function incomeTaxConfigRowToDomain(
+  row: IncomeTaxConfigRow
+): IncomeTaxConfigDomain {
+  return {
+    yearOfAssessment: row.year_of_assessment,
+    reliefs: {
+      spouseReliefSgd: num(row.spouse_relief_sgd),
+      qualifyingChildReliefSgd: num(row.qualifying_child_relief_sgd),
+      handicappedChildReliefSgd: num(row.handicapped_child_relief_sgd),
+      workingMotherChildReliefSgd: num(row.working_mother_child_relief_sgd),
+      parentReliefSgd: num(row.parent_relief_sgd),
+      grandparentCaregiverReliefSgd: num(row.grandparent_caregiver_relief_sgd),
+      handicappedSiblingReliefSgd: num(row.handicapped_sibling_relief_sgd),
+      cpfCashTopupSelfSgd: num(row.cpf_cash_topup_self_sgd),
+      cpfCashTopupFamilySgd: num(row.cpf_cash_topup_family_sgd),
+      srsContributionSgd: num(row.srs_contribution_sgd),
+      cpfMedisaveVoluntarySgd: num(row.cpf_medisave_voluntary_sgd),
+      nsmanSelfReliefSgd: num(row.nsman_self_relief_sgd),
+      nsmanWifeReliefSgd: num(row.nsman_wife_relief_sgd),
+      nsmanParentReliefSgd: num(row.nsman_parent_relief_sgd),
+      courseFeesReliefSgd: num(row.course_fees_relief_sgd),
+      lifeInsuranceReliefSgd: num(row.life_insurance_relief_sgd),
+      otherReliefsAmountSgd: num(row.other_reliefs_amount_sgd),
+    },
+    rebatePercent: row.tax_rebate_percent != null ? num(row.tax_rebate_percent) : null,
+    rebateCapSgd: row.tax_rebate_cap_sgd != null ? num(row.tax_rebate_cap_sgd) : null,
+    paymentMethod: row.payment_method,
   };
 }
 

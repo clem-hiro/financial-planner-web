@@ -42,6 +42,10 @@ export type ProfileRow = {
   /** Optional rough monthly food spend band (SGD-oriented labels in UI). */
   food_spend_band: string | null;
   base_currency: string;
+  /** Calendar month (1-12) when the user expects their salary review; null = opt-out. */
+  salary_increment_month: number | null;
+  /** ISO timestamp of the most recent salary-review acknowledgement. */
+  last_salary_review_at: string | null;
   created_at: string;
 };
 
@@ -250,6 +254,54 @@ export type CpfBalanceRow = {
   cpfis_monthly_from_oa: string;
   cpfis_notional_balance: string;
   cpfis_annual_return: string;
+  updated_at: string;
+};
+
+/** Generic inbox row (migration `20260519000000`). Dedupe-keyed per user. */
+export type InboxNotificationRow = {
+  id: string;
+  user_id: string;
+  /** Producer label; consumers use this to know which mark-as-read action to call. */
+  kind: string;
+  title: string;
+  body: string | null;
+  cta_label: string | null;
+  cta_href: string | null;
+  /** Unique per `user_id`; producers re-upsert idempotently with `ignoreDuplicates`. */
+  dedupe_key: string;
+  read_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+/** Singapore income tax inputs (migration `20260518000000`). One row per user. */
+export type IncomeTaxConfigRow = {
+  id: string;
+  user_id: string;
+  year_of_assessment: number;
+  spouse_relief_sgd: string;
+  qualifying_child_relief_sgd: string;
+  handicapped_child_relief_sgd: string;
+  working_mother_child_relief_sgd: string;
+  parent_relief_sgd: string;
+  grandparent_caregiver_relief_sgd: string;
+  handicapped_sibling_relief_sgd: string;
+  cpf_cash_topup_self_sgd: string;
+  cpf_cash_topup_family_sgd: string;
+  srs_contribution_sgd: string;
+  cpf_medisave_voluntary_sgd: string;
+  nsman_self_relief_sgd: string;
+  nsman_wife_relief_sgd: string;
+  nsman_parent_relief_sgd: string;
+  course_fees_relief_sgd: string;
+  life_insurance_relief_sgd: string;
+  other_reliefs_amount_sgd: string;
+  other_reliefs_notes: string | null;
+  /** Both rebate fields are set together or both null (DB CHECK + Zod superRefine). */
+  tax_rebate_percent: string | null;
+  tax_rebate_cap_sgd: string | null;
+  payment_method: "monthly_giro" | "one_time";
+  created_at: string;
   updated_at: string;
 };
 
