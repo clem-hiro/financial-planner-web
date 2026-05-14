@@ -3,13 +3,33 @@
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
 import { useEffect, useRef, useState } from "react";
+import type { InboxNotificationRow } from "@/data/supabase/types";
+import { ContactAdvisorButton } from "@/features/app-shell/ContactAdvisorButton";
 import { OpenMethodologyButton } from "@/features/help/OpenMethodologyButton";
+import { InboxBell } from "@/features/inbox/InboxBell";
 import { signOutAction } from "@/server/actions";
 
 const panelClass =
-  "absolute right-0 z-50 mt-2 w-[min(100vw-2rem,16rem)] rounded-2xl border border-slate-200/90 bg-white/98 p-2 shadow-[0_20px_50px_-24px_rgba(15,23,42,0.35)] backdrop-blur-xl";
+  "absolute right-0 z-50 mt-2 w-[min(100vw-2rem,20rem)] rounded-2xl border border-slate-200/90 bg-white/98 p-2 shadow-[0_20px_50px_-24px_rgba(15,23,42,0.35)] backdrop-blur-xl";
 
-export function AppShellUserMenu({ user }: { user: User }) {
+const menuRowClass =
+  "flex w-full items-center rounded-xl px-3 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50";
+
+const contactMenuRowClass =
+  "flex w-full items-center justify-center rounded-xl px-3 py-2.5 text-sm font-medium text-emerald-900 transition hover:bg-emerald-50 disabled:opacity-60";
+
+const inboxMenuRowClass =
+  "relative flex w-full items-center rounded-xl px-3 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50";
+
+export function AppShellUserMenu({
+  user,
+  inbox,
+  showContactAdvisor,
+}: {
+  user: User;
+  inbox: { unreadCount: number; initialItems: InboxNotificationRow[] } | null;
+  showContactAdvisor?: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -31,7 +51,7 @@ export function AppShellUserMenu({ user }: { user: User }) {
         aria-expanded={open}
         aria-haspopup="menu"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex max-w-[14rem] min-h-10 items-center gap-2 rounded-full border border-slate-200/90 bg-white px-3 py-2 text-left text-sm font-semibold text-[#0c192f] shadow-sm transition hover:border-emerald-200/90 sm:min-h-0 sm:py-1.5"
+        className="inline-flex max-w-56 min-h-10 items-center gap-2 rounded-full border border-slate-200/90 bg-white px-3 py-2 text-left text-sm font-semibold text-[#0c192f] shadow-sm transition hover:border-emerald-200/90 sm:min-h-0 sm:py-1.5"
       >
         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#0c192f] to-[#047857] text-xs font-bold text-white">
           {email.slice(0, 1).toUpperCase()}
@@ -50,31 +70,53 @@ export function AppShellUserMenu({ user }: { user: User }) {
           <Link
             role="menuitem"
             href="/setup?tab=profile"
-            className="block rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+            className={menuRowClass}
             onClick={() => setOpen(false)}
           >
-            Profile &amp; assumptions
+            Financial setup
           </Link>
           <Link
             role="menuitem"
             href="/more"
-            className="block rounded-xl px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+            className={menuRowClass}
             onClick={() => setOpen(false)}
           >
             More
           </Link>
+          {showContactAdvisor || inbox ? (
+            <div className="my-1 border-t border-slate-100" />
+          ) : null}
+          {showContactAdvisor ? (
+            <div className="px-0 py-0.5">
+              <ContactAdvisorButton
+                menuButtonClassName={contactMenuRowClass}
+                onOpened={() => setOpen(false)}
+              />
+            </div>
+          ) : null}
+          {inbox ? (
+            <div className="px-0 py-0.5">
+              <InboxBell
+                unreadCount={inbox.unreadCount}
+                initialItems={inbox.initialItems}
+                menuButtonClassName={inboxMenuRowClass}
+              />
+            </div>
+          ) : null}
           <div className="my-1 border-t border-slate-100" />
-          <div className="px-1 py-1">
+          <div className="px-0 py-0.5">
             <OpenMethodologyButton
               label="How it works"
-              className="w-full rounded-xl px-3 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+              onBeforeOpen={() => setOpen(false)}
+              className={`${menuRowClass} w-full justify-start text-left font-medium`}
             />
           </div>
-          <form action={signOutAction} className="px-1 pb-1">
+          <div className="my-1 border-t border-slate-100" />
+          <form action={signOutAction} className="px-0 pb-0.5">
             <button
               type="submit"
               role="menuitem"
-              className="w-full rounded-xl px-3 py-2.5 text-left text-sm font-medium text-slate-500 transition hover:bg-slate-50 hover:text-slate-900"
+              className={`${menuRowClass} w-full text-slate-500 hover:text-slate-900`}
             >
               Sign out
             </button>

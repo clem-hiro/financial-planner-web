@@ -5,14 +5,17 @@ import type { InboxNotificationRow } from "@/data/supabase/types";
 import { InboxPanel } from "@/features/inbox/InboxPanel";
 
 const panelClass =
-  "absolute right-0 z-50 mt-2 w-[min(100vw-2rem,22rem)] rounded-2xl border border-slate-200/90 bg-white/98 p-3 shadow-[0_20px_50px_-24px_rgba(15,23,42,0.35)] backdrop-blur-xl";
+  "absolute right-0 z-[60] mt-2 w-[min(100vw-2rem,22rem)] rounded-2xl border border-slate-200/90 bg-white/98 p-3 shadow-[0_20px_50px_-24px_rgba(15,23,42,0.35)] backdrop-blur-xl";
 
 export function InboxBell({
   unreadCount,
   initialItems,
+  menuButtonClassName,
 }: {
   unreadCount: number;
   initialItems: InboxNotificationRow[];
+  /** When set, replaces default header icon styling (e.g. account menu row). */
+  menuButtonClassName?: string;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -40,17 +43,39 @@ export function InboxBell({
             : "Notifications"
         }
         onClick={() => setOpen((v) => !v)}
-        className="relative inline-flex min-h-10 items-center justify-center rounded-full border border-slate-200/90 bg-white px-3.5 py-2 text-xs font-semibold tracking-wide text-slate-600 shadow-sm transition hover:border-emerald-200/90 hover:text-emerald-900 sm:min-h-0 sm:py-1.5"
+        className={
+          menuButtonClassName ??
+          "relative inline-flex min-h-10 items-center justify-center rounded-full border border-slate-200/90 bg-white px-3.5 py-2 text-xs font-semibold tracking-wide text-slate-600 shadow-sm transition hover:border-emerald-200/90 hover:text-emerald-900 sm:min-h-0 sm:py-1.5"
+        }
       >
-        <span aria-hidden>🔔</span>
-        {unreadCount > 0 ? (
-          <span
-            className="absolute -top-1 -right-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-600 px-1 text-[10px] font-bold leading-none text-white"
-            aria-hidden
-          >
-            {badge}
+        {menuButtonClassName ? (
+          <span className="flex w-full items-center justify-between gap-2">
+            <span className="flex items-center gap-2">
+              <span aria-hidden>🔔</span>
+              <span>Notifications</span>
+            </span>
+            {unreadCount > 0 ? (
+              <span
+                className="inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-emerald-600 px-1.5 text-[10px] font-bold leading-none text-white"
+                aria-hidden
+              >
+                {badge}
+              </span>
+            ) : null}
           </span>
-        ) : null}
+        ) : (
+          <>
+            <span aria-hidden>🔔</span>
+            {unreadCount > 0 ? (
+              <span
+                className="absolute -top-1 -right-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-600 px-1 text-[10px] font-bold leading-none text-white"
+                aria-hidden
+              >
+                {badge}
+              </span>
+            ) : null}
+          </>
+        )}
       </button>
       {open ? (
         <div className={panelClass} role="menu" aria-label="Inbox">

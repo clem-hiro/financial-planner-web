@@ -25,7 +25,7 @@ export default function MorePage() {
           className="rounded-2xl bg-linear-to-br from-white via-slate-50/50 to-sky-50/20 p-5 ring-1 ring-slate-200/70 transition hover:ring-slate-300/90"
         >
           <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
-            Profile
+            Financial setup
           </p>
           <p className="mt-2 text-lg font-semibold text-[#0c192f]">
             Assumptions &amp; identity
