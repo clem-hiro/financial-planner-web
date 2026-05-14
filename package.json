@@ -10,7 +10,8 @@
     "test": "vitest run",
     "docs:check": "node scripts/validate-handbook.mjs",
     "map": "tsx scripts/function-tree/run.ts",
-    "map:check": "tsx scripts/function-tree/check.ts"
+    "map:check": "tsx scripts/function-tree/check.ts",
+    "seed:dev": "node --env-file=.env.local scripts/seed-dev-users.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.2",

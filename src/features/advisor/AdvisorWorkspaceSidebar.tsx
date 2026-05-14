@@ -53,14 +53,11 @@ export function AdvisorWorkspaceSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
-        Financial Advisor
-      </p>
-      <h2 className="mt-1 text-lg font-semibold tracking-tight text-slate-900">
-        Workspace
-      </h2>
-      <nav className="mt-5 space-y-1.5" aria-label="Advisor navigation">
+    <div className="rounded-xl border border-slate-200 bg-white px-2 py-2 shadow-sm">
+      <nav
+        className="flex gap-1 overflow-x-auto"
+        aria-label="Advisor navigation"
+      >
         {advisorNavItems.map((item) => {
           const active = item.activeMatch
             ? item.activeMatch(pathname)
@@ -69,10 +66,10 @@ export function AdvisorWorkspaceSidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`block rounded-xl px-3 py-2 text-sm font-medium transition ${
+              className={`inline-flex min-h-10 shrink-0 items-center rounded-lg px-3.5 py-2 text-sm font-semibold transition ${
                 active
-                  ? "bg-slate-900 text-white"
-                  : "text-slate-700 hover:bg-slate-100"
+                  ? "bg-[#0c192f] text-white shadow-sm"
+                  : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
               }`}
             >
               {item.label}
@@ -80,15 +77,6 @@ export function AdvisorWorkspaceSidebar() {
           );
         })}
       </nav>
-      <div className="mt-6 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-3 py-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-          Coming Soon
-        </p>
-        <p className="mt-1 text-xs leading-relaxed text-slate-600">
-          Teams, assistants, segmentation, and AI briefs — architecture stays
-          advisor-scoped until those modules ship.
-        </p>
-      </div>
-    </aside>
+    </div>
   );
 }
