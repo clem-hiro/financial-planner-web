@@ -12,19 +12,20 @@ export default async function AppLayout({
   children: React.ReactNode;
 }) {
   let user = null;
+  let profile = null;
   let workspace: "client" | "advisor" = "client";
   if (isSupabaseConfigured()) {
     const supabase = await createSupabaseServerClient();
     const { data } = await supabase.auth.getUser();
     user = data.user;
     if (user) {
-      const profile = await getProfileById(supabase, user.id);
+      profile = await getProfileById(supabase, user.id);
       workspace = isAdvisor(profile) ? "advisor" : "client";
     }
   }
 
   return (
-    <AppShell user={user} workspace={workspace}>
+    <AppShell user={user} profile={profile} workspace={workspace}>
       {children}
     </AppShell>
   );

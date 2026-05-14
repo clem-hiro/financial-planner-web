@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "docs:check": "node scripts/validate-handbook.mjs",
+    "map": "tsx scripts/function-tree/run.ts",
+    "map:check": "tsx scripts/function-tree/check.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.2",
@@ -15,6 +18,7 @@
     "next": "16.2.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-phone-number-input": "^3.4.16",
     "recharts": "^3.8.1",
     "zod": "^4.3.6"
   },
@@ -26,6 +30,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.3",
     "tailwindcss": "^4",
+    "ts-morph": "^28.0.0",
+    "tsx": "^4.21.0",
     "typescript": "^5",
     "vitest": "^3.2.4"
   }

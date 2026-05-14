@@ -3,10 +3,12 @@
 import { createSupabaseBrowserClient } from "@/data/supabase/browser";
 import {
   clientAccessKeyInputSchema,
+  e164PhoneSchema,
   signupFinancialRoleSchema,
 } from "@/lib/validation";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { PhoneInputField } from "@/features/auth/PhoneInputField";
 
 type Mode = "signin" | "signup";
 
@@ -14,6 +16,11 @@ type SignupRole = "advisor" | "client";
 
 const tabBase =
   "flex-1 rounded-lg py-2.5 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/35 focus-visible:ring-offset-2";
+
+const authInputClass =
+  "min-h-11 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20";
+
+const authLabelClass = "block text-sm font-medium text-slate-700";
 
 function formatSignupError(message: string): string {
   if (message.includes("Invalid, already used")) return message;
@@ -31,6 +38,7 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [signupRole, setSignupRole] = useState<SignupRole>("advisor");
+  const [advisorPhone, setAdvisorPhone] = useState("");
   const [accessKey, setAccessKey] = useState("");
   const [mode, setMode] = useState<Mode>("signin");
   const [error, setError] = useState<string | null>(() =>
@@ -45,6 +53,7 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
     setSignupInfo(null);
     if (next === "signin") {
       setSignupRole("advisor");
+      setAdvisorPhone("");
       setAccessKey("");
     }
   }
@@ -97,6 +106,13 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
             return;
           }
           userMeta.access_key = normalizedKey;
+        } else {
+          const phoneParsed = e164PhoneSchema.safeParse(advisorPhone);
+          if (!phoneParsed.success) {
+            setError("Enter a valid phone number with country code.");
+            return;
+          }
+          userMeta.phone_e164 = phoneParsed.data;
         }
 
         const { data, error: err } = await supabase.auth.signUp({
@@ -108,6 +124,7 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
               display_name?: string;
               profile_type: string;
               access_key?: string;
+              phone_e164?: string;
             },
           },
         });
@@ -121,6 +138,7 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
           );
           setPassword("");
           setAccessKey("");
+          setAdvisorPhone("");
           return;
         }
         router.push(role === "advisor" ? "/advisor" : "/onboarding");
@@ -280,31 +298,31 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
         </fieldset>
       ) : null}
 
-      <label className="block text-sm font-medium text-slate-700">
+      <label className={authLabelClass}>
         <span className="mb-1.5 block">Email</span>
         <input
           type="email"
           autoComplete="email"
           required
-          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20"
+          className={authInputClass}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
       </label>
-      <label className="block text-sm font-medium text-slate-700">
+      <label className={authLabelClass}>
         <span className="mb-1.5 block">Password</span>
         <input
           type="password"
           autoComplete={mode === "signin" ? "current-password" : "new-password"}
           required
           minLength={6}
-          className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20"
+          className={authInputClass}
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </label>
       {mode === "signup" && signupRole === "client" ? (
-        <label className="block text-sm font-medium text-slate-700">
+        <label className={authLabelClass}>
           <span className="mb-1.5 block">Advisor access key</span>
           <input
             type="text"
@@ -312,19 +330,30 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
             spellCheck={false}
             required
             placeholder="Paste the key from your advisor"
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 font-mono text-sm text-slate-900 shadow-sm outline-none transition focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20"
+            className={`${authInputClass} font-mono`}
             value={accessKey}
             onChange={(e) => setAccessKey(e.target.value)}
           />
         </label>
       ) : null}
+      {mode === "signup" && signupRole === "advisor" ? (
+        <label className={authLabelClass}>
+          <span className="mb-1.5 block">WhatsApp phone</span>
+          <PhoneInputField
+            value={advisorPhone}
+            onChange={setAdvisorPhone}
+            required
+            variant="auth"
+          />
+        </label>
+      ) : null}
       {mode === "signup" && (
-        <label className="block text-sm font-medium text-slate-700">
+        <label className={authLabelClass}>
           <span className="mb-1.5 block">Display name (optional)</span>
           <input
             type="text"
             autoComplete="name"
-            className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20"
+            className={authInputClass}
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
           />
