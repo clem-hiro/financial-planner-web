@@ -8,11 +8,8 @@ import type { InboxNotificationRow, ProfileRow } from "@/data/supabase/types";
 import { AdvisorPhonePromptBanner } from "@/features/app-shell/AdvisorPhonePromptBanner";
 import { AppShellNav } from "@/features/app-shell/AppShellNav";
 import { AppShellUserMenu } from "@/features/app-shell/AppShellUserMenu";
-import { ContactAdvisorButton } from "@/features/app-shell/ContactAdvisorButton";
 import { MethodologySheet } from "@/features/help/MethodologySheet";
 import { MethodologyProvider } from "@/features/help/methodology-context";
-import { OpenMethodologyButton } from "@/features/help/OpenMethodologyButton";
-import { InboxBell } from "@/features/inbox/InboxBell";
 import { ScrollToTopButton } from "@/ui/ScrollToTopButton";
 
 export function AppShell({
@@ -60,57 +57,49 @@ export function AppShell({
               : "border-slate-200/80 bg-white/95 shadow-[0_1px_0_0_rgba(4,120,87,0.08)]"
           }`}
         >
-          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 sm:gap-y-4 sm:px-8 sm:py-5">
-            <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-baseline sm:gap-4">
+          <div
+            className={`mx-auto flex w-full max-w-6xl items-center gap-3 px-4 py-3 sm:gap-4 sm:px-8 sm:py-5 ${
+              user && showMainAppNav ? "" : "justify-between"
+            }`}
+          >
+            <div className="flex shrink-0 flex-col gap-1 self-center sm:flex-row sm:items-baseline sm:gap-4">
               <Link
                 href={brandHref}
-                className="text-lg font-semibold tracking-tight text-[#0c192f] transition-opacity hover:opacity-80 sm:text-xl"
+                className="shrink-0 text-lg font-semibold tracking-tight text-[#0c192f] transition-opacity hover:opacity-80 sm:text-xl"
               >
                 Finance Planner
               </Link>
-              <span className="hidden max-w-xs text-[11px] font-medium uppercase leading-snug tracking-[0.18em] text-slate-400 sm:inline">
+              <span className="hidden max-w-40 text-[11px] font-medium uppercase leading-snug tracking-[0.18em] text-slate-400 sm:inline md:max-w-xs">
                 {workspace === "advisor"
                   ? "Advisor workspace"
                   : "Private wealth clarity"}
               </span>
             </div>
-            <div
-              className={`flex w-full items-center gap-2 sm:w-auto sm:flex-row sm:flex-wrap sm:gap-3 ${
-                showMainAppNav
-                  ? "justify-between sm:justify-end"
-                  : "justify-end"
-              }`}
-            >
-              {showMainAppNav ? (
+            {showMainAppNav ? (
+              <div className="min-h-0 min-w-0 flex-1 overflow-x-auto">
                 <AppShellNav workspace={workspace} />
-              ) : null}
-              <div className="flex shrink-0 items-center justify-end gap-1.5 sm:gap-2">
-                {workspace === "advisor" ? (
-                  <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
-                    Operations
-                  </span>
-                ) : null}
-                {showMainAppNav && workspace === "client" ? (
-                  <ContactAdvisorButton />
-                ) : null}
-                {user && inbox ? (
-                  <InboxBell
-                    unreadCount={inbox.unreadCount}
-                    initialItems={inbox.initialItems}
-                  />
-                ) : null}
-                <OpenMethodologyButton className="inline-flex min-h-10 items-center justify-center rounded-full border border-slate-200/90 bg-white px-3.5 py-2 text-xs font-semibold tracking-wide text-slate-600 shadow-sm transition hover:border-emerald-200/90 hover:text-emerald-900 sm:min-h-0 sm:py-1.5" />
-                {user ? (
-                  <AppShellUserMenu user={user} />
-                ) : (
-                  <Link
-                    href="/login"
-                    className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#0c192f] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-slate-900/15 transition hover:bg-[#152a45] sm:min-h-0 sm:py-2"
-                  >
-                    Sign in
-                  </Link>
-                )}
               </div>
+            ) : null}
+            <div className="flex shrink-0 items-center gap-2">
+              {workspace === "advisor" ? (
+                <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+                  Operations
+                </span>
+              ) : null}
+              {user ? (
+                <AppShellUserMenu
+                  user={user}
+                  inbox={inbox}
+                  showContactAdvisor={showMainAppNav && workspace === "client"}
+                />
+              ) : (
+                <Link
+                  href="/login"
+                  className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#0c192f] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-slate-900/15 transition hover:bg-[#152a45] sm:min-h-0 sm:py-2"
+                >
+                  Sign in
+                </Link>
+              )}
             </div>
           </div>
           {user && workspace === "advisor" ? (

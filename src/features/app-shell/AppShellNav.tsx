@@ -6,10 +6,10 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { lockBodyScroll } from "@/lib/body-scroll-lock";
 import {
+  appShellMainNavRailClass,
   appTabPillActiveClass,
   appTabPillClass,
   appTabPillInactiveClass,
-  appTabRailClass,
 } from "@/ui/app-tab-styles";
 
 type NavRoute = {
@@ -18,8 +18,22 @@ type NavRoute = {
   activeMatch?: (pathname: string) => boolean;
 };
 
+function matchesFinancialSetup(pathname: string) {
+  return (
+    pathname === "/setup" ||
+    pathname.startsWith("/setup/") ||
+    pathname === "/financial-profile" ||
+    pathname.startsWith("/financial-profile/")
+  );
+}
+
 const clientRoutes: readonly NavRoute[] = [
   { href: "/dashboard", label: "Home" },
+  {
+    href: "/setup",
+    label: "Financial setup",
+    activeMatch: matchesFinancialSetup,
+  },
   {
     href: "/planning/overview",
     label: "Planning",
@@ -28,12 +42,8 @@ const clientRoutes: readonly NavRoute[] = [
       pathname.startsWith("/planning/") ||
       pathname === "/goals" ||
       pathname.startsWith("/goals/") ||
-      pathname === "/setup" ||
-      pathname.startsWith("/setup/") ||
       pathname === "/balances" ||
       pathname.startsWith("/balances/") ||
-      pathname === "/financial-profile" ||
-      pathname.startsWith("/financial-profile/") ||
       pathname === "/budget" ||
       pathname.startsWith("/budget/"),
   },
@@ -59,6 +69,7 @@ const clientRoutes: readonly NavRoute[] = [
 
 const prefetchClientRoutes = [
   "/dashboard",
+  "/setup",
   "/expenses",
   "/planning/overview",
   "/more",
@@ -97,7 +108,7 @@ export function AppShellNav({
       : pathname === route.href || pathname.startsWith(`${route.href}/`);
 
   return (
-    <nav className="relative w-full sm:w-auto" aria-label="Main">
+    <nav className="relative w-full min-w-0 sm:w-max" aria-label="Main">
       <div className="sm:hidden">
         <button
           type="button"
@@ -163,7 +174,7 @@ export function AppShellNav({
           )}
       </div>
       <div className="hidden sm:block">
-        <div className={appTabRailClass}>
+        <div className={appShellMainNavRailClass}>
           {routes.map((route) => {
             const active = isActive(route);
             return (

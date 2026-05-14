@@ -3,7 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import { getMyAdvisorContactAction } from "@/server/advisor-key-purchase-actions";
 
-export function ContactAdvisorButton() {
+export function ContactAdvisorButton({
+  menuButtonClassName,
+  onOpened,
+}: {
+  /** When set, replaces default pill styling (e.g. account menu row). */
+  menuButtonClassName?: string;
+  /** Called after a WhatsApp contact link is opened successfully. */
+  onOpened?: () => void;
+} = {}) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -42,6 +50,7 @@ export function ContactAdvisorButton() {
         if (!opened) {
           window.location.assign(contact.whatsapp_url);
         }
+        onOpened?.();
         return;
       }
       setMessage(contact.message ?? "Advisor contact is unavailable.");
@@ -58,7 +67,10 @@ export function ContactAdvisorButton() {
         type="button"
         onClick={openAdvisorContact}
         disabled={pending}
-        className="inline-flex min-h-10 items-center justify-center rounded-full border border-emerald-200/90 bg-emerald-50 px-3.5 py-2 text-xs font-semibold tracking-wide text-emerald-900 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-100 sm:min-h-0 sm:py-1.5 disabled:opacity-60"
+        className={
+          menuButtonClassName ??
+          "inline-flex min-h-10 items-center justify-center rounded-full border border-emerald-200/90 bg-emerald-50 px-3.5 py-2 text-xs font-semibold tracking-wide text-emerald-900 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-100 sm:min-h-0 sm:py-1.5 disabled:opacity-60"
+        }
       >
         {pending ? "Opening..." : "Contact advisor"}
       </button>
