@@ -43,10 +43,10 @@ export function AdvisorClientsBoard({
     <div className="space-y-6">
       <form
         method="get"
-        className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:gap-4 sm:p-5"
+        className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4 sm:p-5"
       >
         <div className="min-w-0 flex-1">
-          <label htmlFor="advisor-client-q" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <label htmlFor="advisor-client-q" className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
             Search
           </label>
           <input
@@ -54,10 +54,10 @@ export function AdvisorClientsBoard({
             name="q"
             defaultValue={q}
             placeholder="Name contains…"
-            className="mt-1 w-full max-w-md rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-sm text-slate-900 outline-none ring-slate-300/40 focus:ring-2"
+            className="mt-1.5 w-full max-w-md rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-sm text-slate-900 outline-none ring-slate-300/40 focus:ring-2"
           />
         </div>
-        <div>
+        <div className="flex items-center gap-2">
           <label htmlFor="advisor-client-sort" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
             Sort
           </label>
@@ -65,7 +65,7 @@ export function AdvisorClientsBoard({
             id="advisor-client-sort"
             name="sort"
             defaultValue={sort}
-            className="mt-1 w-full min-w-[200px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-800 shadow-sm outline-none ring-slate-300/40 focus:ring-2 sm:w-auto"
+            className="w-full min-w-[200px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-800 shadow-sm outline-none ring-slate-300/40 focus:ring-2 sm:w-auto"
           >
             <option value="created_desc">Newest first</option>
             <option value="name_asc">Name A–Z</option>
@@ -135,70 +135,65 @@ export function AdvisorClientsBoard({
         </div>
       ) : (
         <>
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {rows.map((row) => {
-              const sig = advisorClientRosterSignals({
-                monthly_income: row.monthly_income,
-                monthly_gross_salary: row.monthly_gross_salary,
-                savings_target_monthly: row.savings_target_monthly,
-                fixed_expenses_monthly: row.fixed_expenses_monthly,
-                onboarding_completed_at: row.onboarding_completed_at,
-                onboarding_required: row.onboarding_required,
-                last_expense_spent_at: row.last_expense_spent_at,
-                expense_count: row.expense_count,
-              });
-              return (
-                <Link
-                  key={row.id}
-                  href={`/advisor/client/${row.id}`}
-                  className="group flex flex-col rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-slate-300 hover:shadow-md"
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="truncate text-lg font-semibold tracking-tight text-slate-900 group-hover:underline">
-                        {row.display_name?.trim() || "Unnamed client"}
-                      </p>
-                      <p className="mt-1 text-xs text-slate-500">
-                        Last activity:{" "}
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <table className="min-w-full divide-y divide-slate-200 text-sm">
+              <thead className="bg-slate-50/80">
+                <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <th scope="col" className="px-4 py-3">Client</th>
+                  <th scope="col" className="px-4 py-3">Status</th>
+                  <th scope="col" className="px-4 py-3">Savings</th>
+                  <th scope="col" className="px-4 py-3">Budget</th>
+                  <th scope="col" className="px-4 py-3">Last activity</th>
+                  <th scope="col" className="px-4 py-3">Next action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {rows.map((row) => {
+                  const sig = advisorClientRosterSignals({
+                    monthly_income: row.monthly_income,
+                    monthly_gross_salary: row.monthly_gross_salary,
+                    savings_target_monthly: row.savings_target_monthly,
+                    fixed_expenses_monthly: row.fixed_expenses_monthly,
+                    onboarding_completed_at: row.onboarding_completed_at,
+                    onboarding_required: row.onboarding_required,
+                    last_expense_spent_at: row.last_expense_spent_at,
+                    expense_count: row.expense_count,
+                  });
+                  const href = `/advisor/client/${row.id}`;
+                  return (
+                    <tr key={row.id} className="transition hover:bg-slate-50/70">
+                      <td className="px-4 py-3 align-middle">
+                        <Link
+                          href={href}
+                          className="font-semibold tracking-tight text-slate-900 hover:underline"
+                        >
+                          {row.display_name?.trim() || "Unnamed client"}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3 align-middle">
+                        <AdvisorBadge tone={sig.riskBand === "high" ? "risk" : "neutral"}>
+                          {onboardingShort(row)}
+                        </AdvisorBadge>
+                      </td>
+                      <td className="px-4 py-3 align-middle text-slate-700">
+                        {sig.savingsHealthLabel}
+                      </td>
+                      <td className="px-4 py-3 align-middle text-slate-700">
+                        {sig.budgetHealthLabel}
+                      </td>
+                      <td className="px-4 py-3 align-middle text-slate-700">
                         {row.last_expense_spent_at
                           ? new Date(row.last_expense_spent_at).toLocaleDateString()
                           : "—"}
-                      </p>
-                    </div>
-                    <AdvisorBadge tone={sig.riskBand === "high" ? "risk" : "neutral"}>
-                      {onboardingShort(row)}
-                    </AdvisorBadge>
-                  </div>
-                  <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
-                    <div>
-                      <p className="font-semibold uppercase tracking-wide text-slate-500">
-                        Savings
-                      </p>
-                      <p className="mt-1 font-medium text-slate-800">{sig.savingsHealthLabel}</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold uppercase tracking-wide text-slate-500">
-                        Budget
-                      </p>
-                      <p className="mt-1 font-medium text-slate-800">{sig.budgetHealthLabel}</p>
-                    </div>
-                  </div>
-                  <div className="mt-4 flex flex-wrap gap-1.5">
-                    {sig.tags.slice(0, 3).map((t) => (
-                      <AdvisorBadge key={t} tone="neutral">
-                        {t}
-                      </AdvisorBadge>
-                    ))}
-                  </div>
-                  <p className="mt-4 border-t border-slate-100 pt-3 text-xs font-medium text-slate-600">
-                    Next: <span className="text-slate-900">{sig.nextActionHint}</span>
-                  </p>
-                  <p className="mt-3 text-xs font-semibold text-slate-500 transition group-hover:text-slate-900">
-                    Open workspace →
-                  </p>
-                </Link>
-              );
-            })}
+                      </td>
+                      <td className="px-4 py-3 align-middle text-slate-700">
+                        {sig.nextActionHint}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
 
           <div className="flex flex-col items-start justify-between gap-3 border-t border-slate-200 pt-4 text-sm text-slate-600 sm:flex-row sm:items-center">
