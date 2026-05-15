@@ -11,6 +11,7 @@ import { PageSection } from "@/ui/PageSection";
 export function AdvisorPhoneVerificationForm({ user }: { user: User }) {
   const router = useRouter();
   const [phone, setPhone] = useState(user.phone ? `+${user.phone}` : "");
+  const [sentToPhone, setSentToPhone] = useState<string | null>(null);
   const [otp, setOtp] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -18,7 +19,7 @@ export function AdvisorPhoneVerificationForm({ user }: { user: User }) {
 
   const verified =
     user.phone_confirmed_at != null &&
-    user.phone === phone.replace(/^\+/, "");
+    (sentToPhone == null || user.phone === sentToPhone.replace(/^\+/, ""));
 
   async function sendCode() {
     if (pending) return;
@@ -44,6 +45,7 @@ export function AdvisorPhoneVerificationForm({ user }: { user: User }) {
       }
 
       setPhone(normalized);
+      setSentToPhone(normalized);
       setInfo("Verification code sent.");
     } catch (e) {
       setError(e instanceof Error ? e.message : "Could not send verification code.");
@@ -55,9 +57,8 @@ export function AdvisorPhoneVerificationForm({ user }: { user: User }) {
   async function verifyCode() {
     setError(null);
     setInfo(null);
-    const normalized = normalizeE164(phone);
-    if (!normalized) {
-      setError("Enter a valid phone number with country code.");
+    if (sentToPhone == null) {
+      setError("Send a verification code first.");
       return;
     }
     if (!otp.trim()) {
@@ -69,7 +70,7 @@ export function AdvisorPhoneVerificationForm({ user }: { user: User }) {
     try {
       const supabase = createSupabaseBrowserClient();
       const { error: verifyErr } = await supabase.auth.verifyOtp({
-        phone: normalized,
+        phone: sentToPhone,
         token: otp.trim(),
         type: "phone_change",
       });
@@ -126,7 +127,14 @@ export function AdvisorPhoneVerificationForm({ user }: { user: User }) {
         >
           <label className="block text-sm font-medium text-slate-700">
             <span className="mb-1.5 block">Phone number</span>
-            <PhoneInputField value={phone} onChange={setPhone} required />
+            <PhoneInputField
+              value={phone}
+              onChange={(next) => {
+                setPhone(next);
+                setSentToPhone(null);
+              }}
+              required
+            />
           </label>
           <button
             type="submit"
