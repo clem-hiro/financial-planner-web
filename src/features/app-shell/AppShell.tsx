@@ -4,7 +4,7 @@ import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
-import type { InboxNotificationRow, ProfileRow } from "@/data/supabase/types";
+import type { ProfileRow } from "@/data/supabase/types";
 import { AdvisorPhonePromptBanner } from "@/features/app-shell/AdvisorPhonePromptBanner";
 import { AppShellNav } from "@/features/app-shell/AppShellNav";
 import { AppShellUserMenu } from "@/features/app-shell/AppShellUserMenu";
@@ -16,15 +16,15 @@ export function AppShell({
   user,
   profile,
   workspace,
-  inbox,
+  inboxSlot,
   children,
 }: {
   user: User | null;
   profile: ProfileRow | null;
   /** Which product surface the signed-in user should see in the shell. */
   workspace: "client" | "advisor";
-  /** Server-rendered inbox snapshot. `null` when signed-out (bell is hidden). */
-  inbox: { unreadCount: number; initialItems: InboxNotificationRow[] } | null;
+  /** Inbox bell loaded in Suspense so page content can stream first. */
+  inboxSlot: React.ReactNode;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -89,7 +89,7 @@ export function AppShell({
               {user ? (
                 <AppShellUserMenu
                   user={user}
-                  inbox={inbox}
+                  inboxSlot={inboxSlot}
                   showContactAdvisor={showMainAppNav && workspace === "client"}
                 />
               ) : (

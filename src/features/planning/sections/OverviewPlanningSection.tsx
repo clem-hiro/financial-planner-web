@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { getDashboardPayload } from "@/data/dashboard";
 import { isFinancialProfileIncomplete } from "@/data/financial-profile";
-import { getProfileById } from "@/data/repositories/profiles";
-import { createSupabaseServerClient } from "@/data/supabase/server";
+import { getRequestAuth } from "@/data/supabase/request-context";
 import { DashboardOverviewSection } from "@/features/dashboard/DashboardOverviewSection";
 import { InsightCard } from "@/components/insights/InsightCard";
 import { AiInsightsRoadmapCard, AdvisorWorkspaceRoadmapCard } from "@/features/planning/roadmap-modules";
@@ -12,10 +11,7 @@ import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { formatCurrency } from "@/ui/lib/format";
 
 export async function OverviewPlanningSection() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { supabase, user, profile } = await getRequestAuth();
 
   if (!user) {
     return (
@@ -29,10 +25,7 @@ export async function OverviewPlanningSection() {
   }
 
   const month = formatYearMonth(new Date());
-  const [payload, profile] = await Promise.all([
-    getDashboardPayload(supabase, user.id, month),
-    getProfileById(supabase, user.id),
-  ]);
+  const payload = await getDashboardPayload(supabase, user.id, month);
   const currency = profile?.base_currency ?? DEFAULT_BASE_CURRENCY;
   const profileIncomplete = isFinancialProfileIncomplete(profile);
 

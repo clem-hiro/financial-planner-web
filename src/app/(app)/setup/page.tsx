@@ -7,8 +7,7 @@ import {
   profileSalaryTakeHomeMonthly,
 } from "@/data/mappers";
 import { getIncomeTaxConfig } from "@/data/repositories/income-tax-configs";
-import { getProfileById } from "@/data/repositories/profiles";
-import { createSupabaseServerClient } from "@/data/supabase/server";
+import { getRequestAuth } from "@/data/supabase/request-context";
 import { ProfileIncomeForm } from "@/features/dashboard/ProfileIncomeForm";
 import { IncomeTaxSection } from "@/features/income-tax/IncomeTaxSection";
 import {
@@ -67,10 +66,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
     );
   }
 
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { supabase, user, profile: financialProfile } = await getRequestAuth();
 
   if (!user) {
     return (
@@ -83,16 +79,11 @@ export default async function SetupPage({ searchParams }: PageProps) {
     );
   }
 
-  const financialProfile = await getProfileById(supabase, user.id);
   const setupTabs = buildSetupTabs();
 
   const sp = await searchParams;
   const activeTab =
     sp.tab && setupTabs.some((t) => t.id === sp.tab) ? sp.tab : "profile";
-  const incomeTaxConfig =
-    activeTab === "income_tax"
-      ? await getIncomeTaxConfig(supabase, user.id)
-      : null;
   const budgetMonth =
     sp.month && parseYearMonth(sp.month)
       ? sp.month
@@ -105,6 +96,12 @@ export default async function SetupPage({ searchParams }: PageProps) {
       ? budgetYearParsed
       : yearFromYearMonth(budgetMonth);
 
+  const [tabBundle, incomeTaxConfig] = await Promise.all([
+    loadSetupTabBundle(supabase, user.id, new Set([activeTab])),
+    activeTab === "income_tax"
+      ? getIncomeTaxConfig(supabase, user.id)
+      : Promise.resolve(null),
+  ]);
   const {
     investments,
     cashAccounts,
@@ -113,7 +110,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
     cpfRow,
     housingLoans,
     goals,
-  } = await loadSetupTabBundle(supabase, user.id, new Set([activeTab]));
+  } = tabBundle;
 
   const income = profileSalaryTakeHomeMonthly(financialProfile, budgetMonth);
   const gross = profileMonthlyGross(financialProfile);
