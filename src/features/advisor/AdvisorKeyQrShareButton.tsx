@@ -149,13 +149,26 @@ export function AdvisorKeyQrShareButton({ initialData }: Props) {
       <dialog
         ref={dialogRef}
         aria-labelledby={dialogHeadingId}
-        // CORE utilities only — no arbitrary [..] values. Tailwind v4 + Turbopack
-        // ships core utilities reliably but its JIT can drop arbitrary values
-        // until a deep rebuild (that was the lingering bug: the height cap never
-        // applied, so a tall box overflowed the top under translateY(-50%)).
-        // fixed + 50/50 + translate centers in every engine; max-h-screen +
-        // overflow-y-auto keeps a tall dialog on-screen. backdrop: → ::backdrop.
-        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-h-screen w-full max-w-md overflow-y-auto rounded-2xl border border-slate-200 bg-transparent p-0 shadow-2xl backdrop:bg-slate-900/50"
+        // Centering is inline (not Tailwind): immune to Turbopack/JIT dropping
+        // classes, and inline specificity beats the UA <dialog> stylesheet whose
+        // residual inset/margin (esp. block-axis, in real Safari) defeated every
+        // class-based attempt. right/bottom:auto + margin:0 neutralize the UA
+        // insets so only top/left + translate apply → centered in every engine.
+        // backdrop:bg-* (className) styles the ::backdrop pseudo-element.
+        style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          right: "auto",
+          bottom: "auto",
+          transform: "translate(-50%, -50%)",
+          margin: 0,
+          width: "100%",
+          maxWidth: "28rem",
+          maxHeight: "100vh",
+          overflowY: "auto",
+        }}
+        className="rounded-2xl border border-slate-200 bg-transparent p-0 shadow-2xl backdrop:bg-slate-900/50"
         onClose={closeDialog}
         onCancel={closeDialog}
         onClick={(e) => {
