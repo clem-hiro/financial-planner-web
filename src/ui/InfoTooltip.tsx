@@ -58,13 +58,27 @@ export function InfoTooltip({
   const opensSheet = methodologyTopicId != null;
 
   return (
-    <span ref={rootRef} className="relative inline-flex align-middle">
+    <span
+      ref={rootRef}
+      className="relative inline-flex align-middle"
+      onBlur={(e) => {
+        const related = (e as React.FocusEvent).relatedTarget as Node | null;
+        if (!related || !rootRef.current?.contains(related)) {
+          setOpen(false);
+        }
+      }}
+    >
       <button
         type="button"
         className={`ml-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border bg-white/90 text-xs font-bold leading-none shadow-sm focus:outline-none focus:ring-2 touch-manipulation sm:h-5 sm:w-5 sm:text-[10px] ${triggerClass[variant]}`}
         aria-expanded={opensSheet ? undefined : open}
         aria-controls={opensSheet ? undefined : panelId}
         aria-label={ariaLabel}
+        onBlur={(e) => {
+          if (!rootRef.current?.contains(e.relatedTarget as Node | null)) {
+            setOpen(false);
+          }
+        }}
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
