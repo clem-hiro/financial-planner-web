@@ -149,12 +149,12 @@ export function AdvisorKeyQrShareButton({ initialData }: Props) {
       <dialog
         ref={dialogRef}
         aria-labelledby={dialogHeadingId}
-        // Center deterministically instead of relying on the UA :modal centering
-        // (overridden under Tailwind Preflight → pinned top-left). `fixed inset-0`
-        // gives a full-viewport box; `m-auto` + a constrained `w`/`h-fit` then
-        // distributes free space on both axes. `max-h`+`overflow-y-auto` keeps a
-        // tall dialog in-viewport. `backdrop:` styles the ::backdrop pseudo.
-        className="fixed inset-0 m-auto h-fit max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-md overflow-y-auto rounded-2xl border border-slate-200 bg-transparent p-0 shadow-2xl backdrop:bg-slate-900/50"
+        // Transform-based centering — engine-agnostic, independent of the
+        // <dialog> top-layer + margin:auto/inset:0 resolution that real Safari
+        // diverges on. fixed + 50/50 + translate(-50%,-50%) centers any-size
+        // box in every browser. max-h + overflow-y-auto keeps a tall dialog
+        // in-viewport. backdrop: styles the ::backdrop pseudo-element.
+        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-md overflow-y-auto rounded-2xl border border-slate-200 bg-transparent p-0 shadow-2xl backdrop:bg-slate-900/50"
         onClose={closeDialog}
         onCancel={closeDialog}
         onClick={(e) => {
