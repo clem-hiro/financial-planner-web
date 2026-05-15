@@ -2,8 +2,11 @@
 const base =
   "rounded-xl border border-slate-200/90 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition-[border-color,box-shadow,background-color] placeholder:text-slate-400 focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/15 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500";
 
-export const fpInputClass = `w-full max-w-xs ${base}`;
-export const fpInputNarrowClass = `w-full max-w-[8rem] ${base}`;
+const numberInputClass =
+  "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
+
+export const fpInputClass = `w-full max-w-xs ${base} ${numberInputClass}`;
+export const fpInputNarrowClass = `w-full max-w-[8rem] ${base} ${numberInputClass}`;
 export const fpSelectClass = `w-full max-w-xs ${base} cursor-pointer bg-white`;
 
 export const fpPrimaryButtonClass =
