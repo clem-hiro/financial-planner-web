@@ -58,7 +58,9 @@ async function ensureAdvisor() {
   const existing = await findUserByEmail(DEV_ADVISOR.email);
   if (existing) {
     // Sync phone if it drifted from the script's source of truth.
-    if (existing.phone !== DEV_ADVISOR.phone.replace(/^\+/, "")) {
+    const wantPhone = DEV_ADVISOR.phone.replace(/^\+/, "");
+    const havePhone = (existing.phone ?? "").replace(/^\+/, "");
+    if (havePhone !== wantPhone) {
       const { data: updated, error: updErr } = await admin.auth.admin.updateUserById(
         existing.id,
         { phone: DEV_ADVISOR.phone, phone_confirm: true },
@@ -118,7 +120,16 @@ async function ensureClient(advisorUserId) {
   });
   if (error) {
     // Roll back the orphaned key so the next run starts clean.
-    await admin.from("advisor_access_keys").delete().eq("access_key", consumeKey);
+    const { error: rbErr } = await admin
+      .from("advisor_access_keys")
+      .delete()
+      .eq("access_key", consumeKey);
+    if (rbErr) {
+      console.error(
+        `[seed-dev-users] orphan key NOT cleaned: ${consumeKey} (rollback err: ${rbErr.message}). ` +
+          "Delete manually before re-running.",
+      );
+    }
     throw new Error(`createUser client: ${error.message}`);
   }
   if (!data.user) throw new Error("createUser client: no user returned");
