@@ -154,7 +154,7 @@ export function AdvisorKeyQrShareButton({ initialData }: Props) {
         // residual inset/margin (esp. block-axis, in real Safari) defeated every
         // class-based attempt. right/bottom:auto + margin:0 neutralize the UA
         // insets so only top/left + translate apply → centered in every engine.
-        // backdrop:bg-* (className) styles the ::backdrop pseudo-element.
+        // ::backdrop dim is a source-CSS rule in globals.css (not a JIT utility).
         style={{
           position: "fixed",
           top: "50%",
@@ -168,7 +168,7 @@ export function AdvisorKeyQrShareButton({ initialData }: Props) {
           maxHeight: "100vh",
           overflowY: "auto",
         }}
-        className="rounded-2xl border border-slate-200 bg-transparent p-0 shadow-2xl backdrop:bg-slate-900/50"
+        className="rounded-2xl border border-slate-200 bg-transparent p-0 shadow-2xl"
         onClose={closeDialog}
         onCancel={closeDialog}
         onClick={(e) => {
