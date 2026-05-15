@@ -2,15 +2,16 @@
 
 ## 1. State Snapshot
 
-Branch `sandbox` at `fcba463`, **6 commits ahead of `origin/sandbox`** (unpushed) and ahead of `origin/main` (`8a1f679`). Prior session: PRs #2/#3/#4 merged. Co-developer (CleAyz) pushed in parallel: `[Contact Advisor] Allow dismiss on blur`, a Codex agents/skills setup, and a `[Financial Setup] Move to main tabs instead of profile tabs` navigation refactor (added `src/app/(app)/more/page.tsx` + `src/lib/client-main-nav.ts`). The income-tax migrations (`20260518000000`–`20260520000000`) + `20260521000000` DEVPOC-UNLI coupon migration applied via Supabase Dashboard SQL Editor by the operator. Dev users seeded: `_dev@dev.com` (advisor, phone `+6596340104` confirmed) and `_dev_client@dev.com` (client, pw `dev123`, advisor link wired via consumed access key).
+Branch `sandbox` at `fc2f931`, **pushed to `origin/sandbox`** (2026-05-15; in sync, `0 0`) and ahead of `origin/main` (`8a1f679`). Prior session: PRs #2/#3/#4 merged. Co-developer (CleAyz) pushed in parallel: `[Contact Advisor] Allow dismiss on blur`, a Codex agents/skills setup, and a `[Financial Setup] Move to main tabs instead of profile tabs` navigation refactor (added `src/app/(app)/more/page.tsx` + `src/lib/client-main-nav.ts`). The local QR commits were **rebased onto CleAyz's `c86ea38`** (an empty merge commit — zero net file changes; rebase was conflict-free and tree-identical) then fast-forward pushed. The income-tax migrations (`20260518000000`–`20260520000000`) + `20260521000000` DEVPOC-UNLI coupon migration applied via Supabase Dashboard SQL Editor by the operator. Dev users seeded: `_dev@dev.com` (advisor, phone `+6596340104` confirmed) and `_dev_client@dev.com` (client, pw `dev123`, advisor link wired via consumed access key).
 
-**This session (2026-05-15) — local commits not yet pushed:**
-- `6c4f4af fix(advisor): bind phone-verify to sent number, not live input` — the carried-forward P0 phone-verify race fix (capture `sentToPhone`).
-- `992201b chore(handoff): add P1 for per-category income-tax tooltips`.
-- `dea6e04 feat(advisor): QR-code key sharing with one-time deeplinks` — full QR feature: server-side `qrcode` SVG, opaque-token deeplink, `advisor_qr_share_tokens` table + RPCs, native `<dialog>`, WCAG 2.2 AA, anti-quishing trust signals.
-- `fcba463 fix(advisor): QR token — idempotent mint + peek-on-GET, consume-on-POST` — post-ship review fixes (Bug A retire-on-page-render, Bug B consume-on-GET).
+**This session (2026-05-15) — 5 commits, pushed (post-rebase SHAs):**
+- `b9f054e fix(advisor): bind phone-verify to sent number, not live input` — the carried-forward P0 phone-verify race fix (capture `sentToPhone`).
+- `dd2c047 chore(handoff): add P1 for per-category income-tax tooltips`.
+- `80c7245 feat(advisor): QR-code key sharing with one-time deeplinks` — full QR feature: server-side `qrcode` SVG, opaque-token deeplink, `advisor_qr_share_tokens` table + RPCs, native `<dialog>`, WCAG 2.2 AA, anti-quishing trust signals.
+- `1cf1060 fix(advisor): QR token — idempotent mint + peek-on-GET, consume-on-POST` — post-ship review fixes (Bug A retire-on-page-render, Bug B consume-on-GET).
+- `fc2f931 chore(handoff): QR-share shipped + P0 resolved + accepted posture`.
 - **Migration `20260522000000_advisor_qr_share_tokens.sql` was applied by the operator** via Supabase Dashboard SQL Editor (the final canonical block: table + 3 indexes incl. `advisor_qr_share_tokens_active_idx` + RLS + `peek_qr_share_token` + `consume_qr_share_token` + 4-arg `mint_qr_share_token`). Operator confirmed "query ran". Validation queries are in the plan file.
-- **Operator action items still open:** (1) add `SITE_URL=` to `.env.local.example` (sandbox-locked from agents); (2) set `SITE_URL` in Vercel production env before promoting `main`; (3) `git push` the 6 sandbox commits when ready (not pushed — no instruction given).
+- **Operator action items still open:** (1) `SITE_URL` set in Vercel production env by operator (reported done) — verify scope = Production + redeploy; (2) before production: Supabase Auth → URL Configuration → Redirect URLs allowlist must include the prod `…/auth/callback`; (3) sandbox→main PR + Vercel-preview real-phone scan smoke test (only path not exercisable on localhost). `.env.local.example` `SITE_URL` line decided (keep) — `ENVIRONMENT` line dropped per user (no code reads it; `VERCEL_ENV` discriminates).
 
 ## 5. Active Focus
 
