@@ -19,9 +19,15 @@ create index if not exists advisor_qr_share_tokens_advisor_idx
 create index if not exists advisor_qr_share_tokens_cleanup_idx
   on public.advisor_qr_share_tokens (expires_at);
 
+-- Partial index covering the TS-layer "peek for existing live token" SELECT and the
+-- kill-prior UPDATE inside mint_qr_share_token.
+create index if not exists advisor_qr_share_tokens_active_idx
+  on public.advisor_qr_share_tokens (advisor_user_id, access_key)
+  where consumed_at is null;
+
 alter table public.advisor_qr_share_tokens enable row level security;
 
--- Advisors can read their own tokens (powers a future audit-log UI; unused in this PR).
+-- Advisors can read their own tokens. Used by the TS-layer peek path (Fix A) and a future audit-log UI.
 drop policy if exists "advisor_qr_share_tokens_select_own" on public.advisor_qr_share_tokens;
 create policy "advisor_qr_share_tokens_select_own"
   on public.advisor_qr_share_tokens
@@ -33,7 +39,28 @@ create policy "advisor_qr_share_tokens_select_own"
 -- is granted to authenticated callers.
 
 -- ---------------------------------------------------------------------------
--- Consume RPC: atomic single-use claim, callable unauthenticated from /login.
+-- Peek RPC (Fix B): read-only check from /login GET. Safe under link-preview prefetch.
+-- Returns the access_key if the token is alive, NULL otherwise. Does not mutate.
+-- ---------------------------------------------------------------------------
+create or replace function public.peek_qr_share_token(p_token text)
+returns text
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select access_key
+  from public.advisor_qr_share_tokens
+  where token = p_token
+    and consumed_at is null
+    and expires_at > now();
+$$;
+
+grant execute on function public.peek_qr_share_token(text) to anon, authenticated;
+
+-- ---------------------------------------------------------------------------
+-- Consume RPC: atomic single-use claim. After Fix B, this is called from the
+-- signup submit server action (POST) rather than from the /login server render (GET).
 -- Returns the underlying access_key on success, NULL on miss (invalid/expired/consumed).
 -- ---------------------------------------------------------------------------
 create or replace function public.consume_qr_share_token(p_token text)
@@ -93,8 +120,8 @@ begin
   end if;
 
   -- Retire any prior unconsumed tokens for this (advisor, key) — pressing "Show QR"
-  -- or "Refresh QR" again invalidates the previously displayed code so that only
-  -- the most recently minted token is live. Bounds replay window to one active QR.
+  -- or "Refresh QR" with no prior peek hit invalidates the previously-displayed code.
+  -- Bounds replay window to one active QR per key.
   update public.advisor_qr_share_tokens
   set consumed_at = now()
   where advisor_user_id = p_advisor_user_id

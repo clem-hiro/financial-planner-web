@@ -8,19 +8,21 @@ type PageProps = {
   searchParams: Promise<{ error?: string; qr_token?: string }>;
 };
 
-async function consumeQrTokenIfPresent(token: string | undefined): Promise<string | undefined> {
+// Read-only peek: validates the token without consuming it. Consume happens at
+// POST (signup submit) so link-preview GET prefetches don't burn the token.
+async function peekQrTokenIfPresent(token: string | undefined): Promise<string | undefined> {
   if (!token) return undefined;
   const parsed = qrShareTokenSchema.safeParse(token);
   if (!parsed.success) return undefined;
   try {
     const supabase = await createSupabaseServerClient();
-    const { data, error } = await supabase.rpc("consume_qr_share_token", {
+    const { data, error } = await supabase.rpc("peek_qr_share_token", {
       p_token: parsed.data,
     });
     if (error || !data) return undefined;
     return typeof data === "string" ? data : undefined;
   } catch (e) {
-    console.error("consume_qr_share_token failed", e);
+    console.error("peek_qr_share_token failed", e);
     return undefined;
   }
 }
@@ -28,9 +30,11 @@ async function consumeQrTokenIfPresent(token: string | undefined): Promise<strin
 export default async function LoginPage({ searchParams }: PageProps) {
   const sp = await searchParams;
   const authError = sp.error?.trim() ? sp.error : undefined;
+  const rawQrToken = sp.qr_token?.trim();
   const initialAccessKey = isSupabaseConfigured()
-    ? await consumeQrTokenIfPresent(sp.qr_token?.trim())
+    ? await peekQrTokenIfPresent(rawQrToken)
     : undefined;
+  const initialQrToken = initialAccessKey ? rawQrToken : undefined;
 
   return (
     <div className="flex min-h-full flex-col items-center justify-center px-4 py-16 sm:py-20">
@@ -55,7 +59,11 @@ export default async function LoginPage({ searchParams }: PageProps) {
             to enable auth.
           </div>
         ) : (
-          <LoginForm initialAuthError={authError} initialAccessKey={initialAccessKey} />
+          <LoginForm
+            initialAuthError={authError}
+            initialAccessKey={initialAccessKey}
+            initialQrToken={initialQrToken}
+          />
         )}
         <Link
           href="/dashboard"

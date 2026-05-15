@@ -35,6 +35,29 @@ async function pickOldestAvailableKey(
   return (data as Pick<AdvisorAccessKeyRow, "access_key"> | null)?.access_key ?? null;
 }
 
+async function peekExistingLiveToken(
+  supabase: SupabaseClient,
+  advisorUserId: string
+): Promise<{ token: string; key: string; expiresAt: Date } | null> {
+  const { data, error } = await supabase
+    .from("advisor_qr_share_tokens")
+    .select("token, access_key, expires_at")
+    .eq("advisor_user_id", advisorUserId)
+    .is("consumed_at", null)
+    .gt("expires_at", new Date().toISOString())
+    .order("expires_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  const row = data as { token: string; access_key: string; expires_at: string };
+  return {
+    token: row.token,
+    key: row.access_key,
+    expiresAt: new Date(row.expires_at),
+  };
+}
+
 export async function mintQrShareToken(
   supabase: SupabaseClient,
   advisorUserId: string
@@ -56,12 +79,21 @@ export async function mintQrShareToken(
   return { token, key, expiresAt };
 }
 
+/**
+ * `refresh=false` (page render): reuse an existing live token if one exists, so
+ * navigating back to the page does NOT invalidate a previously-shared QR.
+ * `refresh=true` (Refresh QR button): always mint, retiring the prior token.
+ */
 export async function buildShareData(
   supabase: SupabaseClient,
   advisorUserId: string,
-  advisorDisplayName: string | null
+  advisorDisplayName: string | null,
+  refresh = false
 ): Promise<QrShareData | null> {
-  const minted = await mintQrShareToken(supabase, advisorUserId);
+  const existing = refresh
+    ? null
+    : await peekExistingLiveToken(supabase, advisorUserId);
+  const minted = existing ?? (await mintQrShareToken(supabase, advisorUserId));
   if (!minted) return null;
 
   const origin = await getSiteOrigin();
