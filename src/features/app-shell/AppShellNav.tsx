@@ -6,74 +6,15 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { lockBodyScroll } from "@/lib/body-scroll-lock";
 import {
+  CLIENT_MAIN_NAV,
+  CLIENT_MAIN_NAV_PREFETCH_HREFS,
+} from "@/lib/client-main-nav";
+import {
   appShellMainNavRailClass,
   appTabPillActiveClass,
   appTabPillClass,
   appTabPillInactiveClass,
 } from "@/ui/app-tab-styles";
-
-type NavRoute = {
-  href: string;
-  label: string;
-  activeMatch?: (pathname: string) => boolean;
-};
-
-function matchesFinancialSetup(pathname: string) {
-  return (
-    pathname === "/setup" ||
-    pathname.startsWith("/setup/") ||
-    pathname === "/financial-profile" ||
-    pathname.startsWith("/financial-profile/")
-  );
-}
-
-const clientRoutes: readonly NavRoute[] = [
-  { href: "/dashboard", label: "Home" },
-  {
-    href: "/setup",
-    label: "Financial setup",
-    activeMatch: matchesFinancialSetup,
-  },
-  {
-    href: "/planning/overview",
-    label: "Planning",
-    activeMatch: (pathname) =>
-      pathname === "/planning" ||
-      pathname.startsWith("/planning/") ||
-      pathname === "/goals" ||
-      pathname.startsWith("/goals/") ||
-      pathname === "/balances" ||
-      pathname.startsWith("/balances/") ||
-      pathname === "/budget" ||
-      pathname.startsWith("/budget/"),
-  },
-  {
-    href: "/expenses",
-    label: "Activity",
-    activeMatch: (pathname) =>
-      pathname === "/spending" ||
-      pathname.startsWith("/spending/") ||
-      pathname === "/expenses" ||
-      pathname.startsWith("/expenses/"),
-  },
-  {
-    href: "/more",
-    label: "More",
-    activeMatch: (pathname) =>
-      pathname === "/more" ||
-      pathname.startsWith("/more/") ||
-      pathname === "/account-issue" ||
-      pathname.startsWith("/account-issue/"),
-  },
-] as const;
-
-const prefetchClientRoutes = [
-  "/dashboard",
-  "/setup",
-  "/expenses",
-  "/planning/overview",
-  "/more",
-] as const;
 
 export function AppShellNav({
   workspace,
@@ -85,7 +26,7 @@ export function AppShellNav({
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    for (const href of prefetchClientRoutes) {
+    for (const href of CLIENT_MAIN_NAV_PREFETCH_HREFS) {
       router.prefetch(href);
     }
   }, [router]);
@@ -100,12 +41,11 @@ export function AppShellNav({
     return null;
   }
 
-  const routes: readonly NavRoute[] = clientRoutes;
+  const isActive = (route: (typeof CLIENT_MAIN_NAV)[number]) =>
+    route.activeMatch(pathname);
 
-  const isActive = (route: NavRoute) =>
-    route.activeMatch
-      ? route.activeMatch(pathname)
-      : pathname === route.href || pathname.startsWith(`${route.href}/`);
+  const navLinkClass = (active: boolean) =>
+    `${appTabPillClass} ${active ? appTabPillActiveClass : appTabPillInactiveClass}`;
 
   return (
     <nav className="relative w-full min-w-0 sm:w-max" aria-label="Main">
@@ -148,12 +88,13 @@ export function AppShellNav({
                 </div>
                 <div className="mt-8 flex flex-1 items-start">
                   <ul className="w-full space-y-2.5">
-                    {routes.map((route) => {
+                    {CLIENT_MAIN_NAV.map((route) => {
                       const active = isActive(route);
                       return (
-                        <li key={route.href}>
+                        <li key={route.id}>
                           <Link
                             href={route.href}
+                            prefetch
                             onClick={() => setMobileOpen(false)}
                             className={`flex min-h-14 items-center rounded-2xl px-5 py-3 text-3xl font-semibold tracking-tight transition ${
                               active
@@ -175,15 +116,14 @@ export function AppShellNav({
       </div>
       <div className="hidden sm:block">
         <div className={appShellMainNavRailClass}>
-          {routes.map((route) => {
+          {CLIENT_MAIN_NAV.map((route) => {
             const active = isActive(route);
             return (
               <Link
-                key={route.href}
+                key={route.id}
                 href={route.href}
-                className={`${appTabPillClass} ${
-                  active ? appTabPillActiveClass : appTabPillInactiveClass
-                }`}
+                prefetch
+                className={navLinkClass(active)}
               >
                 {route.label}
               </Link>

@@ -28,11 +28,8 @@ export function DashboardOverviewSection({
         <div className="pointer-events-none absolute -right-8 -top-12 h-32 w-32 rounded-full bg-emerald-500/[0.07] blur-2xl" />
         <div className="relative flex flex-wrap items-center gap-1">
           <p className={labelClass}>Net worth</p>
-          <InfoTooltip
-            methodologyTopicId="net-worth"
-            ariaLabel="How net worth is calculated"
-          >
-            <span className="sr-only">Open methodology: net worth</span>
+          <InfoTooltip ariaLabel="How net worth is calculated">
+            Investments + cash + optional CPF and vehicle equity, minus debts.
           </InfoTooltip>
         </div>
         <p className={figureClass}>
@@ -42,11 +39,8 @@ export function DashboardOverviewSection({
           <div className="relative mt-5 border-t border-slate-100 pt-5">
             <div className="flex flex-wrap items-center gap-1">
               <p className={labelClass}>Net excluding CPF</p>
-              <InfoTooltip
-                methodologyTopicId="net-worth"
-                ariaLabel="How net excluding CPF relates to full net worth"
-              >
-                <span className="sr-only">Open methodology: net worth</span>
+              <InfoTooltip ariaLabel="How net excluding CPF relates to full net worth">
+                Investments + cash + vehicles minus debts; CPF balances omitted.
               </InfoTooltip>
             </div>
             <p className="mt-2 font-mono text-xl font-semibold tracking-tight text-slate-800 tabular-nums sm:text-2xl">
@@ -108,11 +102,8 @@ export function DashboardOverviewSection({
                     payload.baseCurrency
                   )}
                 </span>
-                <InfoTooltip
-                  methodologyTopicId="vehicles-sg"
-                  ariaLabel="How vehicle value is estimated"
-                >
-                  <span className="sr-only">Vehicle methodology</span>
+                <InfoTooltip ariaLabel="How vehicle value is estimated">
+                  Estimated market value less loan; approximate listing or resale-based estimate.
                 </InfoTooltip>
               </li>
             )}
@@ -130,11 +121,10 @@ export function DashboardOverviewSection({
       <div className={`${metricCard} bg-linear-to-br from-white via-white to-sky-50/45`}>
         <div className="flex flex-wrap items-center gap-1">
           <p className={labelClass}>Savings rate</p>
-          <InfoTooltip
-            methodologyTopicId="savings-rate"
-            ariaLabel="How savings rate is calculated"
-          >
-            <span className="sr-only">Savings rate methodology</span>
+          <InfoTooltip ariaLabel="How savings rate is calculated">
+            Share of take-home left after this month&apos;s expenses and planned
+            monthly goal contributions. Spend uses logged expenses when present,
+            otherwise planned monthly budget.
           </InfoTooltip>
         </div>
         <p className={figureClass}>{formatPercent(payload.savingsRate)}</p>
@@ -145,11 +135,8 @@ export function DashboardOverviewSection({
       <div className={`${metricCard} bg-linear-to-br from-white via-white to-amber-50/35 sm:col-span-2 xl:col-span-1`}>
         <div className="flex flex-wrap items-center gap-1">
           <p className={labelClass}>Spend basis (this month)</p>
-          <InfoTooltip
-            methodologyTopicId="savings-rate"
-            ariaLabel="How monthly spend basis is calculated"
-          >
-            <span className="sr-only">Spend basis methodology</span>
+          <InfoTooltip ariaLabel="How monthly spend basis is calculated">
+            Monthly take-home used to calculate budgets and savings rate; uses logged expenses when present.
           </InfoTooltip>
         </div>
         <p className={figureClass}>

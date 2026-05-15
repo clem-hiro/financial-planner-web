@@ -94,14 +94,16 @@ export function ExpenseForm({
       <h2 className="text-sm font-semibold text-slate-900">
         Custom expenses
       </h2>
-      <p className="rounded-xl border border-emerald-100/80 bg-emerald-50/60 px-3 py-2 text-xs leading-relaxed text-slate-600">
-        Use <strong>any category name</strong> you want—gifts, one-offs, ad-hoc
-        spend, etc. You can add <strong>as many rows as you need</strong> for
-        categories that are <strong>not</strong> on your monthly budget, or
-        that don&apos;t match a budget line name. The only restriction: if the
-        category name matches a monthly budget line you already logged this
-        month, edit that entry instead of adding another.
-      </p>
+      <div className="rounded-xl border border-emerald-100/80 bg-emerald-50/60 px-3 py-2 text-xs leading-relaxed text-slate-600">
+        <p>
+          Add one-off spending here: gifts, ad-hoc buys, or anything that
+          doesn&apos;t fit your monthly budget.
+        </p>
+        <p className="mt-1 font-medium text-slate-700">
+          If it matches a budget category you already logged this month, edit
+          that row instead.
+        </p>
+      </div>
       {error && (
         <p className="text-sm text-red-600" role="alert">
           {error}

@@ -68,7 +68,7 @@ export const CLIENT_MAIN_NAV: readonly ClientMainNavItem[] = [
   },
   {
     id: "planning",
-    href: "/planning",
+    href: "/planning/overview",
     label: "Planning",
     activeMatch: matchesPlanning,
   },
@@ -90,7 +90,7 @@ export const CLIENT_MAIN_NAV: readonly ClientMainNavItem[] = [
 export const CLIENT_MAIN_NAV_PREFETCH_HREFS: readonly string[] = [
   "/dashboard",
   "/setup",
-  "/planning",
+  "/planning/overview",
   "/expenses",
   "/more",
 ] as const;

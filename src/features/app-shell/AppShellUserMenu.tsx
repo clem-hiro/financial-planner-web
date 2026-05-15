@@ -3,10 +3,8 @@
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
 import { useEffect, useRef, useState } from "react";
-import type { InboxNotificationRow } from "@/data/supabase/types";
 import { ContactAdvisorButton } from "@/features/app-shell/ContactAdvisorButton";
 import { OpenMethodologyButton } from "@/features/help/OpenMethodologyButton";
-import { InboxBell } from "@/features/inbox/InboxBell";
 import { signOutAction } from "@/server/actions";
 
 const panelClass =
@@ -18,16 +16,13 @@ const menuRowClass =
 const contactMenuRowClass =
   "flex w-full items-center justify-center rounded-xl px-3 py-2.5 text-sm font-medium text-emerald-900 transition hover:bg-emerald-50 disabled:opacity-60";
 
-const inboxMenuRowClass =
-  "relative flex w-full items-center rounded-xl px-3 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50";
-
 export function AppShellUserMenu({
   user,
-  inbox,
+  inboxSlot,
   showContactAdvisor,
 }: {
   user: User;
-  inbox: { unreadCount: number; initialItems: InboxNotificationRow[] } | null;
+  inboxSlot: React.ReactNode;
   showContactAdvisor?: boolean;
 }) {
   const [open, setOpen] = useState(false);
@@ -83,7 +78,7 @@ export function AppShellUserMenu({
           >
             More
           </Link>
-          {showContactAdvisor || inbox ? (
+          {showContactAdvisor || inboxSlot ? (
             <div className="my-1 border-t border-slate-100" />
           ) : null}
           {showContactAdvisor ? (
@@ -94,15 +89,7 @@ export function AppShellUserMenu({
               />
             </div>
           ) : null}
-          {inbox ? (
-            <div className="px-0 py-0.5">
-              <InboxBell
-                unreadCount={inbox.unreadCount}
-                initialItems={inbox.initialItems}
-                menuButtonClassName={inboxMenuRowClass}
-              />
-            </div>
-          ) : null}
+          {inboxSlot ? <div className="px-0 py-0.5">{inboxSlot}</div> : null}
           <div className="my-1 border-t border-slate-100" />
           <div className="px-0 py-0.5">
             <OpenMethodologyButton

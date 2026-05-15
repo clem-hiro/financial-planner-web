@@ -5,6 +5,7 @@ import {
   clientAccessKeyInputSchema,
   signupFinancialRoleSchema,
 } from "@/lib/validation";
+import { consumeQrTokenAction } from "@/server/advisor-qr-share-actions";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -30,14 +31,26 @@ function formatSignupError(message: string): string {
   return message;
 }
 
-export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
+export function LoginForm({
+  initialAuthError,
+  initialAccessKey,
+  initialQrToken,
+}: {
+  initialAuthError?: string;
+  initialAccessKey?: string;
+  initialQrToken?: string;
+}) {
   const router = useRouter();
+  const prefilledKey = initialAccessKey?.trim() ?? "";
+  const [qrToken] = useState(initialQrToken ?? null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
-  const [signupRole, setSignupRole] = useState<SignupRole>("advisor");
-  const [accessKey, setAccessKey] = useState("");
-  const [mode, setMode] = useState<Mode>("signin");
+  const [signupRole, setSignupRole] = useState<SignupRole>(
+    prefilledKey ? "client" : "advisor"
+  );
+  const [accessKey, setAccessKey] = useState(prefilledKey);
+  const [mode, setMode] = useState<Mode>(prefilledKey ? "signup" : "signin");
   const [error, setError] = useState<string | null>(() =>
     initialAuthError?.trim() ? initialAuthError : null
   );
@@ -82,7 +95,15 @@ export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
         };
 
         if (role === "client") {
-          const keyParsed = clientAccessKeyInputSchema.safeParse(accessKey);
+          // QR flow: the token is the binding source of truth. Consume at POST
+          // (not GET) so link-preview prefetch can't burn it. Consume failure
+          // silently falls back to the access-key field.
+          let effectiveKey = accessKey;
+          if (qrToken) {
+            const consumed = await consumeQrTokenAction(qrToken);
+            if (consumed.ok) effectiveKey = consumed.accessKey;
+          }
+          const keyParsed = clientAccessKeyInputSchema.safeParse(effectiveKey);
           if (!keyParsed.success) {
             const msg = keyParsed.error.flatten().formErrors[0] ?? "Invalid access key";
             setError(msg);

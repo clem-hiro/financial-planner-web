@@ -55,7 +55,7 @@ import { listFinancialGoals } from "@/data/repositories/goals";
 import { listHousingLoans } from "@/data/repositories/housing-loans";
 import { listLiabilities } from "@/data/repositories/liabilities";
 import { listVehicles } from "@/data/repositories/vehicles";
-import { getProfileById } from "@/data/repositories/profiles";
+import { getCachedProfileById } from "@/data/supabase/request-context";
 import { getIncomeTaxConfig } from "@/data/repositories/income-tax-configs";
 import { listExpensesForMonth } from "@/data/repositories/expenses";
 import { listInvestments } from "@/data/repositories/investments";
@@ -297,7 +297,7 @@ export async function getDashboardPayload(
     vehicleRows,
     incomeTaxConfig,
   ] = await Promise.all([
-    getProfileById(supabase, userId),
+    getCachedProfileById(userId),
     listExpensesForMonth(supabase, userId, yearMonth),
     listInvestments(supabase, userId),
     listCashAccounts(supabase, userId),

@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { isFinancialProfileIncomplete } from "@/data/financial-profile";
 import { getDashboardPayload } from "@/data/dashboard";
-import { getProfileById } from "@/data/repositories/profiles";
-import { createSupabaseServerClient } from "@/data/supabase/server";
+import { getRequestAuth } from "@/data/supabase/request-context";
 import { DashboardMonthSection } from "@/features/dashboard/DashboardMonthSection";
 import { DashboardOverviewSection } from "@/features/dashboard/DashboardOverviewSection";
 import { DashboardRetirementSection } from "@/features/dashboard/DashboardRetirementSection";
@@ -28,10 +27,7 @@ export default async function DashboardPage() {
     );
   }
 
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { supabase, user, profile } = await getRequestAuth();
 
   if (!user) {
     return (
@@ -59,10 +55,7 @@ export default async function DashboardPage() {
   }
 
   const month = formatYearMonth(new Date());
-  const [payload, profile] = await Promise.all([
-    getDashboardPayload(supabase, user.id, month),
-    getProfileById(supabase, user.id),
-  ]);
+  const payload = await getDashboardPayload(supabase, user.id, month);
   const currency = profile?.base_currency ?? DEFAULT_BASE_CURRENCY;
   const profileIncomplete = isFinancialProfileIncomplete(profile);
 

@@ -4,6 +4,8 @@ import {
   listAdvisorAccessKeysForAdvisor,
 } from "@/data/repositories/advisor-access-keys";
 import type { AdvisorAccessKeyRow } from "@/data/supabase/types";
+import { AdvisorKeyQrShareButton } from "@/features/advisor/AdvisorKeyQrShareButton";
+import type { SerializableQrShareData } from "@/server/advisor-qr-share-actions";
 import { PageSection } from "@/ui/PageSection";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import Link from "next/link";
@@ -27,9 +29,11 @@ function KeyStatusBadge({ status }: { status: AdvisorAccessKeyRow["status"] }) {
 export async function AdvisorAccessKeysSection({
   supabase,
   userId,
+  initialShareData,
 }: {
   supabase: SupabaseClient;
   userId: string;
+  initialShareData: SerializableQrShareData | null;
 }) {
   const [counts, keys] = await Promise.all([
     countAdvisorAccessKeyStatuses(supabase, userId),
@@ -46,6 +50,7 @@ export async function AdvisorAccessKeysSection({
           Keys are issued through the advisor purchase and coupon workflow.
         </span>
       }
+      actions={<AdvisorKeyQrShareButton initialData={initialShareData} />}
     >
       <div className="space-y-6">
         <div className="rounded-xl border border-emerald-200/90 bg-emerald-50/80 px-4 py-3 text-sm text-emerald-950">
