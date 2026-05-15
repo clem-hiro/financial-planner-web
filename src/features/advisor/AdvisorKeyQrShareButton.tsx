@@ -149,12 +149,13 @@ export function AdvisorKeyQrShareButton({ initialData }: Props) {
       <dialog
         ref={dialogRef}
         aria-labelledby={dialogHeadingId}
-        // Transform-based centering — engine-agnostic, independent of the
-        // <dialog> top-layer + margin:auto/inset:0 resolution that real Safari
-        // diverges on. fixed + 50/50 + translate(-50%,-50%) centers any-size
-        // box in every browser. max-h + overflow-y-auto keeps a tall dialog
-        // in-viewport. backdrop: styles the ::backdrop pseudo-element.
-        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-md overflow-y-auto rounded-2xl border border-slate-200 bg-transparent p-0 shadow-2xl backdrop:bg-slate-900/50"
+        // CORE utilities only — no arbitrary [..] values. Tailwind v4 + Turbopack
+        // ships core utilities reliably but its JIT can drop arbitrary values
+        // until a deep rebuild (that was the lingering bug: the height cap never
+        // applied, so a tall box overflowed the top under translateY(-50%)).
+        // fixed + 50/50 + translate centers in every engine; max-h-screen +
+        // overflow-y-auto keeps a tall dialog on-screen. backdrop: → ::backdrop.
+        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-h-screen w-full max-w-md overflow-y-auto rounded-2xl border border-slate-200 bg-transparent p-0 shadow-2xl backdrop:bg-slate-900/50"
         onClose={closeDialog}
         onCancel={closeDialog}
         onClick={(e) => {
