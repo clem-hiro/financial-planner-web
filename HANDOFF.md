@@ -2,31 +2,26 @@
 
 ## 1. State Snapshot
 
-Branch `sandbox` at `337f9f9` (= `origin/sandbox`), 10 commits ahead of `origin/main` (`8a1f679`). PR #2 (worktree → sandbox, income-tax + inbox + salary-review reminder) and PR #3 (sandbox → main, project tooling + advisor UI polish + dev seed + income-tax bundle) merged this session. PR #4 (sandbox → main, planning breakpoint fix) merged. Co-developer (CleAyz) pushed in parallel: `[Contact Advisor] Allow dismiss on blur`, a Codex agents/skills setup, and a `[Financial Setup] Move to main tabs instead of profile tabs` navigation refactor (added `src/app/(app)/more/page.tsx` + `src/lib/client-main-nav.ts`). The 3 income-tax migrations (`20260518000000`, `20260519000000`, `20260520000000`) were applied via Supabase Dashboard SQL Editor by the operator. The `20260521000000` DEVPOC-UNLI coupon migration also applied. Dev users seeded: `_dev@dev.com` (advisor, phone `+6596340104` confirmed) and `_dev_client@dev.com` (client, pw `dev123`, advisor link wired via consumed access key).
+Branch `sandbox` at `fcba463`, **6 commits ahead of `origin/sandbox`** (unpushed) and ahead of `origin/main` (`8a1f679`). Prior session: PRs #2/#3/#4 merged. Co-developer (CleAyz) pushed in parallel: `[Contact Advisor] Allow dismiss on blur`, a Codex agents/skills setup, and a `[Financial Setup] Move to main tabs instead of profile tabs` navigation refactor (added `src/app/(app)/more/page.tsx` + `src/lib/client-main-nav.ts`). The income-tax migrations (`20260518000000`–`20260520000000`) + `20260521000000` DEVPOC-UNLI coupon migration applied via Supabase Dashboard SQL Editor by the operator. Dev users seeded: `_dev@dev.com` (advisor, phone `+6596340104` confirmed) and `_dev_client@dev.com` (client, pw `dev123`, advisor link wired via consumed access key).
+
+**This session (2026-05-15) — local commits not yet pushed:**
+- `6c4f4af fix(advisor): bind phone-verify to sent number, not live input` — the carried-forward P0 phone-verify race fix (capture `sentToPhone`).
+- `992201b chore(handoff): add P1 for per-category income-tax tooltips`.
+- `dea6e04 feat(advisor): QR-code key sharing with one-time deeplinks` — full QR feature: server-side `qrcode` SVG, opaque-token deeplink, `advisor_qr_share_tokens` table + RPCs, native `<dialog>`, WCAG 2.2 AA, anti-quishing trust signals.
+- `fcba463 fix(advisor): QR token — idempotent mint + peek-on-GET, consume-on-POST` — post-ship review fixes (Bug A retire-on-page-render, Bug B consume-on-GET).
+- **Migration `20260522000000_advisor_qr_share_tokens.sql` was applied by the operator** via Supabase Dashboard SQL Editor (the final canonical block: table + 3 indexes incl. `advisor_qr_share_tokens_active_idx` + RLS + `peek_qr_share_token` + `consume_qr_share_token` + 4-arg `mint_qr_share_token`). Operator confirmed "query ran". Validation queries are in the plan file.
+- **Operator action items still open:** (1) add `SITE_URL=` to `.env.local.example` (sandbox-locked from agents); (2) set `SITE_URL` in Vercel production env before promoting `main`; (3) `git push` the 6 sandbox commits when ready (not pushed — no instruction given).
 
 ## 5. Active Focus
 
-**Next focus — QR-code key sharing for advisors.**
+**QR-code key sharing — SHIPPED on `sandbox` (commits `dea6e04` + `fcba463`).** Feature complete, lead-verified (tsc/lint/150 tests/grep clean), code-reviewed (GO, 0 blockers), migration applied by operator. Not yet pushed; not yet promoted to `main`.
 
-Goal: advisors can expose an access key as a scannable QR code; clients who scan it land on a deeplink that pre-fills the access-key field in the client signup form, eliminating manual typing. The deeplink's website URL must be derived dynamically at runtime (so it works across local dev / Vercel preview / production), not hardcoded.
+**Next focus — pick from P1 backlog below.** No specific next feature was directed. Strong candidates in priority order:
+1. **P0 is clear** (the phone-verify race was the only P0; it's fixed in `6c4f4af`). No open P0.
+2. The income-tax follow-ups (P1 cluster from the 2026-05-15 audit, incl. the per-category tooltip restructure just added) are the densest remaining area.
+3. Or: push the 6 sandbox commits + open a sandbox→main PR for the QR feature, then smoke-test on Vercel preview (real phone scan over the internet — the only path not exercisable on localhost).
 
-Next session should **research first, then plan, then execute** in three discrete phases:
-
-1. **Research** — read the existing key-purchase + redemption flow:
-   - `src/server/advisor-key-purchase-actions.ts` (existing buy / quote / contact actions).
-   - `src/features/advisor/AdvisorAccessKeysSection.tsx` (where per-key actions live in the UI today; per the prior plan, this section is also flagged as a UX target — the recent-keys table currently leaks who-redeemed-what; not in this scope but worth knowing).
-   - `src/app/(app)/advisor/access-keys/page.tsx`.
-   - `src/features/auth/LoginForm.tsx:85-133` for the client-side access-key consumption path. Deeplink should pre-fill the `userMeta.access_key` value.
-   - The `handle_new_user` trigger at `supabase/migrations/20260517110000_drop_phone_mirror_columns.sql:65-142` to confirm the access-key handoff path is unchanged.
-2. **Pick a QR library** — evaluate options. Default candidate: `qrcode` (npm, ~mature, small) for server-side SVG / data-URL generation. Alternatives: `qrcode.react` (client-side React component). Decide whether QR is generated in a server action returning data-URL or in a client component. Surface as a dependency-gate AskUserQuestion before adding (per global rules).
-3. **Dynamic site URL derivation** — research the safe runtime path:
-   - In Next.js 16: read `request.headers.get('x-forwarded-host')` and `x-forwarded-proto` from the route handler context, OR use `headers()` from `next/headers` (async in Next 16). Fall back to `NEXT_PUBLIC_SITE_URL` env var if header parsing fails (production hardening).
-   - On Vercel specifically: `process.env.VERCEL_URL` + `process.env.VERCEL_ENV` give canonical URL per environment.
-   - Avoid: hardcoding any URL; using `window.location` server-side; relying on `NEXT_PUBLIC_SUPABASE_URL` (different domain).
-   - The deeplink path is something like `/login?access_key=<value>&intent=client-signup`. LoginForm already accepts query params (verify) — read it before designing.
-4. **Plan + execute** — use `/worktree` for isolation. Standard 3-phase rhythm (migration if needed → server action / route → UI + tests). Likely no DB migration since access keys already exist; this is purely UX.
-
-Deliverable: a small `<QrCodeForKey accessKey={...} />` component in `src/features/advisor/`, rendered alongside each access-key row in the advisor's keys section, plus the deeplink consumption in `LoginForm`.
+Decide with the user at session start.
 
 ## 6. Open Loops
 
@@ -44,10 +39,7 @@ When promoting from sandbox to production, this is the complete checklist. Per t
 
 ### P0 (do next)
 
-- **P0** `src/features/advisor/AdvisorPhoneVerificationForm.tsx:19-21,71-85` — phone-verify form has two related race-condition bugs (P0, **2 sessions**):
-  - `verified` predicate compares `user.phone` (from prop) against the current input value, not against the number actually sent for OTP. If the user edits the input mid-flow, the badge can flip incorrectly.
-  - `verifyCode` calls `verifyOtp({phone: <current input>})` but the OTP was minted for whatever phone was sent at `sendCode` time. If the user edits between Send and Verify, Supabase returns "Token expired/invalid" — misleading error.
-  - **Fix:** capture `sentToPhone` in local state inside `sendCode()`; use that for both the `verified` check and as the `phone` argument to `verifyOtp`. Reset `sentToPhone` when the input changes. ~10 LOC.
+- **RESOLVED 2026-05-15** (`6c4f4af`) — `AdvisorPhoneVerificationForm` phone-verify race. Fixed by capturing `sentToPhone` in local state in `sendCode()`, using it for both the `verified` predicate and the `verifyOtp` phone arg, and clearing it on input change. No open P0.
 
 ### P1 (do soon)
 
@@ -59,6 +51,13 @@ When promoting from sandbox to production, this is the complete checklist. Per t
 - **P1** `src/features/income-tax/IncomeTaxSection.tsx:26-47` and `src/data/income-tax-synthetic-expense.ts:30-58` — duplicate logic. Both derive `(age, mandatoryCpfSgd, annualBonus)` from the same `(profile, referenceYearMonth)` inputs with identical guards. Drift risk on age-band rule changes. Mitigation: extract `deriveCpfDerivedInputs(profile, referenceYearMonth)` in `src/domain/finance/sg-cpf-derived.ts`; both callers add their own thin layer.
 - **P1** Missing tests for `deriveAutoAppliedReliefs`. Pure-ish helper with a branchy guard ladder. Add `src/features/income-tax/IncomeTaxSection.test.ts` against frozen `now`.
 - **P1** Income-tax tooltips: split the single top-of-section `TaxMethodologyTooltip` into per-category tooltips. Today `src/features/income-tax/IncomeTaxSection.tsx:58` renders one `<TaxMethodologyTooltip />` covering the whole computation (topic `sg-income-tax-ya2026`). Form (`IncomeTaxForm.tsx`) is already organized into 5 `FieldGroup`s — Earned income, CPF / SRS, Family, NS, Career & other. Redesign: each `FieldGroup` carries its own `InfoTooltip` keyed to a per-category methodology topic (e.g. `sg-income-tax-earned-income-ya2026`, `…-cpf-srs-ya2026`, etc.), so users see the rules for the category they're filling in rather than a wall of text at the top. Likely needs: extending `FieldGroup` to accept an optional `methodologyTopicId`/`tooltipAriaLabel`, splitting the source methodology content per category, and removing the section-level tooltip (or keeping a thin "Methodology overview" link). _(added: 2026-05-15)_
+
+#### From the QR-share feature (2026-05-15, post-ship)
+
+- **Accepted posture (signed off by user, NOT a defect — recorded so it isn't re-litigated):** `peek_qr_share_token` is idempotent/non-consuming (required to make link-preview prefetch safe). Consequence: a leaked/screenshotted QR URL exposes the access key on *every* GET within the 15-min TTL, and `LoginForm`'s raw-key field-fallback lets signup proceed with that key until the underlying key is `claimed`. Double-claim remains impossible (DB trigger is the single-use gate). The fallback is retained because removing it breaks legitimate retry-after-failed-signup. If a hard token-bound on key exposure is ever wanted, that's a separate follow-up requiring a re-issue mechanism. _(added: 2026-05-15)_
+- **P2** Project-wide Tailwind v4 cursor regression. v4 preflight dropped the default `cursor: pointer` on `<button>`. Fixed only for the QR dialog buttons in `dea6e04`. Every other button (`AdvisorPhoneVerificationForm` Send Code, `AdvisorBuyKeysSection` Purchase, `LoginForm` submit, etc.) still shows the default arrow cursor. Cleanest global fix: `@layer base { button:not(:disabled){cursor:pointer} }` in the global stylesheet. _(added: 2026-05-15)_
+- **P2** No client-component test infra for `AdvisorKeyQrShareButton`, the modified `LoginForm`, or the `/login` GET-vs-POST split — same deferral as the `AdvisorPhoneVerificationForm` P2 below. The QR dialog (countdown, refresh, copy, focus trap) and the consume-on-submit path are untested.
+- **P2** `refactoring-expert` flagged `bg-[#0c192f]`/`hover:bg-[#152a45]` solid-navy primary button duplicated across `AdvisorKeyQrShareButton`, `AdvisorBuyKeysSection`, `LoginForm`. Promote to a shared token in `src/ui/` (sibling to `fpPrimaryButtonClass`). Also `useCopyToClipboard` worth promoting to `src/lib/use-clipboard.ts` (low blast radius, likely reuse). Both "discuss" priority — not done in-scope.
 
 #### From the income-tax PR #2 worktree-review (carried forward, **needs human inspection**)
 
@@ -83,8 +82,11 @@ When promoting from sandbox to production, this is the complete checklist. Per t
 - **No app-level dev/prod gating for auth.** Every dev/prod difference for auth is a Supabase Dashboard config (`Confirm Email`, Twilio creds) or per-environment Supabase URL + anon key. There is no `NEXT_PUBLIC_DEPLOYMENT_ENV` env var; do not introduce one for auth-related behavior. _(added: 2026-05-14)_
 - **`handle_new_user` trigger must not consume `raw_user_meta_data.phone_e164`.** Signup no longer carries phone. Advisor phone collection is exclusively via the OTP flow on `/advisor/profile`. _(added: 2026-05-14)_
 - **No service role key in app code.** RLS is the trust boundary. All cross-user reads of `auth.users` go through SECURITY DEFINER RPCs, never via the admin API. The seed script under `scripts/` is the ONLY consumer of `SUPABASE_SERVICE_ROLE_KEY`; never import it from anywhere under `src/`. Never prefix with `NEXT_PUBLIC_`. _(added: 2026-05-14, expanded: 2026-05-15)_
-- **Migration filenames are unique per timestamp prefix.** Use `_100000`, `_200000` etc. when a sub-day ordering is needed. Latest applied: `20260521000000_seed_devpoc_unli_coupon.sql`. _(added: 2026-05-14)_
+- **Migration filenames are unique per timestamp prefix.** Use `_100000`, `_200000` etc. when a sub-day ordering is needed. Latest applied: `20260522000000_advisor_qr_share_tokens.sql`. _(added: 2026-05-14, updated: 2026-05-15)_
 - **`/auth/callback` `next=` query param must be validated.** Only same-origin paths starting with single `/`, length ≤ 512. Already enforced in `src/app/auth/callback/route.ts:safeNext`. _(added: 2026-05-14)_
+- **QR deeplinks carry only the opaque token, never the access key.** `/login?qr_token=<22-24 char base64url>`. The access key is resolved server-side via SECURITY DEFINER RPC. Never put `access_key` in a URL. _(added: 2026-05-15)_
+- **QR token: peek-on-GET, consume-on-POST.** `/login` server render calls the read-only `peek_qr_share_token` only. Consume (`consume_qr_share_token`, atomic single-use) happens exclusively in the POST-time `consumeQrTokenAction` from the signup submit. Never regress to consuming on GET — link-preview prefetch would burn tokens. _(added: 2026-05-15)_
+- **`SITE_URL` is the production canonical origin, not `VERCEL_URL`.** `getSiteOrigin()` uses `SITE_URL` when `VERCEL_ENV==='production'`; otherwise header-derived against a host allowlist. `VERCEL_URL` is deployment-scoped and must not be used as the canonical origin. _(added: 2026-05-15)_
 
 ## References
 
@@ -93,7 +95,9 @@ When promoting from sandbox to production, this is the complete checklist. Per t
 - Long-tail backlog (P2+): `BACKLOG.md` (create if needed)
 - Anti-patterns and corrections: `LEARNINGS.md` (if present)
 - This session's diff: `git log --oneline 8a1f679..sandbox` then `git diff 8a1f679..sandbox`
-- Migration ledger: `supabase/migrations/` — latest is `20260521000000_seed_devpoc_unli_coupon.sql`
+- Migration ledger: `supabase/migrations/` — latest is `20260522000000_advisor_qr_share_tokens.sql` (applied 2026-05-15)
+- QR-share plan + validation SQL: `~/.claude/plans/purrfect-questing-canyon.md`
+- QR-share review record: `REVIEW-FEEDBACK.md` (repo root, untracked — transient; T10 verdict GO-WITH-FOLLOWUPS)
 - Dev seed: `npm run seed:dev` (idempotent; reads `SUPABASE_SERVICE_ROLE_KEY` from `.env.local`)
 - Dev users: `_dev@dev.com` (advisor) / `_dev_client@dev.com` (pw `dev123`, client, already linked to dev advisor)
 - DEVPOC-UNLI coupon: 100% discount, no expiry, available in buy-keys form
