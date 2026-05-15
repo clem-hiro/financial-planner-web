@@ -1,4 +1,4 @@
-# Codebase Issues — 2026-05-14
+# Codebase Issues — 2026-05-15
 
 ## Summary
 
@@ -6,8 +6,10 @@
 
 ## Changes Since Last Scan
 
-First scan — no prior baseline.
+No marker delta. Prior scan baseline (2026-05-14) was 0; current scan still 0. The codebase remains free of inline code markers across `src/`, `scripts/`, and `supabase/`.
 
 ## Note
 
-Repo is clean of inline `TODO` / `FIXME` / `HACK` / `STUB` / `XXX` / `WORKAROUND` markers across `src/` and `supabase/migrations/`. Open loops that would normally surface as inline markers in other codebases (e.g., audit-discovered phone-form race conditions, fulfillment loop hardening, GC perf tuning) are tracked in `HANDOFF.md` § 6 instead. Project convention so far favors plan/handoff docs over inline markers — keep it that way unless a marker would land directly on the line that needs the fix.
+Repo convention so far favors plan/handoff docs over inline markers. Open loops surface as P0/P1 entries in `HANDOFF.md` §6 (today: 1 P0 + 13 P1) instead of `// TODO` comments. Keep it that way unless a marker would land directly on the line that needs the fix.
+
+If future sessions add markers, this file will diff them and surface resolved/persisted/new accordingly.
