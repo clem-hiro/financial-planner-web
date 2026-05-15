@@ -149,6 +149,7 @@ export function AdvisorClientsBoard({
               </thead>
               <tbody className="divide-y divide-slate-100">
                 {rows.map((row) => {
+                  if (!row.id) return null;
                   const sig = advisorClientRosterSignals({
                     monthly_income: row.monthly_income,
                     monthly_gross_salary: row.monthly_gross_salary,

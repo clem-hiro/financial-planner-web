@@ -45,12 +45,12 @@ function buildSetupTabs(): readonly SetupTabDef[] {
     { id: "profile", label: "Profile" },
     { id: "add-account", label: "Investments" },
     { id: "cpf", label: "CPF" },
+    { id: "income_tax", label: "Income tax" },
     { id: "cash-liabilities", label: "Cash and debts" },
     { id: "housing-loans", label: "Housing loans" },
     { id: "vehicles", label: "Vehicles" },
     { id: "budget", label: "Budget" },
     { id: "goals", label: "Goals" },
-    { id: "income_tax", label: "Income tax" },
   ] as const;
 }
 
