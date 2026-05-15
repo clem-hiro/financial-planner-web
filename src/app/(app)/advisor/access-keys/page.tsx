@@ -3,6 +3,8 @@ import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
 import { isAdvisor } from "@/lib/profile-role";
+import { buildShareData } from "@/server/advisor-qr-share";
+import type { SerializableQrShareData } from "@/server/advisor-qr-share-actions";
 import { redirect } from "next/navigation";
 
 export default async function AdvisorAccessKeysPage() {
@@ -26,6 +28,17 @@ export default async function AdvisorAccessKeysPage() {
     redirect("/dashboard");
   }
 
+  // Untrusted-host throws fall to null (empty state); the section still renders.
+  let initialShareData: SerializableQrShareData | null = null;
+  try {
+    const data = await buildShareData(supabase, user.id, profile?.display_name ?? null);
+    if (data) {
+      initialShareData = { ...data, expiresAt: data.expiresAt.toISOString() };
+    }
+  } catch (e) {
+    console.error("buildShareData failed on advisor access-keys page", e);
+  }
+
   return (
     <div className="space-y-6">
       <div className="rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm sm:px-6">
@@ -34,7 +47,11 @@ export default async function AdvisorAccessKeysPage() {
           Invite clients with one-time keys created through coupon-backed advisor purchases.
         </p>
       </div>
-      <AdvisorAccessKeysSection supabase={supabase} userId={user.id} />
+      <AdvisorAccessKeysSection
+        supabase={supabase}
+        userId={user.id}
+        initialShareData={initialShareData}
+      />
     </div>
   );
 }

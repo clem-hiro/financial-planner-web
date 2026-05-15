@@ -61,6 +61,15 @@ export type AdvisorAccessKeyRow = {
   created_at: string;
 };
 
+export type AdvisorQrShareTokenRow = {
+  token: string;
+  access_key: string;
+  advisor_user_id: string;
+  expires_at: string;
+  consumed_at: string | null;
+  created_at: string;
+};
+
 export type PurchaseStatus =
   | "pending"
   | "paid"

@@ -30,14 +30,23 @@ function formatSignupError(message: string): string {
   return message;
 }
 
-export function LoginForm({ initialAuthError }: { initialAuthError?: string }) {
+export function LoginForm({
+  initialAuthError,
+  initialAccessKey,
+}: {
+  initialAuthError?: string;
+  initialAccessKey?: string;
+}) {
   const router = useRouter();
+  const prefilledKey = initialAccessKey?.trim() ?? "";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
-  const [signupRole, setSignupRole] = useState<SignupRole>("advisor");
-  const [accessKey, setAccessKey] = useState("");
-  const [mode, setMode] = useState<Mode>("signin");
+  const [signupRole, setSignupRole] = useState<SignupRole>(
+    prefilledKey ? "client" : "advisor"
+  );
+  const [accessKey, setAccessKey] = useState(prefilledKey);
+  const [mode, setMode] = useState<Mode>(prefilledKey ? "signup" : "signin");
   const [error, setError] = useState<string | null>(() =>
     initialAuthError?.trim() ? initialAuthError : null
   );
