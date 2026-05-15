@@ -149,8 +149,11 @@ export function AdvisorKeyQrShareButton({ initialData }: Props) {
       <dialog
         ref={dialogRef}
         aria-labelledby={dialogHeadingId}
-        // backdrop:bg-* styles the native ::backdrop pseudo-element
-        className="w-full max-w-md rounded-2xl border border-slate-200 bg-transparent p-0 shadow-2xl backdrop:bg-slate-900/50"
+        // m-auto re-asserts the UA `margin:auto` that centers a modal <dialog>
+        // (Tailwind Preflight zeroes element margins, which kills it → pins top-left).
+        // max-h + overflow keeps a tall dialog inside the viewport (content scrolls).
+        // backdrop:bg-* styles the native ::backdrop pseudo-element.
+        className="m-auto w-[calc(100%-2rem)] max-w-md max-h-[calc(100dvh-2rem)] overflow-y-auto rounded-2xl border border-slate-200 bg-transparent p-0 shadow-2xl backdrop:bg-slate-900/50"
         onClose={closeDialog}
         onCancel={closeDialog}
         onClick={(e) => {
