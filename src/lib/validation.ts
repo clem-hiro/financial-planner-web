@@ -252,6 +252,15 @@ export const clientAccessKeyInputSchema = z
       .regex(/^[A-F0-9]+$/, "Invalid access key format")
   );
 
+/**
+ * Shape gate for `/login?qr_token=...`. 128-bit random → `base64url` is 22 chars
+ * (`base64url` strips padding). Accept up to 24 to tolerate possible padding.
+ */
+export const qrShareTokenSchema = z
+  .string()
+  .trim()
+  .regex(/^[A-Za-z0-9_-]{22,24}$/, "Invalid token");
+
 export const advisorAccessKeyPurchaseQuantitySchema = z.coerce
   .number()
   .int()
