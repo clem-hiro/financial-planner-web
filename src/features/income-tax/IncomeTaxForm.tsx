@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition, type FormEvent } from "react";
+import { useState, useTransition, type FormEvent, type ReactNode } from "react";
 import { num } from "@/data/mappers";
 import type { IncomeTaxConfigRow } from "@/data/supabase/types";
 import { appCardClass, appCardPadding } from "@/ui/surface-classes";
 import { fpInputClass, fpPrimaryButtonClass, fpSelectClass } from "@/ui/input-classes";
+import { formatCurrency } from "@/ui/lib/format";
 
 type ReliefFieldKey =
   // family
@@ -62,6 +63,18 @@ const ALL_FIELDS = [...FAMILY, ...CPF_SRS, ...NS, ...CAREER_OTHER];
 
 type ReliefValues = Record<ReliefFieldKey, string>;
 
+type AutoAppliedRow = {
+  label: string;
+  value: number;
+  caption: string;
+};
+
+type AutoAppliedProp = {
+  mandatoryCpfSgd: number;
+  earnedIncomeSgd: number;
+  age: number;
+} | null;
+
 function initialValues(config: IncomeTaxConfigRow | null): ReliefValues {
   const out = {} as ReliefValues;
   for (const f of ALL_FIELDS) {
@@ -78,7 +91,13 @@ function parseNullable(raw: string): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-export function IncomeTaxForm({ config }: { config: IncomeTaxConfigRow | null }) {
+export function IncomeTaxForm({
+  config,
+  autoApplied,
+}: {
+  config: IncomeTaxConfigRow | null;
+  autoApplied: AutoAppliedProp;
+}) {
   const router = useRouter();
   const [values, setValues] = useState<ReliefValues>(initialValues(config));
   const [notes, setNotes] = useState(config?.other_reliefs_notes ?? "");
@@ -155,10 +174,50 @@ export function IncomeTaxForm({ config }: { config: IncomeTaxConfigRow | null })
     }
   }
 
+  const earnedIncomeRow: AutoAppliedRow | null = autoApplied
+    ? {
+        label: "Earned income relief",
+        value: autoApplied.earnedIncomeSgd,
+        caption: `Auto-applied · age ${autoApplied.age} tier`,
+      }
+    : null;
+  const mandatoryCpfRow: AutoAppliedRow | null = autoApplied
+    ? {
+        label: "Mandatory CPF (employee share)",
+        value: autoApplied.mandatoryCpfSgd,
+        caption: "Auto-applied by IRAS via your employer's IR8S filing",
+      }
+    : null;
+
   return (
-    <form onSubmit={onSubmit} className={`${appCardClass} ${appCardPadding} space-y-6`}>
+    <form onSubmit={onSubmit} className={`${appCardClass} ${appCardPadding} space-y-4`}>
+      <FieldGroup
+        title="Earned income"
+        defaultOpen
+        autoAppliedRows={earnedIncomeRow ? [earnedIncomeRow] : []}
+        autoAppliedHint={
+          autoApplied
+            ? null
+            : "Set your birth date and CPF age band on the Profile tab to see this auto-derived."
+        }
+        fields={[]}
+        values={values}
+        onChange={setField}
+      />
+      <FieldGroup
+        title="CPF / SRS"
+        defaultOpen
+        autoAppliedRows={mandatoryCpfRow ? [mandatoryCpfRow] : []}
+        autoAppliedHint={
+          autoApplied
+            ? null
+            : "Set your monthly gross salary, birth date, and CPF age band on the Profile tab to see your mandatory CPF here."
+        }
+        fields={CPF_SRS}
+        values={values}
+        onChange={setField}
+      />
       <FieldGroup title="Family" fields={FAMILY} values={values} onChange={setField} />
-      <FieldGroup title="CPF / SRS" fields={CPF_SRS} values={values} onChange={setField} />
       <FieldGroup title="NS" fields={NS} values={values} onChange={setField} />
       <FieldGroup
         title="Career & other"
@@ -261,35 +320,82 @@ function FieldGroup({
   fields,
   values,
   onChange,
+  defaultOpen = false,
+  autoAppliedRows = [],
+  autoAppliedHint = null,
 }: {
   title: string;
   fields: FieldDef[];
   values: ReliefValues;
   onChange: (key: ReliefFieldKey, raw: string) => void;
+  defaultOpen?: boolean;
+  autoAppliedRows?: AutoAppliedRow[];
+  autoAppliedHint?: ReactNode;
 }) {
   return (
-    <fieldset className="space-y-3">
-      <legend className="text-sm font-semibold text-slate-900">{title}</legend>
-      <div className="grid gap-3 sm:grid-cols-2">
-        {fields.map((f) => (
-          <label key={f.key} className="block">
-            <span className="block text-xs text-slate-600">
-              {f.label}{" "}
-              <span className="text-slate-400">(max {f.max.toLocaleString()})</span>
-            </span>
-            <input
-              type="number"
-              step="0.01"
-              min={0}
-              max={f.max}
-              value={values[f.key]}
-              onChange={(e) => onChange(f.key, e.target.value)}
-              className={fpInputClass}
-              placeholder="0"
-            />
-          </label>
-        ))}
+    <details
+      open={defaultOpen}
+      className="group rounded-xl border border-slate-200/80 p-4"
+    >
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-slate-900 [&::-webkit-details-marker]:hidden">
+        <span className="flex items-center gap-2">
+          <span className="inline-block text-slate-400 transition-transform group-open:rotate-90">
+            ▸
+          </span>
+          {title}
+        </span>
+        {autoAppliedRows.length > 0 ? (
+          <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-800">
+            auto
+          </span>
+        ) : null}
+      </summary>
+      <div className="mt-3 space-y-3">
+        {autoAppliedRows.length > 0 ? (
+          <div className="space-y-2 rounded-lg bg-slate-50/80 p-3 ring-1 ring-slate-200/60">
+            {autoAppliedRows.map((r) => (
+              <div key={r.label} className="space-y-1">
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className="text-xs font-medium text-slate-700">
+                    {r.label}
+                  </span>
+                  <span className="font-mono text-sm font-semibold tabular-nums text-slate-900">
+                    {formatCurrency(r.value)}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-500">{r.caption}</p>
+              </div>
+            ))}
+          </div>
+        ) : null}
+        {autoAppliedHint ? (
+          <p className="rounded-lg bg-amber-50/80 px-3 py-2 text-xs text-amber-800 ring-1 ring-amber-200/70">
+            {autoAppliedHint}
+          </p>
+        ) : null}
+        {fields.length > 0 ? (
+          <div className="grid gap-3 sm:grid-cols-2">
+            {fields.map((f) => (
+              <label key={f.key} className="block">
+                <span className="block text-xs text-slate-600">
+                  {f.label}{" "}
+                  <span className="text-slate-400">(max {f.max.toLocaleString()})</span>
+                </span>
+                <input
+                  type="number"
+                  step="0.01"
+                  min={0}
+                  max={f.max}
+                  value={values[f.key]}
+                  onChange={(e) => onChange(f.key, e.target.value)}
+                  className={fpInputClass}
+                  placeholder="0"
+                />
+              </label>
+            ))}
+          </div>
+        ) : null}
       </div>
-    </fieldset>
+    </details>
   );
 }
