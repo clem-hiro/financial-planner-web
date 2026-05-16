@@ -16,6 +16,7 @@ import {
   monthlyBudgetAggregateOverspend,
   monthlyBudgetVsActual,
   topOverBudgetCategories,
+  sumInvestableSurplusOverHorizon,
   vehicleGrossAssetEstimate,
   vehicleNetListedBeforeLiquidation,
 } from "@/domain/finance";
@@ -506,16 +507,25 @@ export async function getDashboardPayload(
         (s, vi) => s + vehicleNetListedBeforeLiquidation(vi, asOfRetirement),
         0
       );
+    const extraTaxMonthly =
+      syntheticTax?.expense.spendPeriod === "monthly"
+        ? syntheticTax.expense.amount
+        : 0;
     const surplusAccrualToRet =
-      monthlyInvestableSurplus * monthsToRet +
-      (annualBonusTakeHomeNet > 0
-        ? annualBonusTakeHomeNet *
-          countAnnualBonusPayoutsInHorizon(
-            yearMonth,
-            monthsToRet,
-            DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH
-          )
-        : 0);
+      income != null
+        ? sumInvestableSurplusOverHorizon({
+            startYearMonth: yearMonth,
+            months: monthsToRet,
+            monthlyIncome: income,
+            domainBudgetLines,
+            amountOverrideByLineId,
+            monthlyGoalContributions: totalPlannedGoalContributionsMonthly,
+            annualBonusTakeHomeNet:
+              annualBonusTakeHomeNet > 0 ? annualBonusTakeHomeNet : 0,
+            annualBonusPayoutMonth: DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
+            extraMonthlyPlannedSpend: extraTaxMonthly,
+          })
+        : 0;
     const cashAtRetirementHorizon =
       cashTotal + vehicleSaleCashAtRet + surplusAccrualToRet;
     let projectedAtRetirement =
@@ -663,15 +673,20 @@ export async function getDashboardPayload(
           0
         );
       const surplusAccrualHorizon =
-        monthlyInvestableSurplus * p.monthsFromToday +
-        (annualBonusTakeHomeNet > 0
-          ? annualBonusTakeHomeNet *
-            countAnnualBonusPayoutsInHorizon(
-              yearMonth,
-              p.monthsFromToday,
-              DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH
-            )
-          : 0);
+        income != null
+          ? sumInvestableSurplusOverHorizon({
+              startYearMonth: yearMonth,
+              months: p.monthsFromToday,
+              monthlyIncome: income,
+              domainBudgetLines,
+              amountOverrideByLineId,
+              monthlyGoalContributions: totalPlannedGoalContributionsMonthly,
+              annualBonusTakeHomeNet:
+                annualBonusTakeHomeNet > 0 ? annualBonusTakeHomeNet : 0,
+              annualBonusPayoutMonth: DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
+              extraMonthlyPlannedSpend: extraTaxMonthly,
+            })
+          : 0;
       const cashRow =
         cashTotal +
         vehicleSaleCashHorizon +

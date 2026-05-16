@@ -86,13 +86,6 @@ export async function WealthPlanningSection() {
       balance: num(r.balance),
     })
   );
-  const liabilityBalanceRows: LiabilityBalanceRow[] = bundle.liabilityRows.map(
-    (r) => ({
-      id: r.id,
-      name: r.name,
-      balance: num(r.balance),
-    })
-  );
 
   return (
     <div className="space-y-10">
@@ -153,7 +146,7 @@ export async function WealthPlanningSection() {
           <PageSection id="wealth-cash-debts" title="Cash and debts">
             <CashAndLiabilitiesPanels
               cashRows={cashBalanceRows}
-              liabilityRows={liabilityBalanceRows}
+              liabilityRows={bundle.liabilityRows}
               currencyCode={currency}
             />
           </PageSection>

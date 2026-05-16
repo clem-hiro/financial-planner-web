@@ -30,6 +30,9 @@ export function budgetCategoryEmoji(categoryRaw: string): string {
   if (k.includes("transport") || k.includes("car") || k.includes("petrol")) {
     return "\u{1F697}";
   }
+  if (k.includes("debt repay") || k.includes("loan repay")) {
+    return "\u{1F4B3}";
+  }
   if (k.includes("insur")) {
     return "\u{1F6E1}";
   }

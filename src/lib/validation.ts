@@ -343,6 +343,42 @@ export const incomeTaxConfigPatchSchema = z
     }
   });
 
+export const debtCategorySchema = z.enum([
+  "property",
+  "vehicle",
+  "personal",
+  "credit_card",
+  "renovation",
+  "education",
+  "other",
+]);
+
+export const loanTypeSchema = z.enum(["amortized", "flat_rate", "revolving"]);
+
+export const liabilityWriteSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  balance: z.number().nonnegative().max(100_000_000),
+  category: debtCategorySchema.nullable().optional(),
+  loan_type: loanTypeSchema.nullable().optional(),
+  interest_rate_annual: z.number().min(0).max(1).nullable().optional(),
+  remaining_tenure_months: z
+    .number()
+    .int()
+    .min(0)
+    .max(12 * 50)
+    .nullable()
+    .optional(),
+  monthly_repayment: z
+    .number()
+    .nonnegative()
+    .max(1_000_000)
+    .nullable()
+    .optional(),
+  repayment_override: z.boolean().optional(),
+  start_date: isoDateOnly.nullable().optional(),
+  notes: z.string().trim().max(2000).nullable().optional(),
+});
+
 export const couponCodeInputSchema = z
   .string()
   .trim()

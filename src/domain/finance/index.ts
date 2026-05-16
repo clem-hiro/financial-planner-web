@@ -47,6 +47,7 @@ export {
   normalizeCategory,
   isValidYearMonth,
   isMonthlyBudgetLineApplicable,
+  plannedMonthlyBudgetTotalForMonth,
   monthlyBudgetVsActual,
   monthlyBudgetAggregateOverspend,
   annualBudgetVsActual,
@@ -78,6 +79,27 @@ export {
   sgCpfAgeBandForCompletedAge,
 } from "./sg-cpf-contribution-buckets";
 export type { OwSubjectYtdResult } from "./sg-cpf-contribution-buckets";
+export {
+  DEBT_CATEGORIES,
+  DEBT_REPAYMENTS_CATEGORY_PREFIX,
+  debtBudgetCategoryName,
+  debtRepaymentAppliesInMonth,
+  debtRepaymentEndYearMonth,
+  debtRepaymentStartYearMonth,
+  defaultLoanTypeForCategory,
+  effectiveMonthlyRepayment,
+  estimateAmortizedMonthlyPayment,
+  estimateFlatRateMonthlyPayment,
+  estimateMonthlyRepayment,
+  isDebtBudgetCategory,
+  sumDebtRepaymentsInMonth,
+} from "./debt-repayment";
+export type {
+  DebtCategory,
+  LiabilityForPlanning,
+  LoanType,
+} from "./debt-repayment";
+export { sumInvestableSurplusOverHorizon } from "./investable-surplus";
 export { buildAmortizationSchedule } from "./mortgage-amortization";
 export type { AmortizationPayment } from "./mortgage-amortization";
 export {

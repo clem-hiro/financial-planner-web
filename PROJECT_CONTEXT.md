@@ -91,7 +91,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 |---------|--------|--------|
 | **Overview** | **Partial** | Live snapshot metrics from dashboard payload; roadmap cards for advisor collaboration extensions and AI layer are **planned**. |
 | **Cash flow** | **Shipped** | Budget workspace + progressive income/assumptions (`CashFlowPlanningSection`, `BudgetPlanningView`). |
-| **Wealth** | **Shipped** | Same underlying data as Setup: investments, CPF, cash/debts, housing, vehicles. |
+| **Wealth** | **Shipped** | Same underlying data as Setup: investments, CPF, cash/debts, housing, vehicles. Debts support loan categories, repayment estimates (amortized / flat / revolving), budget sync, and payoff-aware projections (`DebtPlanningPanels`, `debt-repayment.ts`). |
 | **Protection** | **Partial** | Emergency-fund **recommendation** + link to Wealth for cash; insurance, dependents, estate, risk cards are **planned** (`ProtectionPlanningSection`). |
 | **Future** | **Partial** | **Goals** CRUD is **shipped** (`FinancialGoalsPanels`); dedicated “retirement studio”, scenario compare, tax lens, exports, vault are **planned** cards (Home already shows projection **charts**). |
 
@@ -105,6 +105,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | SG-oriented guided budget templates (onboarding + domain) | **Shipped** | `budget-guided-setup.ts`, onboarding actions. |
 | Investments with contribution phase (until retirement / fixed duration) | **Shipped** | DB migration `20260516000000_*`; Setup → Investments; FV helpers. |
 | Housing quick-add / guided property + BSD context; loan amortization | **Shipped** | Domain + Setup → Housing; see Database section. |
+| **Debt planning** (categories, repayment, budget + projection integration) | **Shipped** | `financial_liabilities` extended fields; auto monthly budget lines under “Debt Repayments”; educational UX in Setup / Wealth. |
 | Methodology / “How it works” | **Shipped** | `src/features/help/`, `methodology-topics.ts`. |
 
 ### Client — APIs
@@ -137,6 +138,8 @@ These match `roadmap-modules.tsx` — all **Planned** as standalone modules unle
 **Direction:** move away from “one noisy page per micro-feature” toward **section-based composition** and **reusable surface components** (`InsightCard`, `RecommendationCard`, `PlaceholderModuleCard`, dashboard sections). **Level 1** is a simple summary; **Level 2** is the planning workspace; **Level 3** is advanced assumptions (often behind disclosure, e.g. collapsible income blocks on Cash Flow).
 
 Shared numeric flows still come from **`src/data/dashboard.ts`**, **`src/domain/finance/**`, and existing repositories — new UI is largely **routing + composition**, not duplicate calculators.
+
+**Debt planning philosophy:** a liability is modeled as both balance-sheet debt (net worth) and a **future cash-flow obligation**. Optional loan metadata drives repayment estimates (amortized, flat-rate, or manual/revolving), syncs **monthly budget lines** under “Debt Repayments”, and sets **end months** so long-term surplus projections reflect payoff (cash-flow relief). Educational copy in the debt UI explains structures without banking jargon.
 
 ---
 
@@ -276,6 +279,7 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 | Budget | `src/features/budget/` (`BudgetPlanningView`, `BudgetStrategyInsightPanel` for target vs line mix + placeholders), `src/data/repositories/budget-lines.ts`, overrides, `src/domain/finance/budget.ts` |
 | Setup tabs | `src/features/setup/SetupTabsNav.tsx`, `src/lib/setup-urls.ts` (`setupBudgetPath` for classic `/setup` budget tab; `planningCashFlowBudgetPath` for `/planning/cash-flow`) |
 | Goals / balances / loans / vehicles / CPF | `src/features/goals/`, related `src/data/repositories/*` |
+| Debt planning UI + budget sync | `src/features/debts/`, `src/domain/finance/debt-repayment.ts`, `src/data/liability-budget-sync.ts` |
 | Help / methodology | `src/features/help/`, `src/content/methodology-topics.ts`, `OpenMethodologyButton.tsx` |
 | Pure finance logic | `src/domain/finance/` (projections, net worth, SG CPF/vehicle/housing helpers, **`cpf-retirement-projection.ts`** for RA-at-55 / FRS-BRS-ERS illustrations, tests alongside) |
 | DB access patterns | `src/data/repositories/*.ts`, `src/data/mappers.ts`, `src/data/supabase/types.ts` |
