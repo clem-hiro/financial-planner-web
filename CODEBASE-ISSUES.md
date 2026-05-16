@@ -1,4 +1,4 @@
-# Codebase Issues — 2026-05-15
+# Codebase Issues — 2026-05-16
 
 ## Summary
 
@@ -6,10 +6,10 @@
 
 ## Changes Since Last Scan
 
-No marker delta. Prior scan baseline (2026-05-14) was 0; current scan still 0. The codebase remains free of inline code markers across `src/`, `scripts/`, and `supabase/`.
+No marker delta. Prior scan baselines (2026-05-14, 2026-05-15) were 0; current scan (`src/`, `scripts/`, `supabase/`) is still 0. No `TODO`/`FIXME`/`HACK`/`STUB`/`XXX`/`WORKAROUND` markers introduced this session despite a large diff (`9fb1584..fba9f9d`: QR feature, dialog fixes, income-tax 500, seed key).
 
 ## Note
 
-Repo convention so far favors plan/handoff docs over inline markers. Open loops surface as P0/P1 entries in `HANDOFF.md` §6 (today: 1 P0 + 13 P1) instead of `// TODO` comments. Keep it that way unless a marker would land directly on the line that needs the fix.
+Repo convention favors `HANDOFF.md` §6 (P0/P1) + `BACKLOG.md` (P2) over inline code markers. Open work this session is tracked there, not as `// TODO`. Keep it that way unless a marker would land exactly on the line needing the fix.
 
-If future sessions add markers, this file will diff them and surface resolved/persisted/new accordingly.
+If a future session adds markers, this file diffs them and surfaces resolved/persisted/new.

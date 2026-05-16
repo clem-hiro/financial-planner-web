@@ -5,7 +5,8 @@ import {
   clientAccessKeyInputSchema,
   signupFinancialRoleSchema,
 } from "@/lib/validation";
-import { consumeQrTokenAction } from "@/server/advisor-qr-share-actions";
+import { appEmeraldPanelClass } from "@/ui/surface-classes";
+import { formatSignupError } from "@/features/auth/signup-error";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -21,24 +22,16 @@ const authInputClass =
 
 const authLabelClass = "block text-sm font-medium text-slate-700";
 
-function formatSignupError(message: string): string {
-  if (message.includes("Invalid, already used")) return message;
-  if (message.includes("expired access key")) return message;
-  if (message.includes("Client signup requires")) return message;
-  if (/database error/i.test(message)) {
-    return "Could not complete signup. If you are a client, confirm your access key with your advisor and try again.";
-  }
-  return message;
-}
-
 export function LoginForm({
   initialAuthError,
   initialAccessKey,
   initialQrToken,
+  initialAdvisorName,
 }: {
   initialAuthError?: string;
   initialAccessKey?: string;
   initialQrToken?: string;
+  initialAdvisorName?: string;
 }) {
   const router = useRouter();
   const prefilledKey = initialAccessKey?.trim() ?? "";
@@ -95,34 +88,34 @@ export function LoginForm({
         };
 
         if (role === "client") {
-          // QR flow: the token is the binding source of truth. Consume at POST
-          // (not GET) so link-preview prefetch can't burn it. Consume failure
-          // silently falls back to the access-key field.
-          let effectiveKey = accessKey;
           if (qrToken) {
-            const consumed = await consumeQrTokenAction(qrToken);
-            if (consumed.ok) effectiveKey = consumed.accessKey;
+            // QR flow: the auth-insert trigger redeems the token atomically
+            // with the key-claim + advisor bind (single-use, fail-closed). No
+            // pre-validate, no access_key in metadata — the token is the only
+            // binding source of truth.
+            userMeta.qr_token = qrToken;
+          } else {
+            const keyParsed = clientAccessKeyInputSchema.safeParse(accessKey);
+            if (!keyParsed.success) {
+              const msg = keyParsed.error.flatten().formErrors[0] ?? "Invalid access key";
+              setError(msg);
+              return;
+            }
+            const normalizedKey = keyParsed.data;
+            const { data: keyOk, error: rpcErr } = await supabase.rpc(
+              "validate_client_access_key_for_signup",
+              { p_key: normalizedKey }
+            );
+            if (rpcErr) {
+              setError(rpcErr.message || "Could not validate access key.");
+              return;
+            }
+            if (!keyOk) {
+              setError("Invalid, already used, or expired access key. Ask your advisor for a new key.");
+              return;
+            }
+            userMeta.access_key = normalizedKey;
           }
-          const keyParsed = clientAccessKeyInputSchema.safeParse(effectiveKey);
-          if (!keyParsed.success) {
-            const msg = keyParsed.error.flatten().formErrors[0] ?? "Invalid access key";
-            setError(msg);
-            return;
-          }
-          const normalizedKey = keyParsed.data;
-          const { data: keyOk, error: rpcErr } = await supabase.rpc(
-            "validate_client_access_key_for_signup",
-            { p_key: normalizedKey }
-          );
-          if (rpcErr) {
-            setError(rpcErr.message || "Could not validate access key.");
-            return;
-          }
-          if (!keyOk) {
-            setError("Invalid, already used, or expired access key. Ask your advisor for a new key.");
-            return;
-          }
-          userMeta.access_key = normalizedKey;
         }
 
         const { data, error: err } = await supabase.auth.signUp({
@@ -134,6 +127,7 @@ export function LoginForm({
               display_name?: string;
               profile_type: string;
               access_key?: string;
+              qr_token?: string;
             },
           },
         });
@@ -214,6 +208,16 @@ export function LoginForm({
       onSubmit={onSubmit}
       className="mx-auto w-full max-w-sm space-y-5 rounded-2xl border border-slate-200/90 border-t-emerald-600 border-t-4 bg-white p-6 text-left shadow-[0_16px_48px_-24px_rgba(12,25,47,0.12)] sm:max-w-md sm:p-8"
     >
+      {mode === "signup" && initialAdvisorName ? (
+        <div
+          className={`${appEmeraldPanelClass} px-4 py-3 text-sm text-emerald-950`}
+          role="note"
+        >
+          You&rsquo;re connecting with{" "}
+          <span className="font-semibold">{initialAdvisorName}</span>
+        </div>
+      ) : null}
+
       <div
         className="flex rounded-xl bg-slate-100/90 p-1"
         role="tablist"

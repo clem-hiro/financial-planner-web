@@ -149,8 +149,26 @@ export function AdvisorKeyQrShareButton({ initialData }: Props) {
       <dialog
         ref={dialogRef}
         aria-labelledby={dialogHeadingId}
-        // backdrop:bg-* styles the native ::backdrop pseudo-element
-        className="w-full max-w-md rounded-2xl border border-slate-200 bg-transparent p-0 shadow-2xl backdrop:bg-slate-900/50"
+        // Centering is inline (not Tailwind): immune to Turbopack/JIT dropping
+        // classes, and inline specificity beats the UA <dialog> stylesheet whose
+        // residual inset/margin (esp. block-axis, in real Safari) defeated every
+        // class-based attempt. right/bottom:auto + margin:0 neutralize the UA
+        // insets so only top/left + translate apply → centered in every engine.
+        // ::backdrop dim is a source-CSS rule in globals.css (not a JIT utility).
+        style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          right: "auto",
+          bottom: "auto",
+          transform: "translate(-50%, -50%)",
+          margin: 0,
+          width: "100%",
+          maxWidth: "28rem",
+          maxHeight: "100vh",
+          overflowY: "auto",
+        }}
+        className="rounded-2xl border border-slate-200 bg-transparent p-0 shadow-2xl"
         onClose={closeDialog}
         onCancel={closeDialog}
         onClick={(e) => {

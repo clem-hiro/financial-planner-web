@@ -1,6 +1,6 @@
 import "server-only";
 
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { QR_DEEPLINK_EXPIRY_MS } from "@/config/deeplink";
 import type { AdvisorAccessKeyRow } from "@/data/supabase/types";
@@ -19,6 +19,11 @@ function newToken(): string {
   return randomBytes(16).toString("base64url");
 }
 
+/** Server-side hash stored at rest; the raw token lives only in the QR URL. */
+export function tokenHash(raw: string): string {
+  return createHash("sha256").update(raw).digest("hex");
+}
+
 async function pickOldestAvailableKey(
   supabase: SupabaseClient,
   advisorUserId: string
@@ -35,29 +40,6 @@ async function pickOldestAvailableKey(
   return (data as Pick<AdvisorAccessKeyRow, "access_key"> | null)?.access_key ?? null;
 }
 
-async function peekExistingLiveToken(
-  supabase: SupabaseClient,
-  advisorUserId: string
-): Promise<{ token: string; key: string; expiresAt: Date } | null> {
-  const { data, error } = await supabase
-    .from("advisor_qr_share_tokens")
-    .select("token, access_key, expires_at")
-    .eq("advisor_user_id", advisorUserId)
-    .is("consumed_at", null)
-    .gt("expires_at", new Date().toISOString())
-    .order("expires_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (error) throw error;
-  if (!data) return null;
-  const row = data as { token: string; access_key: string; expires_at: string };
-  return {
-    token: row.token,
-    key: row.access_key,
-    expiresAt: new Date(row.expires_at),
-  };
-}
-
 export async function mintQrShareToken(
   supabase: SupabaseClient,
   advisorUserId: string
@@ -69,7 +51,7 @@ export async function mintQrShareToken(
   const expiresAt = new Date(Date.now() + QR_DEEPLINK_EXPIRY_MS);
 
   const { error } = await supabase.rpc("mint_qr_share_token", {
-    p_token: token,
+    p_token_hash: tokenHash(token),
     p_access_key: key,
     p_advisor_user_id: advisorUserId,
     p_expires_at: expiresAt.toISOString(),
@@ -80,20 +62,17 @@ export async function mintQrShareToken(
 }
 
 /**
- * `refresh=false` (page render): reuse an existing live token if one exists, so
- * navigating back to the page does NOT invalidate a previously-shared QR.
- * `refresh=true` (Refresh QR button): always mint, retiring the prior token.
+ * Every render mints a fresh token. Since only `sha256(token)` is stored, the
+ * raw token can't be reconstructed to reuse a prior QR — mint's retire-then-
+ * insert retires any prior unconsumed token for the (advisor, key), so exactly
+ * one QR is live at a time.
  */
 export async function buildShareData(
   supabase: SupabaseClient,
   advisorUserId: string,
-  advisorDisplayName: string | null,
-  refresh = false
+  advisorDisplayName: string | null
 ): Promise<QrShareData | null> {
-  const existing = refresh
-    ? null
-    : await peekExistingLiveToken(supabase, advisorUserId);
-  const minted = existing ?? (await mintQrShareToken(supabase, advisorUserId));
+  const minted = await mintQrShareToken(supabase, advisorUserId);
   if (!minted) return null;
 
   const origin = await getSiteOrigin();

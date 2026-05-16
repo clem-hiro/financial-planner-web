@@ -189,6 +189,86 @@
       "readme_section": "Data model",
       "status": "pending",
       "summary": "schema change in supabase/migrations/20260522000000_advisor_qr_share_tokens.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-16T05:59:59Z",
+      "trigger_file": "/Users/hiroshifujiwara/.claude/plans/run-research-for-security-fancy-valley-agent-a94779d5bcdc239fb.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in /Users/hiroshifujiwara/.claude/plans/run-research-for-security-fancy-valley-agent-a94779d5bcdc239fb.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-16T06:00:13Z",
+      "trigger_file": ".claude/agent-memory/researcher/sources-websecurity.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/researcher/sources-websecurity.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-16T06:00:21Z",
+      "trigger_file": ".claude/agent-memory/researcher/heuristics-websecurity.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/researcher/heuristics-websecurity.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-16T06:00:25Z",
+      "trigger_file": ".claude/agent-memory/researcher/MEMORY.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/researcher/MEMORY.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-16T06:22:26Z",
+      "trigger_file": "supabase/migrations/20260523000000_qr_token_hash_and_atomic_redeem.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260523000000_qr_token_hash_and_atomic_redeem.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-16T06:36:41Z",
+      "trigger_file": "supabase/tests/qr_redeem_scenarios.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/tests/qr_redeem_scenarios.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-16T06:46:25Z",
+      "trigger_file": ".claude/agent-memory/code-reviewer/MEMORY.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/code-reviewer/MEMORY.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-16T06:46:33Z",
+      "trigger_file": ".claude/agent-memory/code-reviewer/pgcrypto-schema-convention.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/code-reviewer/pgcrypto-schema-convention.md \u2014 Architecture (readme) may be stale"
     }
   ]
 }

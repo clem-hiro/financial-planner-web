@@ -129,7 +129,8 @@ export function IncomeTaxForm({
     try {
       const patch: Record<string, unknown> = { payment_method: paymentMethod };
       for (const f of ALL_FIELDS) {
-        patch[f.key] = parseNullable(values[f.key]);
+        // Reliefs are NOT NULL DEFAULT 0 in the DB; a blank field means 0, not null.
+        patch[f.key] = parseNullable(values[f.key]) ?? 0;
       }
       patch.other_reliefs_notes = notes.trim() === "" ? null : notes.trim();
       if (rebateOn) {

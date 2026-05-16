@@ -253,13 +253,14 @@ export const clientAccessKeyInputSchema = z
   );
 
 /**
- * Shape gate for `/login?qr_token=...`. 128-bit random → `base64url` is 22 chars
- * (`base64url` strips padding). Accept up to 24 to tolerate possible padding.
+ * Shape gate for `/login?qr_token=...`. `randomBytes(16)` (128-bit) as unpadded
+ * `base64url` is always exactly 22 chars. The URL carries the raw 22-char token;
+ * hashing to `token_hash` happens server-side.
  */
 export const qrShareTokenSchema = z
   .string()
   .trim()
-  .regex(/^[A-Za-z0-9_-]{22,24}$/, "Invalid token");
+  .regex(/^[A-Za-z0-9_-]{22}$/, "Invalid token");
 
 export const advisorAccessKeyPurchaseQuantitySchema = z.coerce
   .number()
@@ -275,8 +276,18 @@ export const incomeTaxPaymentMethodSchema = z.enum(["monthly_giro", "one_time"])
  * IRAS-bounded per-field maxima for relief inputs. Bounds match published category
  * caps for YA 2026; users may still over-claim — domain math applies the $80K total cap.
  */
+// DB columns are NOT NULL DEFAULT 0; the form sends null for blank reliefs.
+// Coerce null→0 here (canonical chokepoint) so the upsert never violates the
+// not-null constraint. `.optional()` is preserved so an omitted key stays
+// undefined → column left untouched on update / DB default on insert.
 const reliefAmount = (max: number) =>
-  z.number().min(0).max(max).nullable().optional();
+  z
+    .number()
+    .min(0)
+    .max(max)
+    .nullable()
+    .optional()
+    .transform((v) => (v === null ? 0 : v));
 
 export const incomeTaxConfigPatchSchema = z
   .object({
