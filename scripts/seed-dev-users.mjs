@@ -37,8 +37,11 @@ const DEV_CLIENT = {
   profile_type: "client",
 };
 
+// Mirror prod `fulfill_access_key_purchase` (gen_random_bytes(16) → 32 hex):
+// the strict clientAccessKeyInputSchema only accepts uppercase hex, so a
+// `DEV-` prefix would make seeded keys unusable for client signup.
 function genKey() {
-  return `DEV-${randomBytes(4).toString("hex").toUpperCase()}`;
+  return randomBytes(16).toString("hex").toUpperCase();
 }
 
 async function findUserByEmail(email) {
