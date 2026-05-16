@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { lockBodyScroll } from "@/lib/body-scroll-lock";
 import {
@@ -11,7 +11,6 @@ import {
 } from "@/lib/client-main-nav";
 import {
   appShellMainNavRailClass,
-  appTabPillActiveClass,
   appTabPillClass,
   appTabPillInactiveClass,
 } from "@/ui/app-tab-styles";
@@ -24,6 +23,13 @@ export function AppShellNav({
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const desktopRailRef = useRef<HTMLDivElement | null>(null);
+  const desktopLinkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+  const [activeIndicator, setActiveIndicator] = useState<{
+    left: number;
+    width: number;
+  } | null>(null);
+  const activeIndicatorInset = 2;
 
   useEffect(() => {
     for (const href of CLIENT_MAIN_NAV_PREFETCH_HREFS) {
@@ -37,15 +43,44 @@ export function AppShellNav({
     return unlock;
   }, [mobileOpen]);
 
-  if (workspace === "advisor") {
-    return null;
-  }
-
   const isActive = (route: (typeof CLIENT_MAIN_NAV)[number]) =>
     route.activeMatch(pathname);
 
-  const navLinkClass = (active: boolean) =>
-    `${appTabPillClass} ${active ? appTabPillActiveClass : appTabPillInactiveClass}`;
+  const activeRoute = CLIENT_MAIN_NAV.find((route) => isActive(route));
+
+  useLayoutEffect(() => {
+    const rail = desktopRailRef.current;
+    const activeLink = activeRoute
+      ? desktopLinkRefs.current[activeRoute.id]
+      : null;
+    if (!rail || !activeLink) {
+      return;
+    }
+
+    const updateIndicator = () => {
+      const railRect = rail.getBoundingClientRect();
+      const linkRect = activeLink.getBoundingClientRect();
+      setActiveIndicator({
+        left: linkRect.left - railRect.left + activeIndicatorInset,
+        width: Math.max(0, linkRect.width - activeIndicatorInset * 2),
+      });
+    };
+
+    const frame = requestAnimationFrame(updateIndicator);
+    const resizeObserver = new ResizeObserver(updateIndicator);
+    resizeObserver.observe(rail);
+    resizeObserver.observe(activeLink);
+    window.addEventListener("resize", updateIndicator);
+    return () => {
+      cancelAnimationFrame(frame);
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", updateIndicator);
+    };
+  }, [activeRoute]);
+
+  if (workspace === "advisor") {
+    return null;
+  }
 
   return (
     <nav className="relative w-full min-w-0 sm:w-max" aria-label="Main">
@@ -115,7 +150,17 @@ export function AppShellNav({
           )}
       </div>
       <div className="hidden sm:block">
-        <div className={appShellMainNavRailClass}>
+        <div ref={desktopRailRef} className={`${appShellMainNavRailClass} relative`}>
+          {activeIndicator ? (
+            <span
+              aria-hidden
+              className="pointer-events-none absolute bottom-1.5 left-0 top-1.5 rounded-full bg-linear-to-r from-[#0c192f] via-[#133359] to-[#047857] shadow-sm shadow-slate-900/20 transition-[transform,width] duration-300 ease-out motion-reduce:transition-none"
+              style={{
+                transform: `translateX(${activeIndicator.left}px)`,
+                width: `${activeIndicator.width}px`,
+              }}
+            />
+          ) : null}
           {CLIENT_MAIN_NAV.map((route) => {
             const active = isActive(route);
             return (
@@ -123,7 +168,12 @@ export function AppShellNav({
                 key={route.id}
                 href={route.href}
                 prefetch
-                className={navLinkClass(active)}
+                ref={(node) => {
+                  desktopLinkRefs.current[route.id] = node;
+                }}
+                className={`${appTabPillClass} relative z-10 ${
+                  active ? "text-white" : appTabPillInactiveClass
+                }`}
               >
                 {route.label}
               </Link>
