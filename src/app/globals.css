@@ -45,3 +45,11 @@ body {
   background-color: rgb(16 185 129 / 0.22);
   color: rgb(12 25 47);
 }
+
+/* Modal <dialog> backdrop dim. Authoritative source-CSS rule rather than a
+   Tailwind `backdrop:` utility — the JIT-generated utility was unreliably
+   dropped by Turbopack, and ::backdrop (a pseudo-element) cannot be styled
+   inline. Plain rgba for maximum Safari compatibility. */
+dialog::backdrop {
+  background-color: rgba(15, 23, 42, 0.5);
+}
