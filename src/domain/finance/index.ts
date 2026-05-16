@@ -25,6 +25,14 @@ export type {
   GoalDeadlineAnalysis,
   GoalDeadlineAnalysisParams,
 } from "./goal-deadline";
+export { accrueTakeHomeSurplus } from "./cash-flow-accrual";
+export type { AccrueTakeHomeSurplusInput } from "./cash-flow-accrual";
+export { buildAgeAssetProjection } from "./age-asset-projection";
+export type {
+  AgeAssetProjectionInput,
+  AgeAssetProjectionResult,
+  AgeCashPoint,
+} from "./age-asset-projection";
 export {
   ageCompletedOnDate,
   buildNetWorthByAgeProjection,

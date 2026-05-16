@@ -3,6 +3,7 @@ import {
   ageCompletedOnDate,
   analyzeRetirementDividendVsSpend,
   analyzeRetirementSpendVsPortfolio,
+  buildAgeAssetProjection,
   buildCpfMonthlyProjectionSeries,
   buildDashboardInsights,
   buildNetWorthByAgeProjection,
@@ -16,7 +17,6 @@ import {
   monthlyBudgetAggregateOverspend,
   monthlyBudgetVsActual,
   topOverBudgetCategories,
-  sumInvestableSurplusOverHorizon,
   vehicleGrossAssetEstimate,
   vehicleNetListedBeforeLiquidation,
 } from "@/domain/finance";
@@ -27,7 +27,6 @@ import {
   DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
 } from "@/domain/finance/sg-cpf";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
-import { addCalendarMonths } from "@/lib/dates";
 import {
   budgetLineRowToDomain,
   expenseRowToBudgetExpense,
@@ -538,40 +537,30 @@ export async function getDashboardPayload(
       monthsToRet,
       monthsToRetirementHorizon
     );
-    const asOfRetirement = addCalendarMonths(dashboardAsOf, monthsToRet);
-    const vehicleSaleCashAtRet = cumulativeVehicleProceedsToCash(
-      vehicleValuationInputs,
-      asOfRetirement
-    );
-    const vehiclesNetAtRet = vehicleValuationInputs
-      .filter((v) => v.vehicleStatus === "active")
-      .reduce(
-        (s, vi) => s + vehicleNetListedBeforeLiquidation(vi, asOfRetirement),
-        0
-      );
     const extraTaxMonthly =
       syntheticTax?.expense.spendPeriod === "monthly"
         ? syntheticTax.expense.amount
         : 0;
-    const surplusAccrualToRet =
-      income != null
-        ? sumInvestableSurplusOverHorizon({
-            startYearMonth: yearMonth,
-            months: monthsToRet,
-            monthlyIncome: income,
-            domainBudgetLines,
-            amountOverrideByLineId,
-            monthlyGoalContributions: totalPlannedGoalContributionsMonthly,
-            annualBonusTakeHomeNet:
-              annualBonusTakeHomeNet > 0 ? annualBonusTakeHomeNet : 0,
-            annualBonusPayoutMonth: DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
-            extraMonthlyPlannedSpend: extraTaxMonthly,
-            incomeGrowthAnnual: profileAnnualSalaryGrowthNominal(profile),
-            expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
-          })
-        : 0;
-    const cashAtRetirementHorizon =
-      cashTotal + vehicleSaleCashAtRet + surplusAccrualToRet;
+    const ageAssets = buildAgeAssetProjection({
+      agePoints: nwAgePoints,
+      asOf: dashboardAsOf,
+      monthsToRet,
+      cashTotal,
+      vehicleValuationInputs,
+      startYearMonth: yearMonth,
+      monthlyIncome: income,
+      domainBudgetLines,
+      amountOverrideByLineId,
+      monthlyGoalContributions: totalPlannedGoalContributionsMonthly,
+      annualBonusTakeHomeNet:
+        annualBonusTakeHomeNet > 0 ? annualBonusTakeHomeNet : 0,
+      annualBonusPayoutMonth: DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
+      extraMonthlyPlannedSpend: extraTaxMonthly,
+      incomeGrowthAnnual: profileAnnualSalaryGrowthNominal(profile),
+      expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
+    });
+    const vehiclesNetAtRet = ageAssets.vehiclesNetAtRet;
+    const cashAtRetirementHorizon = ageAssets.cashAtRetirementHorizon;
     let projectedAtRetirement =
       invAtRet +
       cashAtRetirementHorizon -
@@ -709,41 +698,9 @@ export async function getDashboardPayload(
       }),
     };
     const assetPoints: AgeAssetBreakdownPoint[] = nwAgePoints.map((p, i) => {
-      const asOfHorizon = addCalendarMonths(dashboardAsOf, p.monthsFromToday);
-      const vehicleSaleCashHorizon = cumulativeVehicleProceedsToCash(
-        vehicleValuationInputs,
-        asOfHorizon
-      );
-      const vehiclesNetHorizon = vehicleValuationInputs
-        .filter((v) => v.vehicleStatus === "active")
-        .reduce(
-          (s, vi) => s + vehicleNetListedBeforeLiquidation(vi, asOfHorizon),
-          0
-        );
-      const surplusAccrualHorizon =
-        income != null
-          ? sumInvestableSurplusOverHorizon({
-              startYearMonth: yearMonth,
-              // Cap at retirement: chart cash must not accrue surplus/bonus
-              // past the target retirement age (matches the scalar
-              // projectedAtRetirement) — restored Phase-1 Finding A fix.
-              months: Math.min(p.monthsFromToday, monthsToRet),
-              monthlyIncome: income,
-              domainBudgetLines,
-              amountOverrideByLineId,
-              monthlyGoalContributions: totalPlannedGoalContributionsMonthly,
-              annualBonusTakeHomeNet:
-                annualBonusTakeHomeNet > 0 ? annualBonusTakeHomeNet : 0,
-              annualBonusPayoutMonth: DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
-              extraMonthlyPlannedSpend: extraTaxMonthly,
-              incomeGrowthAnnual: profileAnnualSalaryGrowthNominal(profile),
-              expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
-            })
-          : 0;
-      const cashRow =
-        cashTotal +
-        vehicleSaleCashHorizon +
-        surplusAccrualHorizon;
+      const cashByAge = ageAssets.perAge[i];
+      const cashRow = cashByAge.cash;
+      const vehiclesNetHorizon = cashByAge.vehiclesNet;
       const investments = p.value - cashMinusLiab;
       const cpfRowAge = cpfProjectionByAge?.[i];
       const cpfAmt = cpfRowAge?.totalCpf ?? 0;
