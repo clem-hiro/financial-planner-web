@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useAdvisorProposalRefresh } from "@/features/advisor/use-advisor-proposal-refresh";
 import { patchAdvisorClientGoalMonthlyContributionAction } from "@/server/advisor-client-actions";
 
 const inputClass =
@@ -10,15 +11,19 @@ export function AdvisorGoalContributionForm({
   clientId,
   goalId,
   defaultMonthly,
+  disabled = false,
 }: {
   clientId: string;
   goalId: string;
   defaultMonthly: number;
+  disabled?: boolean;
 }) {
   const [state, action, pending] = useActionState(
     patchAdvisorClientGoalMonthlyContributionAction,
-    { error: null as string | null }
+    { error: null as string | null, proposalRecorded: undefined as boolean | undefined }
   );
+
+  useAdvisorProposalRefresh(state.proposalRecorded, state.error);
 
   return (
     <form action={action} className="inline-flex flex-col items-end gap-1">
@@ -31,17 +36,17 @@ export function AdvisorGoalContributionForm({
         step="0.01"
         defaultValue={defaultMonthly}
         className={inputClass}
-        disabled={pending}
+        disabled={pending || disabled}
       />
       {state.error ? (
         <span className="text-xs font-medium text-rose-700">{state.error}</span>
       ) : null}
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || disabled}
         className="text-xs font-semibold text-slate-600 underline-offset-2 hover:text-slate-900 hover:underline disabled:opacity-50"
       >
-        {pending ? "…" : "Apply"}
+        {pending ? "…" : "Suggest"}
       </button>
     </form>
   );

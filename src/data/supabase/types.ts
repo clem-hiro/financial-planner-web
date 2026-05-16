@@ -267,6 +267,48 @@ export type CpfBalanceRow = {
   updated_at: string;
 };
 
+export type AdvisorProposalStatus =
+  | "draft"
+  | "pending"
+  | "accepted"
+  | "rejected"
+  | "withdrawn";
+
+/** Advisor proposal header (migration `20260524000000`). */
+export type AdvisorProposalRow = {
+  id: string;
+  advisor_user_id: string;
+  client_user_id: string;
+  status: AdvisorProposalStatus;
+  advisor_note: string | null;
+  submitted_at: string | null;
+  resolved_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdvisorProposalChangeRow = {
+  id: string;
+  proposal_id: string;
+  section: string;
+  entity_type: "profile" | "budget_line" | "goal" | "investment";
+  entity_id: string | null;
+  field_key: string;
+  field_label: string;
+  old_value: string | null;
+  new_value: string | null;
+  explanation: string | null;
+  sort_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type AdvisorProposalSectionNoteRow = {
+  proposal_id: string;
+  section: string;
+  note: string;
+};
+
 /** Generic inbox row (migration `20260519000000`). Dedupe-keyed per user. */
 export type InboxNotificationRow = {
   id: string;

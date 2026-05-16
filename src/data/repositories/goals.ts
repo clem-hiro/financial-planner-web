@@ -14,6 +14,21 @@ export async function listFinancialGoals(
   return (data ?? []) as FinancialGoalRow[];
 }
 
+export async function getFinancialGoalById(
+  supabase: SupabaseClient,
+  userId: string,
+  goalId: string
+): Promise<FinancialGoalRow | null> {
+  const { data, error } = await supabase
+    .from("financial_goals")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("id", goalId)
+    .maybeSingle();
+  if (error) throw error;
+  return (data ?? null) as FinancialGoalRow | null;
+}
+
 export type NewFinancialGoal = {
   title: string;
   target_amount: number;

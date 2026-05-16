@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useAdvisorProposalRefresh } from "@/features/advisor/use-advisor-proposal-refresh";
 import { patchAdvisorClientProfileAction } from "@/server/advisor-client-actions";
 
 const inputClass =
@@ -9,8 +10,10 @@ const inputClass =
 export function AdvisorProfilePatchForm({
   clientId,
   defaults,
+  disabled = false,
 }: {
   clientId: string;
+  disabled?: boolean;
   defaults: {
     display_name: string;
     monthly_income: string;
@@ -21,7 +24,10 @@ export function AdvisorProfilePatchForm({
 }) {
   const [state, action, pending] = useActionState(patchAdvisorClientProfileAction, {
     error: null as string | null,
+    proposalRecorded: undefined as boolean | undefined,
   });
+
+  useAdvisorProposalRefresh(state.proposalRecorded, state.error);
 
   return (
     <form action={action} className="space-y-4">
@@ -89,10 +95,10 @@ export function AdvisorProfilePatchForm({
       <div className="flex justify-end">
         <button
           type="submit"
-          disabled={pending}
+          disabled={pending || disabled}
           className="inline-flex rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-60"
         >
-          {pending ? "Saving…" : "Save profile"}
+          {pending ? "Saving…" : "Suggest change"}
         </button>
       </div>
     </form>

@@ -5,6 +5,9 @@ import type { BudgetLineRow, FinancialGoalRow, InvestmentRow } from "@/data/supa
 import type { ProfileRow } from "@/data/supabase/types";
 import { advisorClientWorkspaceSignals } from "@/domain/finance/advisor-client-health";
 import { AdvisorBadge, AdvisorComingSoonPanel, AdvisorSection } from "@/features/advisor/advisor-workspace-primitives";
+import { AdvisorProposalDraftPanel } from "@/features/advisor/AdvisorProposalDraftPanel";
+import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
+import { AdvisorSuggestionModeBanner } from "@/features/advisor/AdvisorSuggestionModeBanner";
 import { AdvisorBudgetLineAmountForm } from "@/features/advisor/forms/AdvisorBudgetLineAmountForm";
 import { AdvisorGoalContributionForm } from "@/features/advisor/forms/AdvisorGoalContributionForm";
 import { AdvisorProfilePatchForm } from "@/features/advisor/forms/AdvisorProfilePatchForm";
@@ -32,6 +35,9 @@ export function AdvisorClientWorkspace({
   budgetLines,
   investments,
   month,
+  draftProposalId,
+  draftChanges,
+  hasPendingProposal,
 }: {
   clientId: string;
   profile: ProfileRow;
@@ -40,7 +46,11 @@ export function AdvisorClientWorkspace({
   budgetLines: BudgetLineRow[];
   investments: InvestmentRow[];
   month: string;
+  draftProposalId: string | null;
+  draftChanges: AdvisorProposalChangeRow[];
+  hasPendingProposal: boolean;
 }) {
+  const draftChangeCount = draftChanges.length;
   const currency = profile.base_currency ?? DEFAULT_BASE_CURRENCY;
   const investmentBalanceRows: InvestmentBalanceRow[] = investments.map((i) => ({
     id: i.id,
@@ -93,8 +103,8 @@ export function AdvisorClientWorkspace({
               )}
             </div>
             <p className="max-w-2xl text-sm leading-relaxed text-slate-600">
-              {signals.financialHealthHeadline}. Collaborative edits save to the client account
-              immediately.
+              {signals.financialHealthHeadline}. Suggested edits are reviewed by your client before
+              their plan updates.
             </p>
             <div className="flex flex-wrap gap-2">
               {signals.tags.slice(0, 5).map((t) => (
@@ -163,6 +173,11 @@ export function AdvisorClientWorkspace({
         </div>
       </header>
 
+      <AdvisorSuggestionModeBanner
+        changeCount={draftChangeCount}
+        hasPendingProposal={hasPendingProposal}
+      />
+
       <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start xl:gap-10">
         <div className="space-y-8">
           <AdvisorSection
@@ -171,11 +186,12 @@ export function AdvisorClientWorkspace({
             title="Profile & assumptions"
             description="Fast edits — income and targets drive projections on the client app."
             aside={
-              <AdvisorBadge tone="neutral">Live sync</AdvisorBadge>
+              <AdvisorBadge tone="neutral">Suggestion mode</AdvisorBadge>
             }
           >
             <AdvisorProfilePatchForm
               clientId={clientId}
+              disabled={hasPendingProposal}
               defaults={{
                 display_name: profile.display_name ?? "",
                 monthly_income: profile.monthly_income ?? "",
@@ -250,6 +266,7 @@ export function AdvisorClientWorkspace({
                             clientId={clientId}
                             goalId={g.id}
                             defaultMonthly={num(g.monthly_contribution)}
+                            disabled={hasPendingProposal}
                           />
                         </td>
                       </tr>
@@ -287,6 +304,7 @@ export function AdvisorClientWorkspace({
                             clientId={clientId}
                             lineId={line.id}
                             defaultAmount={num(line.amount)}
+                            disabled={hasPendingProposal}
                           />
                         </td>
                       </tr>
@@ -338,11 +356,14 @@ export function AdvisorClientWorkspace({
           <AdvisorSection
             id="investments"
             title="Investments & savings"
-            description="Add, edit, or remove investment accounts for this client. Changes apply immediately to their projections."
+            description="Add, edit, or remove investment accounts — saved as suggestions until the client accepts."
           >
             <div className="overflow-hidden rounded-xl border border-slate-100 bg-white divide-y divide-slate-100">
               <div className="p-4 sm:p-5">
-                <InvestmentForm advisorClientId={clientId} />
+                <InvestmentForm
+                  advisorClientId={clientId}
+                  advisorSuggestionDisabled={hasPendingProposal}
+                />
               </div>
               {investmentBalanceRows.length > 0 ? (
                 <div className="p-4 sm:p-5">
@@ -351,6 +372,7 @@ export function AdvisorClientWorkspace({
                     currencyCode={currency}
                     planningContext={investmentPlanningContext}
                     advisorClientId={clientId}
+                    advisorSuggestionDisabled={hasPendingProposal}
                     accountsHeading="Client accounts"
                   />
                 </div>
@@ -386,6 +408,12 @@ export function AdvisorClientWorkspace({
         </div>
 
         <aside className="space-y-4 lg:sticky lg:top-24">
+          <AdvisorProposalDraftPanel
+            proposalId={draftProposalId}
+            changes={draftChanges}
+            currencyCode={currency}
+            disabled={hasPendingProposal}
+          />
           <div className="rounded-2xl border border-slate-200 bg-slate-900 p-5 text-slate-50 shadow-lg">
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
               Session assist
@@ -396,7 +424,7 @@ export function AdvisorClientWorkspace({
             </p>
             <ul className="mt-4 space-y-2 text-xs text-slate-300">
               <li>• Client retains full ownership of their login.</li>
-              <li>• Edits apply with normal RLS — no elevated keys in the browser.</li>
+              <li>• Changes apply only after the client accepts your proposal.</li>
             </ul>
           </div>
           <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-5 text-sm text-slate-600">

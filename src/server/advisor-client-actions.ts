@@ -2,18 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { revalidateSetupAndPlanning } from "@/lib/planning-revalidate";
-import { updateBudgetLine } from "@/data/repositories/budget-lines";
 import { getClientProfileForAdvisor } from "@/data/repositories/advisor-clients";
-import { updateFinancialGoal } from "@/data/repositories/goals";
-import {
-  deleteInvestment,
-  insertInvestment,
-  updateInvestment,
-} from "@/data/repositories/investments";
-import { getProfileById, updateProfile } from "@/data/repositories/profiles";
+import { getBudgetLineById } from "@/data/repositories/budget-lines";
+import { getFinancialGoalById } from "@/data/repositories/goals";
+import { getInvestmentById } from "@/data/repositories/investments";
+import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
+import { recordAdvisorProposalChanges } from "@/server/advisor-proposal-recording";
 import { isAdvisor } from "@/lib/profile-role";
 import { z } from "zod";
+import { randomUUID } from "crypto";
 
 function clientErrorFromUnknown(e: unknown): string {
   if (e instanceof Error && e.message.trim()) return e.message;
@@ -27,16 +25,16 @@ function clientErrorFromUnknown(e: unknown): string {
 function revalidateAdvisorClientViews(clientId: string) {
   revalidatePath("/advisor/clients");
   revalidatePath(`/advisor/client/${clientId}`);
-  revalidatePath("/dashboard");
-  revalidatePath("/budget");
-  revalidatePath("/planning/future");
-  revalidateSetupAndPlanning();
 }
 
 async function requireAdvisorLinkedClient(
   clientId: string
 ): Promise<
-  | { ok: true; supabase: Awaited<ReturnType<typeof createSupabaseServerClient>> }
+  | {
+      ok: true;
+      supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>;
+      advisorUserId: string;
+    }
   | { ok: false; error: string }
 > {
   const supabase = await createSupabaseServerClient();
@@ -54,72 +52,104 @@ async function requireAdvisorLinkedClient(
   if (!row) {
     return { ok: false, error: "Client not found" };
   }
-  return { ok: true, supabase };
+  return { ok: true, supabase, advisorUserId: user.id };
 }
 
 export async function patchAdvisorClientProfileAction(
-  _prev: { error: string | null },
+  _prev: { error: string | null; proposalRecorded?: boolean },
   formData: FormData
-): Promise<{ error: string | null }> {
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
   const clientId = String(formData.get("client_id") ?? "").trim();
   if (!clientId) return { error: "Missing client" };
 
   const ctx = await requireAdvisorLinkedClient(clientId);
   if (!ctx.ok) return { error: ctx.error };
-  const { supabase } = ctx;
+  const { supabase, advisorUserId } = ctx;
+
+  const profile = await getProfileById(supabase, clientId);
+  if (!profile) return { error: "Client profile not found" };
+
+  const changes: Parameters<typeof recordAdvisorProposalChanges>[3] = [];
 
   const display_name = formData.get("display_name");
-  const monthly_income = formData.get("monthly_income");
-  const savings_target_monthly = formData.get("savings_target_monthly");
-  const fixed_expenses_monthly = formData.get("fixed_expenses_monthly");
-  const monthly_gross_salary = formData.get("monthly_gross_salary");
-
-  const patch: Parameters<typeof updateProfile>[2] = {};
-
   if (display_name !== null) {
     const v = String(display_name).trim();
-    patch.display_name = v || null;
+    changes.push({
+      entityType: "profile",
+      entityId: null,
+      fieldKey: "display_name",
+      oldValue: profile.display_name,
+      newValue: v || null,
+    });
   }
+  const monthly_income = formData.get("monthly_income");
   if (monthly_income !== null && monthly_income !== "") {
     const n = Number(monthly_income);
     if (!Number.isFinite(n) || n < 0) return { error: "Invalid monthly income" };
-    patch.monthly_income = n;
+    changes.push({
+      entityType: "profile",
+      entityId: null,
+      fieldKey: "monthly_income",
+      oldValue: profile.monthly_income,
+      newValue: n,
+    });
   }
+  const savings_target_monthly = formData.get("savings_target_monthly");
   if (savings_target_monthly !== null && savings_target_monthly !== "") {
     const n = Number(savings_target_monthly);
     if (!Number.isFinite(n) || n < 0) return { error: "Invalid savings target" };
-    patch.savings_target_monthly = n;
+    changes.push({
+      entityType: "profile",
+      entityId: null,
+      fieldKey: "savings_target_monthly",
+      oldValue: profile.savings_target_monthly,
+      newValue: n,
+    });
   }
+  const fixed_expenses_monthly = formData.get("fixed_expenses_monthly");
   if (fixed_expenses_monthly !== null && fixed_expenses_monthly !== "") {
     const n = Number(fixed_expenses_monthly);
     if (!Number.isFinite(n) || n < 0) return { error: "Invalid fixed expenses" };
-    patch.fixed_expenses_monthly = n;
+    changes.push({
+      entityType: "profile",
+      entityId: null,
+      fieldKey: "fixed_expenses_monthly",
+      oldValue: profile.fixed_expenses_monthly,
+      newValue: n,
+    });
   }
+  const monthly_gross_salary = formData.get("monthly_gross_salary");
   if (monthly_gross_salary !== null && monthly_gross_salary !== "") {
     const n = Number(monthly_gross_salary);
     if (!Number.isFinite(n) || n < 0) return { error: "Invalid gross salary" };
-    patch.monthly_gross_salary = n;
+    changes.push({
+      entityType: "profile",
+      entityId: null,
+      fieldKey: "monthly_gross_salary",
+      oldValue: profile.monthly_gross_salary,
+      newValue: n,
+    });
   }
 
-  if (Object.keys(patch).length === 0) {
+  if (changes.length === 0) {
     return { error: "Nothing to update" };
   }
 
   try {
-    await updateProfile(supabase, clientId, patch);
+    await recordAdvisorProposalChanges(supabase, advisorUserId, clientId, changes);
   } catch (e) {
     console.error(e);
-    return { error: "Could not update profile" };
+    return { error: "Could not save suggestion" };
   }
 
   revalidateAdvisorClientViews(clientId);
-  return { error: null };
+  return { error: null, proposalRecorded: true };
 }
 
 export async function patchAdvisorClientBudgetLineAmountAction(
-  _prev: { error: string | null },
+  _prev: { error: string | null; proposalRecorded?: boolean },
   formData: FormData
-): Promise<{ error: string | null }> {
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
   const clientId = String(formData.get("client_id") ?? "").trim();
   const lineId = String(formData.get("id") ?? "").trim();
   const amount = Number(formData.get("amount"));
@@ -128,23 +158,35 @@ export async function patchAdvisorClientBudgetLineAmountAction(
 
   const ctx = await requireAdvisorLinkedClient(clientId);
   if (!ctx.ok) return { error: ctx.error };
-  const { supabase } = ctx;
+  const { supabase, advisorUserId } = ctx;
+
+  const line = await getBudgetLineById(supabase, clientId, lineId);
+  if (!line) return { error: "Budget line not found" };
 
   try {
-    await updateBudgetLine(supabase, clientId, lineId, { amount });
+    await recordAdvisorProposalChanges(supabase, advisorUserId, clientId, [
+      {
+        entityType: "budget_line",
+        entityId: lineId,
+        fieldKey: "amount",
+        oldValue: line.amount,
+        newValue: amount,
+        contextLabel: line.category,
+      },
+    ]);
   } catch (e) {
     console.error(e);
-    return { error: "Could not update budget line" };
+    return { error: "Could not save suggestion" };
   }
 
   revalidateAdvisorClientViews(clientId);
-  return { error: null };
+  return { error: null, proposalRecorded: true };
 }
 
 export async function patchAdvisorClientGoalMonthlyContributionAction(
-  _prev: { error: string | null },
+  _prev: { error: string | null; proposalRecorded?: boolean },
   formData: FormData
-): Promise<{ error: string | null }> {
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
   const clientId = String(formData.get("client_id") ?? "").trim();
   const goalId = String(formData.get("goal_id") ?? "").trim();
   const raw = formData.get("monthly_contribution");
@@ -156,31 +198,41 @@ export async function patchAdvisorClientGoalMonthlyContributionAction(
 
   const ctx = await requireAdvisorLinkedClient(clientId);
   if (!ctx.ok) return { error: ctx.error };
-  const { supabase } = ctx;
+  const { supabase, advisorUserId } = ctx;
+
+  const goal = await getFinancialGoalById(supabase, clientId, goalId);
+  if (!goal) return { error: "Goal not found" };
 
   try {
-    await updateFinancialGoal(supabase, clientId, goalId, {
-      monthly_contribution,
-    });
+    await recordAdvisorProposalChanges(supabase, advisorUserId, clientId, [
+      {
+        entityType: "goal",
+        entityId: goalId,
+        fieldKey: "monthly_contribution",
+        oldValue: goal.monthly_contribution,
+        newValue: monthly_contribution,
+        contextLabel: goal.title,
+      },
+    ]);
   } catch (e) {
     console.error(e);
-    return { error: "Could not update goal" };
+    return { error: "Could not save suggestion" };
   }
 
   revalidateAdvisorClientViews(clientId);
-  return { error: null };
+  return { error: null, proposalRecorded: true };
 }
 
 export async function createAdvisorClientInvestmentAction(
-  _prev: { error: string | null },
+  _prev: { error: string | null; proposalRecorded?: boolean },
   formData: FormData
-): Promise<{ error: string | null }> {
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
   const clientId = String(formData.get("client_id") ?? "").trim();
   if (!clientId) return { error: "Missing client" };
 
   const ctx = await requireAdvisorLinkedClient(clientId);
   if (!ctx.ok) return { error: ctx.error };
-  const { supabase } = ctx;
+  const { supabase, advisorUserId } = ctx;
 
   const name = String(formData.get("name") ?? "").trim();
   const currentValue = Number(formData.get("current_value"));
@@ -202,9 +254,7 @@ export async function createAdvisorClientInvestmentAction(
     return { error: "Invalid expected return (use 0–1, e.g. 0.07)" };
   }
 
-  const contributionTypeRaw = String(
-    formData.get("contribution_type") ?? ""
-  ).trim();
+  const contributionTypeRaw = String(formData.get("contribution_type") ?? "").trim();
   const isFixed = contributionTypeRaw === "fixed_duration";
 
   let contribution_type: string | null = null;
@@ -222,39 +272,57 @@ export async function createAdvisorClientInvestmentAction(
     contribution_type = "until_retirement";
   }
 
+  const placeholderId = randomUUID();
+  const fields = [
+    { fieldKey: "name", newValue: name },
+    { fieldKey: "current_value", newValue: currentValue },
+    { fieldKey: "monthly_contribution", newValue: monthlyContribution },
+    { fieldKey: "expected_annual_return", newValue: expectedAnnualReturn },
+    { fieldKey: "contribution_type", newValue: contribution_type },
+    { fieldKey: "contribution_duration_years", newValue: contribution_duration_years },
+  ];
+
   try {
-    await insertInvestment(supabase, clientId, {
-      name,
-      current_value: currentValue,
-      monthly_contribution: monthlyContribution,
-      expected_annual_return: expectedAnnualReturn,
-      contribution_type,
-      contribution_duration_years,
-    });
+    await recordAdvisorProposalChanges(
+      supabase,
+      advisorUserId,
+      clientId,
+      fields.map((f) => ({
+        entityType: "investment" as const,
+        entityId: placeholderId,
+        fieldKey: f.fieldKey,
+        oldValue: null,
+        newValue: f.newValue,
+        contextLabel: name,
+      }))
+    );
   } catch (e) {
     return { error: clientErrorFromUnknown(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
-  return { error: null };
+  return { error: null, proposalRecorded: true };
 }
 
 export async function updateAdvisorClientInvestmentAction(
-  _prev: { error: string | null },
+  _prev: { error: string | null; proposalRecorded?: boolean },
   formData: FormData
-): Promise<{ error: string | null }> {
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
   const clientId = String(formData.get("client_id") ?? "").trim();
   if (!clientId) return { error: "Missing client" };
 
   const ctx = await requireAdvisorLinkedClient(clientId);
   if (!ctx.ok) return { error: ctx.error };
-  const { supabase } = ctx;
+  const { supabase, advisorUserId } = ctx;
 
   const idRaw = String(formData.get("id") ?? "").trim();
   const idParsed = z.string().uuid().safeParse(idRaw);
   if (!idParsed.success) {
     return { error: "Invalid investment" };
   }
+
+  const existing = await getInvestmentById(supabase, clientId, idParsed.data);
+  if (!existing) return { error: "Investment not found" };
 
   const name = String(formData.get("name") ?? "").trim();
   const currentValue = Number(formData.get("current_value"));
@@ -276,9 +344,7 @@ export async function updateAdvisorClientInvestmentAction(
     return { error: "Invalid expected return (use 0–1, e.g. 0.07)" };
   }
 
-  const contributionTypeRaw = String(
-    formData.get("contribution_type") ?? ""
-  ).trim();
+  const contributionTypeRaw = String(formData.get("contribution_type") ?? "").trim();
   const isFixed = contributionTypeRaw === "fixed_duration";
 
   let contribution_type: string | null = null;
@@ -296,33 +362,63 @@ export async function updateAdvisorClientInvestmentAction(
     contribution_type = "until_retirement";
   }
 
+  const updates = [
+    { fieldKey: "name", oldValue: existing.name, newValue: name },
+    { fieldKey: "current_value", oldValue: existing.current_value, newValue: currentValue },
+    {
+      fieldKey: "monthly_contribution",
+      oldValue: existing.monthly_contribution,
+      newValue: monthlyContribution,
+    },
+    {
+      fieldKey: "expected_annual_return",
+      oldValue: existing.expected_annual_return,
+      newValue: expectedAnnualReturn,
+    },
+    {
+      fieldKey: "contribution_type",
+      oldValue: existing.contribution_type,
+      newValue: contribution_type,
+    },
+    {
+      fieldKey: "contribution_duration_years",
+      oldValue: existing.contribution_duration_years,
+      newValue: contribution_duration_years,
+    },
+  ];
+
   try {
-    await updateInvestment(supabase, clientId, idParsed.data, {
-      name,
-      current_value: currentValue,
-      monthly_contribution: monthlyContribution,
-      expected_annual_return: expectedAnnualReturn,
-      contribution_type,
-      contribution_duration_years,
-    });
+    await recordAdvisorProposalChanges(
+      supabase,
+      advisorUserId,
+      clientId,
+      updates.map((u) => ({
+        entityType: "investment" as const,
+        entityId: idParsed.data,
+        fieldKey: u.fieldKey,
+        oldValue: u.oldValue,
+        newValue: u.newValue,
+        contextLabel: name,
+      }))
+    );
   } catch (e) {
     return { error: clientErrorFromUnknown(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
-  return { error: null };
+  return { error: null, proposalRecorded: true };
 }
 
 export async function deleteAdvisorClientInvestmentAction(
-  _prev: { error: string | null },
+  _prev: { error: string | null; proposalRecorded?: boolean },
   formData: FormData
-): Promise<{ error: string | null }> {
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
   const clientId = String(formData.get("client_id") ?? "").trim();
   if (!clientId) return { error: "Missing client" };
 
   const ctx = await requireAdvisorLinkedClient(clientId);
   if (!ctx.ok) return { error: ctx.error };
-  const { supabase } = ctx;
+  const { supabase, advisorUserId } = ctx;
 
   const idRaw = String(formData.get("id") ?? "").trim();
   const idParsed = z.string().uuid().safeParse(idRaw);
@@ -330,12 +426,24 @@ export async function deleteAdvisorClientInvestmentAction(
     return { error: "Invalid investment" };
   }
 
+  const existing = await getInvestmentById(supabase, clientId, idParsed.data);
+  if (!existing) return { error: "Investment not found" };
+
   try {
-    await deleteInvestment(supabase, clientId, idParsed.data);
+    await recordAdvisorProposalChanges(supabase, advisorUserId, clientId, [
+      {
+        entityType: "investment",
+        entityId: idParsed.data,
+        fieldKey: "_deleted",
+        oldValue: null,
+        newValue: "true",
+        contextLabel: existing.name,
+      },
+    ]);
   } catch (e) {
     return { error: clientErrorFromUnknown(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
-  return { error: null };
+  return { error: null, proposalRecorded: true };
 }
