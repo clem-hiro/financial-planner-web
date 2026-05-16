@@ -39,6 +39,11 @@ import {
   updateLiability,
 } from "@/data/repositories/liabilities";
 import {
+  removeLiabilityBudgetLines,
+  syncLiabilityBudgetLine,
+} from "@/data/liability-budget-sync";
+import { parseLiabilityFormData } from "@/server/liability-form";
+import {
   deleteVehicle,
   insertVehicle,
   updateVehicle,
@@ -348,16 +353,21 @@ export async function createLiabilityAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Sign in required" };
 
-  const name = String(formData.get("name") ?? "").trim();
-  const balance = Number(formData.get("balance"));
-  if (!name) return { error: "Name is required" };
-  if (!Number.isFinite(balance) || balance < 0) {
-    return { error: "Invalid balance (amount owed)" };
+  const parsed = parseLiabilityFormData(formData);
+  if (!parsed.ok) return { error: parsed.error };
+
+  try {
+    const row = await insertLiability(supabase, user.id, parsed.data);
+    await syncLiabilityBudgetLine(supabase, user.id, row);
+  } catch (e) {
+    console.error(e);
+    return { error: "Could not save debt" };
   }
 
-  await insertLiability(supabase, user.id, { name, balance });
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidatePath("/budget");
+  revalidateSetupAndPlanning();
   return { error: null as string | null };
 }
 
@@ -374,16 +384,26 @@ export async function updateLiabilityAction(
   const idParsed = z.string().uuid().safeParse(String(formData.get("id") ?? "").trim());
   if (!idParsed.success) return { error: "Invalid liability" };
 
-  const name = String(formData.get("name") ?? "").trim();
-  const balance = Number(formData.get("balance"));
-  if (!name) return { error: "Name is required" };
-  if (!Number.isFinite(balance) || balance < 0) {
-    return { error: "Invalid balance (amount owed)" };
+  const parsed = parseLiabilityFormData(formData);
+  if (!parsed.ok) return { error: parsed.error };
+
+  try {
+    const row = await updateLiability(
+      supabase,
+      user.id,
+      idParsed.data,
+      parsed.data
+    );
+    await syncLiabilityBudgetLine(supabase, user.id, row);
+  } catch (e) {
+    console.error(e);
+    return { error: "Could not save debt" };
   }
 
-  await updateLiability(supabase, user.id, idParsed.data, { name, balance });
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidatePath("/budget");
+  revalidateSetupAndPlanning();
   return { error: null as string | null };
 }
 
@@ -400,12 +420,15 @@ export async function deleteLiabilityAction(formData: FormData) {
   if (!parsed.success) return;
 
   try {
+    await removeLiabilityBudgetLines(supabase, user.id, parsed.data);
     await deleteLiability(supabase, user.id, parsed.data);
   } catch (e) {
     console.error(e);
   }
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidatePath("/budget");
+  revalidateSetupAndPlanning();
 }
 
 function optionalYearMonth(

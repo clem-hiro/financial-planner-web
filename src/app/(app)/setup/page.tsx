@@ -145,11 +145,6 @@ export default async function SetupPage({ searchParams }: PageProps) {
     name: r.name,
     balance: num(r.balance),
   }));
-  const liabilityBalanceRows: LiabilityBalanceRow[] = liabilityRows.map((r) => ({
-    id: r.id,
-    name: r.name,
-    balance: num(r.balance),
-  }));
 
   return (
     <div className="space-y-8">
@@ -311,7 +306,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           <PageSection id="cash-liabilities" title="Cash and debts">
             <CashAndLiabilitiesPanels
               cashRows={cashBalanceRows}
-              liabilityRows={liabilityBalanceRows}
+              liabilityRows={liabilityRows}
               currencyCode={currency}
             />
           </PageSection>

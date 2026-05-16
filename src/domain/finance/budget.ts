@@ -15,6 +15,29 @@ export function isValidYearMonth(s: string): boolean {
 /**
  * Whether a monthly budget line applies in `viewingYearMonth` (inclusive start/end bounds).
  */
+/** Sum of active monthly budget line amounts for a given month. */
+export function plannedMonthlyBudgetTotalForMonth(
+  budgetLines: BudgetLineForDomain[],
+  viewingYearMonth: string,
+  amountOverrideByLineId?: Record<string, number>
+): number {
+  return budgetLines
+    .filter(
+      (line) =>
+        line.cadence === "monthly" &&
+        isMonthlyBudgetLineApplicable(
+          viewingYearMonth,
+          line.startYearMonth,
+          line.endYearMonth
+        )
+    )
+    .reduce((sum, line) => {
+      const override =
+        line.id != null ? amountOverrideByLineId?.[line.id] : undefined;
+      return sum + (override ?? line.amount);
+    }, 0);
+}
+
 export function isMonthlyBudgetLineApplicable(
   viewingYearMonth: string,
   startYearMonth: string | null | undefined,

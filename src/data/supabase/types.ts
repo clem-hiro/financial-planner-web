@@ -161,6 +161,7 @@ export type BudgetLineRow = {
   start_year_month?: string | null;
   end_year_month?: string | null;
   created_at: string;
+  source_liability_id?: string | null;
 };
 
 export type BudgetLineMonthOverrideRow = {
@@ -205,6 +206,22 @@ export type LiabilityRow = {
   name: string;
   balance: string;
   created_at: string;
+  category?:
+    | "property"
+    | "vehicle"
+    | "personal"
+    | "credit_card"
+    | "renovation"
+    | "education"
+    | "other"
+    | null;
+  loan_type?: "amortized" | "flat_rate" | "revolving" | null;
+  interest_rate_annual?: string | null;
+  remaining_tenure_months?: number | null;
+  monthly_repayment?: string | null;
+  repayment_override?: boolean;
+  start_date?: string | null;
+  notes?: string | null;
 };
 
 export type VehicleRow = {
