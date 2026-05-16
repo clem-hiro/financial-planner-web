@@ -2,19 +2,22 @@
 
 import { useActionState } from "react";
 import { createGoalAction } from "@/server/actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };
 
 type InvestmentOption = { id: string; name: string };
 
 export function GoalForm({ investments }: { investments: InvestmentOption[] }) {
-  const [state, formAction] = useActionState(createGoalAction, initial);
+  const [state, formAction, pending] = useActionState(createGoalAction, initial);
 
   return (
     <form
       action={formAction}
       className="space-y-3 rounded-lg border border-zinc-200 bg-white p-4"
+      {...(pending ? { inert: true } : {})}
     >
+      <BlockingSubmitOverlay active={pending} message="Saving goal…" />
       <h2 className="text-sm font-semibold text-zinc-900">Add goal</h2>
       {state.error && (
         <p className="text-sm text-red-600" role="alert">
@@ -119,9 +122,10 @@ export function GoalForm({ investments }: { investments: InvestmentOption[] }) {
       </div>
       <button
         type="submit"
+        disabled={pending}
         className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800"
       >
-        Save goal
+        {pending ? "Saving…" : "Save goal"}
       </button>
     </form>
   );

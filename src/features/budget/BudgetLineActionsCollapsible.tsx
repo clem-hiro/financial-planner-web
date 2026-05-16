@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import type { ExpenseRow } from "@/data/supabase/types";
 import { deleteBudgetLineAction } from "@/server/actions";
 import { BudgetLineExpenseQuickAdd } from "@/features/budget/BudgetLineExpenseQuickAdd";
@@ -35,9 +37,25 @@ type AnnualProps = {
 export function BudgetLineActionsCollapsible(
   props: MonthlyProps | AnnualProps
 ) {
+  const [deletePending, setDeletePending] = useState(false);
+
+  async function onDeleteBudgetLine(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setDeletePending(true);
+    try {
+      await deleteBudgetLineAction(new FormData(event.currentTarget));
+    } finally {
+      setDeletePending(false);
+    }
+  }
+
   if (props.variant === "annual") {
     return (
       <details className="group">
+        <BlockingSubmitOverlay
+          active={deletePending}
+          message="Removing budget line…"
+        />
         <summary className="flex min-h-10 cursor-pointer list-none items-center gap-1 text-xs font-medium text-teal-800 hover:underline [&::-webkit-details-marker]:hidden">
           <span className="inline-block transition-transform group-open:rotate-90">
             ▸
@@ -46,13 +64,14 @@ export function BudgetLineActionsCollapsible(
         </summary>
         <div className="mt-2 flex flex-col gap-2 border-t border-zinc-100 pt-2 sm:flex-row sm:items-center">
           <BudgetUpdateAmountForm id={props.lineId} amount={props.budgetAmount} />
-          <form action={deleteBudgetLineAction}>
+          <form onSubmit={(event) => void onDeleteBudgetLine(event)}>
             <input type="hidden" name="id" value={props.lineId} />
             <button
               type="submit"
+              disabled={deletePending}
               className="text-xs text-red-600 hover:underline"
             >
-              Remove
+              {deletePending ? "Removing…" : "Remove"}
             </button>
           </form>
         </div>
@@ -63,6 +82,10 @@ export function BudgetLineActionsCollapsible(
   const p = props;
   return (
     <details className="group">
+        <BlockingSubmitOverlay
+          active={deletePending}
+          message="Removing budget line…"
+        />
         <summary className="flex min-h-10 cursor-pointer list-none items-center gap-1 text-xs font-medium text-teal-800 hover:underline [&::-webkit-details-marker]:hidden">
           <span className="inline-block transition-transform group-open:rotate-90">
             ▸
@@ -72,13 +95,14 @@ export function BudgetLineActionsCollapsible(
       <div className="mt-2 space-y-2 border-t border-zinc-100 pt-2">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <BudgetUpdateAmountForm id={p.lineId} amount={p.baseAmount} />
-          <form action={deleteBudgetLineAction}>
+          <form onSubmit={(event) => void onDeleteBudgetLine(event)}>
             <input type="hidden" name="id" value={p.lineId} />
             <button
               type="submit"
+              disabled={deletePending}
               className="text-xs text-red-600 hover:underline"
             >
-              Remove
+              {deletePending ? "Removing…" : "Remove"}
             </button>
           </form>
         </div>

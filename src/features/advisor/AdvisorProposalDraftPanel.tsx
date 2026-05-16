@@ -12,6 +12,7 @@ import {
   removeAdvisorProposalSectionAction,
   submitAdvisorProposalAction,
 } from "@/server/advisor-proposal-actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const textareaClass =
   "mt-1 w-full resize-y rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-slate-300/40 focus:ring-2";
@@ -48,8 +49,14 @@ export function AdvisorProposalDraftPanel({
     });
   }
 
+  const busy = isPending || submitPending;
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" {...(busy ? { inert: true } : {})}>
+      <BlockingSubmitOverlay
+        active={busy}
+        message={submitPending ? "Submitting proposal…" : "Updating proposal…"}
+      />
       {changeCount > 0 ? (
         <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
           <DraftSummaryHeader changeCount={changeCount} isPending={isPending} />

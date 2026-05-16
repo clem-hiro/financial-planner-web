@@ -13,6 +13,7 @@ import {
   type OnboardingConfidenceLevel,
 } from "@/domain/finance/budget-guided-setup";
 import { applyGuidedBudgetLinesAction } from "@/server/actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { fpInputClass, fpPrimaryButtonClass } from "@/ui/input-classes";
 import { formatCurrency } from "@/ui/lib/format";
 
@@ -338,7 +339,8 @@ export function OnboardingWizard(props: Props) {
       )}
 
       {step === 2 && (
-        <div className="space-y-6">
+    <div className="space-y-6" {...(pending ? { inert: true } : {})}>
+      <BlockingSubmitOverlay active={pending} message="Saving onboarding…" />
           <div className={`${cardClass} space-y-4`}>
             <p className="text-sm font-medium text-slate-800">Lifestyle</p>
             <div className="grid max-h-[min(52vh,22rem)] gap-2 overflow-y-auto pr-1 sm:max-h-none sm:grid-cols-2">

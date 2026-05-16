@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   createVehicleAction,
@@ -27,6 +27,7 @@ import {
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { formatCurrency } from "@/ui/lib/format";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import {
   fpInputClass,
   fpInputNarrowClass,
@@ -496,9 +497,14 @@ function VehicleEditForm({
     if (res.error === null) router.refresh();
     return res;
   };
-  const [state, action] = useActionState(wrapped, initial);
+  const [state, action, pending] = useActionState(wrapped, initial);
   return (
-    <form action={action} className="mt-2 space-y-2 rounded border border-zinc-200 bg-white p-3">
+    <form
+      action={action}
+      className="mt-2 space-y-2 rounded border border-zinc-200 bg-white p-3"
+      {...(pending ? { inert: true } : {})}
+    >
+      <BlockingSubmitOverlay active={pending} message="Saving vehicle…" />
       <input type="hidden" name="id" value={row.id} />
       {state.error && (
         <p className="text-sm text-red-600" role="alert">
@@ -532,8 +538,8 @@ function VehicleEditForm({
         <AdvancedModelFields row={row} />
       </div>
       <div className="flex justify-end">
-        <button type="submit" className={fpPrimaryButtonClass}>
-          Save vehicle
+        <button type="submit" disabled={pending} className={fpPrimaryButtonClass}>
+          {pending ? "Saving…" : "Save vehicle"}
         </button>
       </div>
     </form>
@@ -550,12 +556,14 @@ function AddVehicleForm({ currencyCode }: { currencyCode: string }) {
     if (res.error === null) router.refresh();
     return res;
   };
-  const [state, action] = useActionState(wrapped, initial);
+  const [state, action, pending] = useActionState(wrapped, initial);
   return (
     <form
       action={action}
       className="rounded-lg border border-dashed border-zinc-300 bg-zinc-50/50 p-4"
+      {...(pending ? { inert: true } : {})}
     >
+      <BlockingSubmitOverlay active={pending} message="Adding vehicle…" />
       <p className="mb-2 text-sm font-medium text-zinc-800">Add vehicle</p>
       {state.error && (
         <p className="mb-2 text-sm text-red-600" role="alert">
@@ -580,10 +588,37 @@ function AddVehicleForm({ currencyCode }: { currencyCode: string }) {
         <AdvancedModelFields />
       </div>
       <div className="mt-3 flex justify-end">
-        <button type="submit" className={fpPrimaryButtonClass}>
-          Add vehicle
+        <button type="submit" disabled={pending} className={fpPrimaryButtonClass}>
+          {pending ? "Adding…" : "Add vehicle"}
         </button>
       </div>
+    </form>
+  );
+}
+
+function VehicleDeleteForm({ id }: { id: string }) {
+  const [pending, setPending] = useState(false);
+
+  return (
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        setPending(true);
+        deleteVehicleAction(new FormData(event.currentTarget)).finally(() =>
+          setPending(false)
+        );
+      }}
+      {...(pending ? { inert: true } : {})}
+    >
+      <BlockingSubmitOverlay active={pending} message="Deleting vehicle…" />
+      <input type="hidden" name="id" value={id} />
+      <button
+        type="submit"
+        disabled={pending}
+        className="text-xs font-medium text-rose-700 hover:underline"
+      >
+        {pending ? "Deleting…" : "Delete"}
+      </button>
     </form>
   );
 }
@@ -627,15 +662,7 @@ export function VehiclesPanel({
                     {row.vehicle_status === "planned" ? "Planned" : "Active"}
                   </p>
                 </div>
-                <form action={deleteVehicleAction}>
-                  <input type="hidden" name="id" value={row.id} />
-                  <button
-                    type="submit"
-                    className="text-xs font-medium text-rose-700 hover:underline"
-                  >
-                    Delete
-                  </button>
-                </form>
+                <VehicleDeleteForm id={row.id} />
               </div>
               <VehicleSummary row={row} currencyCode={currencyCode} />
               <details className="mt-2">

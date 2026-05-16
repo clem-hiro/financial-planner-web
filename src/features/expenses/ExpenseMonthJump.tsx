@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useRef, useTransition } from "react";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 type Props = {
   category?: string;
@@ -25,6 +26,7 @@ export function ExpenseMonthJump({ category, month }: Props) {
 
   return (
     <span className="relative inline-flex">
+      <BlockingSubmitOverlay active={pending} message="Loading month…" />
       <button
         type="button"
         aria-label={`Jump to expense month, currently ${month}`}

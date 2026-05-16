@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { updateGoalAction } from "@/server/actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };
 
@@ -25,10 +26,15 @@ export function GoalEditForm({
   goal: GoalFields;
   investments: InvestmentOption[];
 }) {
-  const [state, formAction] = useActionState(updateGoalAction, initial);
+  const [state, formAction, pending] = useActionState(updateGoalAction, initial);
 
   return (
-    <form action={formAction} className="mt-3 space-y-3 rounded border border-zinc-100 bg-zinc-50 p-3">
+    <form
+      action={formAction}
+      className="mt-3 space-y-3 rounded border border-zinc-100 bg-zinc-50 p-3"
+      {...(pending ? { inert: true } : {})}
+    >
+      <BlockingSubmitOverlay active={pending} message="Saving goal…" />
       <input type="hidden" name="goal_id" value={goal.id} />
       {state.error && (
         <p className="text-sm text-red-600" role="alert">
@@ -126,9 +132,10 @@ export function GoalEditForm({
       </div>
       <button
         type="submit"
+        disabled={pending}
         className="rounded bg-zinc-800 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-700"
       >
-        Update goal
+        {pending ? "Saving…" : "Update goal"}
       </button>
     </form>
   );

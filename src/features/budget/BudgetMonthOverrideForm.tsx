@@ -1,10 +1,11 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import {
   clearBudgetMonthOverrideAction,
   setBudgetMonthOverrideAction,
 } from "@/server/actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };
 
@@ -19,18 +20,34 @@ export function BudgetMonthOverrideForm({
   baseAmount: number;
   overrideAmount?: number;
 }) {
-  const [state, formAction] = useActionState(
+  const [state, formAction, pending] = useActionState(
     setBudgetMonthOverrideAction,
     initial
   );
+  const [clearPending, setClearPending] = useState(false);
   const hasOverride = overrideAmount !== undefined;
+
+  async function onClearOverride(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setClearPending(true);
+    try {
+      await clearBudgetMonthOverrideAction(new FormData(event.currentTarget));
+    } finally {
+      setClearPending(false);
+    }
+  }
 
   return (
     <div className="mt-2 border-t border-zinc-100 pt-2 text-xs text-zinc-600">
       <span className="font-medium text-zinc-700">This month only:</span>{" "}
       replace planned budget for <code className="rounded bg-zinc-100 px-1">{yearMonth}</code>
       <div className="mt-1 flex flex-wrap items-center gap-2">
-        <form action={formAction} className="flex flex-wrap items-center gap-1">
+        <form
+          action={formAction}
+          className="flex flex-wrap items-center gap-1"
+          {...(pending ? { inert: true } : {})}
+        >
+          <BlockingSubmitOverlay active={pending} message="Saving override…" />
           <input type="hidden" name="budget_line_id" value={lineId} />
           <input type="hidden" name="year_month" value={yearMonth} />
           <input
@@ -44,20 +61,29 @@ export function BudgetMonthOverrideForm({
           />
           <button
             type="submit"
+            disabled={pending}
             className="rounded border border-zinc-300 px-2 py-0.5 font-medium text-zinc-800 hover:bg-zinc-50"
           >
-            Set override
+            {pending ? "Saving…" : "Set override"}
           </button>
         </form>
         {hasOverride && (
-          <form action={clearBudgetMonthOverrideAction}>
+          <form
+            onSubmit={(event) => void onClearOverride(event)}
+            {...(clearPending ? { inert: true } : {})}
+          >
+            <BlockingSubmitOverlay
+              active={clearPending}
+              message="Clearing override…"
+            />
             <input type="hidden" name="budget_line_id" value={lineId} />
             <input type="hidden" name="year_month" value={yearMonth} />
             <button
               type="submit"
+              disabled={clearPending}
               className="text-red-600 hover:underline"
             >
-              Clear override
+              {clearPending ? "Clearing…" : "Clear override"}
             </button>
           </form>
         )}

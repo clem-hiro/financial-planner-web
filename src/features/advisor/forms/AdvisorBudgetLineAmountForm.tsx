@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useAdvisorProposalRefresh } from "@/features/advisor/use-advisor-proposal-refresh";
 import { patchAdvisorClientBudgetLineAmountAction } from "@/server/advisor-client-actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const inputClass =
   "w-28 rounded-lg border border-slate-200 bg-white px-2 py-1.5 text-right text-sm tabular-nums text-slate-900 shadow-sm outline-none ring-slate-300/40 focus:ring-2";
@@ -26,7 +27,12 @@ export function AdvisorBudgetLineAmountForm({
   useAdvisorProposalRefresh(state.proposalRecorded, state.error);
 
   return (
-    <form action={action} className="inline-flex flex-col items-end gap-1">
+    <form
+      action={action}
+      className="inline-flex flex-col items-end gap-1"
+      {...(pending ? { inert: true } : {})}
+    >
+      <BlockingSubmitOverlay active={pending} message="Recording suggestion…" />
       <input type="hidden" name="client_id" value={clientId} />
       <input type="hidden" name="id" value={lineId} />
       <input

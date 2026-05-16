@@ -5,13 +5,15 @@ import { useState } from "react";
 import { clearCpfBalanceAction, upsertCpfBalanceAction } from "@/server/actions";
 import type { CpfBalanceRow } from "@/data/supabase/types";
 import { num } from "@/data/mappers";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };
 const numberInputClass =
   "w-full rounded border border-zinc-300 px-2 py-1.5 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
 
 export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
-  const [state, action] = useActionState(upsertCpfBalanceAction, initial);
+  const [state, action, pending] = useActionState(upsertCpfBalanceAction, initial);
+  const [clearPending, setClearPending] = useState(false);
   const [showCpfisAdvanced, setShowCpfisAdvanced] = useState(() => {
     if (!row) return false;
     return (
@@ -22,7 +24,12 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
 
   return (
     <div className="space-y-3">
-      <form action={action} className="space-y-4">
+      <form
+        action={action}
+        className="space-y-4"
+        {...(pending ? { inert: true } : {})}
+      >
+        <BlockingSubmitOverlay active={pending} message="Saving CPF balances…" />
         <h2 className="text-sm font-semibold text-zinc-900">
           CPF balances (OA / SA / MA)
         </h2>
@@ -135,19 +142,31 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
         <div className="flex justify-end">
           <button
             type="submit"
+            disabled={pending}
             className="rounded-md bg-zinc-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-800"
           >
-            Save CPF balances
+            {pending ? "Saving…" : "Save CPF balances"}
           </button>
         </div>
       </form>
       {row && (
-        <form action={clearCpfBalanceAction}>
+        <form
+          onSubmit={(event) => {
+            event.preventDefault();
+            setClearPending(true);
+            clearCpfBalanceAction().finally(() => setClearPending(false));
+          }}
+          {...(clearPending ? { inert: true } : {})}
+        >
+          <BlockingSubmitOverlay active={clearPending} message="Removing CPF row…" />
           <button
             type="submit"
+            disabled={clearPending}
             className="text-xs font-medium text-rose-700 hover:underline"
           >
-            Remove saved CPF row (clears from net worth)
+            {clearPending
+              ? "Removing…"
+              : "Remove saved CPF row (clears from net worth)"}
           </button>
         </form>
       )}

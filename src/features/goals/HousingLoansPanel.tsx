@@ -8,6 +8,7 @@ import {
 } from "@/server/actions";
 import type { HousingLoanRow } from "@/data/supabase/types";
 import { num } from "@/data/mappers";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { formatCurrency } from "@/ui/lib/format";
 import { HousingLoanQuickAddForm } from "@/features/goals/HousingLoanQuickAddForm";
 import { HDB_CONCESSIONARY_RATE_ANNUAL } from "@/domain/finance/housing-loan-quick";
@@ -30,9 +31,11 @@ function instalmentPresetFromShare(s: number): "cpf100" | "split50" | "cash100" 
 function HousingLoanManualAddForm({
   formError,
   action,
+  pending,
 }: {
   formError: string | null;
   action: (payload: FormData) => void;
+  pending: boolean;
 }) {
   const [lender, setLender] = useState<"hdb" | "bank" | "other">("hdb");
   const [bankPct, setBankPct] = useState("3.2");
@@ -51,7 +54,9 @@ function HousingLoanManualAddForm({
     <form
       action={action}
       className="mt-3 space-y-3 rounded-lg border border-zinc-200 bg-white p-4"
+      {...(pending ? { inert: true } : {})}
     >
+      <BlockingSubmitOverlay active={pending} message="Saving housing loan…" />
       <h2 className="text-sm font-semibold text-zinc-900">
         Add housing loan (manual)
       </h2>
@@ -299,7 +304,7 @@ function HousingLoanManualAddForm({
 }
 
 function HousingLoanEditForm({ L }: { L: HousingLoanRow }) {
-  const [state, action] = useActionState(updateHousingLoanAction, initial);
+  const [state, action, pending] = useActionState(updateHousingLoanAction, initial);
   const initLender = (L.lender_type ?? "hdb") as "hdb" | "bank" | "other";
   const [lender, setLender] = useState<"hdb" | "bank" | "other">(initLender);
   const [bankPct, setBankPct] = useState(() =>
@@ -369,7 +374,9 @@ function HousingLoanEditForm({ L }: { L: HousingLoanRow }) {
       <form
         action={action}
         className="mt-3 space-y-3 rounded border border-zinc-200 bg-white p-3"
+        {...(pending ? { inert: true } : {})}
       >
+        <BlockingSubmitOverlay active={pending} message="Saving housing loan…" />
         <input type="hidden" name="id" value={L.id} />
         <input type="hidden" name="lender_type" value={lender} />
         <input type="hidden" name="annual_nominal_rate" value={String(annualEff)} />
@@ -647,6 +654,34 @@ function HousingLoanEditForm({ L }: { L: HousingLoanRow }) {
   );
 }
 
+function HousingLoanDeleteForm({ id }: { id: string }) {
+  const [pending, setPending] = useState(false);
+
+  return (
+    <form
+      className="shrink-0"
+      onSubmit={(event) => {
+        event.preventDefault();
+        setPending(true);
+        deleteHousingLoanAction(new FormData(event.currentTarget)).finally(() =>
+          setPending(false)
+        );
+      }}
+      {...(pending ? { inert: true } : {})}
+    >
+      <BlockingSubmitOverlay active={pending} message="Deleting housing loan…" />
+      <input type="hidden" name="id" value={id} />
+      <button
+        type="submit"
+        disabled={pending}
+        className="text-xs font-medium text-rose-700 hover:underline"
+      >
+        {pending ? "Deleting…" : "Delete"}
+      </button>
+    </form>
+  );
+}
+
 export function HousingLoansPanel({
   loans,
   currencyCode,
@@ -654,7 +689,7 @@ export function HousingLoansPanel({
   loans: HousingLoanRow[];
   currencyCode: string;
 }) {
-  const [state, action] = useActionState(createHousingLoanAction, initial);
+  const [state, action, pending] = useActionState(createHousingLoanAction, initial);
 
   return (
     <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
@@ -672,7 +707,11 @@ export function HousingLoansPanel({
           principal repaid to date — same data as quick add, without the purchase
           price shortcut.
         </p>
-          <HousingLoanManualAddForm formError={state.error} action={action} />
+          <HousingLoanManualAddForm
+            formError={state.error}
+            action={action}
+            pending={pending}
+          />
         </details>
       </div>
 
@@ -775,15 +814,7 @@ export function HousingLoansPanel({
                       </p>
                     )}
                   </div>
-                  <form action={deleteHousingLoanAction} className="shrink-0">
-                    <input type="hidden" name="id" value={L.id} />
-                    <button
-                      type="submit"
-                      className="text-xs font-medium text-rose-700 hover:underline"
-                    >
-                      Delete
-                    </button>
-                  </form>
+                  <HousingLoanDeleteForm id={L.id} />
                 </div>
                 <HousingLoanEditForm L={L} />
               </li>

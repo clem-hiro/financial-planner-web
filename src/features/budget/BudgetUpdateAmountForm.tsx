@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { updateBudgetLineAmountAction } from "@/server/actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };
 
@@ -12,13 +13,18 @@ export function BudgetUpdateAmountForm({
   id: string;
   amount: number;
 }) {
-  const [state, formAction] = useActionState(
+  const [state, formAction, pending] = useActionState(
     updateBudgetLineAmountAction,
     initial
   );
 
   return (
-    <form action={formAction} className="flex flex-wrap items-center gap-2">
+    <form
+      action={formAction}
+      className="flex flex-wrap items-center gap-2"
+      {...(pending ? { inert: true } : {})}
+    >
+      <BlockingSubmitOverlay active={pending} message="Updating budget line…" />
       <input type="hidden" name="id" value={id} />
       <input
         name="amount"
@@ -31,9 +37,10 @@ export function BudgetUpdateAmountForm({
       />
       <button
         type="submit"
+        disabled={pending}
         className="rounded border border-zinc-300 px-2 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-50"
       >
-        Update
+        {pending ? "Updating…" : "Update"}
       </button>
       {state.error && (
         <span className="text-xs text-red-600">{state.error}</span>

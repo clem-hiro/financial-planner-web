@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useAdvisorProposalRefresh } from "@/features/advisor/use-advisor-proposal-refresh";
 import { patchAdvisorClientProfileAction } from "@/server/advisor-client-actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const inputClass =
   "mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none ring-slate-300/40 focus:ring-2";
@@ -30,7 +31,12 @@ export function AdvisorProfilePatchForm({
   useAdvisorProposalRefresh(state.proposalRecorded, state.error);
 
   return (
-    <form action={action} className="space-y-4">
+    <form
+      action={action}
+      className="space-y-4"
+      {...(pending ? { inert: true } : {})}
+    >
+      <BlockingSubmitOverlay active={pending} message="Recording suggestion…" />
       <input type="hidden" name="client_id" value={clientId} />
       {state.error ? (
         <p className="text-sm font-medium text-rose-700" role="alert">

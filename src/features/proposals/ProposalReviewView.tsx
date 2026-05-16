@@ -16,6 +16,7 @@ import {
   acceptAdvisorProposalAction,
   rejectAdvisorProposalAction,
 } from "@/server/advisor-proposal-actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { appCardClass, appCardPadding } from "@/ui/surface-classes";
 import Link from "next/link";
 
@@ -77,9 +78,17 @@ export function ProposalReviewView({
     rejectAdvisorProposalAction,
     { error: null as string | null }
   );
+  const actionPending = acceptPending || rejectPending;
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8 pb-16">
+    <div
+      className="mx-auto max-w-3xl space-y-8 pb-16"
+      {...(actionPending ? { inert: true } : {})}
+    >
+      <BlockingSubmitOverlay
+        active={actionPending}
+        message={acceptPending ? "Applying proposal…" : "Rejecting proposal…"}
+      />
       <p className="text-sm">
         <Link href="/dashboard" className="font-medium text-emerald-700 hover:text-emerald-800">
           ← Home

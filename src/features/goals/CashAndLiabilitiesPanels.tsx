@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import {
   createCashAccountAction,
   createLiabilityAction,
@@ -10,6 +10,7 @@ import {
   updateCashAccountAction,
   updateLiabilityAction,
 } from "@/server/actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { formatCurrency } from "@/ui/lib/format";
 
 export type CashAccountBalanceRow = {
@@ -38,12 +39,14 @@ function AddCashForm({ currencyCode }: { currencyCode: string }) {
     }
     return res;
   };
-  const [state, formAction] = useActionState(wrapped, initial);
+  const [state, formAction, pending] = useActionState(wrapped, initial);
   return (
     <form
       action={formAction}
       className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50/80 p-3.5"
+      {...(pending ? { inert: true } : {})}
     >
+      <BlockingSubmitOverlay active={pending} message="Adding cash account…" />
       <div className="mb-2 flex items-center justify-between">
         <p className="text-xs font-semibold uppercase tracking-wide text-zinc-600">
           New cash account
@@ -85,9 +88,10 @@ function AddCashForm({ currencyCode }: { currencyCode: string }) {
         <div className="w-full flex justify-end">
           <button
             type="submit"
+            disabled={pending}
             className="rounded-md bg-zinc-800 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-700"
           >
-            Add
+            {pending ? "Adding…" : "Add"}
           </button>
         </div>
       </div>
@@ -103,6 +107,7 @@ function CashAccountRow({
   currencyCode: string;
 }) {
   const router = useRouter();
+  const [deletePending, setDeletePending] = useState(false);
   const wrapped = async (
     prev: typeof initial,
     fd: FormData
@@ -111,10 +116,19 @@ function CashAccountRow({
     if (res.error === null) router.refresh();
     return res;
   };
-  const [state, formAction] = useActionState(wrapped, initial);
+  const [state, formAction, pending] = useActionState(wrapped, initial);
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-3.5 shadow-sm ring-1 ring-zinc-100">
-      <form action={formAction} className="space-y-2">
+    <div
+      className="rounded-xl border border-zinc-200 bg-white p-3.5 shadow-sm ring-1 ring-zinc-100"
+      {...(deletePending ? { inert: true } : {})}
+    >
+      <BlockingSubmitOverlay active={deletePending} message="Removing cash account…" />
+      <form
+        action={formAction}
+        className="space-y-2"
+        {...(pending ? { inert: true } : {})}
+      >
+        <BlockingSubmitOverlay active={pending} message="Saving cash account…" />
         <input type="hidden" name="id" value={row.id} />
         <div className="flex items-center justify-between rounded-lg bg-emerald-50 px-2 py-1">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
@@ -157,9 +171,10 @@ function CashAccountRow({
           <div className="w-full flex justify-end">
             <button
               type="submit"
+              disabled={pending}
               className="rounded-md bg-zinc-900 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-800"
             >
-              Save
+              {pending ? "Saving…" : "Save"}
             </button>
           </div>
         </div>
@@ -168,13 +183,18 @@ function CashAccountRow({
         type="button"
         className="mt-2 text-xs text-red-600 hover:underline"
         onClick={async () => {
+          setDeletePending(true);
           const fd = new FormData();
           fd.set("id", row.id);
-          await deleteCashAccountAction(fd);
-          router.refresh();
+          try {
+            await deleteCashAccountAction(fd);
+            router.refresh();
+          } finally {
+            setDeletePending(false);
+          }
         }}
       >
-        Remove
+        {deletePending ? "Removing…" : "Remove"}
       </button>
     </div>
   );
@@ -190,12 +210,14 @@ function AddLiabilityForm({ currencyCode }: { currencyCode: string }) {
     if (res.error === null) router.refresh();
     return res;
   };
-  const [state, formAction] = useActionState(wrapped, initial);
+  const [state, formAction, pending] = useActionState(wrapped, initial);
   return (
     <form
       action={formAction}
       className="rounded-xl border border-dashed border-zinc-300 bg-zinc-50/80 p-3.5"
+      {...(pending ? { inert: true } : {})}
     >
+      <BlockingSubmitOverlay active={pending} message="Adding debt…" />
       <div className="mb-2 flex items-center justify-between">
         <p className="text-xs font-semibold uppercase tracking-wide text-zinc-600">
           New debt
@@ -237,9 +259,10 @@ function AddLiabilityForm({ currencyCode }: { currencyCode: string }) {
         <div className="w-full flex justify-end">
           <button
             type="submit"
+            disabled={pending}
             className="rounded-md bg-zinc-800 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-700"
           >
-            Add
+            {pending ? "Adding…" : "Add"}
           </button>
         </div>
       </div>
@@ -255,6 +278,7 @@ function LiabilityRow({
   currencyCode: string;
 }) {
   const router = useRouter();
+  const [deletePending, setDeletePending] = useState(false);
   const wrapped = async (
     prev: typeof initial,
     fd: FormData
@@ -263,10 +287,19 @@ function LiabilityRow({
     if (res.error === null) router.refresh();
     return res;
   };
-  const [state, formAction] = useActionState(wrapped, initial);
+  const [state, formAction, pending] = useActionState(wrapped, initial);
   return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-3.5 shadow-sm ring-1 ring-zinc-100">
-      <form action={formAction} className="space-y-2">
+    <div
+      className="rounded-xl border border-zinc-200 bg-white p-3.5 shadow-sm ring-1 ring-zinc-100"
+      {...(deletePending ? { inert: true } : {})}
+    >
+      <BlockingSubmitOverlay active={deletePending} message="Removing debt…" />
+      <form
+        action={formAction}
+        className="space-y-2"
+        {...(pending ? { inert: true } : {})}
+      >
+        <BlockingSubmitOverlay active={pending} message="Saving debt…" />
         <input type="hidden" name="id" value={row.id} />
         <div className="flex items-center justify-between rounded-lg bg-rose-50 px-2 py-1">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-rose-700">
@@ -309,9 +342,10 @@ function LiabilityRow({
           <div className="w-full flex justify-end">
             <button
               type="submit"
+              disabled={pending}
               className="rounded-md bg-zinc-900 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-800"
             >
-              Save
+              {pending ? "Saving…" : "Save"}
             </button>
           </div>
         </div>
@@ -320,13 +354,18 @@ function LiabilityRow({
         type="button"
         className="mt-2 text-xs text-red-600 hover:underline"
         onClick={async () => {
+          setDeletePending(true);
           const fd = new FormData();
           fd.set("id", row.id);
-          await deleteLiabilityAction(fd);
-          router.refresh();
+          try {
+            await deleteLiabilityAction(fd);
+            router.refresh();
+          } finally {
+            setDeletePending(false);
+          }
         }}
       >
-        Remove
+        {deletePending ? "Removing…" : "Remove"}
       </button>
     </div>
   );

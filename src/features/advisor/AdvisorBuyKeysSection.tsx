@@ -8,6 +8,7 @@ import {
   validateCouponForPurchaseAction,
   type BuyAccessKeysFormState,
 } from "@/server/advisor-key-purchase-actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { PageSection } from "@/ui/PageSection";
 
 const initial: BuyAccessKeysFormState = {
@@ -62,10 +63,11 @@ export function AdvisorBuyKeysSection({
     net_cents: number;
   } | null>(null);
   const [quotePending, setQuotePending] = useState(false);
-  const [state, formAction] = useActionState(
+  const [state, formAction, purchasePending] = useActionState(
     buyAdvisorAccessKeysAction,
     initial
   );
+  const busy = quotePending || purchasePending;
 
   async function checkCoupon() {
     setQuotePending(true);
@@ -124,7 +126,15 @@ export function AdvisorBuyKeysSection({
         title="Buy access keys"
         description="Purchase one-time client signup keys. Coupons are validated server-side before fulfillment."
       >
-        <form action={formAction} className="space-y-5">
+        <form
+          action={formAction}
+          className="space-y-5"
+          {...(busy ? { inert: true } : {})}
+        >
+          <BlockingSubmitOverlay
+            active={busy}
+            message={purchasePending ? "Purchasing keys…" : "Checking coupon…"}
+          />
           <input type="hidden" name="idempotency_key" value={idempotencyKey} />
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="block text-sm font-medium text-slate-700">
@@ -155,7 +165,7 @@ export function AdvisorBuyKeysSection({
                 <button
                   type="button"
                   onClick={checkCoupon}
-                  disabled={quotePending}
+                  disabled={busy}
                   className="rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-emerald-200 hover:text-emerald-900 disabled:opacity-60"
                 >
                   {quotePending ? "Checking" : "Check"}
@@ -226,10 +236,10 @@ export function AdvisorBuyKeysSection({
 
           <button
             type="submit"
-            disabled={quotePending || (quoteMatches && quote?.ok === false)}
+            disabled={busy || (quoteMatches && quote?.ok === false)}
             className="rounded-full bg-[#0c192f] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-slate-900/15 transition hover:bg-[#152a45] disabled:cursor-not-allowed disabled:opacity-60"
           >
-            Purchase keys
+            {purchasePending ? "Purchasing…" : "Purchase keys"}
           </button>
         </form>
       </PageSection>

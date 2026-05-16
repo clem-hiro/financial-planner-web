@@ -15,6 +15,7 @@ import { buildAmortizationSchedule } from "@/domain/finance/mortgage-amortizatio
 import { computeSingaporeResidentialBuyersStampDuty } from "@/domain/finance/singapore-residential-bsd";
 import { formatYearMonth } from "@/lib/dates";
 import { createHousingLoanQuickAction } from "@/server/actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { formatCurrency } from "@/ui/lib/format";
 
 const initial = { error: null as string | null };
@@ -32,7 +33,7 @@ export function HousingLoanQuickAddForm({
 }: {
   currencyCode: string;
 }) {
-  const [state, action] = useActionState(createHousingLoanQuickAction, initial);
+  const [state, action, pending] = useActionState(createHousingLoanQuickAction, initial);
   const [label, setLabel] = useState("");
   const [purchasePrice, setPurchasePrice] = useState("");
   const [dpPreset, setDpPreset] = useState<HousingDownpaymentGuidancePreset>("pct_25");
@@ -162,7 +163,9 @@ export function HousingLoanQuickAddForm({
     <form
       action={action}
       className="space-y-4 rounded-xl border border-emerald-200/70 bg-linear-to-br from-emerald-50/50 via-white to-white p-4 shadow-sm sm:p-5"
+      {...(pending ? { inert: true } : {})}
     >
+      <BlockingSubmitOverlay active={pending} message="Saving property plan…" />
       <input type="hidden" name="oa_inst_share" value={oaInstMode} />
       <input type="hidden" name="lender_type" value={lender} />
       <input type="hidden" name="guided_dp_preset" value={dpPreset} />

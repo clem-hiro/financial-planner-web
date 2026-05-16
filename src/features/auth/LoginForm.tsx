@@ -6,6 +6,7 @@ import {
   signupFinancialRoleSchema,
 } from "@/lib/validation";
 import { appEmeraldPanelClass } from "@/ui/surface-classes";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { formatSignupError } from "@/features/auth/signup-error";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -207,7 +208,12 @@ export function LoginForm({
     <form
       onSubmit={onSubmit}
       className="mx-auto w-full max-w-sm space-y-5 rounded-2xl border border-slate-200/90 border-t-emerald-600 border-t-4 bg-white p-6 text-left shadow-[0_16px_48px_-24px_rgba(12,25,47,0.12)] sm:max-w-md sm:p-8"
+      {...(pending ? { inert: true } : {})}
     >
+      <BlockingSubmitOverlay
+        active={pending}
+        message={mode === "signin" ? "Signing in…" : "Creating account…"}
+      />
       {mode === "signup" && initialAdvisorName ? (
         <div
           className={`${appEmeraldPanelClass} px-4 py-3 text-sm text-emerald-950`}
