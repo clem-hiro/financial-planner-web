@@ -3,7 +3,6 @@ import {
   appTabPillActiveClass,
   appTabPillClass,
   appTabPillInactiveClass,
-  appTabRailClass,
 } from "@/ui/app-tab-styles";
 
 type SetupTab = {
@@ -21,9 +20,12 @@ export function SetupTabsNav({
   buildHref: (tabId: string) => string;
 }) {
   return (
-    <nav aria-label="Setup sections" className="sticky top-2 z-20">
+    <nav
+      aria-label="Setup sections"
+      className="sticky top-[4.75rem] z-20 py-2 sm:top-[5.5rem]"
+    >
       <div className="-mx-1 overflow-x-auto px-1 pb-0.5 scroll-smooth sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
-        <div className={appTabRailClass}>
+        <div className="inline-flex min-w-max snap-x items-center gap-1.5 rounded-full bg-white/88 p-1 shadow-[0_14px_40px_rgba(15,23,42,0.12)] ring-1 ring-slate-200/70 backdrop-blur-xl sm:min-w-0 sm:flex-wrap">
           {tabs.map((tab) => {
             const href = buildHref(tab.id);
             const isActive = activeTab === tab.id;

@@ -108,6 +108,7 @@ function InvestmentSummary({
   onDelete,
   deleteError,
   deletePending,
+  actionsDisabled = false,
 }: {
   investment: InvestmentBalanceRow;
   currencyCode: string;
@@ -116,6 +117,7 @@ function InvestmentSummary({
   onDelete: () => void;
   deleteError: string | null;
   deletePending: boolean;
+  actionsDisabled?: boolean;
 }) {
   const returnPct = (investment.expected_annual_return * 100).toFixed(1);
   const flowSummary = contributionSummaryLine(investment, currencyCode);
@@ -143,7 +145,7 @@ function InvestmentSummary({
             <button
               type="button"
               onClick={onEdit}
-              disabled={deletePending}
+              disabled={deletePending || actionsDisabled}
               className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60"
             >
               Edit
@@ -151,7 +153,7 @@ function InvestmentSummary({
             <button
               type="button"
               onClick={onDelete}
-              disabled={deletePending}
+              disabled={deletePending || actionsDisabled}
               className="rounded-full border border-red-200 bg-white px-3 py-1 text-xs font-medium text-red-700 transition hover:border-red-300 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500/25 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {deletePending ? "Removing…" : "Delete"}
@@ -173,11 +175,13 @@ function InvestmentEditForm({
   currencyCode,
   onClose,
   advisorClientId,
+  disabled = false,
 }: {
   investment: InvestmentBalanceRow;
   currencyCode: string;
   onClose: () => void;
   advisorClientId?: string;
+  disabled?: boolean;
 }) {
   const router = useRouter();
   const submitLockRef = useRef(false);
@@ -433,10 +437,10 @@ function InvestmentEditForm({
         </button>
         <button
           type="submit"
-          disabled={pending}
+          disabled={pending || disabled}
           className={`${fpPrimaryButtonClass} disabled:cursor-not-allowed disabled:opacity-60`}
         >
-          {pending ? "Saving…" : "Save changes"}
+          {pending ? "Saving…" : advisorClientId ? "Suggest changes" : "Save changes"}
         </button>
       </div>
     </form>
@@ -449,11 +453,13 @@ function InvestmentRow({
   currencyCode,
   planningContext,
   advisorClientId,
+  advisorSuggestionDisabled = false,
 }: {
   investment: InvestmentBalanceRow;
   currencyCode: string;
   planningContext: InvestmentPlanningContext | null;
   advisorClientId?: string;
+  advisorSuggestionDisabled?: boolean;
 }) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
@@ -503,6 +509,7 @@ function InvestmentRow({
           onDelete={runDelete}
           deleteError={deleteError}
           deletePending={deletePending}
+          actionsDisabled={advisorSuggestionDisabled}
         />
       </>
     );
@@ -513,6 +520,7 @@ function InvestmentRow({
       currencyCode={currencyCode}
       onClose={() => setEditing(false)}
       advisorClientId={advisorClientId}
+      disabled={advisorSuggestionDisabled}
     />
   );
 }
@@ -522,6 +530,7 @@ export function InvestmentBalancesList({
   currencyCode,
   planningContext,
   advisorClientId,
+  advisorSuggestionDisabled = false,
   accountsHeading = "Your accounts",
 }: {
   items: InvestmentBalanceRow[];
@@ -530,6 +539,7 @@ export function InvestmentBalancesList({
   planningContext?: InvestmentPlanningContext | null;
   /** When set, create/update/delete run as the linked advisor for that client profile id. */
   advisorClientId?: string;
+  advisorSuggestionDisabled?: boolean;
   accountsHeading?: string;
 }) {
   const total = items.reduce((acc, i) => acc + i.current_value, 0);
@@ -561,6 +571,7 @@ export function InvestmentBalancesList({
               currencyCode={currencyCode}
               planningContext={planningContext ?? null}
               advisorClientId={advisorClientId}
+              advisorSuggestionDisabled={advisorSuggestionDisabled}
             />
           </li>
         ))}

@@ -8,6 +8,7 @@ import {
   type LifestyleProfileId,
   type OnboardingConfidenceLevel,
 } from "@/domain/finance/budget-guided-setup";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { fpPrimaryButtonClass, fpSelectClass } from "@/ui/input-classes";
 
 type Props = {
@@ -58,7 +59,9 @@ export function BudgetLensProfileForm(props: Props) {
     <form
       onSubmit={(ev) => void onSave(ev)}
       className="space-y-4 rounded-xl border border-zinc-200 bg-white p-4 sm:p-5"
+      {...(pending ? { inert: true } : {})}
     >
+      <BlockingSubmitOverlay active={pending} message="Saving budget lens…" />
       <div>
         <h3 className="text-sm font-semibold text-zinc-900">Budget lens</h3>
         <p className="mt-1 text-xs text-zinc-600">
@@ -118,7 +121,7 @@ export function BudgetLensProfileForm(props: Props) {
           disabled={pending}
           className={fpPrimaryButtonClass}
         >
-          Save lens
+          {pending ? "Saving…" : "Save lens"}
         </button>
         {status && (
           <span

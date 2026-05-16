@@ -6,6 +6,7 @@ import { useState } from "react";
 import { createSupabaseBrowserClient } from "@/data/supabase/browser";
 import { PhoneInputField } from "@/features/auth/PhoneInputField";
 import { normalizeE164 } from "@/lib/phone-format";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { PageSection } from "@/ui/PageSection";
 
 export function AdvisorPhoneVerificationForm({ user }: { user: User }) {
@@ -97,7 +98,8 @@ export function AdvisorPhoneVerificationForm({ user }: { user: User }) {
       title="Advisor contact"
       description="Verified WhatsApp contact is exposed to linked clients through the app only."
     >
-      <div className="space-y-5">
+      <BlockingSubmitOverlay active={pending} message="Verifying phone…" />
+      <div className="space-y-5" {...(pending ? { inert: true } : {})}>
         <div className="rounded-xl border border-slate-200 bg-slate-50/80 px-4 py-3 text-sm">
           <p className="font-medium text-slate-900">
             Status:{" "}

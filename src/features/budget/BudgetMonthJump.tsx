@@ -7,6 +7,7 @@ import {
   type BudgetPathVariant,
   budgetMonthHref,
 } from "@/lib/setup-urls";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 type Props = {
   month: string;
@@ -22,6 +23,7 @@ export function BudgetMonthJump({
 
   return (
     <label className="flex flex-wrap items-center gap-2 text-sm text-zinc-600">
+      <BlockingSubmitOverlay active={pending} message="Loading month…" />
       <span className="whitespace-nowrap">Go to</span>
       <input
         key={month}

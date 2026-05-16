@@ -1,4 +1,9 @@
 import { getDashboardPayload } from "@/data/dashboard";
+import {
+  getDraftProposalForClient,
+  getPendingProposalForClient,
+  listChangesForProposal,
+} from "@/data/repositories/advisor-proposals";
 import { getClientProfileForAdvisor } from "@/data/repositories/advisor-clients";
 import { listBudgetLines } from "@/data/repositories/budget-lines";
 import { listFinancialGoals } from "@/data/repositories/goals";
@@ -43,13 +48,26 @@ export default async function AdvisorClientDetailPage({ params }: PageProps) {
 
   const month = formatYearMonth(new Date());
 
-  const [clientProfile, payload, goals, budgetLines, investments] = await Promise.all([
-    getProfileById(supabase, clientId),
-    getDashboardPayload(supabase, clientId, month),
-    listFinancialGoals(supabase, clientId),
-    listBudgetLines(supabase, clientId),
-    listInvestments(supabase, clientId),
-  ]);
+  const [clientProfile, payload, goals, budgetLines, investments, draftProposal] =
+    await Promise.all([
+      getProfileById(supabase, clientId),
+      getDashboardPayload(supabase, clientId, month),
+      listFinancialGoals(supabase, clientId),
+      listBudgetLines(supabase, clientId),
+      listInvestments(supabase, clientId),
+      getDraftProposalForClient(supabase, user.id, clientId),
+    ]);
+
+  const pendingProposal = await getPendingProposalForClient(
+    supabase,
+    user.id,
+    clientId
+  );
+
+  const draftId = draftProposal?.id ?? null;
+  const draftChanges = draftId
+    ? await listChangesForProposal(supabase, draftId)
+    : [];
 
   if (!clientProfile) {
     notFound();
@@ -64,6 +82,9 @@ export default async function AdvisorClientDetailPage({ params }: PageProps) {
       budgetLines={budgetLines}
       investments={investments}
       month={month}
+      draftProposalId={draftId}
+      draftChanges={draftChanges}
+      hasPendingProposal={!!pendingProposal}
     />
   );
 }

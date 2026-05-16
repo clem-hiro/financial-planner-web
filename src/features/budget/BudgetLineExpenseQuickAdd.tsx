@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { fpInputClass, fpPrimaryButtonClass } from "@/ui/input-classes";
 
 type Props = {
@@ -92,7 +93,9 @@ export function BudgetLineExpenseQuickAdd({
     <form
       onSubmit={onSubmit}
       className="mt-2 rounded-xl border border-slate-200/90 bg-linear-to-r from-white to-emerald-50/45 p-2.5 shadow-sm"
+      {...(isBusy ? { inert: true } : {})}
     >
+      <BlockingSubmitOverlay active={isBusy} message="Saving expense…" />
       {!compact && (
         <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
           Log actual (monthly)
@@ -140,11 +143,6 @@ export function BudgetLineExpenseQuickAdd({
           {isBusy ? "…" : "Add"}
         </button>
       </div>
-      {isBusy && (
-        <p className="mt-1 text-xs text-slate-500" role="status" aria-live="polite">
-          Updating expenses...
-        </p>
-      )}
     </form>
   );
 }

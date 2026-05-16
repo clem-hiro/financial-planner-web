@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getMyAdvisorContactAction } from "@/server/advisor-key-purchase-actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 export function ContactAdvisorButton({
   menuButtonClassName,
@@ -63,6 +64,7 @@ export function ContactAdvisorButton({
 
   return (
     <div ref={containerRef} className="relative inline-flex">
+      <BlockingSubmitOverlay active={pending} message="Opening advisor contact…" />
       <button
         type="button"
         onClick={openAdvisorContact}

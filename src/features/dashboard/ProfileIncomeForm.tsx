@@ -17,6 +17,7 @@ import {
   fpPrimaryButtonClass,
 } from "@/ui/input-classes";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { InfoTooltip } from "@/ui/InfoTooltip";
 import { appCardClass } from "@/ui/surface-classes";
 
@@ -403,7 +404,9 @@ export function ProfileIncomeForm({
     <form
       onSubmit={onSubmit}
       className="overflow-hidden rounded-2xl border border-slate-200/90 bg-linear-to-br from-white via-white to-sky-50/30 shadow-sm divide-y divide-slate-200"
+      {...(isBusy ? { inert: true } : {})}
     >
+      <BlockingSubmitOverlay active={isBusy} message="Saving profile…" />
       <section id="salary" className="space-y-4 p-5">
         <div className="space-y-1">
           <p className="text-sm font-semibold text-slate-900">Income & CPF</p>

@@ -7,6 +7,7 @@ import {
   type GenerateAdvisorKeysFormState,
 } from "@/server/advisor-access-key-actions";
 import { ADVISOR_ACCESS_KEY_BATCH_POC } from "@/lib/advisor-access-key-token";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial: GenerateAdvisorKeysFormState = {
   error: null,
@@ -15,7 +16,7 @@ const initial: GenerateAdvisorKeysFormState = {
 
 export function AdvisorAccessKeysGenerateForm() {
   const router = useRouter();
-  const [state, formAction] = useActionState(
+  const [state, formAction, pending] = useActionState(
     generateAdvisorAccessKeysPocFormAction,
     initial
   );
@@ -25,7 +26,12 @@ export function AdvisorAccessKeysGenerateForm() {
   }, [state.info, router]);
 
   return (
-    <form action={formAction} className="space-y-3">
+    <form
+      action={formAction}
+      className="space-y-3"
+      {...(pending ? { inert: true } : {})}
+    >
+      <BlockingSubmitOverlay active={pending} message="Generating keys…" />
       {state.error ? (
         <p className="text-sm text-red-600" role="alert">
           {state.error}
@@ -38,9 +44,12 @@ export function AdvisorAccessKeysGenerateForm() {
       ) : null}
       <button
         type="submit"
+        disabled={pending}
         className="rounded-full bg-[#0c192f] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-slate-900/15 transition hover:bg-[#152a45]"
       >
-        Generate {ADVISOR_ACCESS_KEY_BATCH_POC} free keys (POC)
+        {pending
+          ? "Generating…"
+          : `Generate ${ADVISOR_ACCESS_KEY_BATCH_POC} free keys (POC)`}
       </button>
     </form>
   );

@@ -5,6 +5,7 @@ import {
   refreshAdvisorQrShareAction,
   type SerializableQrShareData,
 } from "@/server/advisor-qr-share-actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import Link from "next/link";
 import {
   useCallback,
@@ -177,6 +178,7 @@ export function AdvisorKeyQrShareButton({ initialData }: Props) {
           if (e.target === e.currentTarget) closeDialog();
         }}
       >
+        <BlockingSubmitOverlay active={pending} message="Refreshing QR…" />
         <div className="rounded-2xl bg-white p-6 sm:p-7">
         <div className="flex items-start justify-between gap-3">
           <h2

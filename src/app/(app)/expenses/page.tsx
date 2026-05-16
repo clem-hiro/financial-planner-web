@@ -13,6 +13,7 @@ import { BudgetLineExpenseQuickAdd } from "@/features/budget/BudgetLineExpenseQu
 import { CategoryBarChart } from "@/features/expenses/CategoryBarChart";
 import { ExpenseEditRow } from "@/features/expenses/ExpenseEditRow";
 import { ExpenseForm } from "@/features/expenses/ExpenseForm";
+import { ExpenseMonthJump } from "@/features/expenses/ExpenseMonthJump";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { SpendGuidancePanel } from "@/features/spend/SpendGuidancePanel";
 import { isMonthlyBudgetLineApplicable, normalizeCategory } from "@/domain/finance/budget";
@@ -174,7 +175,7 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
           >
             Previous month
           </Link>
-          <span className="font-medium text-zinc-800">{month}</span>
+          <ExpenseMonthJump category={categoryPrefill} month={month} />
           <Link
             className="text-zinc-600 hover:text-zinc-900"
             href={`/expenses?month=${nextMonth}${catQs}`}

@@ -8,8 +8,10 @@ import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };
 
-export function InvestmentForm(props: { advisorClientId?: string } = {}) {
-  const { advisorClientId } = props;
+export function InvestmentForm(
+  props: { advisorClientId?: string; advisorSuggestionDisabled?: boolean } = {}
+) {
+  const { advisorClientId, advisorSuggestionDisabled = false } = props;
   const router = useRouter();
   const submitLockRef = useRef(false);
   const saveAction = advisorClientId
@@ -204,10 +206,10 @@ export function InvestmentForm(props: { advisorClientId?: string } = {}) {
       <div className="flex justify-end pt-1">
         <button
           type="submit"
-          disabled={pending}
+          disabled={pending || advisorSuggestionDisabled}
           className="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {pending ? "Saving…" : "Save account"}
+          {pending ? "Saving…" : advisorClientId ? "Suggest account" : "Save account"}
         </button>
       </div>
     </form>

@@ -12,6 +12,8 @@ The product is evolving from a **feature-tab financial tracker** into a **calm, 
 
 **Important framing:** this product should evolve toward a **calm private wealth operating system** rather than a traditional expense tracker. Calculations and methodology remain explicit and user-trustable (not a black-box “score”).
 
+**Collaborative planning (advisor ↔ client):** the **client’s tracker is canonical**. Advisors work in **suggestion mode** — field-level proposed changes, grouped for review, with optional educational notes. Clients see transparent before/after comparisons on a dedicated review screen and choose **accept** or **reject**; nothing silent-overwrites client data. Feels like suggested edits / a lightweight pull request, not CRM admin editing.
+
 ---
 
 ## Client UI versioning (generations)
@@ -69,6 +71,8 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | **Client UI v2** shell: Home, Planning, Activity, More | **Shipped** | `AppShell`, `AppShellNav`; version label `src/lib/client-release.ts`, shown on `/more`. |
 | Classic URL redirects to v2 IA | **Shipped** | `/balances` → wealth, `/budget` → cash-flow, etc. |
 | Email confirmation redirect `/auth/callback` | **Shipped** | `src/app/auth/callback/route.ts` — exchanges the one-time `code` for a session via `supabase.auth.exchangeCodeForSession`, then redirects (default `/dashboard`; middleware then routes by role). Required when Supabase **Confirm Email** is ON. Doubles as the landing for magic-link / OAuth flows if those are added later. |
+| Review advisor-proposed plan changes | **Shipped** | Full-page **`/review/proposal/[id]`** — before/after by section, advisor note, accept/reject. Canonical tracker updates only on accept. |
+| Financial inbox notifications (bell) | **Shipped** | `financial_inbox_notifications`; salary-review + advisor-proposal producers. |
 
 ### Client — Home (`/dashboard`)
 
@@ -78,6 +82,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | Safe to spend / discretionary after goals | **Shipped** | Requires income/profile where applicable. |
 | Spending vs budget / month health | **Shipped** | Tied to budget lines + expenses. |
 | **Illustrative** long-horizon projections (investments, cash surplus, CPF, vehicles, combined charts) | **Shipped** | `DashboardRetirementSection`, domain finance modules; methodology links — not advice. |
+| **CPF retirement projection** (FRS/BRS/ERS estimates, age-55 RA simulation, educational scenarios) | **Shipped** | `CpfRetirementProjectionPanel` on Home → Retirement; domain `cpf-retirement-projection.ts` — configurable assumptions, not actuarial CPF LIFE. |
 | Embedded “AI insights” as generative product | **Planned** | Roadmap card only; static `InsightCard` / copy where used. |
 
 ### Client — Planning (`/planning/...`)
@@ -115,10 +120,11 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | Advisor home / operations snapshot (keys, client counts) | **Shipped** | `getAdvisorDashboardData`; mismatch hints if keys claimed but roster empty. |
 | Client roster (search, sort, pagination, health signals) | **Shipped** | RPC-backed list when migrated (`advisor_client_list_metrics`). |
 | Per-client workspace (profile, goals, budget edits, month readouts) | **Shipped** | RLS-backed; `AdvisorClientWorkspace`. |
+| **Advisor proposal & change review** (suggestion mode) | **Shipped** | Advisors queue **field-level** edits on a draft proposal; client reviews on **`/review/proposal/[id]`** and accepts/rejects before canonical data updates. Inbox CTA via `financial_inbox_notifications` (`kind: advisor_proposal`). |
 | Access key create/list/revoke | **Shipped** | `/advisor/access-keys`, server actions. |
 | **Opportunities** hub | **Planned** | `/advisor/opportunities` — “Coming Soon” panel only. |
 | Cross-client **Activity** feed | **Planned** | `/advisor/activity` — “Work in Progress” panel only. |
-| Shared briefs / approvals / commentary | **Planned** | Roadmap card (`AdvisorWorkspaceRoadmapCard`, `beta` badge) — not separate from roster + workspace features above. |
+| Partial field-level approvals / compare projections | **Planned** | MVP is all-or-nothing accept/reject per proposal. |
 
 ### Roadmap modules (Planning cards only)
 
@@ -204,7 +210,8 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 | `/advisor/access-keys` | **Advisor** access key management (moved out of client Setup). |
 | `/advisor/buy-keys` | **Advisor** coupon-backed access key purchase flow (`product_code = 0001`). |
 | `/advisor/profile` | **Advisor** WhatsApp phone verification. |
-| `/advisor/client/[id]` | **Advisor** client workspace: profile edits, goals/budget quick edits, dashboard-month cashflow readouts, RLS-backed data (`AdvisorClientWorkspace`). |
+| `/advisor/client/[id]` | **Advisor** client workspace: **suggestion-mode** profile/goals/budget/investment edits, submit proposal, dashboard-month cashflow readouts (`AdvisorClientWorkspace`). |
+| `/review/proposal/[id]` | **Client** full-page review of an advisor proposal: section-grouped before/after, advisor message, accept/reject (`ProposalReviewView`). |
 | `/expenses` | **Activity / spending** hub: add/list expenses, charts, spend guidance (`(app)/expenses`). |
 | `/spending` | **Alias**: server redirect to `/expenses`. |
 | `/setup` | **Financial setup** hub with tabs: profile, investments, CPF, cash/debts, housing, vehicles, budget, goals (`(app)/setup`). Still fully supported. |
@@ -262,14 +269,15 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 | Budget lens (Setup) | `src/features/setup/BudgetLensProfileForm.tsx` — edit lifestyle/strategy after onboarding (PATCH `/api/profile`) |
 | Budget strategy & guided templates | `src/domain/finance/budget-guided-setup.ts` — lifestyle presets, 50/30/20-style splits, SG-oriented line generator, category→needs/wants/savings heuristics for visuals |
 | Auth UI | `src/features/auth/` |
-| Advisor workspace | `src/app/(app)/advisor/**`, `src/features/advisor/` (sidebar, `AdvisorClientWorkspace`, `AdvisorClientsBoard`, purchase/profile/contact components, forms), `src/data/repositories/advisor-access-keys.ts`, `advisor-clients.ts` (incl. `listAdvisorClientsWorkspace` + RPC), `advisor-dashboard.ts`, `pricing.ts`, `purchases.ts`, `coupons.ts`, `src/server/advisor-access-key-actions.ts`, `src/server/advisor-client-actions.ts` (linked-client mutations + revalidation), `src/server/advisor-key-purchase-actions.ts`, `src/domain/finance/advisor-client-health.ts`, `src/lib/profile-role.ts`, `src/lib/advisor-access-key-token.ts` |
+| Advisor workspace | `src/app/(app)/advisor/**`, `src/features/advisor/` (sidebar, `AdvisorClientWorkspace`, suggestion banner + submit panel, `AdvisorClientsBoard`, forms), `src/features/proposals/ProposalReviewView.tsx`, `src/domain/advisor-proposals/` (sections, field registry, apply on accept), `src/data/repositories/advisor-proposals.ts`, `advisor-access-keys.ts`, `advisor-clients.ts`, `advisor-dashboard.ts`, `src/server/advisor-client-actions.ts` (records proposals, no direct client writes), `advisor-proposal-actions.ts`, `advisor-proposal-recording.ts`, `src/domain/finance/advisor-client-health.ts`, `src/lib/profile-role.ts` |
+| Inbox | `src/features/inbox/`, `src/data/repositories/inbox-notifications.ts`, `src/server/inbox-actions.ts`, `src/server/inbox/ensure-salary-review-notification.ts` |
 | Dashboard | `src/features/dashboard/`, `src/data/dashboard.ts` |
 | Expenses / spending UI | `src/features/expenses/`, `src/features/spend/`, `src/data/repositories/expenses.ts`, spend recommendations data |
 | Budget | `src/features/budget/` (`BudgetPlanningView`, `BudgetStrategyInsightPanel` for target vs line mix + placeholders), `src/data/repositories/budget-lines.ts`, overrides, `src/domain/finance/budget.ts` |
 | Setup tabs | `src/features/setup/SetupTabsNav.tsx`, `src/lib/setup-urls.ts` (`setupBudgetPath` for classic `/setup` budget tab; `planningCashFlowBudgetPath` for `/planning/cash-flow`) |
 | Goals / balances / loans / vehicles / CPF | `src/features/goals/`, related `src/data/repositories/*` |
 | Help / methodology | `src/features/help/`, `src/content/methodology-topics.ts`, `OpenMethodologyButton.tsx` |
-| Pure finance logic | `src/domain/finance/` (projections, net worth, SG CPF/vehicle/housing helpers, tests alongside) |
+| Pure finance logic | `src/domain/finance/` (projections, net worth, SG CPF/vehicle/housing helpers, **`cpf-retirement-projection.ts`** for RA-at-55 / FRS-BRS-ERS illustrations, tests alongside) |
 | DB access patterns | `src/data/repositories/*.ts`, `src/data/mappers.ts`, `src/data/supabase/types.ts` |
 | Server mutations | `src/server/actions.ts` (large file: forms call these; uses `revalidatePath` + `revalidateSetupAndPlanning` where setup/planning overlap) |
 
@@ -287,6 +295,8 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - **Invited client `profile_type` repair (`20260514000000_invited_client_profile_type_repair.sql`):** updates rows that are still `financial_profiles.profile_type = 'advisor'` but have a **claimed** `advisor_access_keys` row with `claimed_by_user_id = financial_profiles.id` — sets them to **`client`** and restores client onboarding fields when onboarding is not completed. Replaces **`handle_new_user`** so any **non-empty `access_key`** in signup metadata always runs the **client** insert path (claim key + `profile_type = 'client'`), even if `profile_type` in metadata says `advisor`, preventing invitees from being stored as advisors.
 - **Client `advisor_user_id` sync (`20260515000000_sync_client_advisor_user_from_claimed_key.sql`):** for `profile_type = 'client'` rows with a **claimed** access key on `claimed_by_user_id`, sets `financial_profiles.advisor_user_id` to match `advisor_access_keys.advisor_user_id` when they differ — fixes advisor dashboard / client list showing **0 clients** while **keys claimed** is positive (roster and RLS filter on `financial_profiles.advisor_user_id`, not the keys table alone).
 - **Role helpers:** `src/lib/profile-role.ts` — `getCurrentUserRole`, `isAdvisor`, `isClient`, `normalizeFinancialProfileType`, `clientAdvisorRelationshipOk` (keep role checks centralized).
+- **Financial inbox (`20260519000000_financial_inbox_notifications.sql`):** dedupe-keyed rows per user (`kind`, `title`, `body`, CTA). Producers include salary-review layout gate and **`submit_advisor_proposal`** RPC (advisor proposal submitted → client notification with **`/review/proposal/{id}`**).
+- **Advisor proposals (`20260524000000_advisor_proposals.sql`):** **`advisor_proposals`** (`draft` \| `pending` \| `accepted` \| `rejected` \| `withdrawn`), **`advisor_proposal_changes`** (field-level `old_value` / `new_value`, `section`, `entity_type`, optional `entity_id`), **`advisor_proposal_section_notes`**. One open draft/pending per advisor–client pair. RLS: advisor CRUD on drafts; client read + resolve pending. Accept path applies changes via `src/domain/advisor-proposals/apply-changes.ts`.
 
 When you add a table, policy, or column: **update this doc’s “Routes” or “Database” bullets** and any **middleware** or **RLS** implications.
 
@@ -308,4 +318,10 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 3. If you introduce a new top-level domain concept (e.g. “tax estimates”), add a **Code map** row and point to the main module.
 4. Keep claims aligned with **code**; avoid marketing copy that does not match the UI. Roadmap **`PlaceholderModuleCard`** badges can stay aspirational; the inventory table should stay factual.
 
-_Last reviewed (2026-05-14): added **Feature inventory (shipped vs planned)**; housing **`buyers_stamp_duty_paid_from_cpf_oa`** migration note; clarified roadmap cards vs implementation; cherry-picked advisor key purchase / coupon workflow, verified WhatsApp contact RPC, and advisor phone verification from `main`; **collapsed advisor phone to auth.users single-source-of-truth (Option C)** — dropped `financial_profiles.phone_e164` mirror, removed signup-time phone capture, deleted `syncAdvisorVerifiedPhoneAction`; added `/auth/callback` route handler; pruned dead `e164PhoneSchema` and `buildWhatsAppChatUrl` helpers._
+### CPF retirement modelling (direction)
+
+- **Shipped:** Home → Retirement **`CpfRetirementProjectionPanel`** — projected FRS/BRS/ERS, age-55 RA transfer flow (SA first, then OA), educational scenarios, collapsible assumptions (growth %, target sum, CPF LIFE payout %). Uses projected OA/SA at 55 from the existing monthly CPF path when Setup balances exist.
+- **Not in scope:** live CPF APIs, actuarial CPF LIFE, exhaustive withdrawal rules.
+- **Future:** persist advisor/client assumption presets; tie RA balance into retirement sustainability / spend coverage; inflation on payouts.
+
+_Last reviewed (2026-05-16): **Advisor proposal & change review** — suggestion-mode advisor edits, field-level `advisor_proposal_*` tables, client `/review/proposal/[id]`, inbox producer, transparency-first collaborative editing model._

@@ -8,7 +8,7 @@ import { OpenMethodologyButton } from "@/features/help/OpenMethodologyButton";
 import { signOutAction } from "@/server/actions";
 
 const panelClass =
-  "absolute right-0 z-50 mt-2 w-[min(100vw-2rem,20rem)] rounded-2xl border border-slate-200/90 bg-white/98 p-2 shadow-[0_20px_50px_-24px_rgba(15,23,42,0.35)] backdrop-blur-xl";
+  "absolute right-0 z-50 mt-2 w-[min(100vw-2rem,15.5rem)] rounded-2xl border border-slate-200/90 bg-white/98 p-2 shadow-[0_20px_50px_-24px_rgba(15,23,42,0.35)] backdrop-blur-xl";
 
 const menuRowClass =
   "flex w-full items-center rounded-xl px-3 py-2.5 text-left text-sm font-medium text-slate-700 transition hover:bg-slate-50";
@@ -62,14 +62,6 @@ export function AppShellUserMenu({
           role="menu"
           aria-label="Account menu"
         >
-          <Link
-            role="menuitem"
-            href="/setup?tab=profile"
-            className={menuRowClass}
-            onClick={() => setOpen(false)}
-          >
-            Financial setup
-          </Link>
           <Link
             role="menuitem"
             href="/more"

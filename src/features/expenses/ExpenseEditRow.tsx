@@ -6,6 +6,7 @@ import type { ExpenseRow } from "@/data/supabase/types";
 import { num } from "@/data/mappers";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { fpInputClass, fpPrimaryButtonClass, fpSelectClass } from "@/ui/input-classes";
 import { formatCurrency } from "@/ui/lib/format";
 
@@ -103,7 +104,14 @@ export function ExpenseEditRow({
 
   if (!editing) {
     return (
-      <div className="mt-2 flex flex-wrap items-center gap-2 rounded-xl border border-slate-200/90 bg-linear-to-r from-white to-sky-50/40 px-3 py-2 text-xs shadow-sm">
+      <div
+        className="mt-2 flex flex-wrap items-center gap-2 rounded-xl border border-slate-200/90 bg-linear-to-r from-white to-sky-50/40 px-3 py-2 text-xs shadow-sm"
+        {...(isBusy ? { inert: true } : {})}
+      >
+        <BlockingSubmitOverlay
+          active={isBusy}
+          message={deleting ? "Deleting expense…" : "Updating expense…"}
+        />
         <span className="font-medium capitalize text-slate-900">
           {expense.category}
         </span>
@@ -137,11 +145,6 @@ export function ExpenseEditRow({
             {deleting ? "…" : isRefreshing ? "Updating…" : "Delete"}
           </button>
         </div>
-        {isRefreshing && (
-          <p className="w-full text-slate-500" role="status" aria-live="polite">
-            Refreshing list...
-          </p>
-        )}
         {error && (
           <p className="w-full text-red-600" role="alert">
             {error}
@@ -155,7 +158,12 @@ export function ExpenseEditRow({
     <form
       onSubmit={onSave}
       className="mt-2 space-y-2 rounded-xl border border-slate-200/90 bg-white p-3 text-xs shadow-sm"
+      {...(isBusy ? { inert: true } : {})}
     >
+      <BlockingSubmitOverlay
+        active={isBusy}
+        message={pending ? "Saving expense…" : "Updating expense…"}
+      />
       {error && (
         <p className="text-red-600" role="alert">
           {error}
@@ -235,11 +243,6 @@ export function ExpenseEditRow({
           Cancel
         </button>
       </div>
-      {isRefreshing && (
-        <p className="text-slate-500" role="status" aria-live="polite">
-          Refreshing list...
-        </p>
-      )}
     </form>
   );
 }

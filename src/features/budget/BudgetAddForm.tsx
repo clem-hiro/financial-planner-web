@@ -2,18 +2,24 @@
 
 import { useActionState, useState } from "react";
 import { createBudgetLineAction } from "@/server/actions";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };
 
 export function BudgetAddForm({ defaultYear }: { defaultYear: number }) {
-  const [state, formAction] = useActionState(createBudgetLineAction, initial);
+  const [state, formAction, pending] = useActionState(
+    createBudgetLineAction,
+    initial
+  );
   const [cadence, setCadence] = useState<"monthly" | "annual">("monthly");
 
   return (
     <form
       action={formAction}
       className="space-y-4 rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-sm sm:p-5"
+      {...(pending ? { inert: true } : {})}
     >
+      <BlockingSubmitOverlay active={pending} message="Saving budget line…" />
       <div>
         <h2 className="text-sm font-semibold text-zinc-900">
           Add a custom line
@@ -140,9 +146,10 @@ export function BudgetAddForm({ defaultYear }: { defaultYear: number }) {
 
       <button
         type="submit"
+        disabled={pending}
         className="rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-zinc-800"
       >
-        Save budget line
+        {pending ? "Saving…" : "Save budget line"}
       </button>
     </form>
   );

@@ -8,6 +8,7 @@ import {
   type BudgetQuickPreset,
 } from "@/features/budget/budget-quick-presets";
 import { formatCurrency } from "@/ui/lib/format";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };
 
@@ -22,7 +23,7 @@ export function BudgetQuickAddPresets({
   monthlyIncome,
   currency,
 }: Props) {
-  const [state, formAction] = useActionState(createBudgetLineAction, initial);
+  const [state, formAction, pending] = useActionState(createBudgetLineAction, initial);
   const [draft, setDraft] = useState<BudgetQuickPreset | null>(null);
   const suggested = useMemo(
     () => (draft ? suggestedMonthlyForPreset(draft, monthlyIncome) : 0),
@@ -70,7 +71,12 @@ export function BudgetQuickAddPresets({
       </div>
 
       {draft && (
-        <form action={formAction} className="mt-5 space-y-3 rounded-xl bg-zinc-50/80 p-4 ring-1 ring-zinc-100">
+        <form
+          action={formAction}
+          className="mt-5 space-y-3 rounded-xl bg-zinc-50/80 p-4 ring-1 ring-zinc-100"
+          {...(pending ? { inert: true } : {})}
+        >
+          <BlockingSubmitOverlay active={pending} message="Adding budget category…" />
           <input type="hidden" name="cadence" value="monthly" />
           <input type="hidden" name="calendar_year" value={defaultCalendarYear} />
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -118,9 +124,10 @@ export function BudgetQuickAddPresets({
           </p>
           <button
             type="submit"
+            disabled={pending}
             className="w-full rounded-xl bg-zinc-900 py-2.5 text-sm font-semibold text-white transition hover:bg-zinc-800 sm:w-auto sm:px-6"
           >
-            Add to monthly plan
+            {pending ? "Adding…" : "Add to monthly plan"}
           </button>
         </form>
       )}

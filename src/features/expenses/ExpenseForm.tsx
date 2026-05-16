@@ -8,6 +8,7 @@ import {
   fpPrimaryButtonClass,
   fpSelectClass,
 } from "@/ui/input-classes";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 export function ExpenseForm({
   defaultDate,
@@ -90,7 +91,9 @@ export function ExpenseForm({
     <form
       onSubmit={onSubmit}
       className="space-y-3 rounded-2xl border border-slate-200/90 bg-linear-to-br from-white via-white to-sky-50/35 p-4 shadow-sm"
+      {...(isBusy ? { inert: true } : {})}
     >
+      <BlockingSubmitOverlay active={isBusy} message="Saving expense…" />
       <h2 className="text-sm font-semibold text-slate-900">
         Custom expenses
       </h2>
@@ -173,11 +176,6 @@ export function ExpenseForm({
       >
         {isBusy ? "Saving…" : "Add custom expense"}
       </button>
-      {isBusy && (
-        <p className="text-xs text-slate-500" role="status" aria-live="polite">
-          Updating expenses...
-        </p>
-      )}
     </form>
   );
 }

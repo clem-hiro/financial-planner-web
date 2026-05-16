@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition, type FormEvent, type ReactNode } from "react";
 import { num } from "@/data/mappers";
 import type { IncomeTaxConfigRow } from "@/data/supabase/types";
+import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { appCardClass, appCardPadding } from "@/ui/surface-classes";
 import { fpInputClass, fpPrimaryButtonClass, fpSelectClass } from "@/ui/input-classes";
 import { formatCurrency } from "@/ui/lib/format";
@@ -191,7 +192,12 @@ export function IncomeTaxForm({
     : null;
 
   return (
-    <form onSubmit={onSubmit} className={`${appCardClass} ${appCardPadding} space-y-4`}>
+    <form
+      onSubmit={onSubmit}
+      className={`${appCardClass} ${appCardPadding} space-y-4`}
+      {...(isBusy ? { inert: true } : {})}
+    >
+      <BlockingSubmitOverlay active={isBusy} message="Saving tax inputs…" />
       <FieldGroup
         title="Earned income"
         defaultOpen

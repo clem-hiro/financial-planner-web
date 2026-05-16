@@ -16,6 +16,21 @@ export async function listBudgetLines(
   return (data ?? []) as BudgetLineRow[];
 }
 
+export async function getBudgetLineById(
+  supabase: SupabaseClient,
+  userId: string,
+  lineId: string
+): Promise<BudgetLineRow | null> {
+  const { data, error } = await supabase
+    .from("financial_budget_lines")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("id", lineId)
+    .maybeSingle();
+  if (error) throw error;
+  return (data ?? null) as BudgetLineRow | null;
+}
+
 export type NewBudgetLine = {
   category: string;
   cadence: "monthly" | "annual";
