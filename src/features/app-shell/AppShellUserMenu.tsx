@@ -64,14 +64,6 @@ export function AppShellUserMenu({
         >
           <Link
             role="menuitem"
-            href="/setup?tab=profile"
-            className={menuRowClass}
-            onClick={() => setOpen(false)}
-          >
-            Financial setup
-          </Link>
-          <Link
-            role="menuitem"
             href="/more"
             className={menuRowClass}
             onClick={() => setOpen(false)}
