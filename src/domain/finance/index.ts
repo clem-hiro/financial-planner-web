@@ -87,6 +87,22 @@ export {
   DEFAULT_CPF_SA_CREDITING_ANNUAL,
   DEFAULT_CPF_MA_CREDITING_ANNUAL,
 } from "./cpf-monthly-projection";
+export {
+  buildCpfRetirementProjection,
+  simulateRaFormationAt55,
+  estimateFutureFrs,
+  CURRENT_FRS_SG,
+  CPF_RA_FORMATION_AGE,
+  DEFAULT_CPF_ASSUMPTIONS,
+  CPF_SCENARIO_EXAMPLES,
+} from "./cpf-retirement-projection";
+export type {
+  CpfAssumptions,
+  CpfRetirementProjection,
+  CpfRaSimulation,
+  CpfRetirementTarget,
+  CpfScenarioExample,
+} from "./cpf-retirement-projection";
 export type {
   CpfBalanceSnapshot,
   CpfMonthPoint,
