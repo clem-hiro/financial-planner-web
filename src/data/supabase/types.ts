@@ -62,11 +62,12 @@ export type AdvisorAccessKeyRow = {
 };
 
 export type AdvisorQrShareTokenRow = {
-  token: string;
+  token_hash: string;
   access_key: string;
   advisor_user_id: string;
   expires_at: string;
   consumed_at: string | null;
+  claimed_by_user_id: string | null;
   created_at: string;
 };
 

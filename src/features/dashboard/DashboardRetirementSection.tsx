@@ -3,6 +3,9 @@ import type { DashboardPayload } from "@/data/dashboard";
 import type { ProfileRow } from "@/data/supabase/types";
 import { AgeCombinedAssetsProjectionChart } from "@/features/dashboard/AgeCombinedAssetsProjectionChart";
 import { CpfProjectionByAgeChart } from "@/features/dashboard/CpfProjectionByAgeChart";
+import { CpfRetirementProjectionPanel } from "@/features/dashboard/CpfRetirementProjectionPanel";
+import { ageCompletedOnDate } from "@/domain/finance/age-projection";
+import { CPF_RA_FORMATION_AGE } from "@/domain/finance/cpf-retirement-projection";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { formatCurrency, formatPercent } from "@/ui/lib/format";
 import { appEmeraldPanelClass } from "@/ui/surface-classes";
@@ -16,6 +19,22 @@ export function DashboardRetirementSection({
   payload: DashboardPayload;
   profile: ProfileRow | null;
 }) {
+  const birthRaw = profile?.birth_date;
+  const currentAge =
+    birthRaw && typeof birthRaw === "string"
+      ? payload.ageProjection?.currentAge ??
+        ageCompletedOnDate(birthRaw, new Date())
+      : null;
+  const cpfAt55Row = payload.cpfProjectionByAge?.find(
+    (r) => r.age === CPF_RA_FORMATION_AGE
+  );
+  const cpfAtAge55 = cpfAt55Row
+    ? { oa: cpfAt55Row.oa, sa: cpfAt55Row.sa }
+    : null;
+  const hasCpfBalances =
+    cpfAtAge55 != null &&
+    (cpfAtAge55.oa > 0 || cpfAtAge55.sa > 0 || (payload.cpfProjectionByAge?.length ?? 0) > 0);
+
   return (
     <div
       className={`${appEmeraldPanelClass} max-w-full p-4 text-emerald-950 sm:p-5 md:p-6`}
@@ -163,7 +182,23 @@ export function DashboardRetirementSection({
                     markers={payload.cpfHousingMarkers}
                   />
                 </div>
+                <CpfRetirementProjectionPanel
+                  currency={payload.baseCurrency}
+                  currentAge={currentAge}
+                  cpfAtAge55={cpfAtAge55}
+                  hasCpfBalances={hasCpfBalances}
+                />
               </div>
+            )}
+          {payload.ageProjection &&
+            (!payload.cpfProjectionByAge ||
+              payload.cpfProjectionByAge.length === 0) && (
+              <CpfRetirementProjectionPanel
+                currency={payload.baseCurrency}
+                currentAge={currentAge}
+                cpfAtAge55={cpfAtAge55}
+                hasCpfBalances={hasCpfBalances}
+              />
             )}
           <div className="mt-3 rounded-md border border-emerald-300/60 bg-white/55 p-4 text-emerald-950 shadow-sm">
             <div className="flex flex-col gap-3 border-b border-emerald-200/70 pb-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">

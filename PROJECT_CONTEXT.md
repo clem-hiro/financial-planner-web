@@ -78,6 +78,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | Safe to spend / discretionary after goals | **Shipped** | Requires income/profile where applicable. |
 | Spending vs budget / month health | **Shipped** | Tied to budget lines + expenses. |
 | **Illustrative** long-horizon projections (investments, cash surplus, CPF, vehicles, combined charts) | **Shipped** | `DashboardRetirementSection`, domain finance modules; methodology links — not advice. |
+| **CPF retirement projection** (FRS/BRS/ERS estimates, age-55 RA simulation, educational scenarios) | **Shipped** | `CpfRetirementProjectionPanel` on Home → Retirement; domain `cpf-retirement-projection.ts` — configurable assumptions, not actuarial CPF LIFE. |
 | Embedded “AI insights” as generative product | **Planned** | Roadmap card only; static `InsightCard` / copy where used. |
 
 ### Client — Planning (`/planning/...`)
@@ -269,7 +270,7 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 | Setup tabs | `src/features/setup/SetupTabsNav.tsx`, `src/lib/setup-urls.ts` (`setupBudgetPath` for classic `/setup` budget tab; `planningCashFlowBudgetPath` for `/planning/cash-flow`) |
 | Goals / balances / loans / vehicles / CPF | `src/features/goals/`, related `src/data/repositories/*` |
 | Help / methodology | `src/features/help/`, `src/content/methodology-topics.ts`, `OpenMethodologyButton.tsx` |
-| Pure finance logic | `src/domain/finance/` (projections, net worth, SG CPF/vehicle/housing helpers, tests alongside) |
+| Pure finance logic | `src/domain/finance/` (projections, net worth, SG CPF/vehicle/housing helpers, **`cpf-retirement-projection.ts`** for RA-at-55 / FRS-BRS-ERS illustrations, tests alongside) |
 | DB access patterns | `src/data/repositories/*.ts`, `src/data/mappers.ts`, `src/data/supabase/types.ts` |
 | Server mutations | `src/server/actions.ts` (large file: forms call these; uses `revalidatePath` + `revalidateSetupAndPlanning` where setup/planning overlap) |
 
@@ -308,4 +309,10 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 3. If you introduce a new top-level domain concept (e.g. “tax estimates”), add a **Code map** row and point to the main module.
 4. Keep claims aligned with **code**; avoid marketing copy that does not match the UI. Roadmap **`PlaceholderModuleCard`** badges can stay aspirational; the inventory table should stay factual.
 
-_Last reviewed (2026-05-14): added **Feature inventory (shipped vs planned)**; housing **`buyers_stamp_duty_paid_from_cpf_oa`** migration note; clarified roadmap cards vs implementation; cherry-picked advisor key purchase / coupon workflow, verified WhatsApp contact RPC, and advisor phone verification from `main`; **collapsed advisor phone to auth.users single-source-of-truth (Option C)** — dropped `financial_profiles.phone_e164` mirror, removed signup-time phone capture, deleted `syncAdvisorVerifiedPhoneAction`; added `/auth/callback` route handler; pruned dead `e164PhoneSchema` and `buildWhatsAppChatUrl` helpers._
+### CPF retirement modelling (direction)
+
+- **Shipped:** Home → Retirement **`CpfRetirementProjectionPanel`** — projected FRS/BRS/ERS, age-55 RA transfer flow (SA first, then OA), educational scenarios, collapsible assumptions (growth %, target sum, CPF LIFE payout %). Uses projected OA/SA at 55 from the existing monthly CPF path when Setup balances exist.
+- **Not in scope:** live CPF APIs, actuarial CPF LIFE, exhaustive withdrawal rules.
+- **Future:** persist advisor/client assumption presets; tie RA balance into retirement sustainability / spend coverage; inflation on payouts.
+
+_Last reviewed (2026-05-16): added **Feature inventory (shipped vs planned)**; housing **`buyers_stamp_duty_paid_from_cpf_oa`** migration note; clarified roadmap cards vs implementation; cherry-picked advisor key purchase / coupon workflow, verified WhatsApp contact RPC, and advisor phone verification from `main`; **collapsed advisor phone to auth.users single-source-of-truth (Option C)** — dropped `financial_profiles.phone_e164` mirror, removed signup-time phone capture, deleted `syncAdvisorVerifiedPhoneAction`; added `/auth/callback` route handler; pruned dead `e164PhoneSchema` and `buildWhatsAppChatUrl` helpers._
