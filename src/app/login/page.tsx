@@ -8,22 +8,32 @@ type PageProps = {
   searchParams: Promise<{ error?: string; qr_token?: string }>;
 };
 
-// Read-only peek: validates the token without consuming it. Consume happens at
-// POST (signup submit) so link-preview GET prefetches don't burn the token.
-async function peekQrTokenIfPresent(token: string | undefined): Promise<string | undefined> {
-  if (!token) return undefined;
+// Read-only peek: validates the token without consuming it. Redemption happens
+// inside the auth-insert trigger (atomic with the bind), so this GET only reads.
+// Returns the access key plus the issuing advisor's name for the scan view.
+async function peekQrTokenIfPresent(
+  token: string | undefined
+): Promise<{ accessKey?: string; advisorName?: string }> {
+  if (!token) return {};
   const parsed = qrShareTokenSchema.safeParse(token);
-  if (!parsed.success) return undefined;
+  if (!parsed.success) return {};
   try {
     const supabase = await createSupabaseServerClient();
     const { data, error } = await supabase.rpc("peek_qr_share_token", {
       p_token: parsed.data,
     });
-    if (error || !data) return undefined;
-    return typeof data === "string" ? data : undefined;
+    if (error) return {};
+    const row = (Array.isArray(data) ? data[0] : data) as
+      | { access_key?: string; advisor_display_name?: string }
+      | undefined;
+    if (!row?.access_key) return {};
+    return {
+      accessKey: row.access_key,
+      advisorName: row.advisor_display_name?.trim() || undefined,
+    };
   } catch (e) {
     console.error("peek_qr_share_token failed", e);
-    return undefined;
+    return {};
   }
 }
 
@@ -31,10 +41,12 @@ export default async function LoginPage({ searchParams }: PageProps) {
   const sp = await searchParams;
   const authError = sp.error?.trim() ? sp.error : undefined;
   const rawQrToken = sp.qr_token?.trim();
-  const initialAccessKey = isSupabaseConfigured()
+  const peeked = isSupabaseConfigured()
     ? await peekQrTokenIfPresent(rawQrToken)
-    : undefined;
+    : {};
+  const initialAccessKey = peeked.accessKey;
   const initialQrToken = initialAccessKey ? rawQrToken : undefined;
+  const initialAdvisorName = initialAccessKey ? peeked.advisorName : undefined;
 
   return (
     <div className="flex min-h-full flex-col items-center justify-center px-4 py-16 sm:py-20">
@@ -63,6 +75,7 @@ export default async function LoginPage({ searchParams }: PageProps) {
             initialAuthError={authError}
             initialAccessKey={initialAccessKey}
             initialQrToken={initialQrToken}
+            initialAdvisorName={initialAdvisorName}
           />
         )}
         <Link

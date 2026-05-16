@@ -8,9 +8,9 @@ Demoted/low-priority items. Promote to `HANDOFF.md` §6 when they become next-se
 - **Promote `useCopyToClipboard`** (currently local in `AdvisorKeyQrShareButton.tsx`) to `src/lib/use-clipboard.ts` — generic, likely-reused (access-key/buy-keys copy flows). Low blast radius.
 
 ## Tests / tooling
-- **No client-component test infra** for `AdvisorKeyQrShareButton`, the modified `LoginForm`, or the `/login` GET-vs-POST split (dialog countdown/refresh/copy/focus, consume-on-submit untested). Same deferral as the historical `AdvisorPhoneVerificationForm` gap.
+- **Automate the QR trigger/RLS scenario matrix.** `supabase/tests/qr_redeem_scenarios.sql` is currently operator-run against a scratch DB (no DB integration harness — option 3 decision, no new dep). Rationale to automate later: the P0 atomic-redeem invariant in `handle_new_user` is the highest-risk surface and only a real-Postgres run proves it; a gated `test:integration` (Supabase CLI local stack or a pg test instance) would let CI catch regressions instead of relying on a manual pre-deploy run. Cost deferred deliberately: needs a Postgres/Supabase test instance + a pg-client/Supabase-CLI dev dependency + CI wiring (Dependency Gate).
+- **No client-component test infra** for `AdvisorKeyQrShareButton`, the modified `LoginForm`, or the `/login` GET-vs-POST split (dialog countdown/refresh/copy/focus untested; QR-branch `qr_token`-not-`access_key` + advisor banner are now manual checks in `supabase/tests/README.md` §11–12). Same deferral as the historical `AdvisorPhoneVerificationForm` gap.
 - **`vitest.config.ts` isolation not pinned.** `site-origin.test.ts` mutates `process.env`/shared state; safe only via Vitest default per-file process isolation. Pin `pool`/`isolate` or migrate to `vi.stubEnv`. (See `LEARNINGS.md`.)
 
 ## Cosmetic / low-impact
-- `qrShareTokenSchema` accepts 22–24 chars but `randomBytes(16).toString("base64url")` is always exactly 22 — the 23/24 range never matches a real token (harmless; tighten to `{22}` if touched).
 - `supabase/migrations/20260522000000…sql:2` comment "TTL literal `15 minutes` mirrors src/config" is misleading — the SQL has no such literal; TTL is single-sourced in TS (`QR_DEEPLINK_EXPIRY_MS`, passed as `expires_at`). Reword the comment if the file is next edited.

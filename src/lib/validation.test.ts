@@ -16,6 +16,15 @@ describe("qrShareTokenSchema", () => {
     expect(qrShareTokenSchema.safeParse("abc").success).toBe(false);
   });
 
+  it("rejects exactly 21 chars (off-by-one under)", () => {
+    expect(qrShareTokenSchema.safeParse("a".repeat(21)).success).toBe(false);
+  });
+
+  it("rejects exactly 23 and 24 chars (former tolerated padding range)", () => {
+    expect(qrShareTokenSchema.safeParse("a".repeat(23)).success).toBe(false);
+    expect(qrShareTokenSchema.safeParse("a".repeat(24)).success).toBe(false);
+  });
+
   it("rejects longer strings (>24)", () => {
     expect(qrShareTokenSchema.safeParse("a".repeat(25)).success).toBe(false);
   });
