@@ -3,6 +3,7 @@ import {
   ageCompletedOnDate,
   analyzeRetirementDividendVsSpend,
   analyzeRetirementSpendVsPortfolio,
+  buildAgeAssetProjection,
   buildCpfMonthlyProjectionSeries,
   buildDashboardInsights,
   buildNetWorthByAgeProjection,
@@ -23,11 +24,9 @@ import type { HousingLoanProjectionInput } from "@/domain/finance";
 import type { RetirementDividendVsSpendResult } from "@/domain/finance";
 import {
   type SgCpfAgeBand,
-  countAnnualBonusPayoutsInHorizon,
   DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
 } from "@/domain/finance/sg-cpf";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
-import { addCalendarMonths } from "@/lib/dates";
 import {
   budgetLineRowToDomain,
   expenseRowToBudgetExpense,
@@ -36,6 +35,7 @@ import {
   profileAnnualBonus,
   profileAnnualBonusTakeHomeCash,
   profileAnnualSalaryGrowthNominal,
+  profileExpenseGrowthNominal,
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
   profileRetirementWithdrawalRateAnnual,
@@ -495,29 +495,23 @@ export async function getDashboardPayload(
       monthsToRet,
       monthsToRetirementHorizon
     );
-    const asOfRetirement = addCalendarMonths(dashboardAsOf, monthsToRet);
-    const vehicleSaleCashAtRet = cumulativeVehicleProceedsToCash(
+    const ageAssets = buildAgeAssetProjection({
+      agePoints: nwAgePoints,
+      asOf: dashboardAsOf,
+      monthsToRet,
+      cashTotal,
       vehicleValuationInputs,
-      asOfRetirement
-    );
-    const vehiclesNetAtRet = vehicleValuationInputs
-      .filter((v) => v.vehicleStatus === "active")
-      .reduce(
-        (s, vi) => s + vehicleNetListedBeforeLiquidation(vi, asOfRetirement),
-        0
-      );
-    const surplusAccrualToRet =
-      monthlyInvestableSurplus * monthsToRet +
-      (annualBonusTakeHomeNet > 0
-        ? annualBonusTakeHomeNet *
-          countAnnualBonusPayoutsInHorizon(
-            yearMonth,
-            monthsToRet,
-            DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH
-          )
-        : 0);
-    const cashAtRetirementHorizon =
-      cashTotal + vehicleSaleCashAtRet + surplusAccrualToRet;
+      monthlyIncome: income,
+      monthlyExpenses: monthlyExpensesTotal,
+      monthlyGoalContrib: totalPlannedGoalContributionsMonthly,
+      annualBonusNet: annualBonusTakeHomeNet,
+      bonusPayoutMonth: DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
+      startYearMonth: yearMonth,
+      incomeGrowthAnnual: profileAnnualSalaryGrowthNominal(profile),
+      expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
+    });
+    const vehiclesNetAtRet = ageAssets.vehiclesNetAtRet;
+    const cashAtRetirementHorizon = ageAssets.cashAtRetirementHorizon;
     let projectedAtRetirement =
       invAtRet +
       cashAtRetirementHorizon -
@@ -637,6 +631,8 @@ export async function getDashboardPayload(
           : null,
       annualDividendYield: dividendYieldAnnual,
       currentCashTotal: cashTotal,
+      expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
+      yearsToRetirement: monthsToRet / 12,
     });
     const spendCheck = {
       goalMonthlySpend,
@@ -648,34 +644,14 @@ export async function getDashboardPayload(
             ? goalMonthlySpend
             : null,
         annualWithdrawalRate: profileRetirementWithdrawalRateAnnual(profile) ?? undefined,
+        expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
+        yearsToRetirement: monthsToRet / 12,
       }),
     };
     const assetPoints: AgeAssetBreakdownPoint[] = nwAgePoints.map((p, i) => {
-      const asOfHorizon = addCalendarMonths(dashboardAsOf, p.monthsFromToday);
-      const vehicleSaleCashHorizon = cumulativeVehicleProceedsToCash(
-        vehicleValuationInputs,
-        asOfHorizon
-      );
-      const vehiclesNetHorizon = vehicleValuationInputs
-        .filter((v) => v.vehicleStatus === "active")
-        .reduce(
-          (s, vi) => s + vehicleNetListedBeforeLiquidation(vi, asOfHorizon),
-          0
-        );
-      const surplusAccrualHorizon =
-        monthlyInvestableSurplus * p.monthsFromToday +
-        (annualBonusTakeHomeNet > 0
-          ? annualBonusTakeHomeNet *
-            countAnnualBonusPayoutsInHorizon(
-              yearMonth,
-              p.monthsFromToday,
-              DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH
-            )
-          : 0);
-      const cashRow =
-        cashTotal +
-        vehicleSaleCashHorizon +
-        surplusAccrualHorizon;
+      const cashByAge = ageAssets.perAge[i];
+      const cashRow = cashByAge.cash;
+      const vehiclesNetHorizon = cashByAge.vehiclesNet;
       const investments = p.value - cashMinusLiab;
       const cpfRowAge = cpfProjectionByAge?.[i];
       const cpfAmt = cpfRowAge?.totalCpf ?? 0;

@@ -16,6 +16,8 @@ export type ProfileRow = {
   monthly_gross_salary: string | null;
   /** Nominal annual raise as decimal (e.g. 0.02); null = no growth in CPF projection. */
   annual_salary_growth_nominal: string | null;
+  /** Nominal annual expense growth as decimal (e.g. 0.02); null = read-time 2% default. */
+  expense_growth_nominal: string | null;
   cpf_age_band: string | null;
   /** `YYYY-MM-DD` when set. */
   birth_date: string | null;

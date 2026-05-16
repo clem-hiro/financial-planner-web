@@ -10,7 +10,10 @@ export type RetirementDividendVsSpendResult = {
   projectedInvestmentsAtRetirement: number;
   /** Dividend cash flow from investments only: `inv × yield / 12`. */
   monthlyDividendIncome: number;
+  /** User's stated goal in today's dollars (unchanged semantics). */
   monthlySpendGoal: number | null;
+  /** Goal escalated to retirement-year dollars: `G·(1+gE)^yearsToRetirement`. */
+  inflatedMonthlySpendGoal: number | null;
   /**
    * Spending not covered by dividends; model assumes this comes from cash
    * each month (no employment income in retirement in this model).
@@ -46,12 +49,22 @@ export function analyzeRetirementDividendVsSpend(input: {
   goalMonthlySpend: number | null;
   annualDividendYield: number;
   currentCashTotal: number;
+  /** Annual expense growth used to inflate the goal. Default 0 = no inflation. */
+  expenseGrowthAnnual?: number;
+  /** Years from now to retirement. Default 0 ⇒ goal unchanged (backward-compatible). */
+  yearsToRetirement?: number;
 }): RetirementDividendVsSpendResult {
   const inv = Math.max(0, input.projectedInvestmentsAtRetirement);
   const y = Math.min(0.25, Math.max(0, input.annualDividendYield));
   const monthlyDividendIncome = y > 0 ? (inv * y) / 12 : 0;
   const cash = Math.max(0, input.currentCashTotal);
-  const G = input.goalMonthlySpend;
+  const G0 = input.goalMonthlySpend;
+  // Math.pow(1, yrs) === 1 exactly, so gE=0 ∨ yrs=0 ⇒ G === G0 byte-identical.
+  const G =
+    G0 == null || G0 <= 0
+      ? G0
+      : G0 *
+        Math.pow(1 + (input.expenseGrowthAnnual ?? 0), input.yearsToRetirement ?? 0);
 
   if (G == null || G <= 0) {
     return {
@@ -59,6 +72,7 @@ export function analyzeRetirementDividendVsSpend(input: {
       projectedInvestmentsAtRetirement: inv,
       monthlyDividendIncome,
       monthlySpendGoal: null,
+      inflatedMonthlySpendGoal: null,
       monthlyCashSupplementNeeded: null,
       dividendsCoverGoal: null,
       currentCashTotal: cash,
@@ -90,7 +104,8 @@ export function analyzeRetirementDividendVsSpend(input: {
     dividendYieldAnnual: y,
     projectedInvestmentsAtRetirement: inv,
     monthlyDividendIncome,
-    monthlySpendGoal: G,
+    monthlySpendGoal: G0,
+    inflatedMonthlySpendGoal: G,
     monthlyCashSupplementNeeded,
     dividendsCoverGoal,
     currentCashTotal: cash,
@@ -107,6 +122,8 @@ export type RetirementSpendVsPortfolioResult = {
   meetsGoal: boolean | null;
   /** `projectedBalance - requiredPortfolio`; negative means shortfall. */
   surplusVsRequired: number | null;
+  /** Goal escalated to retirement-year dollars: `G·(1+gE)^yearsToRetirement`. */
+  inflatedMonthlySpendGoal: number | null;
 };
 
 /**
@@ -118,6 +135,10 @@ export function analyzeRetirementSpendVsPortfolio(input: {
   goalMonthlySpend: number | null;
   /** Default {@link DEFAULT_RETIREMENT_WITHDRAWAL_ANNUAL_RATE}. */
   annualWithdrawalRate?: number;
+  /** Annual expense growth used to inflate the goal. Default 0 = no inflation. */
+  expenseGrowthAnnual?: number;
+  /** Years from now to retirement. Default 0 ⇒ goal unchanged (backward-compatible). */
+  yearsToRetirement?: number;
 }): RetirementSpendVsPortfolioResult {
   const rate =
     input.annualWithdrawalRate ?? DEFAULT_RETIREMENT_WITHDRAWAL_ANNUAL_RATE;
@@ -126,7 +147,13 @@ export function analyzeRetirementSpendVsPortfolio(input: {
   const impliedSustainableMonthlySpend =
     rate > 0 ? (balanceForDraw * rate) / 12 : 0;
 
-  const G = input.goalMonthlySpend;
+  const G0 = input.goalMonthlySpend;
+  // Math.pow(1, yrs) === 1 exactly, so gE=0 ∨ yrs=0 ⇒ G === G0 byte-identical.
+  const G =
+    G0 == null || G0 <= 0
+      ? G0
+      : G0 *
+        Math.pow(1 + (input.expenseGrowthAnnual ?? 0), input.yearsToRetirement ?? 0);
   if (G == null || G <= 0 || rate <= 0) {
     return {
       assumedAnnualWithdrawalRate: rate,
@@ -134,6 +161,7 @@ export function analyzeRetirementSpendVsPortfolio(input: {
       requiredPortfolioForGoal: null,
       meetsGoal: null,
       surplusVsRequired: null,
+      inflatedMonthlySpendGoal: null,
     };
   }
 
@@ -147,5 +175,6 @@ export function analyzeRetirementSpendVsPortfolio(input: {
     requiredPortfolioForGoal,
     meetsGoal,
     surplusVsRequired,
+    inflatedMonthlySpendGoal: G,
   };
 }

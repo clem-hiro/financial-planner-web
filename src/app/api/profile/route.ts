@@ -62,6 +62,7 @@ export async function PATCH(request: Request) {
     retirement_dividend_yield_annual?: number | null;
     retirement_withdrawal_rate_annual?: number | null;
     annual_salary_growth_nominal?: number | null;
+    expense_growth_nominal?: number | null;
     onboarding_required?: boolean;
     onboarding_step?: number | null;
     onboarding_completed_at?: string | null;
@@ -174,6 +175,9 @@ export async function PATCH(request: Request) {
   }
   if (data.annual_salary_growth_nominal !== undefined) {
     patch.annual_salary_growth_nominal = data.annual_salary_growth_nominal;
+  }
+  if (data.expense_growth_nominal !== undefined) {
+    patch.expense_growth_nominal = data.expense_growth_nominal;
   }
   if (data.onboarding_required !== undefined) {
     patch.onboarding_required = data.onboarding_required;

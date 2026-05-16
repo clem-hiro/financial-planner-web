@@ -269,6 +269,26 @@
       "readme_section": "Architecture",
       "status": "pending",
       "summary": "orchestration change in .claude/agent-memory/code-reviewer/pgcrypto-schema-convention.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-16T08:21:09Z",
+      "trigger_file": "supabase/migrations/20260524000000_profile_expense_growth_nominal.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260524000000_profile_expense_growth_nominal.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-16T08:22:10Z",
+      "trigger_file": "src/app/api/profile/route.ts",
+      "change_type": "api",
+      "target_doc": "api_docs",
+      "doc_section": "API routes",
+      "readme_section": "API routes",
+      "status": "pending",
+      "summary": "api change in src/app/api/profile/route.ts \u2014 API routes (api_docs) may be stale"
     }
   ]
 }

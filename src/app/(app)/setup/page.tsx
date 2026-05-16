@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   num,
   profileAnnualSalaryGrowthNominal,
+  profileExpenseGrowthNominal,
   profileCpfAgeBand,
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
@@ -194,7 +195,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           <PageSection id="profile-assumptions" title="Profile basics">
             <div className="space-y-6">
               <ProfileIncomeForm
-                key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.target_retirement_age ?? ""}-${financialProfile?.retirement_monthly_spend_goal ?? ""}-${financialProfile?.retirement_dividend_yield_annual ?? ""}-${financialProfile?.salary_increment_month ?? ""}`}
+                key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${profileExpenseGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.target_retirement_age ?? ""}-${financialProfile?.retirement_monthly_spend_goal ?? ""}-${financialProfile?.retirement_dividend_yield_annual ?? ""}-${financialProfile?.salary_increment_month ?? ""}`}
                 initialIncome={income}
                 initialGross={gross}
                 initialCpfAgeBand={cpfBand}
@@ -208,6 +209,12 @@ export default async function SetupPage({ searchParams }: PageProps) {
                   financialProfile?.annual_salary_growth_nominal != null &&
                   String(financialProfile.annual_salary_growth_nominal).trim() !== ""
                     ? num(financialProfile.annual_salary_growth_nominal) * 100
+                    : null
+                }
+                initialExpenseGrowthPercent={
+                  financialProfile?.expense_growth_nominal != null &&
+                  String(financialProfile.expense_growth_nominal).trim() !== ""
+                    ? num(financialProfile.expense_growth_nominal) * 100
                     : null
                 }
                 initialBirthDate={financialProfile?.birth_date ?? null}

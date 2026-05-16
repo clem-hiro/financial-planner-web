@@ -34,16 +34,16 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     bullets: [
       "Investments grow from each account’s balance, monthly contribution, and expected return (blended by size). Spare take-home is not auto-invested—type contributions if you want that.",
       "Each age uses about that many years of monthly compounding from today: (age − your current age) × 12 months.",
-      "Cash starts at your balances, then adds (monthly surplus × months ahead). Surplus is take-home − spending − goal plans for your dashboard month—spending uses logged expenses if any, otherwise the monthly budget—and is never below zero. That same rate repeats every month in the chart. Debt stays flat; vehicle proceeds apply if configured.",
+      "Cash starts at your balances, then adds monthly surplus up to your target retirement age—it stops accruing after that. Surplus is take-home − spending − goal plans for your dashboard month—spending uses logged expenses if any, otherwise the monthly budget—and is never below zero. Each January, income and bonus grow by your salary-growth rate and spending by your expense-growth rate (2% default). Debt stays flat; vehicle proceeds apply if configured.",
       "Huge contributions won’t be checked against that surplus—sanity-check cash flow yourself.",
-      "After your retirement age the curve still goes up; the app doesn’t stop contributions or model living off assets yet.",
+      "At your target retirement age the cash surplus stops accruing, so the curve and the retirement headline agree there; the app doesn’t model drawdown / living off assets yet.",
       "Retirement headline ≈ investments + cash − debt at that age, plus CPF when you’ve saved CPF data.",
     ],
     formulas: [
       "≈ FV(investments) + cash path − debt (+ CPF when enabled); months ≈ (age − current age) × 12",
     ],
     footnote:
-      "Rough only—not tax, inflation, or portfolio advice.",
+      "Rough only—not tax or portfolio advice. Expenses and the spend goal inflate at your set rate (2% default); investment returns, CPF and vehicles stay nominal.",
   },
   {
     id: "retirement-dividends",
@@ -61,7 +61,8 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
       "need invested (dividends only) ≈ (monthly goal × 12) ÷ yield",
       "cash per month ≈ max(0, goal − monthly dividends)",
     ],
-    footnote: "Not tax or inflation adjusted.",
+    footnote:
+      "Spend goal is inflated to retirement-year dollars at your set rate (2% default); dividend yield is nominal and not tax adjusted.",
   },
   {
     id: "retirement-four-percent",

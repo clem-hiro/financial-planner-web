@@ -127,6 +127,13 @@ export const profilePatchSchema = z
       .max(0.25)
       .nullable()
       .optional(),
+    /** Nominal expense growth per calendar year (e.g. 0.02); null clears. */
+    expense_growth_nominal: z
+      .number()
+      .min(0)
+      .max(0.25)
+      .nullable()
+      .optional(),
     onboarding_required: z.boolean().optional(),
     onboarding_step: z.number().int().min(1).max(4).nullable().optional(),
     onboarding_completed_at: z.string().datetime().nullable().optional(),

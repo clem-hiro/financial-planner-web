@@ -2,6 +2,7 @@ import Link from "next/link";
 import {
   num,
   profileAnnualSalaryGrowthNominal,
+  profileExpenseGrowthNominal,
   profileCpfAgeBand,
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
@@ -90,7 +91,7 @@ export async function CashFlowPlanningSection({
         <div className="space-y-8 border-t border-slate-200/70 px-5 pb-6 pt-2">
           <PageSection id="planning-cashflow-profile" title="Income &amp; retirement">
             <ProfileIncomeForm
-              key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.target_retirement_age ?? ""}-${financialProfile?.retirement_monthly_spend_goal ?? ""}-${financialProfile?.retirement_dividend_yield_annual ?? ""}`}
+              key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${profileExpenseGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.target_retirement_age ?? ""}-${financialProfile?.retirement_monthly_spend_goal ?? ""}-${financialProfile?.retirement_dividend_yield_annual ?? ""}`}
               initialIncome={income}
               initialGross={gross}
               initialCpfAgeBand={cpfBand}
@@ -104,6 +105,12 @@ export async function CashFlowPlanningSection({
                 financialProfile?.annual_salary_growth_nominal != null &&
                 String(financialProfile.annual_salary_growth_nominal).trim() !== ""
                   ? num(financialProfile.annual_salary_growth_nominal) * 100
+                  : null
+              }
+              initialExpenseGrowthPercent={
+                financialProfile?.expense_growth_nominal != null &&
+                String(financialProfile.expense_growth_nominal).trim() !== ""
+                  ? num(financialProfile.expense_growth_nominal) * 100
                   : null
               }
               initialBirthDate={financialProfile?.birth_date ?? null}

@@ -126,6 +126,20 @@ export function profileAnnualSalaryGrowthNominal(
   return Math.min(0.25, n);
 }
 
+/**
+ * Clamped 0–25% nominal per year. Null/blank/invalid → 2% global default
+ * (Decision 1: the model is inflation-aware by default for everyone).
+ * An explicit stored 0 is honoured (user opted out of expense inflation).
+ */
+export function profileExpenseGrowthNominal(
+  profile: ProfileRow | null
+): number {
+  if (!profile?.expense_growth_nominal) return 0.02;
+  const n = num(profile.expense_growth_nominal);
+  if (!Number.isFinite(n) || n < 0) return 0.02;
+  return Math.min(0.25, n);
+}
+
 /** Clamped 0–20% annual withdrawal rate; null/blank in DB uses 4% default at call-site. */
 export function profileRetirementWithdrawalRateAnnual(
   profile: ProfileRow | null

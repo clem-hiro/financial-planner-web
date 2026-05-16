@@ -58,6 +58,7 @@ export function ProfileIncomeForm({
   initialRetirementMonthlySpendGoal,
   initialRetirementDividendYieldPercent,
   initialAnnualSalaryGrowthPercent = null,
+  initialExpenseGrowthPercent = null,
   initialAnnualBonus = null,
   initialRetirementWithdrawalRatePercent = null,
   initialSalaryIncrementMonth = null,
@@ -83,6 +84,11 @@ export function ProfileIncomeForm({
    * Null/blank means no raise path.
    */
   initialAnnualSalaryGrowthPercent?: number | null;
+  /**
+   * Nominal annual expense growth as a percent (e.g. 2 for 2%). Null/blank
+   * means the dashboard applies its 2% global default until you save a value.
+   */
+  initialExpenseGrowthPercent?: number | null;
   /** Annual bonus before employee CPF (optional). */
   initialAnnualBonus?: number | null;
   /** Annual withdrawal rate in percent for simplified retirement checks (e.g. 4 for 4%). */
@@ -133,6 +139,11 @@ export function ProfileIncomeForm({
       ? String(
           Math.round(initialAnnualSalaryGrowthPercent * 1000) / 1000
         )
+      : ""
+  );
+  const [expenseGrowthPctRaw, setExpenseGrowthPctRaw] = useState(
+    initialExpenseGrowthPercent != null
+      ? String(Math.round(initialExpenseGrowthPercent * 1000) / 1000)
       : ""
   );
   const [annualBonusRaw, setAnnualBonusRaw] = useState(
@@ -259,6 +270,21 @@ export function ProfileIncomeForm({
         annual_salary_growth_nominal = p / 100;
       }
       patchBody.annual_salary_growth_nominal = annual_salary_growth_nominal;
+
+      const expGrowthTrim = expenseGrowthPctRaw.trim();
+      let expense_growth_nominal: number | null = null;
+      if (expGrowthTrim !== "") {
+        const p = Number(expGrowthTrim);
+        if (!Number.isFinite(p) || p < 0 || p > 25) {
+          setStatus(
+            "Expense growth must be between 0% and 25%, or leave blank for the 2% default."
+          );
+          setSubmitting(false);
+          return;
+        }
+        expense_growth_nominal = p / 100;
+      }
+      patchBody.expense_growth_nominal = expense_growth_nominal;
 
       const monthTrim = salaryIncrementMonth.trim();
       if (monthTrim === "") {
@@ -708,8 +734,9 @@ export function ProfileIncomeForm({
                       need invested ≈ (monthly goal × 12) ÷ yield
                     </p>
                     <p className="mt-2 text-slate-400">
-                      Yield is your dividend % below (or 2% if blank). Not
-                      inflation- or tax-adjusted.
+                      Yield is your dividend % below (or 2% if blank), nominal and
+                      not tax-adjusted. Your spend goal is inflated to
+                      retirement-year dollars at your set rate (2% default).
                     </p>
                     <p className="mt-2 text-slate-400">
                       Leave blank to clear from the dividend check.
@@ -726,6 +753,34 @@ export function ProfileIncomeForm({
                   value={retirementSpendGoalRaw}
                   onChange={(e) => setRetirementSpendGoalRaw(e.target.value)}
                   placeholder="Optional"
+                />
+              </label>
+              <label className="text-sm sm:min-w-0">
+                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+                  Expense growth (% / yr)
+                  <InfoTooltip ariaLabel="How expense growth is used">
+                    <p>
+                      Each <strong>January</strong> your monthly expenses and
+                      the retirement spend goal grow by{" "}
+                      <strong>(1 + this rate)</strong>. The first projection
+                      year uses today&apos;s figures as-is.
+                    </p>
+                    <p className="mt-2 text-slate-400">
+                      Independent of salary growth. Blank = 2% default. Salary,
+                      dividend yield, CPF and vehicles are unaffected.
+                    </p>
+                  </InfoTooltip>
+                </span>
+                <input
+                  name="expense_growth_pct"
+                  type="number"
+                  min={0}
+                  max={25}
+                  step={0.1}
+                  className={fpInputClass}
+                  value={expenseGrowthPctRaw}
+                  onChange={(e) => setExpenseGrowthPctRaw(e.target.value)}
+                  placeholder="Blank = 2% default"
                 />
               </label>
             </div>
