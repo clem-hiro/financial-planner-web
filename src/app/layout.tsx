@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Finance Planner",
+  title: "BYOFA",
   description:
     "Private wealth clarity — net worth, cash flow, goals, and thoughtful projections.",
 };
