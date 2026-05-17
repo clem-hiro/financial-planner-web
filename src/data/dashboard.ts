@@ -69,6 +69,17 @@ import {
 import type { ProjectionSeriesPoint } from "@/data/projection";
 import { birthDateIsValidPast } from "@/lib/validation";
 import type { AgeAssetBreakdownPoint } from "@/data/age-asset-breakdown";
+import { applyProposalChanges } from "@/domain/advisor-proposals/apply-overlay";
+import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
+
+/**
+ * Server-only, role-gated. When `proposalOverlay` is present the four
+ * proposal-affected canonical bindings are replaced by the shared overlay
+ * mapper before any derivation. Absent/empty ⇒ canonical path is byte-identical.
+ */
+export type DashboardPayloadOptions = {
+  proposalOverlay?: AdvisorProposalChangeRow[];
+};
 
 export type { AgeAssetBreakdownPoint } from "@/data/age-asset-breakdown";
 
@@ -282,17 +293,18 @@ function buildCpfHousingMarkers(
 export async function getDashboardPayload(
   supabase: SupabaseClient,
   userId: string,
-  yearMonth: string
+  yearMonth: string,
+  opts?: DashboardPayloadOptions
 ): Promise<DashboardPayload> {
   const [
-    profile,
+    baseProfile,
     expenses,
-    investments,
+    baseInvestments,
     cashAccounts,
     liabilityRows,
-    budgetLineRows,
+    baseBudgetLineRows,
     overrideRows,
-    goals,
+    baseGoals,
     cpfRow,
     housingLoanRows,
     vehicleRows,
@@ -311,6 +323,36 @@ export async function getDashboardPayload(
     listVehicles(supabase, userId),
     getIncomeTaxConfig(supabase, userId),
   ]);
+
+  // Projection-input seam: substitute the four proposal-affected bindings
+  // BEFORE any derivation. No overlay ⇒ identity (same references) ⇒ the
+  // canonical projection is byte-identical to the pre-overlay behaviour.
+  //
+  // The overlay is composed in-memory from persisted canonical + the persisted
+  // proposal diff via the single shared mapper; it is NEVER persisted. The
+  // accept path reuses the same mapper so preview == read-after-accept (C6).
+  //
+  // MERGE-CONFLICT RULE: if this conflicts vs a pre-change main, KEEP this
+  // design — reject any persisted overlay snapshot or duplicate mapper. See
+  // HANDOFF §7.
+  const overlay = opts?.proposalOverlay;
+  const { profile, investments, budgetLines: budgetLineRows, goals } =
+    overlay && overlay.length > 0
+      ? applyProposalChanges(
+          {
+            profile: baseProfile,
+            investments: baseInvestments,
+            budgetLines: baseBudgetLineRows,
+            goals: baseGoals,
+          },
+          overlay
+        )
+      : {
+          profile: baseProfile,
+          investments: baseInvestments,
+          budgetLines: baseBudgetLineRows,
+          goals: baseGoals,
+        };
 
   const amountOverrideByLineId = overridesToLineIdMap(overrideRows);
   const domainBudgetLines = budgetLineRows.map(budgetLineRowToDomain);

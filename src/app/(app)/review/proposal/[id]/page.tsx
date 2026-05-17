@@ -5,8 +5,12 @@ import {
 } from "@/data/repositories/advisor-proposals";
 import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
+import { getDashboardPayload } from "@/data/dashboard";
+import { resolveOverlayForViewer } from "@/domain/advisor-proposals/overlay-gate";
+import { DashboardRetirementSection } from "@/features/dashboard/DashboardRetirementSection";
 import { ProposalReviewView } from "@/features/proposals/ProposalReviewView";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
+import { formatYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
 import { isClient } from "@/lib/profile-role";
 import { notFound, redirect } from "next/navigation";
@@ -48,6 +52,34 @@ export default async function ProposalReviewPage({ params }: PageProps) {
 
   const currencyCode = me?.base_currency ?? DEFAULT_BASE_CURRENCY;
 
+  // Explicit status gate (pending|accepted only — never draft). This is the
+  // authorization boundary, NOT RLS (client SELECT RLS is not status-scoped).
+  const showProjection =
+    resolveOverlayForViewer({
+      viewerRole: "client",
+      viewerId: user.id,
+      surface: "client_review",
+      proposal,
+    }) && changes.length > 0;
+
+  let actualProjection: React.ReactNode = null;
+  let proposedProjection: React.ReactNode = null;
+  if (showProjection) {
+    const month = formatYearMonth(new Date());
+    const [payloadActual, payloadProposed] = await Promise.all([
+      getDashboardPayload(supabase, user.id, month),
+      getDashboardPayload(supabase, user.id, month, {
+        proposalOverlay: changes,
+      }),
+    ]);
+    actualProjection = (
+      <DashboardRetirementSection payload={payloadActual} profile={me} />
+    );
+    proposedProjection = (
+      <DashboardRetirementSection payload={payloadProposed} profile={me} />
+    );
+  }
+
   return (
     <ProposalReviewView
       proposal={proposal}
@@ -55,6 +87,9 @@ export default async function ProposalReviewPage({ params }: PageProps) {
       sectionNotes={sectionNotes}
       advisorDisplayName={advisorProfile?.display_name?.trim() || "Your advisor"}
       currencyCode={currencyCode}
+      hasProjection={showProjection}
+      actualProjection={actualProjection}
+      proposedProjection={proposedProjection}
     />
   );
 }
