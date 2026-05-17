@@ -16,7 +16,7 @@ Branch `sandbox` @ `f7d9522`, **in sync with `origin/sandbox`** (`0 0`). **PR #8
 
 ## 6. Open Loops
 
-**Resolved this session (dropped; trace in `git log`):** QR P0 / old task #21 (`17a5edc`, applied+verified on prod, now on `main`); PR #8 (squash-merged → `d977bf3` + SOP back-merge `f7d9522`); 2026-05-16 nav-gradient carryover (`d319b4f`).
+**Resolved this session (dropped; trace in `git log`):** QR P0 / old task #21 (`17a5edc`, applied+verified on prod, now on `main`); PR #8 (squash-merged → `d977bf3` + SOP back-merge `f7d9522`); 2026-05-16 nav-gradient carryover (`d319b4f`); cash-flow Finding-A bug + expense-inflation gap (`cc3ed97`); QR hardening (`b1085a9`: atomic redeem, `token_hash` at rest, mint `FOR UPDATE`).
 
 ### New this session
 
@@ -44,6 +44,7 @@ _P2+ long-tail (incl. the reviewer's 2 non-blocking overlay items: parity numeri
 - Long-tail backlog (P2+): `BACKLOG.md`
 - Consent-gate plan (next focus): `~/.claude/plans/image-1-this-is-dapper-truffle.md`
 - Overlay infra plan: `~/.claude/plans/proposal-overlay-projection-gate.md`
+- Cash-flow plan + audit: `~/.claude/plans/run-research-for-security-fancy-valley.md`
 - This session's commits: `git log --oneline aa25586..f7d9522`; uncommitted overlay diff: `git diff` + untracked `src/domain/advisor-proposals/*overlay* *parity*`
 - Backups (origin): `backup/main-preMerge-20260517` (988de45), `backup/sandbox-preMerge-20260517` (17a5edc)
 - Co-dev: CleAyz parallel — fetch + divergence check; **merge never rebase**; sandbox→main **squash** + back-merge

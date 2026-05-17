@@ -10,7 +10,7 @@
 - **New:** 0
 - **Persisted:** 0
 
-No marker delta. Prior scan (2026-05-16 baseline) was 0; current scan (`src/`, `scripts/`, `supabase/`, `*.ts`/`*.tsx`/`*.sql`, excluding `node_modules`) is still **0** — despite a large session (QR-digest P0 fix, PR #8 squash+back-merge, and the full proposal-overlay infra: `apply-overlay.ts`, `overlay-gate.ts`, `ProposalProjectionCompare.tsx` + 4 test files + the `apply-changes.ts`/`dashboard.ts` refactor). No `TODO`/`FIXME`/`HACK`/`STUB`/`XXX`/`WORKAROUND` markers introduced.
+No marker delta. Prior scan (2026-05-16 baseline) was 0; current scan (`src/`, `scripts/`, `supabase/`, `*.ts`/`*.tsx`/`*.sql`, excluding `node_modules`) is still **0** — despite a large session (QR-digest P0 fix, PR #8 squash+back-merge, cash-flow Phase 1+2, the [Debts] reconciliation merge, prod QR hotfix, and the full proposal-overlay infra: `apply-overlay.ts`, `overlay-gate.ts`, `ProposalProjectionCompare.tsx` + 4 test files + the `apply-changes.ts`/`dashboard.ts` refactor). No `TODO`/`FIXME`/`HACK`/`STUB`/`XXX`/`WORKAROUND` markers introduced.
 
 ## Note
 
@@ -19,3 +19,5 @@ Repo convention favors `HANDOFF.md` §6 (P0/P1) + `BACKLOG.md` (P2) over inline 
 - §6 **P1**: deferred `/simplify`+`/unslop` sweep on the overlay diff (run post-merge); old task #22 (QR dialog zoom); live QR-scan→signup prod smoke test.
 - §6 next-session focus: the **client↔advisor consent gate** (restricted advisor view) — plan `~/.claude/plans/image-1-this-is-dapper-truffle.md`, one-table-pilot-then-review.
 - §6 **P2** (in `BACKLOG.md`): parity numeric-fidelity gap; pre-existing `isNewEntity` quirk; access-keys error-log; dashboard growth-rate plumbing.
+
+If a future session adds markers, this file diffs them and surfaces resolved/persisted/new.
