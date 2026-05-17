@@ -35,6 +35,23 @@ export async function listInvestments(
   return (data ?? []) as InvestmentRow[];
 }
 
+/**
+ * Consent-gated advisor read. Drop-in for `listInvestments` on the advisor
+ * path: the RPC `returns setof financial_investments` => identical
+ * `InvestmentRow` shape, so the shared overlay mapper composes unchanged (C6).
+ * Not consented => the SECURITY DEFINER fn returns zero rows (fail-closed).
+ */
+export async function advisorReadInvestments(
+  supabase: SupabaseClient,
+  clientId: string
+): Promise<InvestmentRow[]> {
+  const { data, error } = await supabase.rpc("advisor_read_investments", {
+    p_client: clientId,
+  });
+  if (error) throw error;
+  return (data ?? []) as InvestmentRow[];
+}
+
 export async function getInvestmentById(
   supabase: SupabaseClient,
   userId: string,

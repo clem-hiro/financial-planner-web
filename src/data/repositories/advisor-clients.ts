@@ -153,3 +153,20 @@ export async function getClientProfileForAdvisor(
   if (!data) return null;
   return data as AdvisorClientListRow;
 }
+
+/**
+ * Server-side consent predicate (linkage AND latest-event-wins active
+ * consent). The trust boundary for consent-first: the advisor proposal
+ * create/save actions reject when this is false. Fail-closed: any non-`true`
+ * RPC result (error already thrown, null, false) denies.
+ */
+export async function advisorCanReadClient(
+  supabase: SupabaseClient,
+  clientId: string
+): Promise<boolean> {
+  const { data, error } = await supabase.rpc("advisor_can_read_client", {
+    p_client: clientId,
+  });
+  if (error) throw error;
+  return data === true;
+}

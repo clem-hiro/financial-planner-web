@@ -57,9 +57,15 @@ import { listHousingLoans } from "@/data/repositories/housing-loans";
 import { listLiabilities } from "@/data/repositories/liabilities";
 import { listVehicles } from "@/data/repositories/vehicles";
 import { getCachedProfileById } from "@/data/supabase/request-context";
-import { getIncomeTaxConfig } from "@/data/repositories/income-tax-configs";
+import {
+  getIncomeTaxConfig,
+  advisorReadIncomeTaxConfig,
+} from "@/data/repositories/income-tax-configs";
 import { listExpensesForMonth } from "@/data/repositories/expenses";
-import { listInvestments } from "@/data/repositories/investments";
+import {
+  listInvestments,
+  advisorReadInvestments,
+} from "@/data/repositories/investments";
 import { buildSyntheticTaxExpense } from "@/data/income-tax-synthetic-expense";
 import type { HousingLoanRow } from "@/data/supabase/types";
 import {
@@ -79,6 +85,14 @@ import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
  */
 export type DashboardPayloadOptions = {
   proposalOverlay?: AdvisorProposalChangeRow[];
+  /**
+   * Viewer discriminator (D1). `"advisor"` routes the consent-gated client
+   * tables (investments, income-tax config) through the SECURITY DEFINER
+   * `advisor_read_*` RPCs, with `userId` as the client id. Absent ⇒ unchanged
+   * client-self `.from()` path — byte-identical to pre-consent-gate (C8); an
+   * advisor with no viewer opt hits RLS-denied empty (fail-closed, not a leak).
+   */
+  viewer?: "advisor";
 };
 
 export type { AgeAssetBreakdownPoint } from "@/data/age-asset-breakdown";
@@ -296,6 +310,7 @@ export async function getDashboardPayload(
   yearMonth: string,
   opts?: DashboardPayloadOptions
 ): Promise<DashboardPayload> {
+  const isAdvisorViewer = opts?.viewer === "advisor";
   const [
     baseProfile,
     expenses,
@@ -312,7 +327,11 @@ export async function getDashboardPayload(
   ] = await Promise.all([
     getCachedProfileById(userId),
     listExpensesForMonth(supabase, userId, yearMonth),
-    listInvestments(supabase, userId),
+    // Consent chokepoint: advisor viewer ⇒ RPC (fail-closed empty when not
+    // consented); self ⇒ unchanged `.from()` (C8 byte-identical).
+    isAdvisorViewer
+      ? advisorReadInvestments(supabase, userId)
+      : listInvestments(supabase, userId),
     listCashAccounts(supabase, userId),
     listLiabilities(supabase, userId),
     listBudgetLines(supabase, userId),
@@ -321,7 +340,9 @@ export async function getDashboardPayload(
     getCpfBalanceByUserId(supabase, userId),
     listHousingLoans(supabase, userId),
     listVehicles(supabase, userId),
-    getIncomeTaxConfig(supabase, userId),
+    isAdvisorViewer
+      ? advisorReadIncomeTaxConfig(supabase, userId)
+      : getIncomeTaxConfig(supabase, userId),
   ]);
 
   // Projection-input seam: substitute the four proposal-affected bindings

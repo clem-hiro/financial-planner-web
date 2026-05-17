@@ -289,6 +289,106 @@
       "readme_section": "API routes",
       "status": "pending",
       "summary": "api change in src/app/api/profile/route.ts \u2014 API routes (api_docs) may be stale"
+    },
+    {
+      "timestamp": "2026-05-17T09:39:50Z",
+      "trigger_file": "supabase/migrations/20260527000000_qr_digest_search_path_fix.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260527000000_qr_digest_search_path_fix.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-17T13:41:43Z",
+      "trigger_file": ".claude/settings.json",
+      "change_type": "config",
+      "target_doc": "readme",
+      "doc_section": "Environment & config",
+      "readme_section": "Environment & config",
+      "status": "pending",
+      "summary": "config change in .claude/settings.json \u2014 Environment & config (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-17T14:24:39Z",
+      "trigger_file": "supabase/migrations/20260528000000_advisor_consent_invariant.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260528000000_advisor_consent_invariant.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-17T14:25:41Z",
+      "trigger_file": "src/data/repositories/advisor-clients.ts",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/data/repositories/advisor-clients.ts \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-17T14:26:35Z",
+      "trigger_file": "src/app/(app)/advisor/client/[id]/page.tsx",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/app/(app)/advisor/client/[id]/page.tsx \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-17T14:27:19Z",
+      "trigger_file": "src/features/advisor/AdvisorClientWorkspace.tsx",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/features/advisor/AdvisorClientWorkspace.tsx \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-17T14:27:27Z",
+      "trigger_file": "src/server/advisor-client-actions.ts",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/server/advisor-client-actions.ts \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-17T14:31:21Z",
+      "trigger_file": "supabase/tests/advisor_consent_scenarios.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/tests/advisor_consent_scenarios.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-17T14:39:58Z",
+      "trigger_file": ".claude/agent-memory/coder/feedback-enforcement-vs-audit-predicates.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/coder/feedback-enforcement-vs-audit-predicates.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-17T14:40:03Z",
+      "trigger_file": ".claude/agent-memory/coder/MEMORY.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/coder/MEMORY.md \u2014 Architecture (readme) may be stale"
     }
   ]
 }

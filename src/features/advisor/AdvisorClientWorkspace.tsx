@@ -31,6 +31,7 @@ function onboardingLabel(profile: ProfileRow) {
 
 export function AdvisorClientWorkspace({
   clientId,
+  consentGranted,
   profile,
   payload,
   payloadProposed,
@@ -44,6 +45,7 @@ export function AdvisorClientWorkspace({
   hasPendingProposal,
 }: {
   clientId: string;
+  consentGranted: boolean;
   profile: ProfileRow;
   payload: DashboardPayload;
   payloadProposed: DashboardPayload;
@@ -56,6 +58,34 @@ export function AdvisorClientWorkspace({
   draftChanges: AdvisorProposalChangeRow[];
   hasPendingProposal: boolean;
 }) {
+  // Consent-first (P-ORDER): a linked-but-non-consented advisor cannot author
+  // proposals. Server-side enforcement is the trust boundary (the proposal
+  // create/save actions reject); this is the explicit gated state — NOT an
+  // empty workspace — so the advisor sees why authoring is unavailable.
+  if (!consentGranted) {
+    return (
+      <div className="space-y-8 lg:space-y-10">
+        <p className="text-sm">
+          <Link href="/advisor/clients" className={appInlineLinkClass}>
+            ← Clients
+          </Link>
+        </p>
+        <header className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+              {profile.display_name?.trim() || "Client"}
+            </h1>
+            <AdvisorBadge tone="warning">Consent required</AdvisorBadge>
+          </div>
+        </header>
+        <AdvisorComingSoonPanel
+          title="Consent required"
+          body="This client has not granted you consent to view their financial data or receive plan suggestions. Proposal authoring unlocks once they grant consent. No client data is shown until then."
+        />
+      </div>
+    );
+  }
+
   const draftChangeCount = draftChanges.length;
   const currency = profile.base_currency ?? DEFAULT_BASE_CURRENCY;
   const investmentBalanceRows: InvestmentBalanceRow[] = investments.map((i) => ({
