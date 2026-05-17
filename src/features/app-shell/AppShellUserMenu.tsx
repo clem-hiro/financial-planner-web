@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
 import { useEffect, useRef, useState } from "react";
 import { ContactAdvisorButton } from "@/features/app-shell/ContactAdvisorButton";
@@ -18,10 +17,13 @@ const contactMenuRowClass =
 
 export function AppShellUserMenu({
   user,
+  displayName,
   inboxSlot,
   showContactAdvisor,
 }: {
   user: User;
+  /** Profile display name; falls back to email when empty. */
+  displayName?: string | null;
   inboxSlot: React.ReactNode;
   showContactAdvisor?: boolean;
 }) {
@@ -38,6 +40,7 @@ export function AppShellUserMenu({
   }, [open]);
 
   const email = user.email ?? "Account";
+  const label = displayName || email;
 
   return (
     <div className="relative" ref={rootRef}>
@@ -49,9 +52,9 @@ export function AppShellUserMenu({
         className="inline-flex max-w-56 min-h-10 items-center gap-2 rounded-full border border-slate-200/90 bg-white px-3 py-2 text-left text-sm font-semibold text-[#0c192f] shadow-sm transition hover:border-emerald-200/90 sm:min-h-0 sm:py-1.5"
       >
         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#0c192f] to-[#047857] text-xs font-bold text-white">
-          {email.slice(0, 1).toUpperCase()}
+          {label.slice(0, 1).toUpperCase()}
         </span>
-        <span className="min-w-0 flex-1 truncate">{email}</span>
+        <span className="min-w-0 flex-1 truncate">{label}</span>
         <span className="text-slate-400" aria-hidden>
           ▾
         </span>
@@ -62,17 +65,6 @@ export function AppShellUserMenu({
           role="menu"
           aria-label="Account menu"
         >
-          <Link
-            role="menuitem"
-            href="/more"
-            className={menuRowClass}
-            onClick={() => setOpen(false)}
-          >
-            More
-          </Link>
-          {showContactAdvisor || inboxSlot ? (
-            <div className="my-1 border-t border-slate-100" />
-          ) : null}
           {showContactAdvisor ? (
             <div className="px-0 py-0.5">
               <ContactAdvisorButton
