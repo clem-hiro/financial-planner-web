@@ -1,0 +1,47 @@
+---
+description: When shipping user-facing code, update PROJECT_CONTEXT.md feature inventory in the same task.
+globs: src/**/*,supabase/migrations/**/*
+alwaysApply: false
+---
+
+# Update PROJECT_CONTEXT when you ship code
+
+`PROJECT_CONTEXT.md` is the repo source of truth for what is **Shipped**, **Partial**, **Planned**, or **Not in repo**. When your edits under `src/` or `supabase/migrations/` **materially change** what users or advisors can do, you **must** update that file **in the same task** before finishing — do not leave it for the user.
+
+After updating inventory, follow `.cursor/rules/project-context-notion-sync.mdc` to sync [BYOFA Features](https://www.notion.so/BYOFA-Features-35fa694147bf8093be2fc57673cee41a) unless the user said to skip Notion.
+
+## Update PROJECT_CONTEXT when you
+
+- Add or remove an **App Router** page, layout segment, or API route clients/advisors hit
+- Add or change **middleware** gating, auth flows, onboarding, or shell navigation
+- Ship or extend a **feature module** under `src/features/` (new UI surface, not just a refactor)
+- Add a **migration** that introduces or changes user-visible tables/columns, RLS, or RPCs the app calls
+- Change **advisor ↔ client** workflows (proposals, access keys, roster, contact)
+- Flip a capability from placeholder/scaffold to working (or the reverse)
+
+## Do not update for
+
+- Pure refactors, renames, or internal moves with **no** behavior change
+- Tests, stories, comments, or tooling only
+- Style, copy tweaks, or bugfixes that do not change shipped vs planned scope
+- Domain math tweaks that do not change which modules exist
+
+## What to edit in PROJECT_CONTEXT.md
+
+1. **[Feature inventory (shipped vs planned)]** — add/update/remove the capability row: **Status** + concise **Notes** (routes, key files, migrations). Use factual wiring, not marketing.
+2. **Routes** and/or **Database** — one or two bullets when a new route, table, or RPC matters.
+3. **Code map** — only for a new top-level domain area.
+4. **`_Last reviewed_`** line at the bottom — one sentence on what changed.
+
+Status meanings: **Shipped** = end-to-end for normal users; **Partial** = real workflow plus known gaps; **Planned** = placeholder/card only; **Not in repo** = not implemented.
+
+## Notion row mapping
+
+When adding inventory rows, use product **Feature** titles from `.cursor/rules/project-context-notion-sync.mdc` so BYOFA stays aligned (e.g. split Home metrics into dashboard / net worth / spending rows when appropriate).
+
+## Completion check
+
+Before you mark the task done, confirm either:
+
+- PROJECT_CONTEXT was updated (list which inventory rows changed), **or**
+- You explicitly state why this change did not warrant an update (e.g. internal refactor only).

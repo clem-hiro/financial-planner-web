@@ -59,10 +59,15 @@ Project-specific Codex skills covering the stack-specific failure modes that gen
 
 - `$sg-finance-domain-expert` — read-only skill for SG regulatory verification. Fetches current CPFB / LTA / HDB values and diffs against hardcoded constants in `src/domain/finance/sg-*.ts`, `vehicle-sg.ts`, `housing-loan-quick.ts`. Use when changing any SG-regulatory constant or on annual sweeps (CPFB typically announces Q4 for the next calendar year).
 
+## PROJECT_CONTEXT (required on ship)
+
+`PROJECT_CONTEXT.md` is the repo source of truth for shipped vs planned. **In the same task** as any user-facing ship under `src/` or `supabase/migrations/`, update the **Feature inventory (shipped vs planned)** section in `PROJECT_CONTEXT.md` (status + notes), plus Routes/Database bullets when relevant, and the `_Last reviewed_` line. Then sync [BYOFA Features](https://www.notion.so/BYOFA-Features-35fa694147bf8093be2fc57673cee41a) per `.cursor/rules/project-context-notion-sync.mdc` (or ask to **sync BYOFA**). Skip for refactors, tests-only, or non–user-facing changes. Cursor: `.cursor/rules/update-project-context-on-ship.mdc`.
+
 ## When to invoke
 
 | Edit type | Invoke |
 |---|---|
+| User-facing ship (`src/app/**`, `src/features/**`, migrations with app-facing schema) | Update `PROJECT_CONTEXT.md` + BYOFA Notion sync |
 | `supabase/migrations/*.sql` | `$rls-audit`, `$types-vs-migrations` |
 | `src/app/**`, `src/server/actions.ts`, `src/middleware.ts`, route handlers | `$nextjs16-guard` |
 | Any server-action add/change | `$validate-drift`, `$revalidation-coverage`, `$test-strategy-gate` |
