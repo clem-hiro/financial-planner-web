@@ -39,6 +39,7 @@ export async function updateProfile(
     retirement_dividend_yield_annual?: number | null;
     retirement_withdrawal_rate_annual?: number | null;
     annual_salary_growth_nominal?: number | null;
+    expense_growth_nominal?: number | null;
     onboarding_required?: boolean;
     onboarding_step?: number | null;
     onboarding_completed_at?: string | null;

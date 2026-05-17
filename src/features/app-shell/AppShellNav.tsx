@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { lockBodyScroll } from "@/lib/body-scroll-lock";
 import {
@@ -10,7 +10,9 @@ import {
   CLIENT_MAIN_NAV_PREFETCH_HREFS,
 } from "@/lib/client-main-nav";
 import {
+  appActiveGradientStyle,
   appShellMainNavRailClass,
+  appTabPillActiveClass,
   appTabPillClass,
   appTabPillInactiveClass,
 } from "@/ui/app-tab-styles";
@@ -23,13 +25,6 @@ export function AppShellNav({
   const pathname = usePathname();
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const desktopRailRef = useRef<HTMLDivElement | null>(null);
-  const desktopLinkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
-  const [activeIndicator, setActiveIndicator] = useState<{
-    left: number;
-    width: number;
-  } | null>(null);
-  const activeIndicatorInset = 2;
 
   useEffect(() => {
     for (const href of CLIENT_MAIN_NAV_PREFETCH_HREFS) {
@@ -46,44 +41,15 @@ export function AppShellNav({
   const isActive = (route: (typeof CLIENT_MAIN_NAV)[number]) =>
     route.activeMatch(pathname);
 
-  const activeRoute = CLIENT_MAIN_NAV.find((route) => isActive(route));
-
-  useLayoutEffect(() => {
-    const rail = desktopRailRef.current;
-    const activeLink = activeRoute
-      ? desktopLinkRefs.current[activeRoute.id]
-      : null;
-    if (!rail || !activeLink) {
-      return;
-    }
-
-    const updateIndicator = () => {
-      const railRect = rail.getBoundingClientRect();
-      const linkRect = activeLink.getBoundingClientRect();
-      setActiveIndicator({
-        left: linkRect.left - railRect.left + activeIndicatorInset,
-        width: Math.max(0, linkRect.width - activeIndicatorInset * 2),
-      });
-    };
-
-    const frame = requestAnimationFrame(updateIndicator);
-    const resizeObserver = new ResizeObserver(updateIndicator);
-    resizeObserver.observe(rail);
-    resizeObserver.observe(activeLink);
-    window.addEventListener("resize", updateIndicator);
-    return () => {
-      cancelAnimationFrame(frame);
-      resizeObserver.disconnect();
-      window.removeEventListener("resize", updateIndicator);
-    };
-  }, [activeRoute]);
-
   if (workspace === "advisor") {
     return null;
   }
 
   return (
-    <nav className="relative w-full min-w-0 sm:w-max" aria-label="Main">
+    <nav
+      className="relative w-full min-w-0 sm:mx-auto sm:w-max"
+      aria-label="Main"
+    >
       <div className="sm:hidden">
         <button
           type="button"
@@ -133,9 +99,10 @@ export function AppShellNav({
                             onClick={() => setMobileOpen(false)}
                             className={`flex min-h-14 items-center rounded-2xl px-5 py-3 text-3xl font-semibold tracking-tight transition ${
                               active
-                                ? "bg-linear-to-r from-[#0c192f] via-[#133359] to-[#047857] text-white shadow-md shadow-slate-900/20"
+                                ? "text-white shadow-md shadow-slate-900/20"
                                 : "text-[#0c192f] hover:bg-sky-50"
                             }`}
+                            style={active ? appActiveGradientStyle : undefined}
                           >
                             {route.label}
                           </Link>
@@ -150,17 +117,7 @@ export function AppShellNav({
           )}
       </div>
       <div className="hidden sm:block">
-        <div ref={desktopRailRef} className={`${appShellMainNavRailClass} relative`}>
-          {activeIndicator ? (
-            <span
-              aria-hidden
-              className="pointer-events-none absolute bottom-1.5 left-0 top-1.5 rounded-full bg-linear-to-r from-[#0c192f] via-[#133359] to-[#047857] shadow-sm shadow-slate-900/20 transition-[transform,width] duration-300 ease-out motion-reduce:transition-none"
-              style={{
-                transform: `translateX(${activeIndicator.left}px)`,
-                width: `${activeIndicator.width}px`,
-              }}
-            />
-          ) : null}
+        <div className={appShellMainNavRailClass}>
           {CLIENT_MAIN_NAV.map((route) => {
             const active = isActive(route);
             return (
@@ -168,12 +125,11 @@ export function AppShellNav({
                 key={route.id}
                 href={route.href}
                 prefetch
-                ref={(node) => {
-                  desktopLinkRefs.current[route.id] = node;
-                }}
-                className={`${appTabPillClass} relative z-10 ${
-                  active ? "text-white" : appTabPillInactiveClass
+                aria-current={active ? "page" : undefined}
+                className={`${appTabPillClass} ${
+                  active ? appTabPillActiveClass : appTabPillInactiveClass
                 }`}
+                style={active ? appActiveGradientStyle : undefined}
               >
                 {route.label}
               </Link>

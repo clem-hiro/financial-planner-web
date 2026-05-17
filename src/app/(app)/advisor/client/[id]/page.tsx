@@ -10,6 +10,7 @@ import { listFinancialGoals } from "@/data/repositories/goals";
 import { listInvestments } from "@/data/repositories/investments";
 import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
+import { resolveOverlayForViewer } from "@/domain/advisor-proposals/overlay-gate";
 import { AdvisorClientWorkspace } from "@/features/advisor/AdvisorClientWorkspace";
 import { formatYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -73,11 +74,35 @@ export default async function AdvisorClientDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  // Advisor previews their own client's draft (or pending) proposal. The gate
+  // is the second enforcement layer; the proposals were already queried scoped
+  // to this advisor + client.
+  const overlayProposal = draftProposal ?? pendingProposal;
+  const overlayChanges = draftId
+    ? draftChanges
+    : overlayProposal
+      ? await listChangesForProposal(supabase, overlayProposal.id)
+      : [];
+  const hasOverlay =
+    resolveOverlayForViewer({
+      viewerRole: "advisor",
+      viewerId: user.id,
+      surface: "advisor_workspace",
+      proposal: overlayProposal,
+    }) && overlayChanges.length > 0;
+  const payloadProposed = hasOverlay
+    ? await getDashboardPayload(supabase, clientId, month, {
+        proposalOverlay: overlayChanges,
+      })
+    : payload;
+
   return (
     <AdvisorClientWorkspace
       clientId={clientId}
       profile={clientProfile}
       payload={payload}
+      payloadProposed={payloadProposed}
+      hasOverlay={hasOverlay}
       goals={goals}
       budgetLines={budgetLines}
       investments={investments}

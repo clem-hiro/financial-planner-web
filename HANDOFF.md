@@ -1,65 +1,61 @@
-# Session Handoff — 2026-05-16
+# Session Handoff — 2026-05-17
 
 ## 1. State Snapshot
 
-Branch `sandbox` @ `fba9f9d`, **in sync with `origin/sandbox`** (`0 0`), a **strict superset of `origin/main`** (sandbox 4 ahead, 0 behind). **PR #6 MERGED** to `main` (`edbc4cb`, 2026-05-16) — merged as a **regular merge commit, NOT squashed** (the 6 QR-dialog iteration commits are individually on `main`; not retro-fixed — would require destructive `main` history rewrite). **PR #7 OPEN** — https://github.com/clem-hiro/financial-planner-web/pull/7 — seed `genKey()` hex fix + handoff; net 3 files; **must be squash-merged**, then back-merge `origin/main`→`sandbox` per the merge-not-rebase SOP. `main` contains: phone-verify P0 fix, full QR key-sharing feature + token follow-up + dialog centering/backdrop, income-tax 500 fix. Operator applied migration `20260522000000_advisor_qr_share_tokens.sql` **plus a one-time manual prod data SQL** (strip legacy `DEV-` access-key prefix + clear `advisor_qr_share_tokens`) — recorded in §6 for reproducibility. Dev users seeded (`_dev@dev.com` advisor / `_dev_client@dev.com` client, pw `dev123`). No active build-sequence/phase doc (project doesn't use one). Co-dev CleAyz pushes to `sandbox`/`main` in parallel — always fetch + check divergence before branch ops.
+Branch `sandbox` @ `f7d9522`, **in sync with `origin/sandbox`** (`0 0`). **PR #8 squash-merged + back-merged this session** → `origin/main` @ `d977bf3`; `main` and `sandbox` are content-identical (6 sandbox-ahead commits = history shape only). No open PRs. Landed & pushed: nav-gradient fix `d319b4f`; QR-digest P0 `17a5edc` (`20260527000000_qr_digest_search_path_fix.sql`) — **applied to prod by the user and verified** (`proconfig` = `search_path=public, extensions` for both `peek`/`redeem`; pgcrypto-in-`extensions`-on-prod confirmed). Backup anchors on origin: `backup/main-preMerge-20260517` (988de45), `backup/sandbox-preMerge-20260517` (17a5edc); `backup/*-20260516` superseded.
+
+**⚠ Biggest loose end:** the **proposal-overlay infra is fully implemented, independently reviewer-verified (tsc 0 / eslint 0 / vitest 235/235 / 5-point correctness+security PASS), but UNCOMMITTED on `sandbox`** — 7 new + 6 modified files (see §6 P0). Operational reality unchanged: no `schema_migrations` ledger, migrations hand-applied via SQL editor, pgcrypto in `extensions` on prod; co-dev **CleAyz** pushes sandbox/main in parallel — fetch + check divergence, **merge never rebase**, sandbox→main **squash-merge** + back-merge.
 
 ## 5. Active Focus
 
-**NEW user-directed topic — no carryover.** Per the user, the next session is a brand-new topic to be defined and discussed at session start. There is **no in-progress implementation focus**. Do NOT assume continuation of QR / income-tax / seed work. **Ask the user what the new topic is before doing anything.**
+**NEXT SESSION STARTS HERE (user directive):** implement the **restricted advisor view** — advisor cannot see a linked client's data until that client consents; BOTH advisor and client see client data, gated by consent. Plan (FULLY REVISED 2026-05-17 — read it, it superseded the old per-table approach): `~/.claude/plans/image-1-this-is-dapper-truffle.md` (PDPA research `~/.claude/plans/…-agent-aefb3013f136983d6.md`). **Architecture decision (load-bearing, confirm before building):** the invariant must hold for non-claude-code future work too, so enforcement is **structural/DB-resident, not tooling**: Pillar 1 = a Postgres EVENT TRIGGER auto-enabling RLS on every new table; Pillar 2 = NO direct cross-user RLS policies — advisor→client reads ONLY via SECURITY DEFINER consent-checking RPCs (chokepoint; default advisor-invisible). This **supersedes** the old "per-table `advisor_can_read_client` predicate + `$rls-audit` linter" (process control, insufficient per the constraint) and is a **bigger refactor** (advisor read path moves off direct `.from(table)` to `.rpc()`). Still locked: append-only `advisor_client_consents`; fail-closed + re-consent prompt; Option B wording, App="BYOFA", server-side adviser name; contact-FA dialog gate. Migrations start at **`20260528000000`**. **Two pre-build decisions in the plan:** confirm the structural architecture; resolve the `financial_income_tax_configs` advice-integrity anomaly (advisor is silently tax-blind — fix via consent-gated RPC, recommended, or document+disclaimer). A **Pre-Production Invariant Checklist** (10 checks, run against prod) is in the plan as the one final ship gate.
 
-**Operational loose ends only (not implementation focus), in order:**
-1. Squash-merge **PR #7**, then `git checkout sandbox && git merge origin/main && git push` (post-merge re-sync SOP).
-2. Verify `SITE_URL` is set in Vercel **Production** scope + redeploy.
-3. Supabase Auth → URL Configuration → **Site URL** = prod origin and **Redirect URLs** includes `https://<prod>/auth/callback` (one shared Supabase project serves localhost + prod; the `Confirm Email` toggle is project-global — see §6 onboarding item).
-4. Real-phone QR scan smoke test on the Vercel preview/prod (only path not exercisable on localhost; keys now conform so signup will pass).
+**Implementation constraint (user, mandatory):** apply the RLS change to **ONE table's data first** (recommended pilot `financial_investments` — leaf, single advisor-UI surface; **NOT `financial_profiles`** which gates the roster). Then **validate** (as a linked advisor with a non-consented client: that table returns 0 rows; + functional UI check) and **get user review BEFORE continuing** to the remaining 11 advisor-read policies + 2 roster RPCs. Record the per-table procedure in a runbook; repeat.
+
+**Sequencing dependency:** the uncommitted proposal-overlay infra (§6 P0) and the consent-gate both edit `src/app/(app)/advisor/client/[id]/page.tsx`. Resolve the overlay commit + CleAyz coordination **before/at the start of** the consent work to avoid working-tree/merge collision.
 
 ## 6. Open Loops
 
-**Resolved this session (dropped; trace in `git log`):** phone-verify P0 race (`b9f054e`); income-tax `PATCH` 500 / 23502 (`c178287`); QR dialog centering + backdrop (`9f8d4bb`, `1361a08`, inline-style — root cause was Turbopack JIT dropping arbitrary classes, see `LEARNINGS.md`); seed `genKey()` `DEV-` format → prod hex (`7e3a924`); the one-time manual prod `DEV-`-strip data SQL (run by operator).
+**Resolved this session (dropped; trace in `git log`):** QR P0 / old task #21 (`17a5edc`, applied+verified on prod, now on `main`); PR #8 (squash-merged → `d977bf3` + SOP back-merge `f7d9522`); 2026-05-16 nav-gradient carryover (`d319b4f`).
 
-### New — from the 2026-05-16 passdown audit (QR feature, already merged via PR #6 — needs a future QR-hardening cycle, NOT the next session's new topic unless user redirects)
+### New this session
 
-- **P0** QR token **consume-before-commit** ordering — `src/features/auth/LoginForm.tsx:102-126`. `consumeQrTokenAction` burns the single-use token *before* signup is durable. Any later failure (Zod reject, `validate_client_access_key_for_signup` false, `supabase.auth.signUp` error, email-confirm-not-completed, tab close) leaves the token permanently dead with **no compensation and no user signal** — advisor must Refresh QR; client retrying the stale deeplink gets a plain signin form with no explanation. Also: in the pure-QR flow, `consumeQrTokenAction` failure **silently falls back to the peeked `accessKey`** (fails open, not closed) → single-use bypassed on consume failure; double-click race possible. Fix needs a design decision (consume on signup success; or reservation+confirm; fail-closed; compensation) — surface options to the user before implementing.
-- **P1** `peekExistingLiveToken` returns a token for a key no longer `status='available'` — `src/server/advisor-qr-share.ts:38-59` (flagged independently by code-reviewer + edge-case-auditor). If a key is claimed via the non-QR path, the trigger doesn't touch `advisor_qr_share_tokens`, so the page reuses a dead token; second scanner gets opaque "invalid key" + token wasted. Fix: `peekExistingLiveToken`'s SELECT should join `advisor_access_keys` and require `status='available'` (mirrors `pickOldestAvailableKey`).
-- **P1** `mint_qr_share_token` retire-then-insert is **not atomic vs a concurrent mint** — `supabase/migrations/20260522000000…sql`. Two near-simultaneous mints (Refresh + page-render) can leave 2 live tokens for one (advisor,key); the SQL comment's "one active QR per key" invariant is not actually enforced. Downstream claim-guard prevents corruption (no data integrity issue). Fix: `SELECT … FOR UPDATE` on the access-key row inside the RPC.
-- **P1** Advisor access-keys page bypasses the session's new request-cache — `src/app/(app)/advisor/access-keys/page.tsx:17-26`. 2 redundant round-trips/render (`auth.getUser` + profiles SELECT) the layout's `getRequestAuth()` already deduped for sibling pages (dashboard/setup were migrated; this one wasn't). **Clean 1-block fix:** replace lines 17-29 with `const { supabase, user, profile } = await getRequestAuth()` (from `@/data/supabase/request-context`). Deferred at wrap to avoid reopening the PR cycle.
-- **P1** Relief field-spec triplication — `src/features/income-tax/IncomeTaxForm.tsx:36-60`, `src/lib/validation.ts:294-310`, `src/data/repositories/income-tax-configs.ts:11-33`. 17 relief keys declared 3×; per-field max caps duplicated 2× with literals. CPFB re-bases caps annually → synchronized 3-file edit; a form/schema cap divergence fails silently as an undiagnosable 400. Extract a client-safe `RELIEF_FIELDS` table (key+max) consumed by all three. Deliberate refactor, not urgent.
+- **P0 — proposal-overlay infra implemented + verified but UNCOMMITTED on `sandbox`.** 7 new (`apply-overlay.ts`, `overlay-gate.ts`, `ProposalProjectionCompare.tsx`, 4 test files) + 6 modified (`apply-changes.ts`, `dashboard.ts`, advisor client page, `AdvisorClientWorkspace.tsx`, review page, `ProposalReviewView.tsx`). Reviewer PASS 5/5 with fresh evidence. **Two co-dev-owned `apply-changes.ts` behavior changes need CleAyz coordination before merge:** (1) the 3 formerly-dropped profile fields (`retirement_dividend_yield_annual`, `retirement_withdrawal_rate_annual`, `annual_salary_growth_nominal`) now persist on accept; (2) a partial investment edit no longer clobbers unchanged fields (was: name→"Investment", current_value→0). Next session: get the user's commit go-ahead → commit overlay files **by name** (coder is alive for this, §8) → CleAyz heads-up → then tear down team.
+- **P1 — deferred passdown quality sweep.** `/simplify`+`/unslop` (smell/perf/flakiness/security frame) was **not** run on the overlay diff this session — deliberately deferred to avoid auto-mutating uncommitted co-dev-sensitive WIP pre-handoff. Reviewer covered correctness+security (5/5). Run `/simplify`+`/unslop` on the overlay diff **after it's committed**.
+- **P1 — QR dialog zoom-robust sizing (old task #22, NOT done, user-requested).** `src/features/advisor/AdvisorKeyQrShareButton.tsx`: dialog inline `width:'28rem'`, `maxWidth:'92vw'`, `maxHeight:'min(82dvh,40rem)'`, no explicit `height`, `boxSizing:'border-box'`; QR wrapper inline `width:'13.75rem'`, drop arbitrary class, keep `[&_svg]:h-auto [&_svg]:w-full`. Needs the user's manual zoom checklist.
+- **P1 — live QR-scan → client-signup smoke test on prod (pending).** Schema verified + on `main`, but the end-to-end scan→signup runtime path is unexercised.
 
-### Persisted from prior sessions (carried; full text in git history of HANDOFF / prior commits)
+### Persisted from prior sessions
 
-- **P1 (2 sessions) — income-tax cluster:** `deriveAutoAppliedReliefs` returns single `null` for missing-vs-invalid (`IncomeTaxSection.tsx:32-37`); `ageCompletedOnDate(..., new Date())` uses live clock not assessment-year-end (`:35`); per-category tooltip restructure (`dd2c047` added the P1 — `TaxMethodologyTooltip` → per-`FieldGroup` `InfoTooltip`); missing `deriveAutoAppliedReliefs` tests. Note: the income-tax `PATCH` rebate-pair invariant is now partially covered by this session's Zod unit tests (`validation.test.ts`) — the remaining gap is an **API-harness** integration test (still P1).
-- **P1 (≥2 sessions) — salary-review/profile:** client/server TZ mismatch on `salary_review_due:<year>` dedupe key (`ensure-salary-review-notification.ts:30` + `ProfileIncomeForm.tsx:99`); `/api/profile` lacks `revalidatePath` for `salary_increment_month`/`last_salary_review_at` (only safe via current single caller).
-- **P1 (≥3 sessions — promoted to `LEARNINGS.md`; close or act):** `fulfill_access_key_purchase` key-gen loop has no iteration cap (`20260517100000…:555-572`); coupon-validation-attempts GC runs per-check instead of pg_cron/`random()<0.01`; `AdvisorPhoneVerificationForm:46` `setPhone(normalized)` silently overwrites typed phone; `fulfill_access_key_purchase` M2/M3/M6 defensive guards.
-- **P1 (≥3 sessions) — other-contributor onboarding / shared-DB decision.** Now materially more urgent: this session proved one Supabase project is shared by localhost + Vercel prod (the `DEV-` key incident + the `Confirm Email` project-global toggle conflict). Textbook fix: one Supabase project per env (dev/prod) + per-env URL+anon key. **Flag to user for an explicit decision** — it keeps causing real incidents.
+- **P1 — advisor access-keys page bypasses request-cache** (`src/app/(app)/advisor/access-keys/page.tsx`): redundant `auth.getUser` + profiles SELECT vs layout `getRequestAuth()`. Re-verify line refs.
+- **P1 — Relief field-spec triplication** (`IncomeTaxForm.tsx`, `validation.ts`, `income-tax-configs.ts`): 17 keys × 3; CPFB re-bases annually → silent 400 on drift. Extract client-safe `RELIEF_FIELDS`.
+- **P1 (≥3 sessions) — income-tax cluster:** `deriveAutoAppliedReliefs` missing-vs-invalid `null`; `ageCompletedOnDate(.., new Date())` live clock not assessment-year-end; tooltip restructure; missing tests; API-harness PATCH rebate-pair test.
+- **P1 (≥3 sessions) — salary-review/profile:** client/server TZ mismatch on `salary_review_due:<year>`; `/api/profile` missing `revalidatePath` for `salary_increment_month`/`last_salary_review_at`.
+- **P1 (≥4 sessions, in `LEARNINGS.md`):** `fulfill_access_key_purchase` key-gen loop no iteration cap; coupon-validation GC per-check; `AdvisorPhoneVerificationForm:46` `setPhone(normalized)` overwrites typed input; `fulfill_access_key_purchase` M2/M3/M6 guards.
+- **P1 (≥5 sessions) — shared-DB / no-migration-ledger. CONFIRMED-harmful; escalate.** Hand-applied yet another migration (`20260527`) to prod this session. Needs an explicit user decision (per-env Supabase projects + a real migration tool/ledger).
+
+_P2+ long-tail (incl. the reviewer's 2 non-blocking overlay items: parity numeric-fidelity gap, pre-existing `isNewEntity` quirk; access-keys error-log; dashboard growth-rate plumbing): `BACKLOG.md`._
 
 ## References
 
 - Architecture, conventions, domain model: `CLAUDE.md` → `AGENTS.md`
-- Code marker scan: `CODEBASE-ISSUES.md` (0 markers — repo uses HANDOFF §6 over inline TODOs)
+- Marker scan: `CODEBASE-ISSUES.md` (0 markers — repo uses HANDOFF §6)
 - Anti-patterns / corrections: `LEARNINGS.md`
 - Long-tail backlog (P2+): `BACKLOG.md`
-- This session's diff: `git log --oneline 9fb1584..fba9f9d` then `git diff 9fb1584..fba9f9d`
-- QR-share plan + validation/migration SQL: `~/.claude/plans/purrfect-questing-canyon.md`
-- Open PR: #7 (sandbox→main, seed fix) — **squash-merge**
-- Co-dev: CleAyz pushes to sandbox/main in parallel — fetch + check divergence before any branch op; use **merge** (never rebase) to reconcile the shared `sandbox`
+- Consent-gate plan (next focus): `~/.claude/plans/image-1-this-is-dapper-truffle.md`
+- Overlay infra plan: `~/.claude/plans/proposal-overlay-projection-gate.md`
+- This session's commits: `git log --oneline aa25586..f7d9522`; uncommitted overlay diff: `git diff` + untracked `src/domain/advisor-proposals/*overlay* *parity*`
+- Backups (origin): `backup/main-preMerge-20260517` (988de45), `backup/sandbox-preMerge-20260517` (17a5edc)
+- Co-dev: CleAyz parallel — fetch + divergence check; **merge never rebase**; sandbox→main **squash** + back-merge
 
 ## 7. Invariants — Do Not Break
 
-**Cumulative.** Each persists until explicitly retired by the user.
-
-- **Phone single-source-of-truth: `auth.users.phone` only.** Never reintroduce `financial_profiles.phone_e164` or any mirror. Cross-user reads via `get_my_advisor_contact()` SECURITY DEFINER RPC. _(added: 2026-05-14)_
-- **No app-level dev/prod gating for auth.** Every dev/prod difference is a Supabase Dashboard config or per-env Supabase URL+anon key. No `NEXT_PUBLIC_DEPLOYMENT_ENV`-style flag. _(added: 2026-05-14)_
-- **`handle_new_user` must not consume `raw_user_meta_data.phone_e164`.** Advisor phone is OTP-only on `/advisor/profile`. _(added: 2026-05-14)_
-- **No service-role key in app code.** RLS is the trust boundary; cross-user `auth.users` reads via SECURITY DEFINER RPCs only. `scripts/` is the ONLY `SUPABASE_SERVICE_ROLE_KEY` consumer; never under `src/`; never `NEXT_PUBLIC_`-prefixed. _(added: 2026-05-14, expanded: 2026-05-15)_
-- **Migration filenames unique per timestamp prefix** (`_100000`, `_200000` for sub-day ordering). Latest file: `20260522000000_advisor_qr_share_tokens.sql`. _(added: 2026-05-14, updated: 2026-05-15)_
-- **`/auth/callback` `next=` must be validated** — same-origin, single `/`, ≤512 chars (`safeNext`). _(added: 2026-05-14)_
-
-### Retired Invariants
-- ~~QR deeplinks carry only the opaque token, never the access key~~ — retired per user 2026-05-16: QR feature shipped/merged (PR #6); contract still enforced by code (`peek/consume` RPCs, `?qr_token=` shape) but no longer a do-not-break invariant. _(retired: 2026-05-16)_
-- ~~QR token: peek-on-GET, consume-on-POST~~ — retired per user 2026-05-16 (note: the open **P0** consume-ordering finding may revisit this contract anyway). _(retired: 2026-05-16)_
-- ~~`SITE_URL` is the production canonical origin, not `VERCEL_URL`~~ — retired per user 2026-05-16: still true in code (`getSiteOrigin`) but de-listed as an invariant. _(retired: 2026-05-16)_
+Refer to INVARIANTS.md
 
 ## 8. Agent Team State
 
-No team active at handoff. Three teams were created and **gracefully torn down** this session: `qr-share` (QR feature), `income-tax-fix` (500 fix), `seed-key-fix` (genKey hex). No unfinished coordination. No orchestrator analysis docs created.
+- **Team:** `proposal-overlay` (ALIVE, NOT torn down — intentional, pending the user's overlay-commit decision; socket `claude-swarm-89741`).
+- **Teammates:** `coder` (impl — tasks #1–#3 done+verified; idle; **kept alive to do the commit-by-name** once authorized; no TaskUpdate tool — lead manages board), `reviewer` (code-reviewer — task #4 done, PASS 5/5; idle).
+- **Orchestrator analysis:** none.
+- **Unfinished coordination:** overlay commit + CleAyz heads-up (the two `apply-changes.ts` behavior changes) → then graceful team teardown (SendMessage `shutdown_request` → ack → kill panes %1/%2 on `claude-swarm-89741` → `TeamDelete`).
+- **Recurrence guard:** spawn teammates with cwd = **repo root** (this session they spawned with cwd `src/features/advisor` → froze on the external-`@AGENTS.md`-import trust prompt until the user pressed `1`).

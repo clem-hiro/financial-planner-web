@@ -6,6 +6,8 @@ import type { ProfileRow } from "@/data/supabase/types";
 import { advisorClientWorkspaceSignals } from "@/domain/finance/advisor-client-health";
 import { AdvisorBadge, AdvisorComingSoonPanel, AdvisorSection } from "@/features/advisor/advisor-workspace-primitives";
 import { AdvisorProposalDraftPanel } from "@/features/advisor/AdvisorProposalDraftPanel";
+import { DashboardRetirementSection } from "@/features/dashboard/DashboardRetirementSection";
+import { ProposalProjectionCompare } from "@/features/proposals/ProposalProjectionCompare";
 import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
 import { AdvisorSuggestionModeBanner } from "@/features/advisor/AdvisorSuggestionModeBanner";
 import { AdvisorBudgetLineAmountForm } from "@/features/advisor/forms/AdvisorBudgetLineAmountForm";
@@ -31,6 +33,8 @@ export function AdvisorClientWorkspace({
   clientId,
   profile,
   payload,
+  payloadProposed,
+  hasOverlay,
   goals,
   budgetLines,
   investments,
@@ -42,6 +46,8 @@ export function AdvisorClientWorkspace({
   clientId: string;
   profile: ProfileRow;
   payload: DashboardPayload;
+  payloadProposed: DashboardPayload;
+  hasOverlay: boolean;
   goals: FinancialGoalRow[];
   budgetLines: BudgetLineRow[];
   investments: InvestmentRow[];
@@ -180,6 +186,33 @@ export function AdvisorClientWorkspace({
 
       <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start xl:gap-10">
         <div className="space-y-8">
+          <AdvisorSection
+            id="projection"
+            eyebrow="Projection"
+            title="Retirement & net-worth outlook"
+            description="Toggle between the client's current plan and the projection with your draft proposal applied."
+            aside={
+              hasOverlay ? (
+                <AdvisorBadge tone="positive">Proposal preview</AdvisorBadge>
+              ) : (
+                <AdvisorBadge tone="neutral">Canonical</AdvisorBadge>
+              )
+            }
+          >
+            <ProposalProjectionCompare
+              hasOverlay={hasOverlay}
+              actual={
+                <DashboardRetirementSection payload={payload} profile={profile} />
+              }
+              proposed={
+                <DashboardRetirementSection
+                  payload={payloadProposed}
+                  profile={profile}
+                />
+              }
+            />
+          </AdvisorSection>
+
           <AdvisorSection
             id="profile"
             eyebrow="Operational"

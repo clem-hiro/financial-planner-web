@@ -390,6 +390,32 @@ export function DashboardRetirementSection({
                     <span className="text-emerald-900/85">
                       in retirement (from your profile).
                     </span>
+                    {payload.ageProjection.spendCheck.dividendPlan
+                      .inflatedMonthlySpendGoal != null &&
+                      payload.ageProjection.spendCheck.dividendPlan
+                        .monthlySpendGoal != null &&
+                      Math.round(
+                        payload.ageProjection.spendCheck.dividendPlan
+                          .inflatedMonthlySpendGoal
+                      ) >
+                        Math.round(
+                          payload.ageProjection.spendCheck.dividendPlan
+                            .monthlySpendGoal
+                        ) && (
+                      <span className="text-emerald-900/85">
+                        {" "}
+                        That is about{" "}
+                        <span className="font-semibold tabular-nums">
+                          {formatCurrency(
+                            payload.ageProjection.spendCheck.dividendPlan
+                              .inflatedMonthlySpendGoal,
+                            payload.baseCurrency
+                          )}
+                        </span>{" "}
+                        / month in retirement-year dollars
+                        (inflation-adjusted target).
+                      </span>
+                    )}
                   </li>
                   <li>
                     <span className="text-emerald-900/85">
@@ -408,8 +434,9 @@ export function DashboardRetirementSection({
                     .dividendsCoverGoal ? (
                     <li className="text-emerald-900/90">
                       So in this simplified check, dividends meet or beat the goal.
-                      Nominal yields only—no inflation or tax on dividends here; log
-                      taxes as expenses if you want them in your spend picture.
+                      The spend goal is inflated to retirement-year dollars; dividend
+                      yields stay nominal and untaxed here—log taxes as expenses if
+                      you want them in your spend picture.
                     </li>
                   ) : (
                     <li>

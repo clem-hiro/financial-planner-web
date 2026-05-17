@@ -24,7 +24,6 @@ import type { HousingLoanProjectionInput } from "@/domain/finance";
 import type { RetirementDividendVsSpendResult } from "@/domain/finance";
 import {
   type SgCpfAgeBand,
-  countAnnualBonusPayoutsInHorizon,
   DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
 } from "@/domain/finance/sg-cpf";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
@@ -37,6 +36,7 @@ import {
   profileAnnualBonus,
   profileAnnualBonusTakeHomeCash,
   profileAnnualSalaryGrowthNominal,
+  profileExpenseGrowthNominal,
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
   profileRetirementWithdrawalRateAnnual,
@@ -69,6 +69,17 @@ import {
 import type { ProjectionSeriesPoint } from "@/data/projection";
 import { birthDateIsValidPast } from "@/lib/validation";
 import type { AgeAssetBreakdownPoint } from "@/data/age-asset-breakdown";
+import { applyProposalChanges } from "@/domain/advisor-proposals/apply-overlay";
+import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
+
+/**
+ * Server-only, role-gated. When `proposalOverlay` is present the four
+ * proposal-affected canonical bindings are replaced by the shared overlay
+ * mapper before any derivation. Absent/empty ⇒ canonical path is byte-identical.
+ */
+export type DashboardPayloadOptions = {
+  proposalOverlay?: AdvisorProposalChangeRow[];
+};
 
 export type { AgeAssetBreakdownPoint } from "@/data/age-asset-breakdown";
 
@@ -282,17 +293,18 @@ function buildCpfHousingMarkers(
 export async function getDashboardPayload(
   supabase: SupabaseClient,
   userId: string,
-  yearMonth: string
+  yearMonth: string,
+  opts?: DashboardPayloadOptions
 ): Promise<DashboardPayload> {
   const [
-    profile,
+    baseProfile,
     expenses,
-    investments,
+    baseInvestments,
     cashAccounts,
     liabilityRows,
-    budgetLineRows,
+    baseBudgetLineRows,
     overrideRows,
-    goals,
+    baseGoals,
     cpfRow,
     housingLoanRows,
     vehicleRows,
@@ -311,6 +323,36 @@ export async function getDashboardPayload(
     listVehicles(supabase, userId),
     getIncomeTaxConfig(supabase, userId),
   ]);
+
+  // Projection-input seam: substitute the four proposal-affected bindings
+  // BEFORE any derivation. No overlay ⇒ identity (same references) ⇒ the
+  // canonical projection is byte-identical to the pre-overlay behaviour.
+  //
+  // The overlay is composed in-memory from persisted canonical + the persisted
+  // proposal diff via the single shared mapper; it is NEVER persisted. The
+  // accept path reuses the same mapper so preview == read-after-accept (C6).
+  //
+  // MERGE-CONFLICT RULE: if this conflicts vs a pre-change main, KEEP this
+  // design — reject any persisted overlay snapshot or duplicate mapper. See
+  // HANDOFF §7.
+  const overlay = opts?.proposalOverlay;
+  const { profile, investments, budgetLines: budgetLineRows, goals } =
+    overlay && overlay.length > 0
+      ? applyProposalChanges(
+          {
+            profile: baseProfile,
+            investments: baseInvestments,
+            budgetLines: baseBudgetLineRows,
+            goals: baseGoals,
+          },
+          overlay
+        )
+      : {
+          profile: baseProfile,
+          investments: baseInvestments,
+          budgetLines: baseBudgetLineRows,
+          goals: baseGoals,
+        };
 
   const amountOverrideByLineId = overridesToLineIdMap(overrideRows);
   const domainBudgetLines = budgetLineRows.map(budgetLineRowToDomain);
@@ -524,6 +566,8 @@ export async function getDashboardPayload(
               annualBonusTakeHomeNet > 0 ? annualBonusTakeHomeNet : 0,
             annualBonusPayoutMonth: DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
             extraMonthlyPlannedSpend: extraTaxMonthly,
+            incomeGrowthAnnual: profileAnnualSalaryGrowthNominal(profile),
+            expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
           })
         : 0;
     const cashAtRetirementHorizon =
@@ -647,6 +691,8 @@ export async function getDashboardPayload(
           : null,
       annualDividendYield: dividendYieldAnnual,
       currentCashTotal: cashTotal,
+      expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
+      yearsToRetirement: monthsToRet / 12,
     });
     const spendCheck = {
       goalMonthlySpend,
@@ -658,6 +704,8 @@ export async function getDashboardPayload(
             ? goalMonthlySpend
             : null,
         annualWithdrawalRate: profileRetirementWithdrawalRateAnnual(profile) ?? undefined,
+        expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
+        yearsToRetirement: monthsToRet / 12,
       }),
     };
     const assetPoints: AgeAssetBreakdownPoint[] = nwAgePoints.map((p, i) => {
@@ -676,7 +724,10 @@ export async function getDashboardPayload(
         income != null
           ? sumInvestableSurplusOverHorizon({
               startYearMonth: yearMonth,
-              months: p.monthsFromToday,
+              // Cap at retirement: chart cash must not accrue surplus/bonus
+              // past the target retirement age (matches the scalar
+              // projectedAtRetirement) — restored Phase-1 Finding A fix.
+              months: Math.min(p.monthsFromToday, monthsToRet),
               monthlyIncome: income,
               domainBudgetLines,
               amountOverrideByLineId,
@@ -685,6 +736,8 @@ export async function getDashboardPayload(
                 annualBonusTakeHomeNet > 0 ? annualBonusTakeHomeNet : 0,
               annualBonusPayoutMonth: DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
               extraMonthlyPlannedSpend: extraTaxMonthly,
+              incomeGrowthAnnual: profileAnnualSalaryGrowthNominal(profile),
+              expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
             })
           : 0;
       const cashRow =
