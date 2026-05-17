@@ -11,7 +11,18 @@ export const appTabPillClass =
   "inline-flex min-h-10 shrink-0 snap-start items-center justify-center whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-[background-color,color,box-shadow] duration-200 touch-manipulation sm:min-h-0 sm:px-3.5 sm:py-1.5";
 
 export const appTabPillActiveClass =
-  "bg-linear-to-r from-[#0c192f] via-[#133359] to-[#047857] text-white shadow-sm shadow-slate-900/20";
+  "text-white shadow-sm shadow-slate-900/20";
+
+/**
+ * Brand active-state gradient as inline style. Tailwind v4 + Turbopack
+ * intermittently JIT-drops arbitrary `[#hex]` utilities (see LEARNINGS.md),
+ * which left the active pill/indicator unpainted under `text-white` —
+ * invisible white-on-white. Inline style ships in the JS bundle and cannot
+ * be dropped. Apply alongside `appTabPillActiveClass` whenever a tab/pill is active.
+ */
+export const appActiveGradientStyle = {
+  backgroundImage: "linear-gradient(to right, #0c192f, #133359, #047857)",
+} as const;
 
 export const appTabPillInactiveClass =
   "text-slate-600 hover:bg-white hover:text-slate-900";
