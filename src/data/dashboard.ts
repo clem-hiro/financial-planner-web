@@ -24,7 +24,6 @@ import type { HousingLoanProjectionInput } from "@/domain/finance";
 import type { RetirementDividendVsSpendResult } from "@/domain/finance";
 import {
   type SgCpfAgeBand,
-  countAnnualBonusPayoutsInHorizon,
   DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
 } from "@/domain/finance/sg-cpf";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
@@ -37,6 +36,7 @@ import {
   profileAnnualBonus,
   profileAnnualBonusTakeHomeCash,
   profileAnnualSalaryGrowthNominal,
+  profileExpenseGrowthNominal,
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
   profileRetirementWithdrawalRateAnnual,
@@ -524,6 +524,8 @@ export async function getDashboardPayload(
               annualBonusTakeHomeNet > 0 ? annualBonusTakeHomeNet : 0,
             annualBonusPayoutMonth: DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
             extraMonthlyPlannedSpend: extraTaxMonthly,
+            incomeGrowthAnnual: profileAnnualSalaryGrowthNominal(profile),
+            expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
           })
         : 0;
     const cashAtRetirementHorizon =
@@ -647,6 +649,8 @@ export async function getDashboardPayload(
           : null,
       annualDividendYield: dividendYieldAnnual,
       currentCashTotal: cashTotal,
+      expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
+      yearsToRetirement: monthsToRet / 12,
     });
     const spendCheck = {
       goalMonthlySpend,
@@ -658,6 +662,8 @@ export async function getDashboardPayload(
             ? goalMonthlySpend
             : null,
         annualWithdrawalRate: profileRetirementWithdrawalRateAnnual(profile) ?? undefined,
+        expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
+        yearsToRetirement: monthsToRet / 12,
       }),
     };
     const assetPoints: AgeAssetBreakdownPoint[] = nwAgePoints.map((p, i) => {
@@ -676,7 +682,10 @@ export async function getDashboardPayload(
         income != null
           ? sumInvestableSurplusOverHorizon({
               startYearMonth: yearMonth,
-              months: p.monthsFromToday,
+              // Cap at retirement: chart cash must not accrue surplus/bonus
+              // past the target retirement age (matches the scalar
+              // projectedAtRetirement) — restored Phase-1 Finding A fix.
+              months: Math.min(p.monthsFromToday, monthsToRet),
               monthlyIncome: income,
               domainBudgetLines,
               amountOverrideByLineId,
@@ -685,6 +694,8 @@ export async function getDashboardPayload(
                 annualBonusTakeHomeNet > 0 ? annualBonusTakeHomeNet : 0,
               annualBonusPayoutMonth: DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
               extraMonthlyPlannedSpend: extraTaxMonthly,
+              incomeGrowthAnnual: profileAnnualSalaryGrowthNominal(profile),
+              expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
             })
           : 0;
       const cashRow =

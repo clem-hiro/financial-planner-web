@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {
+  appActiveGradientStyle,
   appTabPillActiveClass,
   appTabPillClass,
   appTabPillInactiveClass,
@@ -38,6 +39,7 @@ export function SetupTabsNav({
                 className={`${appTabPillClass} ${
                   isActive ? appTabPillActiveClass : appTabPillInactiveClass
                 }`}
+                style={isActive ? appActiveGradientStyle : undefined}
               >
                 {tab.label}
               </Link>

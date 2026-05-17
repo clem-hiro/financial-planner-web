@@ -56,6 +56,7 @@ describe("advisorClientWorkspaceSignals", () => {
       annual_bonus: null,
       debt_obligations_monthly: null,
       annual_salary_growth_nominal: null,
+      expense_growth_nominal: null,
       cpf_age_band: null,
       birth_date: null,
       target_retirement_age: null,

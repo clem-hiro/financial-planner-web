@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import {
+  appActiveGradientStyle,
   appTabPillActiveClass,
   appTabPillClass,
   appTabPillInactiveClass,
@@ -15,15 +16,21 @@ const items = [
 ] as const;
 
 export function DashboardSubnav() {
-  const [activeId, setActiveId] = useState<(typeof items)[number]["id"]>(() => {
-    if (typeof window === "undefined") return "overview";
+  const [activeId, setActiveId] =
+    useState<(typeof items)[number]["id"]>("overview");
+  const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+
+  // Initial `activeId` stays "overview" on both server and client so
+  // hydration matches; a deep-link hash is honored by scrolling its section
+  // into view, which the IntersectionObserver below then marks active.
+  useEffect(() => {
     const ids = items.map((item) => item.id);
     const initialHash = window.location.hash.replace("#", "");
-    return ids.includes(initialHash as (typeof items)[number]["id"])
-      ? (initialHash as (typeof items)[number]["id"])
-      : "overview";
-  });
-  const linkRefs = useRef<Record<string, HTMLAnchorElement | null>>({});
+    if (!ids.includes(initialHash as (typeof items)[number]["id"])) return;
+    document
+      .getElementById(initialHash)
+      ?.scrollIntoView({ block: "start" });
+  }, []);
 
   useEffect(() => {
     const ids = items.map((item) => item.id);
@@ -95,6 +102,7 @@ export function DashboardSubnav() {
                 className={`${appTabPillClass} ${
                   activeId === id ? appTabPillActiveClass : appTabPillInactiveClass
                 }`}
+                style={activeId === id ? appActiveGradientStyle : undefined}
               >
                 {label}
               </a>

@@ -8,6 +8,7 @@ import {
   type PlanningSectionId,
 } from "@/lib/planning-sections";
 import {
+  appActiveGradientStyle,
   appTabPillActiveClass,
   appTabPillClass,
   appTabPillInactiveClass,
@@ -39,6 +40,7 @@ export function PlanningSectionNav() {
                 className={`${appTabPillClass} ${
                   isActive ? appTabPillActiveClass : appTabPillInactiveClass
                 }`}
+                style={isActive ? appActiveGradientStyle : undefined}
               >
                 {PLANNING_SECTION_META[id].label}
               </Link>
