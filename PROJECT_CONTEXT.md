@@ -67,6 +67,8 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | Advisor vs client profiles + middleware gating | **Shipped** | `middleware.ts`, `(app)/layout.tsx`, `financial_profiles.profile_type`. |
 | Client onboarding wizard | **Shipped** | Income → lifestyle → strategy → optional guided budget lines. |
 | Invite-only **client** signup via advisor **access key** | **Shipped** | Claim flow in `handle_new_user`; `validate_client_access_key_for_signup` RPC. |
+| QR / link invite sharing for access keys | **Partial** | Share URL + QR for client signup; known single-use / expiry edge cases (`qr_token_invalid`). |
+| Contact advisor (WhatsApp) | **Shipped** | Client shell **Contact advisor**; `get_my_advisor_contact()` after advisor phone verification. |
 | `/account-issue` when client `advisor_user_id` missing | **Shipped** | Data-integrity / support path. |
 | **Client UI v2** shell: Home, Planning, Activity, More | **Shipped** | `AppShell`, `AppShellNav`; version label `src/lib/client-release.ts`, shown on `/more`. |
 | Classic URL redirects to v2 IA | **Shipped** | `/balances` → wealth, `/budget` → cash-flow, etc. |
@@ -100,6 +102,13 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | Capability | Status | Notes |
 |------------|--------|--------|
 | Expenses list / add / charts / month guidance | **Shipped** | `/expenses` (and `/activity` alias); APIs under `src/app/api/expenses/`. |
+| Spending guidance (budget vs actual) | **Shipped** | `SpendGuidancePanel` on Activity and dashboard month section. |
+| Profile income / CPF / retirement assumptions | **Shipped** | Financial Setup **profile** tab; drives projections and safe-to-spend. |
+| CPF balance tracking (Setup) | **Shipped** | Setup → CPF; feeds Home CPF projection and Wealth. |
+| Cash account balances | **Shipped** | Setup cash/debts; net worth and emergency-fund context. |
+| Vehicle planning (SG COE/PARF, loans) | **Shipped** | Setup → vehicles; included in Wealth and long-horizon projections. |
+| Financial goals (targets, contributions) | **Shipped** | Setup goals tab + Future workspace CRUD (`FinancialGoalsPanels`). |
+| Income tax estimation lens | **Partial** | Setup → Income tax tab + `/api/income-tax`; review assumptions and known gaps. |
 | Financial Setup tabs (profile → goals) | **Shipped** | `/setup`; mirrored in Planning where noted. |
 | Budget lines, overrides, strategy insights | **Shipped** | Repositories + `src/domain/finance/budget*.ts`. |
 | SG-oriented guided budget templates (onboarding + domain) | **Shipped** | `budget-guided-setup.ts`, onboarding actions. |
@@ -123,13 +132,24 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | Per-client workspace (profile, goals, budget edits, month readouts) | **Shipped** | RLS-backed; `AdvisorClientWorkspace`. |
 | **Advisor proposal & change review** (suggestion mode) | **Shipped** | Advisors queue **field-level** edits on a draft proposal; client reviews on **`/review/proposal/[id]`** and accepts/rejects before canonical data updates. Inbox CTA via `financial_inbox_notifications` (`kind: advisor_proposal`). |
 | Access key create/list/revoke | **Shipped** | `/advisor/access-keys`, server actions. |
+| Advisor WhatsApp phone verification | **Shipped** | `/advisor/profile`; Supabase Auth Phone + SMS provider. |
+| Buy invite keys (coupon-backed purchase) | **Partial** | `pricing`, `coupons`, `purchases` RPCs — confirm production payment provider. |
+| Advisor notes and meeting prep | **Planned** | Not in repo. |
 | **Opportunities** hub | **Planned** | `/advisor/opportunities` — “Coming Soon” panel only. |
 | Cross-client **Activity** feed | **Planned** | `/advisor/activity` — “Work in Progress” panel only. |
 | Partial field-level approvals / compare projections | **Planned** | MVP is all-or-nothing accept/reject per proposal. |
 
+### Product scope (not in repo)
+
+| Capability | Status | Notes |
+|------------|--------|--------|
+| Admin / operations console | **Not in repo** | No App Router implementation; confirm whether internal support tooling is required. |
+| Household / shared family planning | **Not in repo** | Not visible in app; confirm product scope. |
+| Regulated financial advice workflow | **Not in repo** | Outputs are educational planning only; formal compliance scope TBD. |
+
 ### Roadmap modules (Planning cards only)
 
-These match `roadmap-modules.tsx` — all **Planned** as standalone modules unless already covered as **Shipped** above: insurance map, scenario simulator, dependents planning, estate checklist, tax estimation lens, quarterly reports, documents vault, risk profiling, bank **account syncing**. **Retirement planning studio** and **AI insights layer** cards are marked `work_in_progress` in UI but remain **Partial / Planned** as dedicated products (projection **visualizations** on Home are **Shipped**).
+These match `roadmap-modules.tsx` — all **Planned** as standalone modules unless already covered as **Shipped** above: insurance map, scenario simulator, dependents planning, estate checklist, quarterly reports, documents vault, risk profiling, bank **account syncing**. **Retirement planning studio** and **AI insights layer** cards are marked `work_in_progress` in UI but remain **Partial / Planned** as dedicated products (projection **visualizations** on Home are **Shipped**). Income tax has a **Partial** Setup tab (see Activity & setup); the Future roadmap **tax lens** card remains **planned** as a fuller module.
 
 ---
 
@@ -321,6 +341,7 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 2. If behavior changes globally (middleware, shell, login redirect), update **Auth, onboarding, and gating** or **App shell UX**.
 3. If you introduce a new top-level domain concept (e.g. “tax estimates”), add a **Code map** row and point to the main module.
 4. Keep claims aligned with **code**; avoid marketing copy that does not match the UI. Roadmap **`PlaceholderModuleCard`** badges can stay aspirational; the inventory table should stay factual.
+5. Reconcile **[BYOFA Features](https://www.notion.so/BYOFA-Features-35fa694147bf8093be2fc57673cee41a)** (Feature Roadmap Table) from this inventory — Cursor rule `.cursor/rules/project-context-notion-sync.mdc`, or ask the agent to **sync BYOFA** / **sync Notion from PROJECT_CONTEXT**.
 
 ### CPF retirement modelling (direction)
 
@@ -328,4 +349,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 - **Not in scope:** live CPF APIs, actuarial CPF LIFE, exhaustive withdrawal rules.
 - **Future:** persist advisor/client assumption presets; tie RA balance into retirement sustainability / spend coverage; inflation on payouts.
 
-_Last reviewed (2026-05-16): **Advisor proposal & change review** — suggestion-mode advisor edits, field-level `advisor_proposal_*` tables, client `/review/proposal/[id]`, inbox producer, transparency-first collaborative editing model._
+_Last reviewed (2026-05-17): Feature inventory is the sole repo roadmap source; BYOFA Notion **Feature Roadmap Table** syncs from inventory (see `.cursor/rules/project-context-notion-sync.mdc`). Removed `docs/feature_roadmap.md`._
