@@ -389,6 +389,16 @@
       "readme_section": "Architecture",
       "status": "pending",
       "summary": "orchestration change in .claude/agent-memory/coder/MEMORY.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-17T17:12:28Z",
+      "trigger_file": "src/data/repositories/advisor-clients.test.ts",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/data/repositories/advisor-clients.test.ts \u2014 External dependencies (readme) may be stale"
     }
   ]
 }
