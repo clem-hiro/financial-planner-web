@@ -23,7 +23,7 @@ import {
   vehicleGrossAssetFromDeregistrationAnchors,
   vehicleGrossFromPurchaseToTerminalLinear,
   vehicleNetEquity,
-} from "@/domain/finance";
+} from "@/domain/finance/vehicle-sg";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { formatCurrency } from "@/ui/lib/format";
 import { appInlineLinkClass } from "@/ui/app-link-styles";

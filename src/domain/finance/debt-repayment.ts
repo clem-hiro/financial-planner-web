@@ -1,3 +1,4 @@
+import type { LiabilityRow } from "@/data/supabase/types";
 import { addMonthsToYearMonth } from "@/lib/dates";
 import { isValidYearMonth } from "./budget";
 
@@ -202,4 +203,34 @@ export function sumDebtRepaymentsInMonth(
 
 function roundMoney(n: number): number {
   return Math.round(n * 100) / 100;
+}
+
+function dec(value: string | null | undefined): number {
+  if (value == null || value === "") return 0;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : 0;
+}
+
+/** Map DB row → planning domain (safe for client and server). */
+export function liabilityRowToPlanning(row: LiabilityRow): LiabilityForPlanning {
+  return {
+    id: row.id,
+    name: row.name,
+    balance: dec(row.balance),
+    category: row.category ?? null,
+    loanType: row.loan_type ?? null,
+    interestRateAnnual:
+      row.interest_rate_annual != null &&
+      String(row.interest_rate_annual).trim() !== ""
+        ? dec(row.interest_rate_annual)
+        : null,
+    remainingTenureMonths: row.remaining_tenure_months ?? null,
+    monthlyRepayment:
+      row.monthly_repayment != null && String(row.monthly_repayment).trim() !== ""
+        ? dec(row.monthly_repayment)
+        : null,
+    repaymentOverride: row.repayment_override === true,
+    startDate: row.start_date ?? null,
+    notes: row.notes ?? null,
+  };
 }

@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { normalizeCategory } from "@/domain/finance";
+import { normalizeCategory } from "@/domain/finance/budget";
 import type { BudgetLineRow } from "@/data/supabase/types";
 
 export async function listBudgetLines(

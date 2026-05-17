@@ -21,17 +21,18 @@ export default function MorePage() {
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Link
-          href="/setup?tab=profile"
+          href="/setup/overview"
           className="rounded-2xl bg-linear-to-br from-white via-slate-50/50 to-sky-50/20 p-5 ring-1 ring-slate-200/70 transition hover:ring-slate-300/90"
         >
           <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
             Financial setup
           </p>
           <p className="mt-2 text-lg font-semibold text-[#0c192f]">
-            Assumptions &amp; identity
+            Setup hub &amp; progress
           </p>
           <p className="mt-1 text-sm text-slate-600">
-            Income, retirement targets, and budget lens — same editor as before.
+            Track completion across profile, cash flow, protection, and goals — then
+            jump into any section.
           </p>
           <p className={`mt-4 text-sm font-semibold ${appInlineLinkClass}`}>Open →</p>
         </Link>
