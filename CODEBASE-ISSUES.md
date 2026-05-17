@@ -1,4 +1,4 @@
-# Codebase Issues — 2026-05-16
+# Codebase Issues — 2026-05-17
 
 ## Summary
 
@@ -10,13 +10,12 @@
 - **New:** 0
 - **Persisted:** 0
 
-No marker delta. Prior scan (2026-05-16 baseline) was 0; current scan (`src/`, `scripts/`, `supabase/`, excluding `node_modules`) is still 0 — despite a very large session (QR hardening, cash-flow Phase 1+2, the [Debts] reconciliation merge, prod QR hotfix). No `TODO`/`FIXME`/`HACK`/`STUB`/`XXX`/`WORKAROUND` markers introduced.
+No marker delta. Prior scan (2026-05-16 baseline) was 0; current scan (`src/`, `scripts/`, `supabase/`, `*.ts`/`*.tsx`/`*.sql`, excluding `node_modules`) is still **0** — despite a large session (QR-digest P0 fix, PR #8 squash+back-merge, and the full proposal-overlay infra: `apply-overlay.ts`, `overlay-gate.ts`, `ProposalProjectionCompare.tsx` + 4 test files + the `apply-changes.ts`/`dashboard.ts` refactor). No `TODO`/`FIXME`/`HACK`/`STUB`/`XXX`/`WORKAROUND` markers introduced.
 
 ## Note
 
 Repo convention favors `HANDOFF.md` §6 (P0/P1) + `BACKLOG.md` (P2) over inline code markers. This session's open work is tracked there:
-- §6 P0: repo↔prod migration divergence (task #21 — `20260527000000_qr_digest_search_path_fix.sql` not yet created).
-- §6 P1: QR dialog zoom sizing (task #22), live QR-scan prod smoke test, PR #8 squash-merge.
-- §6 P2 (also `BACKLOG.md`): `access-keys/page.tsx:39` error-log `{}` masking; duplicated growth-rate plumbing in `dashboard.ts`.
-
-If a future session adds markers, this file diffs them and surfaces resolved/persisted/new.
+- §6 **P0**: proposal-overlay infra is committed (`9a8f326`) + pushed + **PR #9 open** (sandbox→main, NOT merged) — needs CleAyz coordination on the two `apply-changes.ts` behavior changes before squash-merge.
+- §6 **P1**: deferred `/simplify`+`/unslop` sweep on the overlay diff (run post-merge); old task #22 (QR dialog zoom); live QR-scan→signup prod smoke test.
+- §6 next-session focus: the **client↔advisor consent gate** (restricted advisor view) — plan `~/.claude/plans/image-1-this-is-dapper-truffle.md`, one-table-pilot-then-review.
+- §6 **P2** (in `BACKLOG.md`): parity numeric-fidelity gap; pre-existing `isNewEntity` quirk; access-keys error-log; dashboard growth-rate plumbing.
