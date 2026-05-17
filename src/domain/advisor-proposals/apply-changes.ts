@@ -1,122 +1,152 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { updateBudgetLine } from "@/data/repositories/budget-lines";
-import { updateFinancialGoal } from "@/data/repositories/goals";
+import { listBudgetLines, updateBudgetLine } from "@/data/repositories/budget-lines";
+import { listFinancialGoals, updateFinancialGoal } from "@/data/repositories/goals";
 import {
   deleteInvestment,
   insertInvestment,
+  listInvestments,
   updateInvestment,
 } from "@/data/repositories/investments";
-import { updateProfile } from "@/data/repositories/profiles";
-import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
+import { getProfileById, updateProfile } from "@/data/repositories/profiles";
+import type {
+  AdvisorProposalChangeRow,
+  InvestmentRow,
+  ProfileRow,
+} from "@/data/supabase/types";
+import {
+  applyProposalChanges,
+  type OverlayInputs,
+} from "@/domain/advisor-proposals/apply-overlay";
 
-type ChangeGroup = {
-  entityType: AdvisorProposalChangeRow["entity_type"];
-  entityId: string | null;
-  changes: AdvisorProposalChangeRow[];
-};
+function toNumOrNull(raw: string | null | undefined): number | null {
+  if (raw === null || raw === undefined || raw === "") return null;
+  const n = Number(raw);
+  return Number.isFinite(n) ? n : null;
+}
 
-function groupChanges(changes: AdvisorProposalChangeRow[]): ChangeGroup[] {
-  const map = new Map<string, ChangeGroup>();
-  for (const c of changes) {
-    const key = `${c.entity_type}:${c.entity_id ?? "profile"}`;
-    let g = map.get(key);
-    if (!g) {
-      g = { entityType: c.entity_type, entityId: c.entity_id, changes: [] };
-      map.set(key, g);
-    }
-    g.changes.push(c);
+const PROFILE_NUM_FIELDS = [
+  "monthly_income",
+  "monthly_gross_salary",
+  "savings_target_monthly",
+  "fixed_expenses_monthly",
+  "retirement_monthly_spend_goal",
+  "retirement_dividend_yield_annual",
+  "retirement_withdrawal_rate_annual",
+  "annual_salary_growth_nominal",
+] as const;
+
+function profilePatch(
+  before: ProfileRow,
+  after: ProfileRow
+): Parameters<typeof updateProfile>[2] {
+  const patch: Parameters<typeof updateProfile>[2] = {};
+  if (after.display_name !== before.display_name) {
+    patch.display_name = after.display_name;
   }
-  return [...map.values()];
+  for (const f of PROFILE_NUM_FIELDS) {
+    if (after[f] !== before[f]) patch[f] = toNumOrNull(after[f]);
+  }
+  if (after.target_retirement_age !== before.target_retirement_age) {
+    patch.target_retirement_age = after.target_retirement_age;
+  }
+  return patch;
 }
 
-function changeMap(changes: AdvisorProposalChangeRow[]): Map<string, string | null> {
-  return new Map(changes.map((c) => [c.field_key, c.new_value]));
+function investmentDiffers(a: InvestmentRow, b: InvestmentRow): boolean {
+  return (
+    a.name !== b.name ||
+    a.current_value !== b.current_value ||
+    a.monthly_contribution !== b.monthly_contribution ||
+    a.expected_annual_return !== b.expected_annual_return ||
+    (a.contribution_type ?? null) !== (b.contribution_type ?? null) ||
+    (a.contribution_duration_years ?? null) !==
+      (b.contribution_duration_years ?? null)
+  );
 }
 
+function investmentWritePayload(row: InvestmentRow) {
+  return {
+    name: row.name,
+    current_value: toNumOrNull(row.current_value) ?? 0,
+    monthly_contribution: toNumOrNull(row.monthly_contribution) ?? 0,
+    expected_annual_return: toNumOrNull(row.expected_annual_return) ?? 0,
+    contribution_type: row.contribution_type || null,
+    contribution_duration_years:
+      toNumOrNull(row.contribution_duration_years ?? null),
+  };
+}
+
+/**
+ * Accept = persist the canonical state the *shared overlay mapper* produces.
+ * Reading canonical, composing the effective state via `applyProposalChanges`,
+ * then writing the diff guarantees the accepted result equals the proposed
+ * preview (constraint C6 — one mapper, no second writer transform).
+ */
 export async function applyAcceptedProposalChanges(
   supabase: SupabaseClient,
   clientUserId: string,
   changes: AdvisorProposalChangeRow[]
 ): Promise<void> {
-  for (const group of groupChanges(changes)) {
-    const m = changeMap(group.changes);
+  const [profile, investments, budgetLines, goals] = await Promise.all([
+    getProfileById(supabase, clientUserId),
+    listInvestments(supabase, clientUserId),
+    listBudgetLines(supabase, clientUserId),
+    listFinancialGoals(supabase, clientUserId),
+  ]);
 
-    if (group.entityType === "profile") {
-      const patch: Parameters<typeof updateProfile>[2] = {};
-      if (m.has("display_name")) patch.display_name = m.get("display_name");
-      if (m.has("monthly_income")) patch.monthly_income = numOrNull(m.get("monthly_income"));
-      if (m.has("monthly_gross_salary")) {
-        patch.monthly_gross_salary = numOrNull(m.get("monthly_gross_salary"));
-      }
-      if (m.has("savings_target_monthly")) {
-        patch.savings_target_monthly = numOrNull(m.get("savings_target_monthly"));
-      }
-      if (m.has("fixed_expenses_monthly")) {
-        patch.fixed_expenses_monthly = numOrNull(m.get("fixed_expenses_monthly"));
-      }
-      if (m.has("target_retirement_age")) {
-        const v = m.get("target_retirement_age");
-        patch.target_retirement_age = v != null ? Number(v) : null;
-      }
-      if (m.has("retirement_monthly_spend_goal")) {
-        patch.retirement_monthly_spend_goal = numOrNull(m.get("retirement_monthly_spend_goal"));
-      }
-      if (Object.keys(patch).length > 0) {
-        await updateProfile(supabase, clientUserId, patch);
-      }
-      continue;
-    }
+  const base: OverlayInputs = { profile, investments, budgetLines, goals };
+  const effective = applyProposalChanges(base, changes);
 
-    if (group.entityType === "budget_line" && group.entityId) {
-      const amount = numOrNull(m.get("amount"));
-      if (amount != null) {
-        await updateBudgetLine(supabase, clientUserId, group.entityId, { amount });
-      }
-      continue;
-    }
-
-    if (group.entityType === "goal" && group.entityId) {
-      const mc = numOrNull(m.get("monthly_contribution"));
-      if (mc != null) {
-        await updateFinancialGoal(supabase, clientUserId, group.entityId, {
-          monthly_contribution: mc,
-        });
-      }
-      continue;
-    }
-
-    if (group.entityType === "investment") {
-      if (m.get("_deleted") === "true" && group.entityId) {
-        await deleteInvestment(supabase, clientUserId, group.entityId);
-        continue;
-      }
-
-      const isNewEntity = group.changes.every(
-        (c) => c.old_value == null || c.old_value === ""
-      );
-
-      const payload = {
-        name: m.get("name") ?? "Investment",
-        current_value: numOrNull(m.get("current_value")) ?? 0,
-        monthly_contribution: numOrNull(m.get("monthly_contribution")) ?? 0,
-        expected_annual_return: numOrNull(m.get("expected_annual_return")) ?? 0,
-        contribution_type: m.get("contribution_type") || null,
-        contribution_duration_years: m.get("contribution_duration_years")
-          ? Number(m.get("contribution_duration_years"))
-          : null,
-      };
-
-      if (isNewEntity) {
-        await insertInvestment(supabase, clientUserId, payload);
-      } else if (group.entityId) {
-        await updateInvestment(supabase, clientUserId, group.entityId, payload);
-      }
+  if (profile && effective.profile) {
+    const patch = profilePatch(profile, effective.profile);
+    if (Object.keys(patch).length > 0) {
+      await updateProfile(supabase, clientUserId, patch);
     }
   }
-}
 
-function numOrNull(raw: string | null | undefined): number | null {
-  if (raw === null || raw === undefined || raw === "") return null;
-  const n = Number(raw);
-  return Number.isFinite(n) ? n : null;
+  for (const after of effective.budgetLines) {
+    const before = budgetLines.find((b) => b.id === after.id);
+    if (before && before.amount !== after.amount) {
+      await updateBudgetLine(supabase, clientUserId, after.id, {
+        amount: Number(after.amount),
+      });
+    }
+  }
+
+  for (const after of effective.goals) {
+    const before = goals.find((g) => g.id === after.id);
+    if (before && before.monthly_contribution !== after.monthly_contribution) {
+      await updateFinancialGoal(supabase, clientUserId, after.id, {
+        monthly_contribution: Number(after.monthly_contribution),
+      });
+    }
+  }
+
+  const beforeIds = new Set(investments.map((i) => i.id));
+  const afterIds = new Set(effective.investments.map((i) => i.id));
+
+  for (const before of investments) {
+    if (!afterIds.has(before.id)) {
+      await deleteInvestment(supabase, clientUserId, before.id);
+    }
+  }
+  for (const after of effective.investments) {
+    if (!beforeIds.has(after.id)) {
+      await insertInvestment(
+        supabase,
+        clientUserId,
+        investmentWritePayload(after)
+      );
+      continue;
+    }
+    const before = investments.find((i) => i.id === after.id);
+    if (before && investmentDiffers(before, after)) {
+      await updateInvestment(
+        supabase,
+        clientUserId,
+        after.id,
+        investmentWritePayload(after)
+      );
+    }
+  }
 }

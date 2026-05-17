@@ -1,7 +1,8 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, type ReactNode } from "react";
 import { fieldMeta } from "@/domain/advisor-proposals/field-registry";
+import { ProposalProjectionCompare } from "@/features/proposals/ProposalProjectionCompare";
 import { formatProposalDisplayValue } from "@/domain/advisor-proposals/format-display";
 import {
   compareSectionOrder,
@@ -61,12 +62,18 @@ export function ProposalReviewView({
   sectionNotes,
   advisorDisplayName,
   currencyCode,
+  hasProjection = false,
+  actualProjection = null,
+  proposedProjection = null,
 }: {
   proposal: AdvisorProposalRow;
   changes: AdvisorProposalChangeRow[];
   sectionNotes: AdvisorProposalSectionNoteRow[];
   advisorDisplayName: string;
   currencyCode: string;
+  hasProjection?: boolean;
+  actualProjection?: ReactNode;
+  proposedProjection?: ReactNode;
 }) {
   const sections = groupBySection(changes, sectionNotes);
   const isPending = proposal.status === "pending";
@@ -124,6 +131,23 @@ export function ProposalReviewView({
           </p>
         )}
       </header>
+
+      {hasProjection ? (
+        <section className={`${appCardClass} ${appCardPadding} space-y-4`}>
+          <h2 className="text-lg font-semibold text-slate-900">
+            Your plan with these changes
+          </h2>
+          <p className="text-sm leading-relaxed text-slate-600">
+            Compare your current projection against the outcome if you accept
+            this proposal.
+          </p>
+          <ProposalProjectionCompare
+            hasOverlay
+            actual={actualProjection}
+            proposed={proposedProjection}
+          />
+        </section>
+      ) : null}
 
       <div className="space-y-6">
         {sections.map((block) => (
