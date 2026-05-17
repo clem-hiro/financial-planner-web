@@ -28,11 +28,11 @@ function consentBadge(row: AdvisorClientWorkspaceListRow): {
 } {
   switch (row.consent_status) {
     case "active":
-      return { tone: "positive", label: "Active" };
+      return { tone: "positive", label: "Granted" };
     case "withdrawn":
       return { tone: "warning", label: "Withdrawn" };
     default:
-      return { tone: "neutral", label: "Not requested" };
+      return { tone: "neutral", label: "Not Granted" };
   }
 }
 
