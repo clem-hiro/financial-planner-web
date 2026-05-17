@@ -70,8 +70,8 @@ export async function OverviewPlanningSection() {
             <Link href="/dashboard" className={appInlineLinkClass}>
               Home command center →
             </Link>
-            <Link href="/setup?tab=profile" className={appInlineLinkClass}>
-              Profile &amp; assumptions →
+            <Link href="/setup/overview" className={appInlineLinkClass}>
+              Financial setup hub →
             </Link>
           </div>
         </div>
@@ -93,7 +93,7 @@ export async function OverviewPlanningSection() {
       {profileIncomplete ? (
         <div className="rounded-2xl bg-amber-50/90 px-4 py-3 text-sm text-amber-950 ring-1 ring-amber-200/80">
           Complete a few profile fields to sharpen savings rate and projections.{" "}
-          <Link href="/setup?tab=profile" className={appInlineLinkClass}>
+          <Link href="/setup/overview" className={appInlineLinkClass}>
             Continue setup →
           </Link>
         </div>

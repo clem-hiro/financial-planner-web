@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useActionState, useState } from "react";
-import { liabilityRowToPlanning } from "@/data/liability-budget-sync";
+import { liabilityRowToPlanning } from "@/domain/finance/debt-repayment";
 import type { LiabilityRow } from "@/data/supabase/types";
 import {
   debtRepaymentEndYearMonth,

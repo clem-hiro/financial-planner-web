@@ -1,3 +1,5 @@
+import { SETUP_OVERVIEW_PATH } from "@/lib/setup-urls";
+
 /**
  * Top-level client app navigation — single source of truth for labels, hrefs,
  * active-state rules, and prefetch targets. Keeps shell nav decoupled from
@@ -16,12 +18,19 @@ function matchesFinancialSetup(pathname: string) {
   return (
     pathname === "/setup" ||
     pathname.startsWith("/setup/") ||
+    pathname === "/planning/setup" ||
     pathname === "/financial-profile" ||
     pathname.startsWith("/financial-profile/")
   );
 }
 
 function matchesPlanning(pathname: string) {
+  if (
+    pathname === "/planning/setup" ||
+    pathname.startsWith("/planning/setup/")
+  ) {
+    return false;
+  }
   return (
     pathname === "/planning" ||
     pathname.startsWith("/planning/") ||
@@ -62,7 +71,7 @@ export const CLIENT_MAIN_NAV: readonly ClientMainNavItem[] = [
   },
   {
     id: "financial_setup",
-    href: "/setup",
+    href: SETUP_OVERVIEW_PATH,
     label: "Financial setup",
     activeMatch: matchesFinancialSetup,
   },
@@ -89,6 +98,7 @@ export const CLIENT_MAIN_NAV: readonly ClientMainNavItem[] = [
 /** Default prefetch for snappy shell transitions */
 export const CLIENT_MAIN_NAV_PREFETCH_HREFS: readonly string[] = [
   "/dashboard",
+  SETUP_OVERVIEW_PATH,
   "/setup",
   "/planning/overview",
   "/expenses",

@@ -4,6 +4,9 @@ import {
   yearFromYearMonth,
 } from "@/lib/dates";
 
+/** Setup hub — progress cards and recommended next step (not a `?tab=` route). */
+export const SETUP_OVERVIEW_PATH = "/setup/overview";
+
 /** Query string for the budget editor under Financial setup (classic tab URL). */
 export function setupBudgetSearch(month: string, calendarYear: number): string {
   return `tab=budget&month=${encodeURIComponent(month)}&year=${String(calendarYear)}`;

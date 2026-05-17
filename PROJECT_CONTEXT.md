@@ -109,7 +109,8 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | Vehicle planning (SG COE/PARF, loans) | **Shipped** | Setup → vehicles; included in Wealth and long-horizon projections. |
 | Financial goals (targets, contributions) | **Shipped** | Setup goals tab + Future workspace CRUD (`FinancialGoalsPanels`). |
 | Income tax estimation lens | **Partial** | Setup → Income tax tab + `/api/income-tax`; review assumptions and known gaps. |
-| Financial Setup tabs (profile → goals) | **Shipped** | `/setup`; mirrored in Planning where noted. |
+| **Financial Setup Hub** (progress, section status, recommended next step) | **Shipped** | `/setup/overview`; config in `src/domain/setup/modules.ts`, evaluators in `src/domain/setup/evaluators.ts`, loader `src/data/setup-status.ts`. Legacy `/planning/setup` redirects here. |
+| Financial Setup tabs (profile → goals) | **Shipped** | `/setup?tab=…` (editors); mirrored in Planning where noted; hub links into each tab/workspace. |
 | Budget lines, overrides, strategy insights | **Shipped** | Repositories + `src/domain/finance/budget*.ts`. |
 | SG-oriented guided budget templates (onboarding + domain) | **Shipped** | `budget-guided-setup.ts`, onboarding actions. |
 | Investments with contribution phase (until retirement / fixed duration) | **Shipped** | DB migration `20260516000000_*`; Setup → Investments; FV helpers. |
@@ -150,6 +151,20 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 ### Roadmap modules (Planning cards only)
 
 These match `roadmap-modules.tsx` — all **Planned** as standalone modules unless already covered as **Shipped** above: insurance map, scenario simulator, dependents planning, estate checklist, quarterly reports, documents vault, risk profiling, bank **account syncing**. **Retirement planning studio** and **AI insights layer** cards are marked `work_in_progress` in UI but remain **Partial / Planned** as dedicated products (projection **visualizations** on Home are **Shipped**). Income tax has a **Partial** Setup tab (see Activity & setup); the Future roadmap **tax lens** card remains **planned** as a fuller module.
+
+---
+
+## Financial Setup Hub (`/setup/overview`)
+
+**Purpose:** Reduce onboarding fatigue by turning fragmented setup tabs into a **guided, resumable** hub — overall progress, per-section status, and a single **recommended next step** — without removing classic `/setup` editors.
+
+**UX philosophy:** Premium, calm, spacious fintech (cards, soft surfaces, subtle status rings). Avoid dense tables and enterprise clutter. Users complete profile, cash flow, protection, and future modules **progressively**; advisors will later reuse the same snapshot shape for client completion visibility (filter incomplete sections) — not implemented in advisor UI yet.
+
+**Status system:** Config-driven modules (`src/domain/setup/modules.ts`). Each module is evaluated by pure rules in `src/domain/setup/evaluators.ts` → `complete` \| `partial` \| `not_started`, plus `completionPercentage`, `lastUpdatedAt` (from underlying rows), and `missingFields` for follow-up. MVP rules are intentionally simple and modular (e.g. profile = name + birth date; loans = liability with balance + rate or repayment). Modules without DB tables (insurance, dependents, estate, documents) stay `not_started` until data models ship.
+
+**Recommended next step:** Highest-priority incomplete module from `SETUP_RECOMMENDATION_PRIORITY` (configurable order in `modules.ts`).
+
+**Auto-save / drafts:** Hub reads existing persisted data and timestamps; no change to form save behavior. `lastUpdatedAt` is derived from related `created_at` / `updated_at` fields — hooks ready for explicit draft columns later.
 
 ---
 
@@ -349,4 +364,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 - **Not in scope:** live CPF APIs, actuarial CPF LIFE, exhaustive withdrawal rules.
 - **Future:** persist advisor/client assumption presets; tie RA balance into retirement sustainability / spend coverage; inflation on payouts.
 
-_Last reviewed (2026-05-17): Feature inventory is the sole repo roadmap source; BYOFA Notion **Feature Roadmap Table** syncs from inventory (see `.cursor/rules/project-context-notion-sync.mdc`). Removed `docs/feature_roadmap.md`._
+_Last reviewed (2026-05-17): **Financial Setup Hub** at `/setup/overview` (progress UI); classic editors at `/setup?tab=…`; `/planning/setup` redirects. Feature inventory is the sole repo roadmap source; BYOFA Notion **Feature Roadmap Table** syncs from inventory (see `.cursor/rules/project-context-notion-sync.mdc`)._

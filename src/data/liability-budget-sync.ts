@@ -1,5 +1,4 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { num } from "@/data/mappers";
 import {
   deleteBudgetLine,
   getBudgetLineBySourceLiabilityId,
@@ -12,9 +11,11 @@ import {
   debtRepaymentEndYearMonth,
   debtRepaymentStartYearMonth,
   effectiveMonthlyRepayment,
-  type LiabilityForPlanning,
+  liabilityRowToPlanning,
 } from "@/domain/finance/debt-repayment";
 import { formatYearMonth } from "@/lib/dates";
+
+export { liabilityRowToPlanning } from "@/domain/finance/debt-repayment";
 
 /**
  * Keeps a monthly budget line in sync with liability repayment (cash-flow view).
@@ -81,25 +82,3 @@ export async function removeLiabilityBudgetLines(
   }
 }
 
-/** Map DB row → planning domain (shared with UI and budget sync). */
-export function liabilityRowToPlanning(row: LiabilityRow): LiabilityForPlanning {
-  return {
-    id: row.id,
-    name: row.name,
-    balance: num(row.balance),
-    category: row.category ?? null,
-    loanType: row.loan_type ?? null,
-    interestRateAnnual:
-      row.interest_rate_annual != null && String(row.interest_rate_annual).trim() !== ""
-        ? num(row.interest_rate_annual)
-        : null,
-    remainingTenureMonths: row.remaining_tenure_months ?? null,
-    monthlyRepayment:
-      row.monthly_repayment != null && String(row.monthly_repayment).trim() !== ""
-        ? num(row.monthly_repayment)
-        : null,
-    repaymentOverride: row.repayment_override === true,
-    startDate: row.start_date ?? null,
-    notes: row.notes ?? null,
-  };
-}

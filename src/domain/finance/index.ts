@@ -107,6 +107,7 @@ export type {
   LiabilityForPlanning,
   LoanType,
 } from "./debt-repayment";
+export { liabilityRowToPlanning } from "./debt-repayment";
 export { sumInvestableSurplusOverHorizon } from "./investable-surplus";
 export { buildAmortizationSchedule } from "./mortgage-amortization";
 export type { AmortizationPayment } from "./mortgage-amortization";
