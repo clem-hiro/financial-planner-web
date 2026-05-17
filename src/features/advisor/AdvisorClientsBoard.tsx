@@ -22,6 +22,20 @@ function onboardingShort(row: AdvisorClientWorkspaceListRow) {
   return "—";
 }
 
+function consentBadge(row: AdvisorClientWorkspaceListRow): {
+  tone: "positive" | "warning" | "neutral";
+  label: string;
+} {
+  switch (row.consent_status) {
+    case "active":
+      return { tone: "positive", label: "Active" };
+    case "withdrawn":
+      return { tone: "warning", label: "Withdrawn" };
+    default:
+      return { tone: "neutral", label: "Not requested" };
+  }
+}
+
 export function AdvisorClientsBoard({
   rows,
   totalCount,
@@ -141,6 +155,7 @@ export function AdvisorClientsBoard({
                 <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
                   <th scope="col" className="px-4 py-3">Client</th>
                   <th scope="col" className="px-4 py-3">Status</th>
+                  <th scope="col" className="px-4 py-3">Consent</th>
                   <th scope="col" className="px-4 py-3">Savings</th>
                   <th scope="col" className="px-4 py-3">Budget</th>
                   <th scope="col" className="px-4 py-3">Last activity</th>
@@ -160,6 +175,7 @@ export function AdvisorClientsBoard({
                     last_expense_spent_at: row.last_expense_spent_at,
                     expense_count: row.expense_count,
                   });
+                  const consent = consentBadge(row);
                   const href = `/advisor/client/${row.id}`;
                   return (
                     <tr key={row.id} className="transition hover:bg-slate-50/70">
@@ -174,6 +190,11 @@ export function AdvisorClientsBoard({
                       <td className="px-4 py-3 align-middle">
                         <AdvisorBadge tone={sig.riskBand === "high" ? "risk" : "neutral"}>
                           {onboardingShort(row)}
+                        </AdvisorBadge>
+                      </td>
+                      <td className="px-4 py-3 align-middle">
+                        <AdvisorBadge tone={consent.tone}>
+                          {consent.label}
                         </AdvisorBadge>
                       </td>
                       <td className="px-4 py-3 align-middle text-slate-700">

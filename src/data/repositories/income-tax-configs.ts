@@ -46,6 +46,24 @@ export async function getIncomeTaxConfig(
 }
 
 /**
+ * Consent-gated advisor read. Drop-in for `getIncomeTaxConfig` on the advisor
+ * path: the RPC `returns setof financial_income_tax_configs` (unique per user
+ * => 0 or 1 row). Not consented => zero rows => null (fail-closed; the
+ * advisor's synthetic-tax projection is omitted until consent).
+ */
+export async function advisorReadIncomeTaxConfig(
+  supabase: SupabaseClient,
+  clientId: string
+): Promise<IncomeTaxConfigRow | null> {
+  const { data, error } = await supabase.rpc("advisor_read_income_tax_config", {
+    p_client: clientId,
+  });
+  if (error) throw error;
+  const rows = (data ?? []) as IncomeTaxConfigRow[];
+  return rows[0] ?? null;
+}
+
+/**
  * Singleton upsert keyed on `user_id` (DB has `unique(user_id)`). Caller-supplied
  * fields override defaults; missing fields keep their existing values on update
  * because Supabase upsert sends only the listed columns.

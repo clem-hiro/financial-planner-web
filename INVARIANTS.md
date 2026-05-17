@@ -29,7 +29,7 @@ _(added: 2026-05-17)_
 
 **Honest residual.** A superuser / table owner / Supabase **service-role** bypasses RLS, grants, and event triggers — true in any RDBMS; absolute enforcement vs a privileged actor is out of scope. The achievable invariant is: *default-deny + cross-boundary access only via the consent path + privileged bypass requires a deliberate, auditable act.* Bounded by **No service-role key in app code** below.
 
-**Status (2026-05-17).** Designed, not yet implemented. Plan: `~/.claude/plans/image-1-this-is-dapper-truffle.md`. Open pre-build decisions in that plan: confirm this structural architecture; resolve the `financial_income_tax_configs` advice-integrity anomaly (advisor silently tax-blind — fix via a consent-gated RPC, recommended).
+**Status (2026-05-17).** Architecture **confirmed** (user, pre-build gate); not yet implemented. Plan: `~/.claude/plans/image-1-this-is-dapper-truffle.md`. Both pre-build decisions resolved 2026-05-17: (1) two-pillar structural enforcement confirmed (event trigger + consent-chokepoint RPCs; lighter per-table+linter and Pillar-2-only variants rejected); (2) `financial_income_tax_configs` → consent-gated `advisor_read_*` RPC (option a — fixes the advisor tax-blind advice bug + brings it under consent). Build approved; pilot table `financial_investments`, one-surface-then-user-review per the §5 implementation constraint.
 
 ---
 

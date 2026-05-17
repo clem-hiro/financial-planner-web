@@ -2,7 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { revalidateSetupAndPlanning } from "@/lib/planning-revalidate";
-import { getClientProfileForAdvisor } from "@/data/repositories/advisor-clients";
+import {
+  advisorCanReadClient,
+  getClientProfileForAdvisor,
+} from "@/data/repositories/advisor-clients";
 import { getBudgetLineById } from "@/data/repositories/budget-lines";
 import { getFinancialGoalById } from "@/data/repositories/goals";
 import { getInvestmentById } from "@/data/repositories/investments";
@@ -51,6 +54,16 @@ async function requireAdvisorLinkedClient(
   const row = await getClientProfileForAdvisor(supabase, user.id, clientId);
   if (!row) {
     return { ok: false, error: "Client not found" };
+  }
+  // Consent-first trust boundary: the advisor (resolved server-side from the
+  // session above — never from client-supplied input) cannot author proposals
+  // until this client has granted active consent. UI gating is secondary.
+  const consentOk = await advisorCanReadClient(supabase, clientId);
+  if (!consentOk) {
+    return {
+      ok: false,
+      error: "This client has not granted consent. Suggestions are unavailable until they do.",
+    };
   }
   return { ok: true, supabase, advisorUserId: user.id };
 }

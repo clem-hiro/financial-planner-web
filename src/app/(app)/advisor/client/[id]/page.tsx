@@ -4,10 +4,13 @@ import {
   getPendingProposalForClient,
   listChangesForProposal,
 } from "@/data/repositories/advisor-proposals";
-import { getClientProfileForAdvisor } from "@/data/repositories/advisor-clients";
+import {
+  advisorCanReadClient,
+  getClientProfileForAdvisor,
+} from "@/data/repositories/advisor-clients";
 import { listBudgetLines } from "@/data/repositories/budget-lines";
 import { listFinancialGoals } from "@/data/repositories/goals";
-import { listInvestments } from "@/data/repositories/investments";
+import { advisorReadInvestments } from "@/data/repositories/investments";
 import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { resolveOverlayForViewer } from "@/domain/advisor-proposals/overlay-gate";
@@ -49,15 +52,23 @@ export default async function AdvisorClientDetailPage({ params }: PageProps) {
 
   const month = formatYearMonth(new Date());
 
-  const [clientProfile, payload, goals, budgetLines, investments, draftProposal] =
-    await Promise.all([
-      getProfileById(supabase, clientId),
-      getDashboardPayload(supabase, clientId, month),
-      listFinancialGoals(supabase, clientId),
-      listBudgetLines(supabase, clientId),
-      listInvestments(supabase, clientId),
-      getDraftProposalForClient(supabase, user.id, clientId),
-    ]);
+  const [
+    clientProfile,
+    payload,
+    goals,
+    budgetLines,
+    investments,
+    draftProposal,
+    consentGranted,
+  ] = await Promise.all([
+    getProfileById(supabase, clientId),
+    getDashboardPayload(supabase, clientId, month, { viewer: "advisor" }),
+    listFinancialGoals(supabase, clientId),
+    listBudgetLines(supabase, clientId),
+    advisorReadInvestments(supabase, clientId),
+    getDraftProposalForClient(supabase, user.id, clientId),
+    advisorCanReadClient(supabase, clientId),
+  ]);
 
   const pendingProposal = await getPendingProposalForClient(
     supabase,
@@ -93,12 +104,14 @@ export default async function AdvisorClientDetailPage({ params }: PageProps) {
   const payloadProposed = hasOverlay
     ? await getDashboardPayload(supabase, clientId, month, {
         proposalOverlay: overlayChanges,
+        viewer: "advisor",
       })
     : payload;
 
   return (
     <AdvisorClientWorkspace
       clientId={clientId}
+      consentGranted={consentGranted}
       profile={clientProfile}
       payload={payload}
       payloadProposed={payloadProposed}

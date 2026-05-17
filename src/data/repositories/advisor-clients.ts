@@ -10,6 +10,9 @@ export type AdvisorClientListRow = {
   created_at: string;
 };
 
+/** Read-only consent state surfaced on the roster (latest-event-wins). */
+export type AdvisorClientConsentStatus = "active" | "withdrawn" | "none";
+
 /** Row from `advisor_client_list_metrics` RPC (requires migration `20260513000000`). */
 export type AdvisorClientWorkspaceListRow = {
   id: string;
@@ -25,7 +28,75 @@ export type AdvisorClientWorkspaceListRow = {
   last_expense_spent_at: string | null;
   expense_count: string;
   total_count: string;
+  consent_status: AdvisorClientConsentStatus;
 };
+
+type ConsentEventRow = {
+  client_user_id: string;
+  status: string;
+  created_at: string;
+  id: string;
+};
+
+/**
+ * Latest-event-wins per client — most recent by (created_at desc, id desc),
+ * the same ordering `advisor_can_read_client` uses. Clients with no event are
+ * absent from the map (the caller defaults them to "none").
+ */
+export function computeConsentStatuses(
+  rows: ConsentEventRow[]
+): Map<string, AdvisorClientConsentStatus> {
+  const latest = new Map<string, ConsentEventRow>();
+  for (const r of rows) {
+    const prev = latest.get(r.client_user_id);
+    if (
+      !prev ||
+      r.created_at > prev.created_at ||
+      (r.created_at === prev.created_at && r.id > prev.id)
+    ) {
+      latest.set(r.client_user_id, r);
+    }
+  }
+  const out = new Map<string, AdvisorClientConsentStatus>();
+  for (const [clientId, ev] of latest) {
+    out.set(
+      clientId,
+      ev.status === "granted"
+        ? "active"
+        : ev.status === "withdrawn"
+          ? "withdrawn"
+          : "none"
+    );
+  }
+  return out;
+}
+
+/**
+ * One batched consent query for a result page (no N+1, no per-row
+ * advisor_can_read_client). RLS already scopes to this advisor; the explicit
+ * .eq is belt-and-suspenders. Fail-safe: an errored/absent consent query ⇒
+ * "none" for every row so the roster still renders (no throw, no log noise).
+ */
+async function withConsentStatus(
+  supabase: SupabaseClient,
+  advisorUserId: string,
+  rows: AdvisorClientWorkspaceListRow[]
+): Promise<AdvisorClientWorkspaceListRow[]> {
+  const ids = rows.map((r) => r.id).filter(Boolean);
+  if (ids.length === 0) {
+    return rows.map((r) => ({ ...r, consent_status: "none" }));
+  }
+  const { data, error } = await supabase
+    .from("advisor_client_consents")
+    .select("client_user_id,status,created_at,id")
+    .eq("advisor_user_id", advisorUserId)
+    .in("client_user_id", ids);
+  const statuses =
+    error || !data
+      ? new Map<string, AdvisorClientConsentStatus>()
+      : computeConsentStatuses(data as ConsentEventRow[]);
+  return rows.map((r) => ({ ...r, consent_status: statuses.get(r.id) ?? "none" }));
+}
 
 export type AdvisorClientListSort =
   | "created_desc"
@@ -110,8 +181,12 @@ export async function listAdvisorClientsWorkspace(
         last_expense_spent_at: null,
         expense_count: "0",
         total_count: String(fallback.length),
+        consent_status: "none",
       }));
-      return { rows, totalCount: fallback.length };
+      return {
+        rows: await withConsentStatus(supabase, advisorUserId, rows),
+        totalCount: fallback.length,
+      };
     }
     throw error;
   }
@@ -132,7 +207,10 @@ export async function listAdvisorClientsWorkspace(
     }
   }
 
-  return { rows: raw, totalCount };
+  return {
+    rows: await withConsentStatus(supabase, advisorUserId, raw),
+    totalCount,
+  };
 }
 
 export async function getClientProfileForAdvisor(
@@ -152,4 +230,21 @@ export async function getClientProfileForAdvisor(
   if (error) throw error;
   if (!data) return null;
   return data as AdvisorClientListRow;
+}
+
+/**
+ * Server-side consent predicate (linkage AND latest-event-wins active
+ * consent). The trust boundary for consent-first: the advisor proposal
+ * create/save actions reject when this is false. Fail-closed: any non-`true`
+ * RPC result (error already thrown, null, false) denies.
+ */
+export async function advisorCanReadClient(
+  supabase: SupabaseClient,
+  clientId: string
+): Promise<boolean> {
+  const { data, error } = await supabase.rpc("advisor_can_read_client", {
+    p_client: clientId,
+  });
+  if (error) throw error;
+  return data === true;
 }
