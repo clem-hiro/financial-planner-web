@@ -34,6 +34,7 @@ export async function insertHousingLoan(
   supabase: SupabaseClient,
   userId: string,
   row: {
+    property_id?: string | null;
     label: string;
     principal: number;
     annual_nominal_rate: number;
@@ -64,6 +65,7 @@ export async function insertHousingLoan(
     .from("financial_housing_loans")
     .insert({
       user_id: userId,
+      property_id: row.property_id ?? null,
       label: row.label,
       principal: row.principal,
       annual_nominal_rate: row.annual_nominal_rate,
@@ -103,6 +105,7 @@ export async function updateHousingLoan(
   userId: string,
   id: string,
   patch: Partial<{
+    property_id?: string | null;
     label: string;
     principal: number;
     annual_nominal_rate: number;

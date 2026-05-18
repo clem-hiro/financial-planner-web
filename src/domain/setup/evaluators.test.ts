@@ -15,6 +15,7 @@ function emptyContext(
     investments: [],
     cashAccounts: [],
     liabilities: [],
+    properties: [],
     housingLoans: [],
     vehicles: [],
     cpf: null,

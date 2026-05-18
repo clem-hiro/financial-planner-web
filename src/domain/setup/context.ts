@@ -4,6 +4,7 @@ import type {
   CpfBalanceRow,
   FinancialGoalRow,
   HousingLoanRow,
+  PropertyRow,
   InvestmentRow,
   LiabilityRow,
   ProfileRow,
@@ -19,6 +20,7 @@ export type SetupEvaluationContext = {
   investments: InvestmentRow[];
   cashAccounts: CashAccountRow[];
   liabilities: LiabilityRow[];
+  properties: PropertyRow[];
   housingLoans: HousingLoanRow[];
   vehicles: VehicleRow[];
   cpf: CpfBalanceRow | null;

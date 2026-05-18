@@ -6,7 +6,8 @@ import {
   deleteHousingLoanAction,
   updateHousingLoanAction,
 } from "@/server/actions";
-import type { HousingLoanRow } from "@/data/supabase/types";
+import type { HousingLoanRow, PropertyRow } from "@/data/supabase/types";
+import { PropertyAddForm } from "@/features/housing/PropertyAddForm";
 import { num } from "@/data/mappers";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { formatCurrency } from "@/ui/lib/format";
@@ -72,9 +73,9 @@ function HousingLoanManualAddForm({
       className="mt-3 space-y-3 rounded-lg border border-zinc-200 bg-white p-4"
       {...(pending ? { inert: true } : {})}
     >
-      <BlockingSubmitOverlay active={pending} message="Saving housing loan…" />
+      <BlockingSubmitOverlay active={pending} message="Saving mortgage…" />
       <h2 className="text-sm font-semibold text-zinc-900">
-        Add housing loan (manual)
+        Add mortgage (manual)
       </h2>
       <p className="text-xs text-zinc-500">
         <strong>Outstanding principal</strong> is the balance when repayments
@@ -642,7 +643,7 @@ function HousingLoanDeleteForm({ id }: { id: string }) {
       }}
       {...(pending ? { inert: true } : {})}
     >
-      <BlockingSubmitOverlay active={pending} message="Deleting housing loan…" />
+      <BlockingSubmitOverlay active={pending} message="Deleting mortgage…" />
       <input type="hidden" name="id" value={id} />
       <button
         type="submit"
@@ -655,25 +656,33 @@ function HousingLoanDeleteForm({ id }: { id: string }) {
   );
 }
 
-export function HousingLoansPanel({
+export function HousingPanel({
+  properties: _properties,
   loans,
   currencyCode,
 }: {
+  properties: PropertyRow[];
   loans: HousingLoanRow[];
   currencyCode: string;
 }) {
   const [state, action, pending] = useActionState(createHousingLoanAction, initial);
 
   return (
-    <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
+    <div className="space-y-4">
+      <PropertyAddForm currencyCode={currencyCode} />
+      <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
       <div className="p-4 sm:p-5">
+        <p className="mb-3 text-xs text-zinc-500">
+          Guided purchase (downpayment, BSD, loan sizing) — creates a property and
+          linked mortgage together.
+        </p>
         <HousingLoanQuickAddForm currencyCode={currencyCode} />
       </div>
 
       <div className="p-4 sm:p-5">
         <details className="group">
         <summary className="cursor-pointer text-sm font-medium text-zinc-700 hover:text-zinc-900">
-          Manual loan entry (edge cases)
+          Manual mortgage entry (edge cases)
         </summary>
         <p className="mt-2 text-xs text-zinc-500">
           Use when you already know outstanding principal, term, months, or
@@ -798,5 +807,21 @@ export function HousingLoansPanel({
         </div>
       )}
     </div>
+    </div>
+  );
+}
+
+/** @deprecated Use `HousingPanel` */
+export function HousingLoansPanel(props: {
+  loans: HousingLoanRow[];
+  currencyCode: string;
+  properties?: PropertyRow[];
+}) {
+  return (
+    <HousingPanel
+      properties={props.properties ?? []}
+      loans={props.loans}
+      currencyCode={props.currencyCode}
+    />
   );
 }

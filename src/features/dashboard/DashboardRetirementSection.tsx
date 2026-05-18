@@ -114,10 +114,10 @@ export function DashboardRetirementSection({
                   One line per bucket + total; dashed markers = housing milestones.
                   Housing OA only if saved under{" "}
                   <Link
-                    href="/setup#housing-loans"
+                    href="/setup?tab=housing"
                     className={appInlineLinkClass}
                   >
-                    Setup → Housing loans
+                    Setup → Housing
                   </Link>
                   . Full rules: <strong>Assumptions →</strong>
                 </p>
@@ -128,10 +128,10 @@ export function DashboardRetirementSection({
                   <strong>OA for housing</strong> only when you have loan rows
                   under{" "}
                   <Link
-                    href="/setup#housing-loans"
+                    href="/setup?tab=housing"
                     className={appInlineLinkClass}
                   >
-                    Setup → Housing loans
+                    Setup → Housing
                   </Link>
                   .
                 </p>
@@ -154,10 +154,10 @@ export function DashboardRetirementSection({
                     <p className="mt-2 text-xs text-indigo-900/90 sm:hidden">
                       <strong>No housing loan in this run</strong> — add one under{" "}
                       <Link
-                        href="/setup#housing-loans"
+                        href="/setup?tab=housing"
                         className={appInlineLinkClass}
                       >
-                        Setup → Housing loans
+                        Setup → Housing
                       </Link>{" "}
                       to model OA after instalments.
                     </p>
@@ -166,10 +166,10 @@ export function DashboardRetirementSection({
                       does not include mortgage payments yet. Add or enable a loan
                       under{" "}
                       <Link
-                        href="/setup#housing-loans"
+                        href="/setup?tab=housing"
                         className={appInlineLinkClass}
                       >
-                        Setup → Housing loans
+                        Setup → Housing
                       </Link>{" "}
                       to project OA after CPF-funded instalments.
                     </p>

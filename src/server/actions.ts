@@ -59,6 +59,11 @@ import {
   updateHousingLoan,
 } from "@/data/repositories/housing-loans";
 import {
+  deleteProperty,
+  insertProperty,
+  updateProperty,
+} from "@/data/repositories/properties";
+import {
   deleteInvestment,
   insertInvestment,
   updateInvestment,
@@ -80,6 +85,8 @@ import {
   housingLenderTypeSchema,
   housingPaymentSourceSchema,
   housingPropertyKindSchema,
+  housingPropertyStatusSchema,
+  housingPropertyTypeSchema,
   yearMonthSchema,
 } from "@/lib/validation";
 import { z } from "zod";
@@ -1497,6 +1504,265 @@ function parseHousingPaymentForm(
   return normalized;
 }
 
+function revalidateHousingPaths() {
+  revalidatePath("/dashboard");
+  revalidatePath("/balances");
+  revalidatePath("/budget");
+  revalidatePath("/setup");
+  revalidatePath("/planning/wealth");
+}
+
+async function insertPropertyForLoan(
+  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
+  userId: string,
+  opts: {
+    name: string;
+    property_type?: import("@/data/supabase/types").PropertyRow["property_type"];
+    purchase_price?: number | null;
+    status?: import("@/data/supabase/types").PropertyRow["status"];
+  }
+) {
+  return insertProperty(supabase, userId, {
+    name: opts.name,
+    property_type: opts.property_type ?? "unknown",
+    purchase_price: opts.purchase_price ?? null,
+    current_valuation: null,
+    ownership_percent: 1,
+    status: opts.status ?? "living_in",
+    rental_income_monthly: 0,
+    planning_scope: "current",
+  });
+}
+
+export async function createHousingPropertyAction(
+  _prev: { error: string | null },
+  formData: FormData
+): Promise<{ error: string | null }> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sign in required" };
+
+  const name = String(formData.get("name") ?? "").trim() || "Property";
+  const propertyTypeRaw = String(formData.get("property_type") ?? "unknown").trim();
+  const propertyTypeParsed = housingPropertyTypeSchema.safeParse(propertyTypeRaw);
+  if (!propertyTypeParsed.success) {
+    return { error: "Invalid property type" };
+  }
+  const statusRaw = String(formData.get("status") ?? "living_in").trim();
+  const statusParsed = housingPropertyStatusSchema.safeParse(statusRaw);
+  if (!statusParsed.success) {
+    return { error: "Invalid property status" };
+  }
+
+  const purchaseRaw = String(formData.get("purchase_price") ?? "").trim();
+  const purchase_price =
+    purchaseRaw === "" ? null : Number(purchaseRaw);
+  const valuationRaw = String(formData.get("current_valuation") ?? "").trim();
+  const current_valuation =
+    valuationRaw === "" ? null : Number(valuationRaw);
+  const ownershipRaw = String(formData.get("ownership_percent") ?? "100").trim();
+  const ownership_percent = Number(ownershipRaw) / 100;
+  const rentalRaw = String(formData.get("rental_income_monthly") ?? "").trim();
+  const rental_income_monthly =
+    rentalRaw === "" ? 0 : Number(rentalRaw);
+  const hasLoan = String(formData.get("has_loan") ?? "no").trim() === "yes";
+
+  if (
+    purchase_price != null &&
+    (!Number.isFinite(purchase_price) || purchase_price <= 0)
+  ) {
+    return { error: "Purchase price must be blank or positive" };
+  }
+  if (
+    current_valuation != null &&
+    (!Number.isFinite(current_valuation) || current_valuation <= 0)
+  ) {
+    return { error: "Current valuation must be blank or positive" };
+  }
+  if (
+    !Number.isFinite(ownership_percent) ||
+    ownership_percent <= 0 ||
+    ownership_percent > 1
+  ) {
+    return { error: "Ownership % must be between 1 and 100" };
+  }
+  if (!Number.isFinite(rental_income_monthly) || rental_income_monthly < 0) {
+    return { error: "Rental income must be ≥ 0" };
+  }
+
+  const property = await insertProperty(supabase, user.id, {
+    name,
+    property_type: propertyTypeParsed.data,
+    purchase_price,
+    current_valuation,
+    ownership_percent,
+    status: statusParsed.data,
+    rental_income_monthly,
+    planning_scope: "current",
+  });
+
+  if (!hasLoan) {
+    revalidateHousingPaths();
+    return { error: null };
+  }
+
+  const label = String(formData.get("loan_label") ?? "").trim() || name;
+  const principal = Number(formData.get("principal"));
+  const annual_nominal_rate = Number(formData.get("annual_nominal_rate"));
+  const term_months = Math.round(Number(formData.get("term_months")));
+  const completion_month = String(formData.get("completion_month") ?? "").trim();
+  const first_payment_month = String(
+    formData.get("first_payment_month") ?? ""
+  ).trim();
+  const downpayment_from_oa = Number(formData.get("downpayment_from_oa"));
+  const fees_from_oa = Number(formData.get("fees_from_oa"));
+  const maxRaw = String(formData.get("max_oa_per_month") ?? "").trim();
+  const max_oa_per_month = maxRaw === "" ? null : Number(maxRaw);
+  const lenderRaw = String(formData.get("lender_type") ?? "hdb").trim();
+  const lenderParsed = housingLenderTypeSchema.safeParse(lenderRaw);
+  const lender_type = lenderParsed.success ? lenderParsed.data : "hdb";
+  const origRaw = String(formData.get("original_loan_principal") ?? "").trim();
+  const original_loan_principal = origRaw === "" ? null : Number(origRaw);
+  const repaidRaw = String(
+    formData.get("principal_repaid_before_schedule") ?? ""
+  ).trim();
+  const principal_repaid_before_schedule =
+    repaidRaw === "" ? 0 : Number(repaidRaw);
+
+  if (!Number.isFinite(principal) || principal <= 0) {
+    return { error: "Outstanding principal must be positive when a loan exists" };
+  }
+  if (!Number.isFinite(annual_nominal_rate) || annual_nominal_rate < 0) {
+    return { error: "Annual rate must be ≥ 0" };
+  }
+  if (!Number.isFinite(term_months) || term_months <= 0 || term_months > 600) {
+    return { error: "Term must be 1–600 months" };
+  }
+  if (!yearMonthSchema.safeParse(completion_month).success) {
+    return { error: "Completion month must be YYYY-MM" };
+  }
+  if (!yearMonthSchema.safeParse(first_payment_month).success) {
+    return { error: "First payment month must be YYYY-MM" };
+  }
+  if (!Number.isFinite(downpayment_from_oa) || downpayment_from_oa < 0) {
+    return { error: "Invalid downpayment from OA" };
+  }
+  if (!Number.isFinite(fees_from_oa) || fees_from_oa < 0) {
+    return { error: "Invalid fees from OA" };
+  }
+
+  const annual_nominal_rate_effective =
+    lender_type === "hdb" ? HDB_CONCESSIONARY_RATE_ANNUAL : annual_nominal_rate;
+
+  const paymentParsed = parseHousingPaymentForm(formData, {
+    principal,
+    annual_nominal_rate: annual_nominal_rate_effective,
+    term_months,
+    first_payment_month,
+    oa_share_of_payment: Number(formData.get("oa_share_of_payment")) || 0,
+  });
+  if ("error" in paymentParsed) return paymentParsed;
+
+  await insertHousingLoan(supabase, user.id, {
+    property_id: property.id,
+    label,
+    principal,
+    annual_nominal_rate: annual_nominal_rate_effective,
+    term_months,
+    completion_month,
+    first_payment_month,
+    downpayment_from_oa,
+    fees_from_oa,
+    oa_share_of_payment: paymentParsed.oa_share_of_payment,
+    max_oa_per_month,
+    lender_type,
+    original_loan_principal,
+    principal_repaid_before_schedule,
+    property_purchase_price: purchase_price,
+    property_kind:
+      propertyTypeParsed.data === "unknown" ||
+      propertyTypeParsed.data === "overseas" ||
+      propertyTypeParsed.data === "other"
+        ? null
+        : propertyTypeParsed.data,
+    payment_source: paymentParsed.payment_source,
+    cpf_oa_payment: paymentParsed.cpf_oa_payment,
+    cash_payment: paymentParsed.cash_payment,
+  });
+
+  revalidateHousingPaths();
+  return { error: null };
+}
+
+export async function updateHousingPropertyAction(
+  _prev: { error: string | null },
+  formData: FormData
+): Promise<{ error: string | null }> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sign in required" };
+
+  const idParsed = z.string().uuid().safeParse(String(formData.get("id") ?? "").trim());
+  if (!idParsed.success) return { error: "Invalid property" };
+
+  const name = String(formData.get("name") ?? "").trim();
+  if (!name) return { error: "Property name is required" };
+
+  const propertyTypeParsed = housingPropertyTypeSchema.safeParse(
+    String(formData.get("property_type") ?? "unknown").trim()
+  );
+  const statusParsed = housingPropertyStatusSchema.safeParse(
+    String(formData.get("status") ?? "living_in").trim()
+  );
+  if (!propertyTypeParsed.success || !statusParsed.success) {
+    return { error: "Invalid property details" };
+  }
+
+  const purchaseRaw = String(formData.get("purchase_price") ?? "").trim();
+  const purchase_price = purchaseRaw === "" ? null : Number(purchaseRaw);
+  const valuationRaw = String(formData.get("current_valuation") ?? "").trim();
+  const current_valuation =
+    valuationRaw === "" ? null : Number(valuationRaw);
+  const ownership_percent =
+    Number(String(formData.get("ownership_percent") ?? "100").trim()) / 100;
+  const rental_income_monthly = Number(
+    String(formData.get("rental_income_monthly") ?? "0").trim()
+  );
+
+  await updateProperty(supabase, user.id, idParsed.data, {
+    name,
+    property_type: propertyTypeParsed.data,
+    purchase_price,
+    current_valuation,
+    ownership_percent,
+    status: statusParsed.data,
+    rental_income_monthly,
+  });
+
+  revalidateHousingPaths();
+  return { error: null };
+}
+
+export async function deleteHousingPropertyAction(formData: FormData) {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+  const idParsed = z.string().uuid().safeParse(String(formData.get("id") ?? "").trim());
+  if (!idParsed.success) return;
+  try {
+    await deleteProperty(supabase, user.id, idParsed.data);
+  } catch (e) {
+    console.error(e);
+  }
+  revalidateHousingPaths();
+}
+
 export async function createHousingLoanAction(
   _prev: { error: string | null },
   formData: FormData
@@ -1591,7 +1857,13 @@ export async function createHousingLoanAction(
     return { error: "Principal repaid must be ≥ 0" };
   }
 
+  const property = await insertPropertyForLoan(supabase, user.id, {
+    name: label,
+    status: "living_in",
+  });
+
   await insertHousingLoan(supabase, user.id, {
+    property_id: property.id,
     label,
     principal,
     annual_nominal_rate: annual_nominal_rate_effective,
@@ -1609,11 +1881,7 @@ export async function createHousingLoanAction(
     cpf_oa_payment,
     cash_payment,
   });
-  revalidatePath("/dashboard");
-  revalidatePath("/balances");
-  revalidatePath("/budget");
-  revalidatePath("/setup");
-  revalidatePath("/planning/wealth");
+  revalidateHousingPaths();
   return { error: null };
 }
 
@@ -1828,7 +2096,21 @@ export async function createHousingLoanQuickAction(
     return { error: paymentNormalized.error };
   }
 
+  const propertyTypeForQuick =
+    property_kind != null &&
+    housingPropertyTypeSchema.safeParse(property_kind).success
+      ? (property_kind as import("@/data/supabase/types").PropertyRow["property_type"])
+      : "unknown";
+
+  const property = await insertPropertyForLoan(supabase, user.id, {
+    name: derived.label,
+    property_type: propertyTypeForQuick,
+    purchase_price: purchasePrice,
+    status: "living_in",
+  });
+
   await insertHousingLoan(supabase, user.id, {
+    property_id: property.id,
     label: derived.label,
     principal: derived.principal,
     annual_nominal_rate: derived.annual_nominal_rate,
@@ -1857,11 +2139,7 @@ export async function createHousingLoanQuickAction(
     cpf_oa_payment: paymentNormalized.cpf_oa_payment,
     cash_payment: paymentNormalized.cash_payment,
   });
-  revalidatePath("/dashboard");
-  revalidatePath("/balances");
-  revalidatePath("/budget");
-  revalidatePath("/setup");
-  revalidatePath("/planning/wealth");
+  revalidateHousingPaths();
   return { error: null };
 }
 
@@ -1980,11 +2258,7 @@ export async function updateHousingLoanAction(
     cpf_oa_payment,
     cash_payment,
   });
-  revalidatePath("/dashboard");
-  revalidatePath("/balances");
-  revalidatePath("/budget");
-  revalidatePath("/setup");
-  revalidatePath("/planning/wealth");
+  revalidateHousingPaths();
   return { error: null };
 }
 
@@ -2001,9 +2275,5 @@ export async function deleteHousingLoanAction(formData: FormData) {
   } catch (e) {
     console.error(e);
   }
-  revalidatePath("/dashboard");
-  revalidatePath("/balances");
-  revalidatePath("/budget");
-  revalidatePath("/setup");
-  revalidatePath("/planning/wealth");
+  revalidateHousingPaths();
 }

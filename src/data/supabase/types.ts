@@ -376,9 +376,34 @@ export type IncomeTaxConfigRow = {
   updated_at: string;
 };
 
+export type PropertyRow = {
+  id: string;
+  user_id: string;
+  name: string;
+  property_type:
+    | "hdb"
+    | "condo"
+    | "ec"
+    | "landed"
+    | "overseas"
+    | "other"
+    | "unknown";
+  purchase_price: string | null;
+  current_valuation: string | null;
+  ownership_percent: string;
+  status: "living_in" | "renting_out" | "under_construction" | "fully_paid";
+  rental_income_monthly: string;
+  planning_scope: "current" | "future_simulation";
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+};
+
 export type HousingLoanRow = {
   id: string;
   user_id: string;
+  /** Links mortgage to `financial_properties` (asset-first housing). */
+  property_id?: string | null;
   label: string;
   /** Outstanding balance when scheduled repayments start (drives amortization). */
   principal: string;

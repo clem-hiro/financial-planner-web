@@ -237,6 +237,29 @@ export const housingPropertyKindSchema = z.enum([
   "landed",
 ]);
 
+/** Full property type list (asset-first housing). */
+export const housingPropertyTypeSchema = z.enum([
+  "hdb",
+  "condo",
+  "ec",
+  "landed",
+  "overseas",
+  "other",
+  "unknown",
+]);
+
+export const housingPropertyStatusSchema = z.enum([
+  "living_in",
+  "renting_out",
+  "under_construction",
+  "fully_paid",
+]);
+
+export const housingPlanningScopeSchema = z.enum([
+  "current",
+  "future_simulation",
+]);
+
 export const housingDownpaymentGuidancePresetSchema = z.enum([
   "pct_20",
   "pct_25",

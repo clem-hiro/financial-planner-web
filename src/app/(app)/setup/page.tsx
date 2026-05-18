@@ -19,7 +19,7 @@ import {
   type LiabilityBalanceRow,
 } from "@/features/goals/CashAndLiabilitiesPanels";
 import { CpfBalancesForm } from "@/features/goals/CpfBalancesForm";
-import { HousingLoansPanel } from "@/features/goals/HousingLoansPanel";
+import { HousingPanel } from "@/features/goals/HousingLoansPanel";
 import {
   InvestmentBalancesList,
   type InvestmentBalanceRow,
@@ -49,7 +49,7 @@ function buildSetupTabs(): readonly SetupTabDef[] {
     { id: "cpf", label: "CPF" },
     { id: "income_tax", label: "Income tax" },
     { id: "cash-liabilities", label: "Cash and debts" },
-    { id: "housing-loans", label: "Housing loans" },
+    { id: "housing", label: "Housing" },
     { id: "vehicles", label: "Vehicles" },
     { id: "budget", label: "Budget" },
     { id: "goals", label: "Goals" },
@@ -85,8 +85,10 @@ export default async function SetupPage({ searchParams }: PageProps) {
   const setupTabs = buildSetupTabs();
 
   const sp = await searchParams;
+  const tabParam =
+    sp.tab === "housing-loans" ? "housing" : sp.tab;
   const activeTab =
-    sp.tab && setupTabs.some((t) => t.id === sp.tab) ? sp.tab : "profile";
+    tabParam && setupTabs.some((t) => t.id === tabParam) ? tabParam : "profile";
   const budgetMonth =
     sp.month && parseYearMonth(sp.month)
       ? sp.month
@@ -118,6 +120,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
     liabilityRows,
     vehicleRows,
     cpfRow,
+    properties,
     housingLoans,
     goals,
   } = tabBundle;
@@ -312,14 +315,15 @@ export default async function SetupPage({ searchParams }: PageProps) {
         </div>
       ) : null}
 
-      {activeTab === "housing-loans" ? (
+      {activeTab === "housing" ? (
         <div className="transition-opacity duration-150 ease-out">
           <PageSection
-            id="housing-loans"
-            title="Housing loans"
+            id="housing"
+            title="Housing"
             description={
               <span className="text-xs text-zinc-600">
-                Mortgages and OA instalment assumptions.{" "}
+                Properties you own and optional linked mortgages. OA instalment
+                assumptions feed CPF and cash-flow projections.{" "}
                 <MethodologyOpenLink
                   topicId="cpf-housing-mortgage"
                   className={appInlineLinkClass}
@@ -329,7 +333,11 @@ export default async function SetupPage({ searchParams }: PageProps) {
               </span>
             }
           >
-            <HousingLoansPanel loans={housingLoans} currencyCode={currency} />
+            <HousingPanel
+              properties={properties}
+              loans={housingLoans}
+              currencyCode={currency}
+            />
           </PageSection>
         </div>
       ) : null}

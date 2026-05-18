@@ -14,6 +14,10 @@ import {
   advisorReadHousingLoans,
 } from "@/data/repositories/housing-loans";
 import {
+  listProperties,
+  advisorReadProperties,
+} from "@/data/repositories/properties";
+import {
   listInvestments,
   advisorReadInvestments,
 } from "@/data/repositories/investments";
@@ -34,6 +38,7 @@ import type {
   CpfBalanceRow,
   FinancialGoalRow,
   HousingLoanRow,
+  PropertyRow,
   InvestmentRow,
   LiabilityRow,
   VehicleRow,
@@ -45,6 +50,7 @@ export type SetupTabBundle = {
   liabilityRows: LiabilityRow[];
   vehicleRows: VehicleRow[];
   cpfRow: CpfBalanceRow | null;
+  properties: PropertyRow[];
   housingLoans: HousingLoanRow[];
   goals: FinancialGoalRow[];
 };
@@ -72,7 +78,8 @@ export async function loadSetupTabBundle(
   const needLiabilities = tabs.has("cash-liabilities");
   const needVehicles = tabs.has("vehicles");
   const needCpf = tabs.has("cpf");
-  const needHousing = tabs.has("housing-loans");
+  const needHousing =
+    tabs.has("housing") || tabs.has("housing-loans");
   const needGoals = tabs.has("goals");
 
   const [
@@ -81,6 +88,7 @@ export async function loadSetupTabBundle(
     liabilityRows,
     vehicleRows,
     cpfRow,
+    properties,
     housingLoans,
     goals,
   ] = await Promise.all([
@@ -115,6 +123,12 @@ export async function loadSetupTabBundle(
         )
       : Promise.resolve(null),
     needHousing
+      ? (isAdvisorViewer ? advisorReadProperties : listProperties)(
+          supabase,
+          userId
+        )
+      : Promise.resolve([] as PropertyRow[]),
+    needHousing
       ? (isAdvisorViewer ? advisorReadHousingLoans : listHousingLoans)(
           supabase,
           userId
@@ -134,6 +148,7 @@ export async function loadSetupTabBundle(
     liabilityRows,
     vehicleRows,
     cpfRow,
+    properties,
     housingLoans,
     goals,
   };

@@ -82,7 +82,7 @@ export function FinancialGoalsPanels({ goals, investments, currency }: Props) {
               href="/planning/wealth#wealth-housing"
               className={appInlineLinkClass}
             >
-              Housing loans
+              Housing
             </Link>{" "}
             in the Wealth workspace.
         </p>

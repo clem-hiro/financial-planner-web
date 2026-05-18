@@ -110,8 +110,14 @@ function evaluateIncomeExpenses(ctx: SetupEvaluationContext): SetupModuleEvaluat
 }
 
 function evaluateLoans(ctx: SetupEvaluationContext): SetupModuleEvaluation {
-  const allLiabilities = [...ctx.liabilities, ...ctx.housingLoans];
-  if (allLiabilities.length === 0) {
+  const currentProperties = ctx.properties.filter(
+    (p) => p.planning_scope === "current"
+  );
+  const trackedDebtCount =
+    ctx.liabilities.length +
+    ctx.housingLoans.length +
+    currentProperties.length;
+  if (trackedDebtCount === 0) {
     return {
       moduleId: "loans",
       status: "not_started",
@@ -122,7 +128,13 @@ function evaluateLoans(ctx: SetupEvaluationContext): SetupModuleEvaluation {
   }
   const completeLiabilities = ctx.liabilities.filter(liabilityIsComplete);
   const completeHousing = ctx.housingLoans.filter(housingLoanIsComplete);
-  const anyComplete = completeLiabilities.length > 0 || completeHousing.length > 0;
+  const completeProperties = currentProperties.filter(
+    (p) => p.name.trim().length > 0
+  );
+  const anyComplete =
+    completeLiabilities.length > 0 ||
+    completeHousing.length > 0 ||
+    completeProperties.length > 0;
   const status: SetupModuleStatus = anyComplete ? "complete" : "partial";
   return {
     moduleId: "loans",
@@ -130,7 +142,8 @@ function evaluateLoans(ctx: SetupEvaluationContext): SetupModuleEvaluation {
     completionPercentage: statusPercent(status),
     lastUpdatedAt: maxIsoTimestamp(
       ...ctx.liabilities.map((l) => l.created_at),
-      ...ctx.housingLoans.map((h) => h.created_at)
+      ...ctx.housingLoans.map((h) => h.created_at),
+      ...currentProperties.map((p) => p.updated_at)
     ),
     missingFields: anyComplete
       ? []

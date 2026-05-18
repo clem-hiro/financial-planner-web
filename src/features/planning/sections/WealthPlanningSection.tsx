@@ -9,7 +9,7 @@ import {
   type LiabilityBalanceRow,
 } from "@/features/goals/CashAndLiabilitiesPanels";
 import { CpfBalancesForm } from "@/features/goals/CpfBalancesForm";
-import { HousingLoansPanel } from "@/features/goals/HousingLoansPanel";
+import { HousingPanel } from "@/features/goals/HousingLoansPanel";
 import {
   InvestmentBalancesList,
   type InvestmentBalanceRow,
@@ -27,7 +27,7 @@ const WEALTH_TABS = new Set([
   "add-account",
   "cpf",
   "cash-liabilities",
-  "housing-loans",
+  "housing",
   "vehicles",
 ]);
 
@@ -153,10 +153,11 @@ export async function WealthPlanningSection() {
 
           <PageSection
             id="wealth-housing"
-            title="Housing loans"
+            title="Housing"
             description={
               <span className="text-xs text-zinc-600">
-                Mortgages and OA instalment assumptions.{" "}
+                Properties you own and linked mortgages. OA instalments feed CPF
+                and cash-flow projections.{" "}
                 <MethodologyOpenLink
                   topicId="cpf-housing-mortgage"
                   className={appInlineLinkClass}
@@ -166,7 +167,11 @@ export async function WealthPlanningSection() {
               </span>
             }
           >
-            <HousingLoansPanel loans={bundle.housingLoans} currencyCode={currency} />
+            <HousingPanel
+              properties={bundle.properties}
+              loans={bundle.housingLoans}
+              currencyCode={currency}
+            />
           </PageSection>
 
           <PageSection

@@ -15,7 +15,7 @@ const HUB_TABS = new Set([
   "add-account",
   "cash-liabilities",
   "cpf",
-  "housing-loans",
+  "housing",
   "goals",
   "vehicles",
 ]);
@@ -47,6 +47,7 @@ export async function loadSetupEvaluationContext(
     investments: bundle.investments,
     cashAccounts: bundle.cashAccounts,
     liabilities: bundle.liabilityRows,
+    properties: bundle.properties,
     housingLoans: bundle.housingLoans,
     vehicles: bundle.vehicleRows,
     cpf: bundle.cpfRow,

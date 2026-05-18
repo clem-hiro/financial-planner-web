@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useActionState, useState } from "react";
 import {
@@ -15,6 +16,7 @@ import {
 import type { LiabilityRow } from "@/data/supabase/types";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { formatCurrency } from "@/ui/lib/format";
+import { appInlineLinkClass } from "@/ui/app-link-styles";
 
 export type CashAccountBalanceRow = {
   id: string;
@@ -242,6 +244,13 @@ export function CashAndLiabilitiesPanels({
       </section>
 
       <div className="rounded-2xl border border-zinc-200 bg-zinc-50/30 p-4">
+        <p className="mb-3 text-xs text-zinc-600">
+          Housing mortgages are managed under{" "}
+          <Link href="/setup?tab=housing" className={appInlineLinkClass}>
+            Setup → Housing
+          </Link>{" "}
+          (property-first, with optional linked loan).
+        </p>
         <DebtPlanningPanels debtRows={debtRows} currencyCode={currencyCode} />
       </div>
     </div>

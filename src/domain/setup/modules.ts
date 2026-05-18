@@ -50,7 +50,7 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     id: "loans",
     group: "core",
     title: "Loans & Liabilities",
-    description: "Debts, housing loans, and repayment assumptions for net worth and budgets.",
+    description: "Debts, housing (properties and mortgages), and repayment assumptions.",
     icon: "🏦",
     href: "/setup?tab=cash-liabilities",
     priority: 40,
