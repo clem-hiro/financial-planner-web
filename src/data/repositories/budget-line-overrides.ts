@@ -16,6 +16,26 @@ export async function listBudgetLineOverridesForMonth(
   return (data ?? []) as BudgetLineMonthOverrideRow[];
 }
 
+/**
+ * Consent-gated advisor read. Drop-in for `listBudgetLineOverridesForMonth` on
+ * the advisor path: the RPC applies the same exact-`year_month` filter
+ * server-side (p_year_month = first of the month → matched as 'YYYY-MM'). RPC
+ * `returns setof financial_budget_line_month_overrides` ⇒ identical
+ * `BudgetLineMonthOverrideRow` shape. Not consented ⇒ zero rows (fail-closed).
+ */
+export async function advisorReadBudgetLineOverridesForMonth(
+  supabase: SupabaseClient,
+  clientId: string,
+  yearMonth: string
+): Promise<BudgetLineMonthOverrideRow[]> {
+  const { data, error } = await supabase.rpc(
+    "advisor_read_budget_line_month_overrides",
+    { p_client: clientId, p_year_month: `${yearMonth}-01` }
+  );
+  if (error) throw error;
+  return (data ?? []) as BudgetLineMonthOverrideRow[];
+}
+
 export function overridesToLineIdMap(
   rows: BudgetLineMonthOverrideRow[]
 ): Record<string, number> {

@@ -7,12 +7,18 @@ import type {
   ProfileRow,
 } from "@/data/supabase/types";
 
-// Consent-gate Phase 1 — the D1 viewer discriminator on getDashboardPayload.
-// Proves: (1) fail-closed default (no viewer ⇒ client-self .from() repos),
-// (2) viewer:"advisor" routes the two consent-gated reads through the RPC
-// repos with userId as p_client, (3) C6 — the shared overlay mapper composes
-// identically on RPC-sourced canonical (source-agnostic; apply-overlay.ts
-// untouched), (4) fail-closed empty when the RPC denies (not consented).
+// Consent-gate Phase 1 + 2 — the D1 viewer discriminator on
+// getDashboardPayload. Proves: (1) fail-closed default (no viewer ⇒
+// client-self .from() repos), (2) viewer:"advisor" routes EVERY consent-gated
+// read through the RPC repos and never the self repo — all 12 surfaces:
+// investments + income-tax + the 7 non-windowed tables (asserted with
+// p_client=userId via the ROUTED matrix), the client profile (consent-gated
+// advisorReadProfile, fail-closed null), and the 2 windowed tables (expenses,
+// budget_line_month_overrides — the advisor RPC wrapper is passed the selected
+// month so the gated view shows the period, not all-time), (3) C6 — the
+// shared overlay mapper composes identically on RPC-sourced canonical
+// (source-agnostic; apply-overlay.ts untouched), (4) fail-closed empty when
+// the RPC denies (not consented).
 
 const h = vi.hoisted(() => {
   const profile: ProfileRow = {
@@ -63,38 +69,7 @@ const h = vi.hoisted(() => {
       updated_at: "2025-01-01T00:00:00Z",
     },
   ];
-  const listInvestments = vi.fn(async () => investments);
-  const advisorReadInvestments = vi.fn(async () => investments);
-  const getIncomeTaxConfig = vi.fn(async (): Promise<IncomeTaxConfigRow | null> => null);
-  const advisorReadIncomeTaxConfig = vi.fn(
-    async (): Promise<IncomeTaxConfigRow | null> => null
-  );
-  return {
-    profile,
-    investments,
-    listInvestments,
-    advisorReadInvestments,
-    getIncomeTaxConfig,
-    advisorReadIncomeTaxConfig,
-  };
-});
-
-vi.mock("@/data/supabase/request-context", () => ({
-  getCachedProfileById: async () => h.profile,
-}));
-vi.mock("@/data/repositories/investments", () => ({
-  listInvestments: h.listInvestments,
-  advisorReadInvestments: h.advisorReadInvestments,
-}));
-vi.mock("@/data/repositories/income-tax-configs", () => ({
-  getIncomeTaxConfig: h.getIncomeTaxConfig,
-  advisorReadIncomeTaxConfig: h.advisorReadIncomeTaxConfig,
-}));
-vi.mock("@/data/repositories/budget-lines", () => ({
-  listBudgetLines: async () => [],
-}));
-vi.mock("@/data/repositories/goals", () => ({
-  listFinancialGoals: async () => [
+  const goals = [
     {
       id: "g1",
       user_id: "c1",
@@ -107,31 +82,101 @@ vi.mock("@/data/repositories/goals", () => ({
       expected_annual_return: "0.04",
       created_at: "2025-01-01T00:00:00Z",
     },
-  ],
+  ];
+  // Each pair returns the SAME fixture so C6 (advisor ≡ self) holds — the
+  // mapper is source-agnostic.
+  return {
+    profile,
+    investments,
+    // Profile: self = getCachedProfileById (1-arg, no supabase); advisor =
+    // advisorReadProfile (consent-gated). Both return the same profile so C6
+    // (advisor ≡ self when consented) holds.
+    getCachedProfileById: vi.fn(async () => profile),
+    advisorReadProfile: vi.fn(async () => profile),
+    // Windowed pair (3-arg: supabase, clientId, yearMonth).
+    listExpensesForMonth: vi.fn(async () => []),
+    advisorReadExpensesForMonth: vi.fn(async () => []),
+    listBudgetLineOverridesForMonth: vi.fn(async () => []),
+    advisorReadBudgetLineOverridesForMonth: vi.fn(async () => []),
+    listInvestments: vi.fn(async () => investments),
+    advisorReadInvestments: vi.fn(async () => investments),
+    getIncomeTaxConfig: vi.fn(async (): Promise<IncomeTaxConfigRow | null> => null),
+    advisorReadIncomeTaxConfig: vi.fn(
+      async (): Promise<IncomeTaxConfigRow | null> => null
+    ),
+    listCashAccounts: vi.fn(async () => []),
+    advisorReadCashAccounts: vi.fn(async () => []),
+    listLiabilities: vi.fn(async () => []),
+    advisorReadLiabilities: vi.fn(async () => []),
+    listBudgetLines: vi.fn(async () => []),
+    advisorReadBudgetLines: vi.fn(async () => []),
+    listFinancialGoals: vi.fn(async () => goals),
+    advisorReadGoals: vi.fn(async () => goals),
+    getCpfBalanceByUserId: vi.fn(async () => null),
+    advisorReadCpfBalances: vi.fn(async () => null),
+    listHousingLoans: vi.fn(async () => []),
+    advisorReadHousingLoans: vi.fn(async () => []),
+    listVehicles: vi.fn(async () => []),
+    advisorReadVehicles: vi.fn(async () => []),
+  };
+});
+
+vi.mock("@/data/supabase/request-context", () => ({
+  getCachedProfileById: h.getCachedProfileById,
+}));
+vi.mock("@/data/repositories/profiles", () => ({
+  advisorReadProfile: h.advisorReadProfile,
+}));
+vi.mock("@/data/repositories/investments", () => ({
+  listInvestments: h.listInvestments,
+  advisorReadInvestments: h.advisorReadInvestments,
+}));
+vi.mock("@/data/repositories/income-tax-configs", () => ({
+  getIncomeTaxConfig: h.getIncomeTaxConfig,
+  advisorReadIncomeTaxConfig: h.advisorReadIncomeTaxConfig,
+}));
+vi.mock("@/data/repositories/budget-lines", () => ({
+  listBudgetLines: h.listBudgetLines,
+  advisorReadBudgetLines: h.advisorReadBudgetLines,
+}));
+vi.mock("@/data/repositories/goals", () => ({
+  listFinancialGoals: h.listFinancialGoals,
+  advisorReadGoals: h.advisorReadGoals,
 }));
 vi.mock("@/data/repositories/expenses", () => ({
-  listExpensesForMonth: async () => [],
+  listExpensesForMonth: h.listExpensesForMonth,
+  advisorReadExpensesForMonth: h.advisorReadExpensesForMonth,
 }));
 vi.mock("@/data/repositories/cash-accounts", () => ({
-  listCashAccounts: async () => [],
+  listCashAccounts: h.listCashAccounts,
+  advisorReadCashAccounts: h.advisorReadCashAccounts,
 }));
 vi.mock("@/data/repositories/liabilities", () => ({
-  listLiabilities: async () => [],
+  listLiabilities: h.listLiabilities,
+  advisorReadLiabilities: h.advisorReadLiabilities,
 }));
 vi.mock("@/data/repositories/cpf-balances", () => ({
-  getCpfBalanceByUserId: async () => null,
+  getCpfBalanceByUserId: h.getCpfBalanceByUserId,
+  advisorReadCpfBalances: h.advisorReadCpfBalances,
 }));
 vi.mock("@/data/repositories/housing-loans", () => ({
-  listHousingLoans: async () => [],
+  listHousingLoans: h.listHousingLoans,
+  advisorReadHousingLoans: h.advisorReadHousingLoans,
 }));
 vi.mock("@/data/repositories/vehicles", () => ({
-  listVehicles: async () => [],
+  listVehicles: h.listVehicles,
+  advisorReadVehicles: h.advisorReadVehicles,
 }));
 vi.mock("@/data/repositories/budget-line-overrides", async (orig) => {
   const actual = await orig<
     typeof import("@/data/repositories/budget-line-overrides")
   >();
-  return { ...actual, listBudgetLineOverridesForMonth: async () => [] };
+  return {
+    ...actual,
+    listBudgetLineOverridesForMonth: h.listBudgetLineOverridesForMonth,
+    advisorReadBudgetLineOverridesForMonth:
+      h.advisorReadBudgetLineOverridesForMonth,
+  };
 });
 
 const { getDashboardPayload } = await import("@/data/dashboard");
@@ -139,32 +184,91 @@ const { getDashboardPayload } = await import("@/data/dashboard");
 const supabase = {} as SupabaseClient;
 const MONTH = "2026-05";
 
+// (self repo spy, advisor RPC repo spy) for every consent-gated table the
+// dashboard routes under viewer:"advisor". Investments + income-tax are
+// Phase 1; the rest are the Phase-2 non-windowed surfaces.
+const ROUTED: Array<[keyof typeof h, keyof typeof h]> = [
+  ["listInvestments", "advisorReadInvestments"],
+  ["getIncomeTaxConfig", "advisorReadIncomeTaxConfig"],
+  ["listCashAccounts", "advisorReadCashAccounts"],
+  ["listLiabilities", "advisorReadLiabilities"],
+  ["listBudgetLines", "advisorReadBudgetLines"],
+  ["listFinancialGoals", "advisorReadGoals"],
+  ["getCpfBalanceByUserId", "advisorReadCpfBalances"],
+  ["listHousingLoans", "advisorReadHousingLoans"],
+  ["listVehicles", "advisorReadVehicles"],
+];
+
+// Profile + the 2 windowed reads are also routed but with non-uniform call
+// shapes (profile self has no supabase arg; windowed are 3-arg) so they get
+// explicit assertions rather than the (supabase, clientId) ROUTED matrix.
+const EXTRA_SPIES = [
+  "getCachedProfileById",
+  "advisorReadProfile",
+  "listExpensesForMonth",
+  "advisorReadExpensesForMonth",
+  "listBudgetLineOverridesForMonth",
+  "advisorReadBudgetLineOverridesForMonth",
+] as const;
+
 beforeEach(() => {
-  h.listInvestments.mockClear();
-  h.advisorReadInvestments.mockClear();
-  h.getIncomeTaxConfig.mockClear();
-  h.advisorReadIncomeTaxConfig.mockClear();
+  for (const [self, adv] of ROUTED) {
+    (h[self] as ReturnType<typeof vi.fn>).mockClear();
+    (h[adv] as ReturnType<typeof vi.fn>).mockClear();
+  }
+  for (const k of EXTRA_SPIES) {
+    (h[k] as ReturnType<typeof vi.fn>).mockClear();
+  }
   h.advisorReadInvestments.mockResolvedValue(h.investments);
   h.advisorReadIncomeTaxConfig.mockResolvedValue(null);
+  h.advisorReadProfile.mockResolvedValue(h.profile);
 });
 
 describe("getDashboardPayload — viewer discriminator (D1)", () => {
-  it("no viewer opt ⇒ fail-closed: client-self repos only (C8 path untouched)", async () => {
+  it("no viewer opt ⇒ fail-closed: every consent-gated read uses the self repo", async () => {
     await getDashboardPayload(supabase, "c1", MONTH);
-    expect(h.listInvestments).toHaveBeenCalledTimes(1);
-    expect(h.getIncomeTaxConfig).toHaveBeenCalledTimes(1);
-    expect(h.advisorReadInvestments).not.toHaveBeenCalled();
-    expect(h.advisorReadIncomeTaxConfig).not.toHaveBeenCalled();
+    for (const [self, adv] of ROUTED) {
+      expect(h[self] as ReturnType<typeof vi.fn>).toHaveBeenCalledTimes(1);
+      expect(h[adv] as ReturnType<typeof vi.fn>).not.toHaveBeenCalled();
+    }
+    // Profile + windowed: self path only.
+    expect(h.getCachedProfileById).toHaveBeenCalledTimes(1);
+    expect(h.advisorReadProfile).not.toHaveBeenCalled();
+    expect(h.listExpensesForMonth).toHaveBeenCalledTimes(1);
+    expect(h.advisorReadExpensesForMonth).not.toHaveBeenCalled();
+    expect(h.listBudgetLineOverridesForMonth).toHaveBeenCalledTimes(1);
+    expect(h.advisorReadBudgetLineOverridesForMonth).not.toHaveBeenCalled();
   });
 
-  it("viewer:'advisor' ⇒ both consent-gated reads route through the RPC repos, p_client=userId", async () => {
+  it("viewer:'advisor' ⇒ every consent-gated read routes through the RPC repo, p_client=userId, never the self repo", async () => {
     await getDashboardPayload(supabase, "c1", MONTH, { viewer: "advisor" });
-    expect(h.advisorReadInvestments).toHaveBeenCalledTimes(1);
-    expect(h.advisorReadInvestments).toHaveBeenCalledWith(supabase, "c1");
-    expect(h.advisorReadIncomeTaxConfig).toHaveBeenCalledTimes(1);
-    expect(h.advisorReadIncomeTaxConfig).toHaveBeenCalledWith(supabase, "c1");
-    expect(h.listInvestments).not.toHaveBeenCalled();
-    expect(h.getIncomeTaxConfig).not.toHaveBeenCalled();
+    for (const [self, adv] of ROUTED) {
+      const advSpy = h[adv] as ReturnType<typeof vi.fn>;
+      expect(advSpy).toHaveBeenCalledTimes(1);
+      expect(advSpy).toHaveBeenCalledWith(supabase, "c1");
+      expect(h[self] as ReturnType<typeof vi.fn>).not.toHaveBeenCalled();
+    }
+    // Profile: consent-gated advisorReadProfile(supabase, clientId); never the
+    // self cached read.
+    expect(h.advisorReadProfile).toHaveBeenCalledTimes(1);
+    expect(h.advisorReadProfile).toHaveBeenCalledWith(supabase, "c1");
+    expect(h.getCachedProfileById).not.toHaveBeenCalled();
+    // Windowed: the advisor RPC wrappers are passed the selected month so the
+    // gated view shows the period (not all-time); never the self repo.
+    expect(h.advisorReadExpensesForMonth).toHaveBeenCalledTimes(1);
+    expect(h.advisorReadExpensesForMonth).toHaveBeenCalledWith(
+      supabase,
+      "c1",
+      MONTH
+    );
+    expect(h.listExpensesForMonth).not.toHaveBeenCalled();
+    expect(h.advisorReadBudgetLineOverridesForMonth).toHaveBeenCalledTimes(1);
+    expect(h.advisorReadBudgetLineOverridesForMonth).toHaveBeenCalledWith(
+      supabase,
+      "c1",
+      MONTH
+    );
+    expect(h.listBudgetLineOverridesForMonth).not.toHaveBeenCalled();
   });
 });
 

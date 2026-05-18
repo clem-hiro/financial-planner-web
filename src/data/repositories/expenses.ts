@@ -26,6 +26,27 @@ export async function listExpensesForMonth(
   return (data ?? []) as ExpenseRow[];
 }
 
+/**
+ * Consent-gated advisor read. Drop-in for `listExpensesForMonth` on the
+ * advisor path: the RPC applies the same calendar-month window server-side
+ * (p_year_month = first of the month) and the same `spent_at desc` order, so
+ * the gated advisor view shows exactly the selected period. RPC `returns setof
+ * financial_expenses` ⇒ identical `ExpenseRow` shape. Not consented ⇒ zero
+ * rows (fail-closed).
+ */
+export async function advisorReadExpensesForMonth(
+  supabase: SupabaseClient,
+  clientId: string,
+  yearMonth: string
+): Promise<ExpenseRow[]> {
+  const { data, error } = await supabase.rpc("advisor_read_expenses", {
+    p_client: clientId,
+    p_year_month: `${yearMonth}-01`,
+  });
+  if (error) throw error;
+  return (data ?? []) as ExpenseRow[];
+}
+
 export async function listExpensesForYear(
   supabase: SupabaseClient,
   userId: string,

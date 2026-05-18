@@ -1,9 +1,41 @@
 import Link from "next/link";
+import {
+  getRequestAuth,
+  getSupabaseServerClient,
+} from "@/data/supabase/request-context";
+import { getMyConsentStatusForAdvisor } from "@/data/repositories/advisor-clients";
+import { getMyAdvisorContact } from "@/data/repositories/coupons";
+import { ClientConsentControl } from "@/features/consent/ClientConsentControl";
 import { OpenMethodologyButton } from "@/features/help/OpenMethodologyButton";
 import { CLIENT_UI_VERSION_LABEL } from "@/lib/client-release";
+import { isClient } from "@/lib/profile-role";
+import { renderConsentText } from "@/server/advisor-consent";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 
-export default function MorePage() {
+export default async function MorePage() {
+  const { profile } = await getRequestAuth();
+  const advisorUserId = profile?.advisor_user_id ?? null;
+  const showConsent = isClient(profile) && !!advisorUserId;
+  let consentStatus: "active" | "withdrawn" | "none" = "none";
+  let consentText = "";
+  if (showConsent && profile && advisorUserId) {
+    const supabase = await getSupabaseServerClient();
+    consentStatus = await getMyConsentStatusForAdvisor(
+      supabase,
+      profile.id,
+      advisorUserId
+    );
+    let adviserName: string | null = null;
+    try {
+      adviserName = (await getMyAdvisorContact(supabase)).advisor_name;
+    } catch {
+      adviserName = null;
+    }
+    consentText = renderConsentText(
+      adviserName ?? "your linked financial adviser"
+    );
+  }
+
   return (
     <div className="space-y-10">
       <header className="max-w-2xl space-y-3">
@@ -83,6 +115,29 @@ export default function MorePage() {
           </div>
         </div>
       </div>
+
+      {showConsent ? (
+        <section
+          id="privacy-advisor-access"
+          className="scroll-mt-24 rounded-2xl bg-white p-5 ring-1 ring-slate-200/70 sm:p-7"
+        >
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            Privacy &amp; Advisor Access
+          </p>
+          <h2 className="mt-2 text-lg font-semibold text-[#0c192f]">
+            Consent for your advisor
+          </h2>
+          <p className="mt-1 mb-4 text-sm text-slate-600">
+            Your linked advisor can only view your financial data and prepare
+            plan suggestions while consent is active. You control this and can
+            withdraw at any time.
+          </p>
+          <ClientConsentControl
+            status={consentStatus}
+            consentText={consentText}
+          />
+        </section>
+      ) : null}
 
       <div className="space-y-2 border-t border-slate-200/80 pt-8">
         <p className="text-xs text-slate-500">

@@ -20,6 +20,29 @@ export async function getProfileById(
   };
 }
 
+/**
+ * Consent-gated advisor read of a client's profile DATA. RPC `returns setof
+ * financial_profiles` (id is unique ⇒ 0 or 1 row). Not consented ⇒ zero rows
+ * ⇒ null (fail-closed). Identity for the linked-but-not-consented gated state
+ * comes from the consent-INDEPENDENT linkage path, never from here.
+ */
+export async function advisorReadProfile(
+  supabase: SupabaseClient,
+  clientId: string
+): Promise<ProfileRow | null> {
+  const { data, error } = await supabase.rpc("advisor_read_profile", {
+    p_client: clientId,
+  });
+  if (error) throw error;
+  const row = ((data ?? []) as ProfileRow[])[0];
+  if (!row) return null;
+  return {
+    ...row,
+    profile_type: row.profile_type === "client" ? "client" : "advisor",
+    advisor_user_id: row.advisor_user_id ?? null,
+  };
+}
+
 export async function updateProfile(
   supabase: SupabaseClient,
   userId: string,

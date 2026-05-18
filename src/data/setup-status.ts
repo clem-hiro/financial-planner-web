@@ -1,7 +1,10 @@
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { listBudgetLines } from "@/data/repositories/budget-lines";
+import {
+  listBudgetLines,
+  advisorReadBudgetLines,
+} from "@/data/repositories/budget-lines";
 import type { ProfileRow } from "@/data/supabase/types";
 import type { SetupEvaluationContext } from "@/domain/setup/context";
 import { buildSetupHubSnapshot } from "@/domain/setup/evaluators";
@@ -19,16 +22,24 @@ const HUB_TABS = new Set([
 
 /**
  * Loads all data needed for setup hub status in one round trip.
- * `subjectUserId` is the financial data owner (self or future advisor client view).
+ * `subjectUserId` is the financial data owner (self or advisor client view).
+ * P2-D1: `viewer:"advisor"` routes all reads through the consent-gated
+ * `advisor_read_*` RPCs (subjectUserId = client id); absent ⇒ unchanged self
+ * path. `profile` is supplied by the caller — not read here, so it is not
+ * gated in this seam.
  */
 export async function loadSetupEvaluationContext(
   supabase: SupabaseClient,
   subjectUserId: string,
-  profile: ProfileRow | null
+  profile: ProfileRow | null,
+  viewer?: "advisor"
 ): Promise<SetupEvaluationContext> {
   const [bundle, budgetLines] = await Promise.all([
-    loadSetupTabBundle(supabase, subjectUserId, HUB_TABS),
-    listBudgetLines(supabase, subjectUserId),
+    loadSetupTabBundle(supabase, subjectUserId, HUB_TABS, viewer),
+    (viewer === "advisor" ? advisorReadBudgetLines : listBudgetLines)(
+      supabase,
+      subjectUserId
+    ),
   ]);
 
   return {
@@ -47,8 +58,14 @@ export async function loadSetupEvaluationContext(
 export async function getSetupHubSnapshot(
   supabase: SupabaseClient,
   subjectUserId: string,
-  profile: ProfileRow | null
+  profile: ProfileRow | null,
+  viewer?: "advisor"
 ): Promise<SetupHubSnapshot> {
-  const ctx = await loadSetupEvaluationContext(supabase, subjectUserId, profile);
+  const ctx = await loadSetupEvaluationContext(
+    supabase,
+    subjectUserId,
+    profile,
+    viewer
+  );
   return buildSetupHubSnapshot(subjectUserId, ctx);
 }

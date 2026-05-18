@@ -14,6 +14,23 @@ export async function getCpfBalanceByUserId(
   return (data as CpfBalanceRow) ?? null;
 }
 
+/**
+ * Consent-gated advisor read. Drop-in for `getCpfBalanceByUserId` on the
+ * advisor path: RPC `returns setof financial_cpf_balances` (unique per user ⇒
+ * 0 or 1 row). Not consented ⇒ zero rows ⇒ null (fail-closed).
+ */
+export async function advisorReadCpfBalances(
+  supabase: SupabaseClient,
+  clientId: string
+): Promise<CpfBalanceRow | null> {
+  const { data, error } = await supabase.rpc("advisor_read_cpf_balances", {
+    p_client: clientId,
+  });
+  if (error) throw error;
+  const rows = (data ?? []) as CpfBalanceRow[];
+  return rows[0] ?? null;
+}
+
 export async function upsertCpfBalance(
   supabase: SupabaseClient,
   userId: string,
