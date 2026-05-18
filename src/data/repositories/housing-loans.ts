@@ -14,6 +14,22 @@ export async function listHousingLoans(
   return (data ?? []) as HousingLoanRow[];
 }
 
+/**
+ * Consent-gated advisor read. Drop-in for `listHousingLoans` on the advisor
+ * path: RPC `returns setof financial_housing_loans` ⇒ identical
+ * `HousingLoanRow` shape. Not consented ⇒ zero rows (fail-closed).
+ */
+export async function advisorReadHousingLoans(
+  supabase: SupabaseClient,
+  clientId: string
+): Promise<HousingLoanRow[]> {
+  const { data, error } = await supabase.rpc("advisor_read_housing_loans", {
+    p_client: clientId,
+  });
+  if (error) throw error;
+  return (data ?? []) as HousingLoanRow[];
+}
+
 export async function insertHousingLoan(
   supabase: SupabaseClient,
   userId: string,

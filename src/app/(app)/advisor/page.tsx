@@ -73,35 +73,28 @@ export default async function AdvisorDashboardPage() {
           role="status"
         >
           <p className="font-semibold text-amber-950">
-            Keys show claimed signups, but this session cannot read any linked client profiles.
+            You have claimed access keys, but no client is linked to this advisor account yet.
           </p>
           <p className="mt-2">
-            Counts and lists load from <code className="rounded bg-white/90 px-1.5 py-0.5 text-xs">financial_profiles</code>{" "}
-            using your <strong>logged-in</strong> Supabase user. The dashboard SQL / Table Editor
-            often runs with privileges that <strong>bypass Row Level Security</strong>, so rows can
-            appear there while the app still gets an empty list.
+            A key shows as <strong>claimed</strong> once someone starts signing up with it. A
+            client only appears here after they finish signup and their profile links to your
+            advisor account — a signup still in progress will show up once completed.
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5">
             <li>
-              In Supabase → <strong>Database → Policies</strong> on{" "}
-              <code className="rounded bg-white/90 px-1 py-0.5 text-xs">financial_profiles</code>,
-              confirm a <strong>SELECT</strong> policy named{" "}
-              <code className="rounded bg-white/90 px-1 py-0.5 text-xs">
-                financial_profiles_select_advisor_clients
-              </code>{" "}
-              exists (from migration{" "}
-              <code className="rounded bg-white/90 px-1 py-0.5 text-xs">
-                20260512000002_advisor_select_linked_clients.sql
-              </code>
-              ). Without it, advisors only see their own profile row, not clients.
+              Confirm you are signed in as the advisor the keys were issued to. Keys claimed
+              under a different advisor account will not surface clients here.{" "}
+              <span className="font-medium">Your current session id:</span>{" "}
+              <code className="rounded bg-white/90 px-1 py-0.5 text-[11px] break-all">{user.id}</code>
             </li>
             <li>
-              Confirm you are signed in as the advisor whose Auth user id matches{" "}
-              <code className="rounded bg-white/90 px-1 py-0.5 text-[11px] break-all">
-                advisor_user_id
-              </code>{" "}
-              on those client rows. <span className="font-medium">Your current session id:</span>{" "}
-              <code className="rounded bg-white/90 px-1 py-0.5 text-[11px] break-all">{user.id}</code>
+              Linked clients always appear here by name, even before they grant consent —
+              consent only gates each client&apos;s <strong>financial detail</strong>, not their
+              presence in this list. Review and request consent per client under{" "}
+              <Link href="/advisor/clients" className={appInlineLinkClass}>
+                Clients
+              </Link>
+              .
             </li>
           </ul>
         </div>
@@ -139,8 +132,8 @@ export default async function AdvisorDashboardPage() {
         {data.recentlyJoinedClients.length === 0 ? (
           keysClaimedButNoClientsVisible ? (
             <p className="text-sm text-slate-600">
-              No client rows returned for this session. Use the troubleshooting note above (RLS
-              policy and matching Auth user id).
+              No client is linked to this advisor account yet. See the note above on claimed
+              keys and advisor account match.
             </p>
           ) : (
             <p className="text-sm text-slate-600">

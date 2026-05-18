@@ -14,6 +14,22 @@ export async function listFinancialGoals(
   return (data ?? []) as FinancialGoalRow[];
 }
 
+/**
+ * Consent-gated advisor read. Drop-in for `listFinancialGoals` on the advisor
+ * path: RPC `returns setof financial_goals` ⇒ identical `FinancialGoalRow`
+ * shape. Not consented ⇒ zero rows (fail-closed).
+ */
+export async function advisorReadGoals(
+  supabase: SupabaseClient,
+  clientId: string
+): Promise<FinancialGoalRow[]> {
+  const { data, error } = await supabase.rpc("advisor_read_goals", {
+    p_client: clientId,
+  });
+  if (error) throw error;
+  return (data ?? []) as FinancialGoalRow[];
+}
+
 export async function getFinancialGoalById(
   supabase: SupabaseClient,
   userId: string,

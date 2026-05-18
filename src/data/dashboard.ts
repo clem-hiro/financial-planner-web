@@ -46,21 +46,47 @@ import {
 } from "@/data/mappers";
 import {
   listBudgetLineOverridesForMonth,
+  advisorReadBudgetLineOverridesForMonth,
   overridesToLineIdMap,
 } from "@/data/repositories/budget-line-overrides";
-import { listBudgetLines } from "@/data/repositories/budget-lines";
-import { listCashAccounts } from "@/data/repositories/cash-accounts";
-import { getCpfBalanceByUserId } from "@/data/repositories/cpf-balances";
-import { listFinancialGoals } from "@/data/repositories/goals";
-import { listHousingLoans } from "@/data/repositories/housing-loans";
-import { listLiabilities } from "@/data/repositories/liabilities";
-import { listVehicles } from "@/data/repositories/vehicles";
+import {
+  listBudgetLines,
+  advisorReadBudgetLines,
+} from "@/data/repositories/budget-lines";
+import {
+  listCashAccounts,
+  advisorReadCashAccounts,
+} from "@/data/repositories/cash-accounts";
+import {
+  getCpfBalanceByUserId,
+  advisorReadCpfBalances,
+} from "@/data/repositories/cpf-balances";
+import {
+  listFinancialGoals,
+  advisorReadGoals,
+} from "@/data/repositories/goals";
+import {
+  listHousingLoans,
+  advisorReadHousingLoans,
+} from "@/data/repositories/housing-loans";
+import {
+  listLiabilities,
+  advisorReadLiabilities,
+} from "@/data/repositories/liabilities";
+import {
+  listVehicles,
+  advisorReadVehicles,
+} from "@/data/repositories/vehicles";
 import { getCachedProfileById } from "@/data/supabase/request-context";
+import { advisorReadProfile } from "@/data/repositories/profiles";
 import {
   getIncomeTaxConfig,
   advisorReadIncomeTaxConfig,
 } from "@/data/repositories/income-tax-configs";
-import { listExpensesForMonth } from "@/data/repositories/expenses";
+import {
+  listExpensesForMonth,
+  advisorReadExpensesForMonth,
+} from "@/data/repositories/expenses";
 import {
   listInvestments,
   advisorReadInvestments,
@@ -324,21 +350,50 @@ export async function getDashboardPayload(
     vehicleRows,
     incomeTaxConfig,
   ] = await Promise.all([
-    getCachedProfileById(userId),
-    listExpensesForMonth(supabase, userId, yearMonth),
+    // Consent chokepoint: advisor viewer ⇒ consent-gated RPC (fail-closed
+    // null profile when not consented — payload financials derive to empty;
+    // the page renders the consent-required gated state via the separate
+    // linkage path). Self ⇒ unchanged cached `.from()` (C8 byte-identical).
+    isAdvisorViewer
+      ? advisorReadProfile(supabase, userId)
+      : getCachedProfileById(userId),
+    // advisor_read_expenses applies the same calendar-month window the self
+    // path does (p_year_month = first of yearMonth) — gated advisor view
+    // shows the selected period, not all-time.
+    isAdvisorViewer
+      ? advisorReadExpensesForMonth(supabase, userId, yearMonth)
+      : listExpensesForMonth(supabase, userId, yearMonth),
     // Consent chokepoint: advisor viewer ⇒ RPC (fail-closed empty when not
     // consented); self ⇒ unchanged `.from()` (C8 byte-identical).
     isAdvisorViewer
       ? advisorReadInvestments(supabase, userId)
       : listInvestments(supabase, userId),
-    listCashAccounts(supabase, userId),
-    listLiabilities(supabase, userId),
-    listBudgetLines(supabase, userId),
-    listBudgetLineOverridesForMonth(supabase, userId, yearMonth),
-    listFinancialGoals(supabase, userId),
-    getCpfBalanceByUserId(supabase, userId),
-    listHousingLoans(supabase, userId),
-    listVehicles(supabase, userId),
+    isAdvisorViewer
+      ? advisorReadCashAccounts(supabase, userId)
+      : listCashAccounts(supabase, userId),
+    isAdvisorViewer
+      ? advisorReadLiabilities(supabase, userId)
+      : listLiabilities(supabase, userId),
+    isAdvisorViewer
+      ? advisorReadBudgetLines(supabase, userId)
+      : listBudgetLines(supabase, userId),
+    // advisor_read_budget_line_month_overrides applies the same exact-month
+    // (year_month) filter the self path does.
+    isAdvisorViewer
+      ? advisorReadBudgetLineOverridesForMonth(supabase, userId, yearMonth)
+      : listBudgetLineOverridesForMonth(supabase, userId, yearMonth),
+    isAdvisorViewer
+      ? advisorReadGoals(supabase, userId)
+      : listFinancialGoals(supabase, userId),
+    isAdvisorViewer
+      ? advisorReadCpfBalances(supabase, userId)
+      : getCpfBalanceByUserId(supabase, userId),
+    isAdvisorViewer
+      ? advisorReadHousingLoans(supabase, userId)
+      : listHousingLoans(supabase, userId),
+    isAdvisorViewer
+      ? advisorReadVehicles(supabase, userId)
+      : listVehicles(supabase, userId),
     isAdvisorViewer
       ? advisorReadIncomeTaxConfig(supabase, userId)
       : getIncomeTaxConfig(supabase, userId),

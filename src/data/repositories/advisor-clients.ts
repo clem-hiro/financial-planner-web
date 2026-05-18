@@ -35,13 +35,17 @@ type ConsentEventRow = {
   client_user_id: string;
   status: string;
   created_at: string;
-  id: string;
+  seq: number;
 };
 
 /**
- * Latest-event-wins per client — most recent by (created_at desc, id desc),
- * the same ordering `advisor_can_read_client` uses. Clients with no event are
- * absent from the map (the caller defaults them to "none").
+ * Latest-event-wins per client — most recent by (created_at desc, seq desc),
+ * BYTE-IDENTICAL to `advisor_can_read_client`'s `order by c.created_at desc,
+ * c.seq desc`. `seq` is a monotonic `bigint generated always as identity`
+ * (C1 fix): a same-tick grant+withdraw resolves deterministically by insert
+ * order, not by a random-uuid coin flip. Numeric compare (not lexical) because
+ * int8 may arrive as a string and "9" > "10" lexically. Clients with no event
+ * are absent from the map (the caller defaults them to "none").
  */
 export function computeConsentStatuses(
   rows: ConsentEventRow[]
@@ -52,7 +56,7 @@ export function computeConsentStatuses(
     if (
       !prev ||
       r.created_at > prev.created_at ||
-      (r.created_at === prev.created_at && r.id > prev.id)
+      (r.created_at === prev.created_at && Number(r.seq) > Number(prev.seq))
     ) {
       latest.set(r.client_user_id, r);
     }
@@ -88,7 +92,7 @@ async function withConsentStatus(
   }
   const { data, error } = await supabase
     .from("advisor_client_consents")
-    .select("client_user_id,status,created_at,id")
+    .select("client_user_id,status,created_at,seq")
     .eq("advisor_user_id", advisorUserId)
     .in("client_user_id", ids);
   const statuses =
@@ -213,23 +217,38 @@ export async function listAdvisorClientsWorkspace(
   };
 }
 
+/**
+ * Consent-INDEPENDENT linkage (is this client linked to the calling advisor?).
+ * Phase 2 dropped the `financial_profiles` advisor SELECT policy, so a direct
+ * `.from()` is RLS-denied for the advisor; this routes through the SECURITY
+ * DEFINER `advisor_linked_client` RPC, which self-scopes to
+ * `(select auth.uid())` = the calling advisor (so `_advisorUserId` is now
+ * redundant — kept for signature stability; callers unchanged). NOT consent-
+ * gated by design: a linked-but-not-consented client must reach the "consent
+ * required" gated workspace, not a 404. Only the identity subset is mapped out
+ * — the full financial_profiles row never leaves this repo, so no financial
+ * data leaks for a non-consented client.
+ */
 export async function getClientProfileForAdvisor(
   supabase: SupabaseClient,
-  advisorUserId: string,
+  _advisorUserId: string,
   clientUserId: string
 ): Promise<AdvisorClientListRow | null> {
-  const { data, error } = await supabase
-    .from("financial_profiles")
-    .select(
-      "id, display_name, profile_type, onboarding_required, onboarding_completed_at, created_at"
-    )
-    .eq("id", clientUserId)
-    .eq("advisor_user_id", advisorUserId)
-    .eq("profile_type", "client")
-    .maybeSingle();
+  const { data, error } = await supabase.rpc("advisor_linked_client", {
+    p_client: clientUserId,
+  });
   if (error) throw error;
-  if (!data) return null;
-  return data as AdvisorClientListRow;
+  const row = ((data ?? []) as Array<Record<string, unknown>>)[0];
+  if (!row) return null;
+  return {
+    id: row.id as string,
+    display_name: (row.display_name as string | null) ?? null,
+    profile_type: "client",
+    onboarding_required: row.onboarding_required as boolean,
+    onboarding_completed_at:
+      (row.onboarding_completed_at as string | null) ?? null,
+    created_at: row.created_at as string,
+  };
 }
 
 /**
@@ -247,4 +266,28 @@ export async function advisorCanReadClient(
   });
   if (error) throw error;
   return data === true;
+}
+
+/**
+ * The CLIENT's own current consent status toward their linked advisor
+ * (latest-event-wins). RLS `advisor_client_consents_select_own_client` lets
+ * the client read their own rows; the same C1-correct `computeConsentStatuses`
+ * reducer is reused (byte-identical to the SQL predicate — single source, no
+ * divergence). Fail-safe: an errored/absent query ⇒ "none" (re-prompt, never
+ * a false "active").
+ */
+export async function getMyConsentStatusForAdvisor(
+  supabase: SupabaseClient,
+  clientId: string,
+  advisorUserId: string
+): Promise<AdvisorClientConsentStatus> {
+  const { data, error } = await supabase
+    .from("advisor_client_consents")
+    .select("client_user_id,status,created_at,seq")
+    .eq("client_user_id", clientId)
+    .eq("advisor_user_id", advisorUserId);
+  if (error || !data) return "none";
+  return (
+    computeConsentStatuses(data as ConsentEventRow[]).get(clientId) ?? "none"
+  );
 }

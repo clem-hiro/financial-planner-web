@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "vitest run",
     "docs:check": "node scripts/validate-handbook.mjs",
+    "check:scratch-verify": "node scripts/check-scratch-verify-sync.mjs",
     "map": "tsx scripts/function-tree/run.ts",
     "map:check": "tsx scripts/function-tree/check.ts",
     "seed:dev": "node --env-file=.env.local scripts/seed-dev-users.mjs"

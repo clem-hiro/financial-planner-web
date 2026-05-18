@@ -2,10 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { applyAcceptedProposalChanges } from "@/domain/advisor-proposals/apply-changes";
-import {
-  advisorCanReadClient,
-  getClientProfileForAdvisor,
-} from "@/data/repositories/advisor-clients";
+import { getClientProfileForAdvisor } from "@/data/repositories/advisor-clients";
+import { assertConsent } from "@/server/advisor-consent";
 import {
   deleteProposalChangesByEntity,
   deleteProposalChangesBySection,
@@ -60,13 +58,8 @@ async function requireAdvisorDraftProposal(proposalId: string) {
   // Consent-first trust boundary: editing/submitting a draft is "proposing a
   // plan" — blocked until the client (resolved via the proposal row, not
   // client input) has granted active consent.
-  const consentOk = await advisorCanReadClient(supabase, proposal.client_user_id);
-  if (!consentOk) {
-    return {
-      ok: false as const,
-      error: "This client has not granted consent. Suggestions are unavailable until they do.",
-    };
-  }
+  const consent = await assertConsent(supabase, proposal.client_user_id);
+  if (!consent.ok) return { ok: false as const, error: consent.error };
 
   return { ok: true as const, supabase, proposal, advisorUserId: user.id };
 }

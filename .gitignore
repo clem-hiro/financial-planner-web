@@ -49,3 +49,8 @@ next-env.d.ts
 .claude/.simplify-last-run
 .claude-worktree-task.md
 .claude-worktree-completion.md
+
+# bot-generated per-run agent memory / cache (not project tooling — see
+# gitignore-classification rule: per-developer/per-run, no lockfile pin)
+.claude/agent-memory/
+src/features/advisor/.claude/
