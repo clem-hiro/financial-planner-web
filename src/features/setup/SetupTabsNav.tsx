@@ -4,6 +4,7 @@ import {
   appTabPillActiveClass,
   appTabPillClass,
   appTabPillInactiveClass,
+  appTabRailClass,
 } from "@/ui/app-tab-styles";
 
 type SetupTab = {
@@ -23,10 +24,12 @@ export function SetupTabsNav({
   return (
     <nav
       aria-label="Setup sections"
-      className="sticky top-[4.75rem] z-20 py-2 sm:top-[5.5rem]"
+      className="sticky top-14 z-20 -mx-4 bg-white/90 px-4 py-1.5 backdrop-blur-md sm:top-22 sm:mx-0 sm:bg-transparent sm:px-0 sm:py-2"
     >
-      <div className="-mx-1 overflow-x-auto px-1 pb-0.5 scroll-smooth sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
-        <div className="inline-flex min-w-max snap-x items-center gap-1.5 rounded-full bg-white/88 p-1 shadow-[0_14px_40px_rgba(15,23,42,0.12)] ring-1 ring-slate-200/70 backdrop-blur-xl sm:min-w-0 sm:flex-wrap">
+      <div className="scrollbar-hide -mx-1 overflow-x-auto scroll-smooth px-1 pb-0.5 sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
+        <div
+          className={`inline-flex min-w-max snap-x snap-mandatory flex-nowrap items-center gap-2 sm:min-w-0 sm:flex-wrap sm:gap-1.5 ${appTabRailClass} max-sm:rounded-2xl max-sm:border-0 max-sm:bg-transparent max-sm:p-0 max-sm:shadow-none max-sm:ring-0`}
+        >
           {tabs.map((tab) => {
             const href = buildHref(tab.id);
             const isActive = activeTab === tab.id;
@@ -36,8 +39,10 @@ export function SetupTabsNav({
                 href={href}
                 scroll={false}
                 aria-current={isActive ? "page" : undefined}
-                className={`${appTabPillClass} ${
-                  isActive ? appTabPillActiveClass : appTabPillInactiveClass
+                className={`${appTabPillClass} max-sm:min-h-9 max-sm:px-3.5 max-sm:py-1.5 max-sm:text-[13px] ${
+                  isActive
+                    ? appTabPillActiveClass
+                    : `${appTabPillInactiveClass} max-sm:bg-slate-100/80 max-sm:text-slate-500 max-sm:hover:bg-slate-100 max-sm:hover:text-slate-700`
                 }`}
                 style={isActive ? appActiveGradientStyle : undefined}
               >

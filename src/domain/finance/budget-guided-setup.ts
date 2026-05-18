@@ -1,4 +1,5 @@
 import { normalizeCategory } from "./budget";
+import { isDebtBudgetCategory } from "./debt-repayment";
 
 export type LifestyleProfileId =
   | "student"
@@ -26,7 +27,34 @@ export type FoodSpendBandId =
   | "above_1000"
   | "unknown";
 
+export const FOOD_SPEND_BAND_PRESETS: ReadonlyArray<{
+  id: FoodSpendBandId;
+  label: string;
+}> = [
+  { id: "under_300", label: "Under S$300" },
+  { id: "range_300_600", label: "S$300–600" },
+  { id: "range_600_1000", label: "S$600–1,000" },
+  { id: "above_1000", label: "Above S$1,000" },
+  { id: "unknown", label: "Not sure yet" },
+];
+
 export type BudgetSpendBucket = "needs" | "wants" | "savings";
+
+/** Debt repayment and income-tax lines are kept when re-applying a guided budget. */
+export function isPreservedOnGuidedBudgetReplace(categoryRaw: string): boolean {
+  const k = categoryRaw.trim().toLowerCase();
+  if (k.startsWith("income tax")) return true;
+  return isDebtBudgetCategory(categoryRaw);
+}
+
+export function countReplaceableMonthlyBudgetLines(
+  lines: ReadonlyArray<{ cadence: string; category: string }>
+): number {
+  return lines.filter(
+    (l) =>
+      l.cadence === "monthly" && !isPreservedOnGuidedBudgetReplace(l.category)
+  ).length;
+}
 
 /** Wants / needs / savings shares (sum = 1). `custom` mirrors balanced until bespoke splits exist. */
 export function strategyNeedsWantsSavings(

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   generateGuidedMonthlyBudgetLines,
+  isPreservedOnGuidedBudgetReplace,
   strategyNeedsWantsSavings,
   sumBucketAmounts,
 } from "./budget-guided-setup";
@@ -16,6 +17,16 @@ describe("strategyNeedsWantsSavings", () => {
       const v = strategyNeedsWantsSavings(s);
       expect(v.needs + v.wants + v.savings).toBeCloseTo(1, 5);
     }
+  });
+});
+
+describe("isPreservedOnGuidedBudgetReplace", () => {
+  it("preserves debt and income tax categories", () => {
+    expect(isPreservedOnGuidedBudgetReplace("housing")).toBe(false);
+    expect(
+      isPreservedOnGuidedBudgetReplace("debt repayments — car loan")
+    ).toBe(true);
+    expect(isPreservedOnGuidedBudgetReplace("Income tax (GIRO)")).toBe(true);
   });
 });
 

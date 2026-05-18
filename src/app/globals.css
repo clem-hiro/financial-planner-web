@@ -53,3 +53,12 @@ body {
 dialog::backdrop {
   background-color: rgba(15, 23, 42, 0.5);
 }
+
+/* Horizontally scrollable tab rails — hide scrollbar while keeping touch scroll. */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
