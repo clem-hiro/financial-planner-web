@@ -15,6 +15,22 @@ export async function listVehicles(
   return (data ?? []) as VehicleRow[];
 }
 
+/**
+ * Consent-gated advisor read. Drop-in for `listVehicles` on the advisor path:
+ * RPC `returns setof financial_vehicles` ⇒ identical `VehicleRow` shape. Not
+ * consented ⇒ zero rows (fail-closed).
+ */
+export async function advisorReadVehicles(
+  supabase: SupabaseClient,
+  clientId: string
+): Promise<VehicleRow[]> {
+  const { data, error } = await supabase.rpc("advisor_read_vehicles", {
+    p_client: clientId,
+  });
+  if (error) throw error;
+  return (data ?? []) as VehicleRow[];
+}
+
 export type VehicleInsert = {
   label: string;
   vehicle_status: "active" | "planned";

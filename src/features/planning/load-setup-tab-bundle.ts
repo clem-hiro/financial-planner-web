@@ -1,13 +1,34 @@
 import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { getCpfBalanceByUserId } from "@/data/repositories/cpf-balances";
-import { listCashAccounts } from "@/data/repositories/cash-accounts";
-import { listHousingLoans } from "@/data/repositories/housing-loans";
-import { listInvestments } from "@/data/repositories/investments";
-import { listLiabilities } from "@/data/repositories/liabilities";
-import { listFinancialGoals } from "@/data/repositories/goals";
-import { listVehicles } from "@/data/repositories/vehicles";
+import {
+  getCpfBalanceByUserId,
+  advisorReadCpfBalances,
+} from "@/data/repositories/cpf-balances";
+import {
+  listCashAccounts,
+  advisorReadCashAccounts,
+} from "@/data/repositories/cash-accounts";
+import {
+  listHousingLoans,
+  advisorReadHousingLoans,
+} from "@/data/repositories/housing-loans";
+import {
+  listInvestments,
+  advisorReadInvestments,
+} from "@/data/repositories/investments";
+import {
+  listLiabilities,
+  advisorReadLiabilities,
+} from "@/data/repositories/liabilities";
+import {
+  listFinancialGoals,
+  advisorReadGoals,
+} from "@/data/repositories/goals";
+import {
+  listVehicles,
+  advisorReadVehicles,
+} from "@/data/repositories/vehicles";
 import type {
   CashAccountRow,
   CpfBalanceRow,
@@ -32,12 +53,19 @@ export type SetupTabBundle = {
  * Loads repository data for one or more financial-setup tabs in a single round trip.
  * Mirrors the conditional fetching in `(app)/setup/page.tsx` so planning workspaces
  * can compose multiple tabs without changing business logic.
+ *
+ * P2-D1 consent chokepoint: `viewer:"advisor"` routes every table read through
+ * the SECURITY DEFINER `advisor_read_*` RPCs with `userId` as the client id
+ * (fail-closed empty when not consented). Absent ⇒ unchanged self `.from()`
+ * path — byte-identical for every existing caller (all pass self today).
  */
 export async function loadSetupTabBundle(
   supabase: SupabaseClient,
   userId: string,
-  tabs: ReadonlySet<string>
+  tabs: ReadonlySet<string>,
+  viewer?: "advisor"
 ): Promise<SetupTabBundle> {
+  const isAdvisorViewer = viewer === "advisor";
   const needInvestments =
     tabs.has("add-account") || tabs.has("goals");
   const needCash = tabs.has("cash-liabilities");
@@ -57,25 +85,46 @@ export async function loadSetupTabBundle(
     goals,
   ] = await Promise.all([
     needInvestments
-      ? listInvestments(supabase, userId)
+      ? (isAdvisorViewer ? advisorReadInvestments : listInvestments)(
+          supabase,
+          userId
+        )
       : Promise.resolve([] as InvestmentRow[]),
     needCash
-      ? listCashAccounts(supabase, userId)
+      ? (isAdvisorViewer ? advisorReadCashAccounts : listCashAccounts)(
+          supabase,
+          userId
+        )
       : Promise.resolve([] as CashAccountRow[]),
     needLiabilities
-      ? listLiabilities(supabase, userId)
+      ? (isAdvisorViewer ? advisorReadLiabilities : listLiabilities)(
+          supabase,
+          userId
+        )
       : Promise.resolve([] as LiabilityRow[]),
     needVehicles
-      ? listVehicles(supabase, userId)
+      ? (isAdvisorViewer ? advisorReadVehicles : listVehicles)(
+          supabase,
+          userId
+        )
       : Promise.resolve([] as VehicleRow[]),
     needCpf
-      ? getCpfBalanceByUserId(supabase, userId)
+      ? (isAdvisorViewer ? advisorReadCpfBalances : getCpfBalanceByUserId)(
+          supabase,
+          userId
+        )
       : Promise.resolve(null),
     needHousing
-      ? listHousingLoans(supabase, userId)
+      ? (isAdvisorViewer ? advisorReadHousingLoans : listHousingLoans)(
+          supabase,
+          userId
+        )
       : Promise.resolve([] as HousingLoanRow[]),
     needGoals
-      ? listFinancialGoals(supabase, userId)
+      ? (isAdvisorViewer ? advisorReadGoals : listFinancialGoals)(
+          supabase,
+          userId
+        )
       : Promise.resolve([] as FinancialGoalRow[]),
   ]);
 

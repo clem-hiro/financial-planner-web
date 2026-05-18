@@ -43,6 +43,22 @@ export async function listLiabilities(
   return (data ?? []) as LiabilityRow[];
 }
 
+/**
+ * Consent-gated advisor read. Drop-in for `listLiabilities` on the advisor
+ * path: RPC `returns setof financial_liabilities` ⇒ identical `LiabilityRow`
+ * shape. Not consented ⇒ zero rows (fail-closed).
+ */
+export async function advisorReadLiabilities(
+  supabase: SupabaseClient,
+  clientId: string
+): Promise<LiabilityRow[]> {
+  const { data, error } = await supabase.rpc("advisor_read_liabilities", {
+    p_client: clientId,
+  });
+  if (error) throw error;
+  return (data ?? []) as LiabilityRow[];
+}
+
 export async function insertLiability(
   supabase: SupabaseClient,
   userId: string,

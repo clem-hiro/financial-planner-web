@@ -14,6 +14,22 @@ export async function listCashAccounts(
   return (data ?? []) as CashAccountRow[];
 }
 
+/**
+ * Consent-gated advisor read. Drop-in for `listCashAccounts` on the advisor
+ * path: RPC `returns setof financial_cash_accounts` ⇒ identical
+ * `CashAccountRow` shape. Not consented ⇒ zero rows (fail-closed).
+ */
+export async function advisorReadCashAccounts(
+  supabase: SupabaseClient,
+  clientId: string
+): Promise<CashAccountRow[]> {
+  const { data, error } = await supabase.rpc("advisor_read_cash_accounts", {
+    p_client: clientId,
+  });
+  if (error) throw error;
+  return (data ?? []) as CashAccountRow[];
+}
+
 export async function insertCashAccount(
   supabase: SupabaseClient,
   userId: string,

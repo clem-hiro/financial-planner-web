@@ -103,3 +103,36 @@ No jsdom/@testing-library in the repo, so these are manual on a Vercel preview
 - **12**: the scan view renders the calm banner "You're connecting with
   **<Advisor display name>**" above the form before the user signs up; an
   invalid/expired token shows no banner (peek returns nothing).
+
+---
+
+# Consent-Gate Phase 2 — scratch verifier
+
+`advisor_consent_scenarios.sql` is the canonical operator runbook (S1–S11).
+`scratch_verify_phase2.sql` is a **single paste-once** script for the Supabase
+SQL editor: precondition guard → the FULL amended
+`20260529000000_advisor_consent_phase2.sql` (embedded **verbatim**, applied and
+NOT rolled back — it is the test target) → self-contained synthetic scenarios
+S6–S12 (`begin … rollback`) → `select public.verify_consent_gated_access() as
+ship_gate;`.
+
+Run **on the scratch project only** (applies real DDL; never prod). It needs
+only the Phase-1 schema (`20260528000000`) present — data may be empty; every
+scenario builds its own synthetic fixtures. Read `SCENARIO Sx: PASS` lines and
+the final `ship_gate = OK`; any failure `raise exception`s and aborts.
+
+### Embedded-migration drift guard (CI / pre-amend)
+
+The migration is duplicated inside `scratch_verify_phase2.sql` (necessary for
+paste-once). After **any** edit to `20260529000000_advisor_consent_phase2.sql`,
+re-embed it (replace the block between the `(b) BEGIN embedded` framing and the
+`-- END embedded 20260529000000.` line with the new canonical contents,
+byte-identical) and run:
+
+```bash
+npm run check:scratch-verify
+```
+
+It fails loudly (with the first divergent migration line) if the embedded copy
+is stale — so the scratch gate can never validate out-of-date DDL and report a
+false `ship_gate = OK`.

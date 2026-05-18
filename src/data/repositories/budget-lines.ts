@@ -16,6 +16,22 @@ export async function listBudgetLines(
   return (data ?? []) as BudgetLineRow[];
 }
 
+/**
+ * Consent-gated advisor read. Drop-in for `listBudgetLines` on the advisor
+ * path: RPC `returns setof financial_budget_lines` ⇒ identical `BudgetLineRow`
+ * shape. Not consented ⇒ zero rows (fail-closed).
+ */
+export async function advisorReadBudgetLines(
+  supabase: SupabaseClient,
+  clientId: string
+): Promise<BudgetLineRow[]> {
+  const { data, error } = await supabase.rpc("advisor_read_budget_lines", {
+    p_client: clientId,
+  });
+  if (error) throw error;
+  return (data ?? []) as BudgetLineRow[];
+}
+
 export async function getBudgetLineBySourceLiabilityId(
   supabase: SupabaseClient,
   userId: string,
