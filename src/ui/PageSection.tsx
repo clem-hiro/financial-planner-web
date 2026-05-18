@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { appBrandNavyTextStyle } from "@/ui/app-tab-styles";
 import { appCardClass, appCardPadding, appEmeraldPanelClass } from "@/ui/surface-classes";
 
 type PageSectionProps = {
@@ -27,7 +28,7 @@ export function PageSection({
 
   const titleClass = isEmerald
     ? "text-lg font-semibold tracking-tight text-emerald-950"
-    : "text-lg font-semibold tracking-tight text-[#0c192f]";
+    : "text-lg font-semibold tracking-tight";
   const descClass = isEmerald
     ? "mt-2 text-sm leading-relaxed text-emerald-900/85"
     : "mt-2 text-sm leading-relaxed text-slate-600";
@@ -41,7 +42,12 @@ export function PageSection({
 
   const header = (
     <div className="flex flex-wrap items-baseline justify-between gap-2">
-      <h2 className={titleClass}>{title}</h2>
+      <h2
+        className={titleClass}
+        style={isEmerald ? undefined : appBrandNavyTextStyle}
+      >
+        {title}
+      </h2>
       {actions ? (
         <div className="flex flex-wrap items-center gap-2">{actions}</div>
       ) : null}
