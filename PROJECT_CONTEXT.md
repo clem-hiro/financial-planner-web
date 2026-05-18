@@ -387,4 +387,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 - **Not in scope:** live CPF APIs, actuarial CPF LIFE, exhaustive withdrawal rules.
 - **Future:** persist advisor/client assumption presets; tie RA balance into retirement sustainability / spend coverage; inflation on payouts.
 
-_Last reviewed (2026-05-19): **Asset-first housing** — `financial_properties`, linked mortgages via `property_id`, Housing tab + property-first form, legacy loan backfill; projection/CPF paths unchanged on `financial_housing_loans`. Prior: CPF-aware instalment `payment_source` (same day)._
+_Last reviewed (2026-05-19): **Asset-first housing** — `financial_properties`, linked mortgages via `property_id`, Housing tab + property-first form, legacy loan backfill; projection/CPF paths unchanged on `financial_housing_loans`. Prior (2026-05-18): **Consent-gate Phase 2 SHIPPED** — advisor→client reads via `advisor_read_*` RPCs; client consent on `/more` + shell banner; migration `20260529000000` on prod with `verify_consent_gated_access() = OK`._
