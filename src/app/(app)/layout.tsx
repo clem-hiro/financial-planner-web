@@ -1,5 +1,9 @@
 import { Suspense } from "react";
-import { getRequestAuth } from "@/data/supabase/request-context";
+import {
+  getRequestAuth,
+  getSupabaseServerClient,
+} from "@/data/supabase/request-context";
+import { ensureAndCheckClientConsentPrompt } from "@/server/inbox/ensure-advisor-consent-notification";
 import { AppShell } from "@/features/app-shell/AppShell";
 import {
   AppShellInbox,
@@ -19,6 +23,7 @@ export default async function AppLayout({
   let profile = null;
   let workspace: "client" | "advisor" = "client";
   let inboxSlot: React.ReactNode = null;
+  let clientConsentNeeded = false;
 
   if (isSupabaseConfigured()) {
     const auth = await getRequestAuth();
@@ -31,6 +36,13 @@ export default async function AppLayout({
           <AppShellInbox userId={user.id} profile={profile} />
         </Suspense>
       );
+      // Ensure the re-consent inbox prompt + drive the shell banner. Non-
+      // client / unlinked short-circuits with zero DB hops.
+      const supabase = await getSupabaseServerClient();
+      clientConsentNeeded = await ensureAndCheckClientConsentPrompt(
+        supabase,
+        profile
+      );
     }
   }
 
@@ -40,6 +52,7 @@ export default async function AppLayout({
       profile={profile}
       workspace={workspace}
       inboxSlot={inboxSlot}
+      clientConsentNeeded={clientConsentNeeded}
     >
       {children}
     </AppShell>

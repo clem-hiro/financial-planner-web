@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import type { ProfileRow } from "@/data/supabase/types";
 import { AdvisorPhonePromptBanner } from "@/features/app-shell/AdvisorPhonePromptBanner";
+import { ClientConsentBanner } from "@/features/app-shell/ClientConsentBanner";
 import { AppShellNav } from "@/features/app-shell/AppShellNav";
 import { AppShellUserMenu } from "@/features/app-shell/AppShellUserMenu";
 import { MethodologySheet } from "@/features/help/MethodologySheet";
@@ -17,6 +18,7 @@ export function AppShell({
   profile,
   workspace,
   inboxSlot,
+  clientConsentNeeded = false,
   children,
 }: {
   user: User | null;
@@ -25,6 +27,8 @@ export function AppShell({
   workspace: "client" | "advisor";
   /** Inbox bell loaded in Suspense so page content can stream first. */
   inboxSlot: React.ReactNode;
+  /** Linked client whose latest consent event is not active (server-resolved). */
+  clientConsentNeeded?: boolean;
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -105,6 +109,9 @@ export function AppShell({
           </div>
           {user && workspace === "advisor" ? (
             <AdvisorPhonePromptBanner user={user} />
+          ) : null}
+          {user && workspace === "client" && clientConsentNeeded ? (
+            <ClientConsentBanner />
           ) : null}
         </header>
         <main

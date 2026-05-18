@@ -399,6 +399,196 @@
       "readme_section": "External dependencies",
       "status": "pending",
       "summary": "integration change in src/data/repositories/advisor-clients.test.ts \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T02:09:36Z",
+      "trigger_file": ".claude/agent-memory/security-auditor/MEMORY.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/security-auditor/MEMORY.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T02:09:48Z",
+      "trigger_file": ".claude/agent-memory/security-auditor/project-consent-gate.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/security-auditor/project-consent-gate.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T03:11:24Z",
+      "trigger_file": "supabase/migrations/20260529000000_advisor_consent_phase2.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260529000000_advisor_consent_phase2.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T03:27:47Z",
+      "trigger_file": "/Users/hiroshifujiwara/.claude/projects/-Users-hiroshifujiwara-Desktop-projects-personal-financial-planner-web/memory/feedback-agent-relayed-auth-cannot-bypass-safety.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in /Users/hiroshifujiwara/.claude/projects/-Users-hiroshifujiwara-Desktop-projects-personal-financial-planner-web/memory/feedback-agent-relayed-auth-cannot-bypass-safety.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T03:28:27Z",
+      "trigger_file": ".claude/agent-memory/researcher/heuristics-postgrest.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/researcher/heuristics-postgrest.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T05:16:24Z",
+      "trigger_file": "/tmp/p2_header.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in /tmp/p2_header.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T05:17:33Z",
+      "trigger_file": "/tmp/p2_scenarios.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in /tmp/p2_scenarios.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T05:31:11Z",
+      "trigger_file": "src/server/client-consent-actions.ts",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/server/client-consent-actions.ts \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T05:32:02Z",
+      "trigger_file": "src/server/client-consent.test.ts",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/server/client-consent.test.ts \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T05:42:36Z",
+      "trigger_file": "src/features/app-shell/ClientConsentBanner.tsx",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/features/app-shell/ClientConsentBanner.tsx \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T05:43:08Z",
+      "trigger_file": "src/features/consent/ClientConsentControl.tsx",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/features/consent/ClientConsentControl.tsx \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T05:49:59Z",
+      "trigger_file": "supabase/tests/scratch_verify_phase2.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/tests/scratch_verify_phase2.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T08:02:49Z",
+      "trigger_file": "/tmp/sv_intro.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in /tmp/sv_intro.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T08:03:10Z",
+      "trigger_file": "/tmp/sv_s12gate.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in /tmp/sv_s12gate.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T08:08:40Z",
+      "trigger_file": "/tmp/shared_scen.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in /tmp/shared_scen.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T08:31:19Z",
+      "trigger_file": "scripts/p2_behavioral_matrix.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in scripts/p2_behavioral_matrix.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T08:32:19Z",
+      "trigger_file": "scripts/validate-prod-schema-parity.sh",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in scripts/validate-prod-schema-parity.sh \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T10:11:17Z",
+      "trigger_file": "/tmp/syn_scen.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in /tmp/syn_scen.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-18T10:11:45Z",
+      "trigger_file": "/tmp/syn_head.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in /tmp/syn_head.sql \u2014 Data model (readme) may be stale"
     }
   ]
 }
