@@ -67,7 +67,7 @@ export function AppShell({
                 href={brandHref}
                 className="shrink-0 text-lg font-semibold tracking-tight text-[#0c192f] transition-opacity hover:opacity-80 sm:text-xl"
               >
-                Finance Planner
+                BYOFA Planner
               </Link>
               <span className="hidden max-w-40 text-[11px] font-medium uppercase leading-snug tracking-[0.18em] text-slate-400 sm:inline md:max-w-xs">
                 {workspace === "advisor"
@@ -89,6 +89,7 @@ export function AppShell({
               {user ? (
                 <AppShellUserMenu
                   user={user}
+                  displayName={profile?.display_name?.trim() || null}
                   inboxSlot={inboxSlot}
                   showContactAdvisor={showMainAppNav && workspace === "client"}
                 />
