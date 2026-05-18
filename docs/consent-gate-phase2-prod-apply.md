@@ -12,6 +12,44 @@ This file is self-contained and copy-pasteable — you do not need the agent to 
 
 ---
 
+## ⚠ Cutover order — LOAD-BEARING (read this first)
+
+**This is the single highest-risk decision in the whole cutover. Use exactly
+this order, and do steps 1→3 in one focused sitting to minimize the transient
+advisor window.**
+
+1. **Apply migration `20260529000000` to PROD** (§2) — **FIRST**.
+2. **Verify on PROD**: `select public.verify_consent_gated_access();` → `OK`
+   (plus the rest of §3) — the gate of record.
+3. **Deploy the Phase-2 app**: squash `sandbox`→`main`; Vercel auto-deploys
+   `main` (§5.3).
+4. Back-merge `origin/main`→`sandbox` (§5.3); then PROJECT_CONTEXT + BYOFA
+   (§5.1–5.2).
+
+**Why migration FIRST (fail-closed rationale):** the migration drops the
+legacy advisor cross-user `financial_*` RLS policies. The app **currently on
+prod** reads advisor→client data *through those policies* (direct
+`.from('financial_*')`); the **Phase-2 app** (not yet deployed) reads through
+the new `advisor_read_*` RPCs.
+
+- **Migration-first intermediate state** (migration applied, old app still
+  live until the deploy lands): advisor reads on the 10 tables return
+  **0 rows — fail-closed, NO data leak**. Client self-data and the rest of the
+  app are **fully unaffected** (client `id/user_id = auth.uid()` self-policies
+  are NOT dropped — only advisor cross-user ones). Predictable and safe; ends
+  the moment the deploy is live.
+- **Deploy-first (DO NOT)**: the new app would call `advisor_read_*` RPCs that
+  don't exist yet **and** select the `seq` column that doesn't exist yet →
+  **hard errors on both** the advisor surface and the client consent UI.
+  Strictly worse than migration-first.
+
+The transient advisor-empty window is inherent to this migration being atomic
+(add-RPCs + drop-legacy-policies in one reviewer-approved file) — it is not an
+oversight, and fail-closed makes it acceptable. **At no point in the entire
+sequence is there a data leak — the system only ever moves toward deny.**
+
+---
+
 ## 0. Scope
 
 - **What this applies:** Phase 2 — the consent chokepoint completion: `seq bigint generated always
@@ -31,43 +69,33 @@ This file is self-contained and copy-pasteable — you do not need the agent to 
 
 Do **not** proceed past this section until every box is checked.
 
-- [ ] **G1 — PDPA legal copy is real (HARD #9 gate).**
-  `src/server/advisor-consent.ts` ships `CONSENT_TEXT` / `CONSENT_VERSION` as a flagged
-  **placeholder** (see the `⚠ TODO(product/legal)` block, ~lines 18–26: `CONSENT_VERSION = "v1"`,
-  placeholder `CONSENT_TEXT`). Serving placeholder legal copy to real users is **not acceptable**.
-  Before prod apply: the reviewed PDPA disclosure text replaces the placeholder and
-  `CONSENT_VERSION` is set to the approved version string. Per-event `consent_text`/`consent_version`
-  recording keeps prior grants attributable, so bumping the version is safe and intended.
-  _Verify:_ open `src/server/advisor-consent.ts`, confirm the `⚠ TODO(product/legal)` placeholder
-  block is gone and the text is the legal-approved copy.
+- [x] **G1 — PDPA legal copy is real (HARD #9 gate). ✅ RESOLVED & user-CONFIRMED
+  (2026-05-18).** `src/server/advisor-consent.ts` ships the user-approved Option-B
+  disclosure (placeholder + `⚠ TODO(product/legal)` block removed). `{adviserName}` is the
+  only interpolation, server-resolved from the client's own advisor linkage (never
+  client/form input). Per-event `consent_text`/`consent_version` recording keeps prior
+  grants attributable.
 
-  - [ ] **G1a — `CONSENT_VERSION` string is user-confirmed.** It is recorded per consent
-    event for legal attributability and must be a stable, dated identifier. **Proposed
-    (pending user confirmation): `2026-05-18.option-b`.** Do not prod-apply until the user
-    confirms the exact version string.
-  - [ ] **G1b — supporting helper line is user-confirmed.** A small non-legal helper line
-    shown beneath the consent text (withdrawal-location pointer). **Proposed (pending user
-    confirmation): "Manage or withdraw this anytime in More → Privacy & Advisor Access."**
-    This is functional UX copy, not legal language — user confirms wording before prod apply.
-  - [ ] **G1c — recorded `consent_text` is the RENDERED string.** The canonical copy is a
-    template with a single `{adviserName}` interpolation, server-resolved from the client's
-    own advisor linkage (never client/form input). The per-event `consent_text` stores the
-    **rendered** string (with the actual resolved adviser name) — that is the exact text the
-    client agreed to. Confirm this is the recorded form (not the raw template).
+  - [x] **G1a — `CONSENT_VERSION` — CONFIRMED `2026-05-18.option-b`** (stable dated
+    identifier, recorded per consent event for legal attributability).
+  - [x] **G1b — supporting helper line — CONFIRMED**: "Manage or withdraw this anytime in
+    More → Privacy & Advisor Access." (functional UX copy, not legal language).
+  - [x] **G1c — recorded `consent_text` is the RENDERED string** (with the actual resolved
+    adviser name) — the exact text the client agreed to, not the raw template. Implemented
+    and reviewer-PASSED.
 
-- [ ] **G2 — Step-0 migration-dup reconciliation is done (#8, LEAD-GATED).**
-  The standing byte-identical `profile_expense_growth_nominal` duplicate-prefix pair (cash-flow
-  co-dev merge provenance) was reconciled on 2026-05-18 with a CleAyz heads-up: the dead
-  byte-identical copy deleted, the surviving file renamed to a free unique prefix
-  (`20260525000001_profile_expense_growth_nominal.sql`), and INVARIANTS.md updated. Filename
-  hygiene only — no prod change (the column is already applied; the migrations are idempotent).
-  **This step is lead-coordinated and gated on the CleAyz heads-up — do not perform it ad hoc.**
-  Only confirm here that the lead has reported it complete on a clean branch.
+- [x] **G2 — Migration-prefix reconciliation DONE & pushed (2026-05-18).** Step-0
+  (`71dbd6c`): the byte-identical `profile_expense_growth_nominal` dup deleted, survivor
+  renamed to `20260525000001`. Plus #12 (`704f023`): the two remaining DISTINCT dup-prefix
+  pairs reconciled rename-only (`…_vehicle_loan_simple_remaining`→`20260427000001`;
+  unreferenced `…_budget_onboarding_profile_extensions`→`20260512000003`; consent-adjacent
+  `…_advisor_select_linked_clients` left untouched). INVARIANTS.md updated. Both commits on
+  `origin/sandbox`. Filename hygiene only — no prod change (idempotent / already-applied).
 
 - [ ] **G3 — Scratch verification is GREEN and the branch is clean.**
-  On a `sandbox`-synced branch (merged with `origin/main`, **never rebased**), with the working
-  tree clean (`git status --porcelain` empty except intended Phase-2 files):
-  - `npm test` → 305/305 pass
+  Phase-2 is committed and pushed to `origin/sandbox` (`sandbox` in sync — merged with
+  co-dev via **merge, never rebase**; working tree clean). Re-confirm on the synced branch:
+  - `npm test` → **316/316** pass (post co-dev merge; was 305 pre-merge)
   - `npm run check:scratch-verify` → `OK: ... embedded byte-identical ...`
   - The scratch verifier has been run by you in a **throwaway/scratch** Supabase SQL editor
     (paste `supabase/tests/scratch_verify_phase2.sql` whole) and the final row reads
@@ -77,6 +105,14 @@ Do **not** proceed past this section until every box is checked.
 ---
 
 ## 2. The exact prod apply
+
+> ⚠ **PROD PROJECT — pick the right Supabase project.** This script
+> (`20260529000000_advisor_consent_phase2.sql`) **IS for production** — it is
+> the *opposite* of `supabase/tests/scratch_verify_phase2.sql`, which must
+> **NEVER** touch prod and runs **only** in a throwaway/scratch clone.
+> Double-check the project switcher reads the **production** project before
+> you paste. Pasting the scratch verifier into prod, or this migration into
+> the wrong project, is the failure this callout exists to prevent.
 
 1. Open the **production** Supabase project → **SQL Editor** → new query.
 2. Open `supabase/migrations/20260529000000_advisor_consent_phase2.sql` from the **branch you
@@ -164,8 +200,9 @@ items). All ten must hold; most are proven mechanically by §3.
    per-row `advisor_can_read_client` (identity-only for non-consented) — scratch S8 PASS + §3c.
 8. **Linkage is consent-independent**: `advisor_linked_client` returns the linked client without
    consent; `advisor_read_profile` stays gated — scratch S10 PASS.
-9. **PDPA legal copy is real** (G1) — `CONSENT_TEXT`/`CONSENT_VERSION` are the approved values,
-   not the placeholder.
+9. **PDPA legal copy is real — ✅ CONFIRMED (G1)** — `CONSENT_TEXT` is the user-approved
+   Option-B disclosure; `CONSENT_VERSION = "2026-05-18.option-b"` (user-confirmed
+   2026-05-18). Not the placeholder.
 10. **Ship gate returns `OK` on prod** — §3a. This is the data-independent final gate; it RAISEs
     on any regression of items 1–3.
 
