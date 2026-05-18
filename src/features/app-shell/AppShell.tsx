@@ -6,7 +6,10 @@ import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import type { ProfileRow } from "@/data/supabase/types";
 import { AdvisorPhonePromptBanner } from "@/features/app-shell/AdvisorPhonePromptBanner";
-import { AppShellNav } from "@/features/app-shell/AppShellNav";
+import {
+  AppShellDesktopNav,
+  AppShellMobileNav,
+} from "@/features/app-shell/AppShellNav";
 import { AppShellUserMenu } from "@/features/app-shell/AppShellUserMenu";
 import { MethodologySheet } from "@/features/help/MethodologySheet";
 import { MethodologyProvider } from "@/features/help/methodology-context";
@@ -58,14 +61,20 @@ export function AppShell({
           }`}
         >
           <div
-            className={`mx-auto flex w-full max-w-6xl items-center gap-3 px-4 py-3 sm:gap-4 sm:px-8 sm:py-5 ${
-              user && showMainAppNav ? "" : "justify-between"
+            className={`mx-auto flex min-h-14 w-full max-w-6xl items-center gap-2 px-4 py-2.5 sm:min-h-0 sm:gap-4 sm:px-8 sm:py-5 ${
+              user && showMainAppNav ? "justify-between sm:justify-start" : "justify-between"
             }`}
           >
-            <div className="flex shrink-0 flex-col gap-1 self-center sm:flex-row sm:items-baseline sm:gap-4">
+            <div className="flex min-w-0 items-center gap-2.5 sm:gap-4">
+              {showMainAppNav ? (
+                <div className="shrink-0 sm:hidden">
+                  <AppShellMobileNav />
+                </div>
+              ) : null}
+              <div className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:gap-4">
               <Link
                 href={brandHref}
-                className="shrink-0 text-lg font-semibold tracking-tight text-[#0c192f] transition-opacity hover:opacity-80 sm:text-xl"
+                className="truncate text-base font-semibold tracking-tight text-[#0c192f] transition-opacity hover:opacity-80 sm:text-xl"
               >
                 BYOFA Planner
               </Link>
@@ -74,10 +83,11 @@ export function AppShell({
                   ? "Advisor workspace"
                   : "Private wealth clarity"}
               </span>
+              </div>
             </div>
             {showMainAppNav ? (
-              <div className="min-h-0 min-w-0 flex-1 overflow-x-auto">
-                <AppShellNav workspace={workspace} />
+              <div className="hidden min-h-0 min-w-0 flex-1 justify-center overflow-x-auto sm:flex">
+                <AppShellDesktopNav />
               </div>
             ) : null}
             <div className="flex shrink-0 items-center gap-2">
@@ -108,7 +118,7 @@ export function AppShell({
           ) : null}
         </header>
         <main
-          className={`mx-auto w-full flex-1 px-4 py-10 sm:px-8 sm:py-14 lg:py-16 ${
+          className={`mx-auto w-full flex-1 px-4 py-6 sm:px-8 sm:py-14 lg:py-16 ${
             workspace === "advisor" ? "max-w-7xl" : "max-w-6xl"
           }`}
         >

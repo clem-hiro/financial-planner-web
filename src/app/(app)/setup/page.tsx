@@ -156,9 +156,11 @@ export default async function SetupPage({ searchParams }: PageProps) {
   }));
 
   return (
-    <div className="space-y-8">
-      <div className="rounded-2xl border border-slate-200 bg-white px-5 py-5 shadow-sm sm:px-6">
-        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900">Financial setup</h1>
+    <div className="flex flex-col gap-5 sm:gap-8">
+      <div className="order-1 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm sm:px-6 sm:py-5">
+        <h1 className="text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl">
+          Financial setup
+        </h1>
         <p className="mt-1 text-sm text-zinc-600">
           Keep balances, budgets, savings goals, and profile assumptions in one place.
         </p>
@@ -169,31 +171,15 @@ export default async function SetupPage({ searchParams }: PageProps) {
         </p>
       </div>
 
-      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Core setup</p>
-          <p className="mt-1 text-sm text-slate-700">Profile, CPF, balances, budget, goals.</p>
-        </div>
-        <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Risk scoring</p>
-          <p className="mt-1 text-sm text-slate-700">Coming Soon</p>
-        </div>
-        <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Portfolio insights</p>
-          <p className="mt-1 text-sm text-slate-700">Work in Progress</p>
-        </div>
-        <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Automation</p>
-          <p className="mt-1 text-sm text-slate-700">Coming Soon</p>
-        </div>
-      </section>
+      <div className="order-2 sm:order-3">
+        <SetupTabsNav
+          tabs={setupTabs}
+          activeTab={activeTab}
+          buildHref={(tabId) => setupTabPath(tabId, sp)}
+        />
+      </div>
 
-      <SetupTabsNav
-        tabs={setupTabs}
-        activeTab={activeTab}
-        buildHref={(tabId) => setupTabPath(tabId, sp)}
-      />
-
+      <div className="order-3 flex flex-col gap-5 sm:order-4 sm:gap-8">
       {activeTab === "profile" ? (
         <div className="transition-opacity duration-150 ease-out">
           <PageSection id="profile-assumptions" title="Profile basics">
@@ -392,6 +378,36 @@ export default async function SetupPage({ searchParams }: PageProps) {
           />
         </div>
       ) : null}
+      </div>
+
+      <section className="order-4 grid gap-2.5 sm:order-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
+        <div className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs">
+            Core setup
+          </p>
+          <p className="mt-0.5 text-sm text-slate-700 sm:mt-1">
+            Profile, CPF, balances, budget, goals.
+          </p>
+        </div>
+        <div className="rounded-xl border border-dashed border-slate-300/90 bg-slate-50/90 p-3 sm:p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 sm:text-xs">
+            Risk scoring
+          </p>
+          <p className="mt-0.5 text-sm font-medium text-slate-500 sm:mt-1">Coming soon</p>
+        </div>
+        <div className="rounded-xl border border-dashed border-slate-300/90 bg-slate-50/90 p-3 sm:p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 sm:text-xs">
+            Portfolio insights
+          </p>
+          <p className="mt-0.5 text-sm font-medium text-slate-500 sm:mt-1">Work in progress</p>
+        </div>
+        <div className="rounded-xl border border-dashed border-slate-300/90 bg-slate-50/90 p-3 sm:p-4">
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 sm:text-xs">
+            Automation
+          </p>
+          <p className="mt-0.5 text-sm font-medium text-slate-500 sm:mt-1">Coming soon</p>
+        </div>
+      </section>
     </div>
   );
 }

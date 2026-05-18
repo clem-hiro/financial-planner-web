@@ -70,7 +70,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | QR / link invite sharing for access keys | **Partial** | Share URL + QR for client signup; known single-use / expiry edge cases (`qr_token_invalid`). |
 | Contact advisor (WhatsApp) | **Shipped** | Client shell **Contact advisor**; `get_my_advisor_contact()` after advisor phone verification. |
 | `/account-issue` when client `advisor_user_id` missing | **Shipped** | Data-integrity / support path. |
-| **Client UI v2** shell: Home, Planning, Activity, More | **Shipped** | `AppShell`, `AppShellNav`; version label `src/lib/client-release.ts`, shown on `/more`. |
+| **Client UI v2** shell: Home, Planning, Activity, More | **Shipped** | `AppShell`, `AppShellNav` (`AppShellMobileNav` / `AppShellDesktopNav`); mobile header + scrollable setup tabs; version label `src/lib/client-release.ts`, shown on `/more`. |
 | Classic URL redirects to v2 IA | **Shipped** | `/balances` → wealth, `/budget` → cash-flow, etc. |
 | Email confirmation redirect `/auth/callback` | **Shipped** | `src/app/auth/callback/route.ts` — exchanges the one-time `code` for a session via `supabase.auth.exchangeCodeForSession`, then redirects (default `/dashboard`; middleware then routes by role). Required when Supabase **Confirm Email** is ON. Doubles as the landing for magic-link / OAuth flows if those are added later. |
 | Review advisor-proposed plan changes | **Shipped** | Full-page **`/review/proposal/[id]`** — before/after by section, advisor note, accept/reject. Canonical tracker updates only on accept. |
@@ -110,7 +110,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | Financial goals (targets, contributions) | **Shipped** | Setup goals tab + Future workspace CRUD (`FinancialGoalsPanels`). |
 | Income tax estimation lens | **Partial** | Setup → Income tax tab + `/api/income-tax`; review assumptions and known gaps. |
 | **Financial Setup Hub** (progress, section status, recommended next step) | **Shipped** | `/setup/overview`; config in `src/domain/setup/modules.ts`, evaluators in `src/domain/setup/evaluators.ts`, loader `src/data/setup-status.ts`. Legacy `/planning/setup` redirects here. |
-| Financial Setup tabs (profile → goals) | **Shipped** | `/setup?tab=…` (editors); mirrored in Planning where noted; hub links into each tab/workspace. |
+| Financial Setup tabs (profile → goals) | **Shipped** | `/setup?tab=…` (editors); `SetupTabsNav` scrollable pills on mobile; mirrored in Planning where noted; hub links into each tab/workspace. |
 | Budget lines, overrides, strategy insights | **Shipped** | Repositories + `src/domain/finance/budget*.ts`. |
 | SG-oriented guided budget templates (onboarding + domain) | **Shipped** | `budget-guided-setup.ts`, onboarding actions. |
 | Investments with contribution phase (until retirement / fixed duration) | **Shipped** | DB migration `20260516000000_*`; Setup → Investments; FV helpers. |
@@ -284,12 +284,24 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 **`src/features/app-shell/AppShell.tsx`**
 
 - Header: brand link ( **`/dashboard`** for clients, **`/advisor`** for advisors ), subtitle (“Private wealth clarity” vs “Advisor workspace”), optional **main nav**, client **Contact advisor**, advisor phone prompt, **How it works** button, **account menu** (signed-in) or **Sign in**.
-- **`AppShellNav`** (**client** only): **Home** → `/dashboard`; **Planning** → `/planning/overview` (active on `/planning/**`, `/setup/**`, `/balances`, `/budget`, `/financial-profile`, `/goals`); **Activity** → `/expenses` (active on `/expenses`, `/spending`); **More** → `/more` (active on `/more`, `/account-issue`).
+- **`AppShellNav`** (**client** only): **Home** → `/dashboard`; **Planning** → `/planning/overview` (active on `/planning/**`, `/setup/**`, `/balances`, `/budget`, `/financial-profile`, `/goals`); **Activity** → `/expenses` (active on `/expenses`, `/spending`); **More** → `/more` (active on `/more`, `/account-issue`). Split into **`AppShellMobileNav`** (hamburger + full-screen drawer) and **`AppShellDesktopNav`** (centered pill rail) so layout can differ by breakpoint without duplicating route logic.
 - **`AppShellUserMenu`**: avatar + email, links to profile (`/setup?tab=profile`), **More**, **How it works** (methodology sheet), **Sign out**.
 - Advisor navigation is rendered in a dedicated sidebar under `src/app/(app)/advisor/layout.tsx` using `AdvisorWorkspaceSidebar`, including Workspace, Clients, Opportunities, Activity, Access keys, and Buy keys.
 - **Main app nav is shown only when** the user is signed in **and** the path does **not** start with `/onboarding`.
 
 **`AppShellNav.tsx`**: Prefetches `/dashboard`, `/expenses`, `/planning/overview`, and `/more`.
+
+### Mobile navigation & setup UX (2026-05)
+
+**Why:** The client shell and **Financial setup** (`/setup`) were readable on desktop but felt like a compressed dashboard on phones — centered hamburger, heavy top padding, tabs that wrapped or cramped, and module cards pushing primary editors below the fold.
+
+**Mobile header (< `sm`):** `[☰] BYOFA Planner` left-aligned with the account menu on the right; ~56px row height and reduced vertical padding. Desktop/tablet header is unchanged (brand + tagline, centered nav rail, account menu).
+
+**Financial setup tabs:** `SetupTabsNav` uses a **horizontally scrollable pill rail** on mobile (hidden scrollbar via `.scrollbar-hide` in `globals.css`); desktop keeps the existing bordered rail. Sticky offset follows the shorter mobile header (`top-14`). Tab `?tab=` routing and server bundle loading are unchanged.
+
+**Setup page hierarchy (< `sm`):** flex `order-*` — page intro → **tabs** → **tab content** → roadmap module cards (Risk scoring, Portfolio insights, Automation). Cards use lighter padding and muted “coming soon” styling on small screens only. **`sm+`** order matches the prior desktop flow (intro → cards → tabs → content).
+
+**Scalability:** New setup tabs are config-only in `buildSetupTabs()`; the mobile rail scrolls without wrapping. Future planning modules can follow the same pill pattern in `SetupTabsNav` / `app-tab-styles.ts` without restructuring the page.
 
 ---
 
@@ -364,4 +376,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 - **Not in scope:** live CPF APIs, actuarial CPF LIFE, exhaustive withdrawal rules.
 - **Future:** persist advisor/client assumption presets; tie RA balance into retirement sustainability / spend coverage; inflation on payouts.
 
-_Last reviewed (2026-05-17): **Financial Setup Hub** at `/setup/overview` (progress UI); classic editors at `/setup?tab=…`; `/planning/setup` redirects. Feature inventory is the sole repo roadmap source; BYOFA Notion **Feature Roadmap Table** syncs from inventory (see `.cursor/rules/project-context-notion-sync.mdc`)._
+_Last reviewed (2026-05-18): **Mobile shell + setup UX** — compact client header (`AppShellMobileNav`), scrollable `SetupTabsNav` on `/setup`, mobile-first section ordering; desktop layouts preserved at `sm+`. Feature inventory is the sole repo roadmap source; BYOFA Notion **Feature Roadmap Table** syncs from inventory (see `.cursor/rules/project-context-notion-sync.mdc`)._
