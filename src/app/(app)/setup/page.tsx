@@ -7,7 +7,9 @@ import {
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
 } from "@/data/mappers";
+import { listBudgetLines } from "@/data/repositories/budget-lines";
 import { getIncomeTaxConfig } from "@/data/repositories/income-tax-configs";
+import { countReplaceableMonthlyBudgetLines } from "@/domain/finance/budget-guided-setup";
 import { getRequestAuth } from "@/data/supabase/request-context";
 import { ProfileIncomeForm } from "@/features/dashboard/ProfileIncomeForm";
 import { IncomeTaxSection } from "@/features/income-tax/IncomeTaxSection";
@@ -97,12 +99,19 @@ export default async function SetupPage({ searchParams }: PageProps) {
       ? budgetYearParsed
       : yearFromYearMonth(budgetMonth);
 
-  const [tabBundle, incomeTaxConfig] = await Promise.all([
+  const [tabBundle, incomeTaxConfig, budgetLinesForLens] = await Promise.all([
     loadSetupTabBundle(supabase, user.id, new Set([activeTab])),
     activeTab === "income_tax"
       ? getIncomeTaxConfig(supabase, user.id)
       : Promise.resolve(null),
+    activeTab === "profile"
+      ? listBudgetLines(supabase, user.id)
+      : Promise.resolve([]),
   ]);
+  const replaceableMonthlyLineCount =
+    activeTab === "profile"
+      ? countReplaceableMonthlyBudgetLines(budgetLinesForLens)
+      : 0;
   const {
     investments,
     cashAccounts,
@@ -248,6 +257,10 @@ export default async function SetupPage({ searchParams }: PageProps) {
                 initialConfidence={
                   financialProfile?.onboarding_confidence_level ?? null
                 }
+                initialFoodSpendBand={financialProfile?.food_spend_band ?? null}
+                monthlyIncome={income}
+                currency={currency}
+                replaceableMonthlyLineCount={replaceableMonthlyLineCount}
               />
             </div>
           </PageSection>

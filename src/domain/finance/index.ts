@@ -166,9 +166,12 @@ export type { VehicleStatus, VehicleValuationInput } from "./vehicle-sg";
 export type { MonthlyBudgetVsActualOptions } from "./budget";
 export {
   BUDGET_STRATEGY_PRESETS,
+  FOOD_SPEND_BAND_PRESETS,
   LIFESTYLE_PRESETS,
   budgetBucketForCategoryLabel,
+  countReplaceableMonthlyBudgetLines,
   generateGuidedMonthlyBudgetLines,
+  isPreservedOnGuidedBudgetReplace,
   strategyNeedsWantsSavings,
   sumBucketAmounts,
 } from "./budget-guided-setup";

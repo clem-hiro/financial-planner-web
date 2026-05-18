@@ -7,7 +7,9 @@ import {
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
 } from "@/data/mappers";
+import { listBudgetLines } from "@/data/repositories/budget-lines";
 import { getProfileById } from "@/data/repositories/profiles";
+import { countReplaceableMonthlyBudgetLines } from "@/domain/finance/budget-guided-setup";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { ProfileIncomeForm } from "@/features/dashboard/ProfileIncomeForm";
 import { BudgetPlanningView } from "@/features/budget/BudgetPlanningView";
@@ -40,7 +42,12 @@ export async function CashFlowPlanningSection({
     );
   }
 
-  const financialProfile = await getProfileById(supabase, user.id);
+  const [financialProfile, budgetLines] = await Promise.all([
+    getProfileById(supabase, user.id),
+    listBudgetLines(supabase, user.id),
+  ]);
+  const replaceableMonthlyLineCount =
+    countReplaceableMonthlyBudgetLines(budgetLines);
   const sp = await searchParams;
   const budgetMonth =
     sp.month && parseYearMonth(sp.month) ? sp.month : formatYearMonth(new Date());
@@ -147,6 +154,10 @@ export async function CashFlowPlanningSection({
               initialLifestyle={financialProfile?.lifestyle_profile ?? null}
               initialStrategy={financialProfile?.budgeting_strategy ?? null}
               initialConfidence={financialProfile?.onboarding_confidence_level ?? null}
+              initialFoodSpendBand={financialProfile?.food_spend_band ?? null}
+              monthlyIncome={income}
+              currency={currency}
+              replaceableMonthlyLineCount={replaceableMonthlyLineCount}
             />
           </PageSection>
         </div>

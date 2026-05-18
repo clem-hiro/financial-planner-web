@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import {
   BUDGET_STRATEGY_PRESETS,
+  FOOD_SPEND_BAND_PRESETS,
   LIFESTYLE_PRESETS,
   generateGuidedMonthlyBudgetLines,
   type BudgetingStrategyId,
@@ -32,17 +33,6 @@ type Props = {
   initialEstimatedBudgetMode: boolean;
 };
 
-const FOOD_BANDS: ReadonlyArray<{
-  id: FoodSpendBandId;
-  label: string;
-}> = [
-  { id: "under_300", label: "Under S$300" },
-  { id: "range_300_600", label: "S$300–600" },
-  { id: "range_600_1000", label: "S$600–1,000" },
-  { id: "above_1000", label: "Above S$1,000" },
-  { id: "unknown", label: "Not sure yet" },
-];
-
 function isLifestyleId(s: string | null): s is LifestyleProfileId {
   return (
     s != null &&
@@ -64,7 +54,7 @@ function isConfidence(
 }
 
 function isFoodBand(s: string | null): s is FoodSpendBandId {
-  return s != null && FOOD_BANDS.some((b) => b.id === s);
+  return s != null && FOOD_SPEND_BAND_PRESETS.some((b) => b.id === s);
 }
 
 export function OnboardingWizard(props: Props) {
@@ -370,7 +360,7 @@ export function OnboardingWizard(props: Props) {
               Roughly, monthly food (dining + groceries)
             </p>
             <div className="flex flex-wrap gap-2">
-              {FOOD_BANDS.map((b) => (
+              {FOOD_SPEND_BAND_PRESETS.map((b) => (
                 <button
                   key={b.id}
                   type="button"

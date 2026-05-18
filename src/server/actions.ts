@@ -19,6 +19,7 @@ import { isValidYearMonth } from "@/domain/finance";
 import { formatYearMonth } from "@/lib/dates";
 import {
   generateGuidedMonthlyBudgetLines,
+  isPreservedOnGuidedBudgetReplace,
   type BudgetingStrategyId,
   type FoodSpendBandId,
   type LifestyleProfileId,
@@ -1089,11 +1090,12 @@ function coerceFoodBand(
 
 /**
  * Seeds monthly `financial_budget_lines` from guided-setup heuristics.
- * Skips when any monthly lines already exist (avoid duplicates / unique index).
+ * When monthly lines already exist, pass `replaceExisting=true` in form data to
+ * remove replaceable lines (keeps debt repayment and income tax categories).
  */
 export async function applyGuidedBudgetLinesAction(
   _prev: { error: string | null },
-  _formData: FormData
+  formData: FormData
 ): Promise<{ error: string | null }> {
   const supabase = await createSupabaseServerClient();
   const {
@@ -1101,16 +1103,22 @@ export async function applyGuidedBudgetLinesAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Sign in required" };
 
+  const replaceExisting = formData.get("replaceExisting") === "true";
+
   const [profile, existingLines] = await Promise.all([
     getProfileById(supabase, user.id),
     listBudgetLines(supabase, user.id),
   ]);
 
   const monthlyExisting = existingLines.filter((l) => l.cadence === "monthly");
-  if (monthlyExisting.length > 0) {
+  const replaceable = monthlyExisting.filter(
+    (l) => !isPreservedOnGuidedBudgetReplace(l.category)
+  );
+
+  if (replaceable.length > 0 && !replaceExisting) {
     return {
       error:
-        "You already have monthly budget lines. Adjust or add categories on the Budget page instead.",
+        "You already have monthly budget lines. Confirm replace on Budget lens to rebuild from your current settings.",
     };
   }
 
@@ -1138,6 +1146,11 @@ export async function applyGuidedBudgetLinesAction(
   }
 
   try {
+    if (replaceExisting) {
+      for (const line of replaceable) {
+        await deleteBudgetLine(supabase, user.id, line.id);
+      }
+    }
     for (const row of drafts) {
       await insertBudgetLine(supabase, user.id, {
         category: row.category,
@@ -1163,6 +1176,7 @@ export async function applyGuidedBudgetLinesAction(
   revalidateSetupAndPlanning();
   revalidatePath("/dashboard");
   revalidatePath("/onboarding");
+  revalidatePath("/expenses");
   return { error: null };
 }
 
