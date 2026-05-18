@@ -243,6 +243,8 @@ export const housingDownpaymentGuidancePresetSchema = z.enum([
   "custom",
 ]);
 
+export const housingPaymentSourceSchema = z.enum(["cash", "cpf_oa", "split"]);
+
 /** Sign-up role selection on the login page. */
 export const signupFinancialRoleSchema = z.enum(["advisor", "client"]);
 

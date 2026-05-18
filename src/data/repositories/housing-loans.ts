@@ -55,6 +55,9 @@ export async function insertHousingLoan(
     buyers_stamp_duty?: number | null;
     financing_includes_bsd?: boolean;
     buyers_stamp_duty_paid_from_cpf_oa?: boolean;
+    payment_source?: HousingLoanRow["payment_source"];
+    cpf_oa_payment?: number | null;
+    cash_payment?: number | null;
   }
 ): Promise<HousingLoanRow> {
   const { data, error } = await supabase
@@ -85,6 +88,9 @@ export async function insertHousingLoan(
       financing_includes_bsd: row.financing_includes_bsd ?? false,
       buyers_stamp_duty_paid_from_cpf_oa:
         row.buyers_stamp_duty_paid_from_cpf_oa ?? false,
+      payment_source: row.payment_source ?? null,
+      cpf_oa_payment: row.cpf_oa_payment ?? null,
+      cash_payment: row.cash_payment ?? null,
     })
     .select()
     .single();
@@ -118,6 +124,9 @@ export async function updateHousingLoan(
     buyers_stamp_duty?: number | null;
     financing_includes_bsd?: boolean;
     buyers_stamp_duty_paid_from_cpf_oa?: boolean;
+    payment_source?: HousingLoanRow["payment_source"];
+    cpf_oa_payment?: number | null;
+    cash_payment?: number | null;
   }>
 ): Promise<void> {
   const { error } = await supabase

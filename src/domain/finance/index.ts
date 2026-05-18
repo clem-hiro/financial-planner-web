@@ -112,6 +112,22 @@ export { sumInvestableSurplusOverHorizon } from "./investable-surplus";
 export { buildAmortizationSchedule } from "./mortgage-amortization";
 export type { AmortizationPayment } from "./mortgage-amortization";
 export {
+  buildHousingPaymentInsights,
+  firstHousingInstalmentAmount,
+  housingInstalmentForMonth,
+  oaShareForCpfProjection,
+  oaShareForStoredHousingLoan,
+  paymentSourceFromLegacyPreset,
+  resolveHousingPaymentSource,
+  splitHousingInstalment,
+  sumHousingCashInstalmentsForMonth,
+} from "./housing-loan-payments";
+export type {
+  HousingInstalmentSplit,
+  HousingLoanPaymentFields,
+  HousingPaymentSource,
+} from "./housing-loan-payments";
+export {
   buildCpfMonthlyProjectionSeries,
   downsampleCpfSeries,
   DEFAULT_CPF_OA_CREDITING_ANNUAL,

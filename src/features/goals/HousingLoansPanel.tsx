@@ -12,6 +12,12 @@ import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { formatCurrency } from "@/ui/lib/format";
 import { HousingLoanQuickAddForm } from "@/features/goals/HousingLoanQuickAddForm";
 import { HDB_CONCESSIONARY_RATE_ANNUAL } from "@/domain/finance/housing-loan-quick";
+import {
+  firstHousingInstalmentAmount,
+  resolveHousingPaymentSource,
+} from "@/domain/finance/housing-loan-payments";
+import type { HousingPaymentSource } from "@/domain/finance/housing-loan-payments";
+import { HousingPaymentSourceFields } from "@/features/goals/HousingPaymentSourceFields";
 
 const initial = { error: null as string | null };
 
@@ -32,15 +38,20 @@ function HousingLoanManualAddForm({
   formError,
   action,
   pending,
+  currencyCode,
 }: {
   formError: string | null;
   action: (payload: FormData) => void;
   pending: boolean;
+  currencyCode: string;
 }) {
   const [lender, setLender] = useState<"hdb" | "bank" | "other">("hdb");
   const [bankPct, setBankPct] = useState("3.2");
   const [otherRate, setOtherRate] = useState("0.032");
-  const [inst, setInst] = useState<"cpf100" | "split50" | "cash100">("cpf100");
+  const [paymentSource, setPaymentSource] =
+    useState<HousingPaymentSource>("cpf_oa");
+  const [cpfOaPayment, setCpfOaPayment] = useState("");
+  const [cashPayment, setCashPayment] = useState("");
 
   const annualEff =
     lender === "hdb"
@@ -48,7 +59,12 @@ function HousingLoanManualAddForm({
       : lender === "bank"
         ? Math.max(0, Number(bankPct) / 100 || 0)
         : Math.max(0, Number(otherRate) || 0);
-  const oaEff = inst === "split50" ? 0.5 : inst === "cash100" ? 0 : 1;
+  const oaEff =
+    paymentSource === "split"
+      ? 0.5
+      : paymentSource === "cash"
+        ? 0
+        : 1;
 
   return (
     <form
@@ -76,6 +92,7 @@ function HousingLoanManualAddForm({
       <input type="hidden" name="lender_type" value={lender} />
       <input type="hidden" name="annual_nominal_rate" value={String(annualEff)} />
       <input type="hidden" name="oa_share_of_payment" value={String(oaEff)} />
+      <input type="hidden" name="payment_source" value={paymentSource} />
 
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm sm:col-span-2">
@@ -146,42 +163,17 @@ function HousingLoanManualAddForm({
           )}
         </div>
 
-        <fieldset className="text-sm sm:col-span-2">
-          <legend className="mb-1.5 text-zinc-600">
-            Instalment: share from your OA (CPF projection)
-          </legend>
-          <div className="flex flex-col gap-2">
-            <label className="inline-flex cursor-pointer items-start gap-2 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2">
-              <input
-                type="radio"
-                className="mt-0.5"
-                checked={inst === "cpf100"}
-                onChange={() => setInst("cpf100")}
-              />
-              <span>100% from OA</span>
-            </label>
-            <label className="inline-flex cursor-pointer items-start gap-2 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2">
-              <input
-                type="radio"
-                className="mt-0.5"
-                checked={inst === "split50"}
-                onChange={() => setInst("split50")}
-              />
-              <span>50% OA, 50% cash (or spouse — their OA not modeled)</span>
-            </label>
-            <label className="inline-flex cursor-pointer items-start gap-2 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2">
-              <input
-                type="radio"
-                className="mt-0.5"
-                checked={inst === "cash100"}
-                onChange={() => setInst("cash100")}
-              />
-              <span>
-                100% cash — no instalment draw from OA (lumps above still apply)
-              </span>
-            </label>
-          </div>
-        </fieldset>
+        <HousingPaymentSourceFields
+          paymentSource={paymentSource}
+          onPaymentSourceChange={setPaymentSource}
+          monthlyInstalment={0}
+          cpfOaPayment={cpfOaPayment}
+          onCpfOaPaymentChange={setCpfOaPayment}
+          cashPayment={cashPayment}
+          onCashPaymentChange={setCashPayment}
+          currencyCode={currencyCode}
+          compact
+        />
 
         <label className="text-sm">
           <span className="mb-1 block text-zinc-600">
@@ -303,7 +295,13 @@ function HousingLoanManualAddForm({
   );
 }
 
-function HousingLoanEditForm({ L }: { L: HousingLoanRow }) {
+function HousingLoanEditForm({
+  L,
+  currencyCode,
+}: {
+  L: HousingLoanRow;
+  currencyCode: string;
+}) {
   const [state, action, pending] = useActionState(updateHousingLoanAction, initial);
   const initLender = (L.lender_type ?? "hdb") as "hdb" | "bank" | "other";
   const [lender, setLender] = useState<"hdb" | "bank" | "other">(initLender);
@@ -314,6 +312,19 @@ function HousingLoanEditForm({ L }: { L: HousingLoanRow }) {
   );
   const [otherRate, setOtherRate] = useState(() =>
     initLender === "other" ? String(num(L.annual_nominal_rate)) : "0.032"
+  );
+  const [paymentSource, setPaymentSource] = useState<HousingPaymentSource>(() =>
+    resolveHousingPaymentSource(L)
+  );
+  const [cpfOaPayment, setCpfOaPayment] = useState(() =>
+    L.cpf_oa_payment != null && String(L.cpf_oa_payment).trim() !== ""
+      ? String(num(L.cpf_oa_payment))
+      : ""
+  );
+  const [cashPayment, setCashPayment] = useState(() =>
+    L.cash_payment != null && String(L.cash_payment).trim() !== ""
+      ? String(num(L.cash_payment))
+      : ""
   );
   const [instPreset, setInstPreset] = useState(() =>
     instalmentPresetFromShare(num(L.oa_share_of_payment))
@@ -340,6 +351,17 @@ function HousingLoanEditForm({ L }: { L: HousingLoanRow }) {
     const s = num(L.oa_share_of_payment);
     setOaShare(s);
     setInstPreset(instalmentPresetFromShare(s));
+    setPaymentSource(resolveHousingPaymentSource(L));
+    setCpfOaPayment(
+      L.cpf_oa_payment != null && String(L.cpf_oa_payment).trim() !== ""
+        ? String(num(L.cpf_oa_payment))
+        : ""
+    );
+    setCashPayment(
+      L.cash_payment != null && String(L.cash_payment).trim() !== ""
+        ? String(num(L.cash_payment))
+        : ""
+    );
   }
 
   const annualEff =
@@ -349,13 +371,25 @@ function HousingLoanEditForm({ L }: { L: HousingLoanRow }) {
         ? Math.max(0, Number(bankPct) / 100 || 0)
         : Math.max(0, Number(otherRate) || 0);
   const oaEff =
-    instPreset === "cpf100"
+    paymentSource === "cpf_oa"
       ? 1
-      : instPreset === "split50"
-        ? 0.5
-        : instPreset === "cash100"
-          ? 0
-          : oaShare;
+      : paymentSource === "cash"
+        ? 0
+        : paymentSource === "split"
+          ? 0.5
+          : instPreset === "cpf100"
+            ? 1
+            : instPreset === "split50"
+              ? 0.5
+              : instPreset === "cash100"
+                ? 0
+                : oaShare;
+  const monthlyInstalmentEdit = firstHousingInstalmentAmount({
+    principal: num(L.principal),
+    annual_nominal_rate: annualEff,
+    term_months: L.term_months,
+    first_payment_month: L.first_payment_month,
+  });
   const maxOa =
     L.max_oa_per_month != null && String(L.max_oa_per_month).trim() !== ""
       ? num(L.max_oa_per_month)
@@ -381,6 +415,7 @@ function HousingLoanEditForm({ L }: { L: HousingLoanRow }) {
         <input type="hidden" name="lender_type" value={lender} />
         <input type="hidden" name="annual_nominal_rate" value={String(annualEff)} />
         <input type="hidden" name="oa_share_of_payment" value={String(oaEff)} />
+        <input type="hidden" name="payment_source" value={paymentSource} />
         {state.error && (
           <p className="text-sm text-red-600" role="alert">
             {state.error}
@@ -557,78 +592,16 @@ function HousingLoanEditForm({ L }: { L: HousingLoanRow }) {
               className="w-full rounded border border-zinc-300 px-2 py-1.5"
             />
           </label>
-          <fieldset className="text-sm sm:col-span-2">
-            <legend className="mb-1.5 text-zinc-600">
-              Instalment from your OA (CPF projection)
-            </legend>
-            <div className="flex flex-col gap-2">
-              <label className="inline-flex cursor-pointer items-start gap-2 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2">
-                <input
-                  type="radio"
-                  className="mt-0.5"
-                  checked={instPreset === "cpf100"}
-                  onChange={() => {
-                    setInstPreset("cpf100");
-                    setOaShare(1);
-                  }}
-                />
-                <span>100% OA</span>
-              </label>
-              <label className="inline-flex cursor-pointer items-start gap-2 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2">
-                <input
-                  type="radio"
-                  className="mt-0.5"
-                  checked={instPreset === "split50"}
-                  onChange={() => {
-                    setInstPreset("split50");
-                    setOaShare(0.5);
-                  }}
-                />
-                <span>50% OA / 50% cash (or spouse — not modeled)</span>
-              </label>
-              <label className="inline-flex cursor-pointer items-start gap-2 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2">
-                <input
-                  type="radio"
-                  className="mt-0.5"
-                  checked={instPreset === "cash100"}
-                  onChange={() => {
-                    setInstPreset("cash100");
-                    setOaShare(0);
-                  }}
-                />
-                <span>100% cash — no OA instalment draw</span>
-              </label>
-              <label className="inline-flex cursor-pointer items-start gap-2 rounded-md border border-zinc-200 bg-zinc-50 px-3 py-2">
-                <input
-                  type="radio"
-                  className="mt-0.5"
-                  checked={instPreset === "custom"}
-                  onChange={() => setInstPreset("custom")}
-                />
-                <span className="flex-1">
-                  Custom OA fraction (0–1)
-                  <input
-                    type="number"
-                    min={0}
-                    max={1}
-                    step={0.01}
-                    value={oaShare}
-                    onChange={(e) => {
-                      setInstPreset("custom");
-                      const v = Number(e.target.value);
-                      setOaShare(
-                        Number.isFinite(v) ? Math.min(1, Math.max(0, v)) : 0
-                      );
-                    }}
-                    className="mt-1 block w-full max-w-40 rounded border border-zinc-300 px-2 py-1.5"
-                  />
-                </span>
-              </label>
-            </div>
-            <p className="mt-2 text-xs text-zinc-500">
-              Spouse OA not modeled. OA lumps (downpayment/fees) still apply if set.
-            </p>
-          </fieldset>
+          <HousingPaymentSourceFields
+            paymentSource={paymentSource}
+            onPaymentSourceChange={setPaymentSource}
+            monthlyInstalment={monthlyInstalmentEdit}
+            cpfOaPayment={cpfOaPayment}
+            onCpfOaPaymentChange={setCpfOaPayment}
+            cashPayment={cashPayment}
+            onCashPaymentChange={setCashPayment}
+            currencyCode={currencyCode}
+          />
           <label className="text-sm sm:col-span-2">
             <span className="mb-1 block text-zinc-600">Max OA / month (optional)</span>
             <input
@@ -711,6 +684,7 @@ export function HousingLoansPanel({
             formError={state.error}
             action={action}
             pending={pending}
+            currencyCode={currencyCode}
           />
         </details>
       </div>
@@ -742,12 +716,12 @@ export function HousingLoansPanel({
                 : null;
             const repaid = num(L.principal_repaid_before_schedule);
             const lender = L.lender_type ?? "hdb";
-            const oaShare = num(L.oa_share_of_payment);
-            const oaPct = Math.round(oaShare * 1000) / 10;
-            const oaInstalmentNote =
-              oaShare < 0.0001
-                ? "instalment from OA: none (cash)"
-                : `your OA share of instalment ${oaPct}%`;
+            const paymentLabel = (() => {
+              const src = resolveHousingPaymentSource(L);
+              if (src === "cpf_oa") return "Paid via CPF OA";
+              if (src === "cash") return "Cash housing burden";
+              return "Split (CPF OA + cash)";
+            })();
             return (
               <li
                 key={L.id}
@@ -760,7 +734,7 @@ export function HousingLoansPanel({
                       {lenderLabel(lender)} · outstanding{" "}
                       {formatCurrency(num(L.principal), currencyCode)} @{" "}
                       {(num(L.annual_nominal_rate) * 100).toFixed(2)}% ·{" "}
-                      {L.term_months} mo left · {oaInstalmentNote} · completion{" "}
+                      {L.term_months} mo left · {paymentLabel} · completion{" "}
                       {L.completion_month} · first pay {L.first_payment_month}
                     </p>
                     {planningPrice && (
@@ -816,7 +790,7 @@ export function HousingLoansPanel({
                   </div>
                   <HousingLoanDeleteForm id={L.id} />
                 </div>
-                <HousingLoanEditForm L={L} />
+                <HousingLoanEditForm L={L} currencyCode={currencyCode} />
               </li>
             );
           })}

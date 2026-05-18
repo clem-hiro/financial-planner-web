@@ -11,6 +11,7 @@ import {
   HDB_CONCESSIONARY_RATE_ANNUAL,
   oaInstalmentShareFromPreset,
 } from "@/domain/finance/housing-loan-quick";
+import type { HousingPaymentSource } from "@/domain/finance/housing-loan-payments";
 import { buildAmortizationSchedule } from "@/domain/finance/mortgage-amortization";
 import { computeSingaporeResidentialBuyersStampDuty } from "@/domain/finance/singapore-residential-bsd";
 import { formatYearMonth } from "@/lib/dates";
@@ -53,9 +54,10 @@ export function HousingLoanQuickAddForm({
   const [bankRatePct, setBankRatePct] = useState(
     String(Math.round(DEFAULT_BANK_MORTGAGE_RATE_ANNUAL * 1000) / 10)
   );
-  const [oaInstMode, setOaInstMode] = useState<"cpf100" | "split50" | "cash100">(
-    "cpf100"
-  );
+  const [paymentSource, setPaymentSource] =
+    useState<HousingPaymentSource>("cpf_oa");
+  const [cpfOaPayment, setCpfOaPayment] = useState("");
+  const [cashPayment, setCashPayment] = useState("");
 
   const bankDecimal =
     lender === "bank" && bankRatePct.trim() !== ""
@@ -121,7 +123,12 @@ export function HousingLoanQuickAddForm({
       firstPaymentMonth: firstPay,
       lenderType: lender,
       bankAnnualRate: lender === "hdb" ? null : bankDecimal,
-      oaShareOfPayment: oaInstalmentShareFromPreset(oaInstMode),
+      oaShareOfPayment:
+        paymentSource === "cash"
+          ? 0
+          : paymentSource === "cpf_oa"
+            ? 1
+            : 0.5,
       buyersStampDuty: bsdResult.total,
       payBuyersStampDutyFromCpfOa: bsdPayment === "cpf_oa",
     });
@@ -151,7 +158,7 @@ export function HousingLoanQuickAddForm({
     lender,
     bankRatePct,
     bankDecimal,
-    oaInstMode,
+    paymentSource,
     label,
     depositFromOa,
     feesFromOa,
@@ -166,7 +173,17 @@ export function HousingLoanQuickAddForm({
       {...(pending ? { inert: true } : {})}
     >
       <BlockingSubmitOverlay active={pending} message="Saving property plan…" />
-      <input type="hidden" name="oa_inst_share" value={oaInstMode} />
+      <input
+        type="hidden"
+        name="oa_inst_share"
+        value={
+          paymentSource === "cash"
+            ? "cash100"
+            : paymentSource === "cpf_oa"
+              ? "cpf100"
+              : "split50"
+        }
+      />
       <input type="hidden" name="lender_type" value={lender} />
       <input type="hidden" name="guided_dp_preset" value={dpPreset} />
       <input type="hidden" name="guided_dp_custom_mode" value={customDpMode} />
@@ -536,15 +553,16 @@ export function HousingLoanQuickAddForm({
 
           <fieldset className="text-sm">
             <legend className="mb-2 font-medium text-zinc-800">
-              Each instalment: share from your OA
+              Each instalment: payment source
             </legend>
+            <input type="hidden" name="payment_source" value={paymentSource} />
             <div className="flex flex-col gap-2">
               <label className="inline-flex cursor-pointer items-start gap-2 rounded-md border border-zinc-100 bg-zinc-50/80 px-3 py-2">
                 <input
                   type="radio"
                   className="mt-0.5"
-                  checked={oaInstMode === "cpf100"}
-                  onChange={() => setOaInstMode("cpf100")}
+                  checked={paymentSource === "cpf_oa"}
+                  onChange={() => setPaymentSource("cpf_oa")}
                 />
                 <span className="text-xs">
                   <strong>100% from OA</strong> — full instalment reduces OA in CPF
@@ -555,8 +573,16 @@ export function HousingLoanQuickAddForm({
                 <input
                   type="radio"
                   className="mt-0.5"
-                  checked={oaInstMode === "split50"}
-                  onChange={() => setOaInstMode("split50")}
+                  checked={paymentSource === "split"}
+                  onChange={() => {
+                    setPaymentSource("split");
+                    if (preview?.kind === "ok") {
+                      const half =
+                        Math.round((preview.monthlyTotal / 2) * 100) / 100;
+                      setCpfOaPayment(String(half));
+                      setCashPayment(String(preview.monthlyTotal - half));
+                    }
+                  }}
                 />
                 <span className="text-xs">
                   <strong>50% OA, 50% cash</strong> — half the instalment hits your OA.
@@ -566,8 +592,8 @@ export function HousingLoanQuickAddForm({
                 <input
                   type="radio"
                   className="mt-0.5"
-                  checked={oaInstMode === "cash100"}
-                  onChange={() => setOaInstMode("cash100")}
+                  checked={paymentSource === "cash"}
+                  onChange={() => setPaymentSource("cash")}
                 />
                 <span className="text-xs">
                   <strong>100% cash</strong> — instalments do not reduce OA (OA lumps
@@ -575,6 +601,47 @@ export function HousingLoanQuickAddForm({
                 </span>
               </label>
             </div>
+            {paymentSource === "split" && preview?.kind === "ok" && (
+              <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                <label className="block text-xs">
+                  <span className="mb-1 block text-zinc-600">CPF OA / month</span>
+                  <input
+                    name="cpf_oa_payment"
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={cpfOaPayment}
+                    onChange={(e) => {
+                      setCpfOaPayment(e.target.value);
+                      const cpf = Number(e.target.value);
+                      if (Number.isFinite(cpf)) {
+                        setCashPayment(
+                          String(
+                            Math.max(
+                              0,
+                              Math.round((preview.monthlyTotal - cpf) * 100) / 100
+                            )
+                          )
+                        );
+                      }
+                    }}
+                    className="w-full rounded-lg border border-zinc-200 px-2 py-1.5"
+                  />
+                </label>
+                <label className="block text-xs">
+                  <span className="mb-1 block text-zinc-600">Cash / month</span>
+                  <input
+                    name="cash_payment"
+                    type="number"
+                    min={0}
+                    step="0.01"
+                    value={cashPayment}
+                    onChange={(e) => setCashPayment(e.target.value)}
+                    className="w-full rounded-lg border border-zinc-200 px-2 py-1.5"
+                  />
+                </label>
+              </div>
+            )}
           </fieldset>
 
           <ul className="space-y-1 rounded-md border border-dashed border-amber-200/80 bg-amber-50/40 px-3 py-2 text-[11px] text-amber-950/90">
@@ -607,10 +674,26 @@ export function HousingLoanQuickAddForm({
               {formatCurrency(preview.monthlyTotal, currencyCode)}
               <span className="ml-1 text-zinc-500">— estimated only</span>
             </li>
-            <li>
-              <strong>From your OA (first month):</strong>{" "}
-              {formatCurrency(preview.monthlyYourOa, currencyCode)}
-            </li>
+            {paymentSource !== "cash" && (
+              <li>
+                <strong>From your OA (first month):</strong>{" "}
+                {formatCurrency(preview.monthlyYourOa, currencyCode)}
+                {paymentSource === "cpf_oa" && (
+                  <span className="ml-1 text-zinc-500">— Paid via CPF OA</span>
+                )}
+              </li>
+            )}
+            {paymentSource !== "cpf_oa" && (
+              <li>
+                <strong>Cash housing burden (first month):</strong>{" "}
+                {formatCurrency(
+                  paymentSource === "split"
+                    ? Number(cashPayment) || preview.monthlyTotal - preview.monthlyYourOa
+                    : preview.monthlyTotal,
+                  currencyCode
+                )}
+              </li>
+            )}
             <li className="text-zinc-500">
               Completion month for OA lumps:{" "}
               <span className="font-mono">{preview.derived.completion_month}</span> ·

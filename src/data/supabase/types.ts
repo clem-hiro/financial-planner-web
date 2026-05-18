@@ -404,4 +404,10 @@ export type HousingLoanRow = {
   financing_includes_bsd?: boolean;
   /** When true, estimated BSD was saved as paid from OA (rolled into fees_from_oa). */
   buyers_stamp_duty_paid_from_cpf_oa?: boolean;
+  /** `cash` | `cpf_oa` | `split`; null = legacy (infer from oa_share_of_payment). */
+  payment_source?: "cash" | "cpf_oa" | "split" | null;
+  /** Monthly OA instalment when `payment_source` is `split`. */
+  cpf_oa_payment?: string | null;
+  /** Monthly cash instalment when `payment_source` is `split`. */
+  cash_payment?: string | null;
 };

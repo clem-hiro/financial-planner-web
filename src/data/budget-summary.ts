@@ -23,6 +23,8 @@ import {
 import { getIncomeTaxConfig } from "@/data/repositories/income-tax-configs";
 import { getProfileById } from "@/data/repositories/profiles";
 import { buildSyntheticTaxExpense } from "@/data/income-tax-synthetic-expense";
+import { buildSyntheticHousingCashExpense } from "@/data/housing-cash-synthetic-expense";
+import { listHousingLoans } from "@/data/repositories/housing-loans";
 
 export type BudgetPageModel = {
   yearMonth: string;
@@ -51,6 +53,7 @@ export async function getBudgetPageModel(
     overrideRows,
     incomeTaxConfig,
     profile,
+    housingLoans,
   ] = await Promise.all([
     listBudgetLines(supabase, userId),
     listExpensesForMonth(supabase, userId, yearMonth),
@@ -58,6 +61,7 @@ export async function getBudgetPageModel(
     listBudgetLineOverridesForMonth(supabase, userId, yearMonth),
     getIncomeTaxConfig(supabase, userId),
     getProfileById(supabase, userId),
+    listHousingLoans(supabase, userId),
   ]);
 
   const amountOverrideByLineId = overridesToLineIdMap(overrideRows);
@@ -72,10 +76,17 @@ export async function getBudgetPageModel(
     profile,
     yearMonth
   );
-  const monthlyExp =
-    syntheticTax && syntheticTax.expense.spendPeriod === "monthly"
-      ? [syntheticTax.expense, ...baseMonthlyExp]
-      : baseMonthlyExp;
+  const syntheticHousingCash = buildSyntheticHousingCashExpense(
+    housingLoans,
+    yearMonth
+  );
+  const monthlyExp = [
+    ...(syntheticTax && syntheticTax.expense.spendPeriod === "monthly"
+      ? [syntheticTax.expense]
+      : []),
+    ...(syntheticHousingCash ? [syntheticHousingCash.expense] : []),
+    ...baseMonthlyExp,
+  ];
   const annualExp =
     syntheticTax && syntheticTax.expense.spendPeriod === "annual"
       ? [syntheticTax.expense, ...baseAnnualExp]

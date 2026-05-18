@@ -68,11 +68,17 @@ import {
   HDB_CONCESSIONARY_RATE_ANNUAL,
   oaInstalmentShareFromPreset,
 } from "@/domain/finance/housing-loan-quick";
+import {
+  firstHousingInstalmentAmount,
+  normalizeHousingPaymentForPersist,
+  paymentSourceFromLegacyPreset,
+} from "@/domain/finance/housing-loan-payments";
 import { resolveGuidedCashDownpayment } from "@/domain/finance/property-financing-plan";
 import { computeSingaporeResidentialBuyersStampDuty } from "@/domain/finance/singapore-residential-bsd";
 import {
   housingDownpaymentGuidancePresetSchema,
   housingLenderTypeSchema,
+  housingPaymentSourceSchema,
   housingPropertyKindSchema,
   yearMonthSchema,
 } from "@/lib/validation";
@@ -1425,6 +1431,72 @@ export async function clearCpfBalanceAction() {
   revalidatePath("/balances");
 }
 
+function parseHousingPaymentForm(
+  formData: FormData,
+  loanBase: {
+    principal: number;
+    annual_nominal_rate: number;
+    term_months: number;
+    first_payment_month: string;
+    oa_share_of_payment: number;
+  }
+):
+  | {
+      payment_source: "cash" | "cpf_oa" | "split";
+      cpf_oa_payment: number | null;
+      cash_payment: number | null;
+      oa_share_of_payment: number;
+    }
+  | { error: string } {
+  const sourceRaw = String(formData.get("payment_source") ?? "").trim();
+  const legacyShareRaw = String(formData.get("oa_inst_share") ?? "").trim();
+  const sourceParsed =
+    sourceRaw !== ""
+      ? housingPaymentSourceSchema.safeParse(sourceRaw)
+      : legacyShareRaw !== ""
+        ? { success: true as const, data: paymentSourceFromLegacyPreset(legacyShareRaw) }
+        : null;
+
+  if (!sourceParsed || !sourceParsed.success) {
+    return { error: "Invalid instalment payment source" };
+  }
+
+  const cpfRaw = String(formData.get("cpf_oa_payment") ?? "").trim();
+  const cashRaw = String(formData.get("cash_payment") ?? "").trim();
+  const cpfOaPayment = cpfRaw === "" ? null : Number(cpfRaw);
+  const cashPayment = cashRaw === "" ? null : Number(cashRaw);
+
+  if (
+    cpfOaPayment != null &&
+    (!Number.isFinite(cpfOaPayment) || cpfOaPayment < 0)
+  ) {
+    return { error: "CPF OA payment must be blank or ≥ 0" };
+  }
+  if (
+    cashPayment != null &&
+    (!Number.isFinite(cashPayment) || cashPayment < 0)
+  ) {
+    return { error: "Cash payment must be blank or ≥ 0" };
+  }
+
+  const normalized = normalizeHousingPaymentForPersist(
+    {
+      ...loanBase,
+      payment_source: sourceParsed.data,
+      cpf_oa_payment: cpfOaPayment,
+      cash_payment: cashPayment,
+    },
+    {
+      paymentSource: sourceParsed.data,
+      cpfOaPayment,
+      cashPayment,
+    }
+  );
+
+  if ("error" in normalized) return normalized;
+  return normalized;
+}
+
 export async function createHousingLoanAction(
   _prev: { error: string | null },
   formData: FormData
@@ -1445,7 +1517,6 @@ export async function createHousingLoanAction(
   ).trim();
   const downpayment_from_oa = Number(formData.get("downpayment_from_oa"));
   const fees_from_oa = Number(formData.get("fees_from_oa"));
-  const oa_share_of_payment = Number(formData.get("oa_share_of_payment"));
   const maxRaw = String(formData.get("max_oa_per_month") ?? "").trim();
   const max_oa_per_month =
     maxRaw === "" ? null : Number(maxRaw);
@@ -1482,13 +1553,24 @@ export async function createHousingLoanAction(
   if (!Number.isFinite(fees_from_oa) || fees_from_oa < 0) {
     return { error: "Invalid fees from OA" };
   }
-  if (
-    !Number.isFinite(oa_share_of_payment) ||
-    oa_share_of_payment < 0 ||
-    oa_share_of_payment > 1
-  ) {
-    return { error: "OA share of payment must be 0–1" };
-  }
+
+  const annual_nominal_rate_effective =
+    lender_type === "hdb" ? HDB_CONCESSIONARY_RATE_ANNUAL : annual_nominal_rate;
+
+  const paymentParsed = parseHousingPaymentForm(formData, {
+    principal,
+    annual_nominal_rate: annual_nominal_rate_effective,
+    term_months,
+    first_payment_month,
+    oa_share_of_payment: Number(formData.get("oa_share_of_payment")) || 0,
+  });
+  if ("error" in paymentParsed) return paymentParsed;
+  const {
+    payment_source,
+    cpf_oa_payment,
+    cash_payment,
+    oa_share_of_payment,
+  } = paymentParsed;
   if (
     max_oa_per_month != null &&
     (!Number.isFinite(max_oa_per_month) || max_oa_per_month < 0)
@@ -1509,9 +1591,6 @@ export async function createHousingLoanAction(
     return { error: "Principal repaid must be ≥ 0" };
   }
 
-  const annual_nominal_rate_effective =
-    lender_type === "hdb" ? HDB_CONCESSIONARY_RATE_ANNUAL : annual_nominal_rate;
-
   await insertHousingLoan(supabase, user.id, {
     label,
     principal,
@@ -1526,9 +1605,15 @@ export async function createHousingLoanAction(
     lender_type,
     original_loan_principal,
     principal_repaid_before_schedule,
+    payment_source,
+    cpf_oa_payment,
+    cash_payment,
   });
   revalidatePath("/dashboard");
   revalidatePath("/balances");
+  revalidatePath("/budget");
+  revalidatePath("/setup");
+  revalidatePath("/planning/wealth");
   return { error: null };
 }
 
@@ -1560,7 +1645,17 @@ export async function createHousingLoanQuickAction(
   const bankAnnualRate =
     bankPctRaw === "" ? null : Number(bankPctRaw) / 100;
   const shareRaw = String(formData.get("oa_inst_share") ?? "cpf100").trim();
-  const oaShareOfPayment = oaInstalmentShareFromPreset(shareRaw);
+  const sourceRaw = String(formData.get("payment_source") ?? "").trim();
+  const sourceParsed = housingPaymentSourceSchema.safeParse(sourceRaw);
+  const paymentSourceQuick = sourceParsed.success
+    ? sourceParsed.data
+    : paymentSourceFromLegacyPreset(shareRaw);
+  const oaShareOfPayment =
+    paymentSourceQuick === "cash"
+      ? 0
+      : paymentSourceQuick === "cpf_oa"
+        ? 1
+        : oaInstalmentShareFromPreset(shareRaw);
 
   const guidedPresetRaw = String(formData.get("guided_dp_preset") ?? "").trim();
   const depositTotalLegacyRaw = String(formData.get("deposit_total") ?? "").trim();
@@ -1707,6 +1802,32 @@ export async function createHousingLoanQuickAction(
     return { error: derived.error };
   }
 
+  const paymentSource = paymentSourceQuick;
+  const loanPaymentBase = {
+    principal: derived.principal,
+    annual_nominal_rate: derived.annual_nominal_rate,
+    term_months: derived.term_months,
+    first_payment_month: derived.first_payment_month,
+    oa_share_of_payment: derived.oa_share_of_payment,
+  };
+  const instalment = firstHousingInstalmentAmount(loanPaymentBase);
+  const cpfRaw = String(formData.get("cpf_oa_payment") ?? "").trim();
+  const cashRaw = String(formData.get("cash_payment") ?? "").trim();
+  const cpfOaPayment = cpfRaw === "" ? null : Number(cpfRaw);
+  const cashPayment = cashRaw === "" ? null : Number(cashRaw);
+  const paymentNormalized = normalizeHousingPaymentForPersist(
+    {
+      ...loanPaymentBase,
+      payment_source: paymentSource,
+      cpf_oa_payment: cpfOaPayment,
+      cash_payment: cashPayment,
+    },
+    { paymentSource, cpfOaPayment, cashPayment }
+  );
+  if ("error" in paymentNormalized) {
+    return { error: paymentNormalized.error };
+  }
+
   await insertHousingLoan(supabase, user.id, {
     label: derived.label,
     principal: derived.principal,
@@ -1716,7 +1837,7 @@ export async function createHousingLoanQuickAction(
     first_payment_month: derived.first_payment_month,
     downpayment_from_oa: derived.downpayment_from_oa,
     fees_from_oa: derived.fees_from_oa,
-    oa_share_of_payment: derived.oa_share_of_payment,
+    oa_share_of_payment: paymentNormalized.oa_share_of_payment,
     max_oa_per_month: derived.max_oa_per_month,
     lender_type: derived.lender_type,
     original_loan_principal: derived.original_loan_principal,
@@ -1732,9 +1853,15 @@ export async function createHousingLoanQuickAction(
     financing_includes_bsd: false,
     buyers_stamp_duty_paid_from_cpf_oa:
       planning?.buyers_stamp_duty_paid_from_cpf_oa ?? false,
+    payment_source: paymentNormalized.payment_source,
+    cpf_oa_payment: paymentNormalized.cpf_oa_payment,
+    cash_payment: paymentNormalized.cash_payment,
   });
   revalidatePath("/dashboard");
   revalidatePath("/balances");
+  revalidatePath("/budget");
+  revalidatePath("/setup");
+  revalidatePath("/planning/wealth");
   return { error: null };
 }
 
@@ -1761,7 +1888,6 @@ export async function updateHousingLoanAction(
   ).trim();
   const downpayment_from_oa = Number(formData.get("downpayment_from_oa"));
   const fees_from_oa = Number(formData.get("fees_from_oa"));
-  const oa_share_of_payment = Number(formData.get("oa_share_of_payment"));
   const maxRaw = String(formData.get("max_oa_per_month") ?? "").trim();
   const max_oa_per_month =
     maxRaw === "" ? null : Number(maxRaw);
@@ -1799,13 +1925,6 @@ export async function updateHousingLoanAction(
     return { error: "Invalid fees from OA" };
   }
   if (
-    !Number.isFinite(oa_share_of_payment) ||
-    oa_share_of_payment < 0 ||
-    oa_share_of_payment > 1
-  ) {
-    return { error: "OA share of payment must be 0–1 (e.g. 0.5 for half)" };
-  }
-  if (
     max_oa_per_month != null &&
     (!Number.isFinite(max_oa_per_month) || max_oa_per_month < 0)
   ) {
@@ -1828,6 +1947,21 @@ export async function updateHousingLoanAction(
   const annual_nominal_rate_effective =
     lender_type === "hdb" ? HDB_CONCESSIONARY_RATE_ANNUAL : annual_nominal_rate;
 
+  const paymentParsed = parseHousingPaymentForm(formData, {
+    principal,
+    annual_nominal_rate: annual_nominal_rate_effective,
+    term_months,
+    first_payment_month,
+    oa_share_of_payment: Number(formData.get("oa_share_of_payment")) || 0,
+  });
+  if ("error" in paymentParsed) return paymentParsed;
+  const {
+    payment_source,
+    cpf_oa_payment,
+    cash_payment,
+    oa_share_of_payment,
+  } = paymentParsed;
+
   await updateHousingLoan(supabase, user.id, idParsed.data, {
     label,
     principal,
@@ -1842,9 +1976,15 @@ export async function updateHousingLoanAction(
     lender_type,
     original_loan_principal,
     principal_repaid_before_schedule,
+    payment_source,
+    cpf_oa_payment,
+    cash_payment,
   });
   revalidatePath("/dashboard");
   revalidatePath("/balances");
+  revalidatePath("/budget");
+  revalidatePath("/setup");
+  revalidatePath("/planning/wealth");
   return { error: null };
 }
 
@@ -1863,4 +2003,7 @@ export async function deleteHousingLoanAction(formData: FormData) {
   }
   revalidatePath("/dashboard");
   revalidatePath("/balances");
+  revalidatePath("/budget");
+  revalidatePath("/setup");
+  revalidatePath("/planning/wealth");
 }

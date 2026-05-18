@@ -7,9 +7,11 @@ import {
   buildCpfMonthlyProjectionSeries,
   buildDashboardInsights,
   buildNetWorthByAgeProjection,
+  buildHousingPaymentInsights,
   buildSpendRecommendationsForMonth,
   calculateNetWorth,
   calculateSavingsRate,
+  oaShareForCpfProjection,
   DEFAULT_RETIREMENT_DIVIDEND_YIELD_ANNUAL,
   cumulativeVehicleProceedsToCash,
   effectiveLoanBalance,
@@ -92,6 +94,7 @@ import {
   advisorReadInvestments,
 } from "@/data/repositories/investments";
 import { buildSyntheticTaxExpense } from "@/data/income-tax-synthetic-expense";
+import { buildSyntheticHousingCashExpense } from "@/data/housing-cash-synthetic-expense";
 import type { HousingLoanRow } from "@/data/supabase/types";
 import {
   buildInvestmentProjectionSeries,
@@ -288,7 +291,7 @@ function housingLoanToProjection(
     principal: num(row.principal),
     annualNominalRate: num(row.annual_nominal_rate),
     termMonths: row.term_months,
-    oaShareOfPayment: num(row.oa_share_of_payment),
+    oaShareOfPayment: oaShareForCpfProjection(row),
     maxOaPerMonth:
       row.max_oa_per_month != null &&
       String(row.max_oa_per_month).trim() !== ""
@@ -437,11 +440,16 @@ export async function getDashboardPayload(
     profile,
     yearMonth
   );
-  // Prepend so the synthetic tax line appears first in any debug listing; order
-  // doesn't affect `monthlyBudgetVsActual` because it aggregates by category.
-  const budgetExpenses = syntheticTax
-    ? [syntheticTax.expense, ...baseBudgetExpenses]
-    : baseBudgetExpenses;
+  const syntheticHousingCash = buildSyntheticHousingCashExpense(
+    housingLoanRows,
+    yearMonth
+  );
+  // Prepend synthetic lines; order doesn't affect `monthlyBudgetVsActual` totals.
+  const budgetExpenses = [
+    ...(syntheticTax ? [syntheticTax.expense] : []),
+    ...(syntheticHousingCash ? [syntheticHousingCash.expense] : []),
+    ...baseBudgetExpenses,
+  ];
   const monthlyBudget = monthlyBudgetVsActual(domainBudgetLines, budgetExpenses, {
     viewingYearMonth: yearMonth,
     amountOverrideByLineId,
@@ -617,6 +625,7 @@ export async function getDashboardPayload(
       syntheticTax?.expense.spendPeriod === "monthly"
         ? syntheticTax.expense.amount
         : 0;
+    const extraHousingCashMonthly = syntheticHousingCash?.expense.amount ?? 0;
     const ageAssets = buildAgeAssetProjection({
       agePoints: nwAgePoints,
       asOf: dashboardAsOf,
@@ -631,7 +640,7 @@ export async function getDashboardPayload(
       annualBonusTakeHomeNet:
         annualBonusTakeHomeNet > 0 ? annualBonusTakeHomeNet : 0,
       annualBonusPayoutMonth: DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
-      extraMonthlyPlannedSpend: extraTaxMonthly,
+      extraMonthlyPlannedSpend: extraTaxMonthly + extraHousingCashMonthly,
       incomeGrowthAnnual: profileAnnualSalaryGrowthNominal(profile),
       expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
     });
@@ -847,7 +856,12 @@ export async function getDashboardPayload(
   });
 
   const currencyCode = profile?.base_currency ?? DEFAULT_BASE_CURRENCY;
-  const insights = [...baseInsights];
+  const housingInsights = buildHousingPaymentInsights(
+    housingLoanRows,
+    yearMonth,
+    currencyCode
+  );
+  const insights = [...baseInsights, ...housingInsights];
 
   const takeHomeMinusExpenses =
     income != null ? income - monthlyExpensesTotal : null;
