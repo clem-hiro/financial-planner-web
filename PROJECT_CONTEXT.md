@@ -372,7 +372,7 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 2. If behavior changes globally (middleware, shell, login redirect), update **Auth, onboarding, and gating** or **App shell UX**.
 3. If you introduce a new top-level domain concept (e.g. “tax estimates”), add a **Code map** row and point to the main module.
 4. Keep claims aligned with **code**; avoid marketing copy that does not match the UI. Roadmap **`PlaceholderModuleCard`** badges can stay aspirational; the inventory table should stay factual.
-5. Reconcile **[BYOFA Features](https://www.notion.so/BYOFA-Features-35fa694147bf8093be2fc57673cee41a)** (Feature Roadmap Table) from this inventory — Cursor rule `.cursor/rules/project-context-notion-sync.mdc`, or ask the agent to **sync BYOFA** / **sync Notion from PROJECT_CONTEXT**.
+5. Reconcile the **[BYOFA Feature Roadmap](https://app.clickup.com/90182722727/v/l/6-901818233981-1)** in ClickUp from this inventory — Cursor rule `.cursor/rules/project-context-clickup-sync.mdc`, or ask the agent to **sync BYOFA** / **sync ClickUp from PROJECT_CONTEXT**.
 
 ### Housing architecture (asset / debt / goals)
 

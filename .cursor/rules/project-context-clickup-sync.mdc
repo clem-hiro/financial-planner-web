@@ -1,0 +1,153 @@
+---
+description: Sync PROJECT_CONTEXT.md feature inventory to BYOFA ClickUp Feature Roadmap list.
+globs: PROJECT_CONTEXT.md
+alwaysApply: false
+---
+
+# PROJECT_CONTEXT → ClickUp BYOFA
+
+`PROJECT_CONTEXT.md` is the **only repo source of truth** for shipped vs planned. Stakeholder-facing copy lives in ClickUp:
+
+- **List:** [Feature Roadmap](https://app.clickup.com/90182722727/v/l/6-901818233981-1)
+- **Workspace ID:** `90182722727`
+- **List ID:** `901818233981`
+- **Space:** BYOFA (`901811109505`)
+
+When you **materially edit** `PROJECT_CONTEXT.md` (feature inventory rows added/removed, status changes, or “Last reviewed”), or the user asks to **sync BYOFA**, **sync ClickUp from PROJECT_CONTEXT**, or **update the roadmap table**, reconcile ClickUp using the **ClickUp MCP** (`user-clickup`).
+
+**Do not sync Notion** for feature roadmap updates unless the user explicitly asks.
+
+There is **no** `docs/feature_roadmap.md` — do not recreate it unless the user asks.
+
+## ClickUp custom fields (list `901818233981`)
+
+| Field | Custom field ID |
+|-------|-----------------|
+| What it does | `93e9a453-b961-4073-a132-799dcbe067b3` |
+| Area | `49231c65-d78c-4230-99f7-0880e45cc587` |
+| User Type | `660f455d-754b-4414-95ad-eff2c986547b` |
+| Priority | `af1fba8f-d45a-40e1-b58f-4a8d1932e887` |
+| Next step | `130ddf09-518a-44f8-beef-97216b67aa30` |
+
+Use the **Priority** custom field (text: `High` | `Medium` | `Low` | `Needs confirmation`), not the native ClickUp priority field.
+
+## Step 1 — Read inventory
+
+Parse **[Feature inventory (shipped vs planned)]** and **Roadmap modules (Planning cards only)**. Use **Routes** / **Database** only for extra context when writing **What it does** / **Next step**.
+
+Expand **Roadmap modules** into one ClickUp task each when listed there and not already a dedicated inventory row: Insurance tracking, Scenario simulator, Dependents planning, Estate checklist, Wealth reports (quarterly reports), Documents vault, Risk profiling, Account syncing, Retirement planning studio (Partial), AI insights (Planned — also inventory Home row).
+
+Split broad inventory lines into product tasks where ClickUp already uses separate titles (e.g. Home metrics → Client home dashboard, Net worth summary, Monthly spending view; proposals → Advisor proposal flow + Proposal review page).
+
+## Step 2 — Build ClickUp task payloads
+
+For each product row, set:
+
+| ClickUp field | Source |
+|---------------|--------|
+| **Task name** | Product name from mapping table below |
+| **Status** (native) | See status mapping |
+| **Description** | Structured plain text (see format below) |
+| **Area** (custom) | From mapping defaults |
+| **User Type** (custom) | From mapping defaults |
+| **Priority** (custom) | Default from mapping; if task exists, **keep** current Priority unless status flipped to Partial/Planned on a formerly Done item → bump toward High |
+| **Next step** (custom) | Short action from inventory gap; if task exists and inventory unchanged, **keep** existing Next step |
+| **Tags** | Comma-separated tags from mapping when creating; on update, add missing tags only (do not remove tags unless user asks) |
+
+**Description format** (plain text, pipe-separated sections):
+
+```
+What it does: <one sentence> | Examples: <1–2 examples> | Current app behaviour: <shipped/partial/planned fact> | Gaps and next steps: <gap from inventory Notes>
+```
+
+No file paths or backticks in stakeholder copy.
+
+| `PROJECT_CONTEXT` status | ClickUp **status** (native) |
+|--------------------------|----------------------------|
+| **Shipped** | `done` |
+| **Partial** | `in progress` |
+| **Planned** | `not started` |
+| **Not in repo** | `not started` |
+
+If a status string is rejected by the API, run `clickup_filter_tasks` on this list and use an existing status name from returned tasks before retrying.
+
+**User Type** for scope rows: `Admin` or `Needs confirmation` as in mapping. Others: `Client`, `Advisor`, or `Client; Advisor` (semicolon-separated).
+
+### Inventory → ClickUp task (canonical list)
+
+Use these **Task name** values. Map inventory capability → task(s); create all that apply.
+
+| ClickUp **Task name** | **Area** | **User Type** | **Priority** (default) | **Tags** | Inventory source(s) |
+|-----------------------|----------|---------------|------------------------|----------|---------------------|
+| Account access | Login and signup | Client; Advisor | High | auth,client,advisor | Sign-in / sign-up |
+| Client onboarding | Setup | Client | High | onboarding,client,setup | Client onboarding wizard |
+| Role-based workspace | Navigation | Client; Advisor | High | auth,navigation,roles | Advisor vs client profiles |
+| Client invite keys | Advisor onboarding | Advisor | High | invite,access-key,advisor | Invite-only signup / access keys |
+| QR invite sharing | Advisor onboarding | Advisor | High | qr,invite,signup | QR / link invite sharing |
+| Buy invite keys | Billing | Advisor | Medium | payments,invite-keys,coupons | Buy invite keys |
+| Advisor phone verification | Advisor profile | Advisor | Medium | phone,verification,whatsapp | Advisor WhatsApp phone verification |
+| Contact advisor | Communication | Client | Medium | advisor,client,whatsapp,consent | Contact advisor |
+| Client home dashboard | Dashboard | Client | High | dashboard,client,home | Net worth / safe to spend / month health (combined product view) |
+| Net worth summary | Dashboard | Client | High | net-worth,assets,debts | Net worth metrics |
+| Monthly spending view | Dashboard | Client | High | expenses,budget,activity | Spending vs budget / month health |
+| Long-term projections | Planning | Client | Medium | projection,retirement,wealth | Illustrative long-horizon projections |
+| CPF retirement view | Planning | Client | Medium | cpf,retirement,singapore | CPF retirement projection |
+| Planning overview | Planning | Client | Medium | overview,planning | Planning **Overview** |
+| Cash flow planning | Planning | Client | High | cash-flow,budget,income | Planning **Cash flow** |
+| Wealth planning | Planning | Client | High | wealth,assets,debts | Planning **Wealth** |
+| Protection planning | Planning | Client | Medium | protection,insurance,estate | Planning **Protection** |
+| Future planning | Planning | Client | High | future,goals,retirement | Planning **Future** |
+| Financial setup | Setup | Client | High | setup,profile,data-entry | Financial Setup tabs |
+| Profile assumptions | Setup | Client | High | profile,assumptions,income | Profile income / CPF / retirement assumptions |
+| Budget lines | Budget | Client | High | budget,cash-flow | Budget lines |
+| Guided budget templates | Budget | Client | Medium | budget,onboarding,templates | SG-oriented guided budget templates |
+| Expenses | Activity | Client | High | expenses,activity | Expenses list |
+| Spending guidance | Activity | Client | Medium | spending,budget,guidance | Spending guidance |
+| Investments | Setup | Client | High | investments,wealth,projection | Investments |
+| CPF balances | Setup | Client | Medium | cpf,singapore,retirement | CPF balance tracking |
+| Cash accounts | Setup | Client | High | cash,liquidity | Cash account balances |
+| Debt planning | Setup | Client | High | debt,liabilities,budget | Debt planning |
+| Housing planning | Setup | Client | Medium | housing,property,mortgage | Housing quick-add |
+| Vehicle planning | Setup | Client | Low | vehicle,coe,parf,singapore | Vehicle planning |
+| Goals | Planning | Client | High | goals,future | Financial goals |
+| Income tax lens | Planning | Client | Medium | tax,income,singapore | Income tax estimation lens |
+| Methodology help | Education | Client; Advisor | Medium | methodology,education | Methodology |
+| Client notifications | Communication | Client | Medium | notifications,inbox | Financial inbox |
+| Advisor dashboard | Advisor workspace | Advisor | Medium | dashboard,advisor | Advisor home |
+| Advisor client list | Advisor workspace | Advisor | High | client-roster,advisor | Client roster |
+| Advisor client workspace | Advisor workspace | Advisor | High | client-workspace,advisor,consent | Per-client workspace |
+| Advisor proposal flow | Collaboration | Client; Advisor | High | proposal,collaboration,review | Advisor proposal & change review |
+| Proposal review page | Collaboration | Client | High | proposal,client-review | Review advisor-proposed (client `/review/proposal`) |
+| Advisor opportunities | Advisor workspace | Advisor | Medium | opportunities,advisor,planned | Opportunities hub |
+| Advisor activity feed | Advisor workspace | Advisor | Medium | activity,advisor,planned | Activity feed |
+| Advisor notes and meeting prep | Advisor workspace | Advisor | Medium | notes,meetings,planned | Advisor notes and meeting prep |
+| Insurance tracking | Protection | Client; Advisor | Medium | insurance,planned | Roadmap: insurance map |
+| Dependents planning | Protection | Client; Advisor | Low | dependents,family,planned | Roadmap: dependents |
+| Estate checklist | Protection | Client; Advisor | Low | estate,planned | Roadmap: estate checklist |
+| Risk profiling | Planning | Client; Advisor | Medium | risk,planned | Roadmap: risk profiling |
+| Retirement planning studio | Future planning | Client; Advisor | High | retirement,planned | Roadmap: retirement studio (Partial) |
+| Scenario simulator | Future planning | Client; Advisor | High | scenarios,projection,planned | Roadmap: scenario simulator |
+| Wealth reports | Reporting | Client; Advisor | Medium | reports,wealth,planned | Roadmap: quarterly reports |
+| Documents vault | Documents | Client; Advisor | Low | documents,vault,planned | Roadmap: documents vault |
+| Account syncing | Data import | Client | Medium | account-syncing,banking,planned | Roadmap: account syncing |
+| AI insights | Intelligence | Client; Advisor | Medium | ai,insights,planned | Embedded AI insights / AI insights layer |
+| Admin console | Operations | Admin | Needs confirmation | admin,operations,planned | Admin / operations console |
+| Household planning | Planning | Needs confirmation | Needs confirmation | household,family,planned | Household planning |
+| Regulated advice workflow | Compliance | Needs confirmation | Needs confirmation | compliance,regulated-advice,planned | Regulated advice workflow |
+
+**Next step hints** (when inventory notes imply): Partial QR → fix invite edge cases; Partial billing → confirm payment provider; Partial proposals → partial approval / projection compare; Partial protection → insurance tracking; Partial future → retirement studio; Not in repo scope rows → confirm whether in scope.
+
+## Step 3 — Push to ClickUp
+
+1. **Confirm list:** `clickup_get_list` with `list_id: "901818233981"`.
+2. **Find tasks:** `clickup_filter_tasks` with `list_ids: ["901818233981"]` and `workspace_id: "90182722727"`. Match by exact **Task name** (case-sensitive). If ambiguous, use `clickup_search`.
+3. **Update** existing: `clickup_update_task` with `task_id`, `status`, `description` (or `markdown_description`), and `custom_fields` array for What it does, Area, User Type, Priority, Next step.
+4. **Create** missing: `clickup_create_task` with `list_id: "901818233981"`, `name`, `status`, `description`, `tags`, and `custom_fields`.
+5. **Removals** (capability dropped from inventory): set **status** `not started`, **Next step** `Removed from PROJECT_CONTEXT — archive in ClickUp if obsolete.`
+6. Do not change ClickUp tasks for inventory-only internals (e.g. Client APIs route group, email callback, classic redirects) unless the user wants them in the product table.
+
+## Hygiene
+
+- One ClickUp task per **Task name**; merge duplicates if filter finds two with the same name.
+- Do not invent capabilities absent from inventory or Roadmap modules.
+- Reply with: ClickUp creates / updates count and any inventory rows with no ClickUp mapping.

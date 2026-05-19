@@ -41,7 +41,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# notion sync state (per-developer — tracks last commit synced to BYOFA Features tracker)
+# clickup sync state (per-developer — tracks last commit synced to BYOFA Feature Roadmap)
+.claude/clickup-sync.json
+# legacy notion sync state (deprecated — use clickup-sync.json)
 .claude/notion-sync.json
 .worktrees/
 

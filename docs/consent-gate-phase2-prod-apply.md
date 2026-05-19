@@ -220,9 +220,9 @@ items). All ten must hold; most are proven mechanically by §3.
      under `/more`; the 11 `advisor_read_*` RPCs / `seq` column).
    - the **`_Last reviewed_`** line.
    Per `.cursor/rules/update-project-context-on-ship.mdc` — do not leave this for later.
-2. **BYOFA Notion sync** — after editing the inventory, reconcile [BYOFA Features] via the
-   **Notion MCP (`user-notion`)** per `.cursor/rules/project-context-notion-sync.mdc`
-   (status mapping: Shipped → Done). Or tell the agent **"sync BYOFA"**.
+2. **BYOFA ClickUp sync** — after editing the inventory, reconcile the [Feature Roadmap] via the
+   **ClickUp MCP (`user-clickup`)** per `.cursor/rules/project-context-clickup-sync.mdc`
+   (status mapping: Shipped → `done`). Or tell the agent **"sync BYOFA"**.
 3. **Branch / PR (merge-never-rebase SOP, from HANDOFF):**
    - Co-dev CleAyz pushes `sandbox`/`main` in parallel: **fetch + divergence check**, optional
      pre-PR `merge origin/main` → sandbox if conflicts (**never rebase** the shared `sandbox`).
@@ -242,4 +242,4 @@ items). All ten must hold; most are proven mechanically by §3.
 - App-side rollback (if needed) is a normal code revert + back-merge; it does not require a DB
   downgrade because the RPCs/column are inert unless the app calls them.
 
-[BYOFA Features]: https://www.notion.so/BYOFA-Features-35fa694147bf8093be2fc57673cee41a
+[Feature Roadmap]: https://app.clickup.com/90182722727/v/l/6-901818233981-1

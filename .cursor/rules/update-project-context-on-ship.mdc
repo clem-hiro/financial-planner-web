@@ -8,7 +8,7 @@ alwaysApply: false
 
 `PROJECT_CONTEXT.md` is the repo source of truth for what is **Shipped**, **Partial**, **Planned**, or **Not in repo**. When your edits under `src/` or `supabase/migrations/` **materially change** what users or advisors can do, you **must** update that file **in the same task** before finishing — do not leave it for the user.
 
-After updating inventory, follow `.cursor/rules/project-context-notion-sync.mdc` to sync [BYOFA Features](https://www.notion.so/BYOFA-Features-35fa694147bf8093be2fc57673cee41a) unless the user said to skip Notion.
+After updating inventory, follow `.cursor/rules/project-context-clickup-sync.mdc` to sync the [BYOFA Feature Roadmap](https://app.clickup.com/90182722727/v/l/6-901818233981-1) in ClickUp unless the user said to skip ClickUp.
 
 ## Update PROJECT_CONTEXT when you
 
@@ -35,9 +35,9 @@ After updating inventory, follow `.cursor/rules/project-context-notion-sync.mdc`
 
 Status meanings: **Shipped** = end-to-end for normal users; **Partial** = real workflow plus known gaps; **Planned** = placeholder/card only; **Not in repo** = not implemented.
 
-## Notion row mapping
+## ClickUp task mapping
 
-When adding inventory rows, use product **Feature** titles from `.cursor/rules/project-context-notion-sync.mdc` so BYOFA stays aligned (e.g. split Home metrics into dashboard / net worth / spending rows when appropriate).
+When adding inventory rows, use product **Task name** values from `.cursor/rules/project-context-clickup-sync.mdc` so BYOFA stays aligned (e.g. split Home metrics into dashboard / net worth / spending tasks when appropriate).
 
 ## Completion check
 
