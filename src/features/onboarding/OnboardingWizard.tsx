@@ -13,16 +13,30 @@ import {
   type LifestyleProfileId,
   type OnboardingConfidenceLevel,
 } from "@/domain/finance/budget-guided-setup";
+import {
+  BONUS_MONTH_PRESETS,
+  ONBOARDING_DEFAULT_CPF_BAND,
+  annualBonusFromGrossAndMonths,
+  estimateOnboardingTakeHomeMonthly,
+  inferBonusMonthPreset,
+  type BonusMonthPresetId,
+} from "@/domain/finance/onboarding-income";
+import { formatYearMonth } from "@/lib/dates";
 import { applyGuidedBudgetLinesAction } from "@/server/actions";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { fpInputClass, fpPrimaryButtonClass } from "@/ui/input-classes";
 import { formatCurrency } from "@/ui/lib/format";
+import { BonusMonthSelector } from "@/features/onboarding/BonusMonthSelector";
+// Module sync map: see onboarding-module-sync.ts (profile columns → Income, Budget, Goals).
 
 type Props = {
   initialDisplayName: string;
-  initialMonthlyIncome: number | null;
+  initialGrossMonthly: number | null;
+  /** Pre-gross UX: stored take-home only; shown as hint, not prefilled as gross. */
+  initialLegacyTakeHomeMonthly: number | null;
   initialBaseCurrency: string;
   initialAnnualBonus: number | null;
+  initialAnnualBonusMonths: number | null;
   initialSavingsTarget: number | null;
   initialDebtObligations: number | null;
   initialStep: number;
@@ -57,22 +71,42 @@ function isFoodBand(s: string | null): s is FoodSpendBandId {
   return s != null && FOOD_SPEND_BAND_PRESETS.some((b) => b.id === s);
 }
 
+function parsePositive(raw: string): number | null {
+  const n = Number(raw);
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
 export function OnboardingWizard(props: Props) {
   const router = useRouter();
+  const cpfYearMonth = useMemo(() => formatYearMonth(new Date()), []);
   const [step, setStep] = useState(
     Math.min(4, Math.max(1, props.initialStep || 1))
   );
   const [status, setStatus] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [displayName, setDisplayName] = useState(props.initialDisplayName);
-  const [monthlyIncome, setMonthlyIncome] = useState(
-    props.initialMonthlyIncome != null
-      ? String(props.initialMonthlyIncome)
-      : ""
+  const [grossMonthly, setGrossMonthly] = useState(
+    props.initialGrossMonthly != null ? String(props.initialGrossMonthly) : ""
   );
   const [currency, setCurrency] = useState(props.initialBaseCurrency);
-  const [annualBonus, setAnnualBonus] = useState(
-    props.initialAnnualBonus != null ? String(props.initialAnnualBonus) : ""
+  const initialBonus = useMemo(
+    () =>
+      inferBonusMonthPreset(
+        props.initialAnnualBonus,
+        props.initialGrossMonthly,
+        props.initialAnnualBonusMonths
+      ),
+    [
+      props.initialAnnualBonus,
+      props.initialGrossMonthly,
+      props.initialAnnualBonusMonths,
+    ]
+  );
+  const [bonusPreset, setBonusPreset] = useState<BonusMonthPresetId>(
+    initialBonus.preset
+  );
+  const [bonusCustomAmount, setBonusCustomAmount] = useState(
+    initialBonus.customAmount
   );
   const [savingsTarget, setSavingsTarget] = useState(
     props.initialSavingsTarget != null
@@ -107,20 +141,63 @@ export function OnboardingWizard(props: Props) {
       : "unknown"
   );
 
-  const incomeNum = useMemo(() => {
-    const n = Number(monthlyIncome);
-    return Number.isFinite(n) && n > 0 ? n : 0;
-  }, [monthlyIncome]);
+  const grossNum = useMemo(
+    () => parsePositive(grossMonthly),
+    [grossMonthly]
+  );
+
+  const estimatedTakeHome = useMemo(() => {
+    if (grossNum == null) return null;
+    return estimateOnboardingTakeHomeMonthly(grossNum, cpfYearMonth);
+  }, [grossNum, cpfYearMonth]);
+
+  /** Budget previews use take-home (derived or legacy), never gross. */
+  const takeHomeForBudget = useMemo(() => {
+    if (estimatedTakeHome != null) return estimatedTakeHome;
+    if (grossNum == null && props.initialLegacyTakeHomeMonthly != null) {
+      return props.initialLegacyTakeHomeMonthly;
+    }
+    return 0;
+  }, [estimatedTakeHome, grossNum, props.initialLegacyTakeHomeMonthly]);
 
   const previewLines = useMemo(() => {
-    if (incomeNum <= 0) return [];
+    if (takeHomeForBudget <= 0) return [];
     return generateGuidedMonthlyBudgetLines({
-      monthlyIncome: incomeNum,
+      monthlyIncome: takeHomeForBudget,
       lifestyle,
       strategy,
       foodSpendBand: foodBand,
     });
-  }, [incomeNum, lifestyle, strategy, foodBand]);
+  }, [takeHomeForBudget, lifestyle, strategy, foodBand]);
+
+  function resolveBonusPayload(gross: number | null): {
+    annual_bonus: number | null;
+    annual_bonus_months: number | null;
+  } {
+    const presetDef = BONUS_MONTH_PRESETS.find((p) => p.id === bonusPreset);
+    if (bonusPreset === "none") {
+      return { annual_bonus: null, annual_bonus_months: 0 };
+    }
+    if (bonusPreset === "custom") {
+      const custom = bonusCustomAmount.trim();
+      if (custom === "") {
+        return { annual_bonus: null, annual_bonus_months: null };
+      }
+      const amount = Number(custom);
+      if (!Number.isFinite(amount) || amount < 0) {
+        return { annual_bonus: null, annual_bonus_months: null };
+      }
+      return { annual_bonus: amount, annual_bonus_months: null };
+    }
+    const months = presetDef?.months ?? null;
+    if (months == null || months <= 0 || gross == null) {
+      return { annual_bonus: null, annual_bonus_months: months };
+    }
+    return {
+      annual_bonus: annualBonusFromGrossAndMonths(gross, months),
+      annual_bonus_months: months,
+    };
+  }
 
   async function savePatch(patch: Record<string, unknown>) {
     const res = await fetch("/api/profile", {
@@ -142,22 +219,66 @@ export function OnboardingWizard(props: Props) {
     });
   }
 
+  async function onBack() {
+    if (step <= 1 || pending) return;
+    const prev = step - 1;
+    setPending(true);
+    setStatus(null);
+    try {
+      await savePatch({ onboarding_step: prev });
+      setStep(prev);
+    } catch (e) {
+      console.error(e);
+      setStatus("Could not go back. Please try again.");
+    } finally {
+      setPending(false);
+    }
+  }
+
   async function onContinue() {
     setPending(true);
     setStatus(null);
     try {
       if (step === 1) {
-        await savePatch({
-          display_name: displayName.trim() || null,
-          monthly_income:
-            monthlyIncome.trim() === "" ? null : Number(monthlyIncome),
-          base_currency: currency.trim().toUpperCase(),
-          salary_frequency: "monthly",
-          annual_bonus: annualBonus.trim() === "" ? null : Number(annualBonus),
-          onboarding_confidence_level: confidence,
-          estimated_budget_mode: confidence === "rough",
-          onboarding_step: 2,
-        });
+        const bonus = resolveBonusPayload(grossNum);
+        if (grossNum != null) {
+          await savePatch({
+            display_name: displayName.trim() || null,
+            monthly_gross_salary: grossNum,
+            cpf_age_band: ONBOARDING_DEFAULT_CPF_BAND,
+            annual_bonus: bonus.annual_bonus,
+            annual_bonus_months: bonus.annual_bonus_months,
+            base_currency: currency.trim().toUpperCase(),
+            salary_frequency: "monthly",
+            onboarding_confidence_level: confidence,
+            estimated_budget_mode: confidence === "rough",
+            onboarding_step: 2,
+          });
+        } else if (props.initialLegacyTakeHomeMonthly != null) {
+          await savePatch({
+            display_name: displayName.trim() || null,
+            monthly_income: props.initialLegacyTakeHomeMonthly,
+            annual_bonus: bonus.annual_bonus,
+            annual_bonus_months: bonus.annual_bonus_months,
+            base_currency: currency.trim().toUpperCase(),
+            salary_frequency: "monthly",
+            onboarding_confidence_level: confidence,
+            estimated_budget_mode: confidence === "rough",
+            onboarding_step: 2,
+          });
+        } else {
+          await savePatch({
+            display_name: displayName.trim() || null,
+            monthly_income: null,
+            annual_bonus: bonus.annual_bonus,
+            annual_bonus_months: bonus.annual_bonus_months,
+            base_currency: currency.trim().toUpperCase(),
+            salary_frequency: "monthly",
+            onboarding_confidence_level: confidence,
+            estimated_budget_mode: confidence === "rough",
+            onboarding_step: 2,
+          });
+        }
         setStep(2);
       } else if (step === 2) {
         await savePatch({
@@ -187,7 +308,7 @@ export function OnboardingWizard(props: Props) {
     }
   }
 
-  async function onCreateRecommendedBudget() {
+  async function onCreateIllustratedBudget() {
     setPending(true);
     setStatus(null);
     try {
@@ -213,45 +334,92 @@ export function OnboardingWizard(props: Props) {
   const cardClass =
     "rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm shadow-slate-900/5";
 
+  const backButtonClass =
+    "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600";
+
   return (
     <div className="mx-auto max-w-xl space-y-8">
-      <div className="space-y-1">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-800/90">
-          Guided setup · Step {step} of 4
-        </p>
-        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-[1.65rem]">
-          {step === 1 && "Start with your income"}
-          {step === 2 && "Pick a lifestyle lens"}
-          {step === 3 && "Choose how you want to allocate"}
-          {step === 4 && "You are ready to go"}
-        </h1>
-        <p className="text-sm leading-relaxed text-slate-600">
-          {step === 1 &&
-            "One number is enough to begin. Refine CPF, bonuses, and household later."}
-          {step === 2 &&
-            "Templates tune category weights — nothing is locked. Edit anytime in Budget."}
-          {step === 3 &&
-            "We draft a Singapore-friendly starter mix. React to suggestions instead of building from zero."}
-          {step === 4 &&
-            "Your dashboard and safe-to-spend view will pick up this plan as you add expenses."}
-        </p>
+      <div className="flex items-start gap-3">
+        {step > 1 && (
+          <button
+            type="button"
+            className={`${backButtonClass} shrink-0`}
+            disabled={pending}
+            onClick={() => void onBack()}
+            aria-label="Go back to previous step"
+          >
+            ← Back
+          </button>
+        )}
+        <div className="min-w-0 flex-1 space-y-1">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-800/90">
+            Guided setup · Step {step} of 4
+          </p>
+          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-[1.65rem]">
+            {step === 1 && "Start with your income"}
+            {step === 2 && "Pick a lifestyle lens"}
+            {step === 3 && "How do you usually manage money?"}
+            {step === 4 && "You are ready to go"}
+          </h1>
+          <p className="text-sm leading-relaxed text-slate-600">
+            {step === 1 &&
+              "One number is enough to begin. Refine CPF, bonuses, and household later."}
+            {step === 2 &&
+              "Templates tune category weights — nothing is locked. Edit anytime in Budget."}
+            {step === 3 &&
+              "Based on your income and selected style. You can customise everything later."}
+            {step === 4 &&
+              "Your dashboard and safe-to-spend view will pick up this plan as you add expenses."}
+          </p>
+        </div>
       </div>
 
       {step === 1 && (
         <div className={`space-y-6 ${cardClass}`}>
+          {props.initialLegacyTakeHomeMonthly != null && grossNum == null && (
+            <p className="rounded-xl border border-amber-200/80 bg-amber-50/80 px-3 py-2 text-xs text-amber-900">
+              You previously saved take-home pay of{" "}
+              <span className="font-semibold tabular-nums">
+                {formatCurrency(
+                  props.initialLegacyTakeHomeMonthly,
+                  currency
+                )}
+              </span>
+              /month. Enter your{" "}
+              <span className="font-medium">gross monthly salary</span> below for
+              automatic CPF estimates.
+            </p>
+          )}
           <label className="block space-y-2">
             <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Monthly take-home
+              Gross monthly income
             </span>
             <input
               className={`${fpInputClass} max-w-none text-lg font-medium tabular-nums`}
-              placeholder="e.g. 4800"
+              placeholder="e.g. 5000"
               type="number"
               min={0}
               step="0.01"
-              value={monthlyIncome}
-              onChange={(e) => setMonthlyIncome(e.target.value)}
+              value={grossMonthly}
+              onChange={(e) => setGrossMonthly(e.target.value)}
+              aria-describedby="gross-income-hint take-home-preview"
             />
+            <p id="gross-income-hint" className="text-xs text-slate-500">
+              We&apos;ll estimate CPF and take-home automatically.
+            </p>
+            {estimatedTakeHome != null && grossNum != null && (
+              <p
+                id="take-home-preview"
+                className="text-sm text-slate-700"
+                aria-live="polite"
+              >
+                Estimated take-home:{" "}
+                <span className="font-medium tabular-nums text-emerald-900">
+                  ~{formatCurrency(estimatedTakeHome, currency)}
+                </span>
+                /month after CPF
+              </p>
+            )}
           </label>
           <label className="block space-y-2">
             <span className="text-xs font-medium text-slate-500">
@@ -278,20 +446,15 @@ export function OnboardingWizard(props: Props) {
                 onChange={(e) => setCurrency(e.target.value.toUpperCase())}
               />
             </label>
-            <label className="block space-y-2">
-              <span className="text-xs font-medium text-slate-500">
-                Annual bonus{" "}
-                <span className="font-normal text-slate-400">(optional)</span>
-              </span>
-              <input
-                className={fpInputClass}
-                type="number"
-                min={0}
-                step="0.01"
-                value={annualBonus}
-                onChange={(e) => setAnnualBonus(e.target.value)}
+            <div className="col-span-2 sm:col-span-1">
+              <BonusMonthSelector
+                preset={bonusPreset}
+                customAmount={bonusCustomAmount}
+                onPresetChange={setBonusPreset}
+                onCustomAmountChange={setBonusCustomAmount}
+                disabled={pending}
               />
-            </label>
+            </div>
           </div>
           <div className="space-y-2">
             <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
@@ -329,8 +492,8 @@ export function OnboardingWizard(props: Props) {
       )}
 
       {step === 2 && (
-    <div className="space-y-6" {...(pending ? { inert: true } : {})}>
-      <BlockingSubmitOverlay active={pending} message="Saving onboarding…" />
+        <div className="space-y-6" {...(pending ? { inert: true } : {})}>
+          <BlockingSubmitOverlay active={pending} message="Saving onboarding…" />
           <div className={`${cardClass} space-y-4`}>
             <p className="text-sm font-medium text-slate-800">Lifestyle</p>
             <div className="grid max-h-[min(52vh,22rem)] gap-2 overflow-y-auto pr-1 sm:max-h-none sm:grid-cols-2">
@@ -389,6 +552,9 @@ export function OnboardingWizard(props: Props) {
             <p className="text-sm font-medium text-slate-800">
               Money management style
             </p>
+            <p className="text-xs text-slate-500">
+              We&apos;ll draft a starting plan you can adjust anytime.
+            </p>
             <div className="space-y-2">
               {BUDGET_STRATEGY_PRESETS.map((p) => (
                 <button
@@ -412,17 +578,17 @@ export function OnboardingWizard(props: Props) {
           <div className={`${cardClass} space-y-4`}>
             <div className="flex flex-wrap items-baseline justify-between gap-2">
               <p className="text-sm font-medium text-slate-800">
-                Recommended monthly plan
+                Illustrated monthly plan
               </p>
-              {incomeNum > 0 && (
+              {takeHomeForBudget > 0 && (
                 <span className="text-xs text-slate-500">
                   Preview · {currency}
                 </span>
               )}
             </div>
-            {incomeNum <= 0 ? (
+            {takeHomeForBudget <= 0 ? (
               <p className="text-sm text-amber-800">
-                Add a positive monthly income in step 1 to preview amounts.
+                Add a positive gross monthly income in step 1 to preview amounts.
               </p>
             ) : (
               <ul className="divide-y divide-slate-100 rounded-xl border border-slate-100">
@@ -479,11 +645,11 @@ export function OnboardingWizard(props: Props) {
           <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <button
               type="button"
-              disabled={pending || incomeNum <= 0}
+              disabled={pending || takeHomeForBudget <= 0}
               className={fpPrimaryButtonClass}
-              onClick={() => void onCreateRecommendedBudget()}
+              onClick={() => void onCreateIllustratedBudget()}
             >
-              Create my recommended budget
+              Create my illustrated budget
             </button>
             <button
               type="button"

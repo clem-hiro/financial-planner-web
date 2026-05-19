@@ -51,6 +51,7 @@ export async function updateProfile(
     monthly_income?: number | null;
     salary_frequency?: "monthly" | "biweekly" | "weekly" | "annual" | null;
     annual_bonus?: number | null;
+    annual_bonus_months?: number | null;
     savings_target_monthly?: number | null;
     fixed_expenses_monthly?: number | null;
     debt_obligations_monthly?: number | null;

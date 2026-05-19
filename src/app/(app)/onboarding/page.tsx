@@ -28,12 +28,25 @@ export default async function OnboardingPage() {
       </p>
       <OnboardingWizard
         initialDisplayName={profile?.display_name ?? ""}
-        initialMonthlyIncome={
-          profile?.monthly_income != null ? num(profile.monthly_income) : null
+        initialGrossMonthly={
+          profile?.monthly_gross_salary != null
+            ? num(profile.monthly_gross_salary)
+            : null
+        }
+        initialLegacyTakeHomeMonthly={
+          profile?.monthly_gross_salary == null &&
+          profile?.monthly_income != null
+            ? num(profile.monthly_income)
+            : null
         }
         initialBaseCurrency={profile?.base_currency ?? DEFAULT_BASE_CURRENCY}
         initialAnnualBonus={
           profile?.annual_bonus != null ? num(profile.annual_bonus) : null
+        }
+        initialAnnualBonusMonths={
+          profile?.annual_bonus_months != null
+            ? num(profile.annual_bonus_months)
+            : null
         }
         initialSavingsTarget={
           profile?.savings_target_monthly != null

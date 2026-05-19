@@ -10,6 +10,8 @@ export type ProfileRow = {
   monthly_income: string | null;
   salary_frequency: "monthly" | "biweekly" | "weekly" | "annual" | null;
   annual_bonus: string | null;
+  /** Months of gross salary used for onboarding bonus presets; null when custom/legacy. */
+  annual_bonus_months?: string | null;
   savings_target_monthly: string | null;
   fixed_expenses_monthly: string | null;
   debt_obligations_monthly: string | null;

@@ -65,7 +65,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 |------------|--------|--------|
 | Sign-in / sign-up (Supabase Auth) | **Shipped** | `LoginForm`, `/login`. |
 | Advisor vs client profiles + middleware gating | **Shipped** | `middleware.ts`, `(app)/layout.tsx`, `financial_profiles.profile_type`. |
-| Client onboarding wizard | **Shipped** | Income → lifestyle → strategy → optional guided budget lines. |
+| Client onboarding wizard | **Shipped** | Gross salary + CPF take-home preview, bonus-month selector, back navigation, illustrated budget wording. Seeds `financial_profiles` (single source of truth for Income / Budget / Goals). See [Onboarding philosophy](#onboarding-philosophy). |
 | Invite-only **client** signup via advisor **access key** | **Shipped** | Claim flow in `handle_new_user`; `validate_client_access_key_for_signup` RPC. |
 | QR / link invite sharing for access keys | **Partial** | Share URL + QR for client signup; known single-use / expiry edge cases (`qr_token_invalid`). |
 | Contact advisor (WhatsApp) | **Shipped** | Client shell **Contact advisor**; `get_my_advisor_contact()` after advisor phone verification. |
@@ -265,6 +265,19 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
 ---
 
+## Onboarding philosophy
+
+**Reduce friction, stay Singapore-friendly, reuse data everywhere.**
+
+- **Gross-first income:** Step 1 asks for **gross monthly salary** (what users know from payslips), not take-home. The wizard shows a live **estimated take-home after employee CPF** using `monthlyEmployeeCpfTakeHomeSg` and a default age band (`below_55`) until birth date is captured in Setup.
+- **Persistence:** PATCH `/api/profile` writes `monthly_gross_salary` + `cpf_age_band`; the API derives and stores `monthly_income` (take-home) so existing budget, dashboard, and projection code paths that read take-home keep working.
+- **Legacy rows:** Users who onboarded before gross UX may only have `monthly_income` (take-home). The wizard does not prefill that value as gross; it shows a hint and preserves take-home on continue if gross is left blank. Mappers (`profileSalaryTakeHomeMonthly`) still fall back to stored take-home when gross + band are absent.
+- **Bonus:** Preset **months of salary** (None → 4+) compute `annual_bonus` = gross × months; **Custom** stores a manual gross annual amount. Optional column `annual_bonus_months` records the preset multiplier (migration `20260520120000_onboarding_bonus_months.sql`).
+- **Illustrated plan (not advisory):** Step 3 labels the draft **Illustrated monthly plan** with copy that everything is editable later — avoids “recommended” / advice framing while still seeding guided budget lines.
+- **Onboarding → module sync:** No duplicate onboarding table. The same profile columns feed Setup Income (`monthly_gross_salary`, `annual_bonus`), Budget (`budgeting_strategy`, guided lines), Goals hints (`savings_target_monthly`), and debt commitments (`debt_obligations_monthly`). Later edits in those modules update the profile; see `src/features/onboarding/onboarding-module-sync.ts`.
+
+---
+
 ## Auth, onboarding, and gating
 
 - **Supabase Auth** via server client (`src/data/supabase/server.ts`) and browser client (`browser.ts`).
@@ -316,7 +329,7 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 | Shared planning constants | `src/lib/planning-sections.ts`, `src/lib/planning-revalidate.ts` |
 | Client UI generation label | `src/lib/client-release.ts` (shown on `/more`; optional `NEXT_PUBLIC_CLIENT_UI_VERSION`) |
 | Placeholder & insight surfaces | `src/components/placeholders/`, `src/components/insights/` |
-| Onboarding | `src/features/onboarding/`, `(app)/onboarding/page.tsx` — guided income → lifestyle → strategy → optional **recommended budget lines** (server `applyGuidedBudgetLinesAction`); profile stores `lifestyle_profile`, `budgeting_strategy`, `onboarding_confidence_level`, `food_spend_band`, `estimated_budget_mode`, `budget_generation_source` |
+| Onboarding | `src/features/onboarding/` (`OnboardingWizard`, `BonusMonthSelector`, `onboarding-module-sync.ts`), `(app)/onboarding/page.tsx` — gross income + CPF preview → lifestyle → illustrated strategy/budget → finish; `src/domain/finance/onboarding-income.ts`; profile stores gross/derived take-home, `annual_bonus` / `annual_bonus_months`, lens fields, optional guided lines via `applyGuidedBudgetLinesAction` |
 | Budget lens (Setup) | `src/features/setup/BudgetLensProfileForm.tsx` — edit lifestyle/strategy after onboarding (PATCH `/api/profile`) |
 | Budget strategy & guided templates | `src/domain/finance/budget-guided-setup.ts` — lifestyle presets, 50/30/20-style splits, SG-oriented line generator, category→needs/wants/savings heuristics for visuals |
 | Auth UI | `src/features/auth/` |
@@ -338,6 +351,7 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 ## Database
 
 - **Migrations:** `supabase/migrations/` (evolved from early `profiles` / `expenses` / `investments` / `financial_goals` toward **`financial_*`** tables and richer profile/onboarding/budget/vehicle/housing/CPF fields).
+- **Onboarding bonus months (`20260520120000_onboarding_bonus_months.sql`):** nullable `financial_profiles.annual_bonus_months` — months-of-salary multiplier from the wizard; `annual_bonus` remains the gross annual lump used in calculations.
 - **Investment contribution phases (`20260516000000_investment_contribution_phases.sql`):** nullable `contribution_type` (`until_retirement` \| `fixed_duration`), `contribution_duration_years`, and reserved `contribution_end_age` / `contribution_end_date` on **`financial_investments`**. Nulls keep legacy behavior (monthly deposits through the retirement horizon when birth + target age exist; otherwise the full chart horizon). Domain: `projectFutureValue` optional `contributionMonthsLimit`, portfolio sum helpers in `src/domain/finance/investment-portfolio-fv.ts`, UI on Setup → Investments.
 - **Housing loan property planning (`20260516100000_housing_loan_property_planning.sql`):** nullable **`financial_housing_loans`** columns: `property_purchase_price`, `property_kind` (`hdb` \| `condo` \| `ec` \| `landed`), `downpayment_guidance_preset` (`pct_20` \| `pct_25` \| `custom`), optional `downpayment_guidance_custom_percent` / `downpayment_guidance_custom_amount`, snapshot `buyers_stamp_duty`, and `financing_includes_bsd` (default `false` for legacy rows). **CPF amortization still uses `principal` + rate + term**; new fields are affordability context. Domain: `singapore-residential-bsd.ts` (IRAS-style residential BSD tiers), `property-financing-plan.ts` (guided deposit + financing toggle), extended `deriveQuickHousingLoanRow` in `housing-loan-quick.ts`. UI: Setup → Housing **`HousingLoanQuickAddForm`** guided planner + list hints in **`HousingLoansPanel`**. **`createHousingLoanQuickAction`** accepts `guided_dp_preset` (omit + `deposit_total` for legacy quick-add); zod: `housingPropertyKindSchema`, `housingDownpaymentGuidancePresetSchema` in `src/lib/validation.ts`.
 - **Housing BSD paid from CPF OA (`20260517000000_housing_loan_bsd_paid_from_cpf_oa.sql`):** boolean **`financial_housing_loans.buyers_stamp_duty_paid_from_cpf_oa`** (default `false`). When true, estimated BSD is treated as paid from CPF OA (feeds OA fee / projection paths); when false, BSD is cash. Ensures **`financing_includes_bsd`** exists if an older DB skipped the prior migration. **`financing_includes_bsd`** remains a legacy “BSD rolled into financed principal” flag; new saves prefer the OA-vs-cash BSD flag.
@@ -387,4 +401,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 - **Not in scope:** live CPF APIs, actuarial CPF LIFE, exhaustive withdrawal rules.
 - **Future:** persist advisor/client assumption presets; tie RA balance into retirement sustainability / spend coverage; inflation on payouts.
 
-_Last reviewed (2026-05-19): **Asset-first housing** — `financial_properties`, linked mortgages via `property_id`, Housing tab + property-first form, legacy loan backfill; projection/CPF paths unchanged on `financial_housing_loans`. Prior (2026-05-18): **Consent-gate Phase 2 SHIPPED** — advisor→client reads via `advisor_read_*` RPCs; client consent on `/more` + shell banner; migration `20260529000000` on prod with `verify_consent_gated_access() = OK`._
+_Last reviewed (2026-05-20): **Onboarding UX** — gross salary + live CPF take-home preview, bonus-month selector, back navigation, illustrated plan wording; `annual_bonus_months` migration; onboarding→module sync doc. Prior (2026-05-19): **Asset-first housing** — `financial_properties`, linked mortgages via `property_id`._

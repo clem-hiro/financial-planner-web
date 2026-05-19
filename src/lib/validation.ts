@@ -72,6 +72,12 @@ export const profilePatchSchema = z
       .nullable()
       .optional(),
     annual_bonus: z.number().nonnegative().max(10_000_000).nullable().optional(),
+    annual_bonus_months: z
+      .number()
+      .nonnegative()
+      .max(24)
+      .nullable()
+      .optional(),
     savings_target_monthly: z
       .number()
       .nonnegative()

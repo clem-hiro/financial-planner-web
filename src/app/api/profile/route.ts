@@ -50,6 +50,7 @@ export async function PATCH(request: Request) {
     monthly_income?: number | null;
     salary_frequency?: "monthly" | "biweekly" | "weekly" | "annual" | null;
     annual_bonus?: number | null;
+    annual_bonus_months?: number | null;
     savings_target_monthly?: number | null;
     fixed_expenses_monthly?: number | null;
     debt_obligations_monthly?: number | null;
@@ -84,6 +85,9 @@ export async function PATCH(request: Request) {
   }
   if (data.annual_bonus !== undefined) {
     patch.annual_bonus = data.annual_bonus;
+  }
+  if (data.annual_bonus_months !== undefined) {
+    patch.annual_bonus_months = data.annual_bonus_months;
   }
   if (data.savings_target_monthly !== undefined) {
     patch.savings_target_monthly = data.savings_target_monthly;
