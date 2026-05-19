@@ -9,6 +9,10 @@ import { DashboardSubnav } from "@/features/dashboard/DashboardSubnav";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
+import {
+  appBrandHeaderStyle,
+  appBrandNavyTextStyle,
+} from "@/ui/app-tab-styles";
 import { formatCurrency } from "@/ui/lib/format";
 
 export default async function DashboardPage() {
@@ -36,7 +40,10 @@ export default async function DashboardPage() {
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-800/90">
             Secure access
           </p>
-          <h1 className="mt-2 text-2xl font-semibold tracking-tight text-[#0c192f] sm:text-3xl">
+          <h1
+            className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl"
+            style={appBrandNavyTextStyle}
+          >
             Dashboard
           </h1>
           <p className="mt-3 text-base leading-relaxed text-slate-600">
@@ -46,7 +53,7 @@ export default async function DashboardPage() {
         </div>
         <Link
           href="/login"
-          className="inline-flex rounded-full bg-[#0c192f] px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-slate-900/15 transition hover:bg-[#152a45]"
+          className="exec-navy-btn inline-flex rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-slate-900/15 transition"
         >
           Sign in
         </Link>
@@ -62,7 +69,10 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-10 sm:space-y-12">
       <header className="space-y-6 border-b border-slate-200/80 pb-8 sm:pb-10">
-        <div className="rounded-3xl border border-slate-200/80 bg-linear-to-br from-[#0c192f] via-[#10213a] to-[#123355] p-6 text-white shadow-[0_16px_44px_-20px_rgba(12,25,47,0.55)] sm:p-8">
+        <div
+          className="rounded-3xl border border-slate-200/80 p-6 text-white sm:p-8"
+          style={appBrandHeaderStyle}
+        >
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div className="max-w-2xl space-y-2">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200/90">
