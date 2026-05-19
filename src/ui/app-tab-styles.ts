@@ -26,3 +26,28 @@ export const appActiveGradientStyle = {
 
 export const appTabPillInactiveClass =
   "text-slate-600 hover:bg-white hover:text-slate-900";
+
+/**
+ * Brand navy as inline style, sourced from the globals.css `--exec-navy`
+ * custom property — single source of truth, no duplicated hex. Same
+ * Turbopack JIT-drop reason as appActiveGradientStyle (see LEARNINGS.md):
+ * arbitrary `text-[#0c192f]` / `bg-[#0c192f]` / `bg-linear-to-br from-[#…]` /
+ * `shadow-[…]` utilities are intermittently dropped in dev, leaving the
+ * surface unpainted (invisible white-on-white headers). Inline style ships
+ * in the JS bundle; the CSS var is authored CSS (not a JIT utility) —
+ * neither can be dropped. Gradient stops without a token stay literal;
+ * the navy stop uses the var.
+ *
+ * The brand-navy *button* (base bg + :hover) is NOT here: a `hover:bg-*`
+ * class is inert over an inline-style background (inline outranks class
+ * selectors), so its whole background lives as the authored
+ * `.exec-navy-btn` rule in globals.css, mirroring the dialog::backdrop
+ * precedent there.
+ */
+export const appBrandNavyTextStyle = { color: "var(--exec-navy)" } as const;
+
+export const appBrandHeaderStyle = {
+  backgroundImage:
+    "linear-gradient(to bottom right, var(--exec-navy), #10213a, #123355)",
+  boxShadow: "0 16px 44px -20px rgba(12, 25, 47, 0.55)",
+} as const;

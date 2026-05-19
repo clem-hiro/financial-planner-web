@@ -3,6 +3,7 @@ import type { DashboardPayload } from "@/data/dashboard";
 import { yearFromYearMonth } from "@/lib/dates";
 import { planningCashFlowBudgetPath } from "@/lib/setup-urls";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
+import { appBrandNavyTextStyle } from "@/ui/app-tab-styles";
 import { InfoTooltip } from "@/ui/InfoTooltip";
 import { appCardClass, appCardPadding } from "@/ui/surface-classes";
 import { formatCurrency, formatPercent } from "@/ui/lib/format";
@@ -11,7 +12,7 @@ const labelClass =
   "text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500";
 const metricCard = `${appCardClass} ${appCardPadding} transition-[box-shadow,transform] duration-200 hover:-translate-y-px hover:shadow-md hover:shadow-slate-900/8`;
 const figureClass =
-  "mt-3 font-mono text-2xl font-semibold tracking-tight text-[#0c192f] tabular-nums sm:text-[1.65rem]";
+  "mt-3 font-mono text-2xl font-semibold tracking-tight tabular-nums sm:text-[1.65rem]";
 
 export function DashboardOverviewSection({
   payload,
@@ -32,7 +33,7 @@ export function DashboardOverviewSection({
             Investments + cash + optional CPF and vehicle equity, minus debts.
           </InfoTooltip>
         </div>
-        <p className={figureClass}>
+        <p className={figureClass} style={appBrandNavyTextStyle}>
           {formatCurrency(payload.netWorth, payload.baseCurrency)}
         </p>
         {payload.netWorthBreakdown.cpf > 0 && (
@@ -127,7 +128,7 @@ export function DashboardOverviewSection({
             otherwise planned monthly budget.
           </InfoTooltip>
         </div>
-        <p className={figureClass}>{formatPercent(payload.savingsRate)}</p>
+        <p className={figureClass} style={appBrandNavyTextStyle}>{formatPercent(payload.savingsRate)}</p>
         <p className="mt-2 text-xs text-slate-500">
           Take-home − spend basis − planned goals ({currency})
         </p>
@@ -139,7 +140,7 @@ export function DashboardOverviewSection({
             Monthly take-home used to calculate budgets and savings rate; uses logged expenses when present.
           </InfoTooltip>
         </div>
-        <p className={figureClass}>
+        <p className={figureClass} style={appBrandNavyTextStyle}>
           {formatCurrency(
             payload.monthlyExpensesTotal,
             payload.baseCurrency

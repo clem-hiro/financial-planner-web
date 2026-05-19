@@ -10,6 +10,7 @@ import {
 } from "@/server/advisor-key-purchase-actions";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { PageSection } from "@/ui/PageSection";
+import { deriveBuyKeysTotals } from "./buy-keys-totals";
 
 const initial: BuyAccessKeysFormState = {
   error: null,
@@ -107,14 +108,10 @@ export function AdvisorBuyKeysSection({
     return () => window.clearTimeout(timer);
   }, [router, state.info]);
 
-  const totals = useMemo(() => {
-    const quoteMatches =
-      quote?.coupon_code === couponCode.trim() && quote.quantity === quantity;
-    const gross = quoteMatches ? quote.gross_cents : quantity * priceCents;
-    const discount = quoteMatches ? quote.discount_cents : 0;
-    const net = quoteMatches ? quote.net_cents : gross;
-    return { gross, discount, net };
-  }, [couponCode, priceCents, quantity, quote]);
+  const totals = useMemo(
+    () => deriveBuyKeysTotals({ quote, couponCode, quantity, priceCents }),
+    [couponCode, priceCents, quantity, quote]
+  );
 
   const quoteMatches =
     quote?.coupon_code === couponCode.trim() && quote.quantity === quantity;
