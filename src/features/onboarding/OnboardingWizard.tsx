@@ -334,44 +334,33 @@ export function OnboardingWizard(props: Props) {
   const cardClass =
     "rounded-2xl border border-slate-200/90 bg-white p-6 shadow-sm shadow-slate-900/5";
 
-  const backButtonClass =
-    "inline-flex min-h-11 min-w-11 items-center justify-center rounded-full border border-slate-200 bg-white px-3 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600";
+  const navBackBase =
+    "inline-flex min-h-11 items-center justify-center rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:opacity-50 min-w-[7.5rem]";
+  const navBackClass = `${navBackBase} flex-1 sm:flex-initial`;
+  const navPrimaryClass = `${fpPrimaryButtonClass} inline-flex min-h-11 flex-1 items-center justify-center disabled:cursor-not-allowed disabled:opacity-50 sm:flex-initial sm:min-w-[9.5rem]`;
 
   return (
-    <div className="mx-auto max-w-xl space-y-8">
-      <div className="flex items-start gap-3">
-        {step > 1 && (
-          <button
-            type="button"
-            className={`${backButtonClass} shrink-0`}
-            disabled={pending}
-            onClick={() => void onBack()}
-            aria-label="Go back to previous step"
-          >
-            ← Back
-          </button>
-        )}
-        <div className="min-w-0 flex-1 space-y-1">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-800/90">
-            Guided setup · Step {step} of 4
-          </p>
-          <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-[1.65rem]">
-            {step === 1 && "Start with your income"}
-            {step === 2 && "Pick a lifestyle lens"}
-            {step === 3 && "How do you usually manage money?"}
-            {step === 4 && "You are ready to go"}
-          </h1>
-          <p className="text-sm leading-relaxed text-slate-600">
-            {step === 1 &&
-              "One number is enough to begin. Refine CPF, bonuses, and household later."}
-            {step === 2 &&
-              "Templates tune category weights — nothing is locked. Edit anytime in Budget."}
-            {step === 3 &&
-              "Based on your income and selected style. You can customise everything later."}
-            {step === 4 &&
-              "Your dashboard and safe-to-spend view will pick up this plan as you add expenses."}
-          </p>
-        </div>
+    <div className="mx-auto max-w-xl space-y-8 pb-28">
+      <div className="space-y-1">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-800/90">
+          Guided setup · Step {step} of 4
+        </p>
+        <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-[1.65rem]">
+          {step === 1 && "Start with your income"}
+          {step === 2 && "Pick a lifestyle lens"}
+          {step === 3 && "How do you usually manage money?"}
+          {step === 4 && "You are ready to go"}
+        </h1>
+        <p className="text-sm leading-relaxed text-slate-600">
+          {step === 1 &&
+            "One number is enough to begin. Refine CPF, bonuses, and household later."}
+          {step === 2 &&
+            "Templates tune category weights — nothing is locked. Edit anytime in Budget."}
+          {step === 3 &&
+            "Based on your income and selected style. You can customise everything later."}
+          {step === 4 &&
+            "Your dashboard and safe-to-spend view will pick up this plan as you add expenses."}
+        </p>
       </div>
 
       {step === 1 && (
@@ -701,23 +690,48 @@ export function OnboardingWizard(props: Props) {
         </div>
       )}
 
-      <div className="flex flex-wrap items-center gap-3">
-        {step !== 3 && (
-          <button
-            className={fpPrimaryButtonClass}
-            disabled={pending}
-            type="button"
-            onClick={() => void onContinue()}
+      <nav
+        className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200/90 bg-white/95 px-4 py-3 backdrop-blur-sm supports-[backdrop-filter]:bg-white/80 pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+        aria-label="Onboarding navigation"
+      >
+        <div className="mx-auto flex max-w-xl flex-col gap-2">
+          {status && (
+            <p className="text-center text-sm text-red-700" role="alert">
+              {status}
+            </p>
+          )}
+          <div
+            className={
+              step === 1
+                ? "flex justify-end"
+                : step === 3
+                  ? "flex justify-start"
+                  : "flex items-stretch gap-3"
+            }
           >
-            {step === 4 ? "Finish onboarding" : "Continue"}
-          </button>
-        )}
-        {status && (
-          <span className="text-sm text-red-700" role="alert">
-            {status}
-          </span>
-        )}
-      </div>
+            {step > 1 && (
+              <button
+                type="button"
+                className={step === 3 ? navBackBase : navBackClass}
+                disabled={pending}
+                onClick={() => void onBack()}
+              >
+                ← Back
+              </button>
+            )}
+            {step !== 3 && (
+              <button
+                type="button"
+                className={navPrimaryClass}
+                disabled={pending}
+                onClick={() => void onContinue()}
+              >
+                {step === 4 ? "Finish onboarding" : "Continue"}
+              </button>
+            )}
+          </div>
+        </div>
+      </nav>
     </div>
   );
 }
