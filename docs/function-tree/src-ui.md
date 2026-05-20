@@ -2,7 +2,7 @@
 
 # Function tree — `src/ui`
 
-13 module(s).
+14 module(s).
 
 ## Modules
 
@@ -10,13 +10,14 @@
 | --- | --- | ---: | ---: |
 | [`src/ui/app-link-styles.ts`](#src-ui-app-link-styles-ts) | `regular` | 0 | 0 |
 | [`src/ui/app-tab-styles.ts`](#src-ui-app-tab-styles-ts) | `regular` | 0 | 0 |
-| [`src/ui/BlockingSubmitOverlay.tsx`](#src-ui-blockingsubmitoverlay-tsx) | `client-component` | 1 | 4 |
+| [`src/ui/BlockingSubmitOverlay.tsx`](#src-ui-blockingsubmitoverlay-tsx) | `client-component` | 2 | 3 |
 | [`src/ui/chart-styles.ts`](#src-ui-chart-styles-ts) | `regular` | 0 | 0 |
 | [`src/ui/ChartFrame.tsx`](#src-ui-chartframe-tsx) | `regular` | 1 | 0 |
 | [`src/ui/InfoTooltip.tsx`](#src-ui-infotooltip-tsx) | `client-component` | 1 | 8 |
 | [`src/ui/input-classes.ts`](#src-ui-input-classes-ts) | `regular` | 0 | 0 |
 | [`src/ui/lib/duration.ts`](#src-ui-lib-duration-ts) | `regular` | 1 | 0 |
 | [`src/ui/lib/format.ts`](#src-ui-lib-format-ts) | `regular` | 2 | 0 |
+| [`src/ui/MainSectionLoading.tsx`](#src-ui-mainsectionloading-tsx) | `regular` | 1 | 0 |
 | [`src/ui/PageSection.tsx`](#src-ui-pagesection-tsx) | `regular` | 1 | 0 |
 | [`src/ui/ScrollToTopButton.tsx`](#src-ui-scrolltotopbutton-tsx) | `client-component` | 1 | 2 |
 | [`src/ui/surface-classes.ts`](#src-ui-surface-classes-ts) | `regular` | 0 | 0 |
@@ -40,11 +41,14 @@ _No top-level functions detected._
 
 Classification: `client-component`
 
-#### `BlockingSubmitOverlay` — component, L10 _(client-component)_
+#### `subscribeNoop` — arrow, L6
+
+_No tracked edges._
+
+#### `BlockingSubmitOverlay` — component, L12 _(client-component)_
 
 - calls: `[external] react-dom`, `[external] react`
-- rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`
-- unresolved: 1
+- rendered by: `src/features/advisor/AdvisorAccessKeysGenerateForm.tsx#AdvisorAccessKeysGenerateForm`, `src/features/advisor/AdvisorBuyKeysSection.tsx#AdvisorBuyKeysSection`, `src/features/advisor/AdvisorKeyQrShareButton.tsx#AdvisorKeyQrShareButton`, `src/features/advisor/AdvisorPhoneVerificationForm.tsx#AdvisorPhoneVerificationForm`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm`, `src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm`, `src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm`, `src/features/app-shell/ContactAdvisorButton.tsx#ContactAdvisorButton`, `src/features/auth/LoginForm.tsx#LoginForm`, `src/features/budget/BudgetAddForm.tsx#BudgetAddForm`, `src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible`, `src/features/budget/BudgetLineExpenseQuickAdd.tsx#BudgetLineExpenseQuickAdd`, `src/features/budget/BudgetLineScheduleForm.tsx#BudgetLineScheduleForm`, `src/features/budget/BudgetMonthJump.tsx#BudgetMonthJump`, `src/features/budget/BudgetMonthOverrideForm.tsx#BudgetMonthOverrideForm`, `src/features/budget/BudgetQuickAddPresets.tsx#BudgetQuickAddPresets`, `src/features/budget/BudgetUpdateAmountForm.tsx#BudgetUpdateAmountForm`, `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`, `src/features/debts/DebtPlanningPanels.tsx#AddDebtForm`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`, `src/features/expenses/ExpenseEditRow.tsx#ExpenseEditRow`, `src/features/expenses/ExpenseForm.tsx#ExpenseForm`, `src/features/expenses/ExpenseMonthJump.tsx#ExpenseMonthJump`, `src/features/goals/CashAndLiabilitiesPanels.tsx#AddCashForm`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`, `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`, `src/features/goals/GoalEditForm.tsx#GoalEditForm`, `src/features/goals/GoalForm.tsx#GoalForm`, `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`, `src/features/goals/HousingLoansPanel.tsx#HousingLoanDeleteForm`, `src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm`, `src/features/goals/HousingLoansPanel.tsx#HousingLoanManualAddForm`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`, `src/features/goals/VehiclesPanel.tsx#AddVehicleForm`, `src/features/goals/VehiclesPanel.tsx#VehicleDeleteForm`, `src/features/goals/VehiclesPanel.tsx#VehicleEditForm`, `src/features/housing/PropertyAddForm.tsx#PropertyAddForm`, `src/features/income-tax/IncomeTaxForm.tsx#IncomeTaxForm`, `src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`, `src/features/setup/BudgetLensProfileForm.tsx#BudgetLensProfileForm`
 
 ### `src/ui/chart-styles.ts` <a id="src-ui-chart-styles-ts"></a>
 
@@ -67,8 +71,8 @@ Classification: `client-component`
 #### `InfoTooltip` — component, L19 _(client-component)_
 
 - calls: `[external] react`, `src/features/help/methodology-context.tsx#useMethodology`
-- rendered by: `src/features/dashboard/DashboardOverviewSection.tsx#DashboardOverviewSection`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`
-- unresolved: 4
+- rendered by: `src/features/dashboard/DashboardOverviewSection.tsx#DashboardOverviewSection`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`, `src/features/income-tax/TaxMethodologyTooltip.tsx#TaxMethodologyTooltip`
+- unresolved: 6
 
 ### `src/ui/input-classes.ts` <a id="src-ui-input-classes-ts"></a>
 
@@ -90,19 +94,27 @@ Classification: `regular`
 
 #### `formatCurrency` — function, L3
 
-- called by: `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/budget/BudgetQuickAddPresets.tsx#BudgetQuickAddPresets`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`, `src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection`, `src/features/dashboard/DashboardOverviewSection.tsx#DashboardOverviewSection`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/expenses/ExpenseEditRow.tsx#ExpenseEditRow`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`, `src/features/goals/CashAndLiabilitiesPanels.tsx#LiabilityRow`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`, `src/features/goals/HousingLoansPanel.tsx#HousingLoansPanel`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary`, `src/features/goals/InvestmentBalancesList.tsx#contributionSummaryLine`, `src/features/goals/VehiclesPanel.tsx#VehicleSummary`, `src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard`, `src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection`
+- called by: `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/budget/BudgetQuickAddPresets.tsx#BudgetQuickAddPresets`, `src/features/budget/BudgetReviewWorkflowPanel.tsx#BudgetReviewWorkflowPanel`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#BalancePill`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#RaFlowVisual`, `src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection`, `src/features/dashboard/DashboardOverviewSection.tsx#DashboardOverviewSection`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/debts/DebtEducationalExamples.tsx#DebtEducationalExamples`, `src/features/debts/DebtFormFields.tsx#DebtFormFields`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`, `src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels`, `src/features/expenses/ExpenseEditRow.tsx#ExpenseEditRow`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`, `src/features/goals/HousingLoansPanel.tsx#HousingPanel`, `src/features/goals/HousingPaymentSourceFields.tsx#HousingPaymentSourceFields`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary`, `src/features/goals/InvestmentBalancesList.tsx#contributionSummaryLine`, `src/features/goals/VehiclesPanel.tsx#VehicleSummary`, `src/features/income-tax/IncomeTaxForm.tsx#FieldGroup`, `src/features/income-tax/TaxComputedSummary.tsx#TaxComputedSummary`, `src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard`, `src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection`, `src/features/setup/BudgetLensProfileForm.tsx#BudgetLensProfileForm`
 
 #### `formatPercent` — function, L14
 
 - called by: `src/features/dashboard/DashboardOverviewSection.tsx#DashboardOverviewSection`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`
 
+### `src/ui/MainSectionLoading.tsx` <a id="src-ui-mainsectionloading-tsx"></a>
+
+Classification: `regular`
+
+#### `MainSectionLoading` — component, L1
+
+- rendered by: `src/app/(app)/dashboard/loading.tsx#DashboardLoading`, `src/app/(app)/expenses/loading.tsx#ExpensesLoading`, `src/app/(app)/planning/loading.tsx#PlanningLoading`, `src/app/(app)/setup/loading.tsx#SetupLoading`
+
 ### `src/ui/PageSection.tsx` <a id="src-ui-pagesection-tsx"></a>
 
 Classification: `regular`
 
-#### `PageSection` — component, L15
+#### `PageSection` — component, L16
 
-- rendered by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/advisor/AdvisorAccessKeysSection.tsx#AdvisorAccessKeysSection`, `src/features/advisor/AdvisorBuyKeysSection.tsx#AdvisorBuyKeysSection`, `src/features/advisor/AdvisorPhoneVerificationForm.tsx#AdvisorPhoneVerificationForm`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
+- rendered by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/advisor/AdvisorAccessKeysSection.tsx#AdvisorAccessKeysSection`, `src/features/advisor/AdvisorBuyKeysSection.tsx#AdvisorBuyKeysSection`, `src/features/advisor/AdvisorPhoneVerificationForm.tsx#AdvisorPhoneVerificationForm`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/income-tax/IncomeTaxSection.tsx#IncomeTaxSection`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
 ### `src/ui/ScrollToTopButton.tsx` <a id="src-ui-scrolltotopbutton-tsx"></a>
 

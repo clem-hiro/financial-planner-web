@@ -12,6 +12,7 @@ import { BudgetLineScheduleForm } from "@/features/budget/BudgetLineScheduleForm
 import { BudgetStrategyInsightPanel } from "@/features/budget/BudgetStrategyInsightPanel";
 import { BudgetPageHero } from "@/features/budget/BudgetPageHero";
 import { BudgetQuickAddPresets } from "@/features/budget/BudgetQuickAddPresets";
+import { BudgetReviewWorkflowPanel } from "@/features/budget/BudgetReviewWorkflowPanel";
 import {
   BudgetMonthlyCategoriesSection,
   partitionMonthlyLines,
@@ -33,6 +34,10 @@ import {
 } from "@/lib/setup-urls";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { deleteBudgetLineAction } from "@/server/actions";
+import {
+  buildBudgetReviewWorkflow,
+  type BudgetReviewLineInput,
+} from "@/domain/finance/budget-review";
 import {
   monthlyBudgetAggregateOverspend,
   normalizeCategory,
@@ -149,6 +154,12 @@ export async function BudgetPlanningView({
         <div className="-mx-1 overflow-x-auto px-1 pb-0.5 scroll-smooth sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
           <div className={appTabRailClass}>
             <a
+              href="#budget-review"
+              className={`${appTabPillClass} ${appTabPillInactiveClass}`}
+            >
+              Monthly review
+            </a>
+            <a
               href="#budget-plan-lens"
               className={`${appTabPillClass} ${appTabPillInactiveClass}`}
             >
@@ -207,6 +218,36 @@ export async function BudgetPlanningView({
         currency={currency}
         month={month}
         monthlyLines={model.lineRows}
+      />
+
+      <BudgetReviewWorkflowPanel
+        review={buildBudgetReviewWorkflow({
+          month,
+          monthly: model.monthly,
+          activeMonthlyLines: activeMonthly.map(
+            (line): BudgetReviewLineInput => ({
+              id: line.id,
+              category: line.category,
+              baseAmount: num(line.amount),
+              startYearMonth: line.start_year_month,
+              endYearMonth: line.end_year_month,
+            })
+          ),
+          inactiveMonthlyLines: inactiveMonthly.map(
+            (line): BudgetReviewLineInput => ({
+              id: line.id,
+              category: line.category,
+              baseAmount: num(line.amount),
+              startYearMonth: line.start_year_month,
+              endYearMonth: line.end_year_month,
+            })
+          ),
+          overrideByLineId: model.overridesThisMonth,
+          unbudgetedMonthlyCount: model.unbudgetedMonthlyExpenses.length,
+          unbudgetedMonthlyTotal,
+        })}
+        currency={currency}
+        expensesHref={expensesHref}
       />
 
       <section

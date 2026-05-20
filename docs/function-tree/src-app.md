@@ -2,7 +2,7 @@
 
 # Function tree — `src/app`
 
-38 module(s).
+46 module(s).
 
 ## Modules
 
@@ -12,39 +12,47 @@
 | [`src/app/(app)/(client)/home/page.tsx`](#src-app-app-client-home-page-tsx) | `page` | 1 | 1 |
 | [`src/app/(app)/(client)/profile/page.tsx`](#src-app-app-client-profile-page-tsx) | `page` | 1 | 1 |
 | [`src/app/(app)/account-issue/page.tsx`](#src-app-app-account-issue-page-tsx) | `page` | 1 | 7 |
-| [`src/app/(app)/advisor/access-keys/page.tsx`](#src-app-app-advisor-access-keys-page-tsx) | `page` | 1 | 8 |
+| [`src/app/(app)/advisor/access-keys/page.tsx`](#src-app-app-advisor-access-keys-page-tsx) | `page` | 1 | 9 |
 | [`src/app/(app)/advisor/activity/page.tsx`](#src-app-app-advisor-activity-page-tsx) | `page` | 1 | 1 |
 | [`src/app/(app)/advisor/buy-keys/page.tsx`](#src-app-app-advisor-buy-keys-page-tsx) | `page` | 2 | 13 |
-| [`src/app/(app)/advisor/client/[id]/page.tsx`](#src-app-app-advisor-client-id-page-tsx) | `page` | 1 | 16 |
+| [`src/app/(app)/advisor/client/[id]/page.tsx`](#src-app-app-advisor-client-id-page-tsx) | `page` | 2 | 22 |
 | [`src/app/(app)/advisor/clients/page.tsx`](#src-app-app-advisor-clients-page-tsx) | `page` | 1 | 10 |
 | [`src/app/(app)/advisor/layout.tsx`](#src-app-app-advisor-layout-tsx) | `layout` | 1 | 1 |
 | [`src/app/(app)/advisor/opportunities/page.tsx`](#src-app-app-advisor-opportunities-page-tsx) | `page` | 1 | 1 |
-| [`src/app/(app)/advisor/page.tsx`](#src-app-app-advisor-page-tsx) | `page` | 2 | 11 |
+| [`src/app/(app)/advisor/page.tsx`](#src-app-app-advisor-page-tsx) | `page` | 2 | 12 |
 | [`src/app/(app)/advisor/profile/page.tsx`](#src-app-app-advisor-profile-page-tsx) | `page` | 1 | 8 |
 | [`src/app/(app)/balances/page.tsx`](#src-app-app-balances-page-tsx) | `page` | 1 | 1 |
 | [`src/app/(app)/budget/page.tsx`](#src-app-app-budget-page-tsx) | `page` | 1 | 9 |
-| [`src/app/(app)/dashboard/page.tsx`](#src-app-app-dashboard-page-tsx) | `page` | 1 | 14 |
-| [`src/app/(app)/expenses/page.tsx`](#src-app-app-expenses-page-tsx) | `page` | 1 | 36 |
+| [`src/app/(app)/dashboard/loading.tsx`](#src-app-app-dashboard-loading-tsx) | `loading` | 1 | 1 |
+| [`src/app/(app)/dashboard/page.tsx`](#src-app-app-dashboard-page-tsx) | `page` | 1 | 11 |
+| [`src/app/(app)/expenses/loading.tsx`](#src-app-app-expenses-loading-tsx) | `loading` | 1 | 1 |
+| [`src/app/(app)/expenses/page.tsx`](#src-app-app-expenses-page-tsx) | `page` | 1 | 34 |
 | [`src/app/(app)/financial-profile/page.tsx`](#src-app-app-financial-profile-page-tsx) | `page` | 1 | 1 |
 | [`src/app/(app)/goals/page.tsx`](#src-app-app-goals-page-tsx) | `page` | 1 | 1 |
-| [`src/app/(app)/layout.tsx`](#src-app-app-layout-tsx) | `layout` | 1 | 6 |
+| [`src/app/(app)/layout.tsx`](#src-app-app-layout-tsx) | `layout` | 1 | 7 |
 | [`src/app/(app)/loading.tsx`](#src-app-app-loading-tsx) | `client-component, loading` | 1 | 0 |
-| [`src/app/(app)/more/page.tsx`](#src-app-app-more-page-tsx) | `page` | 1 | 4 |
+| [`src/app/(app)/more/page.tsx`](#src-app-app-more-page-tsx) | `page` | 1 | 9 |
 | [`src/app/(app)/onboarding/page.tsx`](#src-app-app-onboarding-page-tsx) | `page` | 1 | 10 |
 | [`src/app/(app)/planning/[section]/page.tsx`](#src-app-app-planning-section-page-tsx) | `page` | 1 | 7 |
 | [`src/app/(app)/planning/layout.tsx`](#src-app-app-planning-layout-tsx) | `layout` | 1 | 1 |
+| [`src/app/(app)/planning/loading.tsx`](#src-app-app-planning-loading-tsx) | `loading` | 1 | 1 |
 | [`src/app/(app)/planning/page.tsx`](#src-app-app-planning-page-tsx) | `page` | 1 | 1 |
-| [`src/app/(app)/setup/page.tsx`](#src-app-app-setup-page-tsx) | `page` | 2 | 30 |
+| [`src/app/(app)/planning/setup/page.tsx`](#src-app-app-planning-setup-page-tsx) | `page` | 1 | 1 |
+| [`src/app/(app)/review/proposal/[id]/page.tsx`](#src-app-app-review-proposal-id-page-tsx) | `page` | 1 | 17 |
+| [`src/app/(app)/setup/loading.tsx`](#src-app-app-setup-loading-tsx) | `loading` | 1 | 1 |
+| [`src/app/(app)/setup/overview/page.tsx`](#src-app-app-setup-overview-page-tsx) | `page` | 1 | 4 |
+| [`src/app/(app)/setup/page.tsx`](#src-app-app-setup-page-tsx) | `page` | 2 | 32 |
 | [`src/app/(app)/spending/page.tsx`](#src-app-app-spending-page-tsx) | `page` | 1 | 1 |
 | [`src/app/api/budget/route.ts`](#src-app-api-budget-route-ts) | `route-handler` | 1 | 13 |
 | [`src/app/api/dashboard/route.ts`](#src-app-api-dashboard-route-ts) | `route-handler` | 1 | 10 |
 | [`src/app/api/expenses/[id]/route.ts`](#src-app-api-expenses-id-route-ts) | `route-handler` | 2 | 36 |
 | [`src/app/api/expenses/route.ts`](#src-app-api-expenses-route-ts) | `route-handler` | 1 | 18 |
+| [`src/app/api/income-tax/route.ts`](#src-app-api-income-tax-route-ts) | `route-handler` | 1 | 17 |
 | [`src/app/api/profile/route.ts`](#src-app-api-profile-route-ts) | `route-handler` | 1 | 18 |
 | [`src/app/api/projection/route.ts`](#src-app-api-projection-route-ts) | `route-handler` | 1 | 19 |
-| [`src/app/auth/callback/route.ts`](#src-app-auth-callback-route-ts) | `route-handler` | 1 | 5 |
+| [`src/app/auth/callback/route.ts`](#src-app-auth-callback-route-ts) | `route-handler` | 2 | 6 |
 | [`src/app/layout.tsx`](#src-app-layout-tsx) | `layout` | 1 | 0 |
-| [`src/app/login/page.tsx`](#src-app-login-page-tsx) | `page` | 1 | 3 |
+| [`src/app/login/page.tsx`](#src-app-login-page-tsx) | `page` | 2 | 7 |
 | [`src/app/page.tsx`](#src-app-page-tsx) | `page` | 1 | 1 |
 
 ## Functions
@@ -86,9 +94,9 @@ Classification: `page`
 
 Classification: `page`
 
-#### `AdvisorAccessKeysPage` — component, L8
+#### `AdvisorAccessKeysPage` — component, L10
 
-- calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/profile-role.ts#isAdvisor`
+- calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/profile-role.ts#isAdvisor`, `src/server/advisor-qr-share.ts#buildShareData`
 - renders: `src/features/advisor/AdvisorAccessKeysSection.tsx#AdvisorAccessKeysSection`
 
 ### `src/app/(app)/advisor/activity/page.tsx` <a id="src-app-app-advisor-activity-page-tsx"></a>
@@ -117,9 +125,13 @@ Classification: `page`
 
 Classification: `page`
 
-#### `AdvisorClientDetailPage` — component, L16
+#### `identityOnlyProfile` — function, L38
 
-- calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/repositories/advisor-clients.ts#getClientProfileForAdvisor`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/dates.ts#formatYearMonth`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/profile-role.ts#isAdvisor`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`
+
+#### `AdvisorClientDetailPage` — component, L75
+
+- calls: `[external] @supabase/auth-js`, `[external] next`, `src/app/(app)/advisor/client/[id]/page.tsx#identityOnlyProfile`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/repositories/advisor-clients.ts#advisorCanReadClient`, `src/data/repositories/advisor-clients.ts#getClientProfileForAdvisor`, `src/data/repositories/advisor-proposals.ts#getDraftProposalForClient`, `src/data/repositories/advisor-proposals.ts#getPendingProposalForClient`, `src/data/repositories/advisor-proposals.ts#listChangesForProposal`, `src/data/repositories/budget-lines.ts#advisorReadBudgetLines`, `src/data/repositories/goals.ts#advisorReadGoals`, `src/data/repositories/investments.ts#advisorReadInvestments`, `src/data/repositories/profiles.ts#advisorReadProfile`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/advisor-proposals/overlay-gate.ts#resolveOverlayForViewer`, `src/lib/dates.ts#formatYearMonth`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/profile-role.ts#isAdvisor`
 - renders: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
 
 ### `src/app/(app)/advisor/clients/page.tsx` <a id="src-app-app-advisor-clients-page-tsx"></a>
@@ -186,14 +198,31 @@ Classification: `page`
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/setup-urls.ts#planningCashFlowBudgetPath`
 - renders: `[external] next`
 
+### `src/app/(app)/dashboard/loading.tsx` <a id="src-app-app-dashboard-loading-tsx"></a>
+
+Classification: `loading`
+
+#### `DashboardLoading` — component, L3
+
+- renders: `src/ui/MainSectionLoading.tsx#MainSectionLoading`
+
 ### `src/app/(app)/dashboard/page.tsx` <a id="src-app-app-dashboard-page-tsx"></a>
 
 Classification: `page`
 
-#### `DashboardPage` — component, L15
+#### `DashboardPage` — component, L18
 
-- calls: `[external] @supabase/auth-js`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/financial-profile.ts#isFinancialProfileIncomplete`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/dates.ts#formatYearMonth`, `src/lib/env.ts#isSupabaseConfigured`, `src/ui/lib/format.ts#formatCurrency`
+- calls: `src/data/dashboard.ts#getDashboardPayload`, `src/data/financial-profile.ts#isFinancialProfileIncomplete`, `src/lib/dates.ts#formatYearMonth`, `src/lib/env.ts#isSupabaseConfigured`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `[external] next`, `src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection`, `src/features/dashboard/DashboardOverviewSection.tsx#DashboardOverviewSection`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/dashboard/DashboardSubnav.tsx#DashboardSubnav`
+- unresolved: 1
+
+### `src/app/(app)/expenses/loading.tsx` <a id="src-app-app-expenses-loading-tsx"></a>
+
+Classification: `loading`
+
+#### `ExpensesLoading` — component, L3
+
+- renders: `src/ui/MainSectionLoading.tsx#MainSectionLoading`
 
 ### `src/app/(app)/expenses/page.tsx` <a id="src-app-app-expenses-page-tsx"></a>
 
@@ -201,8 +230,9 @@ Classification: `page`
 
 #### `ExpensesPage` — component, L47
 
-- calls: `[external] @supabase/auth-js`, `src/data/mappers.ts#num`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/repositories/budget-line-overrides.ts#listBudgetLineOverridesForMonth`, `src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/expenses.ts#listExpensesForMonth`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget.ts#isMonthlyBudgetLineApplicable`, `src/domain/finance/budget.ts#normalizeCategory`, `src/domain/finance/expense-budget-lock.ts#activeMonthlyBudgetCategoryKeys`, `src/domain/finance/expense-budget-lock.ts#monthlyExpensesForBudgetCategory`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#defaultExpenseDateForBudgetMonth`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/setup-urls.ts#planningCashFlowBudgetPath`, `src/ui/lib/format.ts#formatCurrency`
-- renders: `[external] next`, `src/features/budget/BudgetLineExpenseQuickAdd.tsx#BudgetLineExpenseQuickAdd`, `src/features/expenses/CategoryBarChart.tsx#CategoryBarChart`, `src/features/expenses/ExpenseEditRow.tsx#ExpenseEditRow`, `src/features/expenses/ExpenseForm.tsx#ExpenseForm`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/features/spend/SpendGuidancePanel.tsx#SpendGuidancePanel`, `src/ui/PageSection.tsx#PageSection`
+- calls: `src/data/mappers.ts#num`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/repositories/budget-line-overrides.ts#listBudgetLineOverridesForMonth`, `src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/expenses.ts#listExpensesForMonth`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth`, `src/domain/finance/budget.ts#isMonthlyBudgetLineApplicable`, `src/domain/finance/budget.ts#normalizeCategory`, `src/domain/finance/expense-budget-lock.ts#activeMonthlyBudgetCategoryKeys`, `src/domain/finance/expense-budget-lock.ts#monthlyExpensesForBudgetCategory`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#defaultExpenseDateForBudgetMonth`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/setup-urls.ts#planningCashFlowBudgetPath`, `src/ui/lib/format.ts#formatCurrency`
+- renders: `[external] next`, `src/features/budget/BudgetLineExpenseQuickAdd.tsx#BudgetLineExpenseQuickAdd`, `src/features/expenses/CategoryBarChart.tsx#CategoryBarChart`, `src/features/expenses/ExpenseEditRow.tsx#ExpenseEditRow`, `src/features/expenses/ExpenseForm.tsx#ExpenseForm`, `src/features/expenses/ExpenseMonthJump.tsx#ExpenseMonthJump`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/features/spend/SpendGuidancePanel.tsx#SpendGuidancePanel`, `src/ui/PageSection.tsx#PageSection`
+- unresolved: 1
 
 ### `src/app/(app)/financial-profile/page.tsx` <a id="src-app-app-financial-profile-page-tsx"></a>
 
@@ -224,10 +254,11 @@ Classification: `page`
 
 Classification: `layout`
 
-#### `AppLayout` — component, L9
+#### `AppLayout` — component, L17
 
-- calls: `[external] @supabase/auth-js`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/profile-role.ts#isAdvisor`
-- renders: `src/features/app-shell/AppShell.tsx#AppShell`
+- calls: `src/lib/env.ts#isSupabaseConfigured`, `src/lib/profile-role.ts#isAdvisor`, `src/server/inbox/ensure-advisor-consent-notification.ts#ensureAndCheckClientConsentPrompt`
+- renders: `[external] react`, `src/features/app-shell/AppShell.tsx#AppShell`, `src/features/app-shell/AppShellInbox.tsx#AppShellInboxFallback`, `src/features/app-shell/AppShellInbox.tsx#AppShellInbox`
+- unresolved: 2
 
 ### `src/app/(app)/loading.tsx` <a id="src-app-app-loading-tsx"></a>
 
@@ -241,9 +272,11 @@ _No tracked edges._
 
 Classification: `page`
 
-#### `MorePage` — component, L6
+#### `MorePage` — component, L15
 
-- renders: `[external] next`, `src/features/help/OpenMethodologyButton.tsx#OpenMethodologyButton`
+- calls: `src/data/repositories/advisor-clients.ts#getMyConsentStatusForAdvisor`, `src/data/repositories/coupons.ts#getMyAdvisorContact`, `src/lib/profile-role.ts#isClient`, `src/server/advisor-consent.ts#renderConsentText`
+- renders: `[external] next`, `src/features/consent/ClientConsentControl.tsx#ClientConsentControl`, `src/features/help/OpenMethodologyButton.tsx#OpenMethodologyButton`
+- unresolved: 2
 
 ### `src/app/(app)/onboarding/page.tsx` <a id="src-app-app-onboarding-page-tsx"></a>
 
@@ -269,7 +302,15 @@ Classification: `layout`
 
 #### `PlanningLayout` — component, L3
 
-- renders: `src/features/planning/PlanningSectionNav.tsx#PlanningSectionNav`
+- renders: `src/features/planning/PlanningLayoutShell.tsx#PlanningLayoutShell`
+
+### `src/app/(app)/planning/loading.tsx` <a id="src-app-app-planning-loading-tsx"></a>
+
+Classification: `loading`
+
+#### `PlanningLoading` — component, L3
+
+- renders: `src/ui/MainSectionLoading.tsx#MainSectionLoading`
 
 ### `src/app/(app)/planning/page.tsx` <a id="src-app-app-planning-page-tsx"></a>
 
@@ -279,18 +320,54 @@ Classification: `page`
 
 - calls: `[external] next`
 
+### `src/app/(app)/planning/setup/page.tsx` <a id="src-app-app-planning-setup-page-tsx"></a>
+
+Classification: `page`
+
+#### `PlanningSetupRedirectPage` — function, L4
+
+- calls: `[external] next`
+
+### `src/app/(app)/review/proposal/[id]/page.tsx` <a id="src-app-app-review-proposal-id-page-tsx"></a>
+
+Classification: `page`
+
+#### `ProposalReviewPage` — component, L20
+
+- calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/repositories/advisor-proposals.ts#getProposalById`, `src/data/repositories/advisor-proposals.ts#listChangesForProposal`, `src/data/repositories/advisor-proposals.ts#listSectionNotesForProposal`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/advisor-proposals/overlay-gate.ts#resolveOverlayForViewer`, `src/lib/dates.ts#formatYearMonth`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/profile-role.ts#isClient`
+- renders: `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
+
+### `src/app/(app)/setup/loading.tsx` <a id="src-app-app-setup-loading-tsx"></a>
+
+Classification: `loading`
+
+#### `SetupLoading` — component, L3
+
+- renders: `src/ui/MainSectionLoading.tsx#MainSectionLoading`
+
+### `src/app/(app)/setup/overview/page.tsx` <a id="src-app-app-setup-overview-page-tsx"></a>
+
+Classification: `page`
+
+#### `SetupOverviewPage` — component, L8
+
+- calls: `src/data/setup-status.ts#getSetupHubSnapshot`, `src/lib/env.ts#isSupabaseConfigured`
+- renders: `[external] next`, `src/features/setup-hub/FinancialSetupHub.tsx#FinancialSetupHub`
+- unresolved: 1
+
 ### `src/app/(app)/setup/page.tsx` <a id="src-app-app-setup-page-tsx"></a>
 
 Classification: `page`
 
-#### `buildSetupTabs` — function, L41
+#### `buildSetupTabs` — function, L45
 
 - called by: `src/app/(app)/setup/page.tsx#SetupPage`
 
-#### `SetupPage` — component, L58
+#### `SetupPage` — component, L63
 
-- calls: `[external] @supabase/auth-js`, `src/app/(app)/setup/page.tsx#buildSetupTabs`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileCpfAgeBand`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/setup-urls.ts#setupTabPath`, `src/lib/validation.ts#birthDateIsValidPast`
-- renders: `[external] next`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`, `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/HousingLoansPanel.tsx#HousingLoansPanel`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`, `src/features/goals/VehiclesPanel.tsx#VehiclesPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/features/setup/BudgetLensProfileForm.tsx#BudgetLensProfileForm`, `src/features/setup/SetupTabsNav.tsx#SetupTabsNav`, `src/ui/PageSection.tsx#PageSection`
+- calls: `src/app/(app)/setup/page.tsx#buildSetupTabs`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileCpfAgeBand`, `src/data/mappers.ts#profileExpenseGrowthNominal`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/income-tax-configs.ts#getIncomeTaxConfig`, `src/domain/finance/budget-guided-setup.ts#countReplaceableMonthlyBudgetLines`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/setup-urls.ts#setupTabPath`, `src/lib/validation.ts#birthDateIsValidPast`
+- renders: `[external] next`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`, `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/HousingLoansPanel.tsx#HousingPanel`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`, `src/features/goals/VehiclesPanel.tsx#VehiclesPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/features/income-tax/IncomeTaxSection.tsx#IncomeTaxSection`, `src/features/setup/BudgetLensProfileForm.tsx#BudgetLensProfileForm`, `src/features/setup/SetupTabsNav.tsx#SetupTabsNav`, `src/ui/PageSection.tsx#PageSection`
+- unresolved: 1
 
 ### `src/app/(app)/spending/page.tsx` <a id="src-app-app-spending-page-tsx"></a>
 
@@ -336,6 +413,14 @@ Classification: `route-handler`
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/expense-budget-guard.ts#hasBudgetCategoryMonthlyConflict`, `src/data/repositories/expenses.ts#insertExpense`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 
+### `src/app/api/income-tax/route.ts` <a id="src-app-api-income-tax-route-ts"></a>
+
+Classification: `route-handler`
+
+#### `PATCH` — function, L13
+
+- calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/income-tax-configs.ts#getIncomeTaxConfig`, `src/data/repositories/income-tax-configs.ts#upsertIncomeTaxConfig`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
+
 ### `src/app/api/profile/route.ts` <a id="src-app-api-profile-route-ts"></a>
 
 Classification: `route-handler`
@@ -356,9 +441,13 @@ Classification: `route-handler`
 
 Classification: `route-handler`
 
-#### `GET` — function, L8
+#### `safeNext` — function, L8
 
-- calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/supabase/server.ts#createSupabaseServerClient`
+- called by: `src/app/auth/callback/route.ts#GET`
+
+#### `GET` — function, L18
+
+- calls: `[external] @supabase/auth-js`, `[external] next`, `src/app/auth/callback/route.ts#safeNext`, `src/data/supabase/server.ts#createSupabaseServerClient`
 
 ### `src/app/layout.tsx` <a id="src-app-layout-tsx"></a>
 
@@ -372,9 +461,14 @@ _No tracked edges._
 
 Classification: `page`
 
-#### `LoginPage` — component, L9
+#### `peekQrTokenIfPresent` — function, L14
 
-- calls: `src/lib/env.ts#isSupabaseConfigured`
+- calls: `[external] @supabase/supabase-js`, `[external] zod`, `src/data/supabase/server.ts#createSupabaseServerClient`
+- called by: `src/app/login/page.tsx#LoginPage`
+
+#### `LoginPage` — component, L40
+
+- calls: `src/app/login/page.tsx#peekQrTokenIfPresent`, `src/lib/env.ts#isSupabaseConfigured`
 - renders: `[external] next`, `src/features/auth/LoginForm.tsx#LoginForm`
 
 ### `src/app/page.tsx` <a id="src-app-page-tsx"></a>
