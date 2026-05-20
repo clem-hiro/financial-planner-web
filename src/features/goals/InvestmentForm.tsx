@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useActionState, useRef, useState } from "react";
 import { createAdvisorClientInvestmentAction } from "@/server/advisor-client-actions";
 import { createInvestmentAction } from "@/server/actions";
+import { InvestmentAssumptionBanner } from "@/features/goals/InvestmentAssumptionBanner";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };
@@ -47,6 +48,7 @@ export function InvestmentForm(
       {advisorClientId ? (
         <input type="hidden" name="client_id" value={advisorClientId} />
       ) : null}
+      <InvestmentAssumptionBanner className="mb-1" />
       <div>
         <h2 className="text-sm font-semibold text-slate-900">Add an account</h2>
         <p className="mt-1 text-xs leading-relaxed text-slate-500">

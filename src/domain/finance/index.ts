@@ -12,6 +12,17 @@ export {
   contributionMonthsLimitFromInvestmentRow,
 } from "./investment-contribution";
 export {
+  INVESTMENT_REVIEW_STALE_MONTHS,
+  INVESTMENT_REVIEW_ACK_VALID_MONTHS,
+  countStaleInvestments,
+  investmentRowIsStale,
+  investmentRowLastTouchedAt,
+  investmentReviewDedupeKeyForYear,
+  monthsSinceTimestamp,
+  shouldPromptInvestmentReview,
+} from "./investment-review";
+export type { InvestmentReviewTimestampRow } from "./investment-review";
+export {
   goalProgressRatio,
   estimateTimeToGoalStandalone,
 } from "./goal-standalone";
@@ -61,6 +72,11 @@ export {
   annualBudgetVsActual,
   topOverBudgetCategories,
 } from "./budget";
+export {
+  annualAmountFromIrregularInput,
+  buildIrregularExpenseReserves,
+  irregularCadenceOccurrences,
+} from "./irregular-expenses";
 export {
   ANNUAL_MAX_TOTAL_CPF_CONTRIBUTION_SG,
   ANNUAL_WAGE_CEILING_SG,
@@ -180,6 +196,10 @@ export {
 } from "./vehicle-sg";
 export type { VehicleStatus, VehicleValuationInput } from "./vehicle-sg";
 export type { MonthlyBudgetVsActualOptions } from "./budget";
+export type {
+  IrregularExpenseCadence,
+  IrregularExpenseReserve,
+} from "./irregular-expenses";
 export {
   BUDGET_STRATEGY_PRESETS,
   FOOD_SPEND_BAND_PRESETS,

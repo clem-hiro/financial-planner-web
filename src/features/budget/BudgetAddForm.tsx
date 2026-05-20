@@ -1,6 +1,10 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import {
+  annualAmountFromIrregularInput,
+  type IrregularExpenseCadence,
+} from "@/domain/finance/irregular-expenses";
 import { createBudgetLineAction } from "@/server/actions";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
@@ -12,6 +16,20 @@ export function BudgetAddForm({ defaultYear }: { defaultYear: number }) {
     initial
   );
   const [cadence, setCadence] = useState<"monthly" | "annual">("monthly");
+  const [amountInput, setAmountInput] = useState("");
+  const [irregularCadence, setIrregularCadence] =
+    useState<IrregularExpenseCadence>("annual");
+  const parsedAmount = Number(amountInput);
+  const storedAmount =
+    cadence === "annual"
+      ? annualAmountFromIrregularInput({
+          amount: parsedAmount,
+          cadence: irregularCadence,
+        })
+      : Number.isFinite(parsedAmount)
+        ? parsedAmount
+        : 0;
+  const showAnnualHelper = cadence === "annual" && Number.isFinite(parsedAmount);
 
   return (
     <form
@@ -34,6 +52,7 @@ export function BudgetAddForm({ defaultYear }: { defaultYear: number }) {
         </p>
       )}
       <input type="hidden" name="cadence" value={cadence} />
+      <input type="hidden" name="amount" value={storedAmount} />
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm sm:col-span-2">
           <span className="mb-1 block text-xs font-medium text-zinc-600">
@@ -52,11 +71,13 @@ export function BudgetAddForm({ defaultYear }: { defaultYear: number }) {
             Budget amount
           </span>
           <input
-            name="amount"
+            name="amount_display"
             type="number"
             min={0}
             step="0.01"
             required
+            value={amountInput}
+            onChange={(event) => setAmountInput(event.target.value)}
             className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm"
           />
         </label>
@@ -91,6 +112,49 @@ export function BudgetAddForm({ defaultYear }: { defaultYear: number }) {
         </div>
       </div>
 
+      {cadence === "annual" && (
+        <div className="rounded-xl border border-teal-100 bg-teal-50/50 p-3 text-sm">
+          <label className="block max-w-sm">
+            <span className="mb-1 block text-xs font-medium text-teal-900">
+              Irregular expense pattern
+            </span>
+            <select
+              value={irregularCadence}
+              onChange={(event) =>
+                setIrregularCadence(
+                  event.target.value as IrregularExpenseCadence
+                )
+              }
+              className="w-full rounded-lg border border-teal-200 bg-white px-3 py-2 text-sm text-zinc-900"
+            >
+              <option value="annual">Once a year — amount is annual total</option>
+              <option value="semi_annual">Twice a year — amount is each bill</option>
+              <option value="quarterly">Quarterly — amount is each bill</option>
+              <option value="monthly_set_aside">
+                Monthly reserve — amount is what to set aside
+              </option>
+            </select>
+          </label>
+          {showAnnualHelper && (
+            <p className="mt-2 text-xs leading-relaxed text-teal-950">
+              Saved annual plan:{" "}
+              <span className="font-semibold">
+                {storedAmount.toLocaleString(undefined, {
+                  maximumFractionDigits: 2,
+                })}
+              </span>
+              . Monthly reserve target:{" "}
+              <span className="font-semibold">
+                {(storedAmount / 12).toLocaleString(undefined, {
+                  maximumFractionDigits: 2,
+                })}
+              </span>
+              .
+            </p>
+          )}
+        </div>
+      )}
+
       <details className="group rounded-xl border border-zinc-100 bg-zinc-50/50 p-3">
         <summary className="cursor-pointer list-none text-sm font-medium text-zinc-800 [&::-webkit-details-marker]:hidden">
           <span className="mr-1 text-zinc-400 transition group-open:rotate-90">
@@ -102,7 +166,9 @@ export function BudgetAddForm({ defaultYear }: { defaultYear: number }) {
           <p className="text-xs text-zinc-600">
             For loans with a payoff month, set monthly cadence and the last
             applicable month. For a one-off higher month, add the line then use
-            &quot;This month only&quot; on that category.
+            &quot;This month only&quot; on that category. For quarterly, semi-annual,
+            and other irregular costs, use annual cadence and the pattern helper
+            above.
           </p>
           {cadence === "monthly" && (
             <>

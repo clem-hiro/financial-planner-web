@@ -347,7 +347,10 @@ export function CpfRetirementProjectionPanel({
           ) : (
             <>
               Add{" "}
-              <Link href="/setup#cpf" className={appInlineLinkClass}>
+              <Link
+                href="/setup?tab=cpf#cpf-balances"
+                className={appInlineLinkClass}
+              >
                 CPF balances in Setup
               </Link>{" "}
               to personalise this flow — showing illustrative zero balances until then.

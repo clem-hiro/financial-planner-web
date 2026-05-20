@@ -33,6 +33,11 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
         <h2 className="text-sm font-semibold text-zinc-900">
           CPF balances (OA / SA / MA)
         </h2>
+        <p className="text-xs leading-relaxed text-zinc-500">
+          These CPF figures are manually entered from the client&apos;s CPF
+          statement. Update them whenever the statement changes so net worth and
+          retirement projections stay current.
+        </p>
         {state.error && (
           <p className="text-sm text-red-600" role="alert">
             {state.error}

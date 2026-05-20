@@ -64,10 +64,24 @@ No file paths or backticks in stakeholder copy.
 
 | `PROJECT_CONTEXT` status | ClickUp **status** (native) |
 |--------------------------|----------------------------|
-| **Shipped** | `done` |
-| **Partial** | `in progress` |
-| **Planned** | `not started` |
-| **Not in repo** | `not started` |
+| **Shipped** | `DONE` — code implemented per inventory; automation may set this only |
+| **Partial** | `NOT STARTED` |
+| **Planned** | `OPEN` |
+| **Not in repo** | `OPEN` |
+
+### Native statuses — do not automate
+
+These are **manual only** (never set or clear via sync; leave unchanged when updating descriptions or custom fields):
+
+| Status | Who moves it |
+|--------|----------------|
+| `READY TO TEST` | You — after you want something in test |
+| `TO BE DISCUSSED` | Team — discussion queue |
+| `TESTED BY DARREN` | Darren — QA sign-off |
+
+**Before any status update:** read the task’s current native status. If it is one of the three above, **omit `status`** from `clickup_update_task` (update description / custom fields only). Do not downgrade `TESTED BY DARREN`, `READY TO TEST`, or `TO BE DISCUSSED` without explicit user instruction.
+
+`DONE` means **repo implementation recognized** in `PROJECT_CONTEXT.md` (inventory **Shipped**), not “released to users” or “QA complete”. Downstream QA (`READY TO TEST` → `TESTED BY DARREN` → `CLOSED`) stays manual.
 
 If a status string is rejected by the API, run `clickup_filter_tasks` on this list and use an existing status name from returned tasks before retrying.
 
@@ -143,7 +157,7 @@ Use these **Task name** values. Map inventory capability → task(s); create all
 2. **Find tasks:** `clickup_filter_tasks` with `list_ids: ["901818233981"]` and `workspace_id: "90182722727"`. Match by exact **Task name** (case-sensitive). If ambiguous, use `clickup_search`.
 3. **Update** existing: `clickup_update_task` with `task_id`, `status`, `description` (or `markdown_description`), and `custom_fields` array for What it does, Area, User Type, Priority, Next step.
 4. **Create** missing: `clickup_create_task` with `list_id: "901818233981"`, `name`, `status`, `description`, `tags`, and `custom_fields`.
-5. **Removals** (capability dropped from inventory): set **status** `not started`, **Next step** `Removed from PROJECT_CONTEXT — archive in ClickUp if obsolete.`
+5. **Removals** (capability dropped from inventory): set **status** `OPEN` (skip if task is on a manual-only status), **Next step** `Removed from PROJECT_CONTEXT — archive in ClickUp if obsolete.`
 6. Do not change ClickUp tasks for inventory-only internals (e.g. Client APIs route group, email callback, classic redirects) unless the user wants them in the product table.
 
 ## Hygiene

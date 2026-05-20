@@ -2,51 +2,282 @@
 
 # Function tree — `src/domain`
 
-37 module(s).
+78 module(s).
 
 ## Modules
 
 | Module | Classification | Fns | Edges out |
 | --- | --- | ---: | ---: |
+| [`src/domain/advisor-proposals/apply-changes.parity.test.ts`](#src-domain-advisor-proposals-apply-changes-parity-test-ts) | `regular` | 5 | 1 |
+| [`src/domain/advisor-proposals/apply-changes.ts`](#src-domain-advisor-proposals-apply-changes-ts) | `regular` | 5 | 16 |
+| [`src/domain/advisor-proposals/apply-overlay.test.ts`](#src-domain-advisor-proposals-apply-overlay-test-ts) | `regular` | 6 | 4 |
+| [`src/domain/advisor-proposals/apply-overlay.ts`](#src-domain-advisor-proposals-apply-overlay-ts) | `regular` | 8 | 10 |
+| [`src/domain/advisor-proposals/field-registry.ts`](#src-domain-advisor-proposals-field-registry-ts) | `regular` | 3 | 0 |
+| [`src/domain/advisor-proposals/format-display.ts`](#src-domain-advisor-proposals-format-display-ts) | `regular` | 1 | 0 |
+| [`src/domain/advisor-proposals/group-changes.ts`](#src-domain-advisor-proposals-group-changes-ts) | `regular` | 3 | 3 |
+| [`src/domain/advisor-proposals/overlay-gate.test.ts`](#src-domain-advisor-proposals-overlay-gate-test-ts) | `regular` | 1 | 0 |
+| [`src/domain/advisor-proposals/overlay-gate.ts`](#src-domain-advisor-proposals-overlay-gate-ts) | `regular` | 1 | 0 |
+| [`src/domain/advisor-proposals/sections.ts`](#src-domain-advisor-proposals-sections-ts) | `regular` | 2 | 0 |
 | [`src/domain/finance/advisor-client-health.test.ts`](#src-domain-finance-advisor-client-health-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/advisor-client-health.ts`](#src-domain-finance-advisor-client-health-ts) | `regular` | 4 | 7 |
+| [`src/domain/finance/age-asset-projection.test.ts`](#src-domain-finance-age-asset-projection-test-ts) | `regular` | 4 | 0 |
+| [`src/domain/finance/age-asset-projection.ts`](#src-domain-finance-age-asset-projection-ts) | `regular` | 1 | 4 |
 | [`src/domain/finance/age-projection.ts`](#src-domain-finance-age-projection-ts) | `regular` | 3 | 4 |
 | [`src/domain/finance/budget-guided-setup.test.ts`](#src-domain-finance-budget-guided-setup-test-ts) | `regular` | 0 | 0 |
-| [`src/domain/finance/budget-guided-setup.ts`](#src-domain-finance-budget-guided-setup-ts) | `regular` | 8 | 8 |
-| [`src/domain/finance/budget.ts`](#src-domain-finance-budget-ts) | `regular` | 8 | 6 |
+| [`src/domain/finance/budget-guided-setup.ts`](#src-domain-finance-budget-guided-setup-ts) | `regular` | 10 | 10 |
+| [`src/domain/finance/budget-review.test.ts`](#src-domain-finance-budget-review-test-ts) | `regular` | 0 | 0 |
+| [`src/domain/finance/budget-review.ts`](#src-domain-finance-budget-review-ts) | `regular` | 1 | 0 |
+| [`src/domain/finance/budget.ts`](#src-domain-finance-budget-ts) | `regular` | 9 | 7 |
+| [`src/domain/finance/cash-flow-accrual.test.ts`](#src-domain-finance-cash-flow-accrual-test-ts) | `regular` | 1 | 1 |
+| [`src/domain/finance/cash-flow-accrual.ts`](#src-domain-finance-cash-flow-accrual-ts) | `regular` | 1 | 1 |
 | [`src/domain/finance/cpf-monthly-projection.test.ts`](#src-domain-finance-cpf-monthly-projection-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/cpf-monthly-projection.ts`](#src-domain-finance-cpf-monthly-projection-ts) | `regular` | 4 | 9 |
+| [`src/domain/finance/cpf-retirement-projection.test.ts`](#src-domain-finance-cpf-retirement-projection-test-ts) | `regular` | 0 | 0 |
+| [`src/domain/finance/cpf-retirement-projection.ts`](#src-domain-finance-cpf-retirement-projection-ts) | `regular` | 10 | 16 |
+| [`src/domain/finance/debt-repayment.test.ts`](#src-domain-finance-debt-repayment-test-ts) | `regular` | 0 | 0 |
+| [`src/domain/finance/debt-repayment.ts`](#src-domain-finance-debt-repayment-ts) | `regular` | 15 | 16 |
 | [`src/domain/finance/expense-budget-lock.ts`](#src-domain-finance-expense-budget-lock-ts) | `regular` | 3 | 3 |
 | [`src/domain/finance/goal-deadline.ts`](#src-domain-finance-goal-deadline-ts) | `regular` | 10 | 11 |
 | [`src/domain/finance/goal-standalone.ts`](#src-domain-finance-goal-standalone-ts) | `regular` | 2 | 1 |
 | [`src/domain/finance/housing-loan-estimate.test.ts`](#src-domain-finance-housing-loan-estimate-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/housing-loan-estimate.ts`](#src-domain-finance-housing-loan-estimate-ts) | `regular` | 5 | 3 |
+| [`src/domain/finance/housing-loan-payments.test.ts`](#src-domain-finance-housing-loan-payments-test-ts) | `regular` | 0 | 0 |
+| [`src/domain/finance/housing-loan-payments.ts`](#src-domain-finance-housing-loan-payments-ts) | `regular` | 15 | 25 |
 | [`src/domain/finance/housing-loan-quick.test.ts`](#src-domain-finance-housing-loan-quick-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/housing-loan-quick.ts`](#src-domain-finance-housing-loan-quick-ts) | `regular` | 3 | 4 |
 | [`src/domain/finance/index.ts`](#src-domain-finance-index-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/insights.ts`](#src-domain-finance-insights-ts) | `regular` | 1 | 0 |
+| [`src/domain/finance/investable-surplus.test.ts`](#src-domain-finance-investable-surplus-test-ts) | `regular` | 1 | 0 |
+| [`src/domain/finance/investable-surplus.ts`](#src-domain-finance-investable-surplus-ts) | `regular` | 1 | 3 |
 | [`src/domain/finance/investment-contribution.ts`](#src-domain-finance-investment-contribution-ts) | `regular` | 1 | 1 |
 | [`src/domain/finance/investment-portfolio-fv.ts`](#src-domain-finance-investment-portfolio-fv-ts) | `regular` | 2 | 4 |
+| [`src/domain/finance/irregular-expenses.test.ts`](#src-domain-finance-irregular-expenses-test-ts) | `regular` | 0 | 0 |
+| [`src/domain/finance/irregular-expenses.ts`](#src-domain-finance-irregular-expenses-ts) | `regular` | 3 | 1 |
 | [`src/domain/finance/mortgage-amortization.test.ts`](#src-domain-finance-mortgage-amortization-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/mortgage-amortization.ts`](#src-domain-finance-mortgage-amortization-ts) | `regular` | 2 | 2 |
 | [`src/domain/finance/net-worth.ts`](#src-domain-finance-net-worth-ts) | `regular` | 2 | 1 |
+| [`src/domain/finance/onboarding-income.test.ts`](#src-domain-finance-onboarding-income-test-ts) | `regular` | 0 | 0 |
+| [`src/domain/finance/onboarding-income.ts`](#src-domain-finance-onboarding-income-ts) | `regular` | 3 | 1 |
 | [`src/domain/finance/projection.test.ts`](#src-domain-finance-projection-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/projection.ts`](#src-domain-finance-projection-ts) | `regular` | 3 | 2 |
 | [`src/domain/finance/property-financing-plan.test.ts`](#src-domain-finance-property-financing-plan-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/property-financing-plan.ts`](#src-domain-finance-property-financing-plan-ts) | `regular` | 2 | 0 |
+| [`src/domain/finance/retirement-spend-vs-portfolio.test.ts`](#src-domain-finance-retirement-spend-vs-portfolio-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/retirement-spend-vs-portfolio.ts`](#src-domain-finance-retirement-spend-vs-portfolio-ts) | `regular` | 2 | 0 |
 | [`src/domain/finance/savings-rate.ts`](#src-domain-finance-savings-rate-ts) | `regular` | 1 | 0 |
 | [`src/domain/finance/sg-cpf-bonus-and-horizon.test.ts`](#src-domain-finance-sg-cpf-bonus-and-horizon-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/sg-cpf-contribution-buckets.ts`](#src-domain-finance-sg-cpf-contribution-buckets-ts) | `regular` | 6 | 5 |
 | [`src/domain/finance/sg-cpf.ts`](#src-domain-finance-sg-cpf-ts) | `regular` | 8 | 8 |
+| [`src/domain/finance/sg-income-tax.test.ts`](#src-domain-finance-sg-income-tax-test-ts) | `regular` | 0 | 0 |
+| [`src/domain/finance/sg-income-tax.ts`](#src-domain-finance-sg-income-tax-ts) | `regular` | 8 | 10 |
 | [`src/domain/finance/singapore-residential-bsd.test.ts`](#src-domain-finance-singapore-residential-bsd-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/singapore-residential-bsd.ts`](#src-domain-finance-singapore-residential-bsd-ts) | `regular` | 2 | 1 |
 | [`src/domain/finance/spend-recommendations.ts`](#src-domain-finance-spend-recommendations-ts) | `regular` | 2 | 1 |
 | [`src/domain/finance/types.ts`](#src-domain-finance-types-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/vehicle-sg.test.ts`](#src-domain-finance-vehicle-sg-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/vehicle-sg.ts`](#src-domain-finance-vehicle-sg-ts) | `regular` | 22 | 43 |
+| [`src/domain/housing/compose.test.ts`](#src-domain-housing-compose-test-ts) | `regular` | 2 | 0 |
+| [`src/domain/housing/compose.ts`](#src-domain-housing-compose-ts) | `regular` | 5 | 7 |
+| [`src/domain/housing/index.ts`](#src-domain-housing-index-ts) | `regular` | 0 | 0 |
+| [`src/domain/housing/types.ts`](#src-domain-housing-types-ts) | `regular` | 0 | 0 |
+| [`src/domain/setup/context.ts`](#src-domain-setup-context-ts) | `regular` | 0 | 0 |
+| [`src/domain/setup/evaluators.test.ts`](#src-domain-setup-evaluators-test-ts) | `regular` | 1 | 0 |
+| [`src/domain/setup/evaluators.ts`](#src-domain-setup-evaluators-ts) | `regular` | 23 | 30 |
+| [`src/domain/setup/modules.ts`](#src-domain-setup-modules-ts) | `regular` | 0 | 0 |
+| [`src/domain/setup/setupStatusService.ts`](#src-domain-setup-setupstatusservice-ts) | `regular` | 0 | 0 |
+| [`src/domain/setup/types.ts`](#src-domain-setup-types-ts) | `regular` | 0 | 0 |
 
 ## Functions
+
+### `src/domain/advisor-proposals/apply-changes.parity.test.ts` <a id="src-domain-advisor-proposals-apply-changes-parity-test-ts"></a>
+
+Classification: `regular`
+
+#### `coerceRead` — function, L47
+
+- called by: `src/domain/advisor-proposals/apply-changes.parity.test.ts#makeFakeSupabase`
+
+#### `makeFakeSupabase` — function, L56
+
+- calls: `src/domain/advisor-proposals/apply-changes.parity.test.ts#coerceRead`
+- unresolved: 6
+
+#### `canonical` — function, L161
+
+_No tracked edges._
+
+#### `ch` — function, L239
+
+_No tracked edges._
+
+#### `investmentValueShape` — arrow, L258
+
+_No tracked edges._
+
+### `src/domain/advisor-proposals/apply-changes.ts` <a id="src-domain-advisor-proposals-apply-changes-ts"></a>
+
+Classification: `regular`
+
+#### `toNumOrNull` — function, L21
+
+- called by: `src/domain/advisor-proposals/apply-changes.ts#investmentWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#profilePatch`
+
+#### `profilePatch` — function, L38
+
+- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
+
+#### `investmentDiffers` — function, L55
+
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
+
+#### `investmentWritePayload` — function, L67
+
+- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
+
+#### `applyAcceptedProposalChanges` — function, L85
+
+- calls: `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/budget-lines.ts#updateBudgetLine`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/goals.ts#updateFinancialGoal`, `src/data/repositories/investments.ts#deleteInvestment`, `src/data/repositories/investments.ts#insertInvestment`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/investments.ts#updateInvestment`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/repositories/profiles.ts#updateProfile`, `src/domain/advisor-proposals/apply-changes.ts#investmentDiffers`, `src/domain/advisor-proposals/apply-changes.ts#investmentWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#profilePatch`, `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
+- called by: `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`
+
+### `src/domain/advisor-proposals/apply-overlay.test.ts` <a id="src-domain-advisor-proposals-apply-overlay-test-ts"></a>
+
+Classification: `regular`
+
+#### `profile` — function, L14
+
+- called by: `src/domain/advisor-proposals/apply-overlay.test.ts#baseInputs`
+
+#### `investment` — function, L52
+
+- called by: `src/domain/advisor-proposals/apply-overlay.test.ts#baseInputs`
+
+#### `budgetLine` — function, L68
+
+- called by: `src/domain/advisor-proposals/apply-overlay.test.ts#baseInputs`
+
+#### `goal` — function, L81
+
+- called by: `src/domain/advisor-proposals/apply-overlay.test.ts#baseInputs`
+
+#### `change` — function, L97
+
+_No tracked edges._
+
+#### `baseInputs` — function, L116
+
+- calls: `src/domain/advisor-proposals/apply-overlay.test.ts#budgetLine`, `src/domain/advisor-proposals/apply-overlay.test.ts#goal`, `src/domain/advisor-proposals/apply-overlay.test.ts#investment`, `src/domain/advisor-proposals/apply-overlay.test.ts#profile`
+
+### `src/domain/advisor-proposals/apply-overlay.ts` <a id="src-domain-advisor-proposals-apply-overlay-ts"></a>
+
+Classification: `regular`
+
+#### `numOrNull` — function, L22
+
+- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`, `src/domain/advisor-proposals/apply-overlay.ts#numStr`
+
+#### `numStr` — function, L33
+
+- calls: `src/domain/advisor-proposals/apply-overlay.ts#numOrNull`
+- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyInvestmentInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyProfile`, `src/domain/advisor-proposals/apply-overlay.ts#mergeInvestment`
+
+#### `groupByEntity` — function, L44
+
+- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
+
+#### `fieldMap` — function, L58
+
+- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
+
+#### `applyProfile` — function, L74
+
+- calls: `src/domain/advisor-proposals/apply-overlay.ts#numStr`
+- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
+
+#### `applyInvestmentInsert` — function, L90
+
+- calls: `src/domain/advisor-proposals/apply-overlay.ts#numStr`
+- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
+
+#### `mergeInvestment` — function, L113
+
+- calls: `src/domain/advisor-proposals/apply-overlay.ts#numStr`
+- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
+
+#### `applyProposalChanges` — function, L147
+
+- calls: `src/domain/advisor-proposals/apply-overlay.ts#applyInvestmentInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyProfile`, `src/domain/advisor-proposals/apply-overlay.ts#fieldMap`, `src/domain/advisor-proposals/apply-overlay.ts#groupByEntity`, `src/domain/advisor-proposals/apply-overlay.ts#mergeInvestment`, `src/domain/advisor-proposals/apply-overlay.ts#numOrNull`
+- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
+
+### `src/domain/advisor-proposals/field-registry.ts` <a id="src-domain-advisor-proposals-field-registry-ts"></a>
+
+Classification: `regular`
+
+#### `fieldMeta` — function, L59
+
+- called by: `src/data/repositories/advisor-proposals.ts#upsertProposalChange`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
+
+#### `serializeProposalValue` — function, L86
+
+- called by: `src/data/repositories/advisor-proposals.ts#upsertProposalChange`
+
+#### `valuesEqual` — function, L93
+
+- called by: `src/data/repositories/advisor-proposals.ts#upsertProposalChange`
+
+### `src/domain/advisor-proposals/format-display.ts` <a id="src-domain-advisor-proposals-format-display-ts"></a>
+
+Classification: `regular`
+
+#### `formatProposalDisplayValue` — function, L4
+
+- called by: `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
+
+### `src/domain/advisor-proposals/group-changes.ts` <a id="src-domain-advisor-proposals-group-changes-ts"></a>
+
+Classification: `regular`
+
+#### `entityKey` — function, L18
+
+- called by: `src/domain/advisor-proposals/group-changes.ts#groupChangesBySection`
+
+#### `headlineForEntity` — function, L22
+
+- called by: `src/domain/advisor-proposals/group-changes.ts#groupChangesBySection`
+
+#### `groupChangesBySection` — function, L46
+
+- calls: `src/domain/advisor-proposals/group-changes.ts#entityKey`, `src/domain/advisor-proposals/group-changes.ts#headlineForEntity`, `src/domain/advisor-proposals/sections.ts#compareSectionOrder`
+- called by: `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`
+
+### `src/domain/advisor-proposals/overlay-gate.test.ts` <a id="src-domain-advisor-proposals-overlay-gate-test-ts"></a>
+
+Classification: `regular`
+
+#### `proposal` — arrow, L5
+
+_No tracked edges._
+
+### `src/domain/advisor-proposals/overlay-gate.ts` <a id="src-domain-advisor-proposals-overlay-gate-ts"></a>
+
+Classification: `regular`
+
+#### `resolveOverlayForViewer` — function, L29
+
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`
+
+### `src/domain/advisor-proposals/sections.ts` <a id="src-domain-advisor-proposals-sections-ts"></a>
+
+Classification: `regular`
+
+#### `sectionLabel` — function, L39
+
+- called by: `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#RemoveSectionButton`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
+
+#### `compareSectionOrder` — function, L46
+
+- called by: `src/domain/advisor-proposals/group-changes.ts#groupChangesBySection`, `src/features/proposals/ProposalReviewView.tsx#groupBySection`
 
 ### `src/domain/finance/advisor-client-health.test.ts` <a id="src-domain-finance-advisor-client-health-test-ts"></a>
 
@@ -77,6 +308,36 @@ Classification: `regular`
 - calls: `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/domain/finance/advisor-client-health.ts#advisorClientRosterSignals`, `src/lib/dates.ts#formatYearMonth`
 - called by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
 
+### `src/domain/finance/age-asset-projection.test.ts` <a id="src-domain-finance-age-asset-projection-test-ts"></a>
+
+Classification: `regular`
+
+#### `flatExpenses` — function, L5
+
+_No tracked edges._
+
+#### `retPoint` — arrow, L32
+
+_No tracked edges._
+
+#### `postPoint` — arrow, L34
+
+_No tracked edges._
+
+#### `prePoint` — arrow, L36
+
+_No tracked edges._
+
+### `src/domain/finance/age-asset-projection.ts` <a id="src-domain-finance-age-asset-projection-ts"></a>
+
+Classification: `regular`
+
+#### `buildAgeAssetProjection` — function, L55
+
+- calls: `src/domain/finance/investable-surplus.ts#sumInvestableSurplusOverHorizon`, `src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash`, `src/domain/finance/vehicle-sg.ts#vehicleNetListedBeforeLiquidation`, `src/lib/dates.ts#addCalendarMonths`
+- called by: `src/data/dashboard.ts#getDashboardPayload`
+- unresolved: 2
+
 ### `src/domain/finance/age-projection.ts` <a id="src-domain-finance-age-projection-ts"></a>
 
 Classification: `regular`
@@ -88,7 +349,7 @@ Classification: `regular`
 #### `ageCompletedOnDate` — function, L20
 
 - calls: `src/domain/finance/age-projection.ts#parseYmd`
-- called by: `src/app/api/projection/route.ts#GET`, `src/data/dashboard.ts#ageAtEndOfYearMonth`, `src/data/dashboard.ts#getDashboardPayload`, `src/domain/finance/age-projection.ts#buildNetWorthByAgeProjection`, `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/features/dashboard/ProfileIncomeForm.tsx#derivedCpfBandFromBirthDate`, `src/features/goals/InvestmentBalancesList.tsx#ContributionTimelineHint`
+- called by: `src/app/api/projection/route.ts#GET`, `src/data/dashboard.ts#ageAtEndOfYearMonth`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/domain/finance/age-projection.ts#buildNetWorthByAgeProjection`, `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/dashboard/ProfileIncomeForm.tsx#derivedCpfBandFromBirthDate`, `src/features/goals/InvestmentBalancesList.tsx#ContributionTimelineHint`, `src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs`
 
 #### `buildNetWorthByAgeProjection` — function, L41
 
@@ -105,42 +366,66 @@ _No top-level functions detected._
 
 Classification: `regular`
 
-#### `strategyNeedsWantsSavings` — function, L32
+#### `isPreservedOnGuidedBudgetReplace` — function, L44
+
+- calls: `src/domain/finance/debt-repayment.ts#isDebtBudgetCategory`
+- called by: `src/domain/finance/budget-guided-setup.ts#countReplaceableMonthlyBudgetLines`, `src/server/actions.ts#applyGuidedBudgetLinesAction`
+
+#### `countReplaceableMonthlyBudgetLines` — function, L50
+
+- calls: `src/domain/finance/budget-guided-setup.ts#isPreservedOnGuidedBudgetReplace`
+- called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`
+
+#### `strategyNeedsWantsSavings` — function, L60
 
 - called by: `src/domain/finance/budget-guided-setup.ts#generateGuidedMonthlyBudgetLines`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`
 
-#### `lifestyleNeedMultipliers` — function, L135
+#### `lifestyleNeedMultipliers` — function, L163
 
 - called by: `src/domain/finance/budget-guided-setup.ts#generateGuidedMonthlyBudgetLines`
 - unresolved: 10
 
-#### `foodBandMidpointSgd` — function, L168
+#### `foodBandMidpointSgd` — function, L196
 
 - called by: `src/domain/finance/budget-guided-setup.ts#generateGuidedMonthlyBudgetLines`
 
-#### `roundMoney` — function, L184
+#### `roundMoney` — function, L212
 
 - called by: `src/domain/finance/budget-guided-setup.ts#distributeRemainder`, `src/domain/finance/budget-guided-setup.ts#generateGuidedMonthlyBudgetLines`
 
-#### `distributeRemainder` — function, L188
+#### `distributeRemainder` — function, L216
 
 - calls: `src/domain/finance/budget-guided-setup.ts#roundMoney`
 - called by: `src/domain/finance/budget-guided-setup.ts#generateGuidedMonthlyBudgetLines`
 
-#### `generateGuidedMonthlyBudgetLines` — function, L227
+#### `generateGuidedMonthlyBudgetLines` — function, L255
 
 - calls: `src/domain/finance/budget-guided-setup.ts#distributeRemainder`, `src/domain/finance/budget-guided-setup.ts#foodBandMidpointSgd`, `src/domain/finance/budget-guided-setup.ts#lifestyleNeedMultipliers`, `src/domain/finance/budget-guided-setup.ts#roundMoney`, `src/domain/finance/budget-guided-setup.ts#strategyNeedsWantsSavings`
-- called by: `src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard`, `src/server/actions.ts#applyGuidedBudgetLinesAction`
+- called by: `src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard`, `src/features/setup/BudgetLensProfileForm.tsx#BudgetLensProfileForm`, `src/server/actions.ts#applyGuidedBudgetLinesAction`
 
-#### `budgetBucketForCategoryLabel` — function, L323
+#### `budgetBucketForCategoryLabel` — function, L351
 
 - calls: `src/domain/finance/budget.ts#normalizeCategory`
 - called by: `src/domain/finance/budget-guided-setup.ts#sumBucketAmounts`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection`
 
-#### `sumBucketAmounts` — function, L349
+#### `sumBucketAmounts` — function, L377
 
 - calls: `src/domain/finance/budget-guided-setup.ts#budgetBucketForCategoryLabel`
 - called by: `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`
+
+### `src/domain/finance/budget-review.test.ts` <a id="src-domain-finance-budget-review-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/domain/finance/budget-review.ts` <a id="src-domain-finance-budget-review-ts"></a>
+
+Classification: `regular`
+
+#### `buildBudgetReviewWorkflow` — function, L45
+
+- called by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
 
 ### `src/domain/finance/budget.ts` <a id="src-domain-finance-budget-ts"></a>
 
@@ -152,34 +437,55 @@ Classification: `regular`
 
 #### `isValidYearMonth` — function, L11
 
-- called by: `src/server/actions.ts#clearBudgetMonthOverrideAction`, `src/server/actions.ts#createBudgetLineAction`, `src/server/actions.ts#setBudgetMonthOverrideAction`, `src/server/actions.ts#updateBudgetLineScheduleAction`
+- called by: `src/domain/finance/debt-repayment.ts#debtRepaymentAppliesInMonth`, `src/domain/finance/debt-repayment.ts#debtRepaymentEndYearMonth`, `src/server/actions.ts#clearBudgetMonthOverrideAction`, `src/server/actions.ts#createBudgetLineAction`, `src/server/actions.ts#setBudgetMonthOverrideAction`, `src/server/actions.ts#updateBudgetLineScheduleAction`
 
-#### `isMonthlyBudgetLineApplicable` — function, L18
+#### `plannedMonthlyBudgetTotalForMonth` — function, L19
 
-- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/data/budget-summary.ts#getBudgetPageModel`, `src/domain/finance/budget.ts#monthlyBudgetVsActual`, `src/domain/finance/expense-budget-lock.ts#activeMonthlyBudgetCategoryKeys`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`
+- calls: `src/domain/finance/budget.ts#isMonthlyBudgetLineApplicable`
+- called by: `src/domain/finance/investable-surplus.ts#sumInvestableSurplusOverHorizon`
 
-#### `monthlyBudgetAggregateOverspend` — function, L74
+#### `isMonthlyBudgetLineApplicable` — function, L41
+
+- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/data/budget-summary.ts#getBudgetPageModel`, `src/domain/finance/budget.ts#monthlyBudgetVsActual`, `src/domain/finance/budget.ts#plannedMonthlyBudgetTotalForMonth`, `src/domain/finance/expense-budget-lock.ts#activeMonthlyBudgetCategoryKeys`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`
+
+#### `monthlyBudgetAggregateOverspend` — function, L97
 
 - called by: `src/data/dashboard.ts#getDashboardPayload`, `src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
 
-#### `sumSpentByCategory` — function, L87
+#### `sumSpentByCategory` — function, L110
 
 - calls: `src/domain/finance/budget.ts#normalizeCategory`
 - called by: `src/domain/finance/budget.ts#annualBudgetVsActual`, `src/domain/finance/budget.ts#monthlyBudgetVsActual`
 
-#### `monthlyBudgetVsActual` — function, L104
+#### `monthlyBudgetVsActual` — function, L127
 
 - calls: `src/domain/finance/budget.ts#isMonthlyBudgetLineApplicable`, `src/domain/finance/budget.ts#normalizeCategory`, `src/domain/finance/budget.ts#sumSpentByCategory`
 - called by: `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth`
 
-#### `annualBudgetVsActual` — function, L157
+#### `annualBudgetVsActual` — function, L180
 
 - calls: `src/domain/finance/budget.ts#normalizeCategory`, `src/domain/finance/budget.ts#sumSpentByCategory`
 - called by: `src/data/budget-summary.ts#getBudgetPageModel`
 
-#### `topOverBudgetCategories` — function, L195
+#### `topOverBudgetCategories` — function, L218
 
 - called by: `src/data/dashboard.ts#getDashboardPayload`, `src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth`
+
+### `src/domain/finance/cash-flow-accrual.test.ts` <a id="src-domain-finance-cash-flow-accrual-test-ts"></a>
+
+Classification: `regular`
+
+#### `expectedFlat` — function, L20
+
+- calls: `src/domain/finance/sg-cpf.ts#countAnnualBonusPayoutsInHorizon`
+
+### `src/domain/finance/cash-flow-accrual.ts` <a id="src-domain-finance-cash-flow-accrual-ts"></a>
+
+Classification: `regular`
+
+#### `accrueTakeHomeSurplus` — function, L43
+
+- calls: `src/domain/finance/sg-cpf.ts#countAnnualBonusPayoutsInHorizon`
 
 ### `src/domain/finance/cpf-monthly-projection.test.ts` <a id="src-domain-finance-cpf-monthly-projection-test-ts"></a>
 
@@ -207,6 +513,142 @@ Classification: `regular`
 #### `downsampleCpfSeries` — function, L228
 
 _No tracked edges._
+
+### `src/domain/finance/cpf-retirement-projection.test.ts` <a id="src-domain-finance-cpf-retirement-projection-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/domain/finance/cpf-retirement-projection.ts` <a id="src-domain-finance-cpf-retirement-projection-ts"></a>
+
+Classification: `regular`
+
+#### `round2` — function, L90
+
+- called by: `src/domain/finance/cpf-retirement-projection.ts#brsFromFrs`, `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`, `src/domain/finance/cpf-retirement-projection.ts#ersFromFrs`, `src/domain/finance/cpf-retirement-projection.ts#estimateCpfLifeMonthlyPayoutRange`, `src/domain/finance/cpf-retirement-projection.ts#estimateFutureFrs`, `src/domain/finance/cpf-retirement-projection.ts#retirementTargetAmount`, `src/domain/finance/cpf-retirement-projection.ts#simulateRaFormationAt55`
+
+#### `yearsUntilAge` — function, L94
+
+- called by: `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`
+
+#### `estimateFutureFrs` — function, L105
+
+- calls: `src/domain/finance/cpf-retirement-projection.ts#round2`
+- called by: `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`
+
+#### `brsFromFrs` — function, L117
+
+- calls: `src/domain/finance/cpf-retirement-projection.ts#round2`
+- called by: `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`, `src/domain/finance/cpf-retirement-projection.ts#retirementTargetAmount`
+
+#### `ersFromFrs` — function, L121
+
+- calls: `src/domain/finance/cpf-retirement-projection.ts#round2`
+- called by: `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`, `src/domain/finance/cpf-retirement-projection.ts#retirementTargetAmount`
+
+#### `retirementTargetAmount` — function, L125
+
+- calls: `src/domain/finance/cpf-retirement-projection.ts#brsFromFrs`, `src/domain/finance/cpf-retirement-projection.ts#ersFromFrs`, `src/domain/finance/cpf-retirement-projection.ts#round2`
+- called by: `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`
+
+#### `estimateCpfLifeMonthlyPayoutRange` — function, L139
+
+- calls: `src/domain/finance/cpf-retirement-projection.ts#round2`
+- called by: `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`
+
+#### `buildCpfRetirementProjection` — function, L151
+
+- calls: `src/domain/finance/cpf-retirement-projection.ts#brsFromFrs`, `src/domain/finance/cpf-retirement-projection.ts#ersFromFrs`, `src/domain/finance/cpf-retirement-projection.ts#estimateCpfLifeMonthlyPayoutRange`, `src/domain/finance/cpf-retirement-projection.ts#estimateFutureFrs`, `src/domain/finance/cpf-retirement-projection.ts#retirementTargetAmount`, `src/domain/finance/cpf-retirement-projection.ts#round2`, `src/domain/finance/cpf-retirement-projection.ts#yearsUntilAge`
+- called by: `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`
+
+#### `simulateRaFormationAt55` — function, L196
+
+- calls: `src/domain/finance/cpf-retirement-projection.ts#round2`
+- called by: `src/domain/finance/cpf-retirement-projection.ts#simulateRaForScenario`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`
+
+#### `simulateRaForScenario` — function, L222
+
+- calls: `src/domain/finance/cpf-retirement-projection.ts#simulateRaFormationAt55`
+- called by: `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`
+
+### `src/domain/finance/debt-repayment.test.ts` <a id="src-domain-finance-debt-repayment-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/domain/finance/debt-repayment.ts` <a id="src-domain-finance-debt-repayment-ts"></a>
+
+Classification: `regular`
+
+#### `debtBudgetCategoryName` — function, L38
+
+- called by: `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`
+
+#### `isDebtBudgetCategory` — function, L45
+
+- calls: `src/domain/finance/debt-repayment.ts#normalizeDebtCategoryKey`
+- called by: `src/domain/finance/budget-guided-setup.ts#isPreservedOnGuidedBudgetReplace`
+
+#### `normalizeDebtCategoryKey` — function, L51
+
+- called by: `src/domain/finance/debt-repayment.ts#isDebtBudgetCategory`
+
+#### `defaultLoanTypeForCategory` — function, L55
+
+- called by: `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`, `src/features/debts/DebtFormFields.tsx#DebtFormFields`, `src/server/liability-form.ts#parseLiabilityFormData`
+
+#### `estimateAmortizedMonthlyPayment` — function, L77
+
+- calls: `src/domain/finance/debt-repayment.ts#roundMoney`
+- called by: `src/domain/finance/debt-repayment.ts#estimateMonthlyRepayment`
+
+#### `estimateFlatRateMonthlyPayment` — function, L98
+
+- calls: `src/domain/finance/debt-repayment.ts#roundMoney`
+- called by: `src/domain/finance/debt-repayment.ts#estimateMonthlyRepayment`, `src/features/debts/DebtEducationalExamples.tsx#DebtEducationalExamples`
+
+#### `estimateMonthlyRepayment` — function, L110
+
+- calls: `src/domain/finance/debt-repayment.ts#estimateAmortizedMonthlyPayment`, `src/domain/finance/debt-repayment.ts#estimateFlatRateMonthlyPayment`
+- called by: `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`, `src/features/debts/DebtFormFields.tsx#DebtFormFields`
+
+#### `effectiveMonthlyRepayment` — function, L135
+
+- calls: `src/domain/finance/debt-repayment.ts#defaultLoanTypeForCategory`, `src/domain/finance/debt-repayment.ts#estimateMonthlyRepayment`
+- called by: `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/domain/finance/debt-repayment.ts#debtRepaymentAppliesInMonth`, `src/domain/finance/debt-repayment.ts#sumDebtRepaymentsInMonth`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`, `src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels`
+
+#### `debtRepaymentStartYearMonth` — function, L151
+
+- called by: `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/domain/finance/debt-repayment.ts#debtRepaymentAppliesInMonth`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
+
+#### `debtRepaymentEndYearMonth` — function, L165
+
+- calls: `src/domain/finance/budget.ts#isValidYearMonth`, `src/lib/dates.ts#addMonthsToYearMonth`
+- called by: `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/domain/finance/debt-repayment.ts#debtRepaymentAppliesInMonth`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
+
+#### `debtRepaymentAppliesInMonth` — function, L176
+
+- calls: `src/domain/finance/budget.ts#isValidYearMonth`, `src/domain/finance/debt-repayment.ts#debtRepaymentEndYearMonth`, `src/domain/finance/debt-repayment.ts#debtRepaymentStartYearMonth`, `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`
+- called by: `src/domain/finance/debt-repayment.ts#sumDebtRepaymentsInMonth`
+
+#### `sumDebtRepaymentsInMonth` — function, L191
+
+- calls: `src/domain/finance/debt-repayment.ts#debtRepaymentAppliesInMonth`, `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`
+
+#### `roundMoney` — function, L204
+
+- called by: `src/domain/finance/debt-repayment.ts#estimateAmortizedMonthlyPayment`, `src/domain/finance/debt-repayment.ts#estimateFlatRateMonthlyPayment`
+
+#### `dec` — function, L208
+
+- called by: `src/domain/finance/debt-repayment.ts#liabilityRowToPlanning`
+
+#### `liabilityRowToPlanning` — function, L215
+
+- calls: `src/domain/finance/debt-repayment.ts#dec`
+- called by: `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`
 
 ### `src/domain/finance/expense-budget-lock.ts` <a id="src-domain-finance-expense-budget-lock-ts"></a>
 
@@ -317,6 +759,85 @@ Classification: `regular`
 
 _No tracked edges._
 
+### `src/domain/finance/housing-loan-payments.test.ts` <a id="src-domain-finance-housing-loan-payments-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/domain/finance/housing-loan-payments.ts` <a id="src-domain-finance-housing-loan-payments-ts"></a>
+
+Classification: `regular`
+
+#### `parseAmount` — function, L26
+
+- called by: `src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount`, `src/domain/finance/housing-loan-payments.ts#housingInstalmentForMonth`, `src/domain/finance/housing-loan-payments.ts#splitHousingInstalment`
+
+#### `parseShare` — function, L37
+
+- called by: `src/domain/finance/housing-loan-payments.ts#buildHousingPaymentInsights`, `src/domain/finance/housing-loan-payments.ts#oaShareForCpfProjection`, `src/domain/finance/housing-loan-payments.ts#resolveHousingPaymentSource`, `src/domain/finance/housing-loan-payments.ts#splitHousingInstalment`
+
+#### `resolveHousingPaymentSourceExplicit` — function, L43
+
+- called by: `src/domain/finance/housing-loan-payments.ts#buildHousingPaymentInsights`, `src/domain/finance/housing-loan-payments.ts#oaShareForCpfProjection`, `src/domain/finance/housing-loan-payments.ts#resolveHousingPaymentSource`, `src/domain/finance/housing-loan-payments.ts#resolveHousingPaymentSourceForCash`
+
+#### `resolveHousingPaymentSourceForCash` — function, L55
+
+- calls: `src/domain/finance/housing-loan-payments.ts#resolveHousingPaymentSourceExplicit`
+- called by: `src/domain/finance/housing-loan-payments.ts#splitHousingInstalment`
+
+#### `resolveHousingPaymentSource` — function, L66
+
+- calls: `src/domain/finance/housing-loan-payments.ts#parseShare`, `src/domain/finance/housing-loan-payments.ts#resolveHousingPaymentSourceExplicit`
+- called by: `src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm`, `src/features/goals/HousingLoansPanel.tsx#HousingPanel`
+
+#### `firstHousingInstalmentAmount` — function, L78
+
+- calls: `src/domain/finance/housing-loan-payments.ts#parseAmount`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`
+- called by: `src/domain/finance/housing-loan-payments.ts#normalizeHousingPaymentForPersist`, `src/domain/finance/housing-loan-payments.ts#oaShareForCpfProjection`, `src/domain/finance/housing-loan-payments.ts#oaShareForStoredHousingLoan`, `src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm`, `src/server/actions.ts#createHousingLoanQuickAction`
+
+#### `housingInstalmentForMonth` — function, L100
+
+- calls: `src/domain/finance/housing-loan-payments.ts#parseAmount`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`
+- called by: `src/domain/finance/housing-loan-payments.ts#buildHousingPaymentInsights`, `src/domain/finance/housing-loan-payments.ts#sumHousingCashInstalmentsForMonth`
+
+#### `splitHousingInstalment` — function, L127
+
+- calls: `src/domain/finance/housing-loan-payments.ts#parseAmount`, `src/domain/finance/housing-loan-payments.ts#parseShare`, `src/domain/finance/housing-loan-payments.ts#resolveHousingPaymentSourceForCash`
+- called by: `src/domain/finance/housing-loan-payments.ts#buildHousingPaymentInsights`, `src/domain/finance/housing-loan-payments.ts#normalizeHousingPaymentForPersist`, `src/domain/finance/housing-loan-payments.ts#oaShareForCpfProjection`, `src/domain/finance/housing-loan-payments.ts#oaShareForStoredHousingLoan`, `src/domain/finance/housing-loan-payments.ts#sumHousingCashInstalmentsForMonth`
+
+#### `oaShareForCpfProjection` — function, L191
+
+- calls: `src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount`, `src/domain/finance/housing-loan-payments.ts#parseShare`, `src/domain/finance/housing-loan-payments.ts#resolveHousingPaymentSourceExplicit`, `src/domain/finance/housing-loan-payments.ts#splitHousingInstalment`
+- called by: `src/data/dashboard.ts#housingLoanToProjection`
+
+#### `sumHousingCashInstalmentsForMonth` — function, L200
+
+- calls: `src/domain/finance/housing-loan-payments.ts#housingInstalmentForMonth`, `src/domain/finance/housing-loan-payments.ts#splitHousingInstalment`
+- called by: `src/data/housing-cash-synthetic-expense.ts#buildSyntheticHousingCashExpense`
+
+#### `paymentSourceFromLegacyPreset` — function, L213
+
+- called by: `src/server/actions.ts#createHousingLoanQuickAction`, `src/server/actions.ts#parseHousingPaymentForm`
+
+#### `oaShareForStoredHousingLoan` — function, L223
+
+- calls: `src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount`, `src/domain/finance/housing-loan-payments.ts#splitHousingInstalment`
+
+#### `buildHousingPaymentInsights` — function, L232
+
+- calls: `src/domain/finance/housing-loan-payments.ts#formatInsightMoney`, `src/domain/finance/housing-loan-payments.ts#housingInstalmentForMonth`, `src/domain/finance/housing-loan-payments.ts#parseShare`, `src/domain/finance/housing-loan-payments.ts#resolveHousingPaymentSourceExplicit`, `src/domain/finance/housing-loan-payments.ts#splitHousingInstalment`
+- called by: `src/data/dashboard.ts#getDashboardPayload`
+
+#### `normalizeHousingPaymentForPersist` — function, L292
+
+- calls: `src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount`, `src/domain/finance/housing-loan-payments.ts#splitHousingInstalment`
+- called by: `src/server/actions.ts#createHousingLoanQuickAction`, `src/server/actions.ts#parseHousingPaymentForm`
+
+#### `formatInsightMoney` — function, L334
+
+- called by: `src/domain/finance/housing-loan-payments.ts#buildHousingPaymentInsights`
+
 ### `src/domain/finance/housing-loan-quick.test.ts` <a id="src-domain-finance-housing-loan-quick-test-ts"></a>
 
 Classification: `regular`
@@ -329,7 +850,7 @@ Classification: `regular`
 
 #### `oaInstalmentShareFromPreset` — function, L13
 
-- called by: `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`, `src/server/actions.ts#createHousingLoanQuickAction`
+- called by: `src/server/actions.ts#createHousingLoanQuickAction`
 
 #### `annualRateForQuickLender` — function, L20
 
@@ -354,6 +875,23 @@ Classification: `regular`
 
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
+### `src/domain/finance/investable-surplus.test.ts` <a id="src-domain-finance-investable-surplus-test-ts"></a>
+
+Classification: `regular`
+
+#### `flatExpenses` — function, L10
+
+_No tracked edges._
+
+### `src/domain/finance/investable-surplus.ts` <a id="src-domain-finance-investable-surplus-ts"></a>
+
+Classification: `regular`
+
+#### `sumInvestableSurplusOverHorizon` — function, L22
+
+- calls: `src/domain/finance/budget.ts#plannedMonthlyBudgetTotalForMonth`, `src/domain/finance/sg-cpf.ts#countAnnualBonusPayoutsInHorizon`, `src/lib/dates.ts#addMonthsToYearMonth`
+- called by: `src/domain/finance/age-asset-projection.ts#buildAgeAssetProjection`
+
 ### `src/domain/finance/investment-contribution.ts` <a id="src-domain-finance-investment-contribution-ts"></a>
 
 Classification: `regular`
@@ -377,6 +915,29 @@ Classification: `regular`
 - calls: `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`
 - called by: `src/data/projection.ts#timeToGoalForTarget`
 
+### `src/domain/finance/irregular-expenses.test.ts` <a id="src-domain-finance-irregular-expenses-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/domain/finance/irregular-expenses.ts` <a id="src-domain-finance-irregular-expenses-ts"></a>
+
+Classification: `regular`
+
+#### `irregularCadenceOccurrences` — function, L22
+
+- called by: `src/domain/finance/irregular-expenses.ts#annualAmountFromIrregularInput`
+
+#### `annualAmountFromIrregularInput` — function, L36
+
+- calls: `src/domain/finance/irregular-expenses.ts#irregularCadenceOccurrences`
+- called by: `src/features/budget/BudgetAddForm.tsx#BudgetAddForm`
+
+#### `buildIrregularExpenseReserves` — function, L48
+
+- called by: `src/features/budget/BudgetIrregularExpenseReservePanel.tsx#BudgetIrregularExpenseReservePanel`
+
 ### `src/domain/finance/mortgage-amortization.test.ts` <a id="src-domain-finance-mortgage-amortization-test-ts"></a>
 
 Classification: `regular`
@@ -390,7 +951,7 @@ Classification: `regular`
 #### `buildAmortizationSchedule` — function, L31
 
 - calls: `src/domain/finance/mortgage-amortization.ts#roundMoney`, `src/lib/dates.ts#addMonthsToYearMonth`
-- called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`
+- called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount`, `src/domain/finance/housing-loan-payments.ts#housingInstalmentForMonth`, `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`
 
 #### `roundMoney` — function, L75
 
@@ -408,6 +969,30 @@ Classification: `regular`
 
 - calls: `src/domain/finance/net-worth.ts#sum`
 - called by: `src/data/dashboard.ts#getDashboardPayload`
+
+### `src/domain/finance/onboarding-income.test.ts` <a id="src-domain-finance-onboarding-income-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/domain/finance/onboarding-income.ts` <a id="src-domain-finance-onboarding-income-ts"></a>
+
+Classification: `regular`
+
+#### `estimateOnboardingTakeHomeMonthly` — function, L32
+
+- calls: `src/domain/finance/sg-cpf.ts#monthlyEmployeeCpfTakeHomeSg`
+- called by: `src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard`
+
+#### `annualBonusFromGrossAndMonths` — function, L48
+
+- called by: `src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard`
+
+#### `inferBonusMonthPreset` — function, L61
+
+- called by: `src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard`
+- unresolved: 3
 
 ### `src/domain/finance/projection.test.ts` <a id="src-domain-finance-projection-test-ts"></a>
 
@@ -451,15 +1036,21 @@ Classification: `regular`
 
 - called by: `src/domain/finance/housing-loan-quick.ts#deriveQuickHousingLoanRow`
 
+### `src/domain/finance/retirement-spend-vs-portfolio.test.ts` <a id="src-domain-finance-retirement-spend-vs-portfolio-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
 ### `src/domain/finance/retirement-spend-vs-portfolio.ts` <a id="src-domain-finance-retirement-spend-vs-portfolio-ts"></a>
 
 Classification: `regular`
 
-#### `analyzeRetirementDividendVsSpend` — function, L44
+#### `analyzeRetirementDividendVsSpend` — function, L47
 
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `analyzeRetirementSpendVsPortfolio` — function, L116
+#### `analyzeRetirementSpendVsPortfolio` — function, L133
 
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
@@ -526,12 +1117,12 @@ Classification: `regular`
 
 #### `isSgCpfAgeBand` — function, L120
 
-- called by: `src/data/mappers.ts#profileAnnualBonusTakeHomeCash`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`
+- called by: `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/data/mappers.ts#profileAnnualBonusTakeHomeCash`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs`
 
 #### `countAnnualBonusPayoutsInHorizon` — function, L131
 
 - calls: `src/lib/dates.ts#addMonthsToYearMonth`
-- called by: `src/data/dashboard.ts#getDashboardPayload`
+- called by: `src/domain/finance/cash-flow-accrual.test.ts#expectedFlat`, `src/domain/finance/cash-flow-accrual.ts#accrueTakeHomeSurplus`, `src/domain/finance/investable-surplus.ts#sumInvestableSurplusOverHorizon`
 
 #### `ordinaryWagesSubjectForMonth` — function, L146
 
@@ -540,12 +1131,58 @@ Classification: `regular`
 #### `monthlyEmployeeCpfTakeHomeSg` — function, L182
 
 - calls: `src/domain/finance/sg-cpf.ts#employeeCpfRateSg`, `src/domain/finance/sg-cpf.ts#ordinaryWageCeilingSg`, `src/domain/finance/sg-cpf.ts#ordinaryWagesSubjectForMonth`
-- called by: `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/domain/finance/sg-cpf.ts#annualEmployeeCpfTakeHomeWithBonusSg`
+- called by: `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/domain/finance/onboarding-income.ts#estimateOnboardingTakeHomeMonthly`, `src/domain/finance/sg-cpf.ts#annualEmployeeCpfTakeHomeWithBonusSg`
 
 #### `annualEmployeeCpfTakeHomeWithBonusSg` — function, L210
 
 - calls: `src/domain/finance/sg-cpf.ts#additionalWageCeilingRemaining`, `src/domain/finance/sg-cpf.ts#employeeCpfRateSg`, `src/domain/finance/sg-cpf.ts#monthlyEmployeeCpfTakeHomeSg`, `src/domain/finance/sg-cpf.ts#ordinaryWageCeilingSg`
-- called by: `src/app/api/profile/route.ts#PATCH`, `src/data/mappers.ts#profileAnnualBonusTakeHomeCash`, `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`
+- called by: `src/app/api/profile/route.ts#PATCH`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/data/mappers.ts#profileAnnualBonusTakeHomeCash`, `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`, `src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs`
+
+### `src/domain/finance/sg-income-tax.test.ts` <a id="src-domain-finance-sg-income-tax-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/domain/finance/sg-income-tax.ts` <a id="src-domain-finance-sg-income-tax-ts"></a>
+
+Classification: `regular`
+
+#### `roundMoney` — function, L106
+
+- called by: `src/domain/finance/sg-income-tax.ts#applyRebate`, `src/domain/finance/sg-income-tax.ts#computeAnnualTax`, `src/domain/finance/sg-income-tax.ts#grossTaxForChargeableIncome`, `src/domain/finance/sg-income-tax.ts#monthlyGiroFromNetTax`
+
+#### `earnedIncomeReliefForAge` — function, L110
+
+- called by: `src/domain/finance/sg-income-tax.ts#computeAnnualTax`, `src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs`
+
+#### `chargeableIncomeFromReliefs` — function, L116
+
+- called by: `src/domain/finance/sg-income-tax.ts#computeAnnualTax`
+
+#### `grossTaxForChargeableIncome` — function, L132
+
+- calls: `src/domain/finance/sg-income-tax.ts#roundMoney`
+- called by: `src/domain/finance/sg-income-tax.ts#computeAnnualTax`
+
+#### `applyRebate` — function, L149
+
+- calls: `src/domain/finance/sg-income-tax.ts#roundMoney`
+- called by: `src/domain/finance/sg-income-tax.ts#computeAnnualTax`
+
+#### `monthlyGiroFromNetTax` — function, L165
+
+- calls: `src/domain/finance/sg-income-tax.ts#roundMoney`
+- called by: `src/domain/finance/sg-income-tax.ts#computeAnnualTax`
+
+#### `sumReliefBundle` — function, L170
+
+- called by: `src/domain/finance/sg-income-tax.ts#computeAnnualTax`
+
+#### `computeAnnualTax` — function, L192
+
+- calls: `src/domain/finance/sg-income-tax.ts#applyRebate`, `src/domain/finance/sg-income-tax.ts#chargeableIncomeFromReliefs`, `src/domain/finance/sg-income-tax.ts#earnedIncomeReliefForAge`, `src/domain/finance/sg-income-tax.ts#grossTaxForChargeableIncome`, `src/domain/finance/sg-income-tax.ts#monthlyGiroFromNetTax`, `src/domain/finance/sg-income-tax.ts#roundMoney`, `src/domain/finance/sg-income-tax.ts#sumReliefBundle`
+- called by: `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`
 
 ### `src/domain/finance/singapore-residential-bsd.test.ts` <a id="src-domain-finance-singapore-residential-bsd-test-ts"></a>
 
@@ -692,9 +1329,191 @@ Classification: `regular`
 #### `vehicleNetListedBeforeLiquidation` — function, L418
 
 - calls: `src/domain/finance/vehicle-sg.ts#vehicleNetEquity`, `src/lib/dates.ts#formatYearMonth`
-- called by: `src/data/dashboard.ts#getDashboardPayload`
+- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/domain/finance/age-asset-projection.ts#buildAgeAssetProjection`
 
 #### `cumulativeVehicleProceedsToCash` — function, L435
 
 - calls: `src/domain/finance/vehicle-sg.ts#vehicleNetProceedsAtCoeMonthEnd`, `src/lib/dates.ts#formatYearMonth`
-- called by: `src/data/dashboard.ts#getDashboardPayload`
+- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/domain/finance/age-asset-projection.ts#buildAgeAssetProjection`
+
+### `src/domain/housing/compose.test.ts` <a id="src-domain-housing-compose-test-ts"></a>
+
+Classification: `regular`
+
+#### `baseProperty` — arrow, L5
+
+_No tracked edges._
+
+#### `baseLoan` — arrow, L22
+
+_No tracked edges._
+
+### `src/domain/housing/compose.ts` <a id="src-domain-housing-compose-ts"></a>
+
+Classification: `regular`
+
+#### `loanToMortgage` — function, L5
+
+- calls: `src/data/mappers.ts#num`
+- called by: `src/domain/housing/compose.ts#composeHousingPropertyViews`, `src/domain/housing/compose.ts#syntheticPropertyFromLoan`
+
+#### `propertyRowToView` — function, L23
+
+- calls: `src/data/mappers.ts#num`
+- called by: `src/domain/housing/compose.ts#composeHousingPropertyViews`
+
+#### `syntheticPropertyFromLoan` — function, L48
+
+- calls: `src/data/mappers.ts#num`, `src/domain/housing/compose.ts#loanToMortgage`
+- called by: `src/domain/housing/compose.ts#composeHousingPropertyViews`
+
+#### `composeHousingPropertyViews` — function, L85
+
+- calls: `src/domain/housing/compose.ts#loanToMortgage`, `src/domain/housing/compose.ts#propertyRowToView`, `src/domain/housing/compose.ts#syntheticPropertyFromLoan`
+
+#### `housingLoansForProjection` — function, L134
+
+_No tracked edges._
+
+### `src/domain/housing/index.ts` <a id="src-domain-housing-index-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/domain/housing/types.ts` <a id="src-domain-housing-types-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/domain/setup/context.ts` <a id="src-domain-setup-context-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/domain/setup/evaluators.test.ts` <a id="src-domain-setup-evaluators-test-ts"></a>
+
+Classification: `regular`
+
+#### `emptyContext` — function, L10
+
+_No tracked edges._
+
+### `src/domain/setup/evaluators.ts` <a id="src-domain-setup-evaluators-ts"></a>
+
+Classification: `regular`
+
+#### `statusPercent` — function, L17
+
+- called by: `src/domain/setup/evaluators.ts#evaluateCpf`, `src/domain/setup/evaluators.ts#evaluateEmergencyFunds`, `src/domain/setup/evaluators.ts#evaluateGoals`, `src/domain/setup/evaluators.ts#evaluateIncomeExpenses`, `src/domain/setup/evaluators.ts#evaluateInvestments`, `src/domain/setup/evaluators.ts#evaluateLoans`, `src/domain/setup/evaluators.ts#evaluateProfile`, `src/domain/setup/evaluators.ts#evaluateRetirement`, `src/domain/setup/evaluators.ts#evaluateRiskProfile`
+
+#### `maxIsoTimestamp` — function, L23
+
+- called by: `src/domain/setup/evaluators.ts#evaluateEmergencyFunds`, `src/domain/setup/evaluators.ts#evaluateGoals`, `src/domain/setup/evaluators.ts#evaluateIncomeExpenses`, `src/domain/setup/evaluators.ts#evaluateInvestments`, `src/domain/setup/evaluators.ts#evaluateLoans`
+
+#### `nonEmptyString` — function, L32
+
+- called by: `src/domain/setup/evaluators.ts#evaluateProfile`, `src/domain/setup/evaluators.ts#evaluateRiskProfile`, `src/domain/setup/evaluators.ts#housingLoanIsComplete`, `src/domain/setup/evaluators.ts#liabilityIsComplete`
+
+#### `liabilityIsComplete` — function, L36
+
+- calls: `src/data/mappers.ts#num`, `src/domain/setup/evaluators.ts#nonEmptyString`
+
+#### `housingLoanIsComplete` — function, L45
+
+- calls: `src/data/mappers.ts#num`, `src/domain/setup/evaluators.ts#nonEmptyString`
+
+#### `evaluateProfile` — function, L54
+
+- calls: `src/domain/setup/evaluators.ts#nonEmptyString`, `src/domain/setup/evaluators.ts#statusPercent`
+
+#### `evaluateIncomeExpenses` — function, L77
+
+- calls: `src/data/mappers.ts#num`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileMonthlyIncome`, `src/domain/setup/evaluators.ts#maxIsoTimestamp`, `src/domain/setup/evaluators.ts#statusPercent`
+
+#### `evaluateLoans` — function, L112
+
+- calls: `src/domain/setup/evaluators.ts#maxIsoTimestamp`, `src/domain/setup/evaluators.ts#statusPercent`
+
+#### `evaluateEmergencyFunds` — function, L154
+
+- calls: `src/data/mappers.ts#num`, `src/domain/setup/evaluators.ts#maxIsoTimestamp`, `src/domain/setup/evaluators.ts#statusPercent`
+
+#### `evaluateInsurance` — function, L181
+
+_No tracked edges._
+
+#### `evaluateDependents` — function, L191
+
+_No tracked edges._
+
+#### `evaluateEstate` — function, L201
+
+_No tracked edges._
+
+#### `evaluateInvestments` — function, L211
+
+- calls: `src/domain/setup/evaluators.ts#maxIsoTimestamp`, `src/domain/setup/evaluators.ts#statusPercent`
+
+#### `evaluateRetirement` — function, L225
+
+- calls: `src/data/mappers.ts#num`, `src/domain/setup/evaluators.ts#statusPercent`
+
+#### `evaluateCpf` — function, L252
+
+- calls: `src/data/mappers.ts#num`, `src/domain/setup/evaluators.ts#statusPercent`
+
+#### `evaluateGoals` — function, L274
+
+- calls: `src/domain/setup/evaluators.ts#maxIsoTimestamp`, `src/domain/setup/evaluators.ts#statusPercent`
+
+#### `evaluateRiskProfile` — function, L286
+
+- calls: `src/domain/setup/evaluators.ts#nonEmptyString`, `src/domain/setup/evaluators.ts#statusPercent`
+
+#### `evaluateDocuments` — function, L309
+
+_No tracked edges._
+
+#### `evaluateSetupModule` — function, L338
+
+- called by: `src/domain/setup/evaluators.ts#evaluateAllSetupModules`
+- unresolved: 1
+
+#### `evaluateAllSetupModules` — function, L345
+
+- calls: `src/domain/setup/evaluators.ts#evaluateSetupModule`
+- called by: `src/domain/setup/evaluators.ts#buildSetupHubSnapshot`
+
+#### `summarizeSetupProgress` — function, L351
+
+- called by: `src/domain/setup/evaluators.ts#buildSetupHubSnapshot`
+
+#### `pickRecommendedSetupStep` — function, L372
+
+- called by: `src/domain/setup/evaluators.ts#buildSetupHubSnapshot`
+
+#### `buildSetupHubSnapshot` — function, L395
+
+- calls: `src/domain/setup/evaluators.ts#evaluateAllSetupModules`, `src/domain/setup/evaluators.ts#pickRecommendedSetupStep`, `src/domain/setup/evaluators.ts#summarizeSetupProgress`
+- called by: `src/data/setup-status.ts#getSetupHubSnapshot`
+
+### `src/domain/setup/modules.ts` <a id="src-domain-setup-modules-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/domain/setup/setupStatusService.ts` <a id="src-domain-setup-setupstatusservice-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/domain/setup/types.ts` <a id="src-domain-setup-types-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._

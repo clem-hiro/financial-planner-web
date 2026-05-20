@@ -6,8 +6,17 @@ import {
   deleteAdvisorClientInvestmentAction,
   updateAdvisorClientInvestmentAction,
 } from "@/server/advisor-client-actions";
-import { deleteInvestmentAction, updateInvestmentAction } from "@/server/actions";
-import { ageCompletedOnDate } from "@/domain/finance";
+import {
+  confirmInvestmentReviewAction,
+  deleteInvestmentAction,
+  updateInvestmentAction,
+} from "@/server/actions";
+import {
+  ageCompletedOnDate,
+  investmentRowIsStale,
+  INVESTMENT_REVIEW_STALE_MONTHS,
+} from "@/domain/finance";
+import { InvestmentAssumptionBanner } from "@/features/goals/InvestmentAssumptionBanner";
 import { InfoTooltip } from "@/ui/InfoTooltip";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { fpInputClass, fpPrimaryButtonClass } from "@/ui/input-classes";
@@ -21,6 +30,8 @@ export type InvestmentBalanceRow = {
   expected_annual_return: number;
   contribution_type?: string | null;
   contribution_duration_years?: number | null;
+  updated_at?: string | null;
+  created_at?: string | null;
 };
 
 export type InvestmentPlanningContext = {
@@ -121,10 +132,18 @@ function InvestmentSummary({
 }) {
   const returnPct = (investment.expected_annual_return * 100).toFixed(1);
   const flowSummary = contributionSummaryLine(investment, currencyCode);
+  const stale = investmentRowIsStale(investment);
   return (
     <div className="flex items-start justify-between gap-3 py-3.5">
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-slate-900">{investment.name}</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="truncate text-sm font-medium text-slate-900">{investment.name}</p>
+          {stale ? (
+            <span className="shrink-0 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-900">
+              Review due
+            </span>
+          ) : null}
+        </div>
         <p className="mt-1 text-xs text-slate-600">{flowSummary}</p>
         <p className="mt-0.5 text-xs text-slate-500">
           <span>{returnPct}% yearly growth (nominal)</span>
@@ -525,6 +544,60 @@ function InvestmentRow({
   );
 }
 
+function InvestmentReviewPrompt({
+  staleCount,
+  disabled = false,
+}: {
+  staleCount: number;
+  disabled?: boolean;
+}) {
+  const router = useRouter();
+  const submitLockRef = useRef(false);
+  const wrapped = async (
+    prev: typeof initial,
+    _fd: FormData
+  ): Promise<typeof initial> => {
+    if (submitLockRef.current) return prev;
+    submitLockRef.current = true;
+    try {
+      const res = await confirmInvestmentReviewAction();
+      if (res.error === null) router.refresh();
+      return res;
+    } finally {
+      submitLockRef.current = false;
+    }
+  };
+  const [state, formAction, pending] = useActionState(wrapped, initial);
+
+  const accountLabel =
+    staleCount === 1 ? "1 account" : `${staleCount} accounts`;
+
+  return (
+    <div className="rounded-xl border border-amber-300/80 bg-amber-50 px-3.5 py-3 text-xs leading-relaxed text-amber-950">
+      <p className="font-semibold">Time to review assumptions</p>
+      <p className="mt-1">
+        {accountLabel} ha{staleCount === 1 ? "s" : "ve"} not been updated in over{" "}
+        {INVESTMENT_REVIEW_STALE_MONTHS} months. Confirm balances and expected returns
+        still match reality, or edit any account below.
+      </p>
+      {state.error ? (
+        <p className="mt-2 text-red-700" role="alert">
+          {state.error}
+        </p>
+      ) : null}
+      <form action={formAction} className="mt-3 flex flex-wrap gap-2">
+        <button
+          type="submit"
+          disabled={pending || disabled}
+          className="rounded-full border border-amber-300 bg-white px-3 py-1.5 text-xs font-medium text-amber-950 transition hover:bg-amber-100/80 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {pending ? "Saving…" : "Assumptions still accurate"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
 export function InvestmentBalancesList({
   items,
   currencyCode,
@@ -532,6 +605,7 @@ export function InvestmentBalancesList({
   advisorClientId,
   advisorSuggestionDisabled = false,
   accountsHeading = "Your accounts",
+  showReviewPrompt = false,
 }: {
   items: InvestmentBalanceRow[];
   currencyCode: string;
@@ -541,8 +615,11 @@ export function InvestmentBalancesList({
   advisorClientId?: string;
   advisorSuggestionDisabled?: boolean;
   accountsHeading?: string;
+  /** Show annual review prompt when balances/returns may be outdated. */
+  showReviewPrompt?: boolean;
 }) {
   const total = items.reduce((acc, i) => acc + i.current_value, 0);
+  const staleCount = items.filter((i) => investmentRowIsStale(i)).length;
 
   if (items.length === 0) {
     return null;
@@ -550,6 +627,13 @@ export function InvestmentBalancesList({
 
   return (
     <section className="space-y-3">
+      <InvestmentAssumptionBanner />
+      {showReviewPrompt && staleCount > 0 && !advisorClientId ? (
+        <InvestmentReviewPrompt
+          staleCount={staleCount}
+          disabled={advisorSuggestionDisabled}
+        />
+      ) : null}
       <div>
         <h2 className="text-sm font-semibold text-zinc-900">{accountsHeading}</h2>
         <p className="mt-1 text-xs text-zinc-500">

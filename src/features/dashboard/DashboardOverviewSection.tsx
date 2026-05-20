@@ -118,6 +118,12 @@ export function DashboardOverviewSection({
           {payload.investmentSummary.count} linked account
           {payload.investmentSummary.count === 1 ? "" : "s"}
         </p>
+        {payload.investmentSummary.count > 0 ? (
+          <p className="relative mt-1 text-[11px] leading-relaxed text-slate-500">
+            Investment totals use balances and return assumptions you entered—not live
+            portfolio data.
+          </p>
+        ) : null}
       </div>
       <div className={`${metricCard} bg-linear-to-br from-white via-white to-sky-50/45`}>
         <div className="flex flex-wrap items-center gap-1">

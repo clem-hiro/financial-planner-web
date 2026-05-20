@@ -68,6 +68,7 @@ import {
   insertInvestment,
   updateInvestment,
 } from "@/data/repositories/investments";
+import { acknowledgeInvestmentReview } from "@/server/inbox/acknowledge-investment-review";
 import {
   deriveQuickHousingLoanRow,
   HDB_CONCESSIONARY_RATE_ANNUAL,
@@ -167,6 +168,7 @@ export async function createInvestmentAction(
       contribution_type,
       contribution_duration_years,
     });
+    await acknowledgeInvestmentReview(supabase, user.id);
   } catch (e) {
     return { error: toClientErrorMessage(e) };
   }
@@ -245,6 +247,7 @@ export async function updateInvestmentAction(
       contribution_type,
       contribution_duration_years,
     });
+    await acknowledgeInvestmentReview(supabase, user.id);
   } catch (e) {
     return { error: toClientErrorMessage(e) };
   }
@@ -276,6 +279,7 @@ export async function deleteInvestmentAction(
 
   try {
     await deleteInvestment(supabase, user.id, idParsed.data);
+    await acknowledgeInvestmentReview(supabase, user.id);
   } catch (e) {
     return { error: toClientErrorMessage(e) };
   }
@@ -285,6 +289,30 @@ export async function deleteInvestmentAction(
   revalidateSetupAndPlanning();
   revalidatePath("/planning/future");
   return { error: null as string | null };
+}
+
+export async function confirmInvestmentReviewAction(): Promise<{
+  error: string | null;
+}> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "Sign in required" };
+  }
+
+  try {
+    await acknowledgeInvestmentReview(supabase, user.id);
+  } catch (e) {
+    return { error: toClientErrorMessage(e) };
+  }
+
+  revalidatePath("/balances");
+  revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
+  revalidatePath("/planning/future");
+  return { error: null };
 }
 
 export async function createCashAccountAction(
@@ -1420,6 +1448,7 @@ export async function upsertCpfBalanceAction(
   });
   revalidatePath("/dashboard");
   revalidatePath("/balances");
+  revalidateSetupAndPlanning();
   return { error: null };
 }
 
@@ -1436,6 +1465,7 @@ export async function clearCpfBalanceAction() {
   }
   revalidatePath("/dashboard");
   revalidatePath("/balances");
+  revalidateSetupAndPlanning();
 }
 
 function parseHousingPaymentForm(

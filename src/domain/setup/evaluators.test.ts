@@ -62,6 +62,7 @@ describe("setup evaluators", () => {
           base_currency: "SGD",
           salary_increment_month: null,
           last_salary_review_at: null,
+          last_investment_review_at: null,
           created_at: "2026-01-01T00:00:00Z",
         },
       })
@@ -123,6 +124,7 @@ describe("setup evaluators", () => {
           base_currency: "SGD",
           salary_increment_month: null,
           last_salary_review_at: null,
+          last_investment_review_at: null,
           created_at: "2026-01-01T00:00:00Z",
         },
       })
@@ -172,6 +174,7 @@ describe("setup evaluators", () => {
           base_currency: "SGD",
           salary_increment_month: null,
           last_salary_review_at: null,
+          last_investment_review_at: null,
           created_at: "2026-01-01T00:00:00Z",
         },
       })
