@@ -1420,6 +1420,7 @@ export async function upsertCpfBalanceAction(
   });
   revalidatePath("/dashboard");
   revalidatePath("/balances");
+  revalidateSetupAndPlanning();
   return { error: null };
 }
 
@@ -1436,6 +1437,7 @@ export async function clearCpfBalanceAction() {
   }
   revalidatePath("/dashboard");
   revalidatePath("/balances");
+  revalidateSetupAndPlanning();
 }
 
 function parseHousingPaymentForm(
