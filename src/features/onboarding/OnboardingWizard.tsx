@@ -27,6 +27,7 @@ import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { fpInputClass, fpPrimaryButtonClass } from "@/ui/input-classes";
 import { formatCurrency } from "@/ui/lib/format";
 import { BonusMonthSelector } from "@/features/onboarding/BonusMonthSelector";
+import { appInlineLinkClass } from "@/ui/app-link-styles";
 // Module sync map: see onboarding-module-sync.ts (profile columns → Income, Budget, Goals).
 
 type Props = {
@@ -235,6 +236,22 @@ export function OnboardingWizard(props: Props) {
     }
   }
 
+  /** Jump to step 1 without walking back through intermediate steps. */
+  async function goToIncomeStep() {
+    if (step === 1 || pending) return;
+    setPending(true);
+    setStatus(null);
+    try {
+      await savePatch({ onboarding_step: 1 });
+      setStep(1);
+    } catch (e) {
+      console.error(e);
+      setStatus("Could not open income step. Please try again.");
+    } finally {
+      setPending(false);
+    }
+  }
+
   async function onContinue() {
     setPending(true);
     setStatus(null);
@@ -338,9 +355,20 @@ export function OnboardingWizard(props: Props) {
     "inline-flex min-h-11 items-center justify-center rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:opacity-50 min-w-[7.5rem]";
   const navBackClass = `${navBackBase} flex-1 sm:flex-initial`;
   const navPrimaryClass = `${fpPrimaryButtonClass} inline-flex min-h-11 flex-1 items-center justify-center disabled:cursor-not-allowed disabled:opacity-50 sm:flex-initial sm:min-w-[9.5rem]`;
+  const navPrimaryFullClass = `${fpPrimaryButtonClass} flex min-h-11 w-full items-center justify-center disabled:cursor-not-allowed disabled:opacity-50`;
+  const navSkipClass =
+    "inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-800 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:opacity-50";
 
   return (
-    <div className="mx-auto max-w-xl space-y-8 pb-28">
+    <div
+      className={`mx-auto max-w-xl space-y-8 ${step === 3 ? "pb-44" : "pb-28"}`}
+    >
+      <BlockingSubmitOverlay
+        active={pending}
+        message={
+          step === 3 ? "Creating your illustrated budget…" : "Saving onboarding…"
+        }
+      />
       <div className="space-y-1">
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-800/90">
           Guided setup · Step {step} of 4
@@ -362,6 +390,62 @@ export function OnboardingWizard(props: Props) {
             "Your dashboard and safe-to-spend view will pick up this plan as you add expenses."}
         </p>
       </div>
+
+      {step >= 2 && step <= 4 && (
+        <div
+          className={
+            takeHomeForBudget > 0
+              ? "flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-200/90 bg-slate-50/80 px-4 py-3 text-sm"
+              : "rounded-xl border border-amber-200/80 bg-amber-50/80 px-4 py-3 text-sm text-amber-900"
+          }
+        >
+          {takeHomeForBudget > 0 ? (
+            <p className="text-slate-700">
+              Income:{" "}
+              {grossNum != null ? (
+                <>
+                  <span className="font-medium tabular-nums">
+                    {formatCurrency(grossNum, currency)}
+                  </span>{" "}
+                  gross
+                  {estimatedTakeHome != null && (
+                    <>
+                      {" "}
+                      → ~
+                      <span className="font-medium tabular-nums">
+                        {formatCurrency(estimatedTakeHome, currency)}
+                      </span>{" "}
+                      take-home/mo
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  ~
+                  <span className="font-medium tabular-nums">
+                    {formatCurrency(takeHomeForBudget, currency)}
+                  </span>{" "}
+                  take-home/mo
+                </>
+              )}
+            </p>
+          ) : (
+            <p>Add your gross monthly income to preview and create a plan.</p>
+          )}
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => void goToIncomeStep()}
+            className={
+              takeHomeForBudget > 0
+                ? `shrink-0 ${appInlineLinkClass}`
+                : "shrink-0 rounded-full bg-amber-900/90 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-950 disabled:opacity-50"
+            }
+          >
+            {takeHomeForBudget > 0 ? "Edit income" : "Add gross income"}
+          </button>
+        </div>
+      )}
 
       {step === 1 && (
         <div className={`space-y-6 ${cardClass}`}>
@@ -482,7 +566,6 @@ export function OnboardingWizard(props: Props) {
 
       {step === 2 && (
         <div className="space-y-6" {...(pending ? { inert: true } : {})}>
-          <BlockingSubmitOverlay active={pending} message="Saving onboarding…" />
           <div className={`${cardClass} space-y-4`}>
             <p className="text-sm font-medium text-slate-800">Lifestyle</p>
             <div className="grid max-h-[min(52vh,22rem)] gap-2 overflow-y-auto pr-1 sm:max-h-none sm:grid-cols-2">
@@ -576,9 +659,19 @@ export function OnboardingWizard(props: Props) {
               )}
             </div>
             {takeHomeForBudget <= 0 ? (
-              <p className="text-sm text-amber-800">
-                Add a positive gross monthly income in step 1 to preview amounts.
-              </p>
+              <div className="space-y-3 rounded-xl border border-amber-200/80 bg-amber-50/60 px-3 py-3 text-sm text-amber-900">
+                <p>
+                  Add a positive gross monthly income to preview amounts.
+                </p>
+                <button
+                  type="button"
+                  disabled={pending}
+                  className="rounded-full bg-amber-900/90 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-950 disabled:opacity-50"
+                  onClick={() => void goToIncomeStep()}
+                >
+                  Add gross monthly income
+                </button>
+              </div>
             ) : (
               <ul className="divide-y divide-slate-100 rounded-xl border border-slate-100">
                 {previewLines.map((l) => (
@@ -631,27 +724,15 @@ export function OnboardingWizard(props: Props) {
               sections stay optional.
             </p>
           </div>
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <button
-              type="button"
-              disabled={pending || takeHomeForBudget <= 0}
-              className={fpPrimaryButtonClass}
-              onClick={() => void onCreateIllustratedBudget()}
-            >
-              Create my illustrated budget
-            </button>
-            <button
-              type="button"
-              disabled={pending}
-              className="rounded-full border border-slate-200 px-5 py-2.5 text-sm font-medium text-slate-800 hover:bg-slate-50"
-              onClick={() => void onContinue()}
-            >
-              Skip lines for now
-            </button>
-          </div>
+          {status && (
+            <p className="text-sm text-red-700" role="alert">
+              {status}
+            </p>
+          )}
           <p className="text-center text-[11px] text-slate-500">
-            If you already have monthly budget lines, continue on the Budget
-            page — we will not duplicate them.
+            Create or skip your illustrated plan using the actions at the bottom
+            of the screen. If you already have monthly budget lines, choose Skip
+            — we will not duplicate them.
           </p>
         </div>
       )}
@@ -700,26 +781,51 @@ export function OnboardingWizard(props: Props) {
               {status}
             </p>
           )}
-          <div
-            className={
-              step === 1
-                ? "flex justify-end"
-                : step === 3
-                  ? "flex justify-start"
-                  : "flex items-stretch gap-3"
-            }
-          >
-            {step > 1 && (
+          {step === 3 ? (
+            <div className="flex w-full flex-col gap-2">
               <button
                 type="button"
-                className={step === 3 ? navBackBase : navBackClass}
-                disabled={pending}
-                onClick={() => void onBack()}
+                className={navPrimaryFullClass}
+                disabled={pending || takeHomeForBudget <= 0}
+                onClick={() => void onCreateIllustratedBudget()}
               >
-                ← Back
+                Create my illustrated budget
               </button>
-            )}
-            {step !== 3 && (
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  className={navBackBase}
+                  disabled={pending}
+                  onClick={() => void onBack()}
+                >
+                  ← Back
+                </button>
+                <button
+                  type="button"
+                  className={navSkipClass}
+                  disabled={pending}
+                  onClick={() => void onContinue()}
+                >
+                  Skip lines for now
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div
+              className={
+                step === 1 ? "flex justify-end" : "flex items-stretch gap-3"
+              }
+            >
+              {step > 1 && (
+                <button
+                  type="button"
+                  className={navBackClass}
+                  disabled={pending}
+                  onClick={() => void onBack()}
+                >
+                  ← Back
+                </button>
+              )}
               <button
                 type="button"
                 className={navPrimaryClass}
@@ -728,8 +834,8 @@ export function OnboardingWizard(props: Props) {
               >
                 {step === 4 ? "Finish onboarding" : "Continue"}
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </nav>
     </div>
