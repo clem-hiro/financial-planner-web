@@ -2,7 +2,7 @@
 
 # Function tree — `src/domain`
 
-76 module(s).
+78 module(s).
 
 ## Modules
 
@@ -51,6 +51,8 @@
 | [`src/domain/finance/investable-surplus.ts`](#src-domain-finance-investable-surplus-ts) | `regular` | 1 | 3 |
 | [`src/domain/finance/investment-contribution.ts`](#src-domain-finance-investment-contribution-ts) | `regular` | 1 | 1 |
 | [`src/domain/finance/investment-portfolio-fv.ts`](#src-domain-finance-investment-portfolio-fv-ts) | `regular` | 2 | 4 |
+| [`src/domain/finance/irregular-expenses.test.ts`](#src-domain-finance-irregular-expenses-test-ts) | `regular` | 0 | 0 |
+| [`src/domain/finance/irregular-expenses.ts`](#src-domain-finance-irregular-expenses-ts) | `regular` | 3 | 1 |
 | [`src/domain/finance/mortgage-amortization.test.ts`](#src-domain-finance-mortgage-amortization-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/mortgage-amortization.ts`](#src-domain-finance-mortgage-amortization-ts) | `regular` | 2 | 2 |
 | [`src/domain/finance/net-worth.ts`](#src-domain-finance-net-worth-ts) | `regular` | 2 | 1 |
@@ -912,6 +914,29 @@ Classification: `regular`
 
 - calls: `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`
 - called by: `src/data/projection.ts#timeToGoalForTarget`
+
+### `src/domain/finance/irregular-expenses.test.ts` <a id="src-domain-finance-irregular-expenses-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/domain/finance/irregular-expenses.ts` <a id="src-domain-finance-irregular-expenses-ts"></a>
+
+Classification: `regular`
+
+#### `irregularCadenceOccurrences` — function, L22
+
+- called by: `src/domain/finance/irregular-expenses.ts#annualAmountFromIrregularInput`
+
+#### `annualAmountFromIrregularInput` — function, L36
+
+- calls: `src/domain/finance/irregular-expenses.ts#irregularCadenceOccurrences`
+- called by: `src/features/budget/BudgetAddForm.tsx#BudgetAddForm`
+
+#### `buildIrregularExpenseReserves` — function, L48
+
+- called by: `src/features/budget/BudgetIrregularExpenseReservePanel.tsx#BudgetIrregularExpenseReservePanel`
 
 ### `src/domain/finance/mortgage-amortization.test.ts` <a id="src-domain-finance-mortgage-amortization-test-ts"></a>
 

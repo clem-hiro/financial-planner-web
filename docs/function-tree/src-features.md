@@ -2,7 +2,7 @@
 
 # Function tree — `src/features`
 
-106 module(s).
+107 module(s).
 
 ## Modules
 
@@ -38,7 +38,8 @@
 | [`src/features/auth/signup-error.ts`](#src-features-auth-signup-error-ts) | `regular` | 1 | 0 |
 | [`src/features/budget/budget-category-icons.ts`](#src-features-budget-budget-category-icons-ts) | `regular` | 1 | 1 |
 | [`src/features/budget/budget-quick-presets.ts`](#src-features-budget-budget-quick-presets-ts) | `regular` | 1 | 0 |
-| [`src/features/budget/BudgetAddForm.tsx`](#src-features-budget-budgetaddform-tsx) | `client-component` | 1 | 3 |
+| [`src/features/budget/BudgetAddForm.tsx`](#src-features-budget-budgetaddform-tsx) | `client-component` | 1 | 6 |
+| [`src/features/budget/BudgetIrregularExpenseReservePanel.tsx`](#src-features-budget-budgetirregularexpensereservepanel-tsx) | `regular` | 1 | 2 |
 | [`src/features/budget/BudgetLineActionsCollapsible.tsx`](#src-features-budget-budgetlineactionscollapsible-tsx) | `client-component` | 1 | 10 |
 | [`src/features/budget/BudgetLineExpenseQuickAdd.tsx`](#src-features-budget-budgetlineexpensequickadd-tsx) | `client-component` | 1 | 7 |
 | [`src/features/budget/BudgetLineScheduleForm.tsx`](#src-features-budget-budgetlinescheduleform-tsx) | `client-component` | 1 | 2 |
@@ -46,7 +47,7 @@
 | [`src/features/budget/BudgetMonthlyCategoriesSection.tsx`](#src-features-budget-budgetmonthlycategoriessection-tsx) | `regular` | 5 | 21 |
 | [`src/features/budget/BudgetMonthOverrideForm.tsx`](#src-features-budget-budgetmonthoverrideform-tsx) | `client-component` | 1 | 5 |
 | [`src/features/budget/BudgetPageHero.tsx`](#src-features-budget-budgetpagehero-tsx) | `regular` | 3 | 11 |
-| [`src/features/budget/BudgetPlanningView.tsx`](#src-features-budget-budgetplanningview-tsx) | `regular` | 2 | 38 |
+| [`src/features/budget/BudgetPlanningView.tsx`](#src-features-budget-budgetplanningview-tsx) | `regular` | 2 | 39 |
 | [`src/features/budget/BudgetQuickAddPresets.tsx`](#src-features-budget-budgetquickaddpresets-tsx) | `client-component` | 1 | 6 |
 | [`src/features/budget/BudgetRecommendationHints.tsx`](#src-features-budget-budgetrecommendationhints-tsx) | `regular` | 1 | 0 |
 | [`src/features/budget/BudgetReviewWorkflowPanel.tsx`](#src-features-budget-budgetreviewworkflowpanel-tsx) | `regular` | 2 | 2 |
@@ -508,12 +509,21 @@ Classification: `regular`
 
 Classification: `client-component`
 
-#### `BudgetAddForm` — component, L9 _(client-component)_
+#### `BudgetAddForm` — component, L13 _(client-component)_
 
-- calls: `[external] react`
+- calls: `[external] react`, `src/domain/finance/irregular-expenses.ts#annualAmountFromIrregularInput`
 - renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
-- unresolved: 2
+- unresolved: 4
+
+### `src/features/budget/BudgetIrregularExpenseReservePanel.tsx` <a id="src-features-budget-budgetirregularexpensereservepanel-tsx"></a>
+
+Classification: `regular`
+
+#### `BudgetIrregularExpenseReservePanel` — component, L7
+
+- calls: `src/domain/finance/irregular-expenses.ts#buildIrregularExpenseReserves`, `src/ui/lib/format.ts#formatCurrency`
+- rendered by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
 
 ### `src/features/budget/BudgetLineActionsCollapsible.tsx` <a id="src-features-budget-budgetlineactionscollapsible-tsx"></a>
 
@@ -624,15 +634,15 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `varianceForLine` — function, L55
+#### `varianceForLine` — function, L56
 
 - calls: `src/domain/finance/budget.ts#normalizeCategory`
 - called by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
 
-#### `BudgetPlanningView` — component, L63
+#### `BudgetPlanningView` — component, L64
 
 - calls: `[external] @supabase/auth-js`, `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget-review.ts#buildBudgetReviewWorkflow`, `src/domain/finance/budget.ts#monthlyBudgetAggregateOverspend`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines`, `src/features/budget/BudgetPlanningView.tsx#varianceForLine`, `src/features/budget/budget-category-icons.ts#budgetCategoryEmoji`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#defaultExpenseDateForBudgetMonth`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/setup-urls.ts#budgetMonthHref`, `src/ui/lib/format.ts#formatCurrency`
-- renders: `[external] next`, `src/features/budget/BudgetAddForm.tsx#BudgetAddForm`, `src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible`, `src/features/budget/BudgetLineScheduleForm.tsx#BudgetLineScheduleForm`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetQuickAddPresets.tsx#BudgetQuickAddPresets`, `src/features/budget/BudgetRecommendationHints.tsx#BudgetRecommendationHints`, `src/features/budget/BudgetReviewWorkflowPanel.tsx#BudgetReviewWorkflowPanel`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/features/spend/SpendGuidancePanel.tsx#SpendGuidancePanel`, `src/ui/PageSection.tsx#PageSection`
+- renders: `[external] next`, `src/features/budget/BudgetAddForm.tsx#BudgetAddForm`, `src/features/budget/BudgetIrregularExpenseReservePanel.tsx#BudgetIrregularExpenseReservePanel`, `src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible`, `src/features/budget/BudgetLineScheduleForm.tsx#BudgetLineScheduleForm`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetQuickAddPresets.tsx#BudgetQuickAddPresets`, `src/features/budget/BudgetRecommendationHints.tsx#BudgetRecommendationHints`, `src/features/budget/BudgetReviewWorkflowPanel.tsx#BudgetReviewWorkflowPanel`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/features/spend/SpendGuidancePanel.tsx#SpendGuidancePanel`, `src/ui/PageSection.tsx#PageSection`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`
 
 ### `src/features/budget/BudgetQuickAddPresets.tsx` <a id="src-features-budget-budgetquickaddpresets-tsx"></a>

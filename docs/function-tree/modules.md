@@ -140,6 +140,8 @@
 | `src/domain/finance/investable-surplus.ts` | `src/domain` | `regular` | 1 | 3 |
 | `src/domain/finance/investment-contribution.ts` | `src/domain` | `regular` | 1 | 1 |
 | `src/domain/finance/investment-portfolio-fv.ts` | `src/domain` | `regular` | 2 | 4 |
+| `src/domain/finance/irregular-expenses.test.ts` | `src/domain` | `regular` | 0 | 0 |
+| `src/domain/finance/irregular-expenses.ts` | `src/domain` | `regular` | 3 | 1 |
 | `src/domain/finance/mortgage-amortization.test.ts` | `src/domain` | `regular` | 0 | 0 |
 | `src/domain/finance/mortgage-amortization.ts` | `src/domain` | `regular` | 2 | 2 |
 | `src/domain/finance/net-worth.ts` | `src/domain` | `regular` | 2 | 1 |
@@ -203,7 +205,8 @@
 | `src/features/auth/signup-error.ts` | `src/features` | `regular` | 1 | 0 |
 | `src/features/budget/budget-category-icons.ts` | `src/features` | `regular` | 1 | 1 |
 | `src/features/budget/budget-quick-presets.ts` | `src/features` | `regular` | 1 | 0 |
-| `src/features/budget/BudgetAddForm.tsx` | `src/features` | `client-component` | 1 | 3 |
+| `src/features/budget/BudgetAddForm.tsx` | `src/features` | `client-component` | 1 | 6 |
+| `src/features/budget/BudgetIrregularExpenseReservePanel.tsx` | `src/features` | `regular` | 1 | 2 |
 | `src/features/budget/BudgetLineActionsCollapsible.tsx` | `src/features` | `client-component` | 1 | 10 |
 | `src/features/budget/BudgetLineExpenseQuickAdd.tsx` | `src/features` | `client-component` | 1 | 7 |
 | `src/features/budget/BudgetLineScheduleForm.tsx` | `src/features` | `client-component` | 1 | 2 |
@@ -211,7 +214,7 @@
 | `src/features/budget/BudgetMonthlyCategoriesSection.tsx` | `src/features` | `regular` | 5 | 21 |
 | `src/features/budget/BudgetMonthOverrideForm.tsx` | `src/features` | `client-component` | 1 | 5 |
 | `src/features/budget/BudgetPageHero.tsx` | `src/features` | `regular` | 3 | 11 |
-| `src/features/budget/BudgetPlanningView.tsx` | `src/features` | `regular` | 2 | 38 |
+| `src/features/budget/BudgetPlanningView.tsx` | `src/features` | `regular` | 2 | 39 |
 | `src/features/budget/BudgetQuickAddPresets.tsx` | `src/features` | `client-component` | 1 | 6 |
 | `src/features/budget/BudgetRecommendationHints.tsx` | `src/features` | `regular` | 1 | 0 |
 | `src/features/budget/BudgetReviewWorkflowPanel.tsx` | `src/features` | `regular` | 2 | 2 |
@@ -303,7 +306,7 @@
 | `src/lib/validation.test.ts` | `src/lib` | `regular` | 0 | 0 |
 | `src/lib/validation.ts` | `src/lib` | `regular` | 2 | 6 |
 | `src/middleware.ts` | `src/server` | `middleware` | 1 | 22 |
-| `src/server/actions.ts` | `src/server` | `server-action` | 39 | 276 |
+| `src/server/actions.ts` | `src/server` | `server-action` | 39 | 278 |
 | `src/server/advisor-access-key-actions.ts` | `src/server` | `server-action` | 2 | 10 |
 | `src/server/advisor-client-actions.ts` | `src/server` | `server-action` | 9 | 40 |
 | `src/server/advisor-consent-gate.test.ts` | `src/server` | `regular` | 1 | 0 |

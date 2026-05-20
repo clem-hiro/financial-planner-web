@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-05-20T16:26:18.472Z",
+  "generated_at": "2026-05-20T16:48:40.075Z",
   "roots": [
     "src/app",
     "src/components",
@@ -9577,6 +9577,58 @@
       ]
     },
     {
+      "path": "src/domain/finance/irregular-expenses.test.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": []
+    },
+    {
+      "path": "src/domain/finance/irregular-expenses.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/domain/finance/irregular-expenses.ts#irregularCadenceOccurrences",
+          "name": "irregularCadenceOccurrences",
+          "kind": "function",
+          "line": 22,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/irregular-expenses.ts#annualAmountFromIrregularInput",
+          "name": "annualAmountFromIrregularInput",
+          "kind": "function",
+          "line": 36,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/irregular-expenses.ts#irregularCadenceOccurrences"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/irregular-expenses.ts#buildIrregularExpenseReserves",
+          "name": "buildIrregularExpenseReserves",
+          "kind": "function",
+          "line": 48,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/domain/finance/mortgage-amortization.test.ts",
       "root": "src/domain",
       "classification": [
@@ -13021,7 +13073,7 @@
           "id": "src/features/budget/BudgetAddForm.tsx#BudgetAddForm",
           "name": "BudgetAddForm",
           "kind": "component",
-          "line": 9,
+          "line": 13,
           "exported": true,
           "classification": [
             "client-component"
@@ -13036,11 +13088,51 @@
               "external": "react"
             },
             {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/irregular-expenses.ts#annualAmountFromIrregularInput"
+            },
+            {
               "kind": "renders",
               "target": "src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay"
             }
           ],
-          "unresolved": 2
+          "unresolved": 4
+        }
+      ]
+    },
+    {
+      "path": "src/features/budget/BudgetIrregularExpenseReservePanel.tsx",
+      "root": "src/features",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/features/budget/BudgetIrregularExpenseReservePanel.tsx#BudgetIrregularExpenseReservePanel",
+          "name": "BudgetIrregularExpenseReservePanel",
+          "kind": "component",
+          "line": 7,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/irregular-expenses.ts#buildIrregularExpenseReserves"
+            },
+            {
+              "kind": "calls",
+              "target": "src/ui/lib/format.ts#formatCurrency"
+            }
+          ],
+          "unresolved": 0
         }
       ]
     },
@@ -13517,7 +13609,7 @@
           "id": "src/features/budget/BudgetPlanningView.tsx#varianceForLine",
           "name": "varianceForLine",
           "kind": "function",
-          "line": 55,
+          "line": 56,
           "exported": false,
           "classification": [],
           "edges": [
@@ -13532,7 +13624,7 @@
           "id": "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
           "name": "BudgetPlanningView",
           "kind": "component",
-          "line": 63,
+          "line": 64,
           "exported": true,
           "classification": [],
           "edges": [
@@ -13671,6 +13763,10 @@
             {
               "kind": "calls",
               "target": "src/lib/setup-urls.ts#budgetMonthHref"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/budget/BudgetIrregularExpenseReservePanel.tsx#BudgetIrregularExpenseReservePanel"
             },
             {
               "kind": "calls",
@@ -20723,6 +20819,10 @@
             {
               "kind": "calls",
               "target": "src/data/repositories/cpf-balances.ts#upsertCpfBalance"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/planning-revalidate.ts#revalidateSetupAndPlanning"
             }
           ],
           "unresolved": 3
@@ -20731,7 +20831,7 @@
           "id": "src/server/actions.ts#clearCpfBalanceAction",
           "name": "clearCpfBalanceAction",
           "kind": "function",
-          "line": 1426,
+          "line": 1427,
           "exported": true,
           "classification": [
             "server-action"
@@ -20756,6 +20856,10 @@
             {
               "kind": "calls",
               "target": "src/data/repositories/cpf-balances.ts#deleteCpfBalance"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/planning-revalidate.ts#revalidateSetupAndPlanning"
             }
           ],
           "unresolved": 0
@@ -20764,7 +20868,7 @@
           "id": "src/server/actions.ts#parseHousingPaymentForm",
           "name": "parseHousingPaymentForm",
           "kind": "function",
-          "line": 1441,
+          "line": 1443,
           "exported": false,
           "classification": [
             "server-action"
@@ -20789,7 +20893,7 @@
           "id": "src/server/actions.ts#revalidateHousingPaths",
           "name": "revalidateHousingPaths",
           "kind": "function",
-          "line": 1507,
+          "line": 1509,
           "exported": false,
           "classification": [
             "server-action"
@@ -20822,7 +20926,7 @@
           "id": "src/server/actions.ts#insertPropertyForLoan",
           "name": "insertPropertyForLoan",
           "kind": "function",
-          "line": 1515,
+          "line": 1517,
           "exported": false,
           "classification": [
             "server-action"
@@ -20839,7 +20943,7 @@
           "id": "src/server/actions.ts#createHousingPropertyAction",
           "name": "createHousingPropertyAction",
           "kind": "function",
-          "line": 1537,
+          "line": 1539,
           "exported": true,
           "classification": [
             "server-action"
@@ -20896,7 +21000,7 @@
           "id": "src/server/actions.ts#updateHousingPropertyAction",
           "name": "updateHousingPropertyAction",
           "kind": "function",
-          "line": 1699,
+          "line": 1701,
           "exported": true,
           "classification": [
             "server-action"
@@ -20945,7 +21049,7 @@
           "id": "src/server/actions.ts#deleteHousingPropertyAction",
           "name": "deleteHousingPropertyAction",
           "kind": "function",
-          "line": 1750,
+          "line": 1752,
           "exported": true,
           "classification": [
             "server-action"
@@ -20986,7 +21090,7 @@
           "id": "src/server/actions.ts#createHousingLoanAction",
           "name": "createHousingLoanAction",
           "kind": "function",
-          "line": 1766,
+          "line": 1768,
           "exported": true,
           "classification": [
             "server-action"
@@ -21035,7 +21139,7 @@
           "id": "src/server/actions.ts#createHousingLoanQuickAction",
           "name": "createHousingLoanQuickAction",
           "kind": "function",
-          "line": 1888,
+          "line": 1890,
           "exported": true,
           "classification": [
             "server-action"
@@ -21116,7 +21220,7 @@
           "id": "src/server/actions.ts#updateHousingLoanAction",
           "name": "updateHousingLoanAction",
           "kind": "function",
-          "line": 2146,
+          "line": 2148,
           "exported": true,
           "classification": [
             "server-action"
@@ -21173,7 +21277,7 @@
           "id": "src/server/actions.ts#deleteHousingLoanAction",
           "name": "deleteHousingLoanAction",
           "kind": "function",
-          "line": 2265,
+          "line": 2267,
           "exported": true,
           "classification": [
             "server-action"
@@ -23725,6 +23829,7 @@
         "src/app/api/income-tax/route.ts#PATCH",
         "src/server/actions.ts#applyGuidedBudgetLinesAction",
         "src/server/actions.ts#clearBudgetMonthOverrideAction",
+        "src/server/actions.ts#clearCpfBalanceAction",
         "src/server/actions.ts#createBudgetLineAction",
         "src/server/actions.ts#createGoalAction",
         "src/server/actions.ts#createInvestmentAction",
@@ -23738,6 +23843,7 @@
         "src/server/actions.ts#updateGoalAction",
         "src/server/actions.ts#updateInvestmentAction",
         "src/server/actions.ts#updateLiabilityAction",
+        "src/server/actions.ts#upsertCpfBalanceAction",
         "src/server/advisor-proposal-actions.ts#revalidateProposalViews",
         "src/server/client-consent-actions.ts#recordAdvisorConsentAction"
       ],
@@ -24501,6 +24607,9 @@
       "src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow": [
         "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth"
       ],
+      "src/domain/finance/irregular-expenses.ts#irregularCadenceOccurrences": [
+        "src/domain/finance/irregular-expenses.ts#annualAmountFromIrregularInput"
+      ],
       "src/domain/finance/mortgage-amortization.ts#roundMoney": [
         "src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule"
       ],
@@ -24724,6 +24833,7 @@
         "src/app/(app)/dashboard/page.tsx#DashboardPage",
         "src/app/(app)/expenses/page.tsx#ExpensesPage",
         "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
+        "src/features/budget/BudgetIrregularExpenseReservePanel.tsx#BudgetIrregularExpenseReservePanel",
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection",
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile",
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop",
@@ -24818,6 +24928,12 @@
       ],
       "src/features/auth/PhoneInputField.tsx#flagEmoji": [
         "src/features/auth/PhoneInputField.tsx#VisibleCountrySelect"
+      ],
+      "src/domain/finance/irregular-expenses.ts#annualAmountFromIrregularInput": [
+        "src/features/budget/BudgetAddForm.tsx#BudgetAddForm"
+      ],
+      "src/domain/finance/irregular-expenses.ts#buildIrregularExpenseReserves": [
+        "src/features/budget/BudgetIrregularExpenseReservePanel.tsx#BudgetIrregularExpenseReservePanel"
       ],
       "src/server/actions.ts#deleteBudgetLineAction": [
         "src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible"
@@ -25405,6 +25521,9 @@
         "src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection"
       ],
       "src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection": [
+        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
+      ],
+      "src/features/budget/BudgetIrregularExpenseReservePanel.tsx#BudgetIrregularExpenseReservePanel": [
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
       ],
       "src/features/budget/BudgetAddForm.tsx#BudgetAddForm": [

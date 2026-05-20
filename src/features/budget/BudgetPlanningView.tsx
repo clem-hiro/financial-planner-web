@@ -7,6 +7,7 @@ import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import type { BudgetLineRow } from "@/data/supabase/types";
 import { BudgetAddForm } from "@/features/budget/BudgetAddForm";
+import { BudgetIrregularExpenseReservePanel } from "@/features/budget/BudgetIrregularExpenseReservePanel";
 import { BudgetLineActionsCollapsible } from "@/features/budget/BudgetLineActionsCollapsible";
 import { BudgetLineScheduleForm } from "@/features/budget/BudgetLineScheduleForm";
 import { BudgetStrategyInsightPanel } from "@/features/budget/BudgetStrategyInsightPanel";
@@ -489,11 +490,12 @@ export async function BudgetPlanningView({
       <PageSection
         id="budget-annual"
         className="scroll-mt-4 space-y-3"
-        title={`Yearly expenses (${calendarYear})`}
+        title={`Annual & irregular expenses (${calendarYear})`}
         description={
           <span className="text-xs text-zinc-600">
-            For insurance, holidays, road tax, gifts, and other once-a-year
-            costs. Totals use annual-tagged expenses dated in {calendarYear}.{" "}
+            For insurance, holidays, road tax, gifts, school fees, quarterly
+            bills, and other non-monthly costs. Totals use annual-tagged
+            expenses dated in {calendarYear}.{" "}
             <MethodologyOpenLink topicId="budget-lines" className={appInlineLinkClass}>
               How annual lines work
             </MethodologyOpenLink>
@@ -524,13 +526,19 @@ export async function BudgetPlanningView({
           </div>
         }
       >
+        <BudgetIrregularExpenseReservePanel
+          annual={model.annual}
+          currency={currency}
+          month={month}
+        />
+
         {annualRows.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-violet-200/80 bg-linear-to-br from-violet-50/50 to-white p-6 text-sm text-zinc-700 shadow-sm">
             <p className="font-semibold text-zinc-900">No yearly lines yet</p>
             <p className="mt-2 text-xs leading-relaxed text-zinc-600">
-              Add categories such as insurance premiums, travel, vehicle tax, or
-              annual subscriptions — then tag matching expenses as annual in{" "}
-              {calendarYear}.
+              Add categories such as insurance premiums, travel, vehicle tax,
+              school fees, quarterly bills, or annual subscriptions — then tag
+              matching expenses as annual in {calendarYear}.
             </p>
             <p className="mt-3 text-xs">
               <a href="#budget-advanced-add" className={appInlineLinkClass}>

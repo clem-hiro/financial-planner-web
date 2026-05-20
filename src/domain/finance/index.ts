@@ -62,6 +62,11 @@ export {
   topOverBudgetCategories,
 } from "./budget";
 export {
+  annualAmountFromIrregularInput,
+  buildIrregularExpenseReserves,
+  irregularCadenceOccurrences,
+} from "./irregular-expenses";
+export {
   ANNUAL_MAX_TOTAL_CPF_CONTRIBUTION_SG,
   ANNUAL_WAGE_CEILING_SG,
   MONTHLY_OW_FROM_ANNUAL_CAP_SG,
@@ -180,6 +185,10 @@ export {
 } from "./vehicle-sg";
 export type { VehicleStatus, VehicleValuationInput } from "./vehicle-sg";
 export type { MonthlyBudgetVsActualOptions } from "./budget";
+export type {
+  IrregularExpenseCadence,
+  IrregularExpenseReserve,
+} from "./irregular-expenses";
 export {
   BUDGET_STRATEGY_PRESETS,
   FOOD_SPEND_BAND_PRESETS,
