@@ -36,6 +36,7 @@ import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth, parseYearMonth, yearFromYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
 import { setupTabPath } from "@/lib/setup-urls";
+import { shouldPromptInvestmentReview } from "@/domain/finance/investment-review";
 import { birthDateIsValidPast } from "@/lib/validation";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { PageSection } from "@/ui/PageSection";
@@ -141,7 +142,13 @@ export default async function SetupPage({ searchParams }: PageProps) {
       String(i.contribution_duration_years).trim() !== ""
         ? num(i.contribution_duration_years as string)
         : null,
+    updated_at: i.updated_at ?? null,
+    created_at: i.created_at ?? null,
   }));
+  const showInvestmentReviewPrompt = shouldPromptInvestmentReview({
+    investments,
+    lastInvestmentReviewAt: financialProfile?.last_investment_review_at ?? null,
+  });
   const investmentPlanningContext =
     financialProfile?.birth_date &&
     typeof financialProfile.birth_date === "string" &&
@@ -273,6 +280,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
                     items={investmentBalanceRows}
                     currencyCode={currency}
                     planningContext={investmentPlanningContext}
+                    showReviewPrompt={showInvestmentReviewPrompt}
                   />
                 </div>
               ) : null}

@@ -68,6 +68,7 @@ function identityOnlyProfile(link: AdvisorClientListRow): ProfileRow {
     base_currency: DEFAULT_BASE_CURRENCY,
     salary_increment_month: null,
     last_salary_review_at: null,
+    last_investment_review_at: null,
     created_at: link.created_at,
   };
 }

@@ -19,6 +19,7 @@ import { VehiclesPanel } from "@/features/goals/VehiclesPanel";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { AccountSyncingRoadmapCard } from "@/features/planning/roadmap-modules";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
+import { shouldPromptInvestmentReview } from "@/domain/finance/investment-review";
 import { birthDateIsValidPast } from "@/lib/validation";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { PageSection } from "@/ui/PageSection";
@@ -67,8 +68,14 @@ export async function WealthPlanningSection() {
         String(i.contribution_duration_years).trim() !== ""
           ? num(i.contribution_duration_years as string)
           : null,
+      updated_at: i.updated_at ?? null,
+      created_at: i.created_at ?? null,
     })
   );
+  const showInvestmentReviewPrompt = shouldPromptInvestmentReview({
+    investments: bundle.investments,
+    lastInvestmentReviewAt: financialProfile?.last_investment_review_at ?? null,
+  });
   const investmentPlanningContext =
     financialProfile?.birth_date &&
     typeof financialProfile.birth_date === "string" &&
@@ -119,6 +126,7 @@ export async function WealthPlanningSection() {
                     items={investmentBalanceRows}
                     currencyCode={currency}
                     planningContext={investmentPlanningContext}
+                    showReviewPrompt={showInvestmentReviewPrompt}
                   />
                 </div>
               ) : null}

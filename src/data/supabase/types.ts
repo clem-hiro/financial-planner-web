@@ -50,6 +50,8 @@ export type ProfileRow = {
   salary_increment_month: number | null;
   /** ISO timestamp of the most recent salary-review acknowledgement. */
   last_salary_review_at: string | null;
+  /** ISO timestamp of the most recent investment-assumption acknowledgement. */
+  last_investment_review_at: string | null;
   created_at: string;
 };
 

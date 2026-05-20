@@ -1,6 +1,11 @@
+import { listInvestments } from "@/data/repositories/investments";
 import { listUnreadByUser } from "@/data/repositories/inbox-notifications";
 import { getSupabaseServerClient } from "@/data/supabase/request-context";
+import type { ProfileRow } from "@/data/supabase/types";
 import { InboxBell } from "@/features/inbox/InboxBell";
+import {
+  ensureInvestmentReviewNotification,
+} from "@/server/inbox/ensure-investment-review-notification";
 import {
   ensureSalaryReviewNotification,
   type SalaryReviewProfile,
@@ -18,10 +23,17 @@ export async function AppShellInbox({
   profile,
 }: {
   userId: string;
-  profile: SalaryReviewProfile;
+  profile: ProfileRow;
 }) {
   const supabase = await getSupabaseServerClient();
-  await ensureSalaryReviewNotification(supabase, profile);
+  const salaryProfile: SalaryReviewProfile = {
+    id: profile.id,
+    salary_increment_month: profile.salary_increment_month,
+    last_salary_review_at: profile.last_salary_review_at,
+  };
+  await ensureSalaryReviewNotification(supabase, salaryProfile);
+  const investments = await listInvestments(supabase, userId);
+  await ensureInvestmentReviewNotification(supabase, profile, investments);
   const initialItems = await listUnreadByUser(supabase, userId, 10);
 
   return (

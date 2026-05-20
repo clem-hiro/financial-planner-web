@@ -76,6 +76,7 @@ export async function updateProfile(
     food_spend_band?: string | null;
     salary_increment_month?: number | null;
     last_salary_review_at?: string | null;
+    last_investment_review_at?: string | null;
   }
 ): Promise<void> {
   const { error } = await supabase

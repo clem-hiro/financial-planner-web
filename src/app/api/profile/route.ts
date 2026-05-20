@@ -75,6 +75,7 @@ export async function PATCH(request: Request) {
     food_spend_band?: string | null;
     salary_increment_month?: number | null;
     last_salary_review_at?: string | null;
+    last_investment_review_at?: string | null;
   } = {};
 
   if (data.display_name !== undefined) {
@@ -215,6 +216,9 @@ export async function PATCH(request: Request) {
   }
   if (data.last_salary_review_at !== undefined) {
     patch.last_salary_review_at = data.last_salary_review_at;
+  }
+  if (data.last_investment_review_at !== undefined) {
+    patch.last_investment_review_at = data.last_investment_review_at;
   }
 
   if (Object.keys(patch).length === 0) {

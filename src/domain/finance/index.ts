@@ -12,6 +12,17 @@ export {
   contributionMonthsLimitFromInvestmentRow,
 } from "./investment-contribution";
 export {
+  INVESTMENT_REVIEW_STALE_MONTHS,
+  INVESTMENT_REVIEW_ACK_VALID_MONTHS,
+  countStaleInvestments,
+  investmentRowIsStale,
+  investmentRowLastTouchedAt,
+  investmentReviewDedupeKeyForYear,
+  monthsSinceTimestamp,
+  shouldPromptInvestmentReview,
+} from "./investment-review";
+export type { InvestmentReviewTimestampRow } from "./investment-review";
+export {
   goalProgressRatio,
   estimateTimeToGoalStandalone,
 } from "./goal-standalone";

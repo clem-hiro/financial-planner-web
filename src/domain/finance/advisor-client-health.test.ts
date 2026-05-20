@@ -71,6 +71,7 @@ describe("advisorClientWorkspaceSignals", () => {
       food_spend_band: null,
       salary_increment_month: null,
       last_salary_review_at: null,
+      last_investment_review_at: null,
       base_currency: "SGD",
       created_at: "2026-01-01",
     } satisfies ProfileRow;
