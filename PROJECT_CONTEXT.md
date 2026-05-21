@@ -116,7 +116,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | SG-oriented guided budget templates (onboarding + domain) | **Shipped** | `budget-guided-setup.ts`, onboarding actions. |
 | Investments with contribution phase, step-ups, and withdrawals | **Shipped** | DB migrations `20260516000000_*` + `20260601010000_*`; Setup/Wealth → Investments; FV helpers support until-retirement / fixed-duration contributions, annual contribution step-ups, planned monthly withdrawals, assumption banners, and annual review reminders (inbox + stale badges) via `last_investment_review_at` + `investment-review.ts`. |
 | **Housing (asset-first)** — properties + linked mortgages | **Shipped** | **`financial_properties`** (current ownership) + **`financial_housing_loans.property_id`** (optional mortgage debt). Setup tab **Housing** (`/setup?tab=housing`; legacy `housing-loans` redirects). **Add property** form creates property ± linked loan atomically (`createHousingPropertyAction`). Projections still consume **`financial_housing_loans`** rows (`housing-loan-payments.ts`, CPF OA / cash split). **`planning_scope`**=`future_simulation` reserved for Goals property purchase (no live cashflow). Migration `20260519120000` backfills one property per legacy loan. |
-| **Debt planning** (categories, repayment, budget + projection integration) | **Shipped** | `financial_liabilities` extended fields; auto monthly budget lines under “Debt Repayments”; educational UX in Setup / Wealth. |
+| **Debt planning** (categories, repayment, budget + projection integration) | **Shipped** | `financial_liabilities` extended fields; auto monthly budget lines under “Debt Repayments”; educational UX in Setup / Wealth. Multi-debt **avalanche vs snowball** comparison with optional extra monthly (`debt-payoff-strategies.ts`, `DebtPayoffStrategyComparison`). Amber hint when repayment assumptions are missing. |
 | Methodology / “How it works” | **Shipped** | `src/features/help/`, `methodology-topics.ts`. |
 
 ### Client — APIs
@@ -405,4 +405,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 - **Not in scope:** live CPF APIs, actuarial CPF LIFE, exhaustive withdrawal rules.
 - **Future:** persist advisor/client assumption presets; tie RA balance into retirement sustainability / spend coverage; inflation on payouts.
 
-_Last reviewed (2026-05-22): **Cash-flow incomplete-setup guidance** — checklist banner on Planning Cash Flow and Setup Budget when income or monthly plan is missing. Prior same day: **Cash account grouping + balance history**._
+_Last reviewed (2026-05-22): **Debt payoff strategy comparison** — avalanche vs snowball panel on Cash and debts when two or more loans have repayments; missing-assumption hint on debt cards. Prior same day: **Cash-flow incomplete-setup guidance**; **Cash account grouping + balance history**._

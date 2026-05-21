@@ -10,6 +10,7 @@ import {
   effectiveMonthlyRepayment,
 } from "@/domain/finance/debt-repayment";
 import { DebtEducationalExamples } from "@/features/debts/DebtEducationalExamples";
+import { DebtPayoffStrategyComparison } from "@/features/debts/DebtPayoffStrategyComparison";
 import {
   DebtFormFields,
   type DebtFormValues,
@@ -220,6 +221,13 @@ function DebtCard({
         ) : null}
       </dl>
 
+      {repayment <= 0 && row.balance > 0 ? (
+        <p className="mt-3 rounded-lg bg-amber-50/80 px-2.5 py-2 text-[11px] leading-relaxed text-amber-950">
+          Add interest rate and tenure (or a monthly repayment) so budgets and
+          payoff projections can estimate this loan.
+        </p>
+      ) : null}
+
       {endYm ? (
         <p className="mt-3 rounded-lg bg-emerald-50/60 px-2.5 py-2 text-[11px] leading-relaxed text-emerald-900">
           Projected payoff around{" "}
@@ -365,6 +373,11 @@ export function DebtPlanningPanels({
       </div>
 
       <DebtEducationalExamples currencyCode={currencyCode} />
+
+      <DebtPayoffStrategyComparison
+        debtRows={debtRows}
+        currencyCode={currencyCode}
+      />
 
       <AddDebtForm currencyCode={currencyCode} />
 
