@@ -5,6 +5,7 @@ import { createSupabaseServerClient } from "@/data/supabase/server";
 import { loadSetupTabBundle } from "@/features/planning/load-setup-tab-bundle";
 import {
   CashAndLiabilitiesPanels,
+  buildCashHistoryByAccountId,
   type CashAccountBalanceRow,
 } from "@/features/goals/CashAndLiabilitiesPanels";
 import { CpfBalancesForm } from "@/features/goals/CpfBalancesForm";
@@ -103,7 +104,11 @@ export async function WealthPlanningSection() {
       id: r.id,
       name: r.name,
       balance: num(r.balance),
+      purpose: r.purpose ?? "other",
     })
+  );
+  const cashHistoryByAccountId = buildCashHistoryByAccountId(
+    bundle.cashSnapshots
   );
 
   return (
@@ -169,6 +174,7 @@ export async function WealthPlanningSection() {
           <PageSection id="wealth-cash-debts" title="Cash and debts">
             <CashAndLiabilitiesPanels
               cashRows={cashBalanceRows}
+              cashHistoryByAccountId={cashHistoryByAccountId}
               liabilityRows={bundle.liabilityRows}
               currencyCode={currency}
             />

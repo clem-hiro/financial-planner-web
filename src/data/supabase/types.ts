@@ -206,12 +206,28 @@ export type InvestmentRow = {
   updated_at: string;
 };
 
+export type CashAccountPurpose =
+  | "emergency_fund"
+  | "everyday_spending"
+  | "short_term_savings"
+  | "other";
+
 export type CashAccountRow = {
   id: string;
   user_id: string;
   name: string;
   balance: string;
+  purpose: CashAccountPurpose;
   created_at: string;
+  updated_at: string;
+};
+
+export type CashAccountSnapshotRow = {
+  id: string;
+  user_id: string;
+  cash_account_id: string;
+  balance: string;
+  recorded_at: string;
 };
 
 export type LiabilityRow = {

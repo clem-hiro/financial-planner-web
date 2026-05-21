@@ -89,6 +89,7 @@ import {
   housingPropertyStatusSchema,
   housingPropertyTypeSchema,
   yearMonthSchema,
+  cashAccountWriteSchema,
 } from "@/lib/validation";
 import { z } from "zod";
 
@@ -378,6 +379,19 @@ export async function confirmCpfRulesReviewAction(): Promise<{
   return { error: null };
 }
 
+function parseCashAccountForm(formData: FormData) {
+  const parsed = cashAccountWriteSchema.safeParse({
+    name: String(formData.get("name") ?? ""),
+    balance: Number(formData.get("balance")),
+    purpose: String(formData.get("purpose") ?? "other"),
+  });
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0]?.message ?? "Invalid cash account";
+    return { error: msg as string, data: null };
+  }
+  return { error: null, data: parsed.data };
+}
+
 export async function createCashAccountAction(
   _prev: { error: string | null },
   formData: FormData
@@ -388,16 +402,13 @@ export async function createCashAccountAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Sign in required" };
 
-  const name = String(formData.get("name") ?? "").trim();
-  const balance = Number(formData.get("balance"));
-  if (!name) return { error: "Name is required" };
-  if (!Number.isFinite(balance) || balance < 0) {
-    return { error: "Invalid balance" };
-  }
+  const body = parseCashAccountForm(formData);
+  if (body.error || !body.data) return { error: body.error ?? "Invalid cash account" };
 
-  await insertCashAccount(supabase, user.id, { name, balance });
+  await insertCashAccount(supabase, user.id, body.data);
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
   return { error: null as string | null };
 }
 
@@ -414,16 +425,13 @@ export async function updateCashAccountAction(
   const idParsed = z.string().uuid().safeParse(String(formData.get("id") ?? "").trim());
   if (!idParsed.success) return { error: "Invalid account" };
 
-  const name = String(formData.get("name") ?? "").trim();
-  const balance = Number(formData.get("balance"));
-  if (!name) return { error: "Name is required" };
-  if (!Number.isFinite(balance) || balance < 0) {
-    return { error: "Invalid balance" };
-  }
+  const body = parseCashAccountForm(formData);
+  if (body.error || !body.data) return { error: body.error ?? "Invalid cash account" };
 
-  await updateCashAccount(supabase, user.id, idParsed.data, { name, balance });
+  await updateCashAccount(supabase, user.id, idParsed.data, body.data);
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
   return { error: null as string | null };
 }
 
@@ -446,6 +454,7 @@ export async function deleteCashAccountAction(formData: FormData) {
   }
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
 }
 
 export async function createLiabilityAction(

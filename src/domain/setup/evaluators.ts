@@ -172,7 +172,9 @@ function evaluateEmergencyFunds(ctx: SetupEvaluationContext): SetupModuleEvaluat
     moduleId: "emergency_funds",
     status,
     completionPercentage: statusPercent(status),
-    lastUpdatedAt: maxIsoTimestamp(...ctx.cashAccounts.map((c) => c.created_at)),
+    lastUpdatedAt: maxIsoTimestamp(
+      ...ctx.cashAccounts.map((c) => c.updated_at ?? c.created_at)
+    ),
     missingFields: missing,
   };
 }

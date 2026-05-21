@@ -15,6 +15,7 @@ import { ProfileIncomeForm } from "@/features/dashboard/ProfileIncomeForm";
 import { IncomeTaxSection } from "@/features/income-tax/IncomeTaxSection";
 import {
   CashAndLiabilitiesPanels,
+  buildCashHistoryByAccountId,
   type CashAccountBalanceRow,
 } from "@/features/goals/CashAndLiabilitiesPanels";
 import { CpfBalancesForm } from "@/features/goals/CpfBalancesForm";
@@ -118,6 +119,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
   const {
     investments,
     cashAccounts,
+    cashSnapshots,
     liabilityRows,
     vehicleRows,
     cpfRow,
@@ -175,7 +177,9 @@ export default async function SetupPage({ searchParams }: PageProps) {
     id: r.id,
     name: r.name,
     balance: num(r.balance),
+    purpose: r.purpose ?? "other",
   }));
+  const cashHistoryByAccountId = buildCashHistoryByAccountId(cashSnapshots);
 
   return (
     <div className="flex flex-col gap-5 sm:gap-8">
@@ -331,6 +335,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           <PageSection id="cash-liabilities" title="Cash and debts">
             <CashAndLiabilitiesPanels
               cashRows={cashBalanceRows}
+              cashHistoryByAccountId={cashHistoryByAccountId}
               liabilityRows={liabilityRows}
               currencyCode={currency}
             />

@@ -420,6 +420,19 @@ export const liabilityWriteSchema = z.object({
   notes: z.string().trim().max(2000).nullable().optional(),
 });
 
+export const cashAccountPurposeSchema = z.enum([
+  "emergency_fund",
+  "everyday_spending",
+  "short_term_savings",
+  "other",
+]);
+
+export const cashAccountWriteSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  balance: z.number().nonnegative().max(100_000_000),
+  purpose: cashAccountPurposeSchema,
+});
+
 export const couponCodeInputSchema = z
   .string()
   .trim()
