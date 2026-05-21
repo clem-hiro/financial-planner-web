@@ -9,6 +9,7 @@ export async function listFinancialGoals(
     .from("financial_goals")
     .select("*")
     .eq("user_id", userId)
+    .order("display_order", { ascending: true })
     .order("created_at", { ascending: true });
   if (error) throw error;
   return (data ?? []) as FinancialGoalRow[];
@@ -65,11 +66,55 @@ export type UpdateFinancialGoalInput = {
   expected_annual_return?: number;
 };
 
+async function nextGoalDisplayOrder(
+  supabase: SupabaseClient,
+  userId: string
+): Promise<number> {
+  const { data, error } = await supabase
+    .from("financial_goals")
+    .select("display_order")
+    .eq("user_id", userId)
+    .order("display_order", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) throw error;
+  return (data?.display_order ?? -1) + 1;
+}
+
+export async function reorderFinancialGoal(
+  supabase: SupabaseClient,
+  userId: string,
+  goalId: string,
+  direction: "up" | "down"
+): Promise<void> {
+  const goals = await listFinancialGoals(supabase, userId);
+  const index = goals.findIndex((g) => g.id === goalId);
+  if (index < 0) return;
+  const swapIndex = direction === "up" ? index - 1 : index + 1;
+  if (swapIndex < 0 || swapIndex >= goals.length) return;
+
+  const current = goals[index];
+  const neighbor = goals[swapIndex];
+  const { error: e1 } = await supabase
+    .from("financial_goals")
+    .update({ display_order: neighbor.display_order })
+    .eq("user_id", userId)
+    .eq("id", current.id);
+  if (e1) throw e1;
+  const { error: e2 } = await supabase
+    .from("financial_goals")
+    .update({ display_order: current.display_order })
+    .eq("user_id", userId)
+    .eq("id", neighbor.id);
+  if (e2) throw e2;
+}
+
 export async function insertFinancialGoal(
   supabase: SupabaseClient,
   userId: string,
   row: NewFinancialGoal
 ): Promise<FinancialGoalRow> {
+  const displayOrder = await nextGoalDisplayOrder(supabase, userId);
   const { data, error } = await supabase
     .from("financial_goals")
     .insert({
@@ -81,6 +126,7 @@ export async function insertFinancialGoal(
       current_amount: row.current_amount ?? 0,
       monthly_contribution: row.monthly_contribution ?? 0,
       expected_annual_return: row.expected_annual_return ?? 0,
+      display_order: displayOrder,
     })
     .select()
     .single();
@@ -94,16 +140,22 @@ export async function insertFinancialGoalsBulk(
   rows: NewFinancialGoal[]
 ): Promise<FinancialGoalRow[]> {
   if (rows.length === 0) return [];
-  const payload = rows.map((row) => ({
-    user_id: userId,
-    title: row.title,
-    target_amount: row.target_amount,
-    target_date: row.target_date ?? null,
-    linked_investment_id: row.linked_investment_id ?? null,
-    current_amount: row.current_amount ?? 0,
-    monthly_contribution: row.monthly_contribution ?? 0,
-    expected_annual_return: row.expected_annual_return ?? 0,
-  }));
+  let nextOrder = await nextGoalDisplayOrder(supabase, userId);
+  const payload = rows.map((row) => {
+    const item = {
+      user_id: userId,
+      title: row.title,
+      target_amount: row.target_amount,
+      target_date: row.target_date ?? null,
+      linked_investment_id: row.linked_investment_id ?? null,
+      current_amount: row.current_amount ?? 0,
+      monthly_contribution: row.monthly_contribution ?? 0,
+      expected_annual_return: row.expected_annual_return ?? 0,
+      display_order: nextOrder,
+    };
+    nextOrder += 1;
+    return item;
+  });
   const { data, error } = await supabase
     .from("financial_goals")
     .insert(payload)

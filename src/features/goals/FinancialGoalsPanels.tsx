@@ -4,10 +4,13 @@ import {
   analyzeGoalDeadlineGap,
   estimateTimeToGoalStandalone,
   goalProgressRatio,
+  sortGoalsByPriority,
 } from "@/domain/finance";
 import type { FinancialGoalRow, InvestmentRow } from "@/data/supabase/types";
 import { GoalEditForm } from "@/features/goals/GoalEditForm";
 import { GoalForm } from "@/features/goals/GoalForm";
+import { GoalPriorityTradeoffPanel } from "@/features/goals/GoalPriorityTradeoffPanel";
+import { GoalReorderButtons } from "@/features/goals/GoalReorderButtons";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { formatMonthsApprox } from "@/ui/lib/duration";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
@@ -23,9 +26,17 @@ type Props = {
   goals: FinancialGoalRow[];
   investments: InvestmentRow[];
   currency: string;
+  /** When set, loads priority trade-off vs current-month surplus. */
+  userId?: string;
 };
 
-export function FinancialGoalsPanels({ goals, investments, currency }: Props) {
+export function FinancialGoalsPanels({
+  goals,
+  investments,
+  currency,
+  userId,
+}: Props) {
+  const orderedGoals = sortGoalsByPriority(goals);
   const investmentOptions = investments.map((i) => ({
     id: i.id,
     name: i.name,
@@ -33,7 +44,7 @@ export function FinancialGoalsPanels({ goals, investments, currency }: Props) {
 
   const today = new Date();
 
-  const rows = goals.map((g) => {
+  const rows = orderedGoals.map((g, index) => {
     const current = num(g.current_amount);
     const target = num(g.target_amount);
     const pmt = num(g.monthly_contribution);
@@ -54,7 +65,16 @@ export function FinancialGoalsPanels({ goals, investments, currency }: Props) {
       expectedAnnualReturn: ret,
       targetAmount: target,
     });
-    return { g, estimate, progress, remaining, deadline };
+    return {
+      g,
+      estimate,
+      progress,
+      remaining,
+      deadline,
+      priorityRank: index + 1,
+      canMoveUp: index > 0,
+      canMoveDown: index < orderedGoals.length - 1,
+    };
   });
 
   return (
@@ -96,6 +116,10 @@ export function FinancialGoalsPanels({ goals, investments, currency }: Props) {
         </p>
       </div>
 
+      {userId ? (
+        <GoalPriorityTradeoffPanel userId={userId} currency={currency} />
+      ) : null}
+
       <PageSection
         title="Add a goal"
         description="Optionally link a goal to an investment account for your own tracking; projections still use account data from Balances."
@@ -107,7 +131,8 @@ export function FinancialGoalsPanels({ goals, investments, currency }: Props) {
         title="Your goals"
         description={
           <span className="text-xs text-zinc-600">
-            Standalone targets and monthly plans.{" "}
+            Higher priority goals are funded first in the trade-off view above.
+            Use ↑ / ↓ to reorder.{" "}
             <MethodologyOpenLink topicId="goals-eta" className={appInlineLinkClass}>
               How estimates work →
             </MethodologyOpenLink>
@@ -121,12 +146,34 @@ export function FinancialGoalsPanels({ goals, investments, currency }: Props) {
           </p>
         ) : (
           <ul className="mt-4 space-y-4">
-            {rows.map(({ g, estimate, progress, remaining, deadline }) => (
+            {rows.map(
+              ({
+                g,
+                estimate,
+                progress,
+                remaining,
+                deadline,
+                priorityRank,
+                canMoveUp,
+                canMoveDown,
+              }) => (
               <li
                 key={g.id}
                 className="border-b border-zinc-100 pb-4 last:border-0 last:pb-0"
               >
-                <p className="font-medium text-zinc-900">{g.title}</p>
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <p className="font-medium text-zinc-900">
+                    <span className="mr-2 text-xs font-normal text-zinc-500">
+                      Priority {priorityRank}
+                    </span>
+                    {g.title}
+                  </p>
+                  <GoalReorderButtons
+                    goalId={g.id}
+                    canMoveUp={canMoveUp}
+                    canMoveDown={canMoveDown}
+                  />
+                </div>
                 <p className="text-sm text-zinc-600">
                   {formatCurrency(num(g.current_amount), currency)} of{" "}
                   {formatCurrency(num(g.target_amount), currency)}
@@ -221,7 +268,8 @@ export function FinancialGoalsPanels({ goals, investments, currency }: Props) {
                   <GoalEditForm goal={g} investments={investmentOptions} />
                 </details>
               </li>
-            ))}
+            )
+            )}
           </ul>
         )}
       </PageSection>

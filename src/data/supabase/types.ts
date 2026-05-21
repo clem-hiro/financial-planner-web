@@ -299,6 +299,8 @@ export type FinancialGoalRow = {
   current_amount: string;
   monthly_contribution: string;
   expected_annual_return: string;
+  /** Lower = fund first in priority trade-off views. */
+  display_order: number;
   created_at: string;
 };
 

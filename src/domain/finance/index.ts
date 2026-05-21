@@ -39,6 +39,15 @@ export {
   countEndOfMonthContributionPeriods,
   requiredMonthlyForMonths,
 } from "./goal-deadline";
+export {
+  analyzeGoalPriorityTradeoff,
+  sortGoalsByPriority,
+} from "./goal-priority-tradeoff";
+export type {
+  GoalFundingLine,
+  GoalPriorityTradeoffAnalysis,
+  GoalPriorityTradeoffInput,
+} from "./goal-priority-tradeoff";
 export type {
   GoalDeadlineAnalysis,
   GoalDeadlineAnalysisParams,

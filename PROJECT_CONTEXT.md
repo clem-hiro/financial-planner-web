@@ -108,7 +108,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | CPF balance tracking (Setup) | **Shipped** | Setup → CPF; feeds Home CPF projection and Wealth. |
 | Cash account balances | **Shipped** | Setup cash/debts; net worth and emergency-fund context. Liquidity **buckets** (emergency fund, everyday spending, short-term savings, other) per account; **balance history** snapshots on create/save (`financial_cash_account_snapshots`, migration `20260601020000_*`). |
 | Vehicle planning (SG COE/PARF, loans) | **Shipped** | Setup → vehicles; included in Wealth and long-horizon projections. |
-| Financial goals (targets, contributions) | **Shipped** | Setup goals tab + Future workspace CRUD (`FinancialGoalsPanels`). |
+| Financial goals (targets, contributions) | **Shipped** | Setup goals tab + Future workspace CRUD (`FinancialGoalsPanels`); **priority order** (`display_order`, ↑/↓ reorder) and **monthly trade-off** panel (waterfall funding vs current-month surplus, same basis as Home). Migration `20260622000000_financial_goals_display_order.sql`. |
 | Income tax estimation lens | **Partial** | Setup → Income tax tab + `/api/income-tax`; review assumptions and known gaps. |
 | **Financial Setup Hub** (progress, section status, recommended next step) | **Shipped** | `/setup/overview`; config in `src/domain/setup/modules.ts`, evaluators in `src/domain/setup/evaluators.ts`, loader `src/data/setup-status.ts`. Legacy `/planning/setup` redirects here. |
 | Financial Setup tabs (profile → goals) | **Shipped** | `/setup?tab=…` (editors); `SetupTabsNav` scrollable pills on mobile; mirrored in Planning where noted; hub links into each tab/workspace. |
@@ -405,4 +405,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 - **Not in scope:** live CPF APIs, actuarial CPF LIFE, exhaustive withdrawal rules.
 - **Future:** persist advisor/client assumption presets; tie RA balance into retirement sustainability / spend coverage; inflation on payouts.
 
-_Last reviewed (2026-05-22): **Debt payoff strategy comparison** — avalanche vs snowball panel on Cash and debts when two or more loans have repayments; missing-assumption hint on debt cards. Prior same day: **Cash-flow incomplete-setup guidance**; **Cash account grouping + balance history**._
+_Last reviewed (2026-05-22): **Goal priority & trade-off views** — `display_order` on `financial_goals`, ↑/↓ reorder, waterfall funding panel vs monthly surplus on Setup/Future goals. Prior same day: debt payoff strategy comparison; cash-flow setup guidance; cash account grouping + balance history._

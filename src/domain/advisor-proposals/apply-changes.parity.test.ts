@@ -239,6 +239,7 @@ function canonical(): OverlayInputs {
         current_amount: "5000",
         monthly_contribution: "300",
         expected_annual_return: "0.04",
+        display_order: 0,
         created_at: "2025-01-01T00:00:00Z",
       },
     ],

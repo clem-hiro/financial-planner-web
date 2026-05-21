@@ -401,6 +401,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
             goals={goals}
             investments={investments}
             currency={currency}
+            userId={user.id}
           />
         </div>
       ) : null}

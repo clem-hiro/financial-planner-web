@@ -27,6 +27,7 @@ import {
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import {
   insertFinancialGoal,
+  reorderFinancialGoal,
   updateFinancialGoal,
 } from "@/data/repositories/goals";
 import {
@@ -1008,6 +1009,38 @@ export async function createGoalAction(
   revalidateSetupAndPlanning();
   revalidatePath("/dashboard");
   return { error: null as string | null };
+}
+
+export async function reorderFinancialGoalAction(
+  _prev: { error: string | null },
+  formData: FormData
+): Promise<{ error: string | null }> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "Sign in required" };
+  }
+
+  const goalId = String(formData.get("goal_id") ?? "").trim();
+  const direction = String(formData.get("direction") ?? "").trim();
+  if (!goalId) return { error: "Missing goal" };
+  if (direction !== "up" && direction !== "down") {
+    return { error: "Invalid direction" };
+  }
+
+  try {
+    await reorderFinancialGoal(supabase, user.id, goalId, direction);
+  } catch (e) {
+    console.error(e);
+    return { error: "Could not reorder goal" };
+  }
+
+  revalidatePath("/planning/future");
+  revalidateSetupAndPlanning();
+  revalidatePath("/dashboard");
+  return { error: null };
 }
 
 export async function updateGoalAction(
