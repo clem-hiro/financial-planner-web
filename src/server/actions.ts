@@ -69,13 +69,13 @@ import {
   updateInvestment,
 } from "@/data/repositories/investments";
 import { acknowledgeInvestmentReview } from "@/server/inbox/acknowledge-investment-review";
+import { acknowledgeCpfRulesReview } from "@/server/inbox/acknowledge-cpf-rules-review";
 import {
   deriveQuickHousingLoanRow,
   HDB_CONCESSIONARY_RATE_ANNUAL,
   oaInstalmentShareFromPreset,
 } from "@/domain/finance/housing-loan-quick";
 import {
-  firstHousingInstalmentAmount,
   normalizeHousingPaymentForPersist,
   paymentSourceFromLegacyPreset,
 } from "@/domain/finance/housing-loan-payments";
@@ -99,6 +99,75 @@ function toClientErrorMessage(e: unknown): string {
     if (typeof m === "string" && m.trim()) return m;
   }
   return "Something went wrong while saving. Please try again.";
+}
+
+function parseInvestmentPlanningFields(formData: FormData):
+  | {
+      ok: true;
+      contribution_type: string | null;
+      contribution_duration_years: number | null;
+      contribution_growth_annual: number;
+      withdrawal_monthly: number;
+      withdrawal_start_years: number | null;
+    }
+  | { ok: false; error: string } {
+  const contributionTypeRaw = String(
+    formData.get("contribution_type") ?? ""
+  ).trim();
+  const isFixed = contributionTypeRaw === "fixed_duration";
+
+  let contribution_type: string | null = null;
+  let contribution_duration_years: number | null = null;
+  if (isFixed) {
+    const y = Number(formData.get("contribution_duration_years"));
+    if (!Number.isFinite(y) || y <= 0 || y > 80) {
+      return {
+        ok: false,
+        error: "Enter contribution duration in years (between 0.25 and 80)",
+      };
+    }
+    contribution_type = "fixed_duration";
+    contribution_duration_years = y;
+  } else if (contributionTypeRaw === "until_retirement") {
+    contribution_type = "until_retirement";
+  }
+
+  const contributionGrowthAnnual = Number(
+    formData.get("contribution_growth_annual") ?? 0
+  );
+  if (
+    !Number.isFinite(contributionGrowthAnnual) ||
+    contributionGrowthAnnual < 0 ||
+    contributionGrowthAnnual > 1
+  ) {
+    return { ok: false, error: "Contribution step-up must be 0–100%." };
+  }
+
+  const withdrawalMonthly = Number(formData.get("withdrawal_monthly") ?? 0);
+  if (!Number.isFinite(withdrawalMonthly) || withdrawalMonthly < 0) {
+    return { ok: false, error: "Invalid monthly withdrawal" };
+  }
+
+  const withdrawalStartRaw = String(
+    formData.get("withdrawal_start_years") ?? ""
+  ).trim();
+  const withdrawalStartYears =
+    withdrawalStartRaw === "" ? null : Number(withdrawalStartRaw);
+  if (
+    withdrawalStartYears != null &&
+    (!Number.isFinite(withdrawalStartYears) || withdrawalStartYears < 0)
+  ) {
+    return { ok: false, error: "Withdrawal start must be 0 or more years." };
+  }
+
+  return {
+    ok: true,
+    contribution_type,
+    contribution_duration_years,
+    contribution_growth_annual: contributionGrowthAnnual,
+    withdrawal_monthly: withdrawalMonthly,
+    withdrawal_start_years: withdrawalStartYears,
+  };
 }
 
 export async function signOutAction() {
@@ -139,25 +208,8 @@ export async function createInvestmentAction(
     return { error: "Invalid expected return (use 0–1, e.g. 0.07)" };
   }
 
-  const contributionTypeRaw = String(
-    formData.get("contribution_type") ?? ""
-  ).trim();
-  const isFixed = contributionTypeRaw === "fixed_duration";
-
-  let contribution_type: string | null = null;
-  let contribution_duration_years: number | null = null;
-  if (isFixed) {
-    const y = Number(formData.get("contribution_duration_years"));
-    if (!Number.isFinite(y) || y <= 0 || y > 80) {
-      return {
-        error: "Enter contribution duration in years (between 0.25 and 80)",
-      };
-    }
-    contribution_type = "fixed_duration";
-    contribution_duration_years = y;
-  } else if (contributionTypeRaw === "until_retirement") {
-    contribution_type = "until_retirement";
-  }
+  const planning = parseInvestmentPlanningFields(formData);
+  if (!planning.ok) return { error: planning.error };
 
   try {
     await insertInvestment(supabase, user.id, {
@@ -165,8 +217,11 @@ export async function createInvestmentAction(
       current_value: currentValue,
       monthly_contribution: monthlyContribution,
       expected_annual_return: expectedAnnualReturn,
-      contribution_type,
-      contribution_duration_years,
+      contribution_type: planning.contribution_type,
+      contribution_duration_years: planning.contribution_duration_years,
+      contribution_growth_annual: planning.contribution_growth_annual,
+      withdrawal_monthly: planning.withdrawal_monthly,
+      withdrawal_start_years: planning.withdrawal_start_years,
     });
     await acknowledgeInvestmentReview(supabase, user.id);
   } catch (e) {
@@ -218,25 +273,8 @@ export async function updateInvestmentAction(
     return { error: "Invalid expected return (use 0–1, e.g. 0.07)" };
   }
 
-  const contributionTypeRaw = String(
-    formData.get("contribution_type") ?? ""
-  ).trim();
-  const isFixed = contributionTypeRaw === "fixed_duration";
-
-  let contribution_type: string | null = null;
-  let contribution_duration_years: number | null = null;
-  if (isFixed) {
-    const y = Number(formData.get("contribution_duration_years"));
-    if (!Number.isFinite(y) || y <= 0 || y > 80) {
-      return {
-        error: "Enter contribution duration in years (between 0.25 and 80)",
-      };
-    }
-    contribution_type = "fixed_duration";
-    contribution_duration_years = y;
-  } else if (contributionTypeRaw === "until_retirement") {
-    contribution_type = "until_retirement";
-  }
+  const planning = parseInvestmentPlanningFields(formData);
+  if (!planning.ok) return { error: planning.error };
 
   try {
     await updateInvestment(supabase, user.id, idParsed.data, {
@@ -244,8 +282,11 @@ export async function updateInvestmentAction(
       current_value: currentValue,
       monthly_contribution: monthlyContribution,
       expected_annual_return: expectedAnnualReturn,
-      contribution_type,
-      contribution_duration_years,
+      contribution_type: planning.contribution_type,
+      contribution_duration_years: planning.contribution_duration_years,
+      contribution_growth_annual: planning.contribution_growth_annual,
+      withdrawal_monthly: planning.withdrawal_monthly,
+      withdrawal_start_years: planning.withdrawal_start_years,
     });
     await acknowledgeInvestmentReview(supabase, user.id);
   } catch (e) {
@@ -312,6 +353,28 @@ export async function confirmInvestmentReviewAction(): Promise<{
   revalidatePath("/dashboard");
   revalidateSetupAndPlanning();
   revalidatePath("/planning/future");
+  return { error: null };
+}
+
+export async function confirmCpfRulesReviewAction(): Promise<{
+  error: string | null;
+}> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "Sign in required" };
+  }
+
+  try {
+    await acknowledgeCpfRulesReview(supabase, user.id);
+  } catch (e) {
+    return { error: toClientErrorMessage(e) };
+  }
+
+  revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
   return { error: null };
 }
 
@@ -2108,7 +2171,6 @@ export async function createHousingLoanQuickAction(
     first_payment_month: derived.first_payment_month,
     oa_share_of_payment: derived.oa_share_of_payment,
   };
-  const instalment = firstHousingInstalmentAmount(loanPaymentBase);
   const cpfRaw = String(formData.get("cpf_oa_payment") ?? "").trim();
   const cashRaw = String(formData.get("cash_payment") ?? "").trim();
   const cpfOaPayment = cpfRaw === "" ? null : Number(cpfRaw);

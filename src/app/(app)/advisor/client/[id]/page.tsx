@@ -69,6 +69,8 @@ function identityOnlyProfile(link: AdvisorClientListRow): ProfileRow {
     salary_increment_month: null,
     last_salary_review_at: null,
     last_investment_review_at: null,
+    last_cpf_rules_review_at: null,
+    last_cpf_rules_review_version: null,
     created_at: link.created_at,
   };
 }

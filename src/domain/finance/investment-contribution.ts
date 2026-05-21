@@ -37,3 +37,37 @@ export function contributionMonthsLimitFromInvestmentRow(
   }
   return undefined;
 }
+
+export function withdrawalStartMonthFromInvestmentRow(
+  row: Pick<
+    InvestmentRow,
+    | "contribution_type"
+    | "contribution_duration_years"
+    | "withdrawal_monthly"
+    | "withdrawal_start_years"
+  >,
+  monthsToRetirementFromNow: number | null
+): number | undefined {
+  const monthlyWithdrawal = num(row.withdrawal_monthly);
+  if (!Number.isFinite(monthlyWithdrawal) || monthlyWithdrawal <= 0) {
+    return undefined;
+  }
+
+  const startYears = num(row.withdrawal_start_years);
+  if (Number.isFinite(startYears) && startYears >= 0) {
+    return Math.floor(startYears * 12);
+  }
+
+  if (
+    monthsToRetirementFromNow != null &&
+    Number.isFinite(monthsToRetirementFromNow)
+  ) {
+    return Math.max(0, Math.floor(monthsToRetirementFromNow));
+  }
+
+  const contributionLimit = contributionMonthsLimitFromInvestmentRow(
+    row,
+    monthsToRetirementFromNow
+  );
+  return contributionLimit != null ? Math.max(0, contributionLimit) : undefined;
+}

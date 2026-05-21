@@ -51,8 +51,11 @@ const INVESTMENT_FIELDS: Record<string, ProposalFieldMeta> = {
   current_value: { label: "Current value", section: "investments", currency: true },
   monthly_contribution: { label: "Monthly contribution", section: "investments", currency: true },
   expected_annual_return: { label: "Expected annual return", section: "investments", percent: true },
+  contribution_growth_annual: { label: "Contribution step-up", section: "investments", percent: true },
   contribution_type: { label: "Contribution schedule", section: "investments" },
   contribution_duration_years: { label: "Contribution duration (years)", section: "investments" },
+  withdrawal_monthly: { label: "Monthly withdrawal", section: "investments", currency: true },
+  withdrawal_start_years: { label: "Withdrawal starts after (years)", section: "investments" },
   _deleted: { label: "Account", section: "investments" },
 };
 

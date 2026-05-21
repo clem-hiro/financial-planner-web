@@ -12,7 +12,10 @@ function isUnknownInvestmentContributionColumnError(error: unknown): boolean {
       : "";
   return (
     (msg.includes("contribution_duration_years") ||
-      msg.includes("contribution_type")) &&
+      msg.includes("contribution_type") ||
+      msg.includes("contribution_growth_annual") ||
+      msg.includes("withdrawal_monthly") ||
+      msg.includes("withdrawal_start_years")) &&
     (msg.includes("schema cache") ||
       msg.includes("Could not find") ||
       msg.includes("column"))
@@ -20,7 +23,7 @@ function isUnknownInvestmentContributionColumnError(error: unknown): boolean {
 }
 
 const MIGRATION_HINT =
-  "Run Supabase migration `20260516000000_investment_contribution_phases.sql` (or `supabase db push`) so contribution phases can be stored.";
+  "Run Supabase investment planning migrations (or `supabase db push`) so contribution phases, step-ups, and withdrawals can be stored.";
 
 export async function listInvestments(
   supabase: SupabaseClient,
@@ -72,8 +75,11 @@ export type NewInvestment = {
   current_value: number;
   monthly_contribution: number;
   expected_annual_return: number;
+  contribution_growth_annual?: number | null;
   contribution_type?: string | null;
   contribution_duration_years?: number | null;
+  withdrawal_monthly?: number | null;
+  withdrawal_start_years?: number | null;
 };
 
 export async function insertInvestment(
@@ -87,8 +93,11 @@ export async function insertInvestment(
     current_value: row.current_value,
     monthly_contribution: row.monthly_contribution,
     expected_annual_return: row.expected_annual_return,
+    contribution_growth_annual: row.contribution_growth_annual ?? 0,
     contribution_type: row.contribution_type ?? null,
     contribution_duration_years: row.contribution_duration_years ?? null,
+    withdrawal_monthly: row.withdrawal_monthly ?? 0,
+    withdrawal_start_years: row.withdrawal_start_years ?? null,
   };
 
   let { data, error } = await supabase
@@ -101,10 +110,18 @@ export async function insertInvestment(
     if (
       row.contribution_type === "fixed_duration" ||
       (row.contribution_duration_years != null &&
-        Number.isFinite(row.contribution_duration_years))
+        Number.isFinite(row.contribution_duration_years)) ||
+      (row.contribution_growth_annual != null &&
+        Number.isFinite(row.contribution_growth_annual) &&
+        row.contribution_growth_annual !== 0) ||
+      (row.withdrawal_monthly != null &&
+        Number.isFinite(row.withdrawal_monthly) &&
+        row.withdrawal_monthly !== 0) ||
+      (row.withdrawal_start_years != null &&
+        Number.isFinite(row.withdrawal_start_years))
     ) {
       throw new Error(
-        `Fixed-duration contributions require newer database columns. ${MIGRATION_HINT}`
+        `Advanced investment planning requires newer database columns. ${MIGRATION_HINT}`
       );
     }
     const legacy = {
@@ -130,8 +147,11 @@ export type InvestmentPatch = {
   current_value?: number;
   monthly_contribution?: number;
   expected_annual_return?: number;
+  contribution_growth_annual?: number | null;
   contribution_type?: string | null;
   contribution_duration_years?: number | null;
+  withdrawal_monthly?: number | null;
+  withdrawal_start_years?: number | null;
 };
 
 export async function updateInvestment(
@@ -143,6 +163,9 @@ export async function updateInvestment(
   const {
     contribution_type: ct,
     contribution_duration_years: cdy,
+    contribution_growth_annual: cga,
+    withdrawal_monthly: wm,
+    withdrawal_start_years: wsy,
     ...rest
   } = patch;
 
@@ -150,6 +173,15 @@ export async function updateInvestment(
   if ("contribution_type" in patch) fullPatch.contribution_type = ct ?? null;
   if ("contribution_duration_years" in patch) {
     fullPatch.contribution_duration_years = cdy ?? null;
+  }
+  if ("contribution_growth_annual" in patch) {
+    fullPatch.contribution_growth_annual = cga ?? 0;
+  }
+  if ("withdrawal_monthly" in patch) {
+    fullPatch.withdrawal_monthly = wm ?? 0;
+  }
+  if ("withdrawal_start_years" in patch) {
+    fullPatch.withdrawal_start_years = wsy ?? null;
   }
 
   let { error } = await supabase
@@ -163,10 +195,21 @@ export async function updateInvestment(
       ("contribution_type" in patch && patch.contribution_type === "fixed_duration") ||
       ("contribution_duration_years" in patch &&
         patch.contribution_duration_years != null &&
-        Number.isFinite(patch.contribution_duration_years));
+        Number.isFinite(patch.contribution_duration_years)) ||
+      ("contribution_growth_annual" in patch &&
+        patch.contribution_growth_annual != null &&
+        Number.isFinite(patch.contribution_growth_annual) &&
+        patch.contribution_growth_annual !== 0) ||
+      ("withdrawal_monthly" in patch &&
+        patch.withdrawal_monthly != null &&
+        Number.isFinite(patch.withdrawal_monthly) &&
+        patch.withdrawal_monthly !== 0) ||
+      ("withdrawal_start_years" in patch &&
+        patch.withdrawal_start_years != null &&
+        Number.isFinite(patch.withdrawal_start_years));
     if (wantsPhases) {
       throw new Error(
-        `Fixed-duration contributions require newer database columns. ${MIGRATION_HINT}`
+        `Advanced investment planning requires newer database columns. ${MIGRATION_HINT}`
       );
     }
     const legacyPatch = { ...rest };

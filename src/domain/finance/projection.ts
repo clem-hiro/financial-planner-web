@@ -23,6 +23,65 @@ function futureValueEndOfMonthWindow(
   return currentValue * growth + monthlyContribution * ((growth - 1) / r);
 }
 
+function hasVariableCashflows(params: ProjectFutureValueParams): boolean {
+  return (
+    (params.contributionGrowthAnnual != null &&
+      Number.isFinite(params.contributionGrowthAnnual) &&
+      params.contributionGrowthAnnual !== 0) ||
+    (params.monthlyWithdrawal != null &&
+      Number.isFinite(params.monthlyWithdrawal) &&
+      params.monthlyWithdrawal > 0)
+  );
+}
+
+function monthlyContributionForMonth(
+  baseContribution: Money,
+  contributionGrowthAnnual: number,
+  monthIndex: number
+): Money {
+  const yearsElapsed = Math.floor(Math.max(0, monthIndex) / 12);
+  return baseContribution * (1 + contributionGrowthAnnual) ** yearsElapsed;
+}
+
+function projectFutureValueIterative(params: ProjectFutureValueParams): Money {
+  const n = Math.max(0, Math.floor(params.months));
+  if (n <= 0) return params.currentValue;
+
+  const r = params.annualReturn / 12;
+  const contributionGrowthAnnual = Math.max(
+    -0.99,
+    Math.min(1, params.contributionGrowthAnnual ?? 0)
+  );
+  const contributionMonthsLimit =
+    params.contributionMonthsLimit != null &&
+    Number.isFinite(params.contributionMonthsLimit)
+      ? Math.max(0, Math.floor(params.contributionMonthsLimit))
+      : n;
+  const monthlyWithdrawal = Math.max(0, params.monthlyWithdrawal ?? 0);
+  const withdrawalStartMonth =
+    params.withdrawalStartMonth != null &&
+    Number.isFinite(params.withdrawalStartMonth)
+      ? Math.max(0, Math.floor(params.withdrawalStartMonth))
+      : Number.POSITIVE_INFINITY;
+
+  let value = params.currentValue;
+  for (let monthIndex = 0; monthIndex < n; monthIndex++) {
+    value *= 1 + r;
+    if (monthIndex < contributionMonthsLimit) {
+      value += monthlyContributionForMonth(
+        params.monthlyContribution,
+        contributionGrowthAnnual,
+        monthIndex
+      );
+    }
+    if (monthIndex >= withdrawalStartMonth) {
+      value -= monthlyWithdrawal;
+    }
+    value = Math.max(0, value);
+  }
+  return value;
+}
+
 /**
  * Future value with lump sum + end-of-month contributions for an initial window,
  * then growth only (same rate) for any remaining months.
@@ -32,6 +91,10 @@ export function projectFutureValue(params: ProjectFutureValueParams): Money {
   const { currentValue, monthlyContribution, annualReturn, months } = params;
   const n = Math.max(0, Math.floor(months));
   if (n <= 0) return currentValue;
+
+  if (hasVariableCashflows(params)) {
+    return projectFutureValueIterative(params);
+  }
 
   let contributionWindow = n;
   if (
@@ -80,6 +143,14 @@ export function calculateTimeToGoal(
 
   if (targetAmount <= currentValue) {
     return { months: 0 };
+  }
+
+  if (hasVariableCashflows({ ...params, months: MAX_PROJECTION_MONTHS })) {
+    for (let months = 1; months <= MAX_PROJECTION_MONTHS; months++) {
+      const fv = projectFutureValue({ ...params, months });
+      if (fv >= targetAmount) return { months };
+    }
+    return null;
   }
 
   const fvAtMax = projectFutureValue({

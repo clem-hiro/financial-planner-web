@@ -94,11 +94,18 @@ export function AdvisorClientWorkspace({
     current_value: num(i.current_value),
     monthly_contribution: num(i.monthly_contribution),
     expected_annual_return: num(i.expected_annual_return),
+    contribution_growth_annual: num(i.contribution_growth_annual),
     contribution_type: i.contribution_type ?? null,
     contribution_duration_years:
       i.contribution_duration_years != null &&
       String(i.contribution_duration_years).trim() !== ""
         ? num(i.contribution_duration_years as string)
+        : null,
+    withdrawal_monthly: num(i.withdrawal_monthly),
+    withdrawal_start_years:
+      i.withdrawal_start_years != null &&
+      String(i.withdrawal_start_years).trim() !== ""
+        ? num(i.withdrawal_start_years)
         : null,
   }));
   const investmentPlanningContext =

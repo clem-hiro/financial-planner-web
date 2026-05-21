@@ -23,6 +23,13 @@ export {
 } from "./investment-review";
 export type { InvestmentReviewTimestampRow } from "./investment-review";
 export {
+  CPF_RULES_REVIEW_MONTH,
+  CPF_RULES_VERSION,
+  cpfRulesReviewDedupeKey,
+  shouldPromptCpfRulesReview,
+} from "./cpf-rules-review";
+export type { CpfRulesReviewProfile } from "./cpf-rules-review";
+export {
   goalProgressRatio,
   estimateTimeToGoalStandalone,
 } from "./goal-standalone";

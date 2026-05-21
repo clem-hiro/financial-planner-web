@@ -1,17 +1,74 @@
 "use client";
 
 import { useActionState } from "react";
-import { useState } from "react";
-import { clearCpfBalanceAction, upsertCpfBalanceAction } from "@/server/actions";
+import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  clearCpfBalanceAction,
+  confirmCpfRulesReviewAction,
+  upsertCpfBalanceAction,
+} from "@/server/actions";
 import type { CpfBalanceRow } from "@/data/supabase/types";
 import { num } from "@/data/mappers";
+import { CPF_RULES_VERSION } from "@/domain/finance/cpf-rules-review";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };
 const numberInputClass =
   "w-full rounded border border-zinc-300 px-2 py-1.5 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
 
-export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
+function CpfRulesReviewPrompt({ disabled = false }: { disabled?: boolean }) {
+  const router = useRouter();
+  const submitLockRef = useRef(false);
+  const wrapped = async (prev: typeof initial): Promise<typeof initial> => {
+    if (submitLockRef.current) return prev;
+    submitLockRef.current = true;
+    try {
+      const res = await confirmCpfRulesReviewAction();
+      if (res.error === null) router.refresh();
+      return res;
+    } finally {
+      submitLockRef.current = false;
+    }
+  };
+  const [state, formAction, pending] = useActionState(wrapped, initial);
+
+  return (
+    <div
+      id="cpf-rules-review"
+      className="rounded-xl border border-sky-300/80 bg-sky-50 px-3.5 py-3 text-xs leading-relaxed text-sky-950"
+    >
+      <p className="font-semibold">Review CPF assumptions</p>
+      <p className="mt-1">
+        Calculations are using CPF rules baseline {CPF_RULES_VERSION}. Confirm
+        balances, age band, contribution assumptions, crediting rates, and retirement
+        sum assumptions (FRS/BRS/ERS on Home → Retirement) against current CPF guidance.
+      </p>
+      {state.error ? (
+        <p className="mt-2 text-red-700" role="alert">
+          {state.error}
+        </p>
+      ) : null}
+      <form action={formAction} className="mt-3 flex flex-wrap gap-2">
+        <button
+          type="submit"
+          disabled={pending || disabled}
+          className="rounded-full border border-sky-300 bg-white px-3 py-1.5 text-xs font-medium text-sky-950 transition hover:bg-sky-100/80 disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {pending ? "Saving…" : "CPF assumptions reviewed"}
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export function CpfBalancesForm({
+  row,
+  showRulesReviewPrompt = false,
+}: {
+  row: CpfBalanceRow | null;
+  showRulesReviewPrompt?: boolean;
+}) {
   const [state, action, pending] = useActionState(upsertCpfBalanceAction, initial);
   const [clearPending, setClearPending] = useState(false);
   const [showCpfisAdvanced, setShowCpfisAdvanced] = useState(() => {
@@ -24,6 +81,7 @@ export function CpfBalancesForm({ row }: { row: CpfBalanceRow | null }) {
 
   return (
     <div className="space-y-3">
+      {showRulesReviewPrompt ? <CpfRulesReviewPrompt /> : null}
       <form
         action={action}
         className="space-y-4"

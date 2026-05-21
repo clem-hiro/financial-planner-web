@@ -194,6 +194,8 @@ export const profilePatchSchema = z
       .optional(),
     last_salary_review_at: z.string().datetime().nullable().optional(),
     last_investment_review_at: z.string().datetime().nullable().optional(),
+    last_cpf_rules_review_at: z.string().datetime().nullable().optional(),
+    last_cpf_rules_review_version: z.string().min(1).nullable().optional(),
   })
   .superRefine((data, ctx) => {
     if (

@@ -58,6 +58,29 @@ describe("projectFutureValue (contribution phase)", () => {
     });
     expect(phased).toBeCloseTo(1400, 8);
   });
+
+  it("steps monthly contributions up annually when contribution growth is set", () => {
+    const stepped = projectFutureValue({
+      currentValue: 0,
+      monthlyContribution: 100,
+      annualReturn: 0,
+      months: 24,
+      contributionGrowthAnnual: 0.1,
+    });
+    expect(stepped).toBeCloseTo(12 * 100 + 12 * 110, 8);
+  });
+
+  it("applies planned withdrawals after the withdrawal start month", () => {
+    const drawdown = projectFutureValue({
+      currentValue: 10_000,
+      monthlyContribution: 0,
+      annualReturn: 0,
+      months: 12,
+      monthlyWithdrawal: 500,
+      withdrawalStartMonth: 6,
+    });
+    expect(drawdown).toBeCloseTo(7_000, 8);
+  });
 });
 
 describe("contributionMonthsLimitFromInvestmentRow", () => {
@@ -100,6 +123,9 @@ describe("futureValueInvestmentPortfolioAtMonth", () => {
         current_value: "5000",
         monthly_contribution: "100",
         expected_annual_return: "0.05",
+        contribution_growth_annual: "0",
+        withdrawal_monthly: "0",
+        withdrawal_start_years: null,
         created_at: ts,
         updated_at: ts,
       },
@@ -110,6 +136,9 @@ describe("futureValueInvestmentPortfolioAtMonth", () => {
         current_value: "3000",
         monthly_contribution: "0",
         expected_annual_return: "0.05",
+        contribution_growth_annual: "0",
+        withdrawal_monthly: "0",
+        withdrawal_start_years: null,
         created_at: ts,
         updated_at: ts,
       },
@@ -131,6 +160,35 @@ describe("futureValueInvestmentPortfolioAtMonth", () => {
     expect(futureValueInvestmentPortfolioAtMonth(rows, m, null)).toBeCloseTo(
       sum,
       6
+    );
+  });
+
+  it("sums variable contributions and account withdrawals", () => {
+    const ts = "2020-01-01T00:00:00.000Z";
+    const rows: InvestmentRow[] = [
+      {
+        id: "1",
+        user_id: "u",
+        name: "A",
+        current_value: "10000",
+        monthly_contribution: "100",
+        expected_annual_return: "0",
+        contribution_growth_annual: "0.1",
+        contribution_type: "until_retirement",
+        contribution_duration_years: null,
+        withdrawal_monthly: "500",
+        withdrawal_start_years: "2",
+        created_at: ts,
+        updated_at: ts,
+      },
+    ];
+    expect(futureValueInvestmentPortfolioAtMonth(rows, 24, 360)).toBeCloseTo(
+      12_520,
+      8
+    );
+    expect(futureValueInvestmentPortfolioAtMonth(rows, 25, 360)).toBeCloseTo(
+      12_141,
+      8
     );
   });
 });

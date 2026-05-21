@@ -54,6 +54,8 @@ const h = vi.hoisted(() => {
     salary_increment_month: null,
     last_salary_review_at: null,
     last_investment_review_at: null,
+    last_cpf_rules_review_at: null,
+    last_cpf_rules_review_version: null,
     created_at: "2025-01-01T00:00:00Z",
   };
   const investments: InvestmentRow[] = [
@@ -64,8 +66,11 @@ const h = vi.hoisted(() => {
       current_value: "10000",
       monthly_contribution: "500",
       expected_annual_return: "0.06",
+      contribution_growth_annual: "0",
       contribution_type: "until_retirement",
       contribution_duration_years: null,
+      withdrawal_monthly: "0",
+      withdrawal_start_years: null,
       created_at: "2025-01-01T00:00:00Z",
       updated_at: "2025-01-01T00:00:00Z",
     },

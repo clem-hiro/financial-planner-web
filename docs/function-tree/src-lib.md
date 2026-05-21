@@ -185,7 +185,7 @@ Classification: `regular`
 #### `revalidateSetupAndPlanning` — function, L12
 
 - calls: `[external] next`, `src/lib/planning-revalidate.ts#revalidatePlanningWorkspace`
-- called by: `src/app/api/expenses/[id]/route.ts#DELETE`, `src/app/api/expenses/[id]/route.ts#PATCH`, `src/app/api/expenses/route.ts#POST`, `src/app/api/income-tax/route.ts#PATCH`, `src/server/actions.ts#applyGuidedBudgetLinesAction`, `src/server/actions.ts#clearBudgetMonthOverrideAction`, `src/server/actions.ts#clearCpfBalanceAction`, `src/server/actions.ts#createBudgetLineAction`, `src/server/actions.ts#createGoalAction`, `src/server/actions.ts#createInvestmentAction`, `src/server/actions.ts#createLiabilityAction`, `src/server/actions.ts#deleteBudgetLineAction`, `src/server/actions.ts#deleteInvestmentAction`, `src/server/actions.ts#deleteLiabilityAction`, `src/server/actions.ts#setBudgetMonthOverrideAction`, `src/server/actions.ts#updateBudgetLineAmountAction`, `src/server/actions.ts#updateBudgetLineScheduleAction`, `src/server/actions.ts#updateGoalAction`, `src/server/actions.ts#updateInvestmentAction`, `src/server/actions.ts#updateLiabilityAction`, `src/server/actions.ts#upsertCpfBalanceAction`, `src/server/advisor-proposal-actions.ts#revalidateProposalViews`, `src/server/client-consent-actions.ts#recordAdvisorConsentAction`
+- called by: `src/app/api/expenses/[id]/route.ts#DELETE`, `src/app/api/expenses/[id]/route.ts#PATCH`, `src/app/api/expenses/route.ts#POST`, `src/app/api/income-tax/route.ts#PATCH`, `src/server/actions.ts#applyGuidedBudgetLinesAction`, `src/server/actions.ts#clearBudgetMonthOverrideAction`, `src/server/actions.ts#clearCpfBalanceAction`, `src/server/actions.ts#confirmCpfRulesReviewAction`, `src/server/actions.ts#confirmInvestmentReviewAction`, `src/server/actions.ts#createBudgetLineAction`, `src/server/actions.ts#createGoalAction`, `src/server/actions.ts#createInvestmentAction`, `src/server/actions.ts#createLiabilityAction`, `src/server/actions.ts#deleteBudgetLineAction`, `src/server/actions.ts#deleteInvestmentAction`, `src/server/actions.ts#deleteLiabilityAction`, `src/server/actions.ts#setBudgetMonthOverrideAction`, `src/server/actions.ts#updateBudgetLineAmountAction`, `src/server/actions.ts#updateBudgetLineScheduleAction`, `src/server/actions.ts#updateGoalAction`, `src/server/actions.ts#updateInvestmentAction`, `src/server/actions.ts#updateLiabilityAction`, `src/server/actions.ts#upsertCpfBalanceAction`, `src/server/advisor-proposal-actions.ts#revalidateProposalViews`, `src/server/client-consent-actions.ts#recordAdvisorConsentAction`
 
 ### `src/lib/planning-sections.ts` <a id="src-lib-planning-sections-ts"></a>
 
@@ -349,6 +349,6 @@ Classification: `regular`
 
 - called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/projection/route.ts#GET`, `src/data/dashboard.ts#getDashboardPayload`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
-#### `reliefAmount` — arrow, L321
+#### `reliefAmount` — arrow, L324
 
 - calls: `[external] zod`
