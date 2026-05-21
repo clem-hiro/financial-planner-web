@@ -16,3 +16,4 @@ Quick reference:
 - ClickUp IDs / field mapping: `.cursor/rules/project-context-clickup-sync.mdc`
 - Inventory: `PROJECT_CONTEXT.md`
 - Manual-only statuses: `READY TO TEST`, `TO BE DISCUSSED`, `TESTED BY DARREN`
+- **Every sub-task:** chat verdict (§4 C) + `clickup_update_task` description (§4 D), including **Not in repo** — never skip because unimplemented. Parent may stay **Shipped**; roll sub-task verdicts up in parent description.

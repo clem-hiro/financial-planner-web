@@ -30,10 +30,14 @@ The user provides a **ClickUp task URL or task ID** in the same message. If miss
 
 ## 3. Sub-tasks
 
-For **each sub-task** (especially `Open` / `in progress`):
+For **every** sub-task on the parent (fetch full detail if the parent payload is thin), regardless of ClickUp status:
 
 - Verify or implement; infer intent from title + parent if description is empty.
-- Produce **separate** engineering verdict + business UAT summary (see §4).
+- Assign an engineering verdict: **Shipped** / **Partial** / **Not in repo** (same labels as the parent).
+- Produce **separate** engineering verdict + business UAT summary in chat (§4 C) — **never skip** a sub-task because it is unimplemented.
+- **Always** call `clickup_update_task` on each sub-task description (§4 D), including when **Not in repo**: record the review date, what was checked in code, and that UAT for this sub-task is N/A until built.
+
+**Parent vs sub-task scope:** A parent may be **Shipped** while sub-tasks remain **Not in repo**. Do not mark the parent as incomplete solely because a sub-task is backlog; roll sub-task status up in the parent Implementation log (see §4 D).
 
 ## 4. Chat deliverables
 
@@ -54,15 +58,17 @@ Plain language:
 
 ### C. Sub-tasks
 
-Repeat **A + B** per sub-task (clear headings with task name + link).
+Repeat **A + B** per sub-task (clear headings with task name + link). Lead with the verdict line, e.g. `**Status: Not in repo**` when applicable, so skimmers see implementation state immediately.
 
 ### D. ClickUp sync (default **on**; skip only if user says “skip ClickUp”)
 
-Update **description** on parent + every sub-task via `clickup_update_task`. Preserve or refine original “What it does” / examples, then add:
+Update **description** on parent + **every** sub-task via `clickup_update_task` (mandatory when ClickUp sync is on — including **Not in repo** sub-tasks). Preserve or refine original “What it does” / examples, then add:
 
 ```
 ---
 Implementation log
+
+Engineering verdict (review DD MMM YYYY): Shipped | Partial | Not in repo
 
 Initial ship — DD MMM YYYY
 • …
@@ -85,6 +91,10 @@ Key files
 Next step for QA
 …
 ```
+
+**Sub-tasks (Not in repo):** set `Engineering verdict` to **Not in repo**; `Initial ship` may be `n/a`; `Gap closure` documents the code review; `How to test (UAT)` is `N/A until shipped` with a pointer to parent UAT; `Next step for QA` is product/backlog (not tester execution).
+
+**Parent rollup:** when sub-tasks exist, add a **Sub-tasks** subsection under `Gaps from roadmap — status` listing each sub-task by name + link + verdict (✅ Shipped / ⏳ Not in repo / ⏳ Partial).
 
 **Dates:** prefer task `date_created` for initial ship; git log on key files if unclear; session date for new work.
 
