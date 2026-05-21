@@ -93,7 +93,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | Section | Status | Notes |
 |---------|--------|--------|
 | **Overview** | **Partial** | Live snapshot metrics from dashboard payload; roadmap cards for advisor collaboration extensions and AI layer are **planned**. |
-| **Cash flow** | **Shipped** | Budget workspace + progressive income/assumptions (`CashFlowPlanningSection`, `BudgetPlanningView`). |
+| **Cash flow** | **Shipped** | Budget workspace + progressive income/assumptions (`CashFlowPlanningSection`, `BudgetPlanningView`). Incomplete-setup checklist banner on budget/cash-flow when income or monthly plan is missing (`cash-flow-setup-guidance.ts`, `CashFlowSetupGuidanceBanner`). |
 | **Wealth** | **Shipped** | Same underlying data as Setup: investments, CPF, cash/debts, housing, vehicles. Debts support loan categories, repayment estimates (amortized / flat / revolving), budget sync, and payoff-aware projections (`DebtPlanningPanels`, `debt-repayment.ts`). |
 | **Protection** | **Partial** | Emergency-fund **recommendation** + link to Wealth for cash; insurance, dependents, estate, risk cards are **planned** (`ProtectionPlanningSection`). |
 | **Future** | **Partial** | **Goals** CRUD is **shipped** (`FinancialGoalsPanels`); dedicated “retirement studio”, scenario compare, tax lens, exports, vault are **planned** cards (Home already shows projection **charts**). |
@@ -405,4 +405,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 - **Not in scope:** live CPF APIs, actuarial CPF LIFE, exhaustive withdrawal rules.
 - **Future:** persist advisor/client assumption presets; tie RA balance into retirement sustainability / spend coverage; inflation on payouts.
 
-_Last reviewed (2026-05-22): **Cash account grouping + balance history** — liquidity buckets per account and snapshot history on save. Prior (2026-05-21): **Investment variable contribution + withdrawal planning**; **CPF rules review reminders**._
+_Last reviewed (2026-05-22): **Cash-flow incomplete-setup guidance** — checklist banner on Planning Cash Flow and Setup Budget when income or monthly plan is missing. Prior same day: **Cash account grouping + balance history**._
