@@ -24,7 +24,9 @@ The user provides a **ClickUp task URL or task ID** in the same message. If miss
 
 - Confirm end-to-end implementation (UI → server/data → domain; tests if present).
 - Compare task **gaps / next steps** to the codebase.
+- **Implement** missing scope in the same session when the task or sub-task is **Not in repo** or **Partial** — including **Open sub-tasks under a Shipped parent**. Do not stop at documentation because the parent is done.
 - **Implement** missing gaps (minimal diff; existing conventions; consult `AGENTS.md` skills when touching migrations, actions, `src/app/`, etc.).
+- Ask the user before building only when scope is ambiguous, needs a product call (taxonomy, compliance), or is clearly out of MVP (e.g. bank feed syncing).
 - Run **relevant unit tests**; report pass/fail briefly.
 - State deliberate limitations (illustrative models, not advice, partial scope).
 
@@ -35,7 +37,8 @@ For **every** sub-task on the parent (fetch full detail if the parent payload is
 - Verify or implement; infer intent from title + parent if description is empty.
 - Assign an engineering verdict: **Shipped** / **Partial** / **Not in repo** (same labels as the parent).
 - Produce **separate** engineering verdict + business UAT summary in chat (§4 C) — **never skip** a sub-task because it is unimplemented.
-- **Always** call `clickup_update_task` on each sub-task description (§4 D), including when **Not in repo**: record the review date, what was checked in code, and that UAT for this sub-task is N/A until built.
+- If **Not in repo** or **Partial**: **implement** first (§2), then **always** call `clickup_update_task` on the sub-task with the post-implementation verdict. Only leave **Not in repo** without code when the user asked to skip implementation or scope needs a product decision.
+- **Always** call `clickup_update_task` on each sub-task description (§4 D) after verification or implementation.
 
 **Parent vs sub-task scope:** A parent may be **Shipped** while sub-tasks remain **Not in repo**. Do not mark the parent as incomplete solely because a sub-task is backlog; roll sub-task status up in the parent Implementation log (see §4 D).
 
