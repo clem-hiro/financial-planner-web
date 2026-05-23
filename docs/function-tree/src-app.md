@@ -15,7 +15,7 @@
 | [`src/app/(app)/advisor/access-keys/page.tsx`](#src-app-app-advisor-access-keys-page-tsx) | `page` | 1 | 9 |
 | [`src/app/(app)/advisor/activity/page.tsx`](#src-app-app-advisor-activity-page-tsx) | `page` | 1 | 1 |
 | [`src/app/(app)/advisor/buy-keys/page.tsx`](#src-app-app-advisor-buy-keys-page-tsx) | `page` | 2 | 13 |
-| [`src/app/(app)/advisor/client/[id]/page.tsx`](#src-app-app-advisor-client-id-page-tsx) | `page` | 2 | 29 |
+| [`src/app/(app)/advisor/client/[id]/page.tsx`](#src-app-app-advisor-client-id-page-tsx) | `page` | 2 | 30 |
 | [`src/app/(app)/advisor/clients/page.tsx`](#src-app-app-advisor-clients-page-tsx) | `page` | 1 | 10 |
 | [`src/app/(app)/advisor/layout.tsx`](#src-app-app-advisor-layout-tsx) | `layout` | 1 | 1 |
 | [`src/app/(app)/advisor/opportunities/page.tsx`](#src-app-app-advisor-opportunities-page-tsx) | `page` | 1 | 1 |
@@ -126,14 +126,14 @@ Classification: `page`
 
 Classification: `page`
 
-#### `identityOnlyProfile` — function, L48
+#### `identityOnlyProfile` — function, L49
 
 - called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`
 
-#### `AdvisorClientDetailPage` — component, L88
+#### `AdvisorClientDetailPage` — component, L89
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/app/(app)/advisor/client/[id]/page.tsx#identityOnlyProfile`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/repositories/advisor-clients.ts#advisorCanReadClient`, `src/data/repositories/advisor-clients.ts#getClientProfileForAdvisor`, `src/data/repositories/advisor-proposals.ts#getDraftProposalForClient`, `src/data/repositories/advisor-proposals.ts#getPendingProposalForClient`, `src/data/repositories/advisor-proposals.ts#getProposalById`, `src/data/repositories/advisor-proposals.ts#listChangesForProposal`, `src/data/repositories/advisor-proposals.ts#listProposalsForAdvisorClient`, `src/data/repositories/budget-lines.ts#advisorReadBudgetLines`, `src/data/repositories/goals.ts#advisorReadGoals`, `src/data/repositories/investments.ts#advisorReadInvestments`, `src/data/repositories/profiles.ts#advisorReadProfile`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/advisor-proposals/overlay-gate.ts#resolveOverlayForViewer`, `src/lib/dates.ts#formatYearMonth`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/profile-role.ts#isAdvisor`
-- renders: `src/features/advisor/AdvisorClientDetailShell.tsx#AdvisorClientDetailShell`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView`, `src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`
+- renders: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`, `src/features/advisor/AdvisorClientDetailShell.tsx#AdvisorClientDetailShell`, `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`, `src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView`, `src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`
 
 ### `src/app/(app)/advisor/clients/page.tsx` <a id="src-app-app-advisor-clients-page-tsx"></a>
 

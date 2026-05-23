@@ -11,7 +11,7 @@
 | `src/app/(app)/advisor/access-keys/page.tsx` | `src/app` | `page` | 1 | 9 |
 | `src/app/(app)/advisor/activity/page.tsx` | `src/app` | `page` | 1 | 1 |
 | `src/app/(app)/advisor/buy-keys/page.tsx` | `src/app` | `page` | 2 | 13 |
-| `src/app/(app)/advisor/client/[id]/page.tsx` | `src/app` | `page` | 2 | 29 |
+| `src/app/(app)/advisor/client/[id]/page.tsx` | `src/app` | `page` | 2 | 30 |
 | `src/app/(app)/advisor/clients/page.tsx` | `src/app` | `page` | 1 | 10 |
 | `src/app/(app)/advisor/layout.tsx` | `src/app` | `layout` | 1 | 1 |
 | `src/app/(app)/advisor/opportunities/page.tsx` | `src/app` | `page` | 1 | 1 |
@@ -201,9 +201,13 @@
 | `src/features/advisor/AdvisorAccessKeysGenerateForm.tsx` | `src/features` | `client-component` | 1 | 5 |
 | `src/features/advisor/AdvisorAccessKeysSection.tsx` | `src/features` | `regular` | 2 | 7 |
 | `src/features/advisor/AdvisorBuyKeysSection.tsx` | `src/features` | `client-component` | 4 | 17 |
+| `src/features/advisor/AdvisorClientCompose-split.test.tsx` | `src/features` | `regular` | 3 | 5 |
+| `src/features/advisor/AdvisorClientCompose.tsx` | `src/features` | `regular` | 1 | 19 |
 | `src/features/advisor/AdvisorClientDetailShell.tsx` | `src/features` | `regular` | 1 | 2 |
+| `src/features/advisor/AdvisorClientHeader.tsx` | `src/features` | `regular` | 2 | 4 |
+| `src/features/advisor/AdvisorClientOverview.tsx` | `src/features` | `regular` | 1 | 14 |
 | `src/features/advisor/AdvisorClientsBoard.tsx` | `src/features` | `regular` | 4 | 10 |
-| `src/features/advisor/AdvisorClientWorkspace.tsx` | `src/features` | `regular` | 2 | 22 |
+| `src/features/advisor/AdvisorConsentRequired.tsx` | `src/features` | `regular` | 1 | 2 |
 | `src/features/advisor/AdvisorKeyQrShareButton.tsx` | `src/features` | `client-component` | 4 | 22 |
 | `src/features/advisor/AdvisorPhoneVerificationForm.tsx` | `src/features` | `client-component` | 1 | 16 |
 | `src/features/advisor/AdvisorProposalDetailView.tsx` | `src/features` | `regular` | 1 | 11 |

@@ -9,40 +9,49 @@ import {
   appTabRailClass,
 } from "@/ui/app-tab-styles";
 
-export type AdvisorClientDetailView = "overview" | "proposals" | "proposalDetail";
+export type AdvisorClientDetailView =
+  | "overview"
+  | "compose"
+  | "proposals"
+  | "proposalDetail";
 
-const TABS: readonly { id: "overview" | "proposals"; label: string }[] = [
+const TABS: readonly { id: "overview" | "compose" | "proposals"; label: string }[] = [
   { id: "overview", label: "Overview" },
+  { id: "compose", label: "Compose" },
   { id: "proposals", label: "Proposals" },
 ];
 
 /**
  * Shared chrome for the advisor client-detail page: `← Clients` back link
- * + Overview | Proposals sub-tabs (query-param routing on the same `[id]`
- * route, mirroring SetupTabsNav). The active view's body is supplied as one
- * of the `overview` / `proposals` / `proposalDetail` slots; the per-proposal
- * detail keeps the Proposals tab active. Server-renderable (no client JS) —
- * interactive children pass through.
+ * + Overview | Compose | Proposals sub-tabs (query-param routing on the same
+ * `[id]` route, mirroring SetupTabsNav). The active view's body is supplied as
+ * one of the `overview` / `compose` / `proposals` / `proposalDetail` slots; the
+ * per-proposal detail keeps the Proposals tab active. Server-renderable (no
+ * client JS) — interactive children pass through.
  */
 export function AdvisorClientDetailShell({
   clientId,
   activeView,
   overview,
+  compose,
   proposals,
   proposalDetail,
 }: {
   clientId: string;
   activeView: AdvisorClientDetailView;
   overview?: ReactNode;
+  compose?: ReactNode;
   proposals?: ReactNode;
   proposalDetail?: ReactNode;
 }) {
   const body =
     activeView === "overview"
       ? overview
-      : activeView === "proposalDetail"
-        ? proposalDetail
-        : proposals;
+      : activeView === "compose"
+        ? compose
+        : activeView === "proposalDetail"
+          ? proposalDetail
+          : proposals;
 
   return (
     <div className="space-y-8 lg:space-y-10">

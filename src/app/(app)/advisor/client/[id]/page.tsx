@@ -20,8 +20,9 @@ import type { ProfileRow } from "@/data/supabase/types";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { resolveOverlayForViewer } from "@/domain/advisor-proposals/overlay-gate";
+import { AdvisorClientCompose } from "@/features/advisor/AdvisorClientCompose";
 import { AdvisorClientDetailShell } from "@/features/advisor/AdvisorClientDetailShell";
-import { AdvisorClientWorkspace } from "@/features/advisor/AdvisorClientWorkspace";
+import { AdvisorClientOverview } from "@/features/advisor/AdvisorClientOverview";
 import { AdvisorProposalDetailView } from "@/features/advisor/AdvisorProposalDetailView";
 import { AdvisorProposalsTable } from "@/features/advisor/AdvisorProposalsTable";
 import { DashboardRetirementSection } from "@/features/dashboard/DashboardRetirementSection";
@@ -97,7 +98,12 @@ export default async function AdvisorClientDetailPage({
 
   const { id: clientId } = await params;
   const sp = await searchParams;
-  const view = sp.view === "proposals" ? "proposals" : "overview";
+  const view =
+    sp.view === "proposals"
+      ? "proposals"
+      : sp.view === "compose"
+        ? "compose"
+        : "overview";
   const focusedProposalId =
     typeof sp.p === "string" && sp.p.trim() ? sp.p.trim() : null;
 
@@ -275,12 +281,36 @@ export default async function AdvisorClientDetailPage({
       })
     : payload;
 
+  if (view === "compose") {
+    return (
+      <AdvisorClientDetailShell
+        clientId={clientId}
+        activeView="compose"
+        compose={
+          <AdvisorClientCompose
+            clientId={clientId}
+            consentGranted={consentGranted}
+            profile={workspaceProfile}
+            payload={payload}
+            goals={goals}
+            budgetLines={budgetLines}
+            investments={investments}
+            month={month}
+            draftProposalId={draftId}
+            draftChanges={draftChanges}
+            hasPendingProposal={!!pendingProposal}
+          />
+        }
+      />
+    );
+  }
+
   return (
     <AdvisorClientDetailShell
       clientId={clientId}
       activeView="overview"
       overview={
-        <AdvisorClientWorkspace
+        <AdvisorClientOverview
           clientId={clientId}
           consentGranted={consentGranted}
           profile={workspaceProfile}
@@ -291,9 +321,7 @@ export default async function AdvisorClientDetailPage({
           budgetLines={budgetLines}
           investments={investments}
           month={month}
-          draftProposalId={draftId}
-          draftChanges={draftChanges}
-          hasPendingProposal={!!pendingProposal}
+          draftChangeCount={draftChanges.length}
         />
       }
     />

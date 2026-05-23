@@ -2,7 +2,7 @@
 
 # Function tree — index
 
-Generated: `2026-05-23T03:38:42.992Z` · Schema: `function-tree/v1`
+Generated: `2026-05-23T04:58:24.133Z` · Schema: `function-tree/v1`
 
 ## How to use this file
 
@@ -18,13 +18,13 @@ This artifact is a derived view, not a contract. The authoritative architectural
 
 | Root | File | Modules | Top-level fns | Classes | Methods | Edges out |
 | --- | --- | ---: | ---: | ---: | ---: | ---: |
-| `src/app` | [`src-app.md`](./src-app.md) | 47 | 54 | 0 | 0 | 413 |
+| `src/app` | [`src-app.md`](./src-app.md) | 47 | 54 | 0 | 0 | 414 |
 | `src/components` | [`src-components.md`](./src-components.md) | 3 | 3 | 0 | 0 | 0 |
 | `src/config` | [`src-config.md`](./src-config.md) | 1 | 0 | 0 | 0 | 0 |
 | `src/content` | [`src-content.md`](./src-content.md) | 1 | 1 | 0 | 0 | 0 |
 | `src/data` | [`src-data.md`](./src-data.md) | 44 | 175 | 0 | 0 | 637 |
 | `src/domain` | [`src-domain.md`](./src-domain.md) | 97 | 292 | 0 | 0 | 335 |
-| `src/features` | [`src-features.md`](./src-features.md) | 124 | 233 | 0 | 0 | 1112 |
+| `src/features` | [`src-features.md`](./src-features.md) | 128 | 239 | 0 | 0 | 1134 |
 | `src/lib` | [`src-lib.md`](./src-lib.md) | 23 | 49 | 0 | 0 | 40 |
 | `src/server` | [`src-server.md`](./src-server.md) | 30 | 111 | 0 | 0 | 553 |
 | `src/ui` | [`src-ui.md`](./src-ui.md) | 17 | 16 | 0 | 0 | 14 |

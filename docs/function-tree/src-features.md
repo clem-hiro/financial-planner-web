@@ -2,7 +2,7 @@
 
 # Function tree — `src/features`
 
-124 module(s).
+128 module(s).
 
 ## Modules
 
@@ -12,9 +12,13 @@
 | [`src/features/advisor/AdvisorAccessKeysGenerateForm.tsx`](#src-features-advisor-advisoraccesskeysgenerateform-tsx) | `client-component` | 1 | 5 |
 | [`src/features/advisor/AdvisorAccessKeysSection.tsx`](#src-features-advisor-advisoraccesskeyssection-tsx) | `regular` | 2 | 7 |
 | [`src/features/advisor/AdvisorBuyKeysSection.tsx`](#src-features-advisor-advisorbuykeyssection-tsx) | `client-component` | 4 | 17 |
+| [`src/features/advisor/AdvisorClientCompose-split.test.tsx`](#src-features-advisor-advisorclientcompose-split-test-tsx) | `regular` | 3 | 5 |
+| [`src/features/advisor/AdvisorClientCompose.tsx`](#src-features-advisor-advisorclientcompose-tsx) | `regular` | 1 | 19 |
 | [`src/features/advisor/AdvisorClientDetailShell.tsx`](#src-features-advisor-advisorclientdetailshell-tsx) | `regular` | 1 | 2 |
+| [`src/features/advisor/AdvisorClientHeader.tsx`](#src-features-advisor-advisorclientheader-tsx) | `regular` | 2 | 4 |
+| [`src/features/advisor/AdvisorClientOverview.tsx`](#src-features-advisor-advisorclientoverview-tsx) | `regular` | 1 | 14 |
 | [`src/features/advisor/AdvisorClientsBoard.tsx`](#src-features-advisor-advisorclientsboard-tsx) | `regular` | 4 | 10 |
-| [`src/features/advisor/AdvisorClientWorkspace.tsx`](#src-features-advisor-advisorclientworkspace-tsx) | `regular` | 2 | 22 |
+| [`src/features/advisor/AdvisorConsentRequired.tsx`](#src-features-advisor-advisorconsentrequired-tsx) | `regular` | 1 | 2 |
 | [`src/features/advisor/AdvisorKeyQrShareButton.tsx`](#src-features-advisor-advisorkeyqrsharebutton-tsx) | `client-component` | 4 | 22 |
 | [`src/features/advisor/AdvisorPhoneVerificationForm.tsx`](#src-features-advisor-advisorphoneverificationform-tsx) | `client-component` | 1 | 16 |
 | [`src/features/advisor/AdvisorProposalDetailView.tsx`](#src-features-advisor-advisorproposaldetailview-tsx) | `regular` | 1 | 11 |
@@ -141,15 +145,15 @@ Classification: `regular`
 
 #### `AdvisorBadge` — component, L11
 
-- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard`, `src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView`, `src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable`, `src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner`, `src/features/proposals/ClientProposalsView.tsx#ClientProposalsView`
+- rendered by: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`, `src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader`, `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`, `src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard`, `src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired`, `src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView`, `src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable`, `src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner`, `src/features/proposals/ClientProposalsView.tsx#ClientProposalsView`
 
 #### `AdvisorSection` — component, L27
 
-- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
+- rendered by: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`, `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`
 
 #### `AdvisorComingSoonPanel` — component, L66
 
-- rendered by: `src/app/(app)/advisor/activity/page.tsx#AdvisorActivityPage`, `src/app/(app)/advisor/opportunities/page.tsx#AdvisorOpportunitiesPage`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard`
+- rendered by: `src/app/(app)/advisor/activity/page.tsx#AdvisorActivityPage`, `src/app/(app)/advisor/opportunities/page.tsx#AdvisorOpportunitiesPage`, `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`, `src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard`, `src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired`
 
 ### `src/features/advisor/AdvisorAccessKeysGenerateForm.tsx` <a id="src-features-advisor-advisoraccesskeysgenerateform-tsx"></a>
 
@@ -197,14 +201,65 @@ Classification: `client-component`
 - rendered by: `src/app/(app)/advisor/buy-keys/page.tsx#AdvisorBuyKeysPage`
 - unresolved: 7
 
+### `src/features/advisor/AdvisorClientCompose-split.test.tsx` <a id="src-features-advisor-advisorclientcompose-split-test-tsx"></a>
+
+Classification: `regular`
+
+#### `profile` — function, L15
+
+- called by: `src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview`
+
+#### `payload` — function, L55
+
+- called by: `src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview`
+
+#### `renderOverview` — function, L100
+
+- calls: `[external] react-dom`, `src/features/advisor/AdvisorClientCompose-split.test.tsx#payload`, `src/features/advisor/AdvisorClientCompose-split.test.tsx#profile`
+- renders: `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`, `src/features/help/methodology-context.tsx#MethodologyProvider`
+
+### `src/features/advisor/AdvisorClientCompose.tsx` <a id="src-features-advisor-advisorclientcompose-tsx"></a>
+
+Classification: `regular`
+
+#### `AdvisorClientCompose` — component, L34
+
+- calls: `src/data/mappers.ts#num`, `src/lib/validation.ts#birthDateIsValidPast`, `src/ui/lib/format.ts#formatCurrency`
+- renders: `src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader`, `src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/advisor/AdvisorProposeRemovalButton.tsx#AdvisorProposeRemovalButton`, `src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection`, `src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm`, `src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm`, `src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx#AdvisorNewBudgetLineForm`, `src/features/advisor/forms/AdvisorNewGoalForm.tsx#AdvisorNewGoalForm`, `src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`, `src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail`, `src/ui/CollapsiblePaneRail.tsx#CollapsiblePane`
+- rendered by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`
+
 ### `src/features/advisor/AdvisorClientDetailShell.tsx` <a id="src-features-advisor-advisorclientdetailshell-tsx"></a>
 
 Classification: `regular`
 
-#### `AdvisorClientDetailShell` — component, L27
+#### `AdvisorClientDetailShell` — component, L32
 
 - renders: `[external] next`
 - rendered by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`
+
+### `src/features/advisor/AdvisorClientHeader.tsx` <a id="src-features-advisor-advisorclientheader-tsx"></a>
+
+Classification: `regular`
+
+#### `onboardingLabel` — function, L8
+
+- called by: `src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader`
+
+#### `AdvisorClientHeader` — component, L16
+
+- calls: `src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals`, `src/features/advisor/AdvisorClientHeader.tsx#onboardingLabel`, `src/ui/lib/format.ts#formatCurrency`
+- renders: `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge`
+- rendered by: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`, `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`
+
+### `src/features/advisor/AdvisorClientOverview.tsx` <a id="src-features-advisor-advisorclientoverview-tsx"></a>
+
+Classification: `regular`
+
+#### `AdvisorClientOverview` — component, L18
+
+- calls: `src/data/mappers.ts#num`, `src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals`, `src/ui/lib/format.ts#formatCurrency`
+- renders: `[external] next`, `src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader`, `src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorComingSoonPanel`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare`, `src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail`, `src/ui/CollapsiblePaneRail.tsx#CollapsiblePane`
+- rendered by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview`
 
 ### `src/features/advisor/AdvisorClientsBoard.tsx` <a id="src-features-advisor-advisorclientsboard-tsx"></a>
 
@@ -228,19 +283,14 @@ Classification: `regular`
 - renders: `[external] next`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorComingSoonPanel`
 - rendered by: `src/app/(app)/advisor/clients/page.tsx#AdvisorClientsPage`
 
-### `src/features/advisor/AdvisorClientWorkspace.tsx` <a id="src-features-advisor-advisorclientworkspace-tsx"></a>
+### `src/features/advisor/AdvisorConsentRequired.tsx` <a id="src-features-advisor-advisorconsentrequired-tsx"></a>
 
 Classification: `regular`
 
-#### `onboardingLabel` — function, L32
+#### `AdvisorConsentRequired` — component, L11
 
-- called by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
-
-#### `AdvisorClientWorkspace` — component, L38
-
-- calls: `src/data/mappers.ts#num`, `src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals`, `src/features/advisor/AdvisorClientWorkspace.tsx#onboardingLabel`, `src/lib/validation.ts#birthDateIsValidPast`, `src/ui/lib/format.ts#formatCurrency`
-- renders: `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/advisor/AdvisorProposeRemovalButton.tsx#AdvisorProposeRemovalButton`, `src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorComingSoonPanel`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection`, `src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm`, `src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm`, `src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx#AdvisorNewBudgetLineForm`, `src/features/advisor/forms/AdvisorNewGoalForm.tsx#AdvisorNewGoalForm`, `src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`, `src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare`, `src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail`, `src/ui/CollapsiblePaneRail.tsx#CollapsiblePane`
-- rendered by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`
+- renders: `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorComingSoonPanel`
+- rendered by: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`, `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`
 
 ### `src/features/advisor/AdvisorKeyQrShareButton.tsx` <a id="src-features-advisor-advisorkeyqrsharebutton-tsx"></a>
 
@@ -298,7 +348,7 @@ Classification: `client-component`
 
 - calls: `[external] next`, `[external] react`, `src/domain/advisor-proposals/field-registry.ts#fieldMeta`, `src/domain/advisor-proposals/format-display.ts#formatProposalDisplayValue`, `src/domain/advisor-proposals/group-changes.ts#groupChangesBySection`, `src/domain/advisor-proposals/sections.ts#sectionLabel`, `src/server/advisor-proposal-actions.ts#removeAdvisorProposalEntityAction`, `src/server/advisor-proposal-actions.ts#removeAdvisorProposalSectionAction`
 - renders: `src/features/advisor/AdvisorProposalDraftPanel.tsx#DraftSummaryHeader`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#RemoveItemButton`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#RemoveSectionButton`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
-- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
+- rendered by: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`
 - unresolved: 4
 
 #### `DraftSummaryHeader` — component, L212 _(client-component)_
@@ -340,7 +390,7 @@ Classification: `client-component`
 
 - calls: `[external] next`, `[external] react`
 - renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
-- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
+- rendered by: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`
 - unresolved: 5
 
 ### `src/features/advisor/AdvisorSuggestionModeBanner.tsx` <a id="src-features-advisor-advisorsuggestionmodebanner-tsx"></a>
@@ -350,7 +400,7 @@ Classification: `regular`
 #### `AdvisorSuggestionModeBanner` — component, L3
 
 - renders: `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge`
-- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
+- rendered by: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`
 
 ### `src/features/advisor/AdvisorWorkspaceSidebar.tsx` <a id="src-features-advisor-advisorworkspacesidebar-tsx"></a>
 
@@ -385,7 +435,7 @@ Classification: `client-component`
 
 - calls: `[external] react`, `src/features/advisor/use-advisor-proposal-refresh.ts#useAdvisorProposalRefresh`
 - renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
-- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
+- rendered by: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`
 
 ### `src/features/advisor/forms/AdvisorGoalContributionForm.tsx` <a id="src-features-advisor-forms-advisorgoalcontributionform-tsx"></a>
 
@@ -395,7 +445,7 @@ Classification: `client-component`
 
 - calls: `[external] react`, `src/features/advisor/use-advisor-proposal-refresh.ts#useAdvisorProposalRefresh`
 - renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
-- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
+- rendered by: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`
 
 ### `src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx` <a id="src-features-advisor-forms-advisornewbudgetlineform-tsx"></a>
 
@@ -405,7 +455,7 @@ Classification: `client-component`
 
 - calls: `[external] react`, `src/features/advisor/use-advisor-proposal-refresh.ts#useAdvisorProposalRefresh`
 - renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
-- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
+- rendered by: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`
 
 ### `src/features/advisor/forms/AdvisorNewGoalForm.tsx` <a id="src-features-advisor-forms-advisornewgoalform-tsx"></a>
 
@@ -415,7 +465,7 @@ Classification: `client-component`
 
 - calls: `[external] react`, `src/features/advisor/use-advisor-proposal-refresh.ts#useAdvisorProposalRefresh`
 - renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
-- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
+- rendered by: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`
 
 ### `src/features/advisor/forms/AdvisorProfilePatchForm.tsx` <a id="src-features-advisor-forms-advisorprofilepatchform-tsx"></a>
 
@@ -425,7 +475,7 @@ Classification: `client-component`
 
 - calls: `[external] react`, `src/features/advisor/use-advisor-proposal-refresh.ts#useAdvisorProposalRefresh`
 - renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
-- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
+- rendered by: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`
 
 ### `src/features/advisor/use-advisor-proposal-refresh.ts` <a id="src-features-advisor-use-advisor-proposal-refresh-ts"></a>
 
@@ -903,7 +953,7 @@ Classification: `regular`
 
 - calls: `src/ui/lib/format.ts#formatCurrency`, `src/ui/lib/format.ts#formatPercent`
 - renders: `[external] next`, `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart`, `src/features/dashboard/CpfProjectionByAgeChart.tsx#CpfProjectionByAgeChart`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/ui/InfoTooltip.tsx#InfoTooltip`
-- rendered by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
+- rendered by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`, `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`
 
 ### `src/features/dashboard/DashboardSubnav.tsx` <a id="src-features-dashboard-dashboardsubnav-tsx"></a>
 
@@ -1311,7 +1361,7 @@ Classification: `client-component`
 
 - calls: `src/domain/finance/investment-review.ts#investmentRowIsStale`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentReviewPrompt`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
-- rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
+- rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
 ### `src/features/goals/InvestmentForm.tsx` <a id="src-features-goals-investmentform-tsx"></a>
 
@@ -1321,7 +1371,7 @@ Classification: `client-component`
 
 - calls: `[external] next`, `[external] react`
 - renders: `src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
-- rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
+- rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 - unresolved: 3
 
 ### `src/features/goals/VehiclesPanel.tsx` <a id="src-features-goals-vehiclespanel-tsx"></a>
@@ -1389,7 +1439,7 @@ Classification: `client-component`
 
 - calls: `[external] react`
 - renders: `[external] react`
-- rendered by: `src/features/app-shell/AppShell.tsx#AppShell`
+- rendered by: `src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview`, `src/features/app-shell/AppShell.tsx#AppShell`
 - unresolved: 3
 
 #### `useMethodology` — function, L59
@@ -1757,10 +1807,10 @@ Classification: `regular`
 
 Classification: `client-component`
 
-#### `ProposalProjectionCompare` — component, L10 _(client-component)_
+#### `ProposalProjectionCompare` — component, L12 _(client-component)_
 
 - calls: `[external] react`
-- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
+- rendered by: `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`, `src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
 - unresolved: 2
 
 ### `src/features/proposals/ProposalReviewActions.test.tsx` <a id="src-features-proposals-proposalreviewactions-test-tsx"></a>

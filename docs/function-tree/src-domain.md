@@ -465,7 +465,7 @@ Classification: `regular`
 #### `advisorClientWorkspaceSignals` — function, L133
 
 - calls: `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/domain/finance/advisor-client-health.ts#advisorClientRosterSignals`, `src/lib/dates.ts#formatYearMonth`
-- called by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
+- called by: `src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader`, `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`
 
 ### `src/domain/finance/age-asset-projection.test.ts` <a id="src-domain-finance-age-asset-projection-test-ts"></a>
 

@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-05-23T03:38:42.992Z",
+  "generated_at": "2026-05-23T04:58:24.133Z",
   "roots": [
     "src/app",
     "src/components",
@@ -308,7 +308,7 @@
           "id": "src/app/(app)/advisor/client/[id]/page.tsx#identityOnlyProfile",
           "name": "identityOnlyProfile",
           "kind": "function",
-          "line": 48,
+          "line": 49,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -318,7 +318,7 @@
           "id": "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
           "name": "AdvisorClientDetailPage",
           "kind": "component",
-          "line": 88,
+          "line": 89,
           "exported": true,
           "classification": [],
           "edges": [
@@ -436,7 +436,11 @@
             },
             {
               "kind": "renders",
-              "target": "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
+              "target": "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview"
             }
           ],
           "unresolved": 0
@@ -13112,6 +13116,162 @@
       ]
     },
     {
+      "path": "src/features/advisor/AdvisorClientCompose-split.test.tsx",
+      "root": "src/features",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/features/advisor/AdvisorClientCompose-split.test.tsx#profile",
+          "name": "profile",
+          "kind": "function",
+          "line": 15,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/advisor/AdvisorClientCompose-split.test.tsx#payload",
+          "name": "payload",
+          "kind": "function",
+          "line": 55,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview",
+          "name": "renderOverview",
+          "kind": "function",
+          "line": 100,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "react-dom"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/help/methodology-context.tsx#MethodologyProvider"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/advisor/AdvisorClientCompose-split.test.tsx#profile"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/advisor/AdvisorClientCompose-split.test.tsx#payload"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/features/advisor/AdvisorClientCompose.tsx",
+      "root": "src/features",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
+          "name": "AdvisorClientCompose",
+          "kind": "component",
+          "line": 34,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/mappers.ts#num"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/validation.ts#birthDateIsValidPast"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm"
+            },
+            {
+              "kind": "calls",
+              "target": "src/ui/lib/format.ts#formatCurrency"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/AdvisorProposeRemovalButton.tsx#AdvisorProposeRemovalButton"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/forms/AdvisorNewGoalForm.tsx#AdvisorNewGoalForm"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx#AdvisorNewBudgetLineForm"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/goals/InvestmentForm.tsx#InvestmentForm"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList"
+            },
+            {
+              "kind": "renders",
+              "target": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail"
+            },
+            {
+              "kind": "renders",
+              "target": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePane"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/features/advisor/AdvisorClientDetailShell.tsx",
       "root": "src/features",
       "classification": [
@@ -13122,7 +13282,7 @@
           "id": "src/features/advisor/AdvisorClientDetailShell.tsx#AdvisorClientDetailShell",
           "name": "AdvisorClientDetailShell",
           "kind": "component",
-          "line": 27,
+          "line": 32,
           "exported": true,
           "classification": [],
           "edges": [
@@ -13133,6 +13293,128 @@
             {
               "kind": "renders",
               "external": "next"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/features/advisor/AdvisorClientHeader.tsx",
+      "root": "src/features",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/features/advisor/AdvisorClientHeader.tsx#onboardingLabel",
+          "name": "onboardingLabel",
+          "kind": "function",
+          "line": 8,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader",
+          "name": "AdvisorClientHeader",
+          "kind": "component",
+          "line": 16,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/advisor/AdvisorClientHeader.tsx#onboardingLabel"
+            },
+            {
+              "kind": "calls",
+              "target": "src/ui/lib/format.ts#formatCurrency"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/features/advisor/AdvisorClientOverview.tsx",
+      "root": "src/features",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
+          "name": "AdvisorClientOverview",
+          "kind": "component",
+          "line": 18,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "renders",
+              "external": "next"
+            },
+            {
+              "kind": "renders",
+              "external": "next"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection"
+            },
+            {
+              "kind": "calls",
+              "target": "src/ui/lib/format.ts#formatCurrency"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/mappers.ts#num"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorComingSoonPanel"
+            },
+            {
+              "kind": "renders",
+              "target": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail"
+            },
+            {
+              "kind": "renders",
+              "target": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePane"
             }
           ],
           "unresolved": 0
@@ -13230,27 +13512,17 @@
       ]
     },
     {
-      "path": "src/features/advisor/AdvisorClientWorkspace.tsx",
+      "path": "src/features/advisor/AdvisorConsentRequired.tsx",
       "root": "src/features",
       "classification": [
         "regular"
       ],
       "functions": [
         {
-          "id": "src/features/advisor/AdvisorClientWorkspace.tsx#onboardingLabel",
-          "name": "onboardingLabel",
-          "kind": "function",
-          "line": 32,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
-          "name": "AdvisorClientWorkspace",
+          "id": "src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired",
+          "name": "AdvisorConsentRequired",
           "kind": "component",
-          "line": 38,
+          "line": 11,
           "exported": true,
           "classification": [],
           "edges": [
@@ -13261,86 +13533,6 @@
             {
               "kind": "renders",
               "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorComingSoonPanel"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/mappers.ts#num"
-            },
-            {
-              "kind": "calls",
-              "target": "src/lib/validation.ts#birthDateIsValidPast"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals"
-            },
-            {
-              "kind": "calls",
-              "target": "src/features/advisor/AdvisorClientWorkspace.tsx#onboardingLabel"
-            },
-            {
-              "kind": "calls",
-              "target": "src/ui/lib/format.ts#formatCurrency"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorProposeRemovalButton.tsx#AdvisorProposeRemovalButton"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/forms/AdvisorNewGoalForm.tsx#AdvisorNewGoalForm"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx#AdvisorNewBudgetLineForm"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/goals/InvestmentForm.tsx#InvestmentForm"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList"
-            },
-            {
-              "kind": "renders",
-              "target": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail"
-            },
-            {
-              "kind": "renders",
-              "target": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePane"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel"
             }
           ],
           "unresolved": 0
@@ -20631,7 +20823,7 @@
           "id": "src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare",
           "name": "ProposalProjectionCompare",
           "kind": "component",
-          "line": 10,
+          "line": 12,
           "exported": true,
           "classification": [
             "client-component"
@@ -26394,7 +26586,8 @@
         "src/domain/setup/evaluators.ts#evaluateRetirement",
         "src/domain/setup/evaluators.ts#housingLoanIsComplete",
         "src/domain/setup/evaluators.ts#liabilityIsComplete",
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
+        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile",
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop",
         "src/features/budget/BudgetPageHero.tsx#BudgetPageHero",
@@ -26549,7 +26742,7 @@
         "src/app/(app)/setup/page.tsx#SetupPage",
         "src/app/api/projection/route.ts#GET",
         "src/data/dashboard.ts#getDashboardPayload",
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
         "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection"
       ],
       "src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash": [
@@ -28211,25 +28404,18 @@
       "src/features/advisor/AdvisorBuyKeysSection.tsx#purchaseStatusClass": [
         "src/features/advisor/AdvisorBuyKeysSection.tsx#AdvisorBuyKeysSection"
       ],
-      "src/features/advisor/AdvisorClientsBoard.tsx#consentBadge": [
-        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard"
+      "src/features/advisor/AdvisorClientCompose-split.test.tsx#profile": [
+        "src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview"
       ],
-      "src/features/advisor/AdvisorClientsBoard.tsx#onboardingShort": [
-        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard"
-      ],
-      "src/features/advisor/AdvisorClientsBoard.tsx#buildListHref": [
-        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard"
-      ],
-      "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals": [
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
-      ],
-      "src/features/advisor/AdvisorClientWorkspace.tsx#onboardingLabel": [
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
+      "src/features/advisor/AdvisorClientCompose-split.test.tsx#payload": [
+        "src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview"
       ],
       "src/ui/lib/format.ts#formatCurrency": [
         "src/app/(app)/dashboard/page.tsx#DashboardPage",
         "src/app/(app)/expenses/page.tsx#ExpensesPage",
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
+        "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader",
+        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
         "src/features/budget/BudgetIrregularExpenseReservePanel.tsx#BudgetIrregularExpenseReservePanel",
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection",
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile",
@@ -28268,6 +28454,22 @@
         "src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard",
         "src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection",
         "src/features/setup/BudgetLensProfileForm.tsx#BudgetLensProfileForm"
+      ],
+      "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals": [
+        "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader",
+        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview"
+      ],
+      "src/features/advisor/AdvisorClientHeader.tsx#onboardingLabel": [
+        "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader"
+      ],
+      "src/features/advisor/AdvisorClientsBoard.tsx#consentBadge": [
+        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard"
+      ],
+      "src/features/advisor/AdvisorClientsBoard.tsx#onboardingShort": [
+        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard"
+      ],
+      "src/features/advisor/AdvisorClientsBoard.tsx#buildListHref": [
+        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard"
       ],
       "src/features/advisor/AdvisorKeyQrShareButton.tsx#useCopyToClipboard": [
         "src/features/advisor/AdvisorKeyQrShareButton.tsx#AdvisorKeyQrShareButton"
@@ -28851,28 +29053,85 @@
       "src/features/advisor/AdvisorAccessKeysSection.tsx#KeyStatusBadge": [
         "src/features/advisor/AdvisorAccessKeysSection.tsx#AdvisorAccessKeysSection"
       ],
+      "src/features/help/methodology-context.tsx#MethodologyProvider": [
+        "src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview",
+        "src/features/app-shell/AppShell.tsx#AppShell"
+      ],
+      "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview": [
+        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
+        "src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview"
+      ],
+      "src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired": [
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
+        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview"
+      ],
+      "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader": [
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
+        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview"
+      ],
+      "src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner": [
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
+      ],
+      "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection": [
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
+        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview"
+      ],
       "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge": [
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
+        "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader",
+        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
         "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard",
+        "src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired",
         "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
         "src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable",
         "src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner",
         "src/features/proposals/ClientProposalsView.tsx#ClientProposalsView"
       ],
-      "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorComingSoonPanel": [
-        "src/app/(app)/advisor/activity/page.tsx#AdvisorActivityPage",
-        "src/app/(app)/advisor/opportunities/page.tsx#AdvisorOpportunitiesPage",
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
-        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard"
+      "src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm": [
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
       ],
-      "src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner": [
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
+      "src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm": [
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
       ],
-      "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection": [
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
+      "src/features/advisor/AdvisorProposeRemovalButton.tsx#AdvisorProposeRemovalButton": [
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
+      ],
+      "src/features/advisor/forms/AdvisorNewGoalForm.tsx#AdvisorNewGoalForm": [
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
+      ],
+      "src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm": [
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
+      ],
+      "src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx#AdvisorNewBudgetLineForm": [
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
+      ],
+      "src/features/goals/InvestmentForm.tsx#InvestmentForm": [
+        "src/app/(app)/setup/page.tsx#SetupPage",
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
+        "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection"
+      ],
+      "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList": [
+        "src/app/(app)/setup/page.tsx#SetupPage",
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
+        "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection"
+      ],
+      "src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail": [
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
+        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
+        "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
+        "src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView"
+      ],
+      "src/ui/CollapsiblePaneRail.tsx#CollapsiblePane": [
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
+        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
+        "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
+        "src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView"
+      ],
+      "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel": [
+        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
       ],
       "src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare": [
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
+        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
         "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
         "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView"
       ],
@@ -28881,48 +29140,14 @@
         "src/app/(app)/dashboard/page.tsx#DashboardPage",
         "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
         "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage",
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
+        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview"
       ],
-      "src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm": [
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
-      ],
-      "src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm": [
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
-      ],
-      "src/features/advisor/AdvisorProposeRemovalButton.tsx#AdvisorProposeRemovalButton": [
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
-      ],
-      "src/features/advisor/forms/AdvisorNewGoalForm.tsx#AdvisorNewGoalForm": [
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
-      ],
-      "src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm": [
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
-      ],
-      "src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx#AdvisorNewBudgetLineForm": [
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
-      ],
-      "src/features/goals/InvestmentForm.tsx#InvestmentForm": [
-        "src/app/(app)/setup/page.tsx#SetupPage",
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
-        "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection"
-      ],
-      "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList": [
-        "src/app/(app)/setup/page.tsx#SetupPage",
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
-        "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection"
-      ],
-      "src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail": [
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
-        "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
-        "src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView"
-      ],
-      "src/ui/CollapsiblePaneRail.tsx#CollapsiblePane": [
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
-        "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
-        "src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView"
-      ],
-      "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel": [
-        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
+      "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorComingSoonPanel": [
+        "src/app/(app)/advisor/activity/page.tsx#AdvisorActivityPage",
+        "src/app/(app)/advisor/opportunities/page.tsx#AdvisorOpportunitiesPage",
+        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
+        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard",
+        "src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired"
       ],
       "src/features/auth/PhoneInputField.tsx#PhoneInputField": [
         "src/features/advisor/AdvisorPhoneVerificationForm.tsx#AdvisorPhoneVerificationForm"
@@ -28938,9 +29163,6 @@
       ],
       "src/features/advisor/WithdrawProposalButton.tsx#WithdrawProposalButton": [
         "src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable"
-      ],
-      "src/features/help/methodology-context.tsx#MethodologyProvider": [
-        "src/features/app-shell/AppShell.tsx#AppShell"
       ],
       "src/features/app-shell/AppShellNav.tsx#AppShellMobileNav": [
         "src/features/app-shell/AppShell.tsx#AppShell",
@@ -29452,7 +29674,7 @@
       "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView": [
         "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage"
       ],
-      "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace": [
+      "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose": [
         "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage"
       ],
       "src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView": [

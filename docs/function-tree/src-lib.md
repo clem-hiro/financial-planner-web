@@ -347,7 +347,7 @@ Classification: `regular`
 
 #### `birthDateIsValidPast` — function, L49
 
-- called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/projection/route.ts#GET`, `src/data/dashboard.ts#getDashboardPayload`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
+- called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/projection/route.ts#GET`, `src/data/dashboard.ts#getDashboardPayload`, `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
 #### `reliefAmount` — arrow, L324
 
