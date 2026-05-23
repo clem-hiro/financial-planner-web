@@ -93,7 +93,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | Section | Status | Notes |
 |---------|--------|--------|
 | **Overview** | **Partial** | Live snapshot metrics from dashboard payload; roadmap cards for advisor collaboration extensions and AI layer are **planned**. |
-| **Cash flow** | **Shipped** | Budget workspace + progressive income/assumptions (`CashFlowPlanningSection`, `BudgetPlanningView`). Incomplete-setup checklist banner on budget/cash-flow when income or monthly plan is missing (`cash-flow-setup-guidance.ts`, `CashFlowSetupGuidanceBanner`). |
+| **Cash flow** | **Shipped** | Budget workspace + progressive income/assumptions (`CashFlowPlanningSection`, `BudgetPlanningView`). Hero shows take-home, monthly planned total, **unallocated** (take-home minus budget lines), and footnotes for goal/investment monthly commitments (`budget-cash-flow-allocation.ts`). Incomplete-setup checklist banner when income or monthly plan is missing (`cash-flow-setup-guidance.ts`, `CashFlowSetupGuidanceBanner`). |
 | **Wealth** | **Shipped** | Same underlying data as Setup: investments, CPF, cash/debts, housing, vehicles. Debts support loan categories, repayment estimates (amortized / flat / revolving), budget sync, and payoff-aware projections (`DebtPlanningPanels`, `debt-repayment.ts`). |
 | **Protection** | **Partial** | Emergency-fund **recommendation** + link to Wealth for cash; insurance, dependents, estate, risk cards are **planned** (`ProtectionPlanningSection`). |
 | **Future** | **Partial** | **Goals** CRUD is **shipped** (`FinancialGoalsPanels`); dedicated “retirement studio”, scenario compare, tax lens, exports, vault are **planned** cards (Home already shows projection **charts**). |
@@ -412,4 +412,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 - **Not in scope:** live CPF APIs, actuarial CPF LIFE, exhaustive withdrawal rules.
 - **Future:** persist advisor/client assumption presets; tie RA balance into retirement sustainability / spend coverage; inflation on payouts.
 
-_Last reviewed (2026-05-24): **Retirement fully on Goals** — all retirement profile fields (age, spend, expense growth, dividend yield, withdrawal rate) moved to Setup/Planning Goals (`RetirementTargetsForm`); Profile is income & CPF only. Prior: onboarding sync banner; retirement partial move to Goals._
+_Last reviewed (2026-05-24): Budget hero **unallocated cash** (take-home − monthly planned lines) with separate goal/investment commitment footnotes; domain `budget-cash-flow-allocation.ts`. Prior: retirement fully on Goals; Profile income & CPF only._

@@ -5,6 +5,7 @@ export type MethodologyTopicId =
   | "net-worth"
   | "savings-rate"
   | "monthly-budget-check"
+  | "budget-cash-flow-allocation"
   | "spend-guidance"
   | "investment-projection-36m"
   | "goal-surplus"
@@ -105,6 +106,24 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
       "Spending is expenses tagged monthly and tied to those categories.",
       "Over cap means that category’s actuals beat its planned amount.",
       "Travel and trips: this view is monthly-only—add a monthly line (with dates around the trip) so those costs roll in; annual-tagged spend is not part of this check.",
+    ],
+  },
+  {
+    id: "budget-cash-flow-allocation",
+    title: "Unallocated cash (budget hero)",
+    summary:
+      "How much take-home is left after your monthly budget lines—and how goals and investments relate.",
+    bullets: [
+      "Take-home uses salary-only employee CPF when gross and age band are set on your profile; otherwise stored monthly income.",
+      "Monthly planned is the sum of active monthly budget lines for the month you are viewing (including one-off overrides).",
+      "Unallocated = take-home − monthly planned. This is cash not assigned to any budget category yet.",
+      "Goals and investment accounts keep their own monthly contribution fields. They are shown separately so you do not double-count—if you budget “investments” as a line and also set account contributions, align the numbers.",
+      "After goals & investments = take-home − monthly planned − goal monthly amounts − investment monthly amounts active that month (respecting contribution start/end dates when set).",
+      "Left in plan is different: planned minus logged spend within budgeted categories only.",
+    ],
+    formulas: [
+      "unallocated = take-home − Σ(monthly budget lines)",
+      "after commitments = take-home − Σ(budget lines) − Σ(goals) − Σ(investments active this month)",
     ],
   },
   {

@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { sumBucketAmounts } from "@/domain/finance/budget-guided-setup";
 import { monthlyBudgetAggregateOverspend } from "@/domain/finance/budget";
+import type { BudgetCashFlowAllocation } from "@/domain/finance/budget-cash-flow-allocation";
 import { num } from "@/data/mappers";
 import type { BudgetLineRow } from "@/data/supabase/types";
 import { BudgetMonthJump } from "@/features/budget/BudgetMonthJump";
+import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { yearFromYearMonth } from "@/lib/dates";
 import {
   type BudgetPathVariant,
@@ -66,6 +68,7 @@ type Props = {
   month: string;
   currency: string;
   totals: { budget: number; spent: number; remaining: number };
+  cashFlow: BudgetCashFlowAllocation;
   activeMonthlyLines: BudgetLineRow[];
   prevMonth: string;
   nextMonth: string;
@@ -76,6 +79,7 @@ export function BudgetPageHero({
   month,
   currency,
   totals,
+  cashFlow,
   activeMonthlyLines,
   prevMonth,
   nextMonth,
@@ -116,6 +120,18 @@ export function BudgetPageHero({
       : savingsHealth.tone === "low"
         ? "text-amber-800"
         : "text-zinc-700";
+
+  const { unallocatedAfterBudget, unallocatedAfterCommitments } = cashFlow;
+  const hasOtherCommitments =
+    cashFlow.plannedGoalContributions > 0 ||
+    cashFlow.plannedInvestmentContributions > 0;
+  const showCommitmentsFootnote =
+    hasOtherCommitments && unallocatedAfterCommitments != null;
+
+  function unallocatedClass(value: number): string {
+    if (value < 0) return "mt-0.5 font-semibold tabular-nums text-amber-900";
+    return "mt-0.5 font-semibold tabular-nums text-teal-900";
+  }
 
   return (
     <section
@@ -178,15 +194,109 @@ export function BudgetPageHero({
               </span>
             </div>
           </div>
-          <dl className="grid w-full max-w-xs grid-cols-2 gap-x-4 gap-y-3 text-sm sm:max-w-sm">
+          <dl className="grid w-full max-w-xs grid-cols-2 gap-x-4 gap-y-3 text-sm sm:max-w-md">
+            {cashFlow.takeHome != null ? (
+              <div className="rounded-2xl bg-white/80 px-3 py-2 shadow-sm ring-1 ring-zinc-100">
+                <dt className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">
+                  Take-home
+                </dt>
+                <dd className="mt-0.5 font-semibold tabular-nums text-zinc-900">
+                  {formatCurrency(cashFlow.takeHome, currency)}
+                </dd>
+              </div>
+            ) : (
+              <div className="col-span-2 rounded-2xl border border-dashed border-zinc-200 bg-white/80 px-3 py-2 text-xs text-zinc-600">
+                <Link href="/setup?tab=profile" className={appInlineLinkClass}>
+                  Set take-home
+                </Link>{" "}
+                on your profile to see unallocated cash after your plan.
+              </div>
+            )}
             <div className="rounded-2xl bg-white/80 px-3 py-2 shadow-sm ring-1 ring-zinc-100">
               <dt className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">
-                Planned
+                Monthly planned
               </dt>
               <dd className="mt-0.5 font-semibold tabular-nums text-zinc-900">
                 {formatCurrency(planned, currency)}
               </dd>
             </div>
+            {unallocatedAfterBudget != null && (
+              <div className="col-span-2 rounded-2xl border border-teal-200/90 bg-teal-50/60 px-3 py-2 shadow-sm">
+                <dt className="flex flex-wrap items-center gap-x-2 text-[11px] font-medium uppercase tracking-wide text-teal-900">
+                  <span>Unallocated (not in budget lines)</span>
+                  <MethodologyOpenLink
+                    topicId="budget-cash-flow-allocation"
+                    className="normal-case tracking-normal"
+                  >
+                    How calculated
+                  </MethodologyOpenLink>
+                </dt>
+                <dd className={unallocatedClass(unallocatedAfterBudget)}>
+                  {formatCurrency(unallocatedAfterBudget, currency)}
+                </dd>
+                {unallocatedAfterBudget < 0 ? (
+                  <p className="mt-1 text-xs text-amber-900/90">
+                    Your planned lines exceed take-home — trim categories or
+                    check income.
+                  </p>
+                ) : (
+                  <p className="mt-1 text-xs text-teal-900/80">
+                    Take-home minus the monthly planned total above.
+                  </p>
+                )}
+              </div>
+            )}
+            {showCommitmentsFootnote && (
+              <div className="col-span-2 space-y-1.5 rounded-2xl border border-zinc-200/80 bg-zinc-50/80 px-3 py-2 text-xs text-zinc-700">
+                <p className="font-medium text-zinc-800">
+                  Other monthly commitments (not in budget lines)
+                </p>
+                {cashFlow.plannedGoalContributions > 0 && (
+                  <p>
+                    Goals:{" "}
+                    <span className="font-medium tabular-nums text-zinc-900">
+                      {formatCurrency(
+                        cashFlow.plannedGoalContributions,
+                        currency
+                      )}
+                    </span>
+                    /mo —{" "}
+                    <Link href="/planning/future" className={appInlineLinkClass}>
+                      Setup → Goals
+                    </Link>
+                  </p>
+                )}
+                {cashFlow.plannedInvestmentContributions > 0 && (
+                  <p>
+                    Investments:{" "}
+                    <span className="font-medium tabular-nums text-zinc-900">
+                      {formatCurrency(
+                        cashFlow.plannedInvestmentContributions,
+                        currency
+                      )}
+                    </span>
+                    /mo —{" "}
+                    <Link href="/setup?tab=investments" className={appInlineLinkClass}>
+                      Setup → Investments
+                    </Link>
+                    . Add an investments budget line only if you want that
+                    spend counted here too.
+                  </p>
+                )}
+                <p>
+                  After these:{" "}
+                  <span
+                    className={
+                      unallocatedAfterCommitments! < 0
+                        ? "font-semibold tabular-nums text-amber-900"
+                        : "font-semibold tabular-nums text-zinc-900"
+                    }
+                  >
+                    {formatCurrency(unallocatedAfterCommitments!, currency)}
+                  </span>
+                </p>
+              </div>
+            )}
             <div className="rounded-2xl bg-white/80 px-3 py-2 shadow-sm ring-1 ring-zinc-100">
               <dt className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">
                 Logged
@@ -195,9 +305,9 @@ export function BudgetPageHero({
                 {formatCurrency(spent, currency)}
               </dd>
             </div>
-            <div className="col-span-2 rounded-2xl bg-white/80 px-3 py-2 shadow-sm ring-1 ring-zinc-100">
+            <div className="rounded-2xl bg-white/80 px-3 py-2 shadow-sm ring-1 ring-zinc-100">
               <dt className="text-[11px] font-medium uppercase tracking-wide text-zinc-500">
-                Breathing room (budgeted categories)
+                Left in plan
               </dt>
               <dd
                 className={
