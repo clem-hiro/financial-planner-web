@@ -49,6 +49,7 @@ export async function insertHousingLoan(
     original_loan_principal: number | null;
     principal_repaid_before_schedule: number;
     property_purchase_price?: number | null;
+    property_purchase_year?: number | null;
     property_kind?: string | null;
     downpayment_guidance_preset?: string | null;
     downpayment_guidance_custom_percent?: number | null;
@@ -59,6 +60,18 @@ export async function insertHousingLoan(
     payment_source?: HousingLoanRow["payment_source"];
     cpf_oa_payment?: number | null;
     cash_payment?: number | null;
+    first_downpayment_total?: number | null;
+    first_downpayment_paid_month?: string | null;
+    first_downpayment_cpf_oa?: number | null;
+    first_downpayment_cash?: number | null;
+    bsd_legal_total?: number | null;
+    bsd_legal_paid_month?: string | null;
+    bsd_legal_cpf_oa?: number | null;
+    bsd_legal_cash?: number | null;
+    second_downpayment_total?: number | null;
+    second_downpayment_paid_month?: string | null;
+    second_downpayment_cpf_oa?: number | null;
+    second_downpayment_cash?: number | null;
   }
 ): Promise<HousingLoanRow> {
   const { data, error } = await supabase
@@ -80,6 +93,7 @@ export async function insertHousingLoan(
       original_loan_principal: row.original_loan_principal,
       principal_repaid_before_schedule: row.principal_repaid_before_schedule,
       property_purchase_price: row.property_purchase_price ?? null,
+      property_purchase_year: row.property_purchase_year ?? null,
       property_kind: row.property_kind ?? null,
       downpayment_guidance_preset: row.downpayment_guidance_preset ?? null,
       downpayment_guidance_custom_percent:
@@ -93,6 +107,18 @@ export async function insertHousingLoan(
       payment_source: row.payment_source ?? null,
       cpf_oa_payment: row.cpf_oa_payment ?? null,
       cash_payment: row.cash_payment ?? null,
+      first_downpayment_total: row.first_downpayment_total ?? null,
+      first_downpayment_paid_month: row.first_downpayment_paid_month ?? null,
+      first_downpayment_cpf_oa: row.first_downpayment_cpf_oa ?? null,
+      first_downpayment_cash: row.first_downpayment_cash ?? null,
+      bsd_legal_total: row.bsd_legal_total ?? null,
+      bsd_legal_paid_month: row.bsd_legal_paid_month ?? null,
+      bsd_legal_cpf_oa: row.bsd_legal_cpf_oa ?? null,
+      bsd_legal_cash: row.bsd_legal_cash ?? null,
+      second_downpayment_total: row.second_downpayment_total ?? null,
+      second_downpayment_paid_month: row.second_downpayment_paid_month ?? null,
+      second_downpayment_cpf_oa: row.second_downpayment_cpf_oa ?? null,
+      second_downpayment_cash: row.second_downpayment_cash ?? null,
     })
     .select()
     .single();
@@ -120,6 +146,7 @@ export async function updateHousingLoan(
     original_loan_principal: number | null;
     principal_repaid_before_schedule: number;
     property_purchase_price?: number | null;
+    property_purchase_year?: number | null;
     property_kind?: string | null;
     downpayment_guidance_preset?: string | null;
     downpayment_guidance_custom_percent?: number | null;
@@ -130,6 +157,18 @@ export async function updateHousingLoan(
     payment_source?: HousingLoanRow["payment_source"];
     cpf_oa_payment?: number | null;
     cash_payment?: number | null;
+    first_downpayment_total?: number | null;
+    first_downpayment_paid_month?: string | null;
+    first_downpayment_cpf_oa?: number | null;
+    first_downpayment_cash?: number | null;
+    bsd_legal_total?: number | null;
+    bsd_legal_paid_month?: string | null;
+    bsd_legal_cpf_oa?: number | null;
+    bsd_legal_cash?: number | null;
+    second_downpayment_total?: number | null;
+    second_downpayment_paid_month?: string | null;
+    second_downpayment_cpf_oa?: number | null;
+    second_downpayment_cash?: number | null;
   }>
 ): Promise<void> {
   const { error } = await supabase

@@ -30,6 +30,7 @@ export type PropertyInsert = {
   name: string;
   property_type: PropertyRow["property_type"];
   purchase_price: number | null;
+  purchase_year?: number | null;
   current_valuation: number | null;
   ownership_percent: number;
   status: PropertyRow["status"];
@@ -50,6 +51,7 @@ export async function insertProperty(
       name: row.name,
       property_type: row.property_type,
       purchase_price: row.purchase_price,
+      purchase_year: row.purchase_year ?? null,
       current_valuation: row.current_valuation,
       ownership_percent: row.ownership_percent,
       status: row.status,

@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-05-21T15:39:31.036Z",
+  "generated_at": "2026-05-23T15:50:44.475Z",
   "roots": [
     "src/app",
     "src/components",
@@ -1538,7 +1538,7 @@
           "id": "src/app/(app)/setup/page.tsx#buildSetupTabs",
           "name": "buildSetupTabs",
           "kind": "function",
-          "line": 46,
+          "line": 47,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -1548,7 +1548,7 @@
           "id": "src/app/(app)/setup/page.tsx#SetupPage",
           "name": "SetupPage",
           "kind": "component",
-          "line": 64,
+          "line": 65,
           "exported": true,
           "classification": [],
           "edges": [
@@ -1619,6 +1619,10 @@
             {
               "kind": "calls",
               "target": "src/lib/validation.ts#birthDateIsValidPast"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/goals/CashAndLiabilitiesPanels.tsx#buildCashHistoryByAccountId"
             },
             {
               "kind": "renders",
@@ -2624,7 +2628,7 @@
           "id": "src/content/methodology-topics.ts#methodologyTopic",
           "name": "methodologyTopic",
           "kind": "function",
-          "line": 236,
+          "line": 257,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -2762,7 +2766,7 @@
           "id": "src/data/dashboard.ts#ageAtEndOfYearMonth",
           "name": "ageAtEndOfYearMonth",
           "kind": "function",
-          "line": 303,
+          "line": 333,
           "exported": false,
           "classification": [],
           "edges": [
@@ -2777,7 +2781,7 @@
           "id": "src/data/dashboard.ts#buildCpfHousingMarkers",
           "name": "buildCpfHousingMarkers",
           "kind": "function",
-          "line": 309,
+          "line": 339,
           "exported": false,
           "classification": [],
           "edges": [
@@ -2792,7 +2796,7 @@
           "id": "src/data/dashboard.ts#getDashboardPayload",
           "name": "getDashboardPayload",
           "kind": "function",
-          "line": 335,
+          "line": 365,
           "exported": true,
           "classification": [],
           "edges": [
@@ -3123,6 +3127,94 @@
           "exported": true,
           "classification": [],
           "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/data/goal-tradeoff-context.ts",
+      "root": "src/data",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
+          "name": "loadGoalTradeoffContext",
+          "kind": "function",
+          "line": 37,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/dates.ts#formatYearMonth"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/profiles.ts#getProfileById"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/goals.ts#listFinancialGoals"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/expenses.ts#listExpensesForMonth"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/budget-lines.ts#listBudgetLines"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/budget-line-overrides.ts#listBudgetLineOverridesForMonth"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/housing-loans.ts#listHousingLoans"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/income-tax-configs.ts#getIncomeTaxConfig"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/housing-cash-synthetic-expense.ts#buildSyntheticHousingCashExpense"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/budget.ts#monthlyBudgetVsActual"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/mappers.ts#sumExpenseAmounts"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/mappers.ts#profileSalaryTakeHomeMonthly"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/goal-priority-tradeoff.ts#sortGoalsByPriority"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/goal-priority-tradeoff.ts#analyzeGoalPriorityTradeoff"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/mappers.ts#num"
+            }
+          ],
           "unresolved": 0
         }
       ]
@@ -4864,6 +4956,80 @@
       ]
     },
     {
+      "path": "src/data/repositories/cash-account-snapshots.ts",
+      "root": "src/data",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/data/repositories/cash-account-snapshots.ts#listCashAccountSnapshots",
+          "name": "listCashAccountSnapshots",
+          "kind": "function",
+          "line": 6,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/supabase-js"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/data/repositories/cash-account-snapshots.ts#advisorReadCashAccountSnapshots",
+          "name": "advisorReadCashAccountSnapshots",
+          "kind": "function",
+          "line": 21,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "@supabase/supabase-js"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/data/repositories/cash-account-snapshots.ts#insertCashAccountSnapshot",
+          "name": "insertCashAccountSnapshot",
+          "kind": "function",
+          "line": 33,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/supabase-js"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/data/repositories/cash-accounts.ts",
       "root": "src/data",
       "classification": [
@@ -4874,7 +5040,7 @@
           "id": "src/data/repositories/cash-accounts.ts#listCashAccounts",
           "name": "listCashAccounts",
           "kind": "function",
-          "line": 4,
+          "line": 5,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4901,7 +5067,7 @@
           "id": "src/data/repositories/cash-accounts.ts#advisorReadCashAccounts",
           "name": "advisorReadCashAccounts",
           "kind": "function",
-          "line": 22,
+          "line": 23,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4916,7 +5082,7 @@
           "id": "src/data/repositories/cash-accounts.ts#insertCashAccount",
           "name": "insertCashAccount",
           "kind": "function",
-          "line": 33,
+          "line": 34,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4935,6 +5101,10 @@
             {
               "kind": "calls",
               "external": "@supabase/supabase-js"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/cash-account-snapshots.ts#insertCashAccountSnapshot"
             }
           ],
           "unresolved": 0
@@ -4943,7 +5113,7 @@
           "id": "src/data/repositories/cash-accounts.ts#updateCashAccount",
           "name": "updateCashAccount",
           "kind": "function",
-          "line": 51,
+          "line": 55,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4962,6 +5132,10 @@
             {
               "kind": "calls",
               "external": "@supabase/supabase-js"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/cash-account-snapshots.ts#insertCashAccountSnapshot"
             }
           ],
           "unresolved": 0
@@ -4970,7 +5144,7 @@
           "id": "src/data/repositories/cash-accounts.ts#deleteCashAccount",
           "name": "deleteCashAccount",
           "kind": "function",
-          "line": 65,
+          "line": 70,
           "exported": true,
           "classification": [],
           "edges": [
@@ -5510,6 +5684,10 @@
             },
             {
               "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
               "external": "@supabase/supabase-js"
             }
           ],
@@ -5519,7 +5697,7 @@
           "id": "src/data/repositories/goals.ts#advisorReadGoals",
           "name": "advisorReadGoals",
           "kind": "function",
-          "line": 22,
+          "line": 23,
           "exported": true,
           "classification": [],
           "edges": [
@@ -5534,7 +5712,7 @@
           "id": "src/data/repositories/goals.ts#getFinancialGoalById",
           "name": "getFinancialGoalById",
           "kind": "function",
-          "line": 33,
+          "line": 34,
           "exported": true,
           "classification": [],
           "edges": [
@@ -5557,6 +5735,88 @@
             {
               "kind": "calls",
               "external": "@supabase/supabase-js"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/data/repositories/goals.ts#nextGoalDisplayOrder",
+          "name": "nextGoalDisplayOrder",
+          "kind": "function",
+          "line": 69,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/supabase-js"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/data/repositories/goals.ts#reorderFinancialGoal",
+          "name": "reorderFinancialGoal",
+          "kind": "function",
+          "line": 84,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/supabase-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/supabase-js"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/goals.ts#listFinancialGoals"
             }
           ],
           "unresolved": 0
@@ -5565,7 +5825,7 @@
           "id": "src/data/repositories/goals.ts#insertFinancialGoal",
           "name": "insertFinancialGoal",
           "kind": "function",
-          "line": 68,
+          "line": 112,
           "exported": true,
           "classification": [],
           "edges": [
@@ -5584,6 +5844,10 @@
             {
               "kind": "calls",
               "external": "@supabase/supabase-js"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/goals.ts#nextGoalDisplayOrder"
             }
           ],
           "unresolved": 0
@@ -5592,7 +5856,7 @@
           "id": "src/data/repositories/goals.ts#insertFinancialGoalsBulk",
           "name": "insertFinancialGoalsBulk",
           "kind": "function",
-          "line": 91,
+          "line": 137,
           "exported": true,
           "classification": [],
           "edges": [
@@ -5607,6 +5871,10 @@
             {
               "kind": "calls",
               "external": "@supabase/supabase-js"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/goals.ts#nextGoalDisplayOrder"
             }
           ],
           "unresolved": 0
@@ -5615,7 +5883,7 @@
           "id": "src/data/repositories/goals.ts#updateFinancialGoal",
           "name": "updateFinancialGoal",
           "kind": "function",
-          "line": 115,
+          "line": 167,
           "exported": true,
           "classification": [],
           "edges": [
@@ -5728,7 +5996,7 @@
           "id": "src/data/repositories/housing-loans.ts#updateHousingLoan",
           "name": "updateHousingLoan",
           "kind": "function",
-          "line": 103,
+          "line": 129,
           "exported": true,
           "classification": [],
           "edges": [
@@ -5755,7 +6023,7 @@
           "id": "src/data/repositories/housing-loans.ts#deleteHousingLoan",
           "name": "deleteHousingLoan",
           "kind": "function",
-          "line": 143,
+          "line": 182,
           "exported": true,
           "classification": [],
           "edges": [
@@ -6629,7 +6897,7 @@
           "id": "src/data/repositories/properties.ts#insertProperty",
           "name": "insertProperty",
           "kind": "function",
-          "line": 41,
+          "line": 42,
           "exported": true,
           "classification": [],
           "edges": [
@@ -6656,7 +6924,7 @@
           "id": "src/data/repositories/properties.ts#updateProperty",
           "name": "updateProperty",
           "kind": "function",
-          "line": 66,
+          "line": 68,
           "exported": true,
           "classification": [],
           "edges": [
@@ -6683,7 +6951,7 @@
           "id": "src/data/repositories/properties.ts#deleteProperty",
           "name": "deleteProperty",
           "kind": "function",
-          "line": 80,
+          "line": 82,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7105,7 +7373,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.parity.test.ts#ch",
           "name": "ch",
           "kind": "function",
-          "line": 248,
+          "line": 249,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -7115,7 +7383,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.parity.test.ts#investmentValueShape",
           "name": "investmentValueShape",
           "kind": "arrow",
-          "line": 267,
+          "line": 268,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -7300,7 +7568,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.test.ts#change",
           "name": "change",
           "kind": "function",
-          "line": 103,
+          "line": 104,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -7310,7 +7578,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.test.ts#baseInputs",
           "name": "baseInputs",
           "kind": "function",
-          "line": 122,
+          "line": 123,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8198,6 +8466,43 @@
       ]
     },
     {
+      "path": "src/domain/finance/cash-account-purpose.test.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": []
+    },
+    {
+      "path": "src/domain/finance/cash-account-purpose.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/domain/finance/cash-account-purpose.ts#parseCashAccountPurpose",
+          "name": "parseCashAccountPurpose",
+          "kind": "function",
+          "line": 17,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/cash-account-purpose.ts#cashPurposeSortOrder",
+          "name": "cashPurposeSortOrder",
+          "kind": "function",
+          "line": 29,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/domain/finance/cash-flow-accrual.test.ts",
       "root": "src/domain",
       "classification": [
@@ -8246,6 +8551,116 @@
       ]
     },
     {
+      "path": "src/domain/finance/cash-flow-setup-guidance.test.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/domain/finance/cash-flow-setup-guidance.test.ts#profile",
+          "name": "profile",
+          "kind": "function",
+          "line": 8,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/domain/finance/cash-flow-setup-guidance.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/domain/finance/cash-flow-setup-guidance.ts#hasBudgetLensSaved",
+          "name": "hasBudgetLensSaved",
+          "kind": "function",
+          "line": 25,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/cash-flow-setup-guidance.ts#incomeAnchor",
+          "name": "incomeAnchor",
+          "kind": "function",
+          "line": 36,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/setup-urls.ts#setupTabPath"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/cash-flow-setup-guidance.ts#budgetLensAnchor",
+          "name": "budgetLensAnchor",
+          "kind": "function",
+          "line": 47,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/setup-urls.ts#setupTabPath"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/cash-flow-setup-guidance.ts#cashFlowSetupGaps",
+          "name": "cashFlowSetupGaps",
+          "kind": "function",
+          "line": 62,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/data/financial-profile.ts#isFinancialProfileIncomplete"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cash-flow-setup-guidance.ts#hasBudgetLensSaved"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cash-flow-setup-guidance.ts#incomeAnchor"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cash-flow-setup-guidance.ts#budgetLensAnchor"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/cash-flow-setup-guidance.ts#shouldShowCashFlowSetupGuidance",
+          "name": "shouldShowCashFlowSetupGuidance",
+          "kind": "function",
+          "line": 117,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cash-flow-setup-guidance.ts#cashFlowSetupGaps"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/domain/finance/cpf-monthly-projection.test.ts",
       "root": "src/domain",
       "classification": [
@@ -8264,7 +8679,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#round2",
           "name": "round2",
           "kind": "function",
-          "line": 52,
+          "line": 56,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -8274,7 +8689,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#endOfYearMonthDate",
           "name": "endOfYearMonthDate",
           "kind": "function",
-          "line": 56,
+          "line": 60,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -8284,7 +8699,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries",
           "name": "buildCpfMonthlyProjectionSeries",
           "kind": "function",
-          "line": 66,
+          "line": 70,
           "exported": true,
           "classification": [],
           "edges": [
@@ -8331,7 +8746,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#downsampleCpfSeries",
           "name": "downsampleCpfSeries",
           "kind": "function",
-          "line": 228,
+          "line": 240,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -8576,6 +8991,91 @@
           "exported": true,
           "classification": [],
           "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/domain/finance/debt-payoff-strategies.test.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": []
+    },
+    {
+      "path": "src/domain/finance/debt-payoff-strategies.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/domain/finance/debt-payoff-strategies.ts#roundMoney",
+          "name": "roundMoney",
+          "kind": "function",
+          "line": 26,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/debt-payoff-strategies.ts#pickTarget",
+          "name": "pickTarget",
+          "kind": "function",
+          "line": 32,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/debt-payoff-strategies.ts#simulateStrategy",
+          "name": "simulateStrategy",
+          "kind": "function",
+          "line": 51,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/debt-payoff-strategies.ts#roundMoney"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/debt-payoff-strategies.ts#pickTarget"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/debt-payoff-strategies.ts#debtsEligibleForPayoffComparison",
+          "name": "debtsEligibleForPayoffComparison",
+          "kind": "function",
+          "line": 115,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/debt-payoff-strategies.ts#compareDebtPayoffStrategies",
+          "name": "compareDebtPayoffStrategies",
+          "kind": "function",
+          "line": 126,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/debt-payoff-strategies.ts#debtsEligibleForPayoffComparison"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/debt-payoff-strategies.ts#simulateStrategy"
+            }
+          ],
           "unresolved": 0
         }
       ]
@@ -9024,6 +9524,48 @@
             {
               "kind": "calls",
               "target": "src/domain/finance/goal-deadline.ts#roundMoneyUp"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/domain/finance/goal-priority-tradeoff.test.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": []
+    },
+    {
+      "path": "src/domain/finance/goal-priority-tradeoff.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/domain/finance/goal-priority-tradeoff.ts#sortGoalsByPriority",
+          "name": "sortGoalsByPriority",
+          "kind": "function",
+          "line": 41,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/goal-priority-tradeoff.ts#analyzeGoalPriorityTradeoff",
+          "name": "analyzeGoalPriorityTradeoff",
+          "kind": "function",
+          "line": 50,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/goal-priority-tradeoff.ts#sortGoalsByPriority"
             }
           ],
           "unresolved": 0
@@ -10524,8 +11066,18 @@
           "id": "src/domain/finance/singapore-residential-bsd.ts#roundMoney",
           "name": "roundMoney",
           "kind": "function",
-          "line": 37,
+          "line": 52,
           "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/singapore-residential-bsd.ts#singaporeResidentialBsdScheduleForPurchaseYear",
+          "name": "singaporeResidentialBsdScheduleForPurchaseYear",
+          "kind": "function",
+          "line": 56,
+          "exported": true,
           "classification": [],
           "edges": [],
           "unresolved": 0
@@ -10534,10 +11086,14 @@
           "id": "src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty",
           "name": "computeSingaporeResidentialBuyersStampDuty",
           "kind": "function",
-          "line": 45,
+          "line": 72,
           "exported": true,
           "classification": [],
           "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/singapore-residential-bsd.ts#singaporeResidentialBsdScheduleForPurchaseYear"
+            },
             {
               "kind": "calls",
               "target": "src/domain/finance/singapore-residential-bsd.ts#roundMoney"
@@ -11348,7 +11904,7 @@
           "id": "src/domain/setup/evaluators.ts#evaluateInsurance",
           "name": "evaluateInsurance",
           "kind": "function",
-          "line": 181,
+          "line": 183,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -11358,7 +11914,7 @@
           "id": "src/domain/setup/evaluators.ts#evaluateDependents",
           "name": "evaluateDependents",
           "kind": "function",
-          "line": 191,
+          "line": 193,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -11368,7 +11924,7 @@
           "id": "src/domain/setup/evaluators.ts#evaluateEstate",
           "name": "evaluateEstate",
           "kind": "function",
-          "line": 201,
+          "line": 203,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -11378,7 +11934,7 @@
           "id": "src/domain/setup/evaluators.ts#evaluateInvestments",
           "name": "evaluateInvestments",
           "kind": "function",
-          "line": 211,
+          "line": 213,
           "exported": false,
           "classification": [],
           "edges": [
@@ -11397,7 +11953,7 @@
           "id": "src/domain/setup/evaluators.ts#evaluateRetirement",
           "name": "evaluateRetirement",
           "kind": "function",
-          "line": 225,
+          "line": 227,
           "exported": false,
           "classification": [],
           "edges": [
@@ -11416,7 +11972,7 @@
           "id": "src/domain/setup/evaluators.ts#evaluateCpf",
           "name": "evaluateCpf",
           "kind": "function",
-          "line": 252,
+          "line": 254,
           "exported": false,
           "classification": [],
           "edges": [
@@ -11435,7 +11991,7 @@
           "id": "src/domain/setup/evaluators.ts#evaluateGoals",
           "name": "evaluateGoals",
           "kind": "function",
-          "line": 274,
+          "line": 276,
           "exported": false,
           "classification": [],
           "edges": [
@@ -11454,7 +12010,7 @@
           "id": "src/domain/setup/evaluators.ts#evaluateRiskProfile",
           "name": "evaluateRiskProfile",
           "kind": "function",
-          "line": 286,
+          "line": 288,
           "exported": false,
           "classification": [],
           "edges": [
@@ -11473,7 +12029,7 @@
           "id": "src/domain/setup/evaluators.ts#evaluateDocuments",
           "name": "evaluateDocuments",
           "kind": "function",
-          "line": 309,
+          "line": 311,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -11483,7 +12039,7 @@
           "id": "src/domain/setup/evaluators.ts#evaluateSetupModule",
           "name": "evaluateSetupModule",
           "kind": "function",
-          "line": 338,
+          "line": 340,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -11493,7 +12049,7 @@
           "id": "src/domain/setup/evaluators.ts#evaluateAllSetupModules",
           "name": "evaluateAllSetupModules",
           "kind": "function",
-          "line": 345,
+          "line": 347,
           "exported": true,
           "classification": [],
           "edges": [
@@ -11508,7 +12064,7 @@
           "id": "src/domain/setup/evaluators.ts#summarizeSetupProgress",
           "name": "summarizeSetupProgress",
           "kind": "function",
-          "line": 351,
+          "line": 353,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -11518,7 +12074,7 @@
           "id": "src/domain/setup/evaluators.ts#pickRecommendedSetupStep",
           "name": "pickRecommendedSetupStep",
           "kind": "function",
-          "line": 372,
+          "line": 374,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -11528,7 +12084,7 @@
           "id": "src/domain/setup/evaluators.ts#buildSetupHubSnapshot",
           "name": "buildSetupHubSnapshot",
           "kind": "function",
-          "line": 395,
+          "line": 397,
           "exported": true,
           "classification": [],
           "edges": [
@@ -13851,7 +14407,7 @@
           "id": "src/features/budget/BudgetPlanningView.tsx#varianceForLine",
           "name": "varianceForLine",
           "kind": "function",
-          "line": 56,
+          "line": 62,
           "exported": false,
           "classification": [],
           "edges": [
@@ -13866,7 +14422,7 @@
           "id": "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
           "name": "BudgetPlanningView",
           "kind": "component",
-          "line": 64,
+          "line": 70,
           "exported": true,
           "classification": [],
           "edges": [
@@ -13932,6 +14488,18 @@
             },
             {
               "kind": "calls",
+              "target": "src/domain/finance/budget.ts#isMonthlyBudgetLineApplicable"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cash-flow-setup-guidance.ts#cashFlowSetupGaps"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cash-flow-setup-guidance.ts#shouldShowCashFlowSetupGuidance"
+            },
+            {
+              "kind": "calls",
               "target": "src/lib/dates.ts#addMonthsToYearMonth"
             },
             {
@@ -13949,6 +14517,10 @@
             {
               "kind": "calls",
               "target": "src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/planning/CashFlowSetupGuidanceBanner.tsx#CashFlowSetupGuidanceBanner"
             },
             {
               "kind": "renders",
@@ -14484,7 +15056,7 @@
           "id": "src/features/dashboard/CpfRetirementProjectionPanel.tsx#FlowArrow",
           "name": "FlowArrow",
           "kind": "component",
-          "line": 33,
+          "line": 38,
           "exported": false,
           "classification": [
             "client-component"
@@ -14496,7 +15068,7 @@
           "id": "src/features/dashboard/CpfRetirementProjectionPanel.tsx#BalancePill",
           "name": "BalancePill",
           "kind": "component",
-          "line": 49,
+          "line": 54,
           "exported": false,
           "classification": [
             "client-component"
@@ -14513,7 +15085,7 @@
           "id": "src/features/dashboard/CpfRetirementProjectionPanel.tsx#RaFlowVisual",
           "name": "RaFlowVisual",
           "kind": "component",
-          "line": 80,
+          "line": 85,
           "exported": false,
           "classification": [
             "client-component"
@@ -14538,7 +15110,7 @@
           "id": "src/features/dashboard/CpfRetirementProjectionPanel.tsx#ScenarioChip",
           "name": "ScenarioChip",
           "kind": "component",
-          "line": 167,
+          "line": 172,
           "exported": false,
           "classification": [
             "client-component"
@@ -14550,7 +15122,7 @@
           "id": "src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel",
           "name": "CpfRetirementProjectionPanel",
           "kind": "component",
-          "line": 191,
+          "line": 196,
           "exported": true,
           "classification": [
             "client-component"
@@ -14589,6 +15161,10 @@
               "external": "next"
             },
             {
+              "kind": "renders",
+              "external": "next"
+            },
+            {
               "kind": "calls",
               "target": "src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection"
             },
@@ -14599,6 +15175,14 @@
             {
               "kind": "calls",
               "target": "src/domain/finance/cpf-retirement-projection.ts#simulateRaForScenario"
+            },
+            {
+              "kind": "renders",
+              "target": "src/ui/InfoTooltip.tsx#InfoTooltip"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink"
             },
             {
               "kind": "calls",
@@ -15215,6 +15799,71 @@
       ]
     },
     {
+      "path": "src/features/debts/DebtPayoffStrategyComparison.tsx",
+      "root": "src/features",
+      "classification": [
+        "client-component"
+      ],
+      "functions": [
+        {
+          "id": "src/features/debts/DebtPayoffStrategyComparison.tsx#debtToSimInput",
+          "name": "debtToSimInput",
+          "kind": "function",
+          "line": 13,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/debts/DebtPayoffStrategyComparison.tsx#DebtPayoffStrategyComparison",
+          "name": "DebtPayoffStrategyComparison",
+          "kind": "component",
+          "line": 23,
+          "exported": true,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/debt-payoff-strategies.ts#debtsEligibleForPayoffComparison"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/debt-payoff-strategies.ts#compareDebtPayoffStrategies"
+            },
+            {
+              "kind": "calls",
+              "target": "src/ui/lib/format.ts#formatCurrency"
+            }
+          ],
+          "unresolved": 1
+        }
+      ]
+    },
+    {
       "path": "src/features/debts/DebtPlanningPanels.tsx",
       "root": "src/features",
       "classification": [
@@ -15225,7 +15874,7 @@
           "id": "src/features/debts/DebtPlanningPanels.tsx#emptyFormValues",
           "name": "emptyFormValues",
           "kind": "function",
-          "line": 38,
+          "line": 39,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -15235,7 +15884,7 @@
           "id": "src/features/debts/DebtPlanningPanels.tsx#rowToFormValues",
           "name": "rowToFormValues",
           "kind": "function",
-          "line": 53,
+          "line": 54,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -15245,7 +15894,7 @@
           "id": "src/features/debts/DebtPlanningPanels.tsx#DebtCard",
           "name": "DebtCard",
           "kind": "component",
-          "line": 74,
+          "line": 75,
           "exported": false,
           "classification": [
             "client-component"
@@ -15346,7 +15995,7 @@
           "id": "src/features/debts/DebtPlanningPanels.tsx#AddDebtForm",
           "name": "AddDebtForm",
           "kind": "component",
-          "line": 264,
+          "line": 272,
           "exported": false,
           "classification": [
             "client-component"
@@ -15395,7 +16044,7 @@
           "id": "src/features/debts/DebtPlanningPanels.tsx#mapLiabilityRows",
           "name": "mapLiabilityRows",
           "kind": "function",
-          "line": 323,
+          "line": 331,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -15405,7 +16054,7 @@
           "id": "src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels",
           "name": "DebtPlanningPanels",
           "kind": "component",
-          "line": 327,
+          "line": 335,
           "exported": true,
           "classification": [
             "client-component"
@@ -15422,6 +16071,10 @@
             {
               "kind": "renders",
               "target": "src/features/debts/DebtEducationalExamples.tsx#DebtEducationalExamples"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/debts/DebtPayoffStrategyComparison.tsx#DebtPayoffStrategyComparison"
             },
             {
               "kind": "renders",
@@ -15668,10 +16321,53 @@
       ],
       "functions": [
         {
+          "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#PurposeSelect",
+          "name": "PurposeSelect",
+          "kind": "component",
+          "line": 49,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#formatSnapshotDate",
+          "name": "formatSnapshotDate",
+          "kind": "function",
+          "line": 74,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountHistory",
+          "name": "CashAccountHistory",
+          "kind": "component",
+          "line": 84,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/goals/CashAndLiabilitiesPanels.tsx#formatSnapshotDate"
+            },
+            {
+              "kind": "calls",
+              "target": "src/ui/lib/format.ts#formatCurrency"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#AddCashForm",
           "name": "AddCashForm",
           "kind": "component",
-          "line": 32,
+          "line": 111,
           "exported": false,
           "classification": [
             "client-component"
@@ -15696,6 +16392,10 @@
             {
               "kind": "renders",
               "target": "src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/goals/CashAndLiabilitiesPanels.tsx#PurposeSelect"
             }
           ],
           "unresolved": 0
@@ -15704,7 +16404,7 @@
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow",
           "name": "CashAccountRow",
           "kind": "component",
-          "line": 104,
+          "line": 184,
           "exported": false,
           "classification": [
             "client-component"
@@ -15743,6 +16443,14 @@
               "target": "src/ui/lib/format.ts#formatCurrency"
             },
             {
+              "kind": "renders",
+              "target": "src/features/goals/CashAndLiabilitiesPanels.tsx#PurposeSelect"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountHistory"
+            },
+            {
               "kind": "calls",
               "target": "src/server/actions.ts#deleteCashAccountAction"
             }
@@ -15750,18 +16458,41 @@
           "unresolved": 2
         },
         {
+          "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#groupCashByPurpose",
+          "name": "groupCashByPurpose",
+          "kind": "function",
+          "line": 289,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cash-account-purpose.ts#cashPurposeSortOrder"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels",
           "name": "CashAndLiabilitiesPanels",
           "kind": "component",
-          "line": 206,
+          "line": 301,
           "exported": true,
           "classification": [
             "client-component"
           ],
           "edges": [
             {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
               "kind": "renders",
               "external": "next"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/goals/CashAndLiabilitiesPanels.tsx#groupCashByPurpose"
             },
             {
               "kind": "calls",
@@ -15782,6 +16513,21 @@
             {
               "kind": "renders",
               "target": "src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#buildCashHistoryByAccountId",
+          "name": "buildCashHistoryByAccountId",
+          "kind": "function",
+          "line": 383,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/data/mappers.ts#num"
             }
           ],
           "unresolved": 0
@@ -15886,7 +16632,7 @@
           "id": "src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels",
           "name": "FinancialGoalsPanels",
           "kind": "component",
-          "line": 28,
+          "line": 33,
           "exported": true,
           "classification": [],
           "edges": [
@@ -15901,6 +16647,10 @@
             {
               "kind": "renders",
               "external": "next"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/goal-priority-tradeoff.ts#sortGoalsByPriority"
             },
             {
               "kind": "calls",
@@ -15924,11 +16674,19 @@
             },
             {
               "kind": "renders",
+              "target": "src/features/goals/GoalPriorityTradeoffPanel.tsx#GoalPriorityTradeoffPanel"
+            },
+            {
+              "kind": "renders",
               "target": "src/ui/PageSection.tsx#PageSection"
             },
             {
               "kind": "renders",
               "target": "src/features/goals/GoalForm.tsx#GoalForm"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/goals/GoalReorderButtons.tsx#GoalReorderButtons"
             },
             {
               "kind": "calls",
@@ -15993,6 +16751,76 @@
           "name": "GoalForm",
           "kind": "component",
           "line": 11,
+          "exported": true,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "renders",
+              "target": "src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/features/goals/GoalPriorityTradeoffPanel.tsx",
+      "root": "src/features",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/features/goals/GoalPriorityTradeoffPanel.tsx#GoalPriorityTradeoffPanel",
+          "name": "GoalPriorityTradeoffPanel",
+          "kind": "component",
+          "line": 12,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "renders",
+              "external": "next"
+            },
+            {
+              "kind": "renders",
+              "external": "next"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/supabase/server.ts#createSupabaseServerClient"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext"
+            },
+            {
+              "kind": "calls",
+              "target": "src/ui/lib/format.ts#formatCurrency"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/features/goals/GoalReorderButtons.tsx",
+      "root": "src/features",
+      "classification": [
+        "client-component"
+      ],
+      "functions": [
+        {
+          "id": "src/features/goals/GoalReorderButtons.tsx#GoalReorderButtons",
+          "name": "GoalReorderButtons",
+          "kind": "component",
+          "line": 9,
           "exported": true,
           "classification": [
             "client-component"
@@ -16156,7 +16984,7 @@
           "id": "src/features/goals/HousingLoansPanel.tsx#lenderLabel",
           "name": "lenderLabel",
           "kind": "function",
-          "line": 25,
+          "line": 24,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -16166,7 +16994,7 @@
           "id": "src/features/goals/HousingLoansPanel.tsx#instalmentPresetFromShare",
           "name": "instalmentPresetFromShare",
           "kind": "function",
-          "line": 31,
+          "line": 30,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -16176,7 +17004,7 @@
           "id": "src/features/goals/HousingLoansPanel.tsx#HousingLoanManualAddForm",
           "name": "HousingLoanManualAddForm",
           "kind": "component",
-          "line": 38,
+          "line": 37,
           "exported": false,
           "classification": [
             "client-component"
@@ -16221,7 +17049,7 @@
           "id": "src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm",
           "name": "HousingLoanEditForm",
           "kind": "component",
-          "line": 299,
+          "line": 298,
           "exported": false,
           "classification": [
             "client-component"
@@ -16298,7 +17126,7 @@
           "id": "src/features/goals/HousingLoansPanel.tsx#HousingLoanDeleteForm",
           "name": "HousingLoanDeleteForm",
           "kind": "component",
-          "line": 631,
+          "line": 630,
           "exported": false,
           "classification": [
             "client-component"
@@ -16327,7 +17155,7 @@
           "id": "src/features/goals/HousingLoansPanel.tsx#HousingPanel",
           "name": "HousingPanel",
           "kind": "component",
-          "line": 659,
+          "line": 658,
           "exported": true,
           "classification": [
             "client-component"
@@ -16340,10 +17168,6 @@
             {
               "kind": "renders",
               "target": "src/features/housing/PropertyAddForm.tsx#PropertyAddForm"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm"
             },
             {
               "kind": "renders",
@@ -16380,7 +17204,7 @@
           "id": "src/features/goals/HousingLoansPanel.tsx#HousingLoansPanel",
           "name": "HousingLoansPanel",
           "kind": "component",
-          "line": 815,
+          "line": 805,
           "exported": true,
           "classification": [
             "client-component"
@@ -17272,10 +18096,55 @@
       ],
       "functions": [
         {
+          "id": "src/features/housing/PropertyAddForm.tsx#currentYearMonth",
+          "name": "currentYearMonth",
+          "kind": "function",
+          "line": 28,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/housing/PropertyAddForm.tsx#moneyValue",
+          "name": "moneyValue",
+          "kind": "function",
+          "line": 33,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/housing/PropertyAddForm.tsx#monthHint",
+          "name": "monthHint",
+          "kind": "function",
+          "line": 38,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/housing/PropertyAddForm.tsx#monthlyInstalment",
+          "name": "monthlyInstalment",
+          "kind": "function",
+          "line": 45,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/features/housing/PropertyAddForm.tsx#PropertyAddForm",
           "name": "PropertyAddForm",
           "kind": "component",
-          "line": 30,
+          "line": 57,
           "exported": true,
           "classification": [
             "client-component"
@@ -17314,47 +18183,139 @@
               "external": "react"
             },
             {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/housing/PropertyAddForm.tsx#moneyValue"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/housing/PropertyAddForm.tsx#monthlyInstalment"
+            },
+            {
               "kind": "renders",
               "target": "src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay"
             },
             {
               "kind": "renders",
-              "target": "src/features/housing/PropertyAddForm.tsx#FormIntro"
+              "target": "src/features/housing/PropertyAddForm.tsx#PaymentEvent"
             },
             {
-              "kind": "renders",
-              "target": "src/features/housing/PropertyAddForm.tsx#LenderPicker"
+              "kind": "calls",
+              "target": "src/ui/lib/format.ts#formatCurrency"
             },
             {
               "kind": "renders",
               "target": "src/features/goals/HousingPaymentSourceFields.tsx#HousingPaymentSourceFields"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/housing/PropertyAddForm.tsx#SummaryPill"
             }
           ],
-          "unresolved": 1
+          "unresolved": 25
         },
         {
-          "id": "src/features/housing/PropertyAddForm.tsx#FormIntro",
-          "name": "FormIntro",
+          "id": "src/features/housing/PropertyAddForm.tsx#PaymentEvent",
+          "name": "PaymentEvent",
           "kind": "component",
-          "line": 324,
+          "line": 422,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [],
+          "unresolved": 4
+        },
+        {
+          "id": "src/features/housing/PropertyAddForm.tsx#SummaryPill",
+          "name": "SummaryPill",
+          "kind": "component",
+          "line": 523,
           "exported": false,
           "classification": [
             "client-component"
           ],
           "edges": [],
           "unresolved": 0
-        },
-        {
-          "id": "src/features/housing/PropertyAddForm.tsx#LenderPicker",
-          "name": "LenderPicker",
-          "kind": "component",
-          "line": 333,
-          "exported": false,
-          "classification": [
-            "client-component"
-          ],
-          "edges": [],
-          "unresolved": 3
         }
       ]
     },
@@ -17943,6 +18904,30 @@
       ]
     },
     {
+      "path": "src/features/planning/CashFlowSetupGuidanceBanner.tsx",
+      "root": "src/features",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/features/planning/CashFlowSetupGuidanceBanner.tsx#CashFlowSetupGuidanceBanner",
+          "name": "CashFlowSetupGuidanceBanner",
+          "kind": "component",
+          "line": 9,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "renders",
+              "external": "next"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/features/planning/load-setup-tab-bundle.ts",
       "root": "src/features",
       "classification": [
@@ -17953,7 +18938,7 @@
           "id": "src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle",
           "name": "loadSetupTabBundle",
           "kind": "function",
-          "line": 68,
+          "line": 74,
           "exported": true,
           "classification": [],
           "edges": [
@@ -17964,6 +18949,10 @@
             {
               "kind": "calls",
               "target": "src/data/repositories/cash-accounts.ts#advisorReadCashAccounts"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/cash-account-snapshots.ts#advisorReadCashAccountSnapshots"
             },
             {
               "kind": "calls",
@@ -18522,7 +19511,7 @@
           "id": "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection",
           "name": "WealthPlanningSection",
           "kind": "component",
-          "line": 35,
+          "line": 36,
           "exported": true,
           "classification": [],
           "edges": [
@@ -18565,6 +19554,10 @@
             {
               "kind": "calls",
               "target": "src/lib/validation.ts#birthDateIsValidPast"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/goals/CashAndLiabilitiesPanels.tsx#buildCashHistoryByAccountId"
             },
             {
               "kind": "renders",
@@ -19927,7 +20920,7 @@
           "id": "src/lib/validation.ts#reliefAmount",
           "name": "reliefAmount",
           "kind": "arrow",
-          "line": 324,
+          "line": 328,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20079,7 +21072,7 @@
           "id": "src/server/actions.ts#toClientErrorMessage",
           "name": "toClientErrorMessage",
           "kind": "function",
-          "line": 95,
+          "line": 97,
           "exported": false,
           "classification": [
             "server-action"
@@ -20091,7 +21084,7 @@
           "id": "src/server/actions.ts#parseInvestmentPlanningFields",
           "name": "parseInvestmentPlanningFields",
           "kind": "function",
-          "line": 104,
+          "line": 106,
           "exported": false,
           "classification": [
             "server-action"
@@ -20103,7 +21096,7 @@
           "id": "src/server/actions.ts#signOutAction",
           "name": "signOutAction",
           "kind": "function",
-          "line": 173,
+          "line": 175,
           "exported": true,
           "classification": [
             "server-action"
@@ -20128,7 +21121,7 @@
           "id": "src/server/actions.ts#createInvestmentAction",
           "name": "createInvestmentAction",
           "kind": "function",
-          "line": 179,
+          "line": 181,
           "exported": true,
           "classification": [
             "server-action"
@@ -20181,7 +21174,7 @@
           "id": "src/server/actions.ts#updateInvestmentAction",
           "name": "updateInvestmentAction",
           "kind": "function",
-          "line": 238,
+          "line": 240,
           "exported": true,
           "classification": [
             "server-action"
@@ -20246,7 +21239,7 @@
           "id": "src/server/actions.ts#deleteInvestmentAction",
           "name": "deleteInvestmentAction",
           "kind": "function",
-          "line": 303,
+          "line": 305,
           "exported": true,
           "classification": [
             "server-action"
@@ -20307,7 +21300,7 @@
           "id": "src/server/actions.ts#confirmInvestmentReviewAction",
           "name": "confirmInvestmentReviewAction",
           "kind": "function",
-          "line": 335,
+          "line": 337,
           "exported": true,
           "classification": [
             "server-action"
@@ -20352,7 +21345,7 @@
           "id": "src/server/actions.ts#confirmCpfRulesReviewAction",
           "name": "confirmCpfRulesReviewAction",
           "kind": "function",
-          "line": 359,
+          "line": 361,
           "exported": true,
           "classification": [
             "server-action"
@@ -20386,10 +21379,27 @@
           "unresolved": 0
         },
         {
+          "id": "src/server/actions.ts#parseCashAccountForm",
+          "name": "parseCashAccountForm",
+          "kind": "function",
+          "line": 383,
+          "exported": false,
+          "classification": [
+            "server-action"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "zod"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/server/actions.ts#createCashAccountAction",
           "name": "createCashAccountAction",
           "kind": "function",
-          "line": 381,
+          "line": 396,
           "exported": true,
           "classification": [
             "server-action"
@@ -20413,7 +21423,15 @@
             },
             {
               "kind": "calls",
+              "target": "src/server/actions.ts#parseCashAccountForm"
+            },
+            {
+              "kind": "calls",
               "target": "src/data/repositories/cash-accounts.ts#insertCashAccount"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/planning-revalidate.ts#revalidateSetupAndPlanning"
             }
           ],
           "unresolved": 0
@@ -20422,7 +21440,7 @@
           "id": "src/server/actions.ts#updateCashAccountAction",
           "name": "updateCashAccountAction",
           "kind": "function",
-          "line": 404,
+          "line": 416,
           "exported": true,
           "classification": [
             "server-action"
@@ -20458,7 +21476,15 @@
             },
             {
               "kind": "calls",
+              "target": "src/server/actions.ts#parseCashAccountForm"
+            },
+            {
+              "kind": "calls",
               "target": "src/data/repositories/cash-accounts.ts#updateCashAccount"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/planning-revalidate.ts#revalidateSetupAndPlanning"
             }
           ],
           "unresolved": 0
@@ -20467,7 +21493,7 @@
           "id": "src/server/actions.ts#deleteCashAccountAction",
           "name": "deleteCashAccountAction",
           "kind": "function",
-          "line": 430,
+          "line": 439,
           "exported": true,
           "classification": [
             "server-action"
@@ -20504,6 +21530,10 @@
             {
               "kind": "calls",
               "target": "src/data/repositories/cash-accounts.ts#deleteCashAccount"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/planning-revalidate.ts#revalidateSetupAndPlanning"
             }
           ],
           "unresolved": 0
@@ -20512,7 +21542,7 @@
           "id": "src/server/actions.ts#createLiabilityAction",
           "name": "createLiabilityAction",
           "kind": "function",
-          "line": 451,
+          "line": 461,
           "exported": true,
           "classification": [
             "server-action"
@@ -20561,7 +21591,7 @@
           "id": "src/server/actions.ts#updateLiabilityAction",
           "name": "updateLiabilityAction",
           "kind": "function",
-          "line": 479,
+          "line": 489,
           "exported": true,
           "classification": [
             "server-action"
@@ -20622,7 +21652,7 @@
           "id": "src/server/actions.ts#deleteLiabilityAction",
           "name": "deleteLiabilityAction",
           "kind": "function",
-          "line": 515,
+          "line": 525,
           "exported": true,
           "classification": [
             "server-action"
@@ -20679,7 +21709,7 @@
           "id": "src/server/actions.ts#optionalYearMonth",
           "name": "optionalYearMonth",
           "kind": "function",
-          "line": 539,
+          "line": 549,
           "exported": false,
           "classification": [
             "server-action"
@@ -20696,7 +21726,7 @@
           "id": "src/server/actions.ts#createVehicleAction",
           "name": "createVehicleAction",
           "kind": "function",
-          "line": 548,
+          "line": 558,
           "exported": true,
           "classification": [
             "server-action"
@@ -20733,7 +21763,7 @@
           "id": "src/server/actions.ts#updateVehicleAction",
           "name": "updateVehicleAction",
           "kind": "function",
-          "line": 738,
+          "line": 748,
           "exported": true,
           "classification": [
             "server-action"
@@ -20782,7 +21812,7 @@
           "id": "src/server/actions.ts#deleteVehicleAction",
           "name": "deleteVehicleAction",
           "kind": "function",
-          "line": 929,
+          "line": 939,
           "exported": true,
           "classification": [
             "server-action"
@@ -20827,7 +21857,7 @@
           "id": "src/server/actions.ts#createGoalAction",
           "name": "createGoalAction",
           "kind": "function",
-          "line": 948,
+          "line": 958,
           "exported": true,
           "classification": [
             "server-action"
@@ -20861,10 +21891,47 @@
           "unresolved": 0
         },
         {
+          "id": "src/server/actions.ts#reorderFinancialGoalAction",
+          "name": "reorderFinancialGoalAction",
+          "kind": "function",
+          "line": 1014,
+          "exported": true,
+          "classification": [
+            "server-action"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "@supabase/auth-js"
+            },
+            {
+              "kind": "calls",
+              "external": "next"
+            },
+            {
+              "kind": "calls",
+              "external": "next"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/supabase/server.ts#createSupabaseServerClient"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/goals.ts#reorderFinancialGoal"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/planning-revalidate.ts#revalidateSetupAndPlanning"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/server/actions.ts#updateGoalAction",
           "name": "updateGoalAction",
           "kind": "function",
-          "line": 1004,
+          "line": 1046,
           "exported": true,
           "classification": [
             "server-action"
@@ -20901,7 +21968,7 @@
           "id": "src/server/actions.ts#createBudgetLineAction",
           "name": "createBudgetLineAction",
           "kind": "function",
-          "line": 1067,
+          "line": 1109,
           "exported": true,
           "classification": [
             "server-action"
@@ -20942,7 +22009,7 @@
           "id": "src/server/actions.ts#coerceLifestyle",
           "name": "coerceLifestyle",
           "kind": "function",
-          "line": 1163,
+          "line": 1205,
           "exported": false,
           "classification": [
             "server-action"
@@ -20954,7 +22021,7 @@
           "id": "src/server/actions.ts#coerceStrategy",
           "name": "coerceStrategy",
           "kind": "function",
-          "line": 1171,
+          "line": 1213,
           "exported": false,
           "classification": [
             "server-action"
@@ -20966,7 +22033,7 @@
           "id": "src/server/actions.ts#coerceFoodBand",
           "name": "coerceFoodBand",
           "kind": "function",
-          "line": 1179,
+          "line": 1221,
           "exported": false,
           "classification": [
             "server-action"
@@ -20978,7 +22045,7 @@
           "id": "src/server/actions.ts#applyGuidedBudgetLinesAction",
           "name": "applyGuidedBudgetLinesAction",
           "kind": "function",
-          "line": 1200,
+          "line": 1242,
           "exported": true,
           "classification": [
             "server-action"
@@ -21067,7 +22134,7 @@
           "id": "src/server/actions.ts#updateBudgetLineAmountAction",
           "name": "updateBudgetLineAmountAction",
           "kind": "function",
-          "line": 1287,
+          "line": 1329,
           "exported": true,
           "classification": [
             "server-action"
@@ -21104,7 +22171,7 @@
           "id": "src/server/actions.ts#deleteBudgetLineAction",
           "name": "deleteBudgetLineAction",
           "kind": "function",
-          "line": 1317,
+          "line": 1359,
           "exported": true,
           "classification": [
             "server-action"
@@ -21141,7 +22208,7 @@
           "id": "src/server/actions.ts#setBudgetMonthOverrideAction",
           "name": "setBudgetMonthOverrideAction",
           "kind": "function",
-          "line": 1338,
+          "line": 1380,
           "exported": true,
           "classification": [
             "server-action"
@@ -21182,7 +22249,7 @@
           "id": "src/server/actions.ts#clearBudgetMonthOverrideAction",
           "name": "clearBudgetMonthOverrideAction",
           "kind": "function",
-          "line": 1375,
+          "line": 1417,
           "exported": true,
           "classification": [
             "server-action"
@@ -21223,7 +22290,7 @@
           "id": "src/server/actions.ts#updateBudgetLineScheduleAction",
           "name": "updateBudgetLineScheduleAction",
           "kind": "function",
-          "line": 1402,
+          "line": 1444,
           "exported": true,
           "classification": [
             "server-action"
@@ -21284,7 +22351,7 @@
           "id": "src/server/actions.ts#upsertCpfBalanceAction",
           "name": "upsertCpfBalanceAction",
           "kind": "function",
-          "line": 1460,
+          "line": 1502,
           "exported": true,
           "classification": [
             "server-action"
@@ -21321,7 +22388,7 @@
           "id": "src/server/actions.ts#clearCpfBalanceAction",
           "name": "clearCpfBalanceAction",
           "kind": "function",
-          "line": 1518,
+          "line": 1560,
           "exported": true,
           "classification": [
             "server-action"
@@ -21358,7 +22425,7 @@
           "id": "src/server/actions.ts#parseHousingPaymentForm",
           "name": "parseHousingPaymentForm",
           "kind": "function",
-          "line": 1534,
+          "line": 1576,
           "exported": false,
           "classification": [
             "server-action"
@@ -21383,7 +22450,7 @@
           "id": "src/server/actions.ts#revalidateHousingPaths",
           "name": "revalidateHousingPaths",
           "kind": "function",
-          "line": 1600,
+          "line": 1642,
           "exported": false,
           "classification": [
             "server-action"
@@ -21413,10 +22480,67 @@
           "unresolved": 0
         },
         {
+          "id": "src/server/actions.ts#parseOptionalMoneyField",
+          "name": "parseOptionalMoneyField",
+          "kind": "function",
+          "line": 1650,
+          "exported": false,
+          "classification": [
+            "server-action"
+          ],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/server/actions.ts#parseOptionalPurchaseYear",
+          "name": "parseOptionalPurchaseYear",
+          "kind": "function",
+          "line": 1659,
+          "exported": false,
+          "classification": [
+            "server-action"
+          ],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/server/actions.ts#normalizeOptionalMmyy",
+          "name": "normalizeOptionalMmyy",
+          "kind": "function",
+          "line": 1666,
+          "exported": false,
+          "classification": [
+            "server-action"
+          ],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/server/actions.ts#optionalYearMonthOrMmyy",
+          "name": "optionalYearMonthOrMmyy",
+          "kind": "function",
+          "line": 1684,
+          "exported": false,
+          "classification": [
+            "server-action"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "zod"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/actions.ts#normalizeOptionalMmyy"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/server/actions.ts#insertPropertyForLoan",
           "name": "insertPropertyForLoan",
           "kind": "function",
-          "line": 1608,
+          "line": 1695,
           "exported": false,
           "classification": [
             "server-action"
@@ -21433,7 +22557,7 @@
           "id": "src/server/actions.ts#createHousingPropertyAction",
           "name": "createHousingPropertyAction",
           "kind": "function",
-          "line": 1630,
+          "line": 1719,
           "exported": true,
           "classification": [
             "server-action"
@@ -21469,11 +22593,23 @@
             },
             {
               "kind": "calls",
+              "target": "src/server/actions.ts#parseOptionalPurchaseYear"
+            },
+            {
+              "kind": "calls",
               "target": "src/data/repositories/properties.ts#insertProperty"
             },
             {
               "kind": "calls",
               "target": "src/server/actions.ts#revalidateHousingPaths"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/actions.ts#parseOptionalMoneyField"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/actions.ts#optionalYearMonthOrMmyy"
             },
             {
               "kind": "calls",
@@ -21490,7 +22626,7 @@
           "id": "src/server/actions.ts#updateHousingPropertyAction",
           "name": "updateHousingPropertyAction",
           "kind": "function",
-          "line": 1792,
+          "line": 1995,
           "exported": true,
           "classification": [
             "server-action"
@@ -21539,7 +22675,7 @@
           "id": "src/server/actions.ts#deleteHousingPropertyAction",
           "name": "deleteHousingPropertyAction",
           "kind": "function",
-          "line": 1843,
+          "line": 2046,
           "exported": true,
           "classification": [
             "server-action"
@@ -21580,7 +22716,7 @@
           "id": "src/server/actions.ts#createHousingLoanAction",
           "name": "createHousingLoanAction",
           "kind": "function",
-          "line": 1859,
+          "line": 2062,
           "exported": true,
           "classification": [
             "server-action"
@@ -21629,7 +22765,7 @@
           "id": "src/server/actions.ts#createHousingLoanQuickAction",
           "name": "createHousingLoanQuickAction",
           "kind": "function",
-          "line": 1981,
+          "line": 2184,
           "exported": true,
           "classification": [
             "server-action"
@@ -21706,7 +22842,7 @@
           "id": "src/server/actions.ts#updateHousingLoanAction",
           "name": "updateHousingLoanAction",
           "kind": "function",
-          "line": 2238,
+          "line": 2441,
           "exported": true,
           "classification": [
             "server-action"
@@ -21763,7 +22899,7 @@
           "id": "src/server/actions.ts#deleteHousingLoanAction",
           "name": "deleteHousingLoanAction",
           "kind": "function",
-          "line": 2357,
+          "line": 2560,
           "exported": true,
           "classification": [
             "server-action"
@@ -23748,6 +24884,7 @@
         "src/data/budget-summary.ts#getBudgetPageModel",
         "src/data/dashboard.ts#getDashboardPayload",
         "src/data/expense-budget-guard.ts#hasBudgetCategoryMonthlyConflict",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
         "src/data/setup-status.ts#loadSetupEvaluationContext",
         "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
         "src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection",
@@ -23757,7 +24894,8 @@
         "src/app/(app)/expenses/page.tsx#ExpensesPage",
         "src/data/budget-summary.ts#getBudgetPageModel",
         "src/data/dashboard.ts#getDashboardPayload",
-        "src/data/expense-budget-guard.ts#hasBudgetCategoryMonthlyConflict"
+        "src/data/expense-budget-guard.ts#hasBudgetCategoryMonthlyConflict",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext"
       ],
       "src/data/repositories/expenses.ts#listExpensesForYear": [
         "src/data/budget-summary.ts#getBudgetPageModel"
@@ -23765,13 +24903,15 @@
       "src/data/repositories/budget-line-overrides.ts#listBudgetLineOverridesForMonth": [
         "src/app/(app)/expenses/page.tsx#ExpensesPage",
         "src/data/budget-summary.ts#getBudgetPageModel",
-        "src/data/dashboard.ts#getDashboardPayload"
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext"
       ],
       "src/data/repositories/income-tax-configs.ts#getIncomeTaxConfig": [
         "src/app/(app)/setup/page.tsx#SetupPage",
         "src/app/api/income-tax/route.ts#PATCH",
         "src/data/budget-summary.ts#getBudgetPageModel",
-        "src/data/dashboard.ts#getDashboardPayload"
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext"
       ],
       "src/data/repositories/profiles.ts#getProfileById": [
         "src/app/(app)/account-issue/page.tsx#AccountIssuePage",
@@ -23786,6 +24926,7 @@
         "src/app/api/profile/route.ts#PATCH",
         "src/app/api/projection/route.ts#GET",
         "src/data/budget-summary.ts#getBudgetPageModel",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
         "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
         "src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection",
@@ -23806,21 +24947,25 @@
       "src/data/repositories/housing-loans.ts#listHousingLoans": [
         "src/data/budget-summary.ts#getBudgetPageModel",
         "src/data/dashboard.ts#getDashboardPayload",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
         "src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle"
       ],
       "src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap": [
         "src/app/(app)/expenses/page.tsx#ExpensesPage",
         "src/data/budget-summary.ts#getBudgetPageModel",
-        "src/data/dashboard.ts#getDashboardPayload"
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext"
       ],
       "src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense": [
         "src/data/budget-summary.ts#getBudgetPageModel",
         "src/data/dashboard.ts#getDashboardPayload",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
         "src/features/income-tax/TaxComputedSummary.tsx#TaxComputedSummary"
       ],
       "src/data/housing-cash-synthetic-expense.ts#buildSyntheticHousingCashExpense": [
         "src/data/budget-summary.ts#getBudgetPageModel",
-        "src/data/dashboard.ts#getDashboardPayload"
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext"
       ],
       "src/domain/finance/budget.ts#isMonthlyBudgetLineApplicable": [
         "src/app/(app)/expenses/page.tsx#ExpensesPage",
@@ -23829,6 +24974,7 @@
         "src/domain/finance/budget.ts#plannedMonthlyBudgetTotalForMonth",
         "src/domain/finance/expense-budget-lock.ts#activeMonthlyBudgetCategoryKeys",
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines",
+        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
         "src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel"
       ],
       "src/domain/finance/budget.ts#normalizeCategory": [
@@ -23853,6 +24999,7 @@
       "src/domain/finance/budget.ts#monthlyBudgetVsActual": [
         "src/data/budget-summary.ts#getBudgetPageModel",
         "src/data/dashboard.ts#getDashboardPayload",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
         "src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth"
       ],
       "src/domain/finance/budget.ts#annualBudgetVsActual": [
@@ -23865,6 +25012,7 @@
         "src/app/api/profile/route.ts#PATCH",
         "src/data/dashboard.ts#getDashboardPayload",
         "src/data/dashboard.ts#housingLoanToProjection",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
         "src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense",
         "src/data/mappers.ts#budgetLineRowToDomain",
         "src/data/mappers.ts#expenseRowToBudgetExpense",
@@ -23901,6 +25049,7 @@
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
         "src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel",
         "src/features/expenses/ExpenseEditRow.tsx#ExpenseEditRow",
+        "src/features/goals/CashAndLiabilitiesPanels.tsx#buildCashHistoryByAccountId",
         "src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm",
         "src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels",
         "src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm",
@@ -23977,6 +25126,8 @@
       "src/data/repositories/goals.ts#listFinancialGoals": [
         "src/app/(app)/expenses/page.tsx#ExpensesPage",
         "src/data/dashboard.ts#getDashboardPayload",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
+        "src/data/repositories/goals.ts#reorderFinancialGoal",
         "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
       ],
@@ -24006,11 +25157,13 @@
       ],
       "src/data/mappers.ts#sumExpenseAmounts": [
         "src/data/dashboard.ts#getDashboardPayload",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
         "src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth"
       ],
       "src/data/mappers.ts#profileSalaryTakeHomeMonthly": [
         "src/app/(app)/setup/page.tsx#SetupPage",
         "src/data/dashboard.ts#getDashboardPayload",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
         "src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth",
         "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals",
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
@@ -24162,6 +25315,45 @@
         "src/app/(app)/account-issue/page.tsx#AccountIssuePage",
         "src/data/financial-profile.ts#needsOnboarding"
       ],
+      "src/lib/dates.ts#formatYearMonth": [
+        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
+        "src/app/(app)/budget/page.tsx#BudgetPage",
+        "src/app/(app)/dashboard/page.tsx#DashboardPage",
+        "src/app/(app)/expenses/page.tsx#ExpensesPage",
+        "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
+        "src/app/(app)/setup/page.tsx#SetupPage",
+        "src/app/api/budget/route.ts#GET",
+        "src/app/api/dashboard/route.ts#GET",
+        "src/app/api/profile/route.ts#PATCH",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
+        "src/data/liability-budget-sync.ts#syncLiabilityBudgetLine",
+        "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals",
+        "src/domain/finance/vehicle-sg.ts#completedMonthsSinceReg",
+        "src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash",
+        "src/domain/finance/vehicle-sg.ts#loanMonthsRemainingResolved",
+        "src/domain/finance/vehicle-sg.ts#vehicleGrossAssetEstimate",
+        "src/domain/finance/vehicle-sg.ts#vehicleGrossFromPurchaseToTerminalLinear",
+        "src/domain/finance/vehicle-sg.ts#vehicleGrossFromRebatesRemainingToTerminal",
+        "src/domain/finance/vehicle-sg.ts#vehicleNetListedBeforeLiquidation",
+        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
+        "src/features/debts/DebtPlanningPanels.tsx#DebtCard",
+        "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
+        "src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard",
+        "src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection",
+        "src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection",
+        "src/lib/dates.ts#addMonthsToYearMonth",
+        "src/lib/dates.ts#defaultExpenseDateForBudgetMonth",
+        "src/lib/setup-urls.ts#setupTabPath",
+        "src/server/actions.ts#applyGuidedBudgetLinesAction"
+      ],
+      "src/domain/finance/goal-priority-tradeoff.ts#sortGoalsByPriority": [
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
+        "src/domain/finance/goal-priority-tradeoff.ts#analyzeGoalPriorityTradeoff",
+        "src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels"
+      ],
+      "src/domain/finance/goal-priority-tradeoff.ts#analyzeGoalPriorityTradeoff": [
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext"
+      ],
       "src/domain/finance/housing-loan-payments.ts#sumHousingCashInstalmentsForMonth": [
         "src/data/housing-cash-synthetic-expense.ts#buildSyntheticHousingCashExpense"
       ],
@@ -24191,38 +25383,9 @@
         "src/data/liability-budget-sync.ts#syncLiabilityBudgetLine",
         "src/domain/finance/debt-repayment.ts#debtRepaymentAppliesInMonth",
         "src/domain/finance/debt-repayment.ts#sumDebtRepaymentsInMonth",
+        "src/features/debts/DebtPayoffStrategyComparison.tsx#debtToSimInput",
         "src/features/debts/DebtPlanningPanels.tsx#DebtCard",
         "src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels"
-      ],
-      "src/lib/dates.ts#formatYearMonth": [
-        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
-        "src/app/(app)/budget/page.tsx#BudgetPage",
-        "src/app/(app)/dashboard/page.tsx#DashboardPage",
-        "src/app/(app)/expenses/page.tsx#ExpensesPage",
-        "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
-        "src/app/(app)/setup/page.tsx#SetupPage",
-        "src/app/api/budget/route.ts#GET",
-        "src/app/api/dashboard/route.ts#GET",
-        "src/app/api/profile/route.ts#PATCH",
-        "src/data/liability-budget-sync.ts#syncLiabilityBudgetLine",
-        "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals",
-        "src/domain/finance/vehicle-sg.ts#completedMonthsSinceReg",
-        "src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash",
-        "src/domain/finance/vehicle-sg.ts#loanMonthsRemainingResolved",
-        "src/domain/finance/vehicle-sg.ts#vehicleGrossAssetEstimate",
-        "src/domain/finance/vehicle-sg.ts#vehicleGrossFromPurchaseToTerminalLinear",
-        "src/domain/finance/vehicle-sg.ts#vehicleGrossFromRebatesRemainingToTerminal",
-        "src/domain/finance/vehicle-sg.ts#vehicleNetListedBeforeLiquidation",
-        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
-        "src/features/debts/DebtPlanningPanels.tsx#DebtCard",
-        "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
-        "src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard",
-        "src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection",
-        "src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection",
-        "src/lib/dates.ts#addMonthsToYearMonth",
-        "src/lib/dates.ts#defaultExpenseDateForBudgetMonth",
-        "src/lib/setup-urls.ts#setupTabPath",
-        "src/server/actions.ts#applyGuidedBudgetLinesAction"
       ],
       "src/data/repositories/budget-lines.ts#getBudgetLineBySourceLiabilityId": [
         "src/data/liability-budget-sync.ts#removeLiabilityBudgetLines",
@@ -24423,6 +25586,7 @@
         "src/app/auth/callback/route.ts#GET",
         "src/app/login/page.tsx#peekQrTokenIfPresent",
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
+        "src/features/goals/GoalPriorityTradeoffPanel.tsx#GoalPriorityTradeoffPanel",
         "src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection",
         "src/features/planning/sections/FuturePlanningSection.tsx#FuturePlanningSection",
         "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection",
@@ -24447,6 +25611,7 @@
         "src/server/actions.ts#deleteInvestmentAction",
         "src/server/actions.ts#deleteLiabilityAction",
         "src/server/actions.ts#deleteVehicleAction",
+        "src/server/actions.ts#reorderFinancialGoalAction",
         "src/server/actions.ts#setBudgetMonthOverrideAction",
         "src/server/actions.ts#signOutAction",
         "src/server/actions.ts#updateBudgetLineAmountAction",
@@ -24503,15 +25668,19 @@
         "src/server/actions.ts#confirmCpfRulesReviewAction",
         "src/server/actions.ts#confirmInvestmentReviewAction",
         "src/server/actions.ts#createBudgetLineAction",
+        "src/server/actions.ts#createCashAccountAction",
         "src/server/actions.ts#createGoalAction",
         "src/server/actions.ts#createInvestmentAction",
         "src/server/actions.ts#createLiabilityAction",
         "src/server/actions.ts#deleteBudgetLineAction",
+        "src/server/actions.ts#deleteCashAccountAction",
         "src/server/actions.ts#deleteInvestmentAction",
         "src/server/actions.ts#deleteLiabilityAction",
+        "src/server/actions.ts#reorderFinancialGoalAction",
         "src/server/actions.ts#setBudgetMonthOverrideAction",
         "src/server/actions.ts#updateBudgetLineAmountAction",
         "src/server/actions.ts#updateBudgetLineScheduleAction",
+        "src/server/actions.ts#updateCashAccountAction",
         "src/server/actions.ts#updateGoalAction",
         "src/server/actions.ts#updateInvestmentAction",
         "src/server/actions.ts#updateLiabilityAction",
@@ -24529,6 +25698,10 @@
       ],
       "src/server/inbox/acknowledge-cpf-rules-review.ts#acknowledgeCpfRulesReview": [
         "src/server/actions.ts#confirmCpfRulesReviewAction"
+      ],
+      "src/server/actions.ts#parseCashAccountForm": [
+        "src/server/actions.ts#createCashAccountAction",
+        "src/server/actions.ts#updateCashAccountAction"
       ],
       "src/data/repositories/cash-accounts.ts#insertCashAccount": [
         "src/server/actions.ts#createCashAccountAction"
@@ -24574,6 +25747,9 @@
       ],
       "src/data/repositories/goals.ts#insertFinancialGoal": [
         "src/server/actions.ts#createGoalAction"
+      ],
+      "src/data/repositories/goals.ts#reorderFinancialGoal": [
+        "src/server/actions.ts#reorderFinancialGoalAction"
       ],
       "src/data/repositories/goals.ts#updateFinancialGoal": [
         "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
@@ -24632,9 +25808,15 @@
         "src/server/actions.ts#createHousingLoanQuickAction",
         "src/server/actions.ts#parseHousingPaymentForm"
       ],
+      "src/server/actions.ts#normalizeOptionalMmyy": [
+        "src/server/actions.ts#optionalYearMonthOrMmyy"
+      ],
       "src/data/repositories/properties.ts#insertProperty": [
         "src/server/actions.ts#createHousingPropertyAction",
         "src/server/actions.ts#insertPropertyForLoan"
+      ],
+      "src/server/actions.ts#parseOptionalPurchaseYear": [
+        "src/server/actions.ts#createHousingPropertyAction"
       ],
       "src/server/actions.ts#revalidateHousingPaths": [
         "src/server/actions.ts#createHousingLoanAction",
@@ -24644,6 +25826,12 @@
         "src/server/actions.ts#deleteHousingPropertyAction",
         "src/server/actions.ts#updateHousingLoanAction",
         "src/server/actions.ts#updateHousingPropertyAction"
+      ],
+      "src/server/actions.ts#parseOptionalMoneyField": [
+        "src/server/actions.ts#createHousingPropertyAction"
+      ],
+      "src/server/actions.ts#optionalYearMonthOrMmyy": [
+        "src/server/actions.ts#createHousingPropertyAction"
       ],
       "src/server/actions.ts#parseHousingPaymentForm": [
         "src/server/actions.ts#createHousingLoanAction",
@@ -24670,6 +25858,7 @@
       ],
       "src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty": [
         "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
+        "src/features/housing/PropertyAddForm.tsx#PropertyAddForm",
         "src/server/actions.ts#createHousingLoanQuickAction"
       ],
       "src/domain/finance/property-financing-plan.ts#resolveGuidedCashDownpayment": [
@@ -24960,6 +26149,10 @@
       "src/domain/advisor-proposals/field-registry.ts#valuesEqual": [
         "src/data/repositories/advisor-proposals.ts#upsertProposalChange"
       ],
+      "src/data/repositories/cash-account-snapshots.ts#insertCashAccountSnapshot": [
+        "src/data/repositories/cash-accounts.ts#insertCashAccount",
+        "src/data/repositories/cash-accounts.ts#updateCashAccount"
+      ],
       "src/data/repositories/coupons.ts#asRecord": [
         "src/data/repositories/coupons.ts#parseAccessKeyPurchaseQuote",
         "src/data/repositories/coupons.ts#parseAccessKeyPurchaseResult",
@@ -24984,6 +26177,10 @@
       ],
       "src/data/repositories/expenses.ts#monthRange": [
         "src/data/repositories/expenses.ts#listExpensesForMonth"
+      ],
+      "src/data/repositories/goals.ts#nextGoalDisplayOrder": [
+        "src/data/repositories/goals.ts#insertFinancialGoal",
+        "src/data/repositories/goals.ts#insertFinancialGoalsBulk"
       ],
       "src/data/repositories/investments.ts#isUnknownInvestmentContributionColumnError": [
         "src/data/repositories/investments.ts#insertInvestment",
@@ -25111,11 +26308,35 @@
         "src/domain/finance/cash-flow-accrual.ts#accrueTakeHomeSurplus",
         "src/domain/finance/investable-surplus.ts#sumInvestableSurplusOverHorizon"
       ],
+      "src/lib/setup-urls.ts#setupTabPath": [
+        "src/app/(app)/setup/page.tsx#SetupPage",
+        "src/domain/finance/cash-flow-setup-guidance.ts#budgetLensAnchor",
+        "src/domain/finance/cash-flow-setup-guidance.ts#incomeAnchor"
+      ],
+      "src/data/financial-profile.ts#isFinancialProfileIncomplete": [
+        "src/app/(app)/dashboard/page.tsx#DashboardPage",
+        "src/domain/finance/cash-flow-setup-guidance.ts#cashFlowSetupGaps",
+        "src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection"
+      ],
+      "src/domain/finance/cash-flow-setup-guidance.ts#hasBudgetLensSaved": [
+        "src/domain/finance/cash-flow-setup-guidance.ts#cashFlowSetupGaps"
+      ],
+      "src/domain/finance/cash-flow-setup-guidance.ts#incomeAnchor": [
+        "src/domain/finance/cash-flow-setup-guidance.ts#cashFlowSetupGaps"
+      ],
+      "src/domain/finance/cash-flow-setup-guidance.ts#budgetLensAnchor": [
+        "src/domain/finance/cash-flow-setup-guidance.ts#cashFlowSetupGaps"
+      ],
+      "src/domain/finance/cash-flow-setup-guidance.ts#cashFlowSetupGaps": [
+        "src/domain/finance/cash-flow-setup-guidance.ts#shouldShowCashFlowSetupGuidance",
+        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
+      ],
       "src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule": [
         "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries",
         "src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount",
         "src/domain/finance/housing-loan-payments.ts#housingInstalmentForMonth",
-        "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm"
+        "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
+        "src/features/housing/PropertyAddForm.tsx#monthlyInstalment"
       ],
       "src/domain/finance/cpf-monthly-projection.ts#round2": [
         "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries"
@@ -25182,6 +26403,19 @@
       ],
       "src/domain/finance/cpf-rules-review.ts#reviewedInOrAfterMonth": [
         "src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview"
+      ],
+      "src/domain/finance/debt-payoff-strategies.ts#roundMoney": [
+        "src/domain/finance/debt-payoff-strategies.ts#simulateStrategy"
+      ],
+      "src/domain/finance/debt-payoff-strategies.ts#pickTarget": [
+        "src/domain/finance/debt-payoff-strategies.ts#simulateStrategy"
+      ],
+      "src/domain/finance/debt-payoff-strategies.ts#debtsEligibleForPayoffComparison": [
+        "src/domain/finance/debt-payoff-strategies.ts#compareDebtPayoffStrategies",
+        "src/features/debts/DebtPayoffStrategyComparison.tsx#DebtPayoffStrategyComparison"
+      ],
+      "src/domain/finance/debt-payoff-strategies.ts#simulateStrategy": [
+        "src/domain/finance/debt-payoff-strategies.ts#compareDebtPayoffStrategies"
       ],
       "src/domain/finance/debt-repayment.ts#normalizeDebtCategoryKey": [
         "src/domain/finance/debt-repayment.ts#isDebtBudgetCategory"
@@ -25381,6 +26615,9 @@
       "src/domain/finance/sg-income-tax.ts#monthlyGiroFromNetTax": [
         "src/domain/finance/sg-income-tax.ts#computeAnnualTax"
       ],
+      "src/domain/finance/singapore-residential-bsd.ts#singaporeResidentialBsdScheduleForPurchaseYear": [
+        "src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty"
+      ],
       "src/domain/finance/singapore-residential-bsd.ts#roundMoney": [
         "src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty"
       ],
@@ -25565,12 +26802,15 @@
         "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection",
         "src/features/debts/DebtEducationalExamples.tsx#DebtEducationalExamples",
         "src/features/debts/DebtFormFields.tsx#DebtFormFields",
+        "src/features/debts/DebtPayoffStrategyComparison.tsx#DebtPayoffStrategyComparison",
         "src/features/debts/DebtPlanningPanels.tsx#DebtCard",
         "src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels",
         "src/features/expenses/ExpenseEditRow.tsx#ExpenseEditRow",
+        "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountHistory",
         "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow",
         "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels",
         "src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels",
+        "src/features/goals/GoalPriorityTradeoffPanel.tsx#GoalPriorityTradeoffPanel",
         "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
         "src/features/goals/HousingLoansPanel.tsx#HousingPanel",
         "src/features/goals/HousingPaymentSourceFields.tsx#HousingPaymentSourceFields",
@@ -25578,6 +26818,7 @@
         "src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary",
         "src/features/goals/InvestmentBalancesList.tsx#contributionSummaryLine",
         "src/features/goals/VehiclesPanel.tsx#VehicleSummary",
+        "src/features/housing/PropertyAddForm.tsx#PropertyAddForm",
         "src/features/income-tax/IncomeTaxForm.tsx#FieldGroup",
         "src/features/income-tax/TaxComputedSummary.tsx#TaxComputedSummary",
         "src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard",
@@ -25690,6 +26931,9 @@
       "src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines": [
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
       ],
+      "src/domain/finance/cash-flow-setup-guidance.ts#shouldShowCashFlowSetupGuidance": [
+        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
+      ],
       "src/lib/dates.ts#defaultExpenseDateForBudgetMonth": [
         "src/app/(app)/expenses/page.tsx#ExpensesPage",
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
@@ -25740,6 +26984,9 @@
       "src/server/inbox-actions.ts#markInboxItemReadByDedupeKeyAction": [
         "src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm"
       ],
+      "src/domain/finance/debt-payoff-strategies.ts#compareDebtPayoffStrategies": [
+        "src/features/debts/DebtPayoffStrategyComparison.tsx#DebtPayoffStrategyComparison"
+      ],
       "src/features/debts/DebtPlanningPanels.tsx#rowToFormValues": [
         "src/features/debts/DebtPlanningPanels.tsx#DebtCard"
       ],
@@ -25767,6 +27014,9 @@
       "src/features/debts/DebtPlanningPanels.tsx#emptyFormValues": [
         "src/features/debts/DebtPlanningPanels.tsx#AddDebtForm"
       ],
+      "src/features/goals/CashAndLiabilitiesPanels.tsx#formatSnapshotDate": [
+        "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountHistory"
+      ],
       "src/server/actions.ts#createCashAccountAction": [
         "src/features/goals/CashAndLiabilitiesPanels.tsx#AddCashForm"
       ],
@@ -25775,6 +27025,12 @@
       ],
       "src/server/actions.ts#deleteCashAccountAction": [
         "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow"
+      ],
+      "src/domain/finance/cash-account-purpose.ts#cashPurposeSortOrder": [
+        "src/features/goals/CashAndLiabilitiesPanels.tsx#groupCashByPurpose"
+      ],
+      "src/features/goals/CashAndLiabilitiesPanels.tsx#groupCashByPurpose": [
+        "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels"
       ],
       "src/features/debts/DebtPlanningPanels.tsx#mapLiabilityRows": [
         "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels"
@@ -25796,6 +27052,9 @@
       ],
       "src/ui/lib/duration.ts#formatMonthsApprox": [
         "src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels"
+      ],
+      "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext": [
+        "src/features/goals/GoalPriorityTradeoffPanel.tsx#GoalPriorityTradeoffPanel"
       ],
       "src/domain/finance/housing-loan-payments.ts#resolveHousingPaymentSource": [
         "src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm",
@@ -25846,6 +27105,12 @@
       "src/server/actions.ts#deleteVehicleAction": [
         "src/features/goals/VehiclesPanel.tsx#VehicleDeleteForm"
       ],
+      "src/features/housing/PropertyAddForm.tsx#moneyValue": [
+        "src/features/housing/PropertyAddForm.tsx#PropertyAddForm"
+      ],
+      "src/features/housing/PropertyAddForm.tsx#monthlyInstalment": [
+        "src/features/housing/PropertyAddForm.tsx#PropertyAddForm"
+      ],
       "src/server/inbox-actions.ts#markInboxItemReadAction": [
         "src/features/inbox/InboxPanel.tsx#InboxPanel"
       ],
@@ -25888,6 +27153,9 @@
       "src/server/actions.ts#applyGuidedBudgetLinesAction": [
         "src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard",
         "src/features/setup/BudgetLensProfileForm.tsx#BudgetLensProfileForm"
+      ],
+      "src/data/repositories/cash-account-snapshots.ts#advisorReadCashAccountSnapshots": [
+        "src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle"
       ],
       "src/data/repositories/properties.ts#advisorReadProperties": [
         "src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle"
@@ -25947,10 +27215,6 @@
         "src/app/api/dashboard/route.ts#GET",
         "src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection"
       ],
-      "src/data/financial-profile.ts#isFinancialProfileIncomplete": [
-        "src/app/(app)/dashboard/page.tsx#DashboardPage",
-        "src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection"
-      ],
       "src/data/financial-profile.ts#needsOnboarding": [
         "src/app/(app)/onboarding/page.tsx#OnboardingPage"
       ],
@@ -25961,8 +27225,9 @@
         "src/app/(app)/setup/page.tsx#SetupPage",
         "src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection"
       ],
-      "src/lib/setup-urls.ts#setupTabPath": [
-        "src/app/(app)/setup/page.tsx#SetupPage"
+      "src/features/goals/CashAndLiabilitiesPanels.tsx#buildCashHistoryByAccountId": [
+        "src/app/(app)/setup/page.tsx#SetupPage",
+        "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection"
       ],
       "src/data/expense-budget-guard.ts#hasBudgetCategoryMonthlyConflict": [
         "src/app/api/expenses/[id]/route.ts#PATCH",
@@ -26070,6 +27335,7 @@
         "src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm",
         "src/features/goals/GoalEditForm.tsx#GoalEditForm",
         "src/features/goals/GoalForm.tsx#GoalForm",
+        "src/features/goals/GoalReorderButtons.tsx#GoalReorderButtons",
         "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
         "src/features/goals/HousingLoansPanel.tsx#HousingLoanDeleteForm",
         "src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm",
@@ -26236,6 +27502,9 @@
       "src/features/budget/BudgetPageHero.tsx#BudgetRingProgress": [
         "src/features/budget/BudgetPageHero.tsx#BudgetPageHero"
       ],
+      "src/features/planning/CashFlowSetupGuidanceBanner.tsx#CashFlowSetupGuidanceBanner": [
+        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
+      ],
       "src/features/budget/BudgetPageHero.tsx#BudgetPageHero": [
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
       ],
@@ -26255,6 +27524,7 @@
         "src/app/(app)/expenses/page.tsx#ExpensesPage",
         "src/app/(app)/setup/page.tsx#SetupPage",
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
+        "src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel",
         "src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection",
         "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection",
         "src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm",
@@ -26298,6 +27568,14 @@
       "src/features/dashboard/CpfRetirementProjectionPanel.tsx#FlowArrow": [
         "src/features/dashboard/CpfRetirementProjectionPanel.tsx#RaFlowVisual"
       ],
+      "src/ui/InfoTooltip.tsx#InfoTooltip": [
+        "src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel",
+        "src/features/dashboard/DashboardOverviewSection.tsx#DashboardOverviewSection",
+        "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection",
+        "src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm",
+        "src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm",
+        "src/features/income-tax/TaxMethodologyTooltip.tsx#TaxMethodologyTooltip"
+      ],
       "src/features/dashboard/CpfRetirementProjectionPanel.tsx#RaFlowVisual": [
         "src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel"
       ],
@@ -26306,13 +27584,6 @@
       ],
       "src/features/dashboard/ProjectionMiniChart.tsx#ProjectionMiniChart": [
         "src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection"
-      ],
-      "src/ui/InfoTooltip.tsx#InfoTooltip": [
-        "src/features/dashboard/DashboardOverviewSection.tsx#DashboardOverviewSection",
-        "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection",
-        "src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm",
-        "src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm",
-        "src/features/income-tax/TaxMethodologyTooltip.tsx#TaxMethodologyTooltip"
       ],
       "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart": [
         "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection"
@@ -26333,11 +27604,21 @@
       "src/features/debts/DebtEducationalExamples.tsx#DebtEducationalExamples": [
         "src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels"
       ],
+      "src/features/debts/DebtPayoffStrategyComparison.tsx#DebtPayoffStrategyComparison": [
+        "src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels"
+      ],
       "src/features/debts/DebtPlanningPanels.tsx#AddDebtForm": [
         "src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels"
       ],
       "src/features/debts/DebtPlanningPanels.tsx#DebtCard": [
         "src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels"
+      ],
+      "src/features/goals/CashAndLiabilitiesPanels.tsx#PurposeSelect": [
+        "src/features/goals/CashAndLiabilitiesPanels.tsx#AddCashForm",
+        "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow"
+      ],
+      "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountHistory": [
+        "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow"
       ],
       "src/features/goals/CashAndLiabilitiesPanels.tsx#AddCashForm": [
         "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels"
@@ -26351,7 +27632,13 @@
       "src/features/goals/CpfBalancesForm.tsx#CpfRulesReviewPrompt": [
         "src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm"
       ],
+      "src/features/goals/GoalPriorityTradeoffPanel.tsx#GoalPriorityTradeoffPanel": [
+        "src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels"
+      ],
       "src/features/goals/GoalForm.tsx#GoalForm": [
+        "src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels"
+      ],
+      "src/features/goals/GoalReorderButtons.tsx#GoalReorderButtons": [
         "src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels"
       ],
       "src/features/goals/GoalEditForm.tsx#GoalEditForm": [
@@ -26363,9 +27650,6 @@
         "src/features/housing/PropertyAddForm.tsx#PropertyAddForm"
       ],
       "src/features/housing/PropertyAddForm.tsx#PropertyAddForm": [
-        "src/features/goals/HousingLoansPanel.tsx#HousingPanel"
-      ],
-      "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm": [
         "src/features/goals/HousingLoansPanel.tsx#HousingPanel"
       ],
       "src/features/goals/HousingLoansPanel.tsx#HousingLoanManualAddForm": [
@@ -26429,10 +27713,10 @@
       "src/features/goals/VehiclesPanel.tsx#VehicleEditForm": [
         "src/features/goals/VehiclesPanel.tsx#VehiclesPanel"
       ],
-      "src/features/housing/PropertyAddForm.tsx#FormIntro": [
+      "src/features/housing/PropertyAddForm.tsx#PaymentEvent": [
         "src/features/housing/PropertyAddForm.tsx#PropertyAddForm"
       ],
-      "src/features/housing/PropertyAddForm.tsx#LenderPicker": [
+      "src/features/housing/PropertyAddForm.tsx#SummaryPill": [
         "src/features/housing/PropertyAddForm.tsx#PropertyAddForm"
       ],
       "src/features/inbox/InboxPanel.tsx#InboxPanel": [

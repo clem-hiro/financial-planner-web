@@ -248,6 +248,10 @@ export const housingPropertyKindSchema = z.enum([
 
 /** Full property type list (asset-first housing). */
 export const housingPropertyTypeSchema = z.enum([
+  "bto",
+  "resale_hdb",
+  "resale_ec_condo",
+  "new_launch_ec_condo",
   "hdb",
   "condo",
   "ec",

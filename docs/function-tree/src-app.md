@@ -41,7 +41,7 @@
 | [`src/app/(app)/review/proposal/[id]/page.tsx`](#src-app-app-review-proposal-id-page-tsx) | `page` | 1 | 17 |
 | [`src/app/(app)/setup/loading.tsx`](#src-app-app-setup-loading-tsx) | `loading` | 1 | 1 |
 | [`src/app/(app)/setup/overview/page.tsx`](#src-app-app-setup-overview-page-tsx) | `page` | 1 | 4 |
-| [`src/app/(app)/setup/page.tsx`](#src-app-app-setup-page-tsx) | `page` | 2 | 34 |
+| [`src/app/(app)/setup/page.tsx`](#src-app-app-setup-page-tsx) | `page` | 2 | 35 |
 | [`src/app/(app)/spending/page.tsx`](#src-app-app-spending-page-tsx) | `page` | 1 | 1 |
 | [`src/app/api/budget/route.ts`](#src-app-api-budget-route-ts) | `route-handler` | 1 | 13 |
 | [`src/app/api/dashboard/route.ts`](#src-app-api-dashboard-route-ts) | `route-handler` | 1 | 10 |
@@ -359,13 +359,13 @@ Classification: `page`
 
 Classification: `page`
 
-#### `buildSetupTabs` — function, L46
+#### `buildSetupTabs` — function, L47
 
 - called by: `src/app/(app)/setup/page.tsx#SetupPage`
 
-#### `SetupPage` — component, L64
+#### `SetupPage` — component, L65
 
-- calls: `src/app/(app)/setup/page.tsx#buildSetupTabs`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileCpfAgeBand`, `src/data/mappers.ts#profileExpenseGrowthNominal`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/income-tax-configs.ts#getIncomeTaxConfig`, `src/domain/finance/budget-guided-setup.ts#countReplaceableMonthlyBudgetLines`, `src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview`, `src/domain/finance/investment-review.ts#shouldPromptInvestmentReview`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/setup-urls.ts#setupTabPath`, `src/lib/validation.ts#birthDateIsValidPast`
+- calls: `src/app/(app)/setup/page.tsx#buildSetupTabs`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileCpfAgeBand`, `src/data/mappers.ts#profileExpenseGrowthNominal`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/income-tax-configs.ts#getIncomeTaxConfig`, `src/domain/finance/budget-guided-setup.ts#countReplaceableMonthlyBudgetLines`, `src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview`, `src/domain/finance/investment-review.ts#shouldPromptInvestmentReview`, `src/features/goals/CashAndLiabilitiesPanels.tsx#buildCashHistoryByAccountId`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/setup-urls.ts#setupTabPath`, `src/lib/validation.ts#birthDateIsValidPast`
 - renders: `[external] next`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`, `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/HousingLoansPanel.tsx#HousingPanel`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`, `src/features/goals/VehiclesPanel.tsx#VehiclesPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/features/income-tax/IncomeTaxSection.tsx#IncomeTaxSection`, `src/features/setup/BudgetLensProfileForm.tsx#BudgetLensProfileForm`, `src/features/setup/SetupTabsNav.tsx#SetupTabsNav`, `src/ui/PageSection.tsx#PageSection`
 - unresolved: 1
 

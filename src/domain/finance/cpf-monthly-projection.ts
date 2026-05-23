@@ -33,6 +33,10 @@ export type HousingLoanProjectionInput = {
   firstPaymentMonth: string;
   downpaymentFromOa: number;
   feesFromOa: number;
+  upfrontOaEvents?: Array<{
+    yearMonth: string;
+    amount: number;
+  }>;
   principal: number;
   annualNominalRate: number;
   termMonths: number;
@@ -183,7 +187,15 @@ export function buildCpfMonthlyProjectionSeries(params: {
     }
 
     for (const { loan } of paymentByYmByLoan) {
-      if (ym === loan.completionMonth) {
+      const explicitEvents = loan.upfrontOaEvents?.filter(
+        (event) => event.yearMonth === ym && event.amount > 0
+      );
+      if (explicitEvents != null && explicitEvents.length > 0) {
+        const lump = round2(
+          explicitEvents.reduce((sum, event) => sum + event.amount, 0)
+        );
+        oa = round2(Math.max(0, oa - lump));
+      } else if (!loan.upfrontOaEvents?.length && ym === loan.completionMonth) {
         const lump = round2(loan.downpaymentFromOa + loan.feesFromOa);
         oa = round2(Math.max(0, oa - lump));
       }
