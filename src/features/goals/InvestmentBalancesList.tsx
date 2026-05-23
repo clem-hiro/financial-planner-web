@@ -13,6 +13,7 @@ import {
 } from "@/server/actions";
 import {
   ageCompletedOnDate,
+  investmentReviewReason,
   investmentRowIsStale,
   INVESTMENT_REVIEW_STALE_MONTHS,
 } from "@/domain/finance";
@@ -143,15 +144,26 @@ function InvestmentSummary({
 }) {
   const returnPct = (investment.expected_annual_return * 100).toFixed(1);
   const flowSummary = contributionSummaryLine(investment, currencyCode);
-  const stale = investmentRowIsStale(investment);
+  const reviewReason = investmentReviewReason(investment);
+  const reviewCopy =
+    reviewReason?.kind === "stale_months"
+      ? `Not updated in ${reviewReason.months} months. Confirm the balance and expected return still match reality.`
+      : reviewReason?.kind === "no_timestamp"
+        ? "This account has no recorded update date. Confirm its details are current."
+        : null;
   return (
     <div className="flex items-start justify-between gap-3 py-3.5">
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <p className="truncate text-sm font-medium text-slate-900">{investment.name}</p>
-          {stale ? (
-            <span className="shrink-0 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-900">
-              Review due
+          {reviewCopy ? (
+            <span className="inline-flex shrink-0 items-center gap-0.5">
+              <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-900">
+                Review due
+              </span>
+              <InfoTooltip ariaLabel="Why this account is due for review">
+                <p>{reviewCopy}</p>
+              </InfoTooltip>
             </span>
           ) : null}
         </div>

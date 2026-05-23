@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   countStaleInvestments,
+  investmentReviewReason,
   investmentRowIsStale,
   monthsSinceTimestamp,
   shouldPromptInvestmentReview,
@@ -36,6 +37,36 @@ describe("investment review staleness", () => {
       now
     );
     expect(n).toBe(1);
+  });
+});
+
+describe("investmentReviewReason", () => {
+  const now = new Date("2026-05-15T12:00:00Z");
+
+  it("returns no_timestamp when the row has never been touched", () => {
+    expect(investmentReviewReason({}, now)).toEqual({ kind: "no_timestamp" });
+  });
+
+  it("returns stale_months with floored months for an old updated_at", () => {
+    const reason = investmentReviewReason(
+      { updated_at: "2025-03-01T12:00:00Z" },
+      now
+    );
+    expect(reason).toEqual({ kind: "stale_months", months: 14 });
+  });
+
+  it("falls back to created_at when updated_at is null", () => {
+    const reason = investmentReviewReason(
+      { updated_at: null, created_at: "2025-03-01T12:00:00Z" },
+      now
+    );
+    expect(reason).toEqual({ kind: "stale_months", months: 14 });
+  });
+
+  it("returns null for a recently updated row", () => {
+    expect(
+      investmentReviewReason({ updated_at: "2026-04-01T00:00:00Z" }, now)
+    ).toBeNull();
   });
 });
 
