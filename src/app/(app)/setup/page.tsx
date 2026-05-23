@@ -14,6 +14,7 @@ import { countReplaceableMonthlyBudgetLines } from "@/domain/finance/budget-guid
 import { getRequestAuth } from "@/data/supabase/request-context";
 import { ProfileIncomeForm } from "@/features/dashboard/ProfileIncomeForm";
 import { IncomeTaxSection } from "@/features/income-tax/IncomeTaxSection";
+import { buildCashHistoryByAccountId } from "@/domain/finance/cash-account-history";
 import {
   CashAndLiabilitiesPanels,
   type CashAccountBalanceRow,

@@ -11,7 +11,6 @@ import { PropertyAddForm } from "@/features/housing/PropertyAddForm";
 import { num } from "@/data/mappers";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { formatCurrency } from "@/ui/lib/format";
-import { HousingLoanQuickAddForm } from "@/features/goals/HousingLoanQuickAddForm";
 import { HDB_CONCESSIONARY_RATE_ANNUAL } from "@/domain/finance/housing-loan-quick";
 import {
   firstHousingInstalmentAmount,
@@ -657,7 +656,6 @@ function HousingLoanDeleteForm({ id }: { id: string }) {
 }
 
 export function HousingPanel({
-  properties: _properties,
   loans,
   currencyCode,
 }: {
@@ -671,14 +669,6 @@ export function HousingPanel({
     <div className="space-y-4">
       <PropertyAddForm currencyCode={currencyCode} />
       <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
-      <div className="p-4 sm:p-5">
-        <p className="mb-3 text-xs text-zinc-500">
-          Guided purchase (downpayment, BSD, loan sizing) — creates a property and
-          linked mortgage together.
-        </p>
-        <HousingLoanQuickAddForm currencyCode={currencyCode} />
-      </div>
-
       <div className="p-4 sm:p-5">
         <details className="group">
         <summary className="cursor-pointer text-sm font-medium text-zinc-700 hover:text-zinc-900">

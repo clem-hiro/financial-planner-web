@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-05-23T09:36:17.083Z",
+  "generated_at": "2026-05-23T15:50:44.475Z",
   "roots": [
     "src/app",
     "src/components",
@@ -308,7 +308,7 @@
           "id": "src/app/(app)/advisor/client/[id]/page.tsx#identityOnlyProfile",
           "name": "identityOnlyProfile",
           "kind": "function",
-          "line": 49,
+          "line": 38,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -318,17 +318,13 @@
           "id": "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
           "name": "AdvisorClientDetailPage",
           "kind": "component",
-          "line": 89,
+          "line": 78,
           "exported": true,
           "classification": [],
           "edges": [
             {
               "kind": "calls",
               "external": "@supabase/auth-js"
-            },
-            {
-              "kind": "calls",
-              "external": "next"
             },
             {
               "kind": "calls",
@@ -364,27 +360,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/data/repositories/advisor-proposals.ts#listProposalsForAdvisorClient"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorClientDetailShell.tsx#AdvisorClientDetailShell"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/advisor-proposals.ts#getProposalById"
-            },
-            {
-              "kind": "calls",
               "target": "src/lib/dates.ts#formatYearMonth"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/advisor-proposals.ts#listChangesForProposal"
             },
             {
               "kind": "calls",
@@ -392,19 +368,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/domain/advisor-proposals/overlay-gate.ts#resolveOverlayForViewer"
-            },
-            {
-              "kind": "calls",
               "target": "src/data/dashboard.ts#getDashboardPayload"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView"
             },
             {
               "kind": "calls",
@@ -432,15 +396,19 @@
             },
             {
               "kind": "calls",
+              "target": "src/data/repositories/advisor-proposals.ts#listChangesForProposal"
+            },
+            {
+              "kind": "calls",
               "target": "src/app/(app)/advisor/client/[id]/page.tsx#identityOnlyProfile"
             },
             {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
+              "kind": "calls",
+              "target": "src/domain/advisor-proposals/overlay-gate.ts#resolveOverlayForViewer"
             },
             {
               "kind": "renders",
-              "target": "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview"
+              "target": "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
             }
           ],
           "unresolved": 0
@@ -1500,94 +1468,6 @@
       ]
     },
     {
-      "path": "src/app/(app)/setup/advisor-proposals/[id]/page.tsx",
-      "root": "src/app",
-      "classification": [
-        "page"
-      ],
-      "functions": [
-        {
-          "id": "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage",
-          "name": "ClientProposalReviewPage",
-          "kind": "component",
-          "line": 21,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "external": "@supabase/auth-js"
-            },
-            {
-              "kind": "calls",
-              "external": "next"
-            },
-            {
-              "kind": "calls",
-              "external": "next"
-            },
-            {
-              "kind": "calls",
-              "external": "next"
-            },
-            {
-              "kind": "calls",
-              "external": "next"
-            },
-            {
-              "kind": "calls",
-              "target": "src/lib/env.ts#isSupabaseConfigured"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/supabase/server.ts#createSupabaseServerClient"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/profiles.ts#getProfileById"
-            },
-            {
-              "kind": "calls",
-              "target": "src/lib/profile-role.ts#isClient"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/advisor-proposals.ts#getProposalById"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/advisor-proposals.ts#listChangesForProposal"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/advisor-proposals.ts#listSectionNotesForProposal"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/overlay-gate.ts#resolveOverlayForViewer"
-            },
-            {
-              "kind": "calls",
-              "target": "src/lib/dates.ts#formatYearMonth"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/dashboard.ts#getDashboardPayload"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView"
-            }
-          ],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
       "path": "src/app/(app)/setup/loading.tsx",
       "root": "src/app",
       "classification": [
@@ -1658,7 +1538,7 @@
           "id": "src/app/(app)/setup/page.tsx#buildSetupTabs",
           "name": "buildSetupTabs",
           "kind": "function",
-          "line": 49,
+          "line": 47,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -1668,14 +1548,10 @@
           "id": "src/app/(app)/setup/page.tsx#SetupPage",
           "name": "SetupPage",
           "kind": "component",
-          "line": 68,
+          "line": 65,
           "exported": true,
           "classification": [],
           "edges": [
-            {
-              "kind": "renders",
-              "external": "next"
-            },
             {
               "kind": "renders",
               "external": "next"
@@ -1711,10 +1587,6 @@
             {
               "kind": "calls",
               "target": "src/data/repositories/budget-lines.ts#listBudgetLines"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/advisor-proposals.ts#listProposalsForClient"
             },
             {
               "kind": "calls",
@@ -1819,10 +1691,6 @@
             {
               "kind": "renders",
               "target": "src/features/income-tax/IncomeTaxSection.tsx#IncomeTaxSection"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/proposals/ClientProposalsView.tsx#ClientProposalsView"
             }
           ],
           "unresolved": 1
@@ -2898,7 +2766,7 @@
           "id": "src/data/dashboard.ts#ageAtEndOfYearMonth",
           "name": "ageAtEndOfYearMonth",
           "kind": "function",
-          "line": 303,
+          "line": 333,
           "exported": false,
           "classification": [],
           "edges": [
@@ -2913,7 +2781,7 @@
           "id": "src/data/dashboard.ts#buildCpfHousingMarkers",
           "name": "buildCpfHousingMarkers",
           "kind": "function",
-          "line": 309,
+          "line": 339,
           "exported": false,
           "classification": [],
           "edges": [
@@ -2928,7 +2796,7 @@
           "id": "src/data/dashboard.ts#getDashboardPayload",
           "name": "getDashboardPayload",
           "kind": "function",
-          "line": 335,
+          "line": 365,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4290,20 +4158,10 @@
       ],
       "functions": [
         {
-          "id": "src/data/repositories/advisor-proposals.ts#changeKeyColumns",
-          "name": "changeKeyColumns",
-          "kind": "function",
-          "line": 41,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
           "id": "src/data/repositories/advisor-proposals.ts#getProposalById",
           "name": "getProposalById",
           "kind": "function",
-          "line": 59,
+          "line": 26,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4330,7 +4188,7 @@
           "id": "src/data/repositories/advisor-proposals.ts#getPendingProposalForClient",
           "name": "getPendingProposalForClient",
           "kind": "function",
-          "line": 72,
+          "line": 39,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4365,7 +4223,7 @@
           "id": "src/data/repositories/advisor-proposals.ts#getDraftProposalForClient",
           "name": "getDraftProposalForClient",
           "kind": "function",
-          "line": 88,
+          "line": 55,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4400,13 +4258,29 @@
           "id": "src/data/repositories/advisor-proposals.ts#getOrCreateDraftProposal",
           "name": "getOrCreateDraftProposal",
           "kind": "function",
-          "line": 104,
+          "line": 71,
           "exported": true,
           "classification": [],
           "edges": [
             {
               "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
               "external": "@supabase/supabase-js"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/advisor-proposals.ts#getDraftProposalForClient"
             }
           ],
           "unresolved": 0
@@ -4415,7 +4289,7 @@
           "id": "src/data/repositories/advisor-proposals.ts#listChangesForProposal",
           "name": "listChangesForProposal",
           "kind": "function",
-          "line": 118,
+          "line": 92,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4446,7 +4320,7 @@
           "id": "src/data/repositories/advisor-proposals.ts#listSectionNotesForProposal",
           "name": "listSectionNotesForProposal",
           "kind": "function",
-          "line": 132,
+          "line": 106,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4469,7 +4343,7 @@
           "id": "src/data/repositories/advisor-proposals.ts#countChangesForProposal",
           "name": "countChangesForProposal",
           "kind": "function",
-          "line": 144,
+          "line": 118,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4492,7 +4366,7 @@
           "id": "src/data/repositories/advisor-proposals.ts#upsertProposalChange",
           "name": "upsertProposalChange",
           "kind": "function",
-          "line": 160,
+          "line": 134,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4506,18 +4380,6 @@
             },
             {
               "kind": "calls",
-              "external": "@supabase/supabase-js"
-            },
-            {
-              "kind": "calls",
-              "external": "@supabase/postgrest-js"
-            },
-            {
-              "kind": "calls",
-              "external": "@supabase/postgrest-js"
-            },
-            {
-              "kind": "calls",
               "external": "@supabase/postgrest-js"
             },
             {
@@ -4535,22 +4397,6 @@
             {
               "kind": "calls",
               "external": "@supabase/postgrest-js"
-            },
-            {
-              "kind": "calls",
-              "external": "@supabase/postgrest-js"
-            },
-            {
-              "kind": "calls",
-              "external": "@supabase/postgrest-js"
-            },
-            {
-              "kind": "calls",
-              "external": "@supabase/postgrest-js"
-            },
-            {
-              "kind": "calls",
-              "external": "@supabase/supabase-js"
             },
             {
               "kind": "calls",
@@ -4570,10 +4416,6 @@
             },
             {
               "kind": "calls",
-              "target": "src/data/repositories/advisor-proposals.ts#changeKeyColumns"
-            },
-            {
-              "kind": "calls",
               "target": "src/domain/advisor-proposals/field-registry.ts#valuesEqual"
             }
           ],
@@ -4583,7 +4425,7 @@
           "id": "src/data/repositories/advisor-proposals.ts#upsertSectionNote",
           "name": "upsertSectionNote",
           "kind": "function",
-          "line": 231,
+          "line": 183,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4618,67 +4460,7 @@
           "id": "src/data/repositories/advisor-proposals.ts#submitProposal",
           "name": "submitProposal",
           "kind": "function",
-          "line": 254,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "external": "@supabase/supabase-js"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/data/repositories/advisor-proposals.ts#withdrawProposal",
-          "name": "withdrawProposal",
-          "kind": "function",
-          "line": 266,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "external": "@supabase/supabase-js"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/data/repositories/advisor-proposals.ts#notifyAdvisorProposalConflict",
-          "name": "notifyAdvisorProposalConflict",
-          "kind": "function",
-          "line": 276,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "external": "@supabase/supabase-js"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/data/repositories/advisor-proposals.ts#claimAdvisorProposalForAccept",
-          "name": "claimAdvisorProposalForAccept",
-          "kind": "function",
-          "line": 291,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "external": "@supabase/supabase-js"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/data/repositories/advisor-proposals.ts#finalizeAdvisorProposalAccept",
-          "name": "finalizeAdvisorProposalAccept",
-          "kind": "function",
-          "line": 307,
+          "line": 206,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4693,14 +4475,10 @@
           "id": "src/data/repositories/advisor-proposals.ts#resolveProposal",
           "name": "resolveProposal",
           "kind": "function",
-          "line": 322,
+          "line": 218,
           "exported": true,
           "classification": [],
           "edges": [
-            {
-              "kind": "calls",
-              "external": "@supabase/postgrest-js"
-            },
             {
               "kind": "calls",
               "external": "@supabase/postgrest-js"
@@ -4724,7 +4502,7 @@
           "id": "src/data/repositories/advisor-proposals.ts#deleteProposalChangesBySection",
           "name": "deleteProposalChangesBySection",
           "kind": "function",
-          "line": 343,
+          "line": 235,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4767,7 +4545,7 @@
           "id": "src/data/repositories/advisor-proposals.ts#deleteProposalChangesByEntity",
           "name": "deleteProposalChangesByEntity",
           "kind": "function",
-          "line": 363,
+          "line": 255,
           "exported": true,
           "classification": [],
           "edges": [
@@ -4802,42 +4580,7 @@
           "id": "src/data/repositories/advisor-proposals.ts#listProposalsForAdvisorClient",
           "name": "listProposalsForAdvisorClient",
           "kind": "function",
-          "line": 383,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "external": "@supabase/postgrest-js"
-            },
-            {
-              "kind": "calls",
-              "external": "@supabase/postgrest-js"
-            },
-            {
-              "kind": "calls",
-              "external": "@supabase/postgrest-js"
-            },
-            {
-              "kind": "calls",
-              "external": "@supabase/postgrest-js"
-            },
-            {
-              "kind": "calls",
-              "external": "@supabase/postgrest-js"
-            },
-            {
-              "kind": "calls",
-              "external": "@supabase/supabase-js"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/data/repositories/advisor-proposals.ts#listProposalsForClient",
-          "name": "listProposalsForClient",
-          "kind": "function",
-          "line": 405,
+          "line": 275,
           "exported": true,
           "classification": [],
           "edges": [
@@ -6170,33 +5913,6 @@
             }
           ],
           "unresolved": 0
-        },
-        {
-          "id": "src/data/repositories/goals.ts#deleteFinancialGoal",
-          "name": "deleteFinancialGoal",
-          "kind": "function",
-          "line": 202,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "external": "@supabase/postgrest-js"
-            },
-            {
-              "kind": "calls",
-              "external": "@supabase/postgrest-js"
-            },
-            {
-              "kind": "calls",
-              "external": "@supabase/postgrest-js"
-            },
-            {
-              "kind": "calls",
-              "external": "@supabase/supabase-js"
-            }
-          ],
-          "unresolved": 0
         }
       ]
     },
@@ -6280,7 +5996,7 @@
           "id": "src/data/repositories/housing-loans.ts#updateHousingLoan",
           "name": "updateHousingLoan",
           "kind": "function",
-          "line": 103,
+          "line": 129,
           "exported": true,
           "classification": [],
           "edges": [
@@ -6307,7 +6023,7 @@
           "id": "src/data/repositories/housing-loans.ts#deleteHousingLoan",
           "name": "deleteHousingLoan",
           "kind": "function",
-          "line": 143,
+          "line": 182,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7181,7 +6897,7 @@
           "id": "src/data/repositories/properties.ts#insertProperty",
           "name": "insertProperty",
           "kind": "function",
-          "line": 41,
+          "line": 42,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7208,7 +6924,7 @@
           "id": "src/data/repositories/properties.ts#updateProperty",
           "name": "updateProperty",
           "kind": "function",
-          "line": 66,
+          "line": 68,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7235,7 +6951,7 @@
           "id": "src/data/repositories/properties.ts#deleteProperty",
           "name": "deleteProperty",
           "kind": "function",
-          "line": 80,
+          "line": 82,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7612,60 +7328,6 @@
       "functions": []
     },
     {
-      "path": "src/domain/advisor-proposals/apply-changes.conflict.test.ts",
-      "root": "src/domain",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/domain/advisor-proposals/apply-changes.conflict.test.ts#coerceRead",
-          "name": "coerceRead",
-          "kind": "function",
-          "line": 25,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-changes.conflict.test.ts#makeFakeSupabase",
-          "name": "makeFakeSupabase",
-          "kind": "function",
-          "line": 34,
-          "exported": false,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-changes.conflict.test.ts#coerceRead"
-            }
-          ],
-          "unresolved": 6
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-changes.conflict.test.ts#ch",
-          "name": "ch",
-          "kind": "function",
-          "line": 137,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-changes.conflict.test.ts#seed",
-          "name": "seed",
-          "kind": "function",
-          "line": 158,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
       "path": "src/domain/advisor-proposals/apply-changes.parity.test.ts",
       "root": "src/domain",
       "classification": [
@@ -7740,7 +7402,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#toNumOrNull",
           "name": "toNumOrNull",
           "kind": "function",
-          "line": 33,
+          "line": 21,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -7750,7 +7412,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#profilePatch",
           "name": "profilePatch",
           "kind": "function",
-          "line": 50,
+          "line": 38,
           "exported": false,
           "classification": [],
           "edges": [
@@ -7765,7 +7427,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#investmentDiffers",
           "name": "investmentDiffers",
           "kind": "function",
-          "line": 67,
+          "line": 55,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -7775,114 +7437,13 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#investmentWritePayload",
           "name": "investmentWritePayload",
           "kind": "function",
-          "line": 82,
+          "line": 70,
           "exported": false,
           "classification": [],
           "edges": [
             {
               "kind": "calls",
               "target": "src/domain/advisor-proposals/apply-changes.ts#toNumOrNull"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-changes.ts#budgetLineWritePayload",
-          "name": "budgetLineWritePayload",
-          "kind": "function",
-          "line": 98,
-          "exported": false,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-changes.ts#toNumOrNull"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-changes.ts#budgetLinePatch",
-          "name": "budgetLinePatch",
-          "kind": "function",
-          "line": 109,
-          "exported": false,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-changes.ts#toNumOrNull"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-changes.ts#goalWritePayload",
-          "name": "goalWritePayload",
-          "kind": "function",
-          "line": 128,
-          "exported": false,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-changes.ts#toNumOrNull"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-changes.ts#goalPatch",
-          "name": "goalPatch",
-          "kind": "function",
-          "line": 140,
-          "exported": false,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-changes.ts#toNumOrNull"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-changes.ts#detectConflicts",
-          "name": "detectConflicts",
-          "kind": "function",
-          "line": 195,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 1
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts",
-          "name": "detectAcceptConflicts",
-          "kind": "function",
-          "line": 244,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/profiles.ts#getProfileById"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/investments.ts#listInvestments"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/budget-lines.ts#listBudgetLines"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/goals.ts#listFinancialGoals"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-changes.ts#detectConflicts"
             }
           ],
           "unresolved": 0
@@ -7891,7 +7452,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
           "name": "applyAcceptedProposalChanges",
           "kind": "function",
-          "line": 270,
+          "line": 92,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7910,10 +7471,6 @@
             {
               "kind": "calls",
               "target": "src/data/repositories/goals.ts#listFinancialGoals"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-changes.ts#detectConflicts"
             },
             {
               "kind": "calls",
@@ -7926,6 +7483,14 @@
             {
               "kind": "calls",
               "target": "src/data/repositories/profiles.ts#updateProfile"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/budget-lines.ts#updateBudgetLine"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/goals.ts#updateFinancialGoal"
             },
             {
               "kind": "calls",
@@ -7946,132 +7511,6 @@
             {
               "kind": "calls",
               "target": "src/data/repositories/investments.ts#updateInvestment"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/budget-lines.ts#deleteBudgetLine"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/budget-lines.ts#insertBudgetLine"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-changes.ts#budgetLineWritePayload"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-changes.ts#budgetLinePatch"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/budget-lines.ts#updateBudgetLine"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/goals.ts#deleteFinancialGoal"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/goals.ts#insertFinancialGoal"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-changes.ts#goalWritePayload"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-changes.ts#goalPatch"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/goals.ts#updateFinancialGoal"
-            }
-          ],
-          "unresolved": 1
-        }
-      ]
-    },
-    {
-      "path": "src/domain/advisor-proposals/apply-overlay.changeops.test.ts",
-      "root": "src/domain",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#bl",
-          "name": "bl",
-          "kind": "function",
-          "line": 11,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#gl",
-          "name": "gl",
-          "kind": "function",
-          "line": 23,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#inv",
-          "name": "inv",
-          "kind": "function",
-          "line": 39,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#prof",
-          "name": "prof",
-          "kind": "function",
-          "line": 57,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#ch",
-          "name": "ch",
-          "kind": "function",
-          "line": 98,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#base",
-          "name": "base",
-          "kind": "function",
-          "line": 117,
-          "exported": false,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#prof"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#inv"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#bl"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#gl"
             }
           ],
           "unresolved": 0
@@ -8200,17 +7639,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#groupByEntity",
           "name": "groupByEntity",
           "kind": "function",
-          "line": 47,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-overlay.ts#resolveOp",
-          "name": "resolveOp",
-          "kind": "function",
-          "line": 77,
+          "line": 44,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -8220,7 +7649,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#fieldMap",
           "name": "fieldMap",
           "kind": "function",
-          "line": 101,
+          "line": 58,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -8230,7 +7659,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#applyProfile",
           "name": "applyProfile",
           "kind": "function",
-          "line": 117,
+          "line": 74,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8242,27 +7671,13 @@
           "unresolved": 0
         },
         {
-          "id": "src/domain/advisor-proposals/apply-overlay.ts#newEntityId",
-          "name": "newEntityId",
-          "kind": "function",
-          "line": 138,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
           "id": "src/domain/advisor-proposals/apply-overlay.ts#applyInvestmentInsert",
           "name": "applyInvestmentInsert",
           "kind": "function",
-          "line": 142,
+          "line": 90,
           "exported": false,
           "classification": [],
           "edges": [
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.ts#newEntityId"
-            },
             {
               "kind": "calls",
               "target": "src/domain/advisor-proposals/apply-overlay.ts#numStr"
@@ -8274,81 +7689,13 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#mergeInvestment",
           "name": "mergeInvestment",
           "kind": "function",
-          "line": 169,
+          "line": 119,
           "exported": false,
           "classification": [],
           "edges": [
             {
               "kind": "calls",
               "target": "src/domain/advisor-proposals/apply-overlay.ts#numStr"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-overlay.ts#applyBudgetLineInsert",
-          "name": "applyBudgetLineInsert",
-          "kind": "function",
-          "line": 201,
-          "exported": false,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.ts#newEntityId"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.ts#numStr"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-overlay.ts#mergeBudgetLine",
-          "name": "mergeBudgetLine",
-          "kind": "function",
-          "line": 219,
-          "exported": false,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.ts#numOrNull"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-overlay.ts#applyGoalInsert",
-          "name": "applyGoalInsert",
-          "kind": "function",
-          "line": 242,
-          "exported": false,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.ts#newEntityId"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.ts#numStr"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/apply-overlay.ts#mergeGoal",
-          "name": "mergeGoal",
-          "kind": "function",
-          "line": 261,
-          "exported": false,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.ts#numOrNull"
             }
           ],
           "unresolved": 0
@@ -8357,7 +7704,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges",
           "name": "applyProposalChanges",
           "kind": "function",
-          "line": 303,
+          "line": 164,
           "exported": true,
           "classification": [],
           "edges": [
@@ -8375,23 +7722,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.ts#resolveOp"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.ts#applyBudgetLineInsert"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.ts#mergeBudgetLine"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.ts#applyGoalInsert"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-overlay.ts#mergeGoal"
+              "target": "src/domain/advisor-proposals/apply-overlay.ts#numOrNull"
             },
             {
               "kind": "calls",
@@ -8417,7 +7748,7 @@
           "id": "src/domain/advisor-proposals/field-registry.ts#fieldMeta",
           "name": "fieldMeta",
           "kind": "function",
-          "line": 65,
+          "line": 62,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -8427,7 +7758,7 @@
           "id": "src/domain/advisor-proposals/field-registry.ts#serializeProposalValue",
           "name": "serializeProposalValue",
           "kind": "function",
-          "line": 92,
+          "line": 89,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -8437,7 +7768,7 @@
           "id": "src/domain/advisor-proposals/field-registry.ts#valuesEqual",
           "name": "valuesEqual",
           "kind": "function",
-          "line": 99,
+          "line": 96,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -8547,70 +7878,6 @@
           "name": "resolveOverlayForViewer",
           "kind": "function",
           "line": 29,
-          "exported": true,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/domain/advisor-proposals/proposal-format.test.ts",
-      "root": "src/domain",
-      "classification": [
-        "regular"
-      ],
-      "functions": []
-    },
-    {
-      "path": "src/domain/advisor-proposals/proposal-format.ts",
-      "root": "src/domain",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/domain/advisor-proposals/proposal-format.ts#shortDate",
-          "name": "shortDate",
-          "kind": "function",
-          "line": 2,
-          "exported": true,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/domain/advisor-proposals/proposal-format.ts#summarize",
-          "name": "summarize",
-          "kind": "function",
-          "line": 12,
-          "exported": true,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/domain/advisor-proposals/proposal-status-display.test.ts",
-      "root": "src/domain",
-      "classification": [
-        "regular"
-      ],
-      "functions": []
-    },
-    {
-      "path": "src/domain/advisor-proposals/proposal-status-display.ts",
-      "root": "src/domain",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/domain/advisor-proposals/proposal-status-display.ts#proposalStatusDisplay",
-          "name": "proposalStatusDisplay",
-          "kind": "function",
-          "line": 41,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -9412,7 +8679,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#round2",
           "name": "round2",
           "kind": "function",
-          "line": 52,
+          "line": 56,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -9422,7 +8689,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#endOfYearMonthDate",
           "name": "endOfYearMonthDate",
           "kind": "function",
-          "line": 56,
+          "line": 60,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -9432,7 +8699,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries",
           "name": "buildCpfMonthlyProjectionSeries",
           "kind": "function",
-          "line": 66,
+          "line": 70,
           "exported": true,
           "classification": [],
           "edges": [
@@ -9479,7 +8746,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#downsampleCpfSeries",
           "name": "downsampleCpfSeries",
           "kind": "function",
-          "line": 228,
+          "line": 240,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -11799,8 +11066,18 @@
           "id": "src/domain/finance/singapore-residential-bsd.ts#roundMoney",
           "name": "roundMoney",
           "kind": "function",
-          "line": 37,
+          "line": 52,
           "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/singapore-residential-bsd.ts#singaporeResidentialBsdScheduleForPurchaseYear",
+          "name": "singaporeResidentialBsdScheduleForPurchaseYear",
+          "kind": "function",
+          "line": 56,
+          "exported": true,
           "classification": [],
           "edges": [],
           "unresolved": 0
@@ -11809,10 +11086,14 @@
           "id": "src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty",
           "name": "computeSingaporeResidentialBuyersStampDuty",
           "kind": "function",
-          "line": 45,
+          "line": 72,
           "exported": true,
           "classification": [],
           "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/singapore-residential-bsd.ts#singaporeResidentialBsdScheduleForPurchaseYear"
+            },
             {
               "kind": "calls",
               "target": "src/domain/finance/singapore-residential-bsd.ts#roundMoney"
@@ -12758,7 +12039,7 @@
           "id": "src/domain/setup/evaluators.ts#evaluateSetupModule",
           "name": "evaluateSetupModule",
           "kind": "function",
-          "line": 343,
+          "line": 340,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -12768,7 +12049,7 @@
           "id": "src/domain/setup/evaluators.ts#evaluateAllSetupModules",
           "name": "evaluateAllSetupModules",
           "kind": "function",
-          "line": 354,
+          "line": 347,
           "exported": true,
           "classification": [],
           "edges": [
@@ -12783,7 +12064,7 @@
           "id": "src/domain/setup/evaluators.ts#summarizeSetupProgress",
           "name": "summarizeSetupProgress",
           "kind": "function",
-          "line": 362,
+          "line": 353,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -12793,7 +12074,7 @@
           "id": "src/domain/setup/evaluators.ts#pickRecommendedSetupStep",
           "name": "pickRecommendedSetupStep",
           "kind": "function",
-          "line": 383,
+          "line": 374,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -12803,7 +12084,7 @@
           "id": "src/domain/setup/evaluators.ts#buildSetupHubSnapshot",
           "name": "buildSetupHubSnapshot",
           "kind": "function",
-          "line": 406,
+          "line": 397,
           "exported": true,
           "classification": [],
           "edges": [
@@ -12823,14 +12104,6 @@
           "unresolved": 0
         }
       ]
-    },
-    {
-      "path": "src/domain/setup/modules.test.ts",
-      "root": "src/domain",
-      "classification": [
-        "regular"
-      ],
-      "functions": []
     },
     {
       "path": "src/domain/setup/modules.ts",
@@ -13116,319 +12389,6 @@
       ]
     },
     {
-      "path": "src/features/advisor/AdvisorClientCompose-split.test.tsx",
-      "root": "src/features",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/features/advisor/AdvisorClientCompose-split.test.tsx#profile",
-          "name": "profile",
-          "kind": "function",
-          "line": 15,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/features/advisor/AdvisorClientCompose-split.test.tsx#payload",
-          "name": "payload",
-          "kind": "function",
-          "line": 55,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview",
-          "name": "renderOverview",
-          "kind": "function",
-          "line": 100,
-          "exported": false,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "external": "react-dom"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/help/methodology-context.tsx#MethodologyProvider"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview"
-            },
-            {
-              "kind": "calls",
-              "target": "src/features/advisor/AdvisorClientCompose-split.test.tsx#profile"
-            },
-            {
-              "kind": "calls",
-              "target": "src/features/advisor/AdvisorClientCompose-split.test.tsx#payload"
-            }
-          ],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/features/advisor/AdvisorClientCompose.tsx",
-      "root": "src/features",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
-          "name": "AdvisorClientCompose",
-          "kind": "component",
-          "line": 34,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/mappers.ts#num"
-            },
-            {
-              "kind": "calls",
-              "target": "src/lib/validation.ts#birthDateIsValidPast"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm"
-            },
-            {
-              "kind": "calls",
-              "target": "src/ui/lib/format.ts#formatCurrency"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorProposeRemovalButton.tsx#AdvisorProposeRemovalButton"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/forms/AdvisorNewGoalForm.tsx#AdvisorNewGoalForm"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx#AdvisorNewBudgetLineForm"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/goals/InvestmentForm.tsx#InvestmentForm"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList"
-            },
-            {
-              "kind": "renders",
-              "target": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail"
-            },
-            {
-              "kind": "renders",
-              "target": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePane"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel"
-            }
-          ],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/features/advisor/AdvisorClientDetailNav.tsx",
-      "root": "src/features",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/features/advisor/AdvisorClientDetailNav.tsx#AdvisorClientDetailNav",
-          "name": "AdvisorClientDetailNav",
-          "kind": "component",
-          "line": 30,
-          "exported": true,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/features/advisor/AdvisorClientDetailShell.tsx",
-      "root": "src/features",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/features/advisor/AdvisorClientDetailShell.tsx#AdvisorClientDetailShell",
-          "name": "AdvisorClientDetailShell",
-          "kind": "component",
-          "line": 18,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorClientDetailNav.tsx#AdvisorClientDetailNav"
-            }
-          ],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/features/advisor/AdvisorClientHeader.tsx",
-      "root": "src/features",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/features/advisor/AdvisorClientHeader.tsx#onboardingLabel",
-          "name": "onboardingLabel",
-          "kind": "function",
-          "line": 8,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader",
-          "name": "AdvisorClientHeader",
-          "kind": "component",
-          "line": 16,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge"
-            },
-            {
-              "kind": "calls",
-              "target": "src/features/advisor/AdvisorClientHeader.tsx#onboardingLabel"
-            },
-            {
-              "kind": "calls",
-              "target": "src/ui/lib/format.ts#formatCurrency"
-            }
-          ],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/features/advisor/AdvisorClientOverview.tsx",
-      "root": "src/features",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
-          "name": "AdvisorClientOverview",
-          "kind": "component",
-          "line": 17,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection"
-            },
-            {
-              "kind": "calls",
-              "target": "src/ui/lib/format.ts#formatCurrency"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/mappers.ts#num"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorComingSoonPanel"
-            },
-            {
-              "kind": "renders",
-              "target": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail"
-            },
-            {
-              "kind": "renders",
-              "target": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePane"
-            }
-          ],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
       "path": "src/features/advisor/AdvisorClientsBoard.tsx",
       "root": "src/features",
       "classification": [
@@ -13519,20 +12479,38 @@
       ]
     },
     {
-      "path": "src/features/advisor/AdvisorConsentRequired.tsx",
+      "path": "src/features/advisor/AdvisorClientWorkspace.tsx",
       "root": "src/features",
       "classification": [
         "regular"
       ],
       "functions": [
         {
-          "id": "src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired",
-          "name": "AdvisorConsentRequired",
+          "id": "src/features/advisor/AdvisorClientWorkspace.tsx#onboardingLabel",
+          "name": "onboardingLabel",
+          "kind": "function",
+          "line": 26,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
+          "name": "AdvisorClientWorkspace",
           "kind": "component",
-          "line": 11,
+          "line": 32,
           "exported": true,
           "classification": [],
           "edges": [
+            {
+              "kind": "renders",
+              "external": "next"
+            },
+            {
+              "kind": "renders",
+              "external": "next"
+            },
             {
               "kind": "renders",
               "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge"
@@ -13540,6 +12518,66 @@
             {
               "kind": "renders",
               "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorComingSoonPanel"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/mappers.ts#num"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/validation.ts#birthDateIsValidPast"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/advisor/AdvisorClientWorkspace.tsx#onboardingLabel"
+            },
+            {
+              "kind": "calls",
+              "target": "src/ui/lib/format.ts#formatCurrency"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/goals/InvestmentForm.tsx#InvestmentForm"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel"
             }
           ],
           "unresolved": 0
@@ -13775,66 +12813,6 @@
       ]
     },
     {
-      "path": "src/features/advisor/AdvisorProposalDetailView.tsx",
-      "root": "src/features",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
-          "name": "AdvisorProposalDetailView",
-          "kind": "component",
-          "line": 21,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/group-changes.ts#groupChangesBySection"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/proposal-status-display.ts#proposalStatusDisplay"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/proposal-format.ts#shortDate"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/sections.ts#sectionLabel"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/field-registry.ts#fieldMeta"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/format-display.ts#formatProposalDisplayValue"
-            },
-            {
-              "kind": "renders",
-              "target": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail"
-            },
-            {
-              "kind": "renders",
-              "target": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePane"
-            }
-          ],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
       "path": "src/features/advisor/AdvisorProposalDraftPanel.tsx",
       "root": "src/features",
       "classification": [
@@ -13950,111 +12928,6 @@
           ],
           "edges": [],
           "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/features/advisor/AdvisorProposalsTable.test.tsx",
-      "root": "src/features",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/features/advisor/AdvisorProposalsTable.test.tsx#row",
-          "name": "row",
-          "kind": "function",
-          "line": 6,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/features/advisor/AdvisorProposalsTable.tsx",
-      "root": "src/features",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable",
-          "name": "AdvisorProposalsTable",
-          "kind": "component",
-          "line": 7,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/proposal-status-display.ts#proposalStatusDisplay"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/proposal-format.ts#shortDate"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/proposal-format.ts#summarize"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/WithdrawProposalButton.tsx#WithdrawProposalButton"
-            }
-          ],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/features/advisor/AdvisorProposeRemovalButton.tsx",
-      "root": "src/features",
-      "classification": [
-        "client-component"
-      ],
-      "functions": [
-        {
-          "id": "src/features/advisor/AdvisorProposeRemovalButton.tsx#AdvisorProposeRemovalButton",
-          "name": "AdvisorProposeRemovalButton",
-          "kind": "component",
-          "line": 20,
-          "exported": true,
-          "classification": [
-            "client-component"
-          ],
-          "edges": [
-            {
-              "kind": "calls",
-              "external": "next"
-            },
-            {
-              "kind": "calls",
-              "external": "react"
-            },
-            {
-              "kind": "calls",
-              "external": "react"
-            },
-            {
-              "kind": "calls",
-              "external": "react"
-            },
-            {
-              "kind": "calls",
-              "external": "next"
-            },
-            {
-              "kind": "renders",
-              "target": "src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay"
-            }
-          ],
-          "unresolved": 5
         }
       ]
     },
@@ -14208,90 +13081,6 @@
       ]
     },
     {
-      "path": "src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx",
-      "root": "src/features",
-      "classification": [
-        "client-component"
-      ],
-      "functions": [
-        {
-          "id": "src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx#AdvisorNewBudgetLineForm",
-          "name": "AdvisorNewBudgetLineForm",
-          "kind": "component",
-          "line": 11,
-          "exported": true,
-          "classification": [
-            "client-component"
-          ],
-          "edges": [
-            {
-              "kind": "calls",
-              "external": "react"
-            },
-            {
-              "kind": "calls",
-              "external": "react"
-            },
-            {
-              "kind": "calls",
-              "external": "react"
-            },
-            {
-              "kind": "calls",
-              "target": "src/features/advisor/use-advisor-proposal-refresh.ts#useAdvisorProposalRefresh"
-            },
-            {
-              "kind": "renders",
-              "target": "src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay"
-            }
-          ],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/features/advisor/forms/AdvisorNewGoalForm.tsx",
-      "root": "src/features",
-      "classification": [
-        "client-component"
-      ],
-      "functions": [
-        {
-          "id": "src/features/advisor/forms/AdvisorNewGoalForm.tsx#AdvisorNewGoalForm",
-          "name": "AdvisorNewGoalForm",
-          "kind": "component",
-          "line": 11,
-          "exported": true,
-          "classification": [
-            "client-component"
-          ],
-          "edges": [
-            {
-              "kind": "calls",
-              "external": "react"
-            },
-            {
-              "kind": "calls",
-              "external": "react"
-            },
-            {
-              "kind": "calls",
-              "external": "react"
-            },
-            {
-              "kind": "calls",
-              "target": "src/features/advisor/use-advisor-proposal-refresh.ts#useAdvisorProposalRefresh"
-            },
-            {
-              "kind": "renders",
-              "target": "src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay"
-            }
-          ],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
       "path": "src/features/advisor/forms/AdvisorProfilePatchForm.tsx",
       "root": "src/features",
       "classification": [
@@ -14354,36 +13143,6 @@
             }
           ],
           "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/features/advisor/WithdrawProposalButton.tsx",
-      "root": "src/features",
-      "classification": [
-        "client-component"
-      ],
-      "functions": [
-        {
-          "id": "src/features/advisor/WithdrawProposalButton.tsx#WithdrawProposalButton",
-          "name": "WithdrawProposalButton",
-          "kind": "component",
-          "line": 16,
-          "exported": true,
-          "classification": [
-            "client-component"
-          ],
-          "edges": [
-            {
-              "kind": "calls",
-              "external": "react"
-            },
-            {
-              "kind": "calls",
-              "external": "react"
-            }
-          ],
-          "unresolved": 2
         }
       ]
     },
@@ -16561,7 +15320,7 @@
           "id": "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection",
           "name": "DashboardRetirementSection",
           "kind": "component",
-          "line": 14,
+          "line": 15,
           "exported": true,
           "classification": [],
           "edges": [
@@ -16592,6 +15351,10 @@
             {
               "kind": "renders",
               "external": "next"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/age-projection.ts#ageCompletedOnDate"
             },
             {
               "kind": "renders",
@@ -16683,7 +15446,7 @@
           "id": "src/features/dashboard/ProfileIncomeForm.tsx#isSgCpfAgeBand",
           "name": "isSgCpfAgeBand",
           "kind": "function",
-          "line": 41,
+          "line": 40,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -16693,7 +15456,7 @@
           "id": "src/features/dashboard/ProfileIncomeForm.tsx#derivedCpfBandFromBirthDate",
           "name": "derivedCpfBandFromBirthDate",
           "kind": "function",
-          "line": 45,
+          "line": 44,
           "exported": false,
           "classification": [],
           "edges": [
@@ -16712,7 +15475,7 @@
           "id": "src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm",
           "name": "ProfileIncomeForm",
           "kind": "component",
-          "line": 54,
+          "line": 53,
           "exported": true,
           "classification": [
             "client-component"
@@ -16809,10 +15572,6 @@
             {
               "kind": "calls",
               "external": "next"
-            },
-            {
-              "kind": "calls",
-              "target": "src/lib/dates.ts#yearFromYearMonth"
             },
             {
               "kind": "calls",
@@ -18225,7 +16984,7 @@
           "id": "src/features/goals/HousingLoansPanel.tsx#lenderLabel",
           "name": "lenderLabel",
           "kind": "function",
-          "line": 25,
+          "line": 24,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -18235,7 +16994,7 @@
           "id": "src/features/goals/HousingLoansPanel.tsx#instalmentPresetFromShare",
           "name": "instalmentPresetFromShare",
           "kind": "function",
-          "line": 31,
+          "line": 30,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -18245,7 +17004,7 @@
           "id": "src/features/goals/HousingLoansPanel.tsx#HousingLoanManualAddForm",
           "name": "HousingLoanManualAddForm",
           "kind": "component",
-          "line": 38,
+          "line": 37,
           "exported": false,
           "classification": [
             "client-component"
@@ -18290,7 +17049,7 @@
           "id": "src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm",
           "name": "HousingLoanEditForm",
           "kind": "component",
-          "line": 299,
+          "line": 298,
           "exported": false,
           "classification": [
             "client-component"
@@ -18367,7 +17126,7 @@
           "id": "src/features/goals/HousingLoansPanel.tsx#HousingLoanDeleteForm",
           "name": "HousingLoanDeleteForm",
           "kind": "component",
-          "line": 631,
+          "line": 630,
           "exported": false,
           "classification": [
             "client-component"
@@ -18396,7 +17155,7 @@
           "id": "src/features/goals/HousingLoansPanel.tsx#HousingPanel",
           "name": "HousingPanel",
           "kind": "component",
-          "line": 659,
+          "line": 658,
           "exported": true,
           "classification": [
             "client-component"
@@ -18409,10 +17168,6 @@
             {
               "kind": "renders",
               "target": "src/features/housing/PropertyAddForm.tsx#PropertyAddForm"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm"
             },
             {
               "kind": "renders",
@@ -18449,7 +17204,7 @@
           "id": "src/features/goals/HousingLoansPanel.tsx#HousingLoansPanel",
           "name": "HousingLoansPanel",
           "kind": "component",
-          "line": 815,
+          "line": 805,
           "exported": true,
           "classification": [
             "client-component"
@@ -19341,10 +18096,55 @@
       ],
       "functions": [
         {
+          "id": "src/features/housing/PropertyAddForm.tsx#currentYearMonth",
+          "name": "currentYearMonth",
+          "kind": "function",
+          "line": 28,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/housing/PropertyAddForm.tsx#moneyValue",
+          "name": "moneyValue",
+          "kind": "function",
+          "line": 33,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/housing/PropertyAddForm.tsx#monthHint",
+          "name": "monthHint",
+          "kind": "function",
+          "line": 38,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/housing/PropertyAddForm.tsx#monthlyInstalment",
+          "name": "monthlyInstalment",
+          "kind": "function",
+          "line": 45,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/features/housing/PropertyAddForm.tsx#PropertyAddForm",
           "name": "PropertyAddForm",
           "kind": "component",
-          "line": 30,
+          "line": 57,
           "exported": true,
           "classification": [
             "client-component"
@@ -19383,47 +18183,139 @@
               "external": "react"
             },
             {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/housing/PropertyAddForm.tsx#moneyValue"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/housing/PropertyAddForm.tsx#monthlyInstalment"
+            },
+            {
               "kind": "renders",
               "target": "src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay"
             },
             {
               "kind": "renders",
-              "target": "src/features/housing/PropertyAddForm.tsx#FormIntro"
+              "target": "src/features/housing/PropertyAddForm.tsx#PaymentEvent"
             },
             {
-              "kind": "renders",
-              "target": "src/features/housing/PropertyAddForm.tsx#LenderPicker"
+              "kind": "calls",
+              "target": "src/ui/lib/format.ts#formatCurrency"
             },
             {
               "kind": "renders",
               "target": "src/features/goals/HousingPaymentSourceFields.tsx#HousingPaymentSourceFields"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/housing/PropertyAddForm.tsx#SummaryPill"
             }
           ],
-          "unresolved": 1
+          "unresolved": 25
         },
         {
-          "id": "src/features/housing/PropertyAddForm.tsx#FormIntro",
-          "name": "FormIntro",
+          "id": "src/features/housing/PropertyAddForm.tsx#PaymentEvent",
+          "name": "PaymentEvent",
           "kind": "component",
-          "line": 324,
+          "line": 422,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [],
+          "unresolved": 4
+        },
+        {
+          "id": "src/features/housing/PropertyAddForm.tsx#SummaryPill",
+          "name": "SummaryPill",
+          "kind": "component",
+          "line": 523,
           "exported": false,
           "classification": [
             "client-component"
           ],
           "edges": [],
           "unresolved": 0
-        },
-        {
-          "id": "src/features/housing/PropertyAddForm.tsx#LenderPicker",
-          "name": "LenderPicker",
-          "kind": "component",
-          "line": 333,
-          "exported": false,
-          "classification": [
-            "client-component"
-          ],
-          "edges": [],
-          "unresolved": 3
         }
       ]
     },
@@ -20709,109 +19601,6 @@
       ]
     },
     {
-      "path": "src/features/proposals/ClientProposalReviewView.tsx",
-      "root": "src/features",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView",
-          "name": "ClientProposalReviewView",
-          "kind": "component",
-          "line": 22,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/group-changes.ts#groupChangesBySection"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView"
-            },
-            {
-              "kind": "renders",
-              "target": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail"
-            },
-            {
-              "kind": "renders",
-              "target": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePane"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/sections.ts#sectionLabel"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/proposals/ProposalReviewView.tsx#ProposalReviewActions"
-            }
-          ],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/features/proposals/ClientProposalsView.test.tsx",
-      "root": "src/features",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/features/proposals/ClientProposalsView.test.tsx#row",
-          "name": "row",
-          "kind": "function",
-          "line": 6,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/features/proposals/ClientProposalsView.tsx",
-      "root": "src/features",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/features/proposals/ClientProposalsView.tsx#ClientProposalsView",
-          "name": "ClientProposalsView",
-          "kind": "component",
-          "line": 7,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "renders",
-              "external": "next"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/proposal-status-display.ts#proposalStatusDisplay"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/proposal-format.ts#shortDate"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/proposal-format.ts#summarize"
-            }
-          ],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
       "path": "src/features/proposals/ProposalProjectionCompare.tsx",
       "root": "src/features",
       "classification": [
@@ -20822,7 +19611,7 @@
           "id": "src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare",
           "name": "ProposalProjectionCompare",
           "kind": "component",
-          "line": 12,
+          "line": 10,
           "exported": true,
           "classification": [
             "client-component"
@@ -20838,14 +19627,6 @@
       ]
     },
     {
-      "path": "src/features/proposals/ProposalReviewActions.test.tsx",
-      "root": "src/features",
-      "classification": [
-        "regular"
-      ],
-      "functions": []
-    },
-    {
       "path": "src/features/proposals/ProposalReviewView.tsx",
       "root": "src/features",
       "classification": [
@@ -20856,7 +19637,7 @@
           "id": "src/features/proposals/ProposalReviewView.tsx#groupBySection",
           "name": "groupBySection",
           "kind": "function",
-          "line": 32,
+          "line": 30,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20871,59 +19652,30 @@
           "id": "src/features/proposals/ProposalReviewView.tsx#formatSubmittedDate",
           "name": "formatSubmittedDate",
           "kind": "function",
-          "line": 52,
+          "line": 50,
           "exported": false,
           "classification": [],
           "edges": [],
           "unresolved": 0
         },
         {
-          "id": "src/features/proposals/ProposalReviewView.tsx#ProposalReviewActions",
-          "name": "ProposalReviewActions",
-          "kind": "component",
-          "line": 71,
-          "exported": true,
-          "classification": [
-            "client-component"
-          ],
-          "edges": [
-            {
-              "kind": "calls",
-              "external": "react"
-            },
-            {
-              "kind": "calls",
-              "external": "react"
-            },
-            {
-              "kind": "calls",
-              "external": "react"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction"
-            },
-            {
-              "kind": "renders",
-              "target": "src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
           "id": "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView",
           "name": "ProposalReviewView",
           "kind": "component",
-          "line": 153,
+          "line": 59,
           "exported": true,
           "classification": [
             "client-component"
           ],
           "edges": [
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
             {
               "kind": "renders",
               "external": "next"
@@ -20931,6 +19683,10 @@
             {
               "kind": "calls",
               "target": "src/features/proposals/ProposalReviewView.tsx#groupBySection"
+            },
+            {
+              "kind": "renders",
+              "target": "src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay"
             },
             {
               "kind": "calls",
@@ -20955,10 +19711,6 @@
             {
               "kind": "calls",
               "target": "src/domain/advisor-proposals/format-display.ts#formatProposalDisplayValue"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/proposals/ProposalReviewView.tsx#ProposalReviewActions"
             }
           ],
           "unresolved": 0
@@ -20967,7 +19719,7 @@
           "id": "src/features/proposals/ProposalReviewView.tsx#StatusBanner",
           "name": "StatusBanner",
           "kind": "component",
-          "line": 303,
+          "line": 241,
           "exported": false,
           "classification": [
             "client-component"
@@ -21047,7 +19799,7 @@
           "id": "src/features/setup-hub/SetupModuleCard.tsx#CardTop",
           "name": "CardTop",
           "kind": "component",
-          "line": 65,
+          "line": 59,
           "exported": false,
           "classification": [],
           "edges": [
@@ -21062,7 +19814,7 @@
           "id": "src/features/setup-hub/SetupModuleCard.tsx#CardCta",
           "name": "CardCta",
           "kind": "component",
-          "line": 92,
+          "line": 86,
           "exported": false,
           "classification": [],
           "edges": [
@@ -22168,7 +20920,7 @@
           "id": "src/lib/validation.ts#reliefAmount",
           "name": "reliefAmount",
           "kind": "arrow",
-          "line": 324,
+          "line": 328,
           "exported": false,
           "classification": [],
           "edges": [
@@ -23728,10 +22480,67 @@
           "unresolved": 0
         },
         {
+          "id": "src/server/actions.ts#parseOptionalMoneyField",
+          "name": "parseOptionalMoneyField",
+          "kind": "function",
+          "line": 1650,
+          "exported": false,
+          "classification": [
+            "server-action"
+          ],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/server/actions.ts#parseOptionalPurchaseYear",
+          "name": "parseOptionalPurchaseYear",
+          "kind": "function",
+          "line": 1659,
+          "exported": false,
+          "classification": [
+            "server-action"
+          ],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/server/actions.ts#normalizeOptionalMmyy",
+          "name": "normalizeOptionalMmyy",
+          "kind": "function",
+          "line": 1666,
+          "exported": false,
+          "classification": [
+            "server-action"
+          ],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/server/actions.ts#optionalYearMonthOrMmyy",
+          "name": "optionalYearMonthOrMmyy",
+          "kind": "function",
+          "line": 1684,
+          "exported": false,
+          "classification": [
+            "server-action"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "zod"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/actions.ts#normalizeOptionalMmyy"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/server/actions.ts#insertPropertyForLoan",
           "name": "insertPropertyForLoan",
           "kind": "function",
-          "line": 1650,
+          "line": 1695,
           "exported": false,
           "classification": [
             "server-action"
@@ -23748,7 +22557,7 @@
           "id": "src/server/actions.ts#createHousingPropertyAction",
           "name": "createHousingPropertyAction",
           "kind": "function",
-          "line": 1672,
+          "line": 1719,
           "exported": true,
           "classification": [
             "server-action"
@@ -23784,11 +22593,23 @@
             },
             {
               "kind": "calls",
+              "target": "src/server/actions.ts#parseOptionalPurchaseYear"
+            },
+            {
+              "kind": "calls",
               "target": "src/data/repositories/properties.ts#insertProperty"
             },
             {
               "kind": "calls",
               "target": "src/server/actions.ts#revalidateHousingPaths"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/actions.ts#parseOptionalMoneyField"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/actions.ts#optionalYearMonthOrMmyy"
             },
             {
               "kind": "calls",
@@ -23805,7 +22626,7 @@
           "id": "src/server/actions.ts#updateHousingPropertyAction",
           "name": "updateHousingPropertyAction",
           "kind": "function",
-          "line": 1834,
+          "line": 1995,
           "exported": true,
           "classification": [
             "server-action"
@@ -23854,7 +22675,7 @@
           "id": "src/server/actions.ts#deleteHousingPropertyAction",
           "name": "deleteHousingPropertyAction",
           "kind": "function",
-          "line": 1885,
+          "line": 2046,
           "exported": true,
           "classification": [
             "server-action"
@@ -23895,7 +22716,7 @@
           "id": "src/server/actions.ts#createHousingLoanAction",
           "name": "createHousingLoanAction",
           "kind": "function",
-          "line": 1901,
+          "line": 2062,
           "exported": true,
           "classification": [
             "server-action"
@@ -23944,7 +22765,7 @@
           "id": "src/server/actions.ts#createHousingLoanQuickAction",
           "name": "createHousingLoanQuickAction",
           "kind": "function",
-          "line": 2023,
+          "line": 2184,
           "exported": true,
           "classification": [
             "server-action"
@@ -24021,7 +22842,7 @@
           "id": "src/server/actions.ts#updateHousingLoanAction",
           "name": "updateHousingLoanAction",
           "kind": "function",
-          "line": 2280,
+          "line": 2441,
           "exported": true,
           "classification": [
             "server-action"
@@ -24078,7 +22899,7 @@
           "id": "src/server/actions.ts#deleteHousingLoanAction",
           "name": "deleteHousingLoanAction",
           "kind": "function",
-          "line": 2399,
+          "line": 2560,
           "exported": true,
           "classification": [
             "server-action"
@@ -24113,25 +22934,6 @@
               "target": "src/server/actions.ts#revalidateHousingPaths"
             }
           ],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/server/advisor-accept-hardening.test.ts",
-      "root": "src/server",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/server/advisor-accept-hardening.test.ts#fd",
-          "name": "fd",
-          "kind": "function",
-          "line": 85,
-          "exported": false,
-          "classification": [],
-          "edges": [],
           "unresolved": 0
         }
       ]
@@ -24222,7 +23024,7 @@
           "id": "src/server/advisor-client-actions.ts#clientErrorFromUnknown",
           "name": "clientErrorFromUnknown",
           "kind": "function",
-          "line": 20,
+          "line": 16,
           "exported": false,
           "classification": [
             "server-action"
@@ -24234,7 +23036,7 @@
           "id": "src/server/advisor-client-actions.ts#parseInvestmentPlanningFields",
           "name": "parseInvestmentPlanningFields",
           "kind": "function",
-          "line": 29,
+          "line": 25,
           "exported": false,
           "classification": [
             "server-action"
@@ -24246,7 +23048,7 @@
           "id": "src/server/advisor-client-actions.ts#revalidateAdvisorClientViews",
           "name": "revalidateAdvisorClientViews",
           "kind": "function",
-          "line": 96,
+          "line": 92,
           "exported": false,
           "classification": [
             "server-action"
@@ -24267,7 +23069,7 @@
           "id": "src/server/advisor-client-actions.ts#requireAdvisorLinkedClient",
           "name": "requireAdvisorLinkedClient",
           "kind": "function",
-          "line": 101,
+          "line": 97,
           "exported": false,
           "classification": [
             "server-action"
@@ -24287,15 +23089,15 @@
             },
             {
               "kind": "calls",
+              "target": "src/lib/profile-role.ts#isAdvisor"
+            },
+            {
+              "kind": "calls",
               "target": "src/data/repositories/advisor-clients.ts#getClientProfileForAdvisor"
             },
             {
               "kind": "calls",
               "target": "src/server/advisor-consent.ts#assertConsent"
-            },
-            {
-              "kind": "calls",
-              "target": "src/lib/profile-role.ts#isAdvisor"
             }
           ],
           "unresolved": 0
@@ -24304,7 +23106,7 @@
           "id": "src/server/advisor-client-actions.ts#patchAdvisorClientProfileAction",
           "name": "patchAdvisorClientProfileAction",
           "kind": "function",
-          "line": 137,
+          "line": 129,
           "exported": true,
           "classification": [
             "server-action"
@@ -24316,7 +23118,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/data/repositories/profiles.ts#advisorReadProfile"
+              "target": "src/data/repositories/profiles.ts#getProfileById"
             },
             {
               "kind": "calls",
@@ -24333,7 +23135,7 @@
           "id": "src/server/advisor-client-actions.ts#patchAdvisorClientBudgetLineAmountAction",
           "name": "patchAdvisorClientBudgetLineAmountAction",
           "kind": "function",
-          "line": 237,
+          "line": 220,
           "exported": true,
           "classification": [
             "server-action"
@@ -24345,7 +23147,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/data/repositories/budget-lines.ts#advisorReadBudgetLines"
+              "target": "src/data/repositories/budget-lines.ts#getBudgetLineById"
             },
             {
               "kind": "calls",
@@ -24362,7 +23164,7 @@
           "id": "src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction",
           "name": "patchAdvisorClientGoalMonthlyContributionAction",
           "kind": "function",
-          "line": 278,
+          "line": 257,
           "exported": true,
           "classification": [
             "server-action"
@@ -24374,7 +23176,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/data/repositories/goals.ts#advisorReadGoals"
+              "target": "src/data/repositories/goals.ts#getFinancialGoalById"
             },
             {
               "kind": "calls",
@@ -24391,7 +23193,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction",
           "name": "createAdvisorClientInvestmentAction",
           "kind": "function",
-          "line": 322,
+          "line": 297,
           "exported": true,
           "classification": [
             "server-action"
@@ -24424,7 +23226,7 @@
           "id": "src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction",
           "name": "updateAdvisorClientInvestmentAction",
           "kind": "function",
-          "line": 406,
+          "line": 375,
           "exported": true,
           "classification": [
             "server-action"
@@ -24448,7 +23250,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/data/repositories/investments.ts#advisorReadInvestments"
+              "target": "src/data/repositories/investments.ts#getInvestmentById"
             },
             {
               "kind": "calls",
@@ -24473,7 +23275,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction",
           "name": "deleteAdvisorClientInvestmentAction",
           "kind": "function",
-          "line": 515,
+          "line": 480,
           "exported": true,
           "classification": [
             "server-action"
@@ -24497,155 +23299,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/data/repositories/investments.ts#advisorReadInvestments"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#revalidateAdvisorClientViews"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/server/advisor-client-actions.ts#createAdvisorClientBudgetLineAction",
-          "name": "createAdvisorClientBudgetLineAction",
-          "kind": "function",
-          "line": 565,
-          "exported": true,
-          "classification": [
-            "server-action"
-          ],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#requireAdvisorLinkedClient"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#revalidateAdvisorClientViews"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/server/advisor-client-actions.ts#createAdvisorClientGoalAction",
-          "name": "createAdvisorClientGoalAction",
-          "kind": "function",
-          "line": 619,
-          "exported": true,
-          "classification": [
-            "server-action"
-          ],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#requireAdvisorLinkedClient"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#revalidateAdvisorClientViews"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientGoalAction",
-          "name": "deleteAdvisorClientGoalAction",
-          "kind": "function",
-          "line": 678,
-          "exported": true,
-          "classification": [
-            "server-action"
-          ],
-          "edges": [
-            {
-              "kind": "calls",
-              "external": "zod"
-            },
-            {
-              "kind": "calls",
-              "external": "zod"
-            },
-            {
-              "kind": "calls",
-              "external": "zod"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#requireAdvisorLinkedClient"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/goals.ts#advisorReadGoals"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#revalidateAdvisorClientViews"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientBudgetLineAction",
-          "name": "deleteAdvisorClientBudgetLineAction",
-          "kind": "function",
-          "line": 727,
-          "exported": true,
-          "classification": [
-            "server-action"
-          ],
-          "edges": [
-            {
-              "kind": "calls",
-              "external": "zod"
-            },
-            {
-              "kind": "calls",
-              "external": "zod"
-            },
-            {
-              "kind": "calls",
-              "external": "zod"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#requireAdvisorLinkedClient"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/budget-lines.ts#advisorReadBudgetLines"
+              "target": "src/data/repositories/investments.ts#getInvestmentById"
             },
             {
               "kind": "calls",
@@ -24675,7 +23329,7 @@
           "id": "src/server/advisor-consent-gate.test.ts#goalForm",
           "name": "goalForm",
           "kind": "function",
-          "line": 83,
+          "line": 79,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -24885,16 +23539,12 @@
           "id": "src/server/advisor-proposal-actions.ts#revalidateProposalViews",
           "name": "revalidateProposalViews",
           "kind": "function",
-          "line": 32,
+          "line": 23,
           "exported": false,
           "classification": [
             "server-action"
           ],
           "edges": [
-            {
-              "kind": "calls",
-              "external": "next"
-            },
             {
               "kind": "calls",
               "external": "next"
@@ -24927,10 +23577,10 @@
           "unresolved": 0
         },
         {
-          "id": "src/server/advisor-proposal-actions.ts#requireAdvisorProposalInStatus",
-          "name": "requireAdvisorProposalInStatus",
+          "id": "src/server/advisor-proposal-actions.ts#requireAdvisorDraftProposal",
+          "name": "requireAdvisorDraftProposal",
           "kind": "function",
-          "line": 43,
+          "line": 33,
           "exported": false,
           "classification": [
             "server-action"
@@ -24950,11 +23600,11 @@
             },
             {
               "kind": "calls",
-              "target": "src/data/repositories/advisor-proposals.ts#getProposalById"
+              "target": "src/lib/profile-role.ts#isAdvisor"
             },
             {
               "kind": "calls",
-              "target": "src/lib/profile-role.ts#isAdvisor"
+              "target": "src/data/repositories/advisor-proposals.ts#getProposalById"
             },
             {
               "kind": "calls",
@@ -24968,44 +23618,10 @@
           "unresolved": 0
         },
         {
-          "id": "src/server/advisor-proposal-actions.ts#requireAdvisorDraftProposal",
-          "name": "requireAdvisorDraftProposal",
-          "kind": "function",
-          "line": 82,
-          "exported": false,
-          "classification": [
-            "server-action"
-          ],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-proposal-actions.ts#requireAdvisorProposalInStatus"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/server/advisor-proposal-actions.ts#requireAdvisorOpenProposal",
-          "name": "requireAdvisorOpenProposal",
-          "kind": "function",
-          "line": 90,
-          "exported": false,
-          "classification": [
-            "server-action"
-          ],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-proposal-actions.ts#requireAdvisorProposalInStatus"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
           "id": "src/server/advisor-proposal-actions.ts#removeAdvisorProposalSectionAction",
           "name": "removeAdvisorProposalSectionAction",
           "kind": "function",
-          "line": 98,
+          "line": 67,
           "exported": true,
           "classification": [
             "server-action"
@@ -25030,7 +23646,7 @@
           "id": "src/server/advisor-proposal-actions.ts#removeAdvisorProposalEntityAction",
           "name": "removeAdvisorProposalEntityAction",
           "kind": "function",
-          "line": 120,
+          "line": 89,
           "exported": true,
           "classification": [
             "server-action"
@@ -25055,7 +23671,7 @@
           "id": "src/server/advisor-proposal-actions.ts#submitAdvisorProposalAction",
           "name": "submitAdvisorProposalAction",
           "kind": "function",
-          "line": 145,
+          "line": 114,
           "exported": true,
           "classification": [
             "server-action"
@@ -25081,35 +23697,10 @@
           "unresolved": 0
         },
         {
-          "id": "src/server/advisor-proposal-actions.ts#withdrawAdvisorProposalAction",
-          "name": "withdrawAdvisorProposalAction",
-          "kind": "function",
-          "line": 188,
-          "exported": true,
-          "classification": [
-            "server-action"
-          ],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-proposal-actions.ts#requireAdvisorOpenProposal"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/advisor-proposals.ts#withdrawProposal"
-            },
-            {
-              "kind": "calls",
-              "target": "src/server/advisor-proposal-actions.ts#revalidateProposalViews"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
           "id": "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction",
           "name": "acceptAdvisorProposalAction",
           "kind": "function",
-          "line": 209,
+          "line": 152,
           "exported": true,
           "classification": [
             "server-action"
@@ -25129,6 +23720,10 @@
             },
             {
               "kind": "calls",
+              "target": "src/lib/profile-role.ts#isClient"
+            },
+            {
+              "kind": "calls",
               "target": "src/data/repositories/advisor-proposals.ts#getProposalById"
             },
             {
@@ -25137,27 +23732,11 @@
             },
             {
               "kind": "calls",
-              "target": "src/lib/profile-role.ts#isClient"
-            },
-            {
-              "kind": "calls",
-              "target": "src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/advisor-proposals.ts#notifyAdvisorProposalConflict"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/repositories/advisor-proposals.ts#claimAdvisorProposalForAccept"
-            },
-            {
-              "kind": "calls",
               "target": "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges"
             },
             {
               "kind": "calls",
-              "target": "src/data/repositories/advisor-proposals.ts#finalizeAdvisorProposalAccept"
+              "target": "src/data/repositories/advisor-proposals.ts#resolveProposal"
             },
             {
               "kind": "calls",
@@ -25174,7 +23753,7 @@
           "id": "src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction",
           "name": "rejectAdvisorProposalAction",
           "kind": "function",
-          "line": 305,
+          "line": 192,
           "exported": true,
           "classification": [
             "server-action"
@@ -25194,11 +23773,11 @@
             },
             {
               "kind": "calls",
-              "target": "src/data/repositories/advisor-proposals.ts#getProposalById"
+              "target": "src/lib/profile-role.ts#isClient"
             },
             {
               "kind": "calls",
-              "target": "src/lib/profile-role.ts#isClient"
+              "target": "src/data/repositories/advisor-proposals.ts#getProposalById"
             },
             {
               "kind": "calls",
@@ -25218,64 +23797,6 @@
       ]
     },
     {
-      "path": "src/server/advisor-proposal-baseversion.test.ts",
-      "root": "src/server",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/server/advisor-proposal-baseversion.test.ts#makeFake",
-          "name": "makeFake",
-          "kind": "function",
-          "line": 12,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 9
-        },
-        {
-          "id": "src/server/advisor-proposal-baseversion.test.ts#fd",
-          "name": "fd",
-          "kind": "function",
-          "line": 168,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/server/advisor-proposal-lifecycle-smoke.test.ts",
-      "root": "src/server",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/server/advisor-proposal-lifecycle-smoke.test.ts#makeFake",
-          "name": "makeFake",
-          "kind": "function",
-          "line": 30,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 16
-        },
-        {
-          "id": "src/server/advisor-proposal-lifecycle-smoke.test.ts#fd",
-          "name": "fd",
-          "kind": "function",
-          "line": 329,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
       "path": "src/server/advisor-proposal-recording.ts",
       "root": "src/server",
       "classification": [
@@ -25290,6 +23811,18 @@
           "exported": true,
           "classification": [],
           "edges": [
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/supabase-js"
+            },
             {
               "kind": "calls",
               "target": "src/data/repositories/advisor-proposals.ts#getOrCreateDraftProposal"
@@ -25467,35 +24000,6 @@
               "target": "src/lib/qr-svg.ts#renderQrSvg"
             }
           ],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
-      "path": "src/server/advisor-rdel-readback.test.ts",
-      "root": "src/server",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/server/advisor-rdel-readback.test.ts#makeFake",
-          "name": "makeFake",
-          "kind": "function",
-          "line": 12,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 6
-        },
-        {
-          "id": "src/server/advisor-rdel-readback.test.ts#fd",
-          "name": "fd",
-          "kind": "function",
-          "line": 161,
-          "exported": false,
-          "classification": [],
-          "edges": [],
           "unresolved": 0
         }
       ]
@@ -26132,51 +24636,6 @@
       ]
     },
     {
-      "path": "src/ui/collapsible-pane-styles.ts",
-      "root": "src/ui",
-      "classification": [
-        "regular"
-      ],
-      "functions": []
-    },
-    {
-      "path": "src/ui/CollapsiblePaneRail.test.tsx",
-      "root": "src/ui",
-      "classification": [
-        "regular"
-      ],
-      "functions": []
-    },
-    {
-      "path": "src/ui/CollapsiblePaneRail.tsx",
-      "root": "src/ui",
-      "classification": [
-        "regular"
-      ],
-      "functions": [
-        {
-          "id": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail",
-          "name": "CollapsiblePaneRail",
-          "kind": "component",
-          "line": 18,
-          "exported": true,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/ui/CollapsiblePaneRail.tsx#CollapsiblePane",
-          "name": "CollapsiblePane",
-          "kind": "component",
-          "line": 34,
-          "exported": true,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
       "path": "src/ui/InfoTooltip.tsx",
       "root": "src/ui",
       "classification": [
@@ -26428,7 +24887,6 @@
         "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
         "src/data/setup-status.ts#loadSetupEvaluationContext",
         "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
-        "src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts",
         "src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection",
         "src/server/actions.ts#applyGuidedBudgetLinesAction"
       ],
@@ -26465,24 +24923,23 @@
         "src/app/(app)/advisor/profile/page.tsx#AdvisorProfilePage",
         "src/app/(app)/onboarding/page.tsx#OnboardingPage",
         "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
-        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage",
         "src/app/api/profile/route.ts#PATCH",
         "src/app/api/projection/route.ts#GET",
         "src/data/budget-summary.ts#getBudgetPageModel",
         "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
         "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
-        "src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts",
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
         "src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection",
         "src/features/planning/sections/FuturePlanningSection.tsx#FuturePlanningSection",
         "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection",
         "src/server/actions.ts#applyGuidedBudgetLinesAction",
         "src/server/advisor-access-key-actions.ts#generateAdvisorAccessKeysPocAction",
+        "src/server/advisor-client-actions.ts#patchAdvisorClientProfileAction",
         "src/server/advisor-client-actions.ts#requireAdvisorLinkedClient",
         "src/server/advisor-key-purchase-actions.ts#requireAdvisorSession",
         "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction",
         "src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction",
-        "src/server/advisor-proposal-actions.ts#requireAdvisorProposalInStatus",
+        "src/server/advisor-proposal-actions.ts#requireAdvisorDraftProposal",
         "src/server/advisor-qr-share-actions.ts#refreshAdvisorQrShareAction",
         "src/server/client-consent-actions.ts#getAdvisorConsentGateAction",
         "src/server/client-consent-actions.ts#recordAdvisorConsentAction"
@@ -26585,8 +25042,7 @@
         "src/domain/setup/evaluators.ts#evaluateRetirement",
         "src/domain/setup/evaluators.ts#housingLoanIsComplete",
         "src/domain/setup/evaluators.ts#liabilityIsComplete",
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
-        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile",
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop",
         "src/features/budget/BudgetPageHero.tsx#BudgetPageHero",
@@ -26614,6 +25070,7 @@
         "src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense",
         "src/domain/finance/age-projection.ts#buildNetWorthByAgeProjection",
         "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries",
+        "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection",
         "src/features/dashboard/ProfileIncomeForm.tsx#derivedCpfBandFromBirthDate",
         "src/features/goals/InvestmentBalancesList.tsx#ContributionTimelineHint",
         "src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs"
@@ -26623,8 +25080,7 @@
       ],
       "src/data/repositories/profiles.ts#advisorReadProfile": [
         "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
-        "src/data/dashboard.ts#getDashboardPayload",
-        "src/server/advisor-client-actions.ts#patchAdvisorClientProfileAction"
+        "src/data/dashboard.ts#getDashboardPayload"
       ],
       "src/data/repositories/expenses.ts#advisorReadExpensesForMonth": [
         "src/data/dashboard.ts#getDashboardPayload"
@@ -26632,16 +25088,13 @@
       "src/data/repositories/investments.ts#advisorReadInvestments": [
         "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
         "src/data/dashboard.ts#getDashboardPayload",
-        "src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction",
-        "src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction"
+        "src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle"
       ],
       "src/data/repositories/investments.ts#listInvestments": [
         "src/app/api/projection/route.ts#GET",
         "src/data/dashboard.ts#getDashboardPayload",
         "src/data/projection.ts#resolveProjectionSnapshot",
         "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
-        "src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts",
         "src/features/app-shell/AppShellInbox.tsx#AppShellInbox"
       ],
       "src/data/repositories/cash-accounts.ts#advisorReadCashAccounts": [
@@ -26660,9 +25113,7 @@
       ],
       "src/data/repositories/budget-lines.ts#advisorReadBudgetLines": [
         "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
-        "src/data/dashboard.ts#getDashboardPayload",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientBudgetLineAction",
-        "src/server/advisor-client-actions.ts#patchAdvisorClientBudgetLineAmountAction"
+        "src/data/dashboard.ts#getDashboardPayload"
       ],
       "src/data/repositories/budget-line-overrides.ts#advisorReadBudgetLineOverridesForMonth": [
         "src/data/dashboard.ts#getDashboardPayload"
@@ -26670,9 +25121,7 @@
       "src/data/repositories/goals.ts#advisorReadGoals": [
         "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
         "src/data/dashboard.ts#getDashboardPayload",
-        "src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientGoalAction",
-        "src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction"
+        "src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle"
       ],
       "src/data/repositories/goals.ts#listFinancialGoals": [
         "src/app/(app)/expenses/page.tsx#ExpensesPage",
@@ -26680,7 +25129,6 @@
         "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
         "src/data/repositories/goals.ts#reorderFinancialGoal",
         "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
-        "src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts",
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
       ],
       "src/data/repositories/cpf-balances.ts#advisorReadCpfBalances": [
@@ -26741,7 +25189,7 @@
         "src/app/(app)/setup/page.tsx#SetupPage",
         "src/app/api/projection/route.ts#GET",
         "src/data/dashboard.ts#getDashboardPayload",
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
         "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection"
       ],
       "src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash": [
@@ -26873,7 +25321,6 @@
         "src/app/(app)/dashboard/page.tsx#DashboardPage",
         "src/app/(app)/expenses/page.tsx#ExpensesPage",
         "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
-        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage",
         "src/app/(app)/setup/page.tsx#SetupPage",
         "src/app/api/budget/route.ts#GET",
         "src/app/api/dashboard/route.ts#GET",
@@ -26947,7 +25394,6 @@
       "src/data/repositories/budget-lines.ts#deleteBudgetLine": [
         "src/data/liability-budget-sync.ts#removeLiabilityBudgetLines",
         "src/data/liability-budget-sync.ts#syncLiabilityBudgetLine",
-        "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
         "src/server/actions.ts#applyGuidedBudgetLinesAction",
         "src/server/actions.ts#deleteBudgetLineAction"
       ],
@@ -26972,7 +25418,6 @@
       ],
       "src/data/repositories/budget-lines.ts#insertBudgetLine": [
         "src/data/liability-budget-sync.ts#syncLiabilityBudgetLine",
-        "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
         "src/server/actions.ts#applyGuidedBudgetLinesAction",
         "src/server/actions.ts#createBudgetLineAction"
       ],
@@ -26991,7 +25436,9 @@
       ],
       "src/data/repositories/investments.ts#getInvestmentById": [
         "src/app/api/projection/route.ts#GET",
-        "src/data/projection.ts#resolveProjectionSnapshot"
+        "src/data/projection.ts#resolveProjectionSnapshot",
+        "src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction",
+        "src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction"
       ],
       "src/domain/finance/projection.ts#projectFutureValue": [
         "src/data/projection.ts#buildProjectionSeries",
@@ -27058,13 +25505,12 @@
         "src/server/advisor-access-key-actions.ts#generateAdvisorAccessKeysPocAction",
         "src/server/advisor-client-actions.ts#requireAdvisorLinkedClient",
         "src/server/advisor-key-purchase-actions.ts#requireAdvisorSession",
-        "src/server/advisor-proposal-actions.ts#requireAdvisorProposalInStatus",
+        "src/server/advisor-proposal-actions.ts#requireAdvisorDraftProposal",
         "src/server/advisor-qr-share-actions.ts#refreshAdvisorQrShareAction"
       ],
       "src/lib/profile-role.ts#isClient": [
         "src/app/(app)/more/page.tsx#MorePage",
         "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
-        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage",
         "src/lib/profile-role.ts#clientAdvisorRelationshipOk",
         "src/lib/profile-role.ts#isClientProfile",
         "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction",
@@ -27105,7 +25551,6 @@
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
         "src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection",
         "src/features/dashboard/DashboardOverviewSection.tsx#DashboardOverviewSection",
-        "src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm",
         "src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection",
         "src/lib/setup-urls.ts#setupTabPath"
       ],
@@ -27130,7 +25575,6 @@
         "src/app/(app)/budget/page.tsx#BudgetPage",
         "src/app/(app)/onboarding/page.tsx#OnboardingPage",
         "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
-        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage",
         "src/app/api/budget/route.ts#GET",
         "src/app/api/dashboard/route.ts#GET",
         "src/app/api/expenses/[id]/route.ts#DELETE",
@@ -27186,7 +25630,7 @@
         "src/server/advisor-key-purchase-actions.ts#requireAdvisorSession",
         "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction",
         "src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction",
-        "src/server/advisor-proposal-actions.ts#requireAdvisorProposalInStatus",
+        "src/server/advisor-proposal-actions.ts#requireAdvisorDraftProposal",
         "src/server/advisor-qr-share-actions.ts#refreshAdvisorQrShareAction",
         "src/server/client-consent-actions.ts#getAdvisorConsentGateAction",
         "src/server/client-consent-actions.ts#recordAdvisorConsentAction",
@@ -27302,7 +25746,6 @@
         "src/server/actions.ts#deleteVehicleAction"
       ],
       "src/data/repositories/goals.ts#insertFinancialGoal": [
-        "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
         "src/server/actions.ts#createGoalAction"
       ],
       "src/data/repositories/goals.ts#reorderFinancialGoal": [
@@ -27365,9 +25808,15 @@
         "src/server/actions.ts#createHousingLoanQuickAction",
         "src/server/actions.ts#parseHousingPaymentForm"
       ],
+      "src/server/actions.ts#normalizeOptionalMmyy": [
+        "src/server/actions.ts#optionalYearMonthOrMmyy"
+      ],
       "src/data/repositories/properties.ts#insertProperty": [
         "src/server/actions.ts#createHousingPropertyAction",
         "src/server/actions.ts#insertPropertyForLoan"
+      ],
+      "src/server/actions.ts#parseOptionalPurchaseYear": [
+        "src/server/actions.ts#createHousingPropertyAction"
       ],
       "src/server/actions.ts#revalidateHousingPaths": [
         "src/server/actions.ts#createHousingLoanAction",
@@ -27377,6 +25826,12 @@
         "src/server/actions.ts#deleteHousingPropertyAction",
         "src/server/actions.ts#updateHousingLoanAction",
         "src/server/actions.ts#updateHousingPropertyAction"
+      ],
+      "src/server/actions.ts#parseOptionalMoneyField": [
+        "src/server/actions.ts#createHousingPropertyAction"
+      ],
+      "src/server/actions.ts#optionalYearMonthOrMmyy": [
+        "src/server/actions.ts#createHousingPropertyAction"
       ],
       "src/server/actions.ts#parseHousingPaymentForm": [
         "src/server/actions.ts#createHousingLoanAction",
@@ -27403,6 +25858,7 @@
       ],
       "src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty": [
         "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
+        "src/features/housing/PropertyAddForm.tsx#PropertyAddForm",
         "src/server/actions.ts#createHousingLoanQuickAction"
       ],
       "src/domain/finance/property-financing-plan.ts#resolveGuidedCashDownpayment": [
@@ -27435,18 +25891,14 @@
       "src/data/repositories/advisor-clients.ts#getClientProfileForAdvisor": [
         "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
         "src/server/advisor-client-actions.ts#requireAdvisorLinkedClient",
-        "src/server/advisor-proposal-actions.ts#requireAdvisorProposalInStatus"
+        "src/server/advisor-proposal-actions.ts#requireAdvisorDraftProposal"
       ],
       "src/server/advisor-consent.ts#assertConsent": [
         "src/server/advisor-client-actions.ts#requireAdvisorLinkedClient",
-        "src/server/advisor-proposal-actions.ts#requireAdvisorProposalInStatus"
+        "src/server/advisor-proposal-actions.ts#requireAdvisorDraftProposal"
       ],
       "src/server/advisor-client-actions.ts#requireAdvisorLinkedClient": [
-        "src/server/advisor-client-actions.ts#createAdvisorClientBudgetLineAction",
-        "src/server/advisor-client-actions.ts#createAdvisorClientGoalAction",
         "src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientBudgetLineAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientGoalAction",
         "src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction",
         "src/server/advisor-client-actions.ts#patchAdvisorClientBudgetLineAmountAction",
         "src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction",
@@ -27454,11 +25906,7 @@
         "src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction"
       ],
       "src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges": [
-        "src/server/advisor-client-actions.ts#createAdvisorClientBudgetLineAction",
-        "src/server/advisor-client-actions.ts#createAdvisorClientGoalAction",
         "src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientBudgetLineAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientGoalAction",
         "src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction",
         "src/server/advisor-client-actions.ts#patchAdvisorClientBudgetLineAmountAction",
         "src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction",
@@ -27466,27 +25914,25 @@
         "src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction"
       ],
       "src/server/advisor-client-actions.ts#revalidateAdvisorClientViews": [
-        "src/server/advisor-client-actions.ts#createAdvisorClientBudgetLineAction",
-        "src/server/advisor-client-actions.ts#createAdvisorClientGoalAction",
         "src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientBudgetLineAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientGoalAction",
         "src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction",
         "src/server/advisor-client-actions.ts#patchAdvisorClientBudgetLineAmountAction",
         "src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction",
         "src/server/advisor-client-actions.ts#patchAdvisorClientProfileAction",
         "src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction"
       ],
+      "src/data/repositories/budget-lines.ts#getBudgetLineById": [
+        "src/server/advisor-client-actions.ts#patchAdvisorClientBudgetLineAmountAction"
+      ],
+      "src/data/repositories/goals.ts#getFinancialGoalById": [
+        "src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction"
+      ],
       "src/server/advisor-client-actions.ts#parseInvestmentPlanningFields": [
         "src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction",
         "src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction"
       ],
       "src/server/advisor-client-actions.ts#clientErrorFromUnknown": [
-        "src/server/advisor-client-actions.ts#createAdvisorClientBudgetLineAction",
-        "src/server/advisor-client-actions.ts#createAdvisorClientGoalAction",
         "src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientBudgetLineAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientGoalAction",
         "src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction",
         "src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction"
       ],
@@ -27519,16 +25965,10 @@
         "src/server/client-consent-actions.ts#resolveAdviserName"
       ],
       "src/data/repositories/advisor-proposals.ts#getProposalById": [
-        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
         "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
-        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage",
         "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction",
         "src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction",
-        "src/server/advisor-proposal-actions.ts#requireAdvisorProposalInStatus"
-      ],
-      "src/server/advisor-proposal-actions.ts#requireAdvisorProposalInStatus": [
-        "src/server/advisor-proposal-actions.ts#requireAdvisorDraftProposal",
-        "src/server/advisor-proposal-actions.ts#requireAdvisorOpenProposal"
+        "src/server/advisor-proposal-actions.ts#requireAdvisorDraftProposal"
       ],
       "src/server/advisor-proposal-actions.ts#requireAdvisorDraftProposal": [
         "src/server/advisor-proposal-actions.ts#removeAdvisorProposalEntityAction",
@@ -27543,8 +25983,7 @@
         "src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction",
         "src/server/advisor-proposal-actions.ts#removeAdvisorProposalEntityAction",
         "src/server/advisor-proposal-actions.ts#removeAdvisorProposalSectionAction",
-        "src/server/advisor-proposal-actions.ts#submitAdvisorProposalAction",
-        "src/server/advisor-proposal-actions.ts#withdrawAdvisorProposalAction"
+        "src/server/advisor-proposal-actions.ts#submitAdvisorProposalAction"
       ],
       "src/data/repositories/advisor-proposals.ts#deleteProposalChangesByEntity": [
         "src/server/advisor-proposal-actions.ts#removeAdvisorProposalEntityAction"
@@ -27555,32 +25994,17 @@
       "src/data/repositories/advisor-proposals.ts#upsertSectionNote": [
         "src/server/advisor-proposal-actions.ts#submitAdvisorProposalAction"
       ],
-      "src/server/advisor-proposal-actions.ts#requireAdvisorOpenProposal": [
-        "src/server/advisor-proposal-actions.ts#withdrawAdvisorProposalAction"
-      ],
-      "src/data/repositories/advisor-proposals.ts#withdrawProposal": [
-        "src/server/advisor-proposal-actions.ts#withdrawAdvisorProposalAction"
-      ],
       "src/data/repositories/advisor-proposals.ts#listChangesForProposal": [
         "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
         "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
-        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage",
-        "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction"
-      ],
-      "src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts": [
-        "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction"
-      ],
-      "src/data/repositories/advisor-proposals.ts#notifyAdvisorProposalConflict": [
-        "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction"
-      ],
-      "src/data/repositories/advisor-proposals.ts#claimAdvisorProposalForAccept": [
         "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction"
       ],
       "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges": [
         "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction"
       ],
-      "src/data/repositories/advisor-proposals.ts#finalizeAdvisorProposalAccept": [
-        "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction"
+      "src/data/repositories/advisor-proposals.ts#resolveProposal": [
+        "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction",
+        "src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction"
       ],
       "src/data/repositories/inbox-notifications.ts#markAsReadByDedupeKey": [
         "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction",
@@ -27589,9 +26013,6 @@
         "src/server/inbox-actions.ts#markInboxItemReadByDedupeKeyAction",
         "src/server/inbox/acknowledge-cpf-rules-review.ts#acknowledgeCpfRulesReview",
         "src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview"
-      ],
-      "src/data/repositories/advisor-proposals.ts#resolveProposal": [
-        "src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction"
       ],
       "src/data/repositories/advisor-proposals.ts#getOrCreateDraftProposal": [
         "src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges"
@@ -27677,7 +26098,6 @@
         "src/app/(app)/layout.tsx#AppLayout",
         "src/app/(app)/onboarding/page.tsx#OnboardingPage",
         "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
-        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage",
         "src/app/(app)/setup/overview/page.tsx#SetupOverviewPage",
         "src/app/(app)/setup/page.tsx#SetupPage",
         "src/app/api/budget/route.ts#GET",
@@ -27714,16 +26134,16 @@
         "src/data/repositories/advisor-dashboard.ts#getAdvisorDashboardData",
         "src/features/advisor/AdvisorAccessKeysSection.tsx#AdvisorAccessKeysSection"
       ],
+      "src/data/repositories/advisor-proposals.ts#getDraftProposalForClient": [
+        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
+        "src/data/repositories/advisor-proposals.ts#getOrCreateDraftProposal"
+      ],
       "src/domain/advisor-proposals/field-registry.ts#fieldMeta": [
         "src/data/repositories/advisor-proposals.ts#upsertProposalChange",
-        "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
         "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel",
         "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView"
       ],
       "src/domain/advisor-proposals/field-registry.ts#serializeProposalValue": [
-        "src/data/repositories/advisor-proposals.ts#upsertProposalChange"
-      ],
-      "src/data/repositories/advisor-proposals.ts#changeKeyColumns": [
         "src/data/repositories/advisor-proposals.ts#upsertProposalChange"
       ],
       "src/domain/advisor-proposals/field-registry.ts#valuesEqual": [
@@ -27773,23 +26193,12 @@
       "src/lib/env.ts#requireSupabaseEnv": [
         "src/data/supabase/server.ts#createSupabaseServerClient"
       ],
-      "src/domain/advisor-proposals/apply-changes.conflict.test.ts#coerceRead": [
-        "src/domain/advisor-proposals/apply-changes.conflict.test.ts#makeFakeSupabase"
-      ],
       "src/domain/advisor-proposals/apply-changes.parity.test.ts#coerceRead": [
         "src/domain/advisor-proposals/apply-changes.parity.test.ts#makeFakeSupabase"
       ],
       "src/domain/advisor-proposals/apply-changes.ts#toNumOrNull": [
-        "src/domain/advisor-proposals/apply-changes.ts#budgetLinePatch",
-        "src/domain/advisor-proposals/apply-changes.ts#budgetLineWritePayload",
-        "src/domain/advisor-proposals/apply-changes.ts#goalPatch",
-        "src/domain/advisor-proposals/apply-changes.ts#goalWritePayload",
         "src/domain/advisor-proposals/apply-changes.ts#investmentWritePayload",
         "src/domain/advisor-proposals/apply-changes.ts#profilePatch"
-      ],
-      "src/domain/advisor-proposals/apply-changes.ts#detectConflicts": [
-        "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
-        "src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts"
       ],
       "src/domain/advisor-proposals/apply-changes.ts#profilePatch": [
         "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges"
@@ -27799,33 +26208,6 @@
       ],
       "src/domain/advisor-proposals/apply-changes.ts#investmentDiffers": [
         "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges"
-      ],
-      "src/domain/advisor-proposals/apply-changes.ts#budgetLineWritePayload": [
-        "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges"
-      ],
-      "src/domain/advisor-proposals/apply-changes.ts#budgetLinePatch": [
-        "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges"
-      ],
-      "src/data/repositories/goals.ts#deleteFinancialGoal": [
-        "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges"
-      ],
-      "src/domain/advisor-proposals/apply-changes.ts#goalWritePayload": [
-        "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges"
-      ],
-      "src/domain/advisor-proposals/apply-changes.ts#goalPatch": [
-        "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges"
-      ],
-      "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#prof": [
-        "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#base"
-      ],
-      "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#inv": [
-        "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#base"
-      ],
-      "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#bl": [
-        "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#base"
-      ],
-      "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#gl": [
-        "src/domain/advisor-proposals/apply-overlay.changeops.test.ts#base"
       ],
       "src/domain/advisor-proposals/apply-overlay.test.ts#profile": [
         "src/domain/advisor-proposals/apply-overlay.test.ts#baseInputs"
@@ -27840,21 +26222,13 @@
         "src/domain/advisor-proposals/apply-overlay.test.ts#baseInputs"
       ],
       "src/domain/advisor-proposals/apply-overlay.ts#numOrNull": [
-        "src/domain/advisor-proposals/apply-overlay.ts#mergeBudgetLine",
-        "src/domain/advisor-proposals/apply-overlay.ts#mergeGoal",
+        "src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges",
         "src/domain/advisor-proposals/apply-overlay.ts#numStr"
       ],
       "src/domain/advisor-proposals/apply-overlay.ts#numStr": [
-        "src/domain/advisor-proposals/apply-overlay.ts#applyBudgetLineInsert",
-        "src/domain/advisor-proposals/apply-overlay.ts#applyGoalInsert",
         "src/domain/advisor-proposals/apply-overlay.ts#applyInvestmentInsert",
         "src/domain/advisor-proposals/apply-overlay.ts#applyProfile",
         "src/domain/advisor-proposals/apply-overlay.ts#mergeInvestment"
-      ],
-      "src/domain/advisor-proposals/apply-overlay.ts#newEntityId": [
-        "src/domain/advisor-proposals/apply-overlay.ts#applyBudgetLineInsert",
-        "src/domain/advisor-proposals/apply-overlay.ts#applyGoalInsert",
-        "src/domain/advisor-proposals/apply-overlay.ts#applyInvestmentInsert"
       ],
       "src/domain/advisor-proposals/apply-overlay.ts#groupByEntity": [
         "src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges"
@@ -27863,21 +26237,6 @@
         "src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges"
       ],
       "src/domain/advisor-proposals/apply-overlay.ts#applyProfile": [
-        "src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges"
-      ],
-      "src/domain/advisor-proposals/apply-overlay.ts#resolveOp": [
-        "src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges"
-      ],
-      "src/domain/advisor-proposals/apply-overlay.ts#applyBudgetLineInsert": [
-        "src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges"
-      ],
-      "src/domain/advisor-proposals/apply-overlay.ts#mergeBudgetLine": [
-        "src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges"
-      ],
-      "src/domain/advisor-proposals/apply-overlay.ts#applyGoalInsert": [
-        "src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges"
-      ],
-      "src/domain/advisor-proposals/apply-overlay.ts#mergeGoal": [
         "src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges"
       ],
       "src/domain/advisor-proposals/apply-overlay.ts#applyInvestmentInsert": [
@@ -27976,7 +26335,8 @@
         "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries",
         "src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount",
         "src/domain/finance/housing-loan-payments.ts#housingInstalmentForMonth",
-        "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm"
+        "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
+        "src/features/housing/PropertyAddForm.tsx#monthlyInstalment"
       ],
       "src/domain/finance/cpf-monthly-projection.ts#round2": [
         "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries"
@@ -28255,6 +26615,9 @@
       "src/domain/finance/sg-income-tax.ts#monthlyGiroFromNetTax": [
         "src/domain/finance/sg-income-tax.ts#computeAnnualTax"
       ],
+      "src/domain/finance/singapore-residential-bsd.ts#singaporeResidentialBsdScheduleForPurchaseYear": [
+        "src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty"
+      ],
       "src/domain/finance/singapore-residential-bsd.ts#roundMoney": [
         "src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty"
       ],
@@ -28403,18 +26766,25 @@
       "src/features/advisor/AdvisorBuyKeysSection.tsx#purchaseStatusClass": [
         "src/features/advisor/AdvisorBuyKeysSection.tsx#AdvisorBuyKeysSection"
       ],
-      "src/features/advisor/AdvisorClientCompose-split.test.tsx#profile": [
-        "src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview"
+      "src/features/advisor/AdvisorClientsBoard.tsx#consentBadge": [
+        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard"
       ],
-      "src/features/advisor/AdvisorClientCompose-split.test.tsx#payload": [
-        "src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview"
+      "src/features/advisor/AdvisorClientsBoard.tsx#onboardingShort": [
+        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard"
+      ],
+      "src/features/advisor/AdvisorClientsBoard.tsx#buildListHref": [
+        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard"
+      ],
+      "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals": [
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
+      ],
+      "src/features/advisor/AdvisorClientWorkspace.tsx#onboardingLabel": [
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
       ],
       "src/ui/lib/format.ts#formatCurrency": [
         "src/app/(app)/dashboard/page.tsx#DashboardPage",
         "src/app/(app)/expenses/page.tsx#ExpensesPage",
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
-        "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader",
-        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
         "src/features/budget/BudgetIrregularExpenseReservePanel.tsx#BudgetIrregularExpenseReservePanel",
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection",
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile",
@@ -28448,27 +26818,12 @@
         "src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary",
         "src/features/goals/InvestmentBalancesList.tsx#contributionSummaryLine",
         "src/features/goals/VehiclesPanel.tsx#VehicleSummary",
+        "src/features/housing/PropertyAddForm.tsx#PropertyAddForm",
         "src/features/income-tax/IncomeTaxForm.tsx#FieldGroup",
         "src/features/income-tax/TaxComputedSummary.tsx#TaxComputedSummary",
         "src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard",
         "src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection",
         "src/features/setup/BudgetLensProfileForm.tsx#BudgetLensProfileForm"
-      ],
-      "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals": [
-        "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader",
-        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview"
-      ],
-      "src/features/advisor/AdvisorClientHeader.tsx#onboardingLabel": [
-        "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader"
-      ],
-      "src/features/advisor/AdvisorClientsBoard.tsx#consentBadge": [
-        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard"
-      ],
-      "src/features/advisor/AdvisorClientsBoard.tsx#onboardingShort": [
-        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard"
-      ],
-      "src/features/advisor/AdvisorClientsBoard.tsx#buildListHref": [
-        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard"
       ],
       "src/features/advisor/AdvisorKeyQrShareButton.tsx#useCopyToClipboard": [
         "src/features/advisor/AdvisorKeyQrShareButton.tsx#AdvisorKeyQrShareButton"
@@ -28487,30 +26842,11 @@
         "src/features/auth/LoginForm.tsx#LoginForm"
       ],
       "src/domain/advisor-proposals/group-changes.ts#groupChangesBySection": [
-        "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
-        "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel",
-        "src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView"
-      ],
-      "src/domain/advisor-proposals/proposal-status-display.ts#proposalStatusDisplay": [
-        "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
-        "src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable",
-        "src/features/proposals/ClientProposalsView.tsx#ClientProposalsView"
-      ],
-      "src/domain/advisor-proposals/proposal-format.ts#shortDate": [
-        "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
-        "src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable",
-        "src/features/proposals/ClientProposalsView.tsx#ClientProposalsView"
+        "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel"
       ],
       "src/domain/advisor-proposals/sections.ts#sectionLabel": [
-        "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
         "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel",
         "src/features/advisor/AdvisorProposalDraftPanel.tsx#RemoveSectionButton",
-        "src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView",
-        "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView"
-      ],
-      "src/domain/advisor-proposals/format-display.ts#formatProposalDisplayValue": [
-        "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
-        "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel",
         "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView"
       ],
       "src/server/advisor-proposal-actions.ts#removeAdvisorProposalSectionAction": [
@@ -28519,9 +26855,9 @@
       "src/server/advisor-proposal-actions.ts#removeAdvisorProposalEntityAction": [
         "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel"
       ],
-      "src/domain/advisor-proposals/proposal-format.ts#summarize": [
-        "src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable",
-        "src/features/proposals/ClientProposalsView.tsx#ClientProposalsView"
+      "src/domain/advisor-proposals/format-display.ts#formatProposalDisplayValue": [
+        "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel",
+        "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView"
       ],
       "src/server/inbox/ensure-salary-review-notification.ts#ensureSalaryReviewNotification": [
         "src/features/app-shell/AppShellInbox.tsx#AppShellInbox"
@@ -28769,6 +27105,12 @@
       "src/server/actions.ts#deleteVehicleAction": [
         "src/features/goals/VehiclesPanel.tsx#VehicleDeleteForm"
       ],
+      "src/features/housing/PropertyAddForm.tsx#moneyValue": [
+        "src/features/housing/PropertyAddForm.tsx#PropertyAddForm"
+      ],
+      "src/features/housing/PropertyAddForm.tsx#monthlyInstalment": [
+        "src/features/housing/PropertyAddForm.tsx#PropertyAddForm"
+      ],
       "src/server/inbox-actions.ts#markInboxItemReadAction": [
         "src/features/inbox/InboxPanel.tsx#InboxPanel"
       ],
@@ -28817,12 +27159,6 @@
       ],
       "src/data/repositories/properties.ts#advisorReadProperties": [
         "src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle"
-      ],
-      "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction": [
-        "src/features/proposals/ProposalReviewView.tsx#ProposalReviewActions"
-      ],
-      "src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction": [
-        "src/features/proposals/ProposalReviewView.tsx#ProposalReviewActions"
       ],
       "src/features/proposals/ProposalReviewView.tsx#groupBySection": [
         "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView"
@@ -28876,7 +27212,6 @@
         "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
         "src/app/(app)/dashboard/page.tsx#DashboardPage",
         "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
-        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage",
         "src/app/api/dashboard/route.ts#GET",
         "src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection"
       ],
@@ -28884,9 +27219,6 @@
         "src/app/(app)/onboarding/page.tsx#OnboardingPage"
       ],
       "src/app/(app)/setup/page.tsx#buildSetupTabs": [
-        "src/app/(app)/setup/page.tsx#SetupPage"
-      ],
-      "src/data/repositories/advisor-proposals.ts#listProposalsForClient": [
         "src/app/(app)/setup/page.tsx#SetupPage"
       ],
       "src/domain/finance/budget-guided-setup.ts#countReplaceableMonthlyBudgetLines": [
@@ -28916,8 +27248,6 @@
       "src/features/advisor/use-advisor-proposal-refresh.ts#useAdvisorProposalRefresh": [
         "src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm",
         "src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm",
-        "src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx#AdvisorNewBudgetLineForm",
-        "src/features/advisor/forms/AdvisorNewGoalForm.tsx#AdvisorNewGoalForm",
         "src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm"
       ],
       "src/data/repositories/pricing.ts#getPricingByProductCode": [
@@ -28948,26 +27278,18 @@
       "src/data/repositories/expenses.ts#deleteExpense": [
         "src/app/api/expenses/[id]/route.ts#DELETE"
       ],
-      "src/data/repositories/advisor-proposals.ts#listProposalsForAdvisorClient": [
-        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage"
-      ],
-      "src/domain/advisor-proposals/overlay-gate.ts#resolveOverlayForViewer": [
-        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
-        "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
-        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage"
-      ],
-      "src/data/repositories/advisor-proposals.ts#getDraftProposalForClient": [
-        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage"
-      ],
       "src/data/repositories/advisor-proposals.ts#getPendingProposalForClient": [
         "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage"
       ],
       "src/app/(app)/advisor/client/[id]/page.tsx#identityOnlyProfile": [
         "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage"
       ],
+      "src/domain/advisor-proposals/overlay-gate.ts#resolveOverlayForViewer": [
+        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
+        "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage"
+      ],
       "src/data/repositories/advisor-proposals.ts#listSectionNotesForProposal": [
-        "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
-        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage"
+        "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage"
       ]
     },
     "renders": {
@@ -28989,11 +27311,8 @@
         "src/features/advisor/AdvisorKeyQrShareButton.tsx#AdvisorKeyQrShareButton",
         "src/features/advisor/AdvisorPhoneVerificationForm.tsx#AdvisorPhoneVerificationForm",
         "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel",
-        "src/features/advisor/AdvisorProposeRemovalButton.tsx#AdvisorProposeRemovalButton",
         "src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm",
         "src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm",
-        "src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx#AdvisorNewBudgetLineForm",
-        "src/features/advisor/forms/AdvisorNewGoalForm.tsx#AdvisorNewGoalForm",
         "src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm",
         "src/features/app-shell/ContactAdvisorButton.tsx#ContactAdvisorButton",
         "src/features/auth/LoginForm.tsx#LoginForm",
@@ -29030,7 +27349,7 @@
         "src/features/housing/PropertyAddForm.tsx#PropertyAddForm",
         "src/features/income-tax/IncomeTaxForm.tsx#IncomeTaxForm",
         "src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard",
-        "src/features/proposals/ProposalReviewView.tsx#ProposalReviewActions",
+        "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView",
         "src/features/setup/BudgetLensProfileForm.tsx#BudgetLensProfileForm"
       ],
       "src/ui/PageSection.tsx#PageSection": [
@@ -29052,104 +27371,53 @@
       "src/features/advisor/AdvisorAccessKeysSection.tsx#KeyStatusBadge": [
         "src/features/advisor/AdvisorAccessKeysSection.tsx#AdvisorAccessKeysSection"
       ],
-      "src/features/help/methodology-context.tsx#MethodologyProvider": [
-        "src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview",
-        "src/features/app-shell/AppShell.tsx#AppShell"
-      ],
-      "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview": [
-        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
-        "src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview"
-      ],
-      "src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired": [
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
-        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview"
-      ],
-      "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader": [
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
-        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview"
-      ],
-      "src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner": [
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
-      ],
-      "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection": [
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
-        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview"
-      ],
       "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge": [
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
-        "src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader",
-        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
         "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard",
-        "src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired",
-        "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
-        "src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable",
-        "src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner",
-        "src/features/proposals/ClientProposalsView.tsx#ClientProposalsView"
-      ],
-      "src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm": [
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
-      ],
-      "src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm": [
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
-      ],
-      "src/features/advisor/AdvisorProposeRemovalButton.tsx#AdvisorProposeRemovalButton": [
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
-      ],
-      "src/features/advisor/forms/AdvisorNewGoalForm.tsx#AdvisorNewGoalForm": [
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
-      ],
-      "src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm": [
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
-      ],
-      "src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx#AdvisorNewBudgetLineForm": [
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
-      ],
-      "src/features/goals/InvestmentForm.tsx#InvestmentForm": [
-        "src/app/(app)/setup/page.tsx#SetupPage",
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
-        "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection"
-      ],
-      "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList": [
-        "src/app/(app)/setup/page.tsx#SetupPage",
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
-        "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection"
-      ],
-      "src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail": [
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
-        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
-        "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
-        "src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView"
-      ],
-      "src/ui/CollapsiblePaneRail.tsx#CollapsiblePane": [
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose",
-        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
-        "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
-        "src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView"
-      ],
-      "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel": [
-        "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
-      ],
-      "src/features/advisor/AdvisorClientDetailNav.tsx#AdvisorClientDetailNav": [
-        "src/features/advisor/AdvisorClientDetailShell.tsx#AdvisorClientDetailShell"
-      ],
-      "src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare": [
-        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
-        "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
-        "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView"
-      ],
-      "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection": [
-        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
-        "src/app/(app)/dashboard/page.tsx#DashboardPage",
-        "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
-        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage",
-        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview"
+        "src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner"
       ],
       "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorComingSoonPanel": [
         "src/app/(app)/advisor/activity/page.tsx#AdvisorActivityPage",
         "src/app/(app)/advisor/opportunities/page.tsx#AdvisorOpportunitiesPage",
-        "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
-        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard",
-        "src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired"
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
+        "src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard"
+      ],
+      "src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner": [
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
+      ],
+      "src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection": [
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
+      ],
+      "src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare": [
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
+        "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView"
+      ],
+      "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection": [
+        "src/app/(app)/dashboard/page.tsx#DashboardPage",
+        "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
+      ],
+      "src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm": [
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
+      ],
+      "src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm": [
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
+      ],
+      "src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm": [
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
+      ],
+      "src/features/goals/InvestmentForm.tsx#InvestmentForm": [
+        "src/app/(app)/setup/page.tsx#SetupPage",
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
+        "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection"
+      ],
+      "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList": [
+        "src/app/(app)/setup/page.tsx#SetupPage",
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace",
+        "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection"
+      ],
+      "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel": [
+        "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace"
       ],
       "src/features/auth/PhoneInputField.tsx#PhoneInputField": [
         "src/features/advisor/AdvisorPhoneVerificationForm.tsx#AdvisorPhoneVerificationForm"
@@ -29163,8 +27431,8 @@
       "src/features/advisor/AdvisorProposalDraftPanel.tsx#RemoveItemButton": [
         "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel"
       ],
-      "src/features/advisor/WithdrawProposalButton.tsx#WithdrawProposalButton": [
-        "src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable"
+      "src/features/help/methodology-context.tsx#MethodologyProvider": [
+        "src/features/app-shell/AppShell.tsx#AppShell"
       ],
       "src/features/app-shell/AppShellNav.tsx#AppShellMobileNav": [
         "src/features/app-shell/AppShell.tsx#AppShell",
@@ -29384,9 +27652,6 @@
       "src/features/housing/PropertyAddForm.tsx#PropertyAddForm": [
         "src/features/goals/HousingLoansPanel.tsx#HousingPanel"
       ],
-      "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm": [
-        "src/features/goals/HousingLoansPanel.tsx#HousingPanel"
-      ],
       "src/features/goals/HousingLoansPanel.tsx#HousingLoanManualAddForm": [
         "src/features/goals/HousingLoansPanel.tsx#HousingPanel"
       ],
@@ -29448,10 +27713,10 @@
       "src/features/goals/VehiclesPanel.tsx#VehicleEditForm": [
         "src/features/goals/VehiclesPanel.tsx#VehiclesPanel"
       ],
-      "src/features/housing/PropertyAddForm.tsx#FormIntro": [
+      "src/features/housing/PropertyAddForm.tsx#PaymentEvent": [
         "src/features/housing/PropertyAddForm.tsx#PropertyAddForm"
       ],
-      "src/features/housing/PropertyAddForm.tsx#LenderPicker": [
+      "src/features/housing/PropertyAddForm.tsx#SummaryPill": [
         "src/features/housing/PropertyAddForm.tsx#PropertyAddForm"
       ],
       "src/features/inbox/InboxPanel.tsx#InboxPanel": [
@@ -29488,14 +27753,6 @@
         "src/features/planning/roadmap-modules.tsx#RiskProfilingRoadmapCard",
         "src/features/planning/roadmap-modules.tsx#ScenarioSimulatorRoadmapCard",
         "src/features/planning/roadmap-modules.tsx#TaxEstimationRoadmapCard"
-      ],
-      "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView": [
-        "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
-        "src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView"
-      ],
-      "src/features/proposals/ProposalReviewView.tsx#ProposalReviewActions": [
-        "src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView",
-        "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView"
       ],
       "src/features/proposals/ProposalReviewView.tsx#StatusBanner": [
         "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView"
@@ -29592,9 +27849,6 @@
       "src/features/income-tax/IncomeTaxSection.tsx#IncomeTaxSection": [
         "src/app/(app)/setup/page.tsx#SetupPage"
       ],
-      "src/features/proposals/ClientProposalsView.tsx#ClientProposalsView": [
-        "src/app/(app)/setup/page.tsx#SetupPage"
-      ],
       "src/features/planning/roadmap-modules.tsx#RetirementRoadmapCard": [
         "src/features/planning/sections/FuturePlanningSection.tsx#FuturePlanningSection"
       ],
@@ -29667,20 +27921,11 @@
       "src/features/setup-hub/FinancialSetupHub.tsx#FinancialSetupHub": [
         "src/app/(app)/setup/overview/page.tsx#SetupOverviewPage"
       ],
-      "src/features/advisor/AdvisorClientDetailShell.tsx#AdvisorClientDetailShell": [
+      "src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace": [
         "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage"
       ],
-      "src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable": [
-        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage"
-      ],
-      "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView": [
-        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage"
-      ],
-      "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose": [
-        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage"
-      ],
-      "src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView": [
-        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage"
+      "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView": [
+        "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage"
       ]
     },
     "new": {},

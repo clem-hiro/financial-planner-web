@@ -39,6 +39,46 @@ describe("buildCpfMonthlyProjectionSeries", () => {
     expect(mar?.oa).toBeCloseTo(30_000, 5);
   });
 
+  it("uses explicit housing upfront OA event months when present", () => {
+    const series = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-01",
+      horizonMonths: 5,
+      birthDate: "1990-01-15",
+      grossMonthly: 0,
+      initial: {
+        oa: 50_000,
+        sa: 0,
+        ma: 0,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [
+        {
+          completionMonth: "2026-03",
+          firstPaymentMonth: "2026-06",
+          downpaymentFromOa: 40_000,
+          feesFromOa: 5_000,
+          upfrontOaEvents: [
+            { yearMonth: "2026-02", amount: 10_000 },
+            { yearMonth: "2026-04", amount: 12_000 },
+          ],
+          principal: 400_000,
+          annualNominalRate: 0.03,
+          termMonths: 12,
+          oaShareOfPayment: 1,
+          maxOaPerMonth: null,
+        },
+      ],
+    });
+    expect(series.find((p) => p.yearMonth === "2026-02")?.oa).toBe(40_000);
+    expect(series.find((p) => p.yearMonth === "2026-03")?.oa).toBe(40_000);
+    expect(series.find((p) => p.yearMonth === "2026-04")?.oa).toBe(28_000);
+  });
+
   it("caps OA toward mortgage payment when OA is low", () => {
     const series = buildCpfMonthlyProjectionSeries({
       startYearMonth: "2026-01",

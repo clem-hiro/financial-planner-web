@@ -2,27 +2,21 @@
 
 # Function tree — `src/domain`
 
-97 module(s).
+90 module(s).
 
 ## Modules
 
 | Module | Classification | Fns | Edges out |
 | --- | --- | ---: | ---: |
-| [`src/domain/advisor-proposals/apply-changes.conflict.test.ts`](#src-domain-advisor-proposals-apply-changes-conflict-test-ts) | `regular` | 4 | 1 |
 | [`src/domain/advisor-proposals/apply-changes.parity.test.ts`](#src-domain-advisor-proposals-apply-changes-parity-test-ts) | `regular` | 5 | 1 |
-| [`src/domain/advisor-proposals/apply-changes.ts`](#src-domain-advisor-proposals-apply-changes-ts) | `regular` | 11 | 34 |
-| [`src/domain/advisor-proposals/apply-overlay.changeops.test.ts`](#src-domain-advisor-proposals-apply-overlay-changeops-test-ts) | `regular` | 6 | 4 |
+| [`src/domain/advisor-proposals/apply-changes.ts`](#src-domain-advisor-proposals-apply-changes-ts) | `regular` | 5 | 16 |
 | [`src/domain/advisor-proposals/apply-overlay.test.ts`](#src-domain-advisor-proposals-apply-overlay-test-ts) | `regular` | 6 | 4 |
-| [`src/domain/advisor-proposals/apply-overlay.ts`](#src-domain-advisor-proposals-apply-overlay-ts) | `regular` | 14 | 21 |
+| [`src/domain/advisor-proposals/apply-overlay.ts`](#src-domain-advisor-proposals-apply-overlay-ts) | `regular` | 8 | 10 |
 | [`src/domain/advisor-proposals/field-registry.ts`](#src-domain-advisor-proposals-field-registry-ts) | `regular` | 3 | 0 |
 | [`src/domain/advisor-proposals/format-display.ts`](#src-domain-advisor-proposals-format-display-ts) | `regular` | 1 | 0 |
 | [`src/domain/advisor-proposals/group-changes.ts`](#src-domain-advisor-proposals-group-changes-ts) | `regular` | 3 | 3 |
 | [`src/domain/advisor-proposals/overlay-gate.test.ts`](#src-domain-advisor-proposals-overlay-gate-test-ts) | `regular` | 1 | 0 |
 | [`src/domain/advisor-proposals/overlay-gate.ts`](#src-domain-advisor-proposals-overlay-gate-ts) | `regular` | 1 | 0 |
-| [`src/domain/advisor-proposals/proposal-format.test.ts`](#src-domain-advisor-proposals-proposal-format-test-ts) | `regular` | 0 | 0 |
-| [`src/domain/advisor-proposals/proposal-format.ts`](#src-domain-advisor-proposals-proposal-format-ts) | `regular` | 2 | 0 |
-| [`src/domain/advisor-proposals/proposal-status-display.test.ts`](#src-domain-advisor-proposals-proposal-status-display-test-ts) | `regular` | 0 | 0 |
-| [`src/domain/advisor-proposals/proposal-status-display.ts`](#src-domain-advisor-proposals-proposal-status-display-ts) | `regular` | 1 | 0 |
 | [`src/domain/advisor-proposals/sections.ts`](#src-domain-advisor-proposals-sections-ts) | `regular` | 2 | 0 |
 | [`src/domain/finance/advisor-client-health.test.ts`](#src-domain-finance-advisor-client-health-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/advisor-client-health.ts`](#src-domain-finance-advisor-client-health-ts) | `regular` | 4 | 7 |
@@ -89,7 +83,7 @@
 | [`src/domain/finance/sg-income-tax.test.ts`](#src-domain-finance-sg-income-tax-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/sg-income-tax.ts`](#src-domain-finance-sg-income-tax-ts) | `regular` | 8 | 10 |
 | [`src/domain/finance/singapore-residential-bsd.test.ts`](#src-domain-finance-singapore-residential-bsd-test-ts) | `regular` | 0 | 0 |
-| [`src/domain/finance/singapore-residential-bsd.ts`](#src-domain-finance-singapore-residential-bsd-ts) | `regular` | 2 | 1 |
+| [`src/domain/finance/singapore-residential-bsd.ts`](#src-domain-finance-singapore-residential-bsd-ts) | `regular` | 3 | 2 |
 | [`src/domain/finance/spend-recommendations.ts`](#src-domain-finance-spend-recommendations-ts) | `regular` | 2 | 1 |
 | [`src/domain/finance/types.ts`](#src-domain-finance-types-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/vehicle-sg.test.ts`](#src-domain-finance-vehicle-sg-test-ts) | `regular` | 0 | 0 |
@@ -101,33 +95,11 @@
 | [`src/domain/setup/context.ts`](#src-domain-setup-context-ts) | `regular` | 0 | 0 |
 | [`src/domain/setup/evaluators.test.ts`](#src-domain-setup-evaluators-test-ts) | `regular` | 1 | 0 |
 | [`src/domain/setup/evaluators.ts`](#src-domain-setup-evaluators-ts) | `regular` | 23 | 30 |
-| [`src/domain/setup/modules.test.ts`](#src-domain-setup-modules-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/setup/modules.ts`](#src-domain-setup-modules-ts) | `regular` | 0 | 0 |
 | [`src/domain/setup/setupStatusService.ts`](#src-domain-setup-setupstatusservice-ts) | `regular` | 0 | 0 |
 | [`src/domain/setup/types.ts`](#src-domain-setup-types-ts) | `regular` | 0 | 0 |
 
 ## Functions
-
-### `src/domain/advisor-proposals/apply-changes.conflict.test.ts` <a id="src-domain-advisor-proposals-apply-changes-conflict-test-ts"></a>
-
-Classification: `regular`
-
-#### `coerceRead` — function, L25
-
-- called by: `src/domain/advisor-proposals/apply-changes.conflict.test.ts#makeFakeSupabase`
-
-#### `makeFakeSupabase` — function, L34
-
-- calls: `src/domain/advisor-proposals/apply-changes.conflict.test.ts#coerceRead`
-- unresolved: 6
-
-#### `ch` — function, L137
-
-_No tracked edges._
-
-#### `seed` — function, L158
-
-_No tracked edges._
 
 ### `src/domain/advisor-proposals/apply-changes.parity.test.ts` <a id="src-domain-advisor-proposals-apply-changes-parity-test-ts"></a>
 
@@ -158,87 +130,28 @@ _No tracked edges._
 
 Classification: `regular`
 
-#### `toNumOrNull` — function, L33
+#### `toNumOrNull` — function, L21
 
-- called by: `src/domain/advisor-proposals/apply-changes.ts#budgetLinePatch`, `src/domain/advisor-proposals/apply-changes.ts#budgetLineWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#goalPatch`, `src/domain/advisor-proposals/apply-changes.ts#goalWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#investmentWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#profilePatch`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#investmentWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#profilePatch`
 
-#### `profilePatch` — function, L50
-
-- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
-- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
-
-#### `investmentDiffers` — function, L67
-
-- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
-
-#### `investmentWritePayload` — function, L82
+#### `profilePatch` — function, L38
 
 - calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 
-#### `budgetLineWritePayload` — function, L98
+#### `investmentDiffers` — function, L55
+
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
+
+#### `investmentWritePayload` — function, L70
 
 - calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 
-#### `budgetLinePatch` — function, L109
+#### `applyAcceptedProposalChanges` — function, L92
 
-- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
-- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
-
-#### `goalWritePayload` — function, L128
-
-- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
-- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
-
-#### `goalPatch` — function, L140
-
-- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
-- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
-
-#### `detectConflicts` — function, L195
-
-- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts`
-- unresolved: 1
-
-#### `detectAcceptConflicts` — function, L244
-
-- calls: `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/profiles.ts#getProfileById`, `src/domain/advisor-proposals/apply-changes.ts#detectConflicts`
+- calls: `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/budget-lines.ts#updateBudgetLine`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/goals.ts#updateFinancialGoal`, `src/data/repositories/investments.ts#deleteInvestment`, `src/data/repositories/investments.ts#insertInvestment`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/investments.ts#updateInvestment`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/repositories/profiles.ts#updateProfile`, `src/domain/advisor-proposals/apply-changes.ts#investmentDiffers`, `src/domain/advisor-proposals/apply-changes.ts#investmentWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#profilePatch`, `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 - called by: `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`
-
-#### `applyAcceptedProposalChanges` — function, L270
-
-- calls: `src/data/repositories/budget-lines.ts#deleteBudgetLine`, `src/data/repositories/budget-lines.ts#insertBudgetLine`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/budget-lines.ts#updateBudgetLine`, `src/data/repositories/goals.ts#deleteFinancialGoal`, `src/data/repositories/goals.ts#insertFinancialGoal`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/goals.ts#updateFinancialGoal`, `src/data/repositories/investments.ts#deleteInvestment`, `src/data/repositories/investments.ts#insertInvestment`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/investments.ts#updateInvestment`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/repositories/profiles.ts#updateProfile`, `src/domain/advisor-proposals/apply-changes.ts#budgetLinePatch`, `src/domain/advisor-proposals/apply-changes.ts#budgetLineWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#detectConflicts`, `src/domain/advisor-proposals/apply-changes.ts#goalPatch`, `src/domain/advisor-proposals/apply-changes.ts#goalWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#investmentDiffers`, `src/domain/advisor-proposals/apply-changes.ts#investmentWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#profilePatch`, `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
-- called by: `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`
-- unresolved: 1
-
-### `src/domain/advisor-proposals/apply-overlay.changeops.test.ts` <a id="src-domain-advisor-proposals-apply-overlay-changeops-test-ts"></a>
-
-Classification: `regular`
-
-#### `bl` — function, L11
-
-- called by: `src/domain/advisor-proposals/apply-overlay.changeops.test.ts#base`
-
-#### `gl` — function, L23
-
-- called by: `src/domain/advisor-proposals/apply-overlay.changeops.test.ts#base`
-
-#### `inv` — function, L39
-
-- called by: `src/domain/advisor-proposals/apply-overlay.changeops.test.ts#base`
-
-#### `prof` — function, L57
-
-- called by: `src/domain/advisor-proposals/apply-overlay.changeops.test.ts#base`
-
-#### `ch` — function, L98
-
-_No tracked edges._
-
-#### `base` — function, L117
-
-- calls: `src/domain/advisor-proposals/apply-overlay.changeops.test.ts#bl`, `src/domain/advisor-proposals/apply-overlay.changeops.test.ts#gl`, `src/domain/advisor-proposals/apply-overlay.changeops.test.ts#inv`, `src/domain/advisor-proposals/apply-overlay.changeops.test.ts#prof`
 
 ### `src/domain/advisor-proposals/apply-overlay.test.ts` <a id="src-domain-advisor-proposals-apply-overlay-test-ts"></a>
 
@@ -274,82 +187,54 @@ Classification: `regular`
 
 #### `numOrNull` — function, L22
 
-- called by: `src/domain/advisor-proposals/apply-overlay.ts#mergeBudgetLine`, `src/domain/advisor-proposals/apply-overlay.ts#mergeGoal`, `src/domain/advisor-proposals/apply-overlay.ts#numStr`
+- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`, `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 
 #### `numStr` — function, L33
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#numOrNull`
-- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyBudgetLineInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyGoalInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyInvestmentInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyProfile`, `src/domain/advisor-proposals/apply-overlay.ts#mergeInvestment`
+- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyInvestmentInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyProfile`, `src/domain/advisor-proposals/apply-overlay.ts#mergeInvestment`
 
-#### `groupByEntity` — function, L47
-
-- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
-
-#### `resolveOp` — function, L77
+#### `groupByEntity` — function, L44
 
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `fieldMap` — function, L101
+#### `fieldMap` — function, L58
 
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `applyProfile` — function, L117
+#### `applyProfile` — function, L74
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `newEntityId` — function, L138
-
-- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyBudgetLineInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyGoalInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyInvestmentInsert`
-
-#### `applyInvestmentInsert` — function, L142
-
-- calls: `src/domain/advisor-proposals/apply-overlay.ts#newEntityId`, `src/domain/advisor-proposals/apply-overlay.ts#numStr`
-- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
-
-#### `mergeInvestment` — function, L169
+#### `applyInvestmentInsert` — function, L90
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `applyBudgetLineInsert` — function, L201
+#### `mergeInvestment` — function, L119
 
-- calls: `src/domain/advisor-proposals/apply-overlay.ts#newEntityId`, `src/domain/advisor-proposals/apply-overlay.ts#numStr`
+- calls: `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `mergeBudgetLine` — function, L219
+#### `applyProposalChanges` — function, L164
 
-- calls: `src/domain/advisor-proposals/apply-overlay.ts#numOrNull`
-- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
-
-#### `applyGoalInsert` — function, L242
-
-- calls: `src/domain/advisor-proposals/apply-overlay.ts#newEntityId`, `src/domain/advisor-proposals/apply-overlay.ts#numStr`
-- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
-
-#### `mergeGoal` — function, L261
-
-- calls: `src/domain/advisor-proposals/apply-overlay.ts#numOrNull`
-- called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
-
-#### `applyProposalChanges` — function, L303
-
-- calls: `src/domain/advisor-proposals/apply-overlay.ts#applyBudgetLineInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyGoalInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyInvestmentInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyProfile`, `src/domain/advisor-proposals/apply-overlay.ts#fieldMap`, `src/domain/advisor-proposals/apply-overlay.ts#groupByEntity`, `src/domain/advisor-proposals/apply-overlay.ts#mergeBudgetLine`, `src/domain/advisor-proposals/apply-overlay.ts#mergeGoal`, `src/domain/advisor-proposals/apply-overlay.ts#mergeInvestment`, `src/domain/advisor-proposals/apply-overlay.ts#resolveOp`
+- calls: `src/domain/advisor-proposals/apply-overlay.ts#applyInvestmentInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyProfile`, `src/domain/advisor-proposals/apply-overlay.ts#fieldMap`, `src/domain/advisor-proposals/apply-overlay.ts#groupByEntity`, `src/domain/advisor-proposals/apply-overlay.ts#mergeInvestment`, `src/domain/advisor-proposals/apply-overlay.ts#numOrNull`
 - called by: `src/data/dashboard.ts#getDashboardPayload`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 
 ### `src/domain/advisor-proposals/field-registry.ts` <a id="src-domain-advisor-proposals-field-registry-ts"></a>
 
 Classification: `regular`
 
-#### `fieldMeta` — function, L65
+#### `fieldMeta` — function, L62
 
-- called by: `src/data/repositories/advisor-proposals.ts#upsertProposalChange`, `src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
+- called by: `src/data/repositories/advisor-proposals.ts#upsertProposalChange`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
 
-#### `serializeProposalValue` — function, L92
+#### `serializeProposalValue` — function, L89
 
 - called by: `src/data/repositories/advisor-proposals.ts#upsertProposalChange`
 
-#### `valuesEqual` — function, L99
+#### `valuesEqual` — function, L96
 
 - called by: `src/data/repositories/advisor-proposals.ts#upsertProposalChange`
 
@@ -359,7 +244,7 @@ Classification: `regular`
 
 #### `formatProposalDisplayValue` — function, L4
 
-- called by: `src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
+- called by: `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
 
 ### `src/domain/advisor-proposals/group-changes.ts` <a id="src-domain-advisor-proposals-group-changes-ts"></a>
 
@@ -376,7 +261,7 @@ Classification: `regular`
 #### `groupChangesBySection` — function, L46
 
 - calls: `src/domain/advisor-proposals/group-changes.ts#entityKey`, `src/domain/advisor-proposals/group-changes.ts#headlineForEntity`, `src/domain/advisor-proposals/sections.ts#compareSectionOrder`
-- called by: `src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView`
+- called by: `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`
 
 ### `src/domain/advisor-proposals/overlay-gate.test.ts` <a id="src-domain-advisor-proposals-overlay-gate-test-ts"></a>
 
@@ -392,39 +277,7 @@ Classification: `regular`
 
 #### `resolveOverlayForViewer` — function, L29
 
-- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`
-
-### `src/domain/advisor-proposals/proposal-format.test.ts` <a id="src-domain-advisor-proposals-proposal-format-test-ts"></a>
-
-Classification: `regular`
-
-_No top-level functions detected._
-
-### `src/domain/advisor-proposals/proposal-format.ts` <a id="src-domain-advisor-proposals-proposal-format-ts"></a>
-
-Classification: `regular`
-
-#### `shortDate` — function, L2
-
-- called by: `src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView`, `src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable`, `src/features/proposals/ClientProposalsView.tsx#ClientProposalsView`
-
-#### `summarize` — function, L12
-
-- called by: `src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable`, `src/features/proposals/ClientProposalsView.tsx#ClientProposalsView`
-
-### `src/domain/advisor-proposals/proposal-status-display.test.ts` <a id="src-domain-advisor-proposals-proposal-status-display-test-ts"></a>
-
-Classification: `regular`
-
-_No top-level functions detected._
-
-### `src/domain/advisor-proposals/proposal-status-display.ts` <a id="src-domain-advisor-proposals-proposal-status-display-ts"></a>
-
-Classification: `regular`
-
-#### `proposalStatusDisplay` — function, L41
-
-- called by: `src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView`, `src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable`, `src/features/proposals/ClientProposalsView.tsx#ClientProposalsView`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`
 
 ### `src/domain/advisor-proposals/sections.ts` <a id="src-domain-advisor-proposals-sections-ts"></a>
 
@@ -432,7 +285,7 @@ Classification: `regular`
 
 #### `sectionLabel` — function, L39
 
-- called by: `src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#RemoveSectionButton`, `src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
+- called by: `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#RemoveSectionButton`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
 
 #### `compareSectionOrder` — function, L46
 
@@ -465,7 +318,7 @@ Classification: `regular`
 #### `advisorClientWorkspaceSignals` — function, L133
 
 - calls: `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/domain/finance/advisor-client-health.ts#advisorClientRosterSignals`, `src/lib/dates.ts#formatYearMonth`
-- called by: `src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader`, `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`
+- called by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
 
 ### `src/domain/finance/age-asset-projection.test.ts` <a id="src-domain-finance-age-asset-projection-test-ts"></a>
 
@@ -508,7 +361,7 @@ Classification: `regular`
 #### `ageCompletedOnDate` — function, L20
 
 - calls: `src/domain/finance/age-projection.ts#parseYmd`
-- called by: `src/app/api/projection/route.ts#GET`, `src/data/dashboard.ts#ageAtEndOfYearMonth`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/domain/finance/age-projection.ts#buildNetWorthByAgeProjection`, `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/features/dashboard/ProfileIncomeForm.tsx#derivedCpfBandFromBirthDate`, `src/features/goals/InvestmentBalancesList.tsx#ContributionTimelineHint`, `src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs`
+- called by: `src/app/api/projection/route.ts#GET`, `src/data/dashboard.ts#ageAtEndOfYearMonth`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/domain/finance/age-projection.ts#buildNetWorthByAgeProjection`, `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/dashboard/ProfileIncomeForm.tsx#derivedCpfBandFromBirthDate`, `src/features/goals/InvestmentBalancesList.tsx#ContributionTimelineHint`, `src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs`
 
 #### `buildNetWorthByAgeProjection` — function, L41
 
@@ -710,20 +563,20 @@ _No top-level functions detected._
 
 Classification: `regular`
 
-#### `round2` — function, L52
+#### `round2` — function, L56
 
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
 
-#### `endOfYearMonthDate` — function, L56
+#### `endOfYearMonthDate` — function, L60
 
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
 
-#### `buildCpfMonthlyProjectionSeries` — function, L66
+#### `buildCpfMonthlyProjectionSeries` — function, L70
 
 - calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/cpf-monthly-projection.ts#endOfYearMonthDate`, `src/domain/finance/cpf-monthly-projection.ts#round2`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`, `src/domain/finance/sg-cpf-contribution-buckets.ts#monthlyCpfInflowsFromOwSubject`, `src/domain/finance/sg-cpf-contribution-buckets.ts#ordinaryWagesSubjectWithYtd`, `src/domain/finance/sg-cpf-contribution-buckets.ts#sgCpfAgeBandForCompletedAge`, `src/domain/finance/sg-cpf.ts#additionalWageCeilingRemaining`, `src/lib/dates.ts#addMonthsToYearMonth`
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `downsampleCpfSeries` — function, L228
+#### `downsampleCpfSeries` — function, L240
 
 _No tracked edges._
 
@@ -1280,7 +1133,7 @@ Classification: `regular`
 #### `buildAmortizationSchedule` — function, L31
 
 - calls: `src/domain/finance/mortgage-amortization.ts#roundMoney`, `src/lib/dates.ts#addMonthsToYearMonth`
-- called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount`, `src/domain/finance/housing-loan-payments.ts#housingInstalmentForMonth`, `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`
+- called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount`, `src/domain/finance/housing-loan-payments.ts#housingInstalmentForMonth`, `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`, `src/features/housing/PropertyAddForm.tsx#monthlyInstalment`
 
 #### `roundMoney` — function, L75
 
@@ -1536,14 +1389,18 @@ _No top-level functions detected._
 
 Classification: `regular`
 
-#### `roundMoney` — function, L37
+#### `roundMoney` — function, L52
 
 - called by: `src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty`
 
-#### `computeSingaporeResidentialBuyersStampDuty` — function, L45
+#### `singaporeResidentialBsdScheduleForPurchaseYear` — function, L56
 
-- calls: `src/domain/finance/singapore-residential-bsd.ts#roundMoney`
-- called by: `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`, `src/server/actions.ts#createHousingLoanQuickAction`
+- called by: `src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty`
+
+#### `computeSingaporeResidentialBuyersStampDuty` — function, L72
+
+- calls: `src/domain/finance/singapore-residential-bsd.ts#roundMoney`, `src/domain/finance/singapore-residential-bsd.ts#singaporeResidentialBsdScheduleForPurchaseYear`
+- called by: `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`, `src/features/housing/PropertyAddForm.tsx#PropertyAddForm`, `src/server/actions.ts#createHousingLoanQuickAction`
 
 ### `src/domain/finance/spend-recommendations.ts` <a id="src-domain-finance-spend-recommendations-ts"></a>
 
@@ -1819,34 +1676,28 @@ _No tracked edges._
 
 _No tracked edges._
 
-#### `evaluateSetupModule` — function, L343
+#### `evaluateSetupModule` — function, L340
 
 - called by: `src/domain/setup/evaluators.ts#evaluateAllSetupModules`
 - unresolved: 1
 
-#### `evaluateAllSetupModules` — function, L354
+#### `evaluateAllSetupModules` — function, L347
 
 - calls: `src/domain/setup/evaluators.ts#evaluateSetupModule`
 - called by: `src/domain/setup/evaluators.ts#buildSetupHubSnapshot`
 
-#### `summarizeSetupProgress` — function, L362
+#### `summarizeSetupProgress` — function, L353
 
 - called by: `src/domain/setup/evaluators.ts#buildSetupHubSnapshot`
 
-#### `pickRecommendedSetupStep` — function, L383
+#### `pickRecommendedSetupStep` — function, L374
 
 - called by: `src/domain/setup/evaluators.ts#buildSetupHubSnapshot`
 
-#### `buildSetupHubSnapshot` — function, L406
+#### `buildSetupHubSnapshot` — function, L397
 
 - calls: `src/domain/setup/evaluators.ts#evaluateAllSetupModules`, `src/domain/setup/evaluators.ts#pickRecommendedSetupStep`, `src/domain/setup/evaluators.ts#summarizeSetupProgress`
 - called by: `src/data/setup-status.ts#getSetupHubSnapshot`
-
-### `src/domain/setup/modules.test.ts` <a id="src-domain-setup-modules-test-ts"></a>
-
-Classification: `regular`
-
-_No top-level functions detected._
 
 ### `src/domain/setup/modules.ts` <a id="src-domain-setup-modules-ts"></a>
 

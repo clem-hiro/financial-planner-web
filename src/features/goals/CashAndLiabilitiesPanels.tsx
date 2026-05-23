@@ -14,12 +14,12 @@ import {
   type DebtPlanningRow,
 } from "@/features/debts/DebtPlanningPanels";
 import type { CashAccountPurpose, LiabilityRow } from "@/data/supabase/types";
-import type { CashAccountHistoryPoint } from "@/features/goals/cash-history";
 import {
   CASH_ACCOUNT_PURPOSE_LABELS,
   CASH_ACCOUNT_PURPOSES,
   cashPurposeSortOrder,
 } from "@/domain/finance/cash-account-purpose";
+import type { CashAccountHistoryPoint } from "@/domain/finance/cash-account-history";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { formatCurrency } from "@/ui/lib/format";
 import { appInlineLinkClass } from "@/ui/app-link-styles";

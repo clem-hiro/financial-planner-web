@@ -3,6 +3,7 @@ import { num } from "@/data/mappers";
 import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { loadSetupTabBundle } from "@/features/planning/load-setup-tab-bundle";
+import { buildCashHistoryByAccountId } from "@/domain/finance/cash-account-history";
 import {
   CashAndLiabilitiesPanels,
   type CashAccountBalanceRow,

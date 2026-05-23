@@ -120,7 +120,10 @@ export function AppShell({
           {user && workspace === "advisor" ? (
             <AdvisorPhonePromptBanner user={user} />
           ) : null}
-          {user && workspace === "client" && clientConsentNeeded ? (
+          {user &&
+          workspace === "client" &&
+          clientConsentNeeded &&
+          !pathname.startsWith("/onboarding") ? (
             <ClientConsentBanner />
           ) : null}
         </header>

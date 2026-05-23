@@ -8,6 +8,24 @@ export type AdvisorAccessKeyStatusCounts = {
   expired: number;
 };
 
+/** Unclaimed keys first so advisors can copy available keys from the top of the list. */
+const ACCESS_KEY_STATUS_SORT_ORDER: Record<AdvisorAccessKeyRow["status"], number> = {
+  available: 0,
+  claimed: 1,
+  expired: 2,
+};
+
+export function sortAdvisorAccessKeysForDisplay(
+  keys: AdvisorAccessKeyRow[]
+): AdvisorAccessKeyRow[] {
+  return [...keys].sort((a, b) => {
+    const byStatus =
+      ACCESS_KEY_STATUS_SORT_ORDER[a.status] - ACCESS_KEY_STATUS_SORT_ORDER[b.status];
+    if (byStatus !== 0) return byStatus;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  });
+}
+
 export async function listAdvisorAccessKeysForAdvisor(
   supabase: SupabaseClient,
   advisorUserId: string
@@ -15,10 +33,9 @@ export async function listAdvisorAccessKeysForAdvisor(
   const { data, error } = await supabase
     .from("advisor_access_keys")
     .select("*")
-    .eq("advisor_user_id", advisorUserId)
-    .order("created_at", { ascending: false });
+    .eq("advisor_user_id", advisorUserId);
   if (error) throw error;
-  return (data ?? []) as AdvisorAccessKeyRow[];
+  return sortAdvisorAccessKeysForDisplay((data ?? []) as AdvisorAccessKeyRow[]);
 }
 
 export async function countAdvisorAccessKeyStatuses(

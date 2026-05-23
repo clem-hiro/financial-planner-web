@@ -10,6 +10,8 @@ export type ConsentPromptProfile = {
   id: string;
   profile_type: string;
   advisor_user_id: string | null;
+  onboarding_required?: boolean;
+  onboarding_completed_at?: string | null;
 };
 
 /**
@@ -18,6 +20,9 @@ export type ConsentPromptProfile = {
  * withdrawn), ensures one inbox row exists (deduped per advisor) and returns
  * `true` so the shell renders the consent banner. The
  * `recordAdvisorConsentAction` grant path clears the same dedupe key.
+ *
+ * Skipped while the client is still in onboarding so consent is only surfaced
+ * after they finish setup.
  *
  * Perf invariant (mirrors ensureSalaryReviewNotification): non-client /
  * unlinked renders short-circuit with ZERO DB hops. Best-effort: an upsert
@@ -28,6 +33,7 @@ export async function ensureAndCheckClientConsentPrompt(
   profile: ConsentPromptProfile | null
 ): Promise<boolean> {
   if (!profile || profile.profile_type !== "client") return false;
+  if (profile.onboarding_required && !profile.onboarding_completed_at) return false;
   const advisorUserId = profile.advisor_user_id;
   if (!advisorUserId || advisorUserId.trim() === "") return false;
 

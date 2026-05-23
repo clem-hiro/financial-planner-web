@@ -434,6 +434,10 @@ export type PropertyRow = {
   user_id: string;
   name: string;
   property_type:
+    | "bto"
+    | "resale_hdb"
+    | "resale_ec_condo"
+    | "new_launch_ec_condo"
     | "hdb"
     | "condo"
     | "ec"
@@ -442,6 +446,7 @@ export type PropertyRow = {
     | "other"
     | "unknown";
   purchase_price: string | null;
+  purchase_year?: number | null;
   current_valuation: string | null;
   ownership_percent: string;
   status: "living_in" | "renting_out" | "under_construction" | "fully_paid";
@@ -474,6 +479,7 @@ export type HousingLoanRow = {
   created_at: string;
   /** Present when saved via guided property flow (migration `20260516000000`). */
   property_purchase_price?: string | null;
+  property_purchase_year?: number | null;
   property_kind?: string | null;
   downpayment_guidance_preset?: string | null;
   downpayment_guidance_custom_percent?: string | null;
@@ -488,4 +494,16 @@ export type HousingLoanRow = {
   cpf_oa_payment?: string | null;
   /** Monthly cash instalment when `payment_source` is `split`. */
   cash_payment?: string | null;
+  first_downpayment_total?: string | null;
+  first_downpayment_paid_month?: string | null;
+  first_downpayment_cpf_oa?: string | null;
+  first_downpayment_cash?: string | null;
+  bsd_legal_total?: string | null;
+  bsd_legal_paid_month?: string | null;
+  bsd_legal_cpf_oa?: string | null;
+  bsd_legal_cash?: string | null;
+  second_downpayment_total?: string | null;
+  second_downpayment_paid_month?: string | null;
+  second_downpayment_cpf_oa?: string | null;
+  second_downpayment_cash?: string | null;
 };

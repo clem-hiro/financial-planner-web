@@ -1756,6 +1756,51 @@ function revalidateHousingPaths() {
   revalidatePath("/planning/wealth");
 }
 
+function parseOptionalMoneyField(
+  formData: FormData,
+  name: string,
+  fallback = 0
+): number {
+  const raw = String(formData.get(name) ?? "").trim();
+  return raw === "" ? fallback : Number(raw);
+}
+
+function parseOptionalPurchaseYear(formData: FormData): number | null {
+  const raw = String(formData.get("purchase_year") ?? "").trim();
+  if (raw === "") return null;
+  const y = Math.trunc(Number(raw));
+  return Number.isFinite(y) ? y : NaN;
+}
+
+function normalizeOptionalMmyy(
+  raw: string,
+  fieldLabel: string
+): { value: string | null } | { error: string } {
+  const t = raw.trim();
+  if (t === "") return { value: null };
+  const compact = t.replace(/[\s/-]/g, "");
+  if (!/^\d{4}$/.test(compact)) {
+    return { error: `${fieldLabel} must be MMYY` };
+  }
+  const month = Number(compact.slice(0, 2));
+  const yy = Number(compact.slice(2, 4));
+  if (month < 1 || month > 12) {
+    return { error: `${fieldLabel} month must be 01–12` };
+  }
+  return { value: `20${String(yy).padStart(2, "0")}-${String(month).padStart(2, "0")}` };
+}
+
+function optionalYearMonthOrMmyy(
+  formData: FormData,
+  name: string,
+  fieldLabel: string
+): { value: string | null } | { error: string } {
+  const raw = String(formData.get(name) ?? "").trim();
+  if (raw === "") return { value: null };
+  if (yearMonthSchema.safeParse(raw).success) return { value: raw };
+  return normalizeOptionalMmyy(raw, fieldLabel);
+}
+
 async function insertPropertyForLoan(
   supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
   userId: string,
@@ -1763,6 +1808,7 @@ async function insertPropertyForLoan(
     name: string;
     property_type?: import("@/data/supabase/types").PropertyRow["property_type"];
     purchase_price?: number | null;
+    purchase_year?: number | null;
     status?: import("@/data/supabase/types").PropertyRow["status"];
   }
 ) {
@@ -1770,6 +1816,7 @@ async function insertPropertyForLoan(
     name: opts.name,
     property_type: opts.property_type ?? "unknown",
     purchase_price: opts.purchase_price ?? null,
+    purchase_year: opts.purchase_year ?? null,
     current_valuation: null,
     ownership_percent: 1,
     status: opts.status ?? "living_in",
@@ -1803,6 +1850,7 @@ export async function createHousingPropertyAction(
   const purchaseRaw = String(formData.get("purchase_price") ?? "").trim();
   const purchase_price =
     purchaseRaw === "" ? null : Number(purchaseRaw);
+  const purchase_year = parseOptionalPurchaseYear(formData);
   const valuationRaw = String(formData.get("current_valuation") ?? "").trim();
   const current_valuation =
     valuationRaw === "" ? null : Number(valuationRaw);
@@ -1818,6 +1866,12 @@ export async function createHousingPropertyAction(
     (!Number.isFinite(purchase_price) || purchase_price <= 0)
   ) {
     return { error: "Purchase price must be blank or positive" };
+  }
+  if (
+    purchase_year != null &&
+    (!Number.isFinite(purchase_year) || purchase_year < 1960 || purchase_year > 2100)
+  ) {
+    return { error: "Purchase year must be between 1960 and 2100" };
   }
   if (
     current_valuation != null &&
@@ -1848,6 +1902,7 @@ export async function createHousingPropertyAction(
     name,
     property_type: propertyTypeParsed.data,
     purchase_price,
+    purchase_year,
     current_valuation,
     ownership_percent,
     status: statusParsed.data,
@@ -1864,12 +1919,70 @@ export async function createHousingPropertyAction(
   const principal = Number(formData.get("principal"));
   const annual_nominal_rate = Number(formData.get("annual_nominal_rate"));
   const term_months = Math.round(Number(formData.get("term_months")));
-  const completion_month = String(formData.get("completion_month") ?? "").trim();
+  const completionRaw = String(formData.get("completion_month") ?? "").trim();
   const first_payment_month = String(
     formData.get("first_payment_month") ?? ""
   ).trim();
-  const downpayment_from_oa = Number(formData.get("downpayment_from_oa"));
-  const fees_from_oa = Number(formData.get("fees_from_oa"));
+  const first_downpayment_total = parseOptionalMoneyField(
+    formData,
+    "first_downpayment_total"
+  );
+  const first_downpayment_cpf_oa = parseOptionalMoneyField(
+    formData,
+    "first_downpayment_cpf_oa",
+    first_downpayment_total
+  );
+  const first_downpayment_cash = parseOptionalMoneyField(
+    formData,
+    "first_downpayment_cash"
+  );
+  const bsd_legal_total = parseOptionalMoneyField(formData, "bsd_legal_total");
+  const bsd_legal_cpf_oa = parseOptionalMoneyField(
+    formData,
+    "bsd_legal_cpf_oa",
+    bsd_legal_total
+  );
+  const bsd_legal_cash = parseOptionalMoneyField(formData, "bsd_legal_cash");
+  const second_downpayment_total = parseOptionalMoneyField(
+    formData,
+    "second_downpayment_total"
+  );
+  const second_downpayment_cpf_oa = parseOptionalMoneyField(
+    formData,
+    "second_downpayment_cpf_oa",
+    second_downpayment_total
+  );
+  const second_downpayment_cash = parseOptionalMoneyField(
+    formData,
+    "second_downpayment_cash"
+  );
+  const firstDownpaymentMonth = optionalYearMonthOrMmyy(
+    formData,
+    "first_downpayment_paid_month",
+    "First downpayment paid date"
+  );
+  if ("error" in firstDownpaymentMonth) return firstDownpaymentMonth;
+  const bsdLegalMonth = optionalYearMonthOrMmyy(
+    formData,
+    "bsd_legal_paid_month",
+    "BSD/legal paid date"
+  );
+  if ("error" in bsdLegalMonth) return bsdLegalMonth;
+  const secondDownpaymentMonth = optionalYearMonthOrMmyy(
+    formData,
+    "second_downpayment_paid_month",
+    "Second downpayment paid date"
+  );
+  if ("error" in secondDownpaymentMonth) return secondDownpaymentMonth;
+  const downpayment_from_oa =
+    first_downpayment_cpf_oa + second_downpayment_cpf_oa;
+  const fees_from_oa = bsd_legal_cpf_oa;
+  const completion_month =
+    completionRaw ||
+    secondDownpaymentMonth.value ||
+    bsdLegalMonth.value ||
+    firstDownpaymentMonth.value ||
+    first_payment_month;
   const maxRaw = String(formData.get("max_oa_per_month") ?? "").trim();
   const max_oa_per_month = maxRaw === "" ? null : Number(maxRaw);
   const lenderRaw = String(formData.get("lender_type") ?? "hdb").trim();
@@ -1904,6 +2017,29 @@ export async function createHousingPropertyAction(
   if (!Number.isFinite(fees_from_oa) || fees_from_oa < 0) {
     return { error: "Invalid fees from OA" };
   }
+  const upfrontAmounts = [
+    first_downpayment_total,
+    first_downpayment_cpf_oa,
+    first_downpayment_cash,
+    bsd_legal_total,
+    bsd_legal_cpf_oa,
+    bsd_legal_cash,
+    second_downpayment_total,
+    second_downpayment_cpf_oa,
+    second_downpayment_cash,
+  ];
+  if (upfrontAmounts.some((v) => !Number.isFinite(v) || v < 0)) {
+    return { error: "Upfront payment amounts must be 0 or more" };
+  }
+  if (first_downpayment_cpf_oa + first_downpayment_cash > first_downpayment_total + 1e-6) {
+    return { error: "First downpayment CPF + cash cannot exceed total" };
+  }
+  if (bsd_legal_cpf_oa + bsd_legal_cash > bsd_legal_total + 1e-6) {
+    return { error: "BSD/legal CPF + cash cannot exceed total" };
+  }
+  if (second_downpayment_cpf_oa + second_downpayment_cash > second_downpayment_total + 1e-6) {
+    return { error: "Second downpayment CPF + cash cannot exceed total" };
+  }
 
   const annual_nominal_rate_effective =
     lender_type === "hdb" ? HDB_CONCESSIONARY_RATE_ANNUAL : annual_nominal_rate;
@@ -1933,12 +2069,37 @@ export async function createHousingPropertyAction(
     original_loan_principal,
     principal_repaid_before_schedule,
     property_purchase_price: purchase_price,
+    property_purchase_year: purchase_year,
     property_kind:
-      propertyTypeParsed.data === "unknown" ||
-      propertyTypeParsed.data === "overseas" ||
-      propertyTypeParsed.data === "other"
-        ? null
-        : propertyTypeParsed.data,
+      propertyTypeParsed.data === "bto" ||
+      propertyTypeParsed.data === "resale_hdb" ||
+      propertyTypeParsed.data === "hdb"
+        ? "hdb"
+        : propertyTypeParsed.data === "condo" ||
+            propertyTypeParsed.data === "ec" ||
+            propertyTypeParsed.data === "landed"
+          ? propertyTypeParsed.data
+          : null,
+    downpayment_guidance_preset:
+      propertyTypeParsed.data === "bto"
+        ? "custom"
+        : propertyTypeParsed.data === "resale_hdb"
+          ? "pct_25"
+          : null,
+    buyers_stamp_duty: bsd_legal_total > 0 ? bsd_legal_total : null,
+    buyers_stamp_duty_paid_from_cpf_oa: bsd_legal_cpf_oa > 0,
+    first_downpayment_total,
+    first_downpayment_paid_month: firstDownpaymentMonth.value,
+    first_downpayment_cpf_oa,
+    first_downpayment_cash,
+    bsd_legal_total,
+    bsd_legal_paid_month: bsdLegalMonth.value,
+    bsd_legal_cpf_oa,
+    bsd_legal_cash,
+    second_downpayment_total,
+    second_downpayment_paid_month: secondDownpaymentMonth.value,
+    second_downpayment_cpf_oa,
+    second_downpayment_cash,
     payment_source: paymentParsed.payment_source,
     cpf_oa_payment: paymentParsed.cpf_oa_payment,
     cash_payment: paymentParsed.cash_payment,

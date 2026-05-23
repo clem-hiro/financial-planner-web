@@ -88,7 +88,8 @@ export async function AdvisorAccessKeysSection({
         <div>
           <h3 className="text-sm font-semibold text-zinc-900">Recent keys</h3>
           <p className="mt-0.5 text-xs text-zinc-600">
-            Showing up to 40 most recent. Copy a key and send it securely to your client.
+            Showing up to 40 keys, unclaimed first. Copy a key and send it securely to your
+            client.
           </p>
           {recent.length === 0 ? (
             <p className="mt-3 text-sm text-zinc-600">
