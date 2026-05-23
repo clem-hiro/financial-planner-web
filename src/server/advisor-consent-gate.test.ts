@@ -44,6 +44,10 @@ vi.mock("@/data/repositories/goals", () => ({
     title: "Retirement",
     monthly_contribution: 300,
   }),
+  // Action now routes the read-back through the consent-gated DEFINER RPC.
+  advisorReadGoals: async () => [
+    { id: "goal-1", title: "Retirement", monthly_contribution: 300 },
+  ],
 }));
 vi.mock("@/server/advisor-proposal-recording", () => ({
   recordAdvisorProposalChanges: m.recordAdvisorProposalChanges,
@@ -63,7 +67,7 @@ vi.mock("@/data/repositories/advisor-proposals", () => ({
   resolveProposal: async () => undefined,
 }));
 vi.mock("@/domain/advisor-proposals/apply-changes", () => ({
-  applyAcceptedProposalChanges: async () => undefined,
+  applyAcceptedProposalChanges: async () => ({ conflicts: [] }),
 }));
 vi.mock("@/data/repositories/inbox-notifications", () => ({
   markAsReadByDedupeKey: async () => undefined,

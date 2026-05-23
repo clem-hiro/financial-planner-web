@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, type ReactNode } from "react";
+import { useActionState, useRef, type ReactNode } from "react";
 import { fieldMeta } from "@/domain/advisor-proposals/field-registry";
 import { ProposalProjectionCompare } from "@/features/proposals/ProposalProjectionCompare";
 import { formatProposalDisplayValue } from "@/domain/advisor-proposals/format-display";
@@ -13,8 +13,10 @@ import type {
   AdvisorProposalRow,
   AdvisorProposalSectionNoteRow,
 } from "@/data/supabase/types";
+import type { ProposalConflict } from "@/domain/advisor-proposals/apply-changes";
 import {
   acceptAdvisorProposalAction,
+  type AcceptProposalState,
   rejectAdvisorProposalAction,
 } from "@/server/advisor-proposal-actions";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
@@ -56,6 +58,98 @@ function formatSubmittedDate(iso: string | null): string {
   });
 }
 
+/**
+ * Reusable accept/reject unit (forms + actions + pending overlay +
+ * error/conflict surface). Shared by the in-flow footer here and the
+ * client review's sticky bottom bar — one source so the two never drift.
+ * `acceptState.conflicts` is the typed `ProposalConflict[]` returned by
+ * `acceptAdvisorProposalAction` (backend P2 shipped this shape). On an
+ * optimistic-concurrency conflict the backend has already notified the
+ * advisor to re-baseline (B8); the client cannot self-resolve, so we name
+ * the stale items and block Accept (Reject stays available).
+ */
+export function ProposalReviewActions({ proposalId }: { proposalId: string }) {
+  // Single in-flight guard — belt to the `disabled` suspenders. Blocks a
+  // second submit of accept OR reject from entering the server action via
+  // Enter+click or a pre-hydration double-fire. Same lockRef pattern as
+  // AdvisorProposeRemovalButton (set on entry, cleared in finally,
+  // early-return if already locked); shared so the two can't interleave.
+  const lockRef = useRef(false);
+
+  const [acceptState, acceptAction, acceptPending] = useActionState(
+    async (prev: AcceptProposalState, fd: FormData) => {
+      if (lockRef.current) return prev;
+      lockRef.current = true;
+      try {
+        return await acceptAdvisorProposalAction(prev, fd);
+      } finally {
+        lockRef.current = false;
+      }
+    },
+    { error: null } as AcceptProposalState
+  );
+  const [rejectState, rejectAction, rejectPending] = useActionState(
+    async (prev: { error: string | null }, fd: FormData) => {
+      if (lockRef.current) return prev;
+      lockRef.current = true;
+      try {
+        return await rejectAdvisorProposalAction(prev, fd);
+      } finally {
+        lockRef.current = false;
+      }
+    },
+    { error: null as string | null }
+  );
+  const actionPending = acceptPending || rejectPending;
+  const conflicts: ProposalConflict[] = acceptState.conflicts ?? [];
+  const conflictLabels = [...new Set(conflicts.map((c) => c.label))];
+  const conflicted = conflictLabels.length > 0;
+
+  return (
+    <div className="space-y-3">
+      <BlockingSubmitOverlay
+        active={actionPending}
+        message={acceptPending ? "Applying proposal…" : "Rejecting proposal…"}
+      />
+      {conflicted ? (
+        <p className="text-sm font-medium text-amber-800" role="alert">
+          Your plan changed since this proposal was created — these items are
+          now out of date:{" "}
+          <span className="font-semibold">{conflictLabels.join(", ")}</span>.
+          Your advisor has been notified to refresh it before it can be
+          applied.
+        </p>
+      ) : acceptState.error || rejectState.error ? (
+        <p className="text-sm font-medium text-rose-700" role="alert">
+          {acceptState.error ?? rejectState.error}
+        </p>
+      ) : null}
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+        <form action={rejectAction}>
+          <input type="hidden" name="proposal_id" value={proposalId} />
+          <button
+            type="submit"
+            disabled={rejectPending || acceptPending}
+            className="w-full rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50 sm:w-auto"
+          >
+            {rejectPending ? "Rejecting…" : "Reject changes"}
+          </button>
+        </form>
+        <form action={acceptAction}>
+          <input type="hidden" name="proposal_id" value={proposalId} />
+          <button
+            type="submit"
+            disabled={acceptPending || rejectPending || conflicted}
+            className="w-full rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-50 sm:w-auto"
+          >
+            {acceptPending ? "Applying…" : "Accept changes"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 export function ProposalReviewView({
   proposal,
   changes,
@@ -65,6 +159,9 @@ export function ProposalReviewView({
   hasProjection = false,
   actualProjection = null,
   proposedProjection = null,
+  hideFooterActions = false,
+  backHref = "/dashboard",
+  backLabel = "← Home",
 }: {
   proposal: AdvisorProposalRow;
   changes: AdvisorProposalChangeRow[];
@@ -74,31 +171,22 @@ export function ProposalReviewView({
   hasProjection?: boolean;
   actualProjection?: ReactNode;
   proposedProjection?: ReactNode;
+  /** When true, omit the in-flow footer (caller renders its own action bar). */
+  hideFooterActions?: boolean;
+  backHref?: string;
+  backLabel?: string;
 }) {
   const sections = groupBySection(changes, sectionNotes);
   const isPending = proposal.status === "pending";
-  const [acceptState, acceptAction, acceptPending] = useActionState(
-    acceptAdvisorProposalAction,
-    { error: null as string | null }
-  );
-  const [rejectState, rejectAction, rejectPending] = useActionState(
-    rejectAdvisorProposalAction,
-    { error: null as string | null }
-  );
-  const actionPending = acceptPending || rejectPending;
 
   return (
-    <div
-      className="mx-auto max-w-3xl space-y-8 pb-16"
-      {...(actionPending ? { inert: true } : {})}
-    >
-      <BlockingSubmitOverlay
-        active={actionPending}
-        message={acceptPending ? "Applying proposal…" : "Rejecting proposal…"}
-      />
+    <div className="mx-auto max-w-3xl space-y-8 pb-16">
       <p className="text-sm">
-        <Link href="/dashboard" className="font-medium text-emerald-700 hover:text-emerald-800">
-          ← Home
+        <Link
+          href={backHref}
+          className="font-medium text-emerald-700 hover:text-emerald-800"
+        >
+          {backLabel}
         </Link>
       </p>
 
@@ -199,39 +287,13 @@ export function ProposalReviewView({
         ))}
       </div>
 
-      {isPending ? (
+      {isPending && !hideFooterActions ? (
         <footer className={`${appCardClass} ${appCardPadding} space-y-4`}>
           <p className="text-sm text-slate-600">
             Accepting applies these updates to your plan. Rejecting leaves your current data
             unchanged.
           </p>
-          {(acceptState.error || rejectState.error) && (
-            <p className="text-sm font-medium text-rose-700" role="alert">
-              {acceptState.error ?? rejectState.error}
-            </p>
-          )}
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
-            <form action={rejectAction}>
-              <input type="hidden" name="proposal_id" value={proposal.id} />
-              <button
-                type="submit"
-                disabled={rejectPending || acceptPending}
-                className="w-full rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50 sm:w-auto"
-              >
-                {rejectPending ? "Rejecting…" : "Reject changes"}
-              </button>
-            </form>
-            <form action={acceptAction}>
-              <input type="hidden" name="proposal_id" value={proposal.id} />
-              <button
-                type="submit"
-                disabled={acceptPending || rejectPending}
-                className="w-full rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-50 sm:w-auto"
-              >
-                {acceptPending ? "Applying…" : "Accept changes"}
-              </button>
-            </form>
-          </div>
+          <ProposalReviewActions proposalId={proposal.id} />
         </footer>
       ) : null}
     </div>

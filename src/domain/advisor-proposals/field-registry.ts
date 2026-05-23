@@ -39,10 +39,13 @@ const PROFILE_FIELDS: Record<string, ProposalFieldMeta> = {
 };
 
 const BUDGET_LINE_FIELDS: Record<string, ProposalFieldMeta> = {
+  category: { label: "Category", section: "cash_flow" },
   amount: { label: "Planned amount", section: "cash_flow", currency: true },
 };
 
 const GOAL_FIELDS: Record<string, ProposalFieldMeta> = {
+  title: { label: "Goal name", section: "goals" },
+  target_amount: { label: "Target amount", section: "goals", currency: true },
   monthly_contribution: { label: "Monthly contribution", section: "goals", currency: true },
 };
 

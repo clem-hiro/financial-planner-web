@@ -57,12 +57,15 @@ export function FinancialSetupHub({ snapshot }: { snapshot: SetupHubSnapshot }) 
             <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {modules.map((def) => {
                 const evaluation = evaluationsById[def.id];
-                if (!evaluation) return null;
+                // Navigation-only modules (no completion state) render
+                // unconditionally; everything else needs an evaluation.
+                const alwaysOn = def.id === "advisor_proposal";
+                if (!evaluation && !alwaysOn) return null;
                 return (
                   <SetupModuleCard
                     key={def.id}
                     definition={SETUP_MODULE_BY_ID[def.id]}
-                    evaluation={evaluation}
+                    evaluation={evaluation ?? null}
                   />
                 );
               })}

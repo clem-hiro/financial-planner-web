@@ -2,7 +2,7 @@
 
 # Function tree — `src/features`
 
-108 module(s).
+124 module(s).
 
 ## Modules
 
@@ -12,19 +12,27 @@
 | [`src/features/advisor/AdvisorAccessKeysGenerateForm.tsx`](#src-features-advisor-advisoraccesskeysgenerateform-tsx) | `client-component` | 1 | 5 |
 | [`src/features/advisor/AdvisorAccessKeysSection.tsx`](#src-features-advisor-advisoraccesskeyssection-tsx) | `regular` | 2 | 7 |
 | [`src/features/advisor/AdvisorBuyKeysSection.tsx`](#src-features-advisor-advisorbuykeyssection-tsx) | `client-component` | 4 | 17 |
+| [`src/features/advisor/AdvisorClientDetailShell.tsx`](#src-features-advisor-advisorclientdetailshell-tsx) | `regular` | 1 | 2 |
 | [`src/features/advisor/AdvisorClientsBoard.tsx`](#src-features-advisor-advisorclientsboard-tsx) | `regular` | 4 | 10 |
-| [`src/features/advisor/AdvisorClientWorkspace.tsx`](#src-features-advisor-advisorclientworkspace-tsx) | `regular` | 2 | 19 |
+| [`src/features/advisor/AdvisorClientWorkspace.tsx`](#src-features-advisor-advisorclientworkspace-tsx) | `regular` | 2 | 22 |
 | [`src/features/advisor/AdvisorKeyQrShareButton.tsx`](#src-features-advisor-advisorkeyqrsharebutton-tsx) | `client-component` | 4 | 22 |
 | [`src/features/advisor/AdvisorPhoneVerificationForm.tsx`](#src-features-advisor-advisorphoneverificationform-tsx) | `client-component` | 1 | 16 |
+| [`src/features/advisor/AdvisorProposalDetailView.tsx`](#src-features-advisor-advisorproposaldetailview-tsx) | `regular` | 1 | 11 |
 | [`src/features/advisor/AdvisorProposalDraftPanel.tsx`](#src-features-advisor-advisorproposaldraftpanel-tsx) | `client-component` | 4 | 15 |
+| [`src/features/advisor/AdvisorProposalsTable.test.tsx`](#src-features-advisor-advisorproposalstable-test-tsx) | `regular` | 1 | 0 |
+| [`src/features/advisor/AdvisorProposalsTable.tsx`](#src-features-advisor-advisorproposalstable-tsx) | `regular` | 1 | 6 |
+| [`src/features/advisor/AdvisorProposeRemovalButton.tsx`](#src-features-advisor-advisorproposeremovalbutton-tsx) | `client-component` | 1 | 6 |
 | [`src/features/advisor/AdvisorSuggestionModeBanner.tsx`](#src-features-advisor-advisorsuggestionmodebanner-tsx) | `regular` | 1 | 1 |
 | [`src/features/advisor/AdvisorWorkspaceSidebar.tsx`](#src-features-advisor-advisorworkspacesidebar-tsx) | `client-component` | 1 | 2 |
 | [`src/features/advisor/buy-keys-totals.test.ts`](#src-features-advisor-buy-keys-totals-test-ts) | `regular` | 0 | 0 |
 | [`src/features/advisor/buy-keys-totals.ts`](#src-features-advisor-buy-keys-totals-ts) | `regular` | 1 | 0 |
 | [`src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx`](#src-features-advisor-forms-advisorbudgetlineamountform-tsx) | `client-component` | 1 | 3 |
 | [`src/features/advisor/forms/AdvisorGoalContributionForm.tsx`](#src-features-advisor-forms-advisorgoalcontributionform-tsx) | `client-component` | 1 | 3 |
+| [`src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx`](#src-features-advisor-forms-advisornewbudgetlineform-tsx) | `client-component` | 1 | 5 |
+| [`src/features/advisor/forms/AdvisorNewGoalForm.tsx`](#src-features-advisor-forms-advisornewgoalform-tsx) | `client-component` | 1 | 5 |
 | [`src/features/advisor/forms/AdvisorProfilePatchForm.tsx`](#src-features-advisor-forms-advisorprofilepatchform-tsx) | `client-component` | 1 | 3 |
 | [`src/features/advisor/use-advisor-proposal-refresh.ts`](#src-features-advisor-use-advisor-proposal-refresh-ts) | `client-component` | 1 | 3 |
+| [`src/features/advisor/WithdrawProposalButton.tsx`](#src-features-advisor-withdrawproposalbutton-tsx) | `client-component` | 1 | 2 |
 | [`src/features/app-shell/AdvisorPhonePromptBanner.tsx`](#src-features-app-shell-advisorphonepromptbanner-tsx) | `client-component` | 1 | 1 |
 | [`src/features/app-shell/AppShell.tsx`](#src-features-app-shell-appshell-tsx) | `client-component` | 1 | 12 |
 | [`src/features/app-shell/AppShellInbox.tsx`](#src-features-app-shell-appshellinbox-tsx) | `regular` | 2 | 6 |
@@ -47,7 +55,7 @@
 | [`src/features/budget/BudgetMonthlyCategoriesSection.tsx`](#src-features-budget-budgetmonthlycategoriessection-tsx) | `regular` | 5 | 21 |
 | [`src/features/budget/BudgetMonthOverrideForm.tsx`](#src-features-budget-budgetmonthoverrideform-tsx) | `client-component` | 1 | 5 |
 | [`src/features/budget/BudgetPageHero.tsx`](#src-features-budget-budgetpagehero-tsx) | `regular` | 3 | 11 |
-| [`src/features/budget/BudgetPlanningView.tsx`](#src-features-budget-budgetplanningview-tsx) | `regular` | 2 | 39 |
+| [`src/features/budget/BudgetPlanningView.tsx`](#src-features-budget-budgetplanningview-tsx) | `regular` | 2 | 43 |
 | [`src/features/budget/BudgetQuickAddPresets.tsx`](#src-features-budget-budgetquickaddpresets-tsx) | `client-component` | 1 | 6 |
 | [`src/features/budget/BudgetRecommendationHints.tsx`](#src-features-budget-budgetrecommendationhints-tsx) | `regular` | 1 | 0 |
 | [`src/features/budget/BudgetReviewWorkflowPanel.tsx`](#src-features-budget-budgetreviewworkflowpanel-tsx) | `regular` | 2 | 2 |
@@ -56,26 +64,29 @@
 | [`src/features/consent/ClientConsentControl.tsx`](#src-features-consent-clientconsentcontrol-tsx) | `client-component` | 1 | 2 |
 | [`src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx`](#src-features-dashboard-agecombinedassetsprojectionchart-tsx) | `client-component` | 4 | 17 |
 | [`src/features/dashboard/CpfProjectionByAgeChart.tsx`](#src-features-dashboard-cpfprojectionbyagechart-tsx) | `client-component` | 1 | 15 |
-| [`src/features/dashboard/CpfRetirementProjectionPanel.tsx`](#src-features-dashboard-cpfretirementprojectionpanel-tsx) | `client-component` | 5 | 18 |
+| [`src/features/dashboard/CpfRetirementProjectionPanel.tsx`](#src-features-dashboard-cpfretirementprojectionpanel-tsx) | `client-component` | 5 | 21 |
 | [`src/features/dashboard/DashboardMonthSection.tsx`](#src-features-dashboard-dashboardmonthsection-tsx) | `regular` | 1 | 9 |
 | [`src/features/dashboard/DashboardOverviewSection.tsx`](#src-features-dashboard-dashboardoverviewsection-tsx) | `regular` | 1 | 8 |
-| [`src/features/dashboard/DashboardRetirementSection.tsx`](#src-features-dashboard-dashboardretirementsection-tsx) | `regular` | 1 | 15 |
+| [`src/features/dashboard/DashboardRetirementSection.tsx`](#src-features-dashboard-dashboardretirementsection-tsx) | `regular` | 1 | 14 |
 | [`src/features/dashboard/DashboardSubnav.tsx`](#src-features-dashboard-dashboardsubnav-tsx) | `client-component` | 1 | 6 |
-| [`src/features/dashboard/ProfileIncomeForm.tsx`](#src-features-dashboard-profileincomeform-tsx) | `client-component` | 3 | 32 |
+| [`src/features/dashboard/ProfileIncomeForm.tsx`](#src-features-dashboard-profileincomeform-tsx) | `client-component` | 3 | 33 |
 | [`src/features/dashboard/ProjectionMiniChart.tsx`](#src-features-dashboard-projectionminichart-tsx) | `client-component` | 1 | 8 |
 | [`src/features/debts/debt-constants.ts`](#src-features-debts-debt-constants-ts) | `regular` | 4 | 0 |
 | [`src/features/debts/DebtEducationalExamples.tsx`](#src-features-debts-debteducationalexamples-tsx) | `client-component` | 2 | 4 |
 | [`src/features/debts/DebtFormFields.tsx`](#src-features-debts-debtformfields-tsx) | `client-component` | 1 | 4 |
-| [`src/features/debts/DebtPlanningPanels.tsx`](#src-features-debts-debtplanningpanels-tsx) | `client-component` | 6 | 36 |
+| [`src/features/debts/DebtPayoffStrategyComparison.tsx`](#src-features-debts-debtpayoffstrategycomparison-tsx) | `client-component` | 2 | 8 |
+| [`src/features/debts/DebtPlanningPanels.tsx`](#src-features-debts-debtplanningpanels-tsx) | `client-component` | 6 | 37 |
 | [`src/features/expenses/CategoryBarChart.tsx`](#src-features-expenses-categorybarchart-tsx) | `client-component` | 1 | 9 |
 | [`src/features/expenses/ExpenseEditRow.tsx`](#src-features-expenses-expenseeditrow-tsx) | `client-component` | 1 | 12 |
 | [`src/features/expenses/ExpenseForm.tsx`](#src-features-expenses-expenseform-tsx) | `client-component` | 1 | 8 |
 | [`src/features/expenses/ExpenseMonthJump.tsx`](#src-features-expenses-expensemonthjump-tsx) | `client-component` | 1 | 5 |
-| [`src/features/goals/CashAndLiabilitiesPanels.tsx`](#src-features-goals-cashandliabilitiespanels-tsx) | `client-component` | 3 | 20 |
+| [`src/features/goals/CashAndLiabilitiesPanels.tsx`](#src-features-goals-cashandliabilitiespanels-tsx) | `client-component` | 8 | 29 |
 | [`src/features/goals/CpfBalancesForm.tsx`](#src-features-goals-cpfbalancesform-tsx) | `client-component` | 2 | 13 |
-| [`src/features/goals/FinancialGoalsPanels.tsx`](#src-features-goals-financialgoalspanels-tsx) | `regular` | 1 | 14 |
+| [`src/features/goals/FinancialGoalsPanels.tsx`](#src-features-goals-financialgoalspanels-tsx) | `regular` | 1 | 17 |
 | [`src/features/goals/GoalEditForm.tsx`](#src-features-goals-goaleditform-tsx) | `client-component` | 1 | 2 |
 | [`src/features/goals/GoalForm.tsx`](#src-features-goals-goalform-tsx) | `client-component` | 1 | 2 |
+| [`src/features/goals/GoalPriorityTradeoffPanel.tsx`](#src-features-goals-goalprioritytradeoffpanel-tsx) | `regular` | 1 | 5 |
+| [`src/features/goals/GoalReorderButtons.tsx`](#src-features-goals-goalreorderbuttons-tsx) | `client-component` | 1 | 2 |
 | [`src/features/goals/HousingLoanQuickAddForm.tsx`](#src-features-goals-housingloanquickaddform-tsx) | `client-component` | 1 | 28 |
 | [`src/features/goals/HousingLoansPanel.tsx`](#src-features-goals-housingloanspanel-tsx) | `client-component` | 7 | 39 |
 | [`src/features/goals/HousingPaymentSourceFields.tsx`](#src-features-goals-housingpaymentsourcefields-tsx) | `client-component` | 1 | 2 |
@@ -97,7 +108,8 @@
 | [`src/features/onboarding/BonusMonthSelector.tsx`](#src-features-onboarding-bonusmonthselector-tsx) | `client-component` | 1 | 0 |
 | [`src/features/onboarding/onboarding-module-sync.ts`](#src-features-onboarding-onboarding-module-sync-ts) | `regular` | 0 | 0 |
 | [`src/features/onboarding/OnboardingWizard.tsx`](#src-features-onboarding-onboardingwizard-tsx) | `client-component` | 6 | 39 |
-| [`src/features/planning/load-setup-tab-bundle.ts`](#src-features-planning-load-setup-tab-bundle-ts) | `regular` | 1 | 8 |
+| [`src/features/planning/CashFlowSetupGuidanceBanner.tsx`](#src-features-planning-cashflowsetupguidancebanner-tsx) | `regular` | 1 | 1 |
+| [`src/features/planning/load-setup-tab-bundle.ts`](#src-features-planning-load-setup-tab-bundle-ts) | `regular` | 1 | 9 |
 | [`src/features/planning/PlanningLayoutShell.tsx`](#src-features-planning-planninglayoutshell-tsx) | `client-component` | 1 | 1 |
 | [`src/features/planning/PlanningSectionNav.tsx`](#src-features-planning-planningsectionnav-tsx) | `client-component` | 1 | 2 |
 | [`src/features/planning/roadmap-modules.tsx`](#src-features-planning-roadmap-modules-tsx) | `regular` | 12 | 12 |
@@ -105,9 +117,13 @@
 | [`src/features/planning/sections/FuturePlanningSection.tsx`](#src-features-planning-sections-futureplanningsection-tsx) | `regular` | 1 | 11 |
 | [`src/features/planning/sections/OverviewPlanningSection.tsx`](#src-features-planning-sections-overviewplanningsection-tsx) | `regular` | 1 | 12 |
 | [`src/features/planning/sections/ProtectionPlanningSection.tsx`](#src-features-planning-sections-protectionplanningsection-tsx) | `regular` | 1 | 6 |
-| [`src/features/planning/sections/WealthPlanningSection.tsx`](#src-features-planning-sections-wealthplanningsection-tsx) | `regular` | 1 | 19 |
+| [`src/features/planning/sections/WealthPlanningSection.tsx`](#src-features-planning-sections-wealthplanningsection-tsx) | `regular` | 1 | 20 |
+| [`src/features/proposals/ClientProposalReviewView.tsx`](#src-features-proposals-clientproposalreviewview-tsx) | `regular` | 1 | 6 |
+| [`src/features/proposals/ClientProposalsView.test.tsx`](#src-features-proposals-clientproposalsview-test-tsx) | `regular` | 1 | 0 |
+| [`src/features/proposals/ClientProposalsView.tsx`](#src-features-proposals-clientproposalsview-tsx) | `regular` | 1 | 5 |
 | [`src/features/proposals/ProposalProjectionCompare.tsx`](#src-features-proposals-proposalprojectioncompare-tsx) | `client-component` | 1 | 1 |
-| [`src/features/proposals/ProposalReviewView.tsx`](#src-features-proposals-proposalreviewview-tsx) | `client-component` | 4 | 12 |
+| [`src/features/proposals/ProposalReviewActions.test.tsx`](#src-features-proposals-proposalreviewactions-test-tsx) | `regular` | 0 | 0 |
+| [`src/features/proposals/ProposalReviewView.tsx`](#src-features-proposals-proposalreviewview-tsx) | `client-component` | 5 | 16 |
 | [`src/features/setup-hub/FinancialSetupHub.tsx`](#src-features-setup-hub-financialsetuphub-tsx) | `regular` | 1 | 4 |
 | [`src/features/setup-hub/SetupModuleCard.tsx`](#src-features-setup-hub-setupmodulecard-tsx) | `regular` | 3 | 5 |
 | [`src/features/setup-hub/SetupModuleStatusBadge.tsx`](#src-features-setup-hub-setupmodulestatusbadge-tsx) | `regular` | 1 | 0 |
@@ -125,7 +141,7 @@ Classification: `regular`
 
 #### `AdvisorBadge` — component, L11
 
-- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard`, `src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner`
+- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/advisor/AdvisorClientsBoard.tsx#AdvisorClientsBoard`, `src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView`, `src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable`, `src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner`, `src/features/proposals/ClientProposalsView.tsx#ClientProposalsView`
 
 #### `AdvisorSection` — component, L27
 
@@ -181,6 +197,15 @@ Classification: `client-component`
 - rendered by: `src/app/(app)/advisor/buy-keys/page.tsx#AdvisorBuyKeysPage`
 - unresolved: 7
 
+### `src/features/advisor/AdvisorClientDetailShell.tsx` <a id="src-features-advisor-advisorclientdetailshell-tsx"></a>
+
+Classification: `regular`
+
+#### `AdvisorClientDetailShell` — component, L27
+
+- renders: `[external] next`
+- rendered by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`
+
 ### `src/features/advisor/AdvisorClientsBoard.tsx` <a id="src-features-advisor-advisorclientsboard-tsx"></a>
 
 Classification: `regular`
@@ -207,14 +232,14 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `onboardingLabel` — function, L26
+#### `onboardingLabel` — function, L32
 
 - called by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
 
-#### `AdvisorClientWorkspace` — component, L32
+#### `AdvisorClientWorkspace` — component, L38
 
 - calls: `src/data/mappers.ts#num`, `src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals`, `src/features/advisor/AdvisorClientWorkspace.tsx#onboardingLabel`, `src/lib/validation.ts#birthDateIsValidPast`, `src/ui/lib/format.ts#formatCurrency`
-- renders: `[external] next`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorComingSoonPanel`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection`, `src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm`, `src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm`, `src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`, `src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare`
+- renders: `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/advisor/AdvisorProposeRemovalButton.tsx#AdvisorProposeRemovalButton`, `src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorComingSoonPanel`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection`, `src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm`, `src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm`, `src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx#AdvisorNewBudgetLineForm`, `src/features/advisor/forms/AdvisorNewGoalForm.tsx#AdvisorNewGoalForm`, `src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`, `src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare`, `src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail`, `src/ui/CollapsiblePaneRail.tsx#CollapsiblePane`
 - rendered by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`
 
 ### `src/features/advisor/AdvisorKeyQrShareButton.tsx` <a id="src-features-advisor-advisorkeyqrsharebutton-tsx"></a>
@@ -255,6 +280,16 @@ Classification: `client-component`
 - rendered by: `src/app/(app)/advisor/profile/page.tsx#AdvisorProfilePage`
 - unresolved: 24
 
+### `src/features/advisor/AdvisorProposalDetailView.tsx` <a id="src-features-advisor-advisorproposaldetailview-tsx"></a>
+
+Classification: `regular`
+
+#### `AdvisorProposalDetailView` — component, L23
+
+- calls: `src/domain/advisor-proposals/field-registry.ts#fieldMeta`, `src/domain/advisor-proposals/format-display.ts#formatProposalDisplayValue`, `src/domain/advisor-proposals/group-changes.ts#groupChangesBySection`, `src/domain/advisor-proposals/proposal-format.ts#shortDate`, `src/domain/advisor-proposals/proposal-status-display.ts#proposalStatusDisplay`, `src/domain/advisor-proposals/sections.ts#sectionLabel`
+- renders: `[external] next`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge`, `src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare`, `src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail`, `src/ui/CollapsiblePaneRail.tsx#CollapsiblePane`
+- rendered by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`
+
 ### `src/features/advisor/AdvisorProposalDraftPanel.tsx` <a id="src-features-advisor-advisorproposaldraftpanel-tsx"></a>
 
 Classification: `client-component`
@@ -278,6 +313,35 @@ Classification: `client-component`
 #### `RemoveItemButton` — component, L251 _(client-component)_
 
 - rendered by: `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`
+
+### `src/features/advisor/AdvisorProposalsTable.test.tsx` <a id="src-features-advisor-advisorproposalstable-test-tsx"></a>
+
+Classification: `regular`
+
+#### `row` — function, L6
+
+_No tracked edges._
+
+### `src/features/advisor/AdvisorProposalsTable.tsx` <a id="src-features-advisor-advisorproposalstable-tsx"></a>
+
+Classification: `regular`
+
+#### `AdvisorProposalsTable` — component, L8
+
+- calls: `src/domain/advisor-proposals/proposal-format.ts#shortDate`, `src/domain/advisor-proposals/proposal-format.ts#summarize`, `src/domain/advisor-proposals/proposal-status-display.ts#proposalStatusDisplay`
+- renders: `[external] next`, `src/features/advisor/WithdrawProposalButton.tsx#WithdrawProposalButton`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge`
+- rendered by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`
+
+### `src/features/advisor/AdvisorProposeRemovalButton.tsx` <a id="src-features-advisor-advisorproposeremovalbutton-tsx"></a>
+
+Classification: `client-component`
+
+#### `AdvisorProposeRemovalButton` — component, L20 _(client-component)_
+
+- calls: `[external] next`, `[external] react`
+- renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
+- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
+- unresolved: 5
 
 ### `src/features/advisor/AdvisorSuggestionModeBanner.tsx` <a id="src-features-advisor-advisorsuggestionmodebanner-tsx"></a>
 
@@ -333,6 +397,26 @@ Classification: `client-component`
 - renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
 
+### `src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx` <a id="src-features-advisor-forms-advisornewbudgetlineform-tsx"></a>
+
+Classification: `client-component`
+
+#### `AdvisorNewBudgetLineForm` — component, L11 _(client-component)_
+
+- calls: `[external] react`, `src/features/advisor/use-advisor-proposal-refresh.ts#useAdvisorProposalRefresh`
+- renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
+- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
+
+### `src/features/advisor/forms/AdvisorNewGoalForm.tsx` <a id="src-features-advisor-forms-advisornewgoalform-tsx"></a>
+
+Classification: `client-component`
+
+#### `AdvisorNewGoalForm` — component, L11 _(client-component)_
+
+- calls: `[external] react`, `src/features/advisor/use-advisor-proposal-refresh.ts#useAdvisorProposalRefresh`
+- renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
+- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
+
 ### `src/features/advisor/forms/AdvisorProfilePatchForm.tsx` <a id="src-features-advisor-forms-advisorprofilepatchform-tsx"></a>
 
 Classification: `client-component`
@@ -350,7 +434,17 @@ Classification: `client-component`
 #### `useAdvisorProposalRefresh` — function, L7
 
 - calls: `[external] next`, `[external] react`
-- called by: `src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm`, `src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm`, `src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm`
+- called by: `src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm`, `src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm`, `src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx#AdvisorNewBudgetLineForm`, `src/features/advisor/forms/AdvisorNewGoalForm.tsx#AdvisorNewGoalForm`, `src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm`
+
+### `src/features/advisor/WithdrawProposalButton.tsx` <a id="src-features-advisor-withdrawproposalbutton-tsx"></a>
+
+Classification: `client-component`
+
+#### `WithdrawProposalButton` — component, L16 _(client-component)_
+
+- calls: `[external] react`
+- rendered by: `src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable`
+- unresolved: 2
 
 ### `src/features/app-shell/AdvisorPhonePromptBanner.tsx` <a id="src-features-app-shell-advisorphonepromptbanner-tsx"></a>
 
@@ -635,15 +729,15 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `varianceForLine` — function, L56
+#### `varianceForLine` — function, L62
 
 - calls: `src/domain/finance/budget.ts#normalizeCategory`
 - called by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
 
-#### `BudgetPlanningView` — component, L64
+#### `BudgetPlanningView` — component, L70
 
-- calls: `[external] @supabase/auth-js`, `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget-review.ts#buildBudgetReviewWorkflow`, `src/domain/finance/budget.ts#monthlyBudgetAggregateOverspend`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines`, `src/features/budget/BudgetPlanningView.tsx#varianceForLine`, `src/features/budget/budget-category-icons.ts#budgetCategoryEmoji`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#defaultExpenseDateForBudgetMonth`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/setup-urls.ts#budgetMonthHref`, `src/ui/lib/format.ts#formatCurrency`
-- renders: `[external] next`, `src/features/budget/BudgetAddForm.tsx#BudgetAddForm`, `src/features/budget/BudgetIrregularExpenseReservePanel.tsx#BudgetIrregularExpenseReservePanel`, `src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible`, `src/features/budget/BudgetLineScheduleForm.tsx#BudgetLineScheduleForm`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetQuickAddPresets.tsx#BudgetQuickAddPresets`, `src/features/budget/BudgetRecommendationHints.tsx#BudgetRecommendationHints`, `src/features/budget/BudgetReviewWorkflowPanel.tsx#BudgetReviewWorkflowPanel`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/features/spend/SpendGuidancePanel.tsx#SpendGuidancePanel`, `src/ui/PageSection.tsx#PageSection`
+- calls: `[external] @supabase/auth-js`, `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget-review.ts#buildBudgetReviewWorkflow`, `src/domain/finance/budget.ts#isMonthlyBudgetLineApplicable`, `src/domain/finance/budget.ts#monthlyBudgetAggregateOverspend`, `src/domain/finance/cash-flow-setup-guidance.ts#cashFlowSetupGaps`, `src/domain/finance/cash-flow-setup-guidance.ts#shouldShowCashFlowSetupGuidance`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines`, `src/features/budget/BudgetPlanningView.tsx#varianceForLine`, `src/features/budget/budget-category-icons.ts#budgetCategoryEmoji`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#defaultExpenseDateForBudgetMonth`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/setup-urls.ts#budgetMonthHref`, `src/ui/lib/format.ts#formatCurrency`
+- renders: `[external] next`, `src/features/budget/BudgetAddForm.tsx#BudgetAddForm`, `src/features/budget/BudgetIrregularExpenseReservePanel.tsx#BudgetIrregularExpenseReservePanel`, `src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible`, `src/features/budget/BudgetLineScheduleForm.tsx#BudgetLineScheduleForm`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetQuickAddPresets.tsx#BudgetQuickAddPresets`, `src/features/budget/BudgetRecommendationHints.tsx#BudgetRecommendationHints`, `src/features/budget/BudgetReviewWorkflowPanel.tsx#BudgetReviewWorkflowPanel`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/features/planning/CashFlowSetupGuidanceBanner.tsx#CashFlowSetupGuidanceBanner`, `src/features/spend/SpendGuidancePanel.tsx#SpendGuidancePanel`, `src/ui/PageSection.tsx#PageSection`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`
 
 ### `src/features/budget/BudgetQuickAddPresets.tsx` <a id="src-features-budget-budgetquickaddpresets-tsx"></a>
@@ -755,29 +849,29 @@ Classification: `client-component`
 
 Classification: `client-component`
 
-#### `FlowArrow` — component, L33 _(client-component)_
+#### `FlowArrow` — component, L38 _(client-component)_
 
 - rendered by: `src/features/dashboard/CpfRetirementProjectionPanel.tsx#RaFlowVisual`
 
-#### `BalancePill` — component, L49 _(client-component)_
+#### `BalancePill` — component, L54 _(client-component)_
 
 - calls: `src/ui/lib/format.ts#formatCurrency`
 - rendered by: `src/features/dashboard/CpfRetirementProjectionPanel.tsx#RaFlowVisual`
 
-#### `RaFlowVisual` — component, L80 _(client-component)_
+#### `RaFlowVisual` — component, L85 _(client-component)_
 
 - calls: `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/dashboard/CpfRetirementProjectionPanel.tsx#BalancePill`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#FlowArrow`
 - rendered by: `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`
 
-#### `ScenarioChip` — component, L167 _(client-component)_
+#### `ScenarioChip` — component, L172 _(client-component)_
 
 - rendered by: `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`
 
-#### `CpfRetirementProjectionPanel` — component, L191 _(client-component)_
+#### `CpfRetirementProjectionPanel` — component, L196 _(client-component)_
 
 - calls: `[external] react`, `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`, `src/domain/finance/cpf-retirement-projection.ts#simulateRaForScenario`, `src/domain/finance/cpf-retirement-projection.ts#simulateRaFormationAt55`, `src/ui/lib/format.ts#formatCurrency`
-- renders: `[external] next`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#RaFlowVisual`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#ScenarioChip`
+- renders: `[external] next`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#RaFlowVisual`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#ScenarioChip`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/ui/InfoTooltip.tsx#InfoTooltip`
 - rendered by: `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`
 - unresolved: 7
 
@@ -805,11 +899,11 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `DashboardRetirementSection` — component, L15
+#### `DashboardRetirementSection` — component, L14
 
-- calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/ui/lib/format.ts#formatCurrency`, `src/ui/lib/format.ts#formatPercent`
+- calls: `src/ui/lib/format.ts#formatCurrency`, `src/ui/lib/format.ts#formatPercent`
 - renders: `[external] next`, `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart`, `src/features/dashboard/CpfProjectionByAgeChart.tsx#CpfProjectionByAgeChart`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/ui/InfoTooltip.tsx#InfoTooltip`
-- rendered by: `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
+- rendered by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
 
 ### `src/features/dashboard/DashboardSubnav.tsx` <a id="src-features-dashboard-dashboardsubnav-tsx"></a>
 
@@ -825,18 +919,18 @@ Classification: `client-component`
 
 Classification: `client-component`
 
-#### `isSgCpfAgeBand` — function, L40
+#### `isSgCpfAgeBand` — function, L41
 
 - called by: `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`
 
-#### `derivedCpfBandFromBirthDate` — function, L44
+#### `derivedCpfBandFromBirthDate` — function, L45
 
 - calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/sg-cpf-contribution-buckets.ts#sgCpfAgeBandForCompletedAge`
 - called by: `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`
 
-#### `ProfileIncomeForm` — component, L53 _(client-component)_
+#### `ProfileIncomeForm` — component, L54 _(client-component)_
 
-- calls: `[external] next`, `[external] react`, `src/domain/finance/sg-cpf.ts#annualEmployeeCpfTakeHomeWithBonusSg`, `src/features/dashboard/ProfileIncomeForm.tsx#derivedCpfBandFromBirthDate`, `src/features/dashboard/ProfileIncomeForm.tsx#isSgCpfAgeBand`, `src/server/inbox-actions.ts#markInboxItemReadByDedupeKeyAction`
+- calls: `[external] next`, `[external] react`, `src/domain/finance/sg-cpf.ts#annualEmployeeCpfTakeHomeWithBonusSg`, `src/features/dashboard/ProfileIncomeForm.tsx#derivedCpfBandFromBirthDate`, `src/features/dashboard/ProfileIncomeForm.tsx#isSgCpfAgeBand`, `src/lib/dates.ts#yearFromYearMonth`, `src/server/inbox-actions.ts#markInboxItemReadByDedupeKeyAction`
 - renders: `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`, `src/ui/InfoTooltip.tsx#InfoTooltip`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`
 - unresolved: 44
@@ -896,40 +990,54 @@ Classification: `client-component`
 - rendered by: `src/features/debts/DebtPlanningPanels.tsx#AddDebtForm`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
 - unresolved: 10
 
+### `src/features/debts/DebtPayoffStrategyComparison.tsx` <a id="src-features-debts-debtpayoffstrategycomparison-tsx"></a>
+
+Classification: `client-component`
+
+#### `debtToSimInput` — function, L13
+
+- calls: `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`
+
+#### `DebtPayoffStrategyComparison` — component, L23 _(client-component)_
+
+- calls: `[external] react`, `src/domain/finance/debt-payoff-strategies.ts#compareDebtPayoffStrategies`, `src/domain/finance/debt-payoff-strategies.ts#debtsEligibleForPayoffComparison`, `src/ui/lib/format.ts#formatCurrency`
+- rendered by: `src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels`
+- unresolved: 1
+
 ### `src/features/debts/DebtPlanningPanels.tsx` <a id="src-features-debts-debtplanningpanels-tsx"></a>
 
 Classification: `client-component`
 
-#### `emptyFormValues` — function, L38
+#### `emptyFormValues` — function, L39
 
 - called by: `src/features/debts/DebtPlanningPanels.tsx#AddDebtForm`
 
-#### `rowToFormValues` — function, L53
+#### `rowToFormValues` — function, L54
 
 - called by: `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
 
-#### `DebtCard` — component, L74 _(client-component)_
+#### `DebtCard` — component, L75 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/domain/finance/debt-repayment.ts#debtRepaymentEndYearMonth`, `src/domain/finance/debt-repayment.ts#debtRepaymentStartYearMonth`, `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`, `src/features/debts/DebtPlanningPanels.tsx#rowToFormValues`, `src/features/debts/debt-constants.ts#debtCategoryIcon`, `src/features/debts/debt-constants.ts#debtCategoryLabel`, `src/features/debts/debt-constants.ts#formatRatePercent`, `src/features/debts/debt-constants.ts#formatTenureYears`, `src/lib/dates.ts#formatYearMonth`, `src/server/actions.ts#deleteLiabilityAction`, `src/server/actions.ts#updateLiabilityAction`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/debts/DebtFormFields.tsx#DebtFormFields`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels`
 - unresolved: 8
 
-#### `AddDebtForm` — component, L264 _(client-component)_
+#### `AddDebtForm` — component, L272 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/features/debts/DebtPlanningPanels.tsx#emptyFormValues`, `src/server/actions.ts#createLiabilityAction`
 - renders: `src/features/debts/DebtFormFields.tsx#DebtFormFields`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels`
 - unresolved: 4
 
-#### `mapLiabilityRows` — function, L323
+#### `mapLiabilityRows` — function, L331
 
 - called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`
 
-#### `DebtPlanningPanels` — component, L327 _(client-component)_
+#### `DebtPlanningPanels` — component, L335 _(client-component)_
 
 - calls: `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`, `src/ui/lib/format.ts#formatCurrency`
-- renders: `src/features/debts/DebtEducationalExamples.tsx#DebtEducationalExamples`, `src/features/debts/DebtPlanningPanels.tsx#AddDebtForm`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
+- renders: `src/features/debts/DebtEducationalExamples.tsx#DebtEducationalExamples`, `src/features/debts/DebtPayoffStrategyComparison.tsx#DebtPayoffStrategyComparison`, `src/features/debts/DebtPlanningPanels.tsx#AddDebtForm`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
 - rendered by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`
 
 ### `src/features/expenses/CategoryBarChart.tsx` <a id="src-features-expenses-categorybarchart-tsx"></a>
@@ -978,24 +1086,47 @@ Classification: `client-component`
 
 Classification: `client-component`
 
-#### `AddCashForm` — component, L32 _(client-component)_
+#### `PurposeSelect` — component, L49 _(client-component)_
+
+- rendered by: `src/features/goals/CashAndLiabilitiesPanels.tsx#AddCashForm`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`
+
+#### `formatSnapshotDate` — function, L74
+
+- called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountHistory`
+
+#### `CashAccountHistory` — component, L84 _(client-component)_
+
+- calls: `src/features/goals/CashAndLiabilitiesPanels.tsx#formatSnapshotDate`, `src/ui/lib/format.ts#formatCurrency`
+- rendered by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`
+
+#### `AddCashForm` — component, L111 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#createCashAccountAction`
-- renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
+- renders: `src/features/goals/CashAndLiabilitiesPanels.tsx#PurposeSelect`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`
 
-#### `CashAccountRow` — component, L104 _(client-component)_
+#### `CashAccountRow` — component, L184 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#deleteCashAccountAction`, `src/server/actions.ts#updateCashAccountAction`, `src/ui/lib/format.ts#formatCurrency`
-- renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
+- renders: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountHistory`, `src/features/goals/CashAndLiabilitiesPanels.tsx#PurposeSelect`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`
 - unresolved: 2
 
-#### `CashAndLiabilitiesPanels` — component, L206 _(client-component)_
+#### `groupCashByPurpose` — function, L289
 
-- calls: `src/features/debts/DebtPlanningPanels.tsx#mapLiabilityRows`, `src/ui/lib/format.ts#formatCurrency`
+- calls: `src/domain/finance/cash-account-purpose.ts#cashPurposeSortOrder`
+- called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`
+
+#### `CashAndLiabilitiesPanels` — component, L301 _(client-component)_
+
+- calls: `[external] react`, `src/features/debts/DebtPlanningPanels.tsx#mapLiabilityRows`, `src/features/goals/CashAndLiabilitiesPanels.tsx#groupCashByPurpose`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `[external] next`, `src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels`, `src/features/goals/CashAndLiabilitiesPanels.tsx#AddCashForm`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
+
+#### `buildCashHistoryByAccountId` — function, L383
+
+- calls: `src/data/mappers.ts#num`
+- called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
 ### `src/features/goals/CpfBalancesForm.tsx` <a id="src-features-goals-cpfbalancesform-tsx"></a>
 
@@ -1017,10 +1148,10 @@ Classification: `client-component`
 
 Classification: `regular`
 
-#### `FinancialGoalsPanels` — component, L28
+#### `FinancialGoalsPanels` — component, L33
 
-- calls: `src/data/mappers.ts#num`, `src/domain/finance/goal-deadline.ts#analyzeGoalDeadlineGap`, `src/domain/finance/goal-standalone.ts#estimateTimeToGoalStandalone`, `src/domain/finance/goal-standalone.ts#goalProgressRatio`, `src/ui/lib/duration.ts#formatMonthsApprox`, `src/ui/lib/format.ts#formatCurrency`, `src/ui/lib/format.ts#formatPercent`
-- renders: `[external] next`, `src/features/goals/GoalEditForm.tsx#GoalEditForm`, `src/features/goals/GoalForm.tsx#GoalForm`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/ui/PageSection.tsx#PageSection`
+- calls: `src/data/mappers.ts#num`, `src/domain/finance/goal-deadline.ts#analyzeGoalDeadlineGap`, `src/domain/finance/goal-priority-tradeoff.ts#sortGoalsByPriority`, `src/domain/finance/goal-standalone.ts#estimateTimeToGoalStandalone`, `src/domain/finance/goal-standalone.ts#goalProgressRatio`, `src/ui/lib/duration.ts#formatMonthsApprox`, `src/ui/lib/format.ts#formatCurrency`, `src/ui/lib/format.ts#formatPercent`
+- renders: `[external] next`, `src/features/goals/GoalEditForm.tsx#GoalEditForm`, `src/features/goals/GoalForm.tsx#GoalForm`, `src/features/goals/GoalPriorityTradeoffPanel.tsx#GoalPriorityTradeoffPanel`, `src/features/goals/GoalReorderButtons.tsx#GoalReorderButtons`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/ui/PageSection.tsx#PageSection`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/FuturePlanningSection.tsx#FuturePlanningSection`
 
 ### `src/features/goals/GoalEditForm.tsx` <a id="src-features-goals-goaleditform-tsx"></a>
@@ -1038,6 +1169,26 @@ Classification: `client-component`
 Classification: `client-component`
 
 #### `GoalForm` — component, L11 _(client-component)_
+
+- calls: `[external] react`
+- renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
+- rendered by: `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`
+
+### `src/features/goals/GoalPriorityTradeoffPanel.tsx` <a id="src-features-goals-goalprioritytradeoffpanel-tsx"></a>
+
+Classification: `regular`
+
+#### `GoalPriorityTradeoffPanel` — component, L12
+
+- calls: `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/ui/lib/format.ts#formatCurrency`
+- renders: `[external] next`
+- rendered by: `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`
+
+### `src/features/goals/GoalReorderButtons.tsx` <a id="src-features-goals-goalreorderbuttons-tsx"></a>
+
+Classification: `client-component`
+
+#### `GoalReorderButtons` — component, L9 _(client-component)_
 
 - calls: `[external] react`
 - renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
@@ -1253,7 +1404,7 @@ Classification: `client-component`
 #### `MethodologyOpenLink` — component, L7 _(client-component)_
 
 - calls: `src/features/help/methodology-context.tsx#useMethodology`
-- rendered by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner`, `src/features/goals/VehiclesPanel.tsx#VehiclesPanel`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
+- rendered by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`, `src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner`, `src/features/goals/VehiclesPanel.tsx#VehiclesPanel`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 - unresolved: 1
 
 ### `src/features/help/MethodologySheet.tsx` <a id="src-features-help-methodologysheet-tsx"></a>
@@ -1423,13 +1574,22 @@ Classification: `client-component`
 - rendered by: `src/app/(app)/onboarding/page.tsx#OnboardingPage`
 - unresolved: 52
 
+### `src/features/planning/CashFlowSetupGuidanceBanner.tsx` <a id="src-features-planning-cashflowsetupguidancebanner-tsx"></a>
+
+Classification: `regular`
+
+#### `CashFlowSetupGuidanceBanner` — component, L9
+
+- renders: `[external] next`
+- rendered by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
+
 ### `src/features/planning/load-setup-tab-bundle.ts` <a id="src-features-planning-load-setup-tab-bundle-ts"></a>
 
 Classification: `regular`
 
-#### `loadSetupTabBundle` — function, L68
+#### `loadSetupTabBundle` — function, L74
 
-- calls: `src/data/repositories/cash-accounts.ts#advisorReadCashAccounts`, `src/data/repositories/cpf-balances.ts#advisorReadCpfBalances`, `src/data/repositories/goals.ts#advisorReadGoals`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/investments.ts#advisorReadInvestments`, `src/data/repositories/liabilities.ts#advisorReadLiabilities`, `src/data/repositories/properties.ts#advisorReadProperties`, `src/data/repositories/vehicles.ts#advisorReadVehicles`
+- calls: `src/data/repositories/cash-account-snapshots.ts#advisorReadCashAccountSnapshots`, `src/data/repositories/cash-accounts.ts#advisorReadCashAccounts`, `src/data/repositories/cpf-balances.ts#advisorReadCpfBalances`, `src/data/repositories/goals.ts#advisorReadGoals`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/investments.ts#advisorReadInvestments`, `src/data/repositories/liabilities.ts#advisorReadLiabilities`, `src/data/repositories/properties.ts#advisorReadProperties`, `src/data/repositories/vehicles.ts#advisorReadVehicles`
 - called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/data/setup-status.ts#loadSetupEvaluationContext`, `src/features/planning/sections/FuturePlanningSection.tsx#FuturePlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
 ### `src/features/planning/PlanningLayoutShell.tsx` <a id="src-features-planning-planninglayoutshell-tsx"></a>
@@ -1559,11 +1719,39 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `WealthPlanningSection` — component, L35
+#### `WealthPlanningSection` — component, L36
 
-- calls: `[external] @supabase/auth-js`, `src/data/mappers.ts#num`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview`, `src/domain/finance/investment-review.ts#shouldPromptInvestmentReview`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/lib/validation.ts#birthDateIsValidPast`
+- calls: `[external] @supabase/auth-js`, `src/data/mappers.ts#num`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview`, `src/domain/finance/investment-review.ts#shouldPromptInvestmentReview`, `src/features/goals/CashAndLiabilitiesPanels.tsx#buildCashHistoryByAccountId`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/lib/validation.ts#birthDateIsValidPast`
 - renders: `[external] next`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`, `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`, `src/features/goals/HousingLoansPanel.tsx#HousingPanel`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`, `src/features/goals/VehiclesPanel.tsx#VehiclesPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/features/planning/roadmap-modules.tsx#AccountSyncingRoadmapCard`, `src/ui/PageSection.tsx#PageSection`
 - rendered by: `src/app/(app)/planning/[section]/page.tsx#PlanningSectionPage`
+
+### `src/features/proposals/ClientProposalReviewView.tsx` <a id="src-features-proposals-clientproposalreviewview-tsx"></a>
+
+Classification: `regular`
+
+#### `ClientProposalReviewView` — component, L22
+
+- calls: `src/domain/advisor-proposals/group-changes.ts#groupChangesBySection`, `src/domain/advisor-proposals/sections.ts#sectionLabel`
+- renders: `src/features/proposals/ProposalReviewView.tsx#ProposalReviewActions`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`, `src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail`, `src/ui/CollapsiblePaneRail.tsx#CollapsiblePane`
+- rendered by: `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`
+
+### `src/features/proposals/ClientProposalsView.test.tsx` <a id="src-features-proposals-clientproposalsview-test-tsx"></a>
+
+Classification: `regular`
+
+#### `row` — function, L6
+
+_No tracked edges._
+
+### `src/features/proposals/ClientProposalsView.tsx` <a id="src-features-proposals-clientproposalsview-tsx"></a>
+
+Classification: `regular`
+
+#### `ClientProposalsView` — component, L7
+
+- calls: `src/domain/advisor-proposals/proposal-format.ts#shortDate`, `src/domain/advisor-proposals/proposal-format.ts#summarize`, `src/domain/advisor-proposals/proposal-status-display.ts#proposalStatusDisplay`
+- renders: `[external] next`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge`
+- rendered by: `src/app/(app)/setup/page.tsx#SetupPage`
 
 ### `src/features/proposals/ProposalProjectionCompare.tsx` <a id="src-features-proposals-proposalprojectioncompare-tsx"></a>
 
@@ -1572,29 +1760,41 @@ Classification: `client-component`
 #### `ProposalProjectionCompare` — component, L10 _(client-component)_
 
 - calls: `[external] react`
-- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
+- rendered by: `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
 - unresolved: 2
+
+### `src/features/proposals/ProposalReviewActions.test.tsx` <a id="src-features-proposals-proposalreviewactions-test-tsx"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
 
 ### `src/features/proposals/ProposalReviewView.tsx` <a id="src-features-proposals-proposalreviewview-tsx"></a>
 
 Classification: `client-component`
 
-#### `groupBySection` — function, L30
+#### `groupBySection` — function, L32
 
 - calls: `src/domain/advisor-proposals/sections.ts#compareSectionOrder`
 - called by: `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
 
-#### `formatSubmittedDate` — function, L50
+#### `formatSubmittedDate` — function, L52
 
 - called by: `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
 
-#### `ProposalReviewView` — component, L59 _(client-component)_
+#### `ProposalReviewActions` — component, L71 _(client-component)_
 
-- calls: `[external] react`, `src/domain/advisor-proposals/field-registry.ts#fieldMeta`, `src/domain/advisor-proposals/format-display.ts#formatProposalDisplayValue`, `src/domain/advisor-proposals/sections.ts#sectionLabel`, `src/features/proposals/ProposalReviewView.tsx#formatSubmittedDate`, `src/features/proposals/ProposalReviewView.tsx#groupBySection`
-- renders: `[external] next`, `src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare`, `src/features/proposals/ProposalReviewView.tsx#StatusBanner`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
-- rendered by: `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`
+- calls: `[external] react`, `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction`
+- renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
+- rendered by: `src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
 
-#### `StatusBanner` — component, L241 _(client-component)_
+#### `ProposalReviewView` — component, L153 _(client-component)_
+
+- calls: `src/domain/advisor-proposals/field-registry.ts#fieldMeta`, `src/domain/advisor-proposals/format-display.ts#formatProposalDisplayValue`, `src/domain/advisor-proposals/sections.ts#sectionLabel`, `src/features/proposals/ProposalReviewView.tsx#formatSubmittedDate`, `src/features/proposals/ProposalReviewView.tsx#groupBySection`
+- renders: `[external] next`, `src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewActions`, `src/features/proposals/ProposalReviewView.tsx#StatusBanner`
+- rendered by: `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/features/proposals/ClientProposalReviewView.tsx#ClientProposalReviewView`
+
+#### `StatusBanner` — component, L303 _(client-component)_
 
 - rendered by: `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
 
@@ -1617,12 +1817,12 @@ Classification: `regular`
 - renders: `src/features/setup-hub/SetupModuleCard.tsx#CardCta`, `src/features/setup-hub/SetupModuleCard.tsx#CardTop`
 - rendered by: `src/features/setup-hub/FinancialSetupHub.tsx#FinancialSetupHub`
 
-#### `CardTop` — component, L59
+#### `CardTop` — component, L65
 
 - renders: `src/features/setup-hub/SetupModuleStatusBadge.tsx#SetupModuleStatusBadge`
 - rendered by: `src/features/setup-hub/SetupModuleCard.tsx#SetupModuleCard`
 
-#### `CardCta` — component, L86
+#### `CardCta` — component, L92
 
 - renders: `[external] next`
 - rendered by: `src/features/setup-hub/SetupModuleCard.tsx#SetupModuleCard`

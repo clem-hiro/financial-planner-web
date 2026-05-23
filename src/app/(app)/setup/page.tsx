@@ -7,6 +7,7 @@ import {
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
 } from "@/data/mappers";
+import { listProposalsForClient } from "@/data/repositories/advisor-proposals";
 import { listBudgetLines } from "@/data/repositories/budget-lines";
 import { getIncomeTaxConfig } from "@/data/repositories/income-tax-configs";
 import { countReplaceableMonthlyBudgetLines } from "@/domain/finance/budget-guided-setup";
@@ -32,6 +33,7 @@ import { loadSetupTabBundle } from "@/features/planning/load-setup-tab-bundle";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { SetupTabsNav } from "@/features/setup/SetupTabsNav";
 import { BudgetLensProfileForm } from "@/features/setup/BudgetLensProfileForm";
+import { ClientProposalsView } from "@/features/proposals/ClientProposalsView";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth, parseYearMonth, yearFromYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
@@ -55,6 +57,7 @@ function buildSetupTabs(): readonly SetupTabDef[] {
     { id: "vehicles", label: "Vehicles" },
     { id: "budget", label: "Budget" },
     { id: "goals", label: "Goals" },
+    { id: "advisor-proposals", label: "Advisor proposals" },
   ] as const;
 }
 
@@ -103,15 +106,19 @@ export default async function SetupPage({ searchParams }: PageProps) {
       ? budgetYearParsed
       : yearFromYearMonth(budgetMonth);
 
-  const [tabBundle, incomeTaxConfig, budgetLinesForLens] = await Promise.all([
-    loadSetupTabBundle(supabase, user.id, new Set([activeTab])),
-    activeTab === "income_tax"
-      ? getIncomeTaxConfig(supabase, user.id)
-      : Promise.resolve(null),
-    activeTab === "profile"
-      ? listBudgetLines(supabase, user.id)
-      : Promise.resolve([]),
-  ]);
+  const [tabBundle, incomeTaxConfig, budgetLinesForLens, advisorProposals] =
+    await Promise.all([
+      loadSetupTabBundle(supabase, user.id, new Set([activeTab])),
+      activeTab === "income_tax"
+        ? getIncomeTaxConfig(supabase, user.id)
+        : Promise.resolve(null),
+      activeTab === "profile"
+        ? listBudgetLines(supabase, user.id)
+        : Promise.resolve([]),
+      activeTab === "advisor-proposals"
+        ? listProposalsForClient(supabase, user.id, 25)
+        : Promise.resolve([]),
+    ]);
   const replaceableMonthlyLineCount =
     activeTab === "profile"
       ? countReplaceableMonthlyBudgetLines(budgetLinesForLens)
@@ -415,6 +422,18 @@ export default async function SetupPage({ searchParams }: PageProps) {
           />
         </div>
       ) : null}
+
+      {activeTab === "advisor-proposals" ? (
+        <div className="transition-opacity duration-150 ease-out">
+          <PageSection
+            id="advisor-proposals"
+            title="Advisor proposals"
+            description="Plan suggestions from your advisor — pending, accepted, rejected, and withdrawn. Always available here, even after you dismiss the inbox notification."
+          >
+            <ClientProposalsView proposals={advisorProposals} />
+          </PageSection>
+        </div>
+      ) : null}
       </div>
 
       <section className="order-4 grid gap-2.5 sm:order-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
@@ -438,12 +457,17 @@ export default async function SetupPage({ searchParams }: PageProps) {
           </p>
           <p className="mt-0.5 text-sm font-medium text-slate-500 sm:mt-1">Work in progress</p>
         </div>
-        <div className="rounded-xl border border-dashed border-slate-300/90 bg-slate-50/90 p-3 sm:p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 sm:text-xs">
-            Automation
+        <Link
+          href="/setup?tab=advisor-proposals"
+          className="group rounded-xl border border-slate-200 bg-white p-3 transition hover:border-slate-300 hover:bg-slate-50/70 sm:p-4"
+        >
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs">
+            Advisor proposals
           </p>
-          <p className="mt-0.5 text-sm font-medium text-slate-500 sm:mt-1">Coming soon</p>
-        </div>
+          <p className="mt-0.5 text-sm font-medium text-slate-700 group-hover:text-slate-900 sm:mt-1">
+            Review plan suggestions →
+          </p>
+        </Link>
       </section>
     </div>
   );

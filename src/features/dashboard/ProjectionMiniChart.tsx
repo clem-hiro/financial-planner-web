@@ -54,7 +54,7 @@ export function ProjectionMiniChart({
             axisLine={false}
             tickLine={false}
             tickFormatter={(v) =>
-              new Intl.NumberFormat(undefined, {
+              new Intl.NumberFormat("en-SG", {
                 notation: "compact",
                 maximumFractionDigits: 1,
               }).format(v as number)
@@ -64,7 +64,7 @@ export function ProjectionMiniChart({
             {...fpChartTooltipProps}
             wrapperStyle={{ pointerEvents: "none" }}
             formatter={(value) =>
-              new Intl.NumberFormat(undefined, {
+              new Intl.NumberFormat("en-SG", {
                 style: "currency",
                 currency,
                 maximumFractionDigits: 0,

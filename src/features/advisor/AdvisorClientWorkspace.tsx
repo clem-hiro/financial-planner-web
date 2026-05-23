@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { DashboardPayload } from "@/data/dashboard";
 import { num } from "@/data/mappers";
 import type { BudgetLineRow, FinancialGoalRow, InvestmentRow } from "@/data/supabase/types";
@@ -6,12 +5,19 @@ import type { ProfileRow } from "@/data/supabase/types";
 import { advisorClientWorkspaceSignals } from "@/domain/finance/advisor-client-health";
 import { AdvisorBadge, AdvisorComingSoonPanel, AdvisorSection } from "@/features/advisor/advisor-workspace-primitives";
 import { AdvisorProposalDraftPanel } from "@/features/advisor/AdvisorProposalDraftPanel";
+import { AdvisorProposeRemovalButton } from "@/features/advisor/AdvisorProposeRemovalButton";
+import {
+  deleteAdvisorClientBudgetLineAction,
+  deleteAdvisorClientGoalAction,
+} from "@/server/advisor-client-actions";
 import { DashboardRetirementSection } from "@/features/dashboard/DashboardRetirementSection";
 import { ProposalProjectionCompare } from "@/features/proposals/ProposalProjectionCompare";
 import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
 import { AdvisorSuggestionModeBanner } from "@/features/advisor/AdvisorSuggestionModeBanner";
 import { AdvisorBudgetLineAmountForm } from "@/features/advisor/forms/AdvisorBudgetLineAmountForm";
 import { AdvisorGoalContributionForm } from "@/features/advisor/forms/AdvisorGoalContributionForm";
+import { AdvisorNewBudgetLineForm } from "@/features/advisor/forms/AdvisorNewBudgetLineForm";
+import { AdvisorNewGoalForm } from "@/features/advisor/forms/AdvisorNewGoalForm";
 import { AdvisorProfilePatchForm } from "@/features/advisor/forms/AdvisorProfilePatchForm";
 import {
   InvestmentBalancesList,
@@ -20,7 +26,7 @@ import {
 import { InvestmentForm } from "@/features/goals/InvestmentForm";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { birthDateIsValidPast } from "@/lib/validation";
-import { appInlineLinkClass } from "@/ui/app-link-styles";
+import { CollapsiblePane, CollapsiblePaneRail } from "@/ui/CollapsiblePaneRail";
 import { formatCurrency } from "@/ui/lib/format";
 
 function onboardingLabel(profile: ProfileRow) {
@@ -65,11 +71,6 @@ export function AdvisorClientWorkspace({
   if (!consentGranted) {
     return (
       <div className="space-y-8 lg:space-y-10">
-        <p className="text-sm">
-          <Link href="/advisor/clients" className={appInlineLinkClass}>
-            ← Clients
-          </Link>
-        </p>
         <header className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
@@ -123,12 +124,6 @@ export function AdvisorClientWorkspace({
 
   return (
     <div className="space-y-8 lg:space-y-10">
-      <p className="text-sm">
-        <Link href="/advisor/clients" className={appInlineLinkClass}>
-          ← Clients
-        </Link>
-      </p>
-
       <header className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-7">
         <div className="flex flex-col gap-6 xl:flex-row xl:items-start xl:justify-between">
           <div className="min-w-0 space-y-3">
@@ -312,39 +307,57 @@ export function AdvisorClientWorkspace({
             title="Goals & priorities"
             description="Adjust planned monthly contributions. Full goal editor remains on the client Planning flow."
           >
-            {goals.length === 0 ? (
-              <p className="text-sm text-slate-600">No goals yet.</p>
-            ) : (
-              <div className="overflow-x-auto rounded-xl border border-slate-100">
-                <table className="min-w-full text-left text-sm">
-                  <thead className="border-b border-slate-100 bg-slate-50/90 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    <tr>
-                      <th className="px-4 py-3">Goal</th>
-                      <th className="px-4 py-3">Target</th>
-                      <th className="px-4 py-3 text-right">Monthly plan</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {goals.map((g) => (
-                      <tr key={g.id} className="text-slate-800">
-                        <td className="px-4 py-3 font-medium text-slate-900">{g.title}</td>
-                        <td className="px-4 py-3 tabular-nums text-slate-600">
-                          {formatCurrency(num(g.target_amount), currency)}
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          <AdvisorGoalContributionForm
-                            clientId={clientId}
-                            goalId={g.id}
-                            defaultMonthly={num(g.monthly_contribution)}
-                            disabled={hasPendingProposal}
-                          />
-                        </td>
+            <div className="space-y-4">
+              {goals.length === 0 ? (
+                <p className="text-sm text-slate-600">No goals yet.</p>
+              ) : (
+                <div className="overflow-x-auto rounded-xl border border-slate-100">
+                  <table className="min-w-full text-left text-sm">
+                    <thead className="border-b border-slate-100 bg-slate-50/90 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      <tr>
+                        <th className="px-4 py-3">Goal</th>
+                        <th className="px-4 py-3">Target</th>
+                        <th className="px-4 py-3 text-right">Monthly plan</th>
+                        <th className="px-4 py-3 text-right">Remove</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {goals.map((g) => (
+                        <tr key={g.id} className="text-slate-800">
+                          <td className="px-4 py-3 font-medium text-slate-900">{g.title}</td>
+                          <td className="px-4 py-3 tabular-nums text-slate-600">
+                            {formatCurrency(num(g.target_amount), currency)}
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <AdvisorGoalContributionForm
+                              clientId={clientId}
+                              goalId={g.id}
+                              defaultMonthly={num(g.monthly_contribution)}
+                              disabled={hasPendingProposal}
+                            />
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <AdvisorProposeRemovalButton
+                              action={deleteAdvisorClientGoalAction}
+                              clientId={clientId}
+                              entityId={g.id}
+                              entityName={g.title}
+                              disabled={hasPendingProposal}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-4 sm:p-5">
+                <AdvisorNewGoalForm
+                  clientId={clientId}
+                  disabled={hasPendingProposal}
+                />
               </div>
-            )}
+            </div>
           </AdvisorSection>
 
           <AdvisorSection
@@ -352,37 +365,55 @@ export function AdvisorClientWorkspace({
             title="Budget management"
             description="Monthly cadence lines for the active profile. Annual lines stay on the client Budget page for now."
           >
-            {monthlyBudgetLines.length === 0 ? (
-              <p className="text-sm text-slate-600">No monthly budget lines.</p>
-            ) : (
-              <div className="overflow-x-auto rounded-xl border border-slate-100">
-                <table className="min-w-full text-left text-sm">
-                  <thead className="border-b border-slate-100 bg-slate-50/90 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                    <tr>
-                      <th className="px-4 py-3">Category</th>
-                      <th className="px-4 py-3 text-right">Planned / mo</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {monthlyBudgetLines.map((line) => (
-                      <tr key={line.id}>
-                        <td className="px-4 py-3 font-medium capitalize text-slate-900">
-                          {line.category}
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          <AdvisorBudgetLineAmountForm
-                            clientId={clientId}
-                            lineId={line.id}
-                            defaultAmount={num(line.amount)}
-                            disabled={hasPendingProposal}
-                          />
-                        </td>
+            <div className="space-y-4">
+              {monthlyBudgetLines.length === 0 ? (
+                <p className="text-sm text-slate-600">No monthly budget lines.</p>
+              ) : (
+                <div className="overflow-x-auto rounded-xl border border-slate-100">
+                  <table className="min-w-full text-left text-sm">
+                    <thead className="border-b border-slate-100 bg-slate-50/90 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      <tr>
+                        <th className="px-4 py-3">Category</th>
+                        <th className="px-4 py-3 text-right">Planned / mo</th>
+                        <th className="px-4 py-3 text-right">Remove</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {monthlyBudgetLines.map((line) => (
+                        <tr key={line.id}>
+                          <td className="px-4 py-3 font-medium capitalize text-slate-900">
+                            {line.category}
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <AdvisorBudgetLineAmountForm
+                              clientId={clientId}
+                              lineId={line.id}
+                              defaultAmount={num(line.amount)}
+                              disabled={hasPendingProposal}
+                            />
+                          </td>
+                          <td className="px-4 py-3 text-right">
+                            <AdvisorProposeRemovalButton
+                              action={deleteAdvisorClientBudgetLineAction}
+                              clientId={clientId}
+                              entityId={line.id}
+                              entityName={line.category}
+                              disabled={hasPendingProposal}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-4 sm:p-5">
+                <AdvisorNewBudgetLineForm
+                  clientId={clientId}
+                  disabled={hasPendingProposal}
+                />
               </div>
-            )}
+            </div>
           </AdvisorSection>
 
           <AdvisorSection
@@ -477,41 +508,37 @@ export function AdvisorClientWorkspace({
           </AdvisorSection>
         </div>
 
-        <aside className="space-y-4 lg:sticky lg:top-24">
-          <AdvisorProposalDraftPanel
-            proposalId={draftProposalId}
-            changes={draftChanges}
-            currencyCode={currency}
-            disabled={hasPendingProposal}
-          />
-          <div className="rounded-2xl border border-slate-200 bg-slate-900 p-5 text-slate-50 shadow-lg">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">
-              Session assist
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-200">
-              Use this column during reviews: health signals above, quick profile edits, and
-              budget tweaks without leaving the client context.
-            </p>
-            <ul className="mt-4 space-y-2 text-xs text-slate-300">
-              <li>• Client retains full ownership of their login.</li>
-              <li>• Changes apply only after the client accepts your proposal.</li>
-            </ul>
-          </div>
-          <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-5 text-sm text-slate-600">
-            <p className="font-semibold text-slate-900">Opportunity detection</p>
-            <p className="mt-2 leading-relaxed">
+        <CollapsiblePaneRail>
+          <CollapsiblePane title="Suggested Plans Consolidation" defaultOpen>
+            <div className="space-y-4">
+              <AdvisorProposalDraftPanel
+                proposalId={draftProposalId}
+                changes={draftChanges}
+                currencyCode={currency}
+                disabled={hasPendingProposal}
+              />
+              <div className="rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-3 text-xs leading-relaxed text-slate-600">
+                <p className="font-semibold text-slate-700">Session assist</p>
+                <ul className="mt-1.5 space-y-1">
+                  <li>• Client retains full ownership of their login.</li>
+                  <li>• Changes apply only after the client accepts your proposal.</li>
+                </ul>
+              </div>
+            </div>
+          </CollapsiblePane>
+          <CollapsiblePane title="Opportunity Detection">
+            <p className="text-sm leading-relaxed text-slate-600">
               Insurance, CPF, and product opportunity scoring —{" "}
               <span className="font-medium text-slate-800">Opportunity Detection Coming</span>.
             </p>
-          </div>
-          <div className="rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-5 text-sm text-slate-600">
-            <p className="font-semibold text-slate-900">AI insights</p>
-            <p className="mt-2 leading-relaxed">
+          </CollapsiblePane>
+          <CollapsiblePane title="AI Insights">
+            <p className="text-sm leading-relaxed text-slate-600">
               Narrative briefs and anomaly explanations —{" "}
               <span className="font-medium text-slate-800">AI Insights Coming</span>.
             </p>
-          </div>
-        </aside>
+          </CollapsiblePane>
+        </CollapsiblePaneRail>
       </div>
     </div>
   );

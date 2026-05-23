@@ -3,10 +3,14 @@
 import { revalidatePath } from "next/cache";
 import { getClientProfileForAdvisor } from "@/data/repositories/advisor-clients";
 import { assertConsent } from "@/server/advisor-consent";
-import { getBudgetLineById } from "@/data/repositories/budget-lines";
-import { getFinancialGoalById } from "@/data/repositories/goals";
-import { getInvestmentById } from "@/data/repositories/investments";
-import { getProfileById } from "@/data/repositories/profiles";
+// Client read-backs MUST route through the consent-gated SECURITY DEFINER
+// advisor_read_* RPCs: consent-Phase-2 dropped the advisor's direct SELECT
+// RLS on financial_*, so a direct .from() returns "not found" for a
+// legitimately-linked advisor and silently breaks authoring (security-Medium).
+import { advisorReadBudgetLines } from "@/data/repositories/budget-lines";
+import { advisorReadGoals } from "@/data/repositories/goals";
+import { advisorReadInvestments } from "@/data/repositories/investments";
+import { advisorReadProfile, getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { recordAdvisorProposalChanges } from "@/server/advisor-proposal-recording";
 import { isAdvisor } from "@/lib/profile-role";
@@ -111,17 +115,21 @@ async function requireAdvisorLinkedClient(
   if (!user) {
     return { ok: false, error: "Sign in required" };
   }
-  const me = await getProfileById(supabase, user.id);
+  // me + linkage + consent are independent reads (clientId is a param, the
+  // advisor is the session user) — batch them.
+  const [me, row, consent] = await Promise.all([
+    getProfileById(supabase, user.id),
+    getClientProfileForAdvisor(supabase, user.id, clientId),
+    // Consent-first trust boundary: the advisor is resolved server-side from
+    // the session above — never from client-supplied input.
+    assertConsent(supabase, clientId),
+  ]);
   if (!isAdvisor(me)) {
     return { ok: false, error: "Not allowed" };
   }
-  const row = await getClientProfileForAdvisor(supabase, user.id, clientId);
   if (!row) {
     return { ok: false, error: "Client not found" };
   }
-  // Consent-first trust boundary: the advisor is resolved server-side from the
-  // session above — never from client-supplied input. UI gating is secondary.
-  const consent = await assertConsent(supabase, clientId);
   if (!consent.ok) return { ok: false, error: consent.error };
   return { ok: true, supabase, advisorUserId: user.id };
 }
@@ -137,7 +145,7 @@ export async function patchAdvisorClientProfileAction(
   if (!ctx.ok) return { error: ctx.error };
   const { supabase, advisorUserId } = ctx;
 
-  const profile = await getProfileById(supabase, clientId);
+  const profile = await advisorReadProfile(supabase, clientId);
   if (!profile) return { error: "Client profile not found" };
 
   const changes: Parameters<typeof recordAdvisorProposalChanges>[3] = [];
@@ -207,7 +215,16 @@ export async function patchAdvisorClientProfileAction(
   }
 
   try {
-    await recordAdvisorProposalChanges(supabase, advisorUserId, clientId, changes);
+    // Capture the profile's version at suggest-time so accept can detect a
+    // client interim edit (B4 optimistic concurrency). All rows target the
+    // one profile, so they share its version.
+    const baseVersion = profile.updated_at ?? null;
+    await recordAdvisorProposalChanges(
+      supabase,
+      advisorUserId,
+      clientId,
+      changes.map((c) => ({ ...c, baseVersion }))
+    );
   } catch (e) {
     console.error(e);
     return { error: "Could not save suggestion" };
@@ -231,7 +248,10 @@ export async function patchAdvisorClientBudgetLineAmountAction(
   if (!ctx.ok) return { error: ctx.error };
   const { supabase, advisorUserId } = ctx;
 
-  const line = await getBudgetLineById(supabase, clientId, lineId);
+  const line =
+    (await advisorReadBudgetLines(supabase, clientId)).find(
+      (b) => b.id === lineId
+    ) ?? null;
   if (!line) return { error: "Budget line not found" };
 
   try {
@@ -242,6 +262,7 @@ export async function patchAdvisorClientBudgetLineAmountAction(
         fieldKey: "amount",
         oldValue: line.amount,
         newValue: amount,
+        baseVersion: line.updated_at ?? null,
         contextLabel: line.category,
       },
     ]);
@@ -271,7 +292,10 @@ export async function patchAdvisorClientGoalMonthlyContributionAction(
   if (!ctx.ok) return { error: ctx.error };
   const { supabase, advisorUserId } = ctx;
 
-  const goal = await getFinancialGoalById(supabase, clientId, goalId);
+  const goal =
+    (await advisorReadGoals(supabase, clientId)).find(
+      (g) => g.id === goalId
+    ) ?? null;
   if (!goal) return { error: "Goal not found" };
 
   try {
@@ -282,6 +306,7 @@ export async function patchAdvisorClientGoalMonthlyContributionAction(
         fieldKey: "monthly_contribution",
         oldValue: goal.monthly_contribution,
         newValue: monthly_contribution,
+        baseVersion: goal.updated_at ?? null,
         contextLabel: goal.title,
       },
     ]);
@@ -328,7 +353,11 @@ export async function createAdvisorClientInvestmentAction(
   const planning = parseInvestmentPlanningFields(formData);
   if (!planning.ok) return { error: planning.error };
 
-  const placeholderId = randomUUID();
+  // Explicit change_op='create' grouped by a server draft_entity_key (no
+  // entity_id yet) — symmetric with budget/goal create; no reliance on the
+  // fragile all-null legacy heuristic. base_version stays null (nothing to
+  // conflict against for a brand-new entity).
+  const draftEntityKey = randomUUID();
   const fields = [
     { fieldKey: "name", newValue: name },
     { fieldKey: "current_value", newValue: currentValue },
@@ -357,10 +386,12 @@ export async function createAdvisorClientInvestmentAction(
       clientId,
       fields.map((f) => ({
         entityType: "investment" as const,
-        entityId: placeholderId,
+        entityId: null,
         fieldKey: f.fieldKey,
         oldValue: null,
         newValue: f.newValue,
+        changeOp: "create" as const,
+        draftEntityKey,
         contextLabel: name,
       }))
     );
@@ -389,7 +420,10 @@ export async function updateAdvisorClientInvestmentAction(
     return { error: "Invalid investment" };
   }
 
-  const existing = await getInvestmentById(supabase, clientId, idParsed.data);
+  const existing =
+    (await advisorReadInvestments(supabase, clientId)).find(
+      (i) => i.id === idParsed.data
+    ) ?? null;
   if (!existing) return { error: "Investment not found" };
 
   const name = String(formData.get("name") ?? "").trim();
@@ -466,6 +500,7 @@ export async function updateAdvisorClientInvestmentAction(
         fieldKey: u.fieldKey,
         oldValue: u.oldValue,
         newValue: u.newValue,
+        baseVersion: existing.updated_at ?? null,
         contextLabel: name,
       }))
     );
@@ -494,7 +529,10 @@ export async function deleteAdvisorClientInvestmentAction(
     return { error: "Invalid investment" };
   }
 
-  const existing = await getInvestmentById(supabase, clientId, idParsed.data);
+  const existing =
+    (await advisorReadInvestments(supabase, clientId)).find(
+      (i) => i.id === idParsed.data
+    ) ?? null;
   if (!existing) return { error: "Investment not found" };
 
   try {
@@ -505,7 +543,221 @@ export async function deleteAdvisorClientInvestmentAction(
         fieldKey: "_deleted",
         oldValue: null,
         newValue: "true",
+        changeOp: "delete" as const,
+        baseVersion: existing.updated_at ?? null,
         contextLabel: existing.name,
+      },
+    ]);
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null, proposalRecorded: true };
+}
+
+/**
+ * Compose a NEW budget line into the advisor's draft proposal. Explicit
+ * change_op='create' grouped by a server-generated draft_entity_key (no
+ * entity_id yet). Advisor budget management is monthly-only, so cadence is
+ * fixed. Backend fails loud on missing required fields (e.g. category).
+ */
+export async function createAdvisorClientBudgetLineAction(
+  _prev: { error: string | null; proposalRecorded?: boolean },
+  formData: FormData
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase, advisorUserId } = ctx;
+
+  const category = String(formData.get("category") ?? "").trim();
+  const amount = Number(formData.get("amount"));
+  if (!category) return { error: "Category is required" };
+  if (!Number.isFinite(amount) || amount < 0) {
+    return { error: "Invalid amount" };
+  }
+
+  const draftEntityKey = randomUUID();
+  const fields: { fieldKey: string; newValue: string | number }[] = [
+    { fieldKey: "category", newValue: category },
+    { fieldKey: "amount", newValue: amount },
+    { fieldKey: "cadence", newValue: "monthly" },
+  ];
+
+  try {
+    await recordAdvisorProposalChanges(
+      supabase,
+      advisorUserId,
+      clientId,
+      fields.map((f) => ({
+        entityType: "budget_line" as const,
+        entityId: null,
+        fieldKey: f.fieldKey,
+        oldValue: null,
+        newValue: f.newValue,
+        changeOp: "create" as const,
+        draftEntityKey,
+        contextLabel: category,
+      }))
+    );
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null, proposalRecorded: true };
+}
+
+/**
+ * Compose a NEW goal into the advisor's draft proposal. Explicit
+ * change_op='create' grouped by a server-generated draft_entity_key.
+ * Backend fails loud on missing required fields (e.g. title).
+ */
+export async function createAdvisorClientGoalAction(
+  _prev: { error: string | null; proposalRecorded?: boolean },
+  formData: FormData
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase, advisorUserId } = ctx;
+
+  const title = String(formData.get("title") ?? "").trim();
+  const targetAmount = Number(formData.get("target_amount"));
+  const monthlyContribution = Number(formData.get("monthly_contribution"));
+  if (!title) return { error: "Goal name is required" };
+  if (!Number.isFinite(targetAmount) || targetAmount < 0) {
+    return { error: "Invalid target amount" };
+  }
+  if (!Number.isFinite(monthlyContribution) || monthlyContribution < 0) {
+    return { error: "Invalid monthly contribution" };
+  }
+
+  const draftEntityKey = randomUUID();
+  const fields: { fieldKey: string; newValue: string | number }[] = [
+    { fieldKey: "title", newValue: title },
+    { fieldKey: "target_amount", newValue: targetAmount },
+    { fieldKey: "monthly_contribution", newValue: monthlyContribution },
+  ];
+
+  try {
+    await recordAdvisorProposalChanges(
+      supabase,
+      advisorUserId,
+      clientId,
+      fields.map((f) => ({
+        entityType: "goal" as const,
+        entityId: null,
+        fieldKey: f.fieldKey,
+        oldValue: null,
+        newValue: f.newValue,
+        changeOp: "create" as const,
+        draftEntityKey,
+        contextLabel: title,
+      }))
+    );
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null, proposalRecorded: true };
+}
+
+/**
+ * Propose removal of an EXISTING goal (R-DEL). Explicit change_op='delete' +
+ * base_version so accept conflict-guards the removal (a goal edited by the
+ * client underneath surfaces a conflict instead of being silently deleted).
+ * Mirrors deleteAdvisorClientInvestmentAction.
+ */
+export async function deleteAdvisorClientGoalAction(
+  _prev: { error: string | null; proposalRecorded?: boolean },
+  formData: FormData
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase, advisorUserId } = ctx;
+
+  const idParsed = z
+    .string()
+    .uuid()
+    .safeParse(String(formData.get("goal_id") ?? "").trim());
+  if (!idParsed.success) return { error: "Invalid goal" };
+
+  const existing =
+    (await advisorReadGoals(supabase, clientId)).find(
+      (g) => g.id === idParsed.data
+    ) ?? null;
+  if (!existing) return { error: "Goal not found" };
+
+  try {
+    await recordAdvisorProposalChanges(supabase, advisorUserId, clientId, [
+      {
+        entityType: "goal",
+        entityId: idParsed.data,
+        fieldKey: "_deleted",
+        oldValue: null,
+        newValue: "true",
+        changeOp: "delete" as const,
+        baseVersion: existing.updated_at ?? null,
+        contextLabel: existing.title,
+      },
+    ]);
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null, proposalRecorded: true };
+}
+
+/**
+ * Propose removal of an EXISTING budget line (R-DEL). Explicit
+ * change_op='delete' + base_version (conflict-guarded). Mirrors
+ * deleteAdvisorClientInvestmentAction.
+ */
+export async function deleteAdvisorClientBudgetLineAction(
+  _prev: { error: string | null; proposalRecorded?: boolean },
+  formData: FormData
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase, advisorUserId } = ctx;
+
+  const idParsed = z
+    .string()
+    .uuid()
+    .safeParse(String(formData.get("id") ?? "").trim());
+  if (!idParsed.success) return { error: "Invalid budget line" };
+
+  const existing =
+    (await advisorReadBudgetLines(supabase, clientId)).find(
+      (b) => b.id === idParsed.data
+    ) ?? null;
+  if (!existing) return { error: "Budget line not found" };
+
+  try {
+    await recordAdvisorProposalChanges(supabase, advisorUserId, clientId, [
+      {
+        entityType: "budget_line",
+        entityId: idParsed.data,
+        fieldKey: "_deleted",
+        oldValue: null,
+        newValue: "true",
+        changeOp: "delete" as const,
+        baseVersion: existing.updated_at ?? null,
+        contextLabel: existing.category,
       },
     ]);
   } catch (e) {

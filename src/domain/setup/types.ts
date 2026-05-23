@@ -20,7 +20,8 @@ export type SetupModuleId =
   | "cpf"
   | "goals"
   | "risk_profile"
-  | "documents";
+  | "documents"
+  | "advisor_proposal";
 
 export type SetupModuleEvaluation = {
   moduleId: SetupModuleId;

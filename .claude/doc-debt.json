@@ -589,6 +589,146 @@
       "readme_section": "Data model",
       "status": "pending",
       "summary": "schema change in /tmp/syn_head.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-19T10:12:05Z",
+      "trigger_file": "supabase/migrations/20260601000000_advisor_proposal_create_rpc.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260601000000_advisor_proposal_create_rpc.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-19T10:16:41Z",
+      "trigger_file": "supabase/migrations/20260602000000_advisor_proposal_change_ops.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260602000000_advisor_proposal_change_ops.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-19T10:16:49Z",
+      "trigger_file": "supabase/migrations/20260603000000_proposal_concurrency_updated_at.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260603000000_proposal_concurrency_updated_at.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-19T10:23:56Z",
+      "trigger_file": "src/features/advisor/AdvisorClientDetailShell.tsx",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/features/advisor/AdvisorClientDetailShell.tsx \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-19T10:32:10Z",
+      "trigger_file": "supabase/migrations/20260604000000_advisor_withdraw_proposal.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260604000000_advisor_withdraw_proposal.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-19T11:01:34Z",
+      "trigger_file": "src/features/proposals/ClientProposalsView.tsx",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/features/proposals/ClientProposalsView.tsx \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-19T11:02:08Z",
+      "trigger_file": "src/features/proposals/ClientProposalReviewView.tsx",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/features/proposals/ClientProposalReviewView.tsx \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-19T11:20:20Z",
+      "trigger_file": ".claude/agent-memory/coder/feedback-gold-plating-vs-required-detail.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/coder/feedback-gold-plating-vs-required-detail.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-19T11:24:16Z",
+      "trigger_file": ".claude/agent-memory/coder/feedback-surface-uncommitted-state-on-done.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/coder/feedback-surface-uncommitted-state-on-done.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-19T11:30:07Z",
+      "trigger_file": ".claude/agent-memory/coder/feedback-drop-settled-owned-decisions.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/coder/feedback-drop-settled-owned-decisions.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-19T13:49:10Z",
+      "trigger_file": "supabase/migrations/20260605000000_advisor_accept_rpc.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260605000000_advisor_accept_rpc.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-19T13:49:29Z",
+      "trigger_file": ".claude/agent-memory/coder/feedback-hold-on-inert-prescribed-mechanism.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/coder/feedback-hold-on-inert-prescribed-mechanism.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-19T14:51:15Z",
+      "trigger_file": "src/features/proposals/ClientProposalsView.test.tsx",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/features/proposals/ClientProposalsView.test.tsx \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-19T15:27:51Z",
+      "trigger_file": "supabase/migrations/20260606000000_financial_profiles_updated_at.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260606000000_financial_profiles_updated_at.sql \u2014 Data model (readme) may be stale"
     }
   ]
 }
