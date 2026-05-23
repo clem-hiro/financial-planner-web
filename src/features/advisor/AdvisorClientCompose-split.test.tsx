@@ -175,7 +175,7 @@ describe("Advisor overview/compose split", () => {
     expect(html).not.toContain("With proposal");
   });
 
-  it("shell renders only Overview | Proposals tabs; compose body still renders on activeView=compose (no Compose tab)", () => {
+  it("hides the Overview/Proposals tab rail on activeView=compose; compose body still renders", () => {
     const html = renderToStaticMarkup(
       <AdvisorClientDetailShell
         clientId="client-1"
@@ -183,9 +183,8 @@ describe("Advisor overview/compose split", () => {
         compose={<div>COMPOSE_BODY</div>}
       />
     );
-    for (const label of ["Overview", "Proposals"]) {
-      expect(html).toContain(`>${label}<`);
-    }
+    // Tab rail is hidden on compose (reached via projection panel, not a tab).
+    expect(html).not.toContain('role="tablist"');
     // Compose is reached via the projection-panel button, not a tab.
     expect(html).not.toContain(">Compose<");
     // The compose slot still renders when activeView is "compose".

@@ -54,31 +54,33 @@ export function AdvisorClientDetailNav({
           {breadcrumbLabel}
         </a>
       </p>
-      <nav aria-label="Client detail sections">
-        <div role="tablist" className={appTabRailClass}>
-          {TABS.map((tab) => {
-            const isActive =
-              tab.id === "proposals"
-                ? activeView === "proposals" || activeView === "proposalDetail"
-                : activeView === tab.id;
-            return (
-              <a
-                key={tab.id}
-                href={`/advisor/client/${clientId}?view=${tab.id}`}
-                role="tab"
-                aria-selected={isActive}
-                aria-current={isActive ? "page" : undefined}
-                className={`${appTabPillClass} ${
-                  isActive ? appTabPillActiveClass : appTabPillInactiveClass
-                }`}
-                style={isActive ? appActiveGradientStyle : undefined}
-              >
-                {tab.label}
-              </a>
-            );
-          })}
-        </div>
-      </nav>
+      {activeView !== "compose" && (
+        <nav aria-label="Client detail sections">
+          <div role="tablist" className={appTabRailClass}>
+            {TABS.map((tab) => {
+              const isActive =
+                tab.id === "proposals"
+                  ? activeView === "proposals" || activeView === "proposalDetail"
+                  : activeView === tab.id;
+              return (
+                <a
+                  key={tab.id}
+                  href={`/advisor/client/${clientId}?view=${tab.id}`}
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`${appTabPillClass} ${
+                    isActive ? appTabPillActiveClass : appTabPillInactiveClass
+                  }`}
+                  style={isActive ? appActiveGradientStyle : undefined}
+                >
+                  {tab.label}
+                </a>
+              );
+            })}
+          </div>
+        </nav>
+      )}
     </div>
   );
 }
