@@ -28,14 +28,31 @@ export function investmentRowLastTouchedAt(
   return c || null;
 }
 
+/** The single condition that makes a row due for review, or null when fresh. */
+export type InvestmentReviewReason =
+  | { kind: "stale_months"; months: number }
+  | { kind: "no_timestamp" };
+
+export function investmentReviewReason(
+  row: InvestmentReviewTimestampRow,
+  now: Date = new Date(),
+  staleMonths: number = INVESTMENT_REVIEW_STALE_MONTHS
+): InvestmentReviewReason | null {
+  const touched = investmentRowLastTouchedAt(row);
+  if (!touched) return { kind: "no_timestamp" };
+  const months = monthsSinceTimestamp(touched, now);
+  if (months >= staleMonths) {
+    return { kind: "stale_months", months: Math.floor(months) };
+  }
+  return null;
+}
+
 export function investmentRowIsStale(
   row: InvestmentReviewTimestampRow,
   now: Date = new Date(),
   staleMonths: number = INVESTMENT_REVIEW_STALE_MONTHS
 ): boolean {
-  const touched = investmentRowLastTouchedAt(row);
-  if (!touched) return true;
-  return monthsSinceTimestamp(touched, now) >= staleMonths;
+  return investmentReviewReason(row, now, staleMonths) !== null;
 }
 
 export function countStaleInvestments(
