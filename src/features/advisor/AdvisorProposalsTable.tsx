@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { AdvisorProposalRow } from "@/data/supabase/types";
 import { proposalStatusDisplay } from "@/domain/advisor-proposals/proposal-status-display";
 import { AdvisorBadge } from "@/features/advisor/advisor-workspace-primitives";
@@ -44,20 +43,18 @@ export function AdvisorProposalsTable({
             const canWithdraw =
               p.status === "draft" || p.status === "pending";
             return (
-              <tr
-                key={p.id}
-                className="relative transition hover:bg-slate-50/70"
-              >
+              <tr key={p.id} className="transition hover:bg-slate-50/70">
                 <td className="px-4 py-3 align-middle">
-                  <Link
-                    href={href}
-                    className="inline-flex items-center after:absolute after:inset-0 after:content-['']"
-                  >
+                  {/* plain <a>: Next App Router soft-nav (<Link>/router.push) is unreliable in
+                      WebKit/Safari for same-pathname search-param changes — verified flaky across
+                      runs (see AdvisorClientDetailNav). No full-row `after:absolute inset-0` overlay
+                      either: it escapes the <tr> in real Safari and hijacks unrelated clicks. */}
+                  <a href={href} className="inline-flex items-center">
                     <span className="sr-only">View proposal details</span>
                     <AdvisorBadge tone={display.tone}>
                       {display.label}
                     </AdvisorBadge>
-                  </Link>
+                  </a>
                 </td>
                 <td className="px-4 py-3 align-middle text-slate-600 tabular-nums">
                   {shortDate(p.created_at)}
@@ -68,7 +65,7 @@ export function AdvisorProposalsTable({
                 <td className="px-4 py-3 align-middle text-slate-600 tabular-nums">
                   {shortDate(p.resolved_at)}
                 </td>
-                <td className="relative z-10 px-4 py-3 text-right align-middle">
+                <td className="px-4 py-3 text-right align-middle">
                   {canWithdraw ? (
                     <WithdrawProposalButton proposalId={p.id} />
                   ) : (

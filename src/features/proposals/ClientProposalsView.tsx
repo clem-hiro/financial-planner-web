@@ -38,15 +38,12 @@ export function ClientProposalsView({
             const display = proposalStatusDisplay(p.status, "client");
             const href = `/setup/advisor-proposals/${p.id}`;
             return (
-              <tr
-                key={p.id}
-                className="relative transition hover:bg-slate-50/70"
-              >
+              <tr key={p.id} className="transition hover:bg-slate-50/70">
                 <td className="px-4 py-3 align-middle">
-                  <Link
-                    href={href}
-                    className="inline-flex items-center after:absolute after:inset-0 after:content-['']"
-                  >
+                  {/* No full-row overlay: an `after:absolute inset-0` anchored to a <tr> escapes the
+                      row in real Safari and covers other UI, hijacking unrelated clicks. Different
+                      pathname → soft-nav is fine, so this stays a <Link>; the badge is the click target. */}
+                  <Link href={href} className="inline-flex items-center">
                     <span className="sr-only">Review proposal</span>
                     <AdvisorBadge tone={display.tone}>
                       {display.label}

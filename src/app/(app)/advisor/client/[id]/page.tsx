@@ -207,7 +207,6 @@ export default async function AdvisorClientDetailPage({
         activeView="proposalDetail"
         proposalDetail={
           <AdvisorProposalDetailView
-            clientId={clientId}
             proposal={proposal}
             changes={proposalChanges}
             currencyCode={currencyForDetail}

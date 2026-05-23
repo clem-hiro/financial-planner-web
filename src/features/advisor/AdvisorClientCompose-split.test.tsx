@@ -175,7 +175,7 @@ describe("Advisor overview/compose split", () => {
     expect(html).not.toContain("With proposal");
   });
 
-  it("shell renders Overview | Compose | Proposals with Compose active on ?view=compose", () => {
+  it("shell renders only Overview | Proposals tabs; compose body still renders on activeView=compose (no Compose tab)", () => {
     const html = renderToStaticMarkup(
       <AdvisorClientDetailShell
         clientId="client-1"
@@ -183,12 +183,52 @@ describe("Advisor overview/compose split", () => {
         compose={<div>COMPOSE_BODY</div>}
       />
     );
-    for (const label of ["Overview", "Compose", "Proposals"]) {
+    for (const label of ["Overview", "Proposals"]) {
       expect(html).toContain(`>${label}<`);
     }
+    // Compose is reached via the projection-panel button, not a tab.
+    expect(html).not.toContain(">Compose<");
+    // The compose slot still renders when activeView is "compose".
     expect(html).toContain("COMPOSE_BODY");
-    // Active tab carries aria-current=page and points at ?view=compose.
-    expect(html).toContain('aria-current="page"');
-    expect(html).toContain("/advisor/client/client-1?view=compose");
+    // No tab is highlighted in the compose view — that's acceptable.
+    expect(html).not.toContain('aria-current="page"');
+  });
+
+  it("breadcrumb hierarchy: overview/proposals → Clients, compose → Overview, detail → Proposals", () => {
+    const breadcrumbOf = (activeView: "overview" | "compose" | "proposals" | "proposalDetail") =>
+      renderToStaticMarkup(
+        <AdvisorClientDetailShell
+          clientId="client-1"
+          activeView={activeView}
+          overview={<div>B</div>}
+          compose={<div>B</div>}
+          proposals={<div>B</div>}
+          proposalDetail={<div>B</div>}
+        />
+      );
+
+    // Overview & Proposals are sibling tabs → up to the roster.
+    const overview = breadcrumbOf("overview");
+    expect(overview).toContain("← Clients");
+    expect(overview).toContain("/advisor/clients");
+    expect(overview).not.toContain("← Overview");
+    expect(overview).not.toContain("← Proposals");
+
+    const proposals = breadcrumbOf("proposals");
+    expect(proposals).toContain("← Clients");
+    expect(proposals).not.toContain("← Overview");
+    expect(proposals).not.toContain("← Proposals");
+
+    // Compose is launched from overview → back to Overview.
+    const compose = breadcrumbOf("compose");
+    expect(compose).toContain("← Overview");
+    expect(compose).not.toContain("← Clients");
+    expect(compose).not.toContain("← Proposals");
+
+    // Detail is a child of the list → back to Proposals.
+    const detail = breadcrumbOf("proposalDetail");
+    expect(detail).toContain("← Proposals");
+    expect(detail).not.toContain("← Clients");
+    expect(detail).not.toContain("← Overview");
   });
 });

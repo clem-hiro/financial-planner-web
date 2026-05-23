@@ -1,13 +1,5 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
-import { appInlineLinkClass } from "@/ui/app-link-styles";
-import {
-  appActiveGradientStyle,
-  appTabPillActiveClass,
-  appTabPillClass,
-  appTabPillInactiveClass,
-  appTabRailClass,
-} from "@/ui/app-tab-styles";
+import { AdvisorClientDetailNav } from "@/features/advisor/AdvisorClientDetailNav";
 
 export type AdvisorClientDetailView =
   | "overview"
@@ -15,19 +7,13 @@ export type AdvisorClientDetailView =
   | "proposals"
   | "proposalDetail";
 
-const TABS: readonly { id: "overview" | "compose" | "proposals"; label: string }[] = [
-  { id: "overview", label: "Overview" },
-  { id: "compose", label: "Compose" },
-  { id: "proposals", label: "Proposals" },
-];
-
 /**
- * Shared chrome for the advisor client-detail page: `← Clients` back link
- * + Overview | Compose | Proposals sub-tabs (query-param routing on the same
- * `[id]` route, mirroring SetupTabsNav). The active view's body is supplied as
- * one of the `overview` / `compose` / `proposals` / `proposalDetail` slots; the
- * per-proposal detail keeps the Proposals tab active. Server-renderable (no
- * client JS) — interactive children pass through.
+ * Shared chrome for the advisor client-detail page: context-aware breadcrumb
+ * + Overview | Proposals sub-tabs (`AdvisorClientDetailNav`, client-side so
+ * search-param-only navigation re-renders reliably). The active view's body is
+ * supplied as one of the `overview` / `compose` / `proposals` / `proposalDetail`
+ * slots; Compose (`?view=compose`) has no tab — it's reached from the overview
+ * projection panel — and per-proposal detail keeps the Proposals tab active.
  */
 export function AdvisorClientDetailShell({
   clientId,
@@ -55,38 +41,7 @@ export function AdvisorClientDetailShell({
 
   return (
     <div className="space-y-8 lg:space-y-10">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <p className="text-sm">
-          <Link href="/advisor/clients" className={appInlineLinkClass}>
-            ← Clients
-          </Link>
-        </p>
-        <nav aria-label="Client detail sections">
-          <div className={appTabRailClass}>
-            {TABS.map((tab) => {
-              const isActive =
-                tab.id === "proposals"
-                  ? activeView === "proposals" ||
-                    activeView === "proposalDetail"
-                  : activeView === tab.id;
-              return (
-                <Link
-                  key={tab.id}
-                  href={`/advisor/client/${clientId}?view=${tab.id}`}
-                  scroll={false}
-                  aria-current={isActive ? "page" : undefined}
-                  className={`${appTabPillClass} ${
-                    isActive ? appTabPillActiveClass : appTabPillInactiveClass
-                  }`}
-                  style={isActive ? appActiveGradientStyle : undefined}
-                >
-                  {tab.label}
-                </Link>
-              );
-            })}
-          </div>
-        </nav>
-      </div>
+      <AdvisorClientDetailNav clientId={clientId} activeView={activeView} />
       {body}
     </div>
   );

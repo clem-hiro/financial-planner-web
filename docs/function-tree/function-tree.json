@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-05-23T04:58:24.133Z",
+  "generated_at": "2026-05-23T09:36:17.083Z",
   "roots": [
     "src/app",
     "src/components",
@@ -13272,6 +13272,25 @@
       ]
     },
     {
+      "path": "src/features/advisor/AdvisorClientDetailNav.tsx",
+      "root": "src/features",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/features/advisor/AdvisorClientDetailNav.tsx#AdvisorClientDetailNav",
+          "name": "AdvisorClientDetailNav",
+          "kind": "component",
+          "line": 30,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/features/advisor/AdvisorClientDetailShell.tsx",
       "root": "src/features",
       "classification": [
@@ -13282,17 +13301,13 @@
           "id": "src/features/advisor/AdvisorClientDetailShell.tsx#AdvisorClientDetailShell",
           "name": "AdvisorClientDetailShell",
           "kind": "component",
-          "line": 32,
+          "line": 18,
           "exported": true,
           "classification": [],
           "edges": [
             {
               "kind": "renders",
-              "external": "next"
-            },
-            {
-              "kind": "renders",
-              "external": "next"
+              "target": "src/features/advisor/AdvisorClientDetailNav.tsx#AdvisorClientDetailNav"
             }
           ],
           "unresolved": 0
@@ -13356,18 +13371,10 @@
           "id": "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",
           "name": "AdvisorClientOverview",
           "kind": "component",
-          "line": 18,
+          "line": 17,
           "exported": true,
           "classification": [],
           "edges": [
-            {
-              "kind": "renders",
-              "external": "next"
-            },
-            {
-              "kind": "renders",
-              "external": "next"
-            },
             {
               "kind": "renders",
               "target": "src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired"
@@ -13778,14 +13785,10 @@
           "id": "src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView",
           "name": "AdvisorProposalDetailView",
           "kind": "component",
-          "line": 23,
+          "line": 21,
           "exported": true,
           "classification": [],
           "edges": [
-            {
-              "kind": "renders",
-              "external": "next"
-            },
             {
               "kind": "calls",
               "target": "src/domain/advisor-proposals/group-changes.ts#groupChangesBySection"
@@ -13980,14 +13983,10 @@
           "id": "src/features/advisor/AdvisorProposalsTable.tsx#AdvisorProposalsTable",
           "name": "AdvisorProposalsTable",
           "kind": "component",
-          "line": 8,
+          "line": 7,
           "exported": true,
           "classification": [],
           "edges": [
-            {
-              "kind": "renders",
-              "external": "next"
-            },
             {
               "kind": "calls",
               "target": "src/domain/advisor-proposals/proposal-status-display.ts#proposalStatusDisplay"
@@ -29129,6 +29128,9 @@
       ],
       "src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel": [
         "src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose"
+      ],
+      "src/features/advisor/AdvisorClientDetailNav.tsx#AdvisorClientDetailNav": [
+        "src/features/advisor/AdvisorClientDetailShell.tsx#AdvisorClientDetailShell"
       ],
       "src/features/proposals/ProposalProjectionCompare.tsx#ProposalProjectionCompare": [
         "src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview",

@@ -769,6 +769,16 @@
       "readme_section": "External dependencies",
       "status": "pending",
       "summary": "integration change in src/features/advisor/AdvisorClientCompose-split.test.tsx \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-23T06:05:30Z",
+      "trigger_file": "src/features/advisor/AdvisorClientDetailNav.tsx",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/features/advisor/AdvisorClientDetailNav.tsx \u2014 External dependencies (readme) may be stale"
     }
   ]
 }

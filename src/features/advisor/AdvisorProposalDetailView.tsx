@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import type {
   AdvisorProposalChangeRow,
@@ -12,7 +11,6 @@ import { shortDate } from "@/domain/advisor-proposals/proposal-format";
 import { sectionLabel } from "@/domain/advisor-proposals/sections";
 import { AdvisorBadge } from "@/features/advisor/advisor-workspace-primitives";
 import { ProposalProjectionCompare } from "@/features/proposals/ProposalProjectionCompare";
-import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { CollapsiblePane, CollapsiblePaneRail } from "@/ui/CollapsiblePaneRail";
 import { appCardClass, appCardPadding } from "@/ui/surface-classes";
 
@@ -21,7 +19,6 @@ import { appCardClass, appCardPadding } from "@/ui/surface-classes";
  * Withdraw lives on the table row (per plan A3); this view never mutates.
  */
 export function AdvisorProposalDetailView({
-  clientId,
   proposal,
   changes,
   currencyCode,
@@ -29,7 +26,6 @@ export function AdvisorProposalDetailView({
   actualProjection = null,
   proposedProjection = null,
 }: {
-  clientId: string;
   proposal: AdvisorProposalRow;
   changes: AdvisorProposalChangeRow[];
   currencyCode: string;
@@ -42,15 +38,6 @@ export function AdvisorProposalDetailView({
 
   return (
     <div className="space-y-8">
-      <p className="text-sm">
-        <Link
-          href={`/advisor/client/${clientId}?view=proposals`}
-          className={appInlineLinkClass}
-        >
-          ← Proposals
-        </Link>
-      </p>
-
       <header className={`${appCardClass} ${appCardPadding} space-y-4`}>
         <div className="flex flex-wrap items-center gap-2">
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">

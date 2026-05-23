@@ -2,7 +2,7 @@
 
 # Function tree — index
 
-Generated: `2026-05-23T04:58:24.133Z` · Schema: `function-tree/v1`
+Generated: `2026-05-23T09:36:17.083Z` · Schema: `function-tree/v1`
 
 ## How to use this file
 
@@ -24,7 +24,7 @@ This artifact is a derived view, not a contract. The authoritative architectural
 | `src/content` | [`src-content.md`](./src-content.md) | 1 | 1 | 0 | 0 | 0 |
 | `src/data` | [`src-data.md`](./src-data.md) | 44 | 175 | 0 | 0 | 637 |
 | `src/domain` | [`src-domain.md`](./src-domain.md) | 97 | 292 | 0 | 0 | 335 |
-| `src/features` | [`src-features.md`](./src-features.md) | 128 | 239 | 0 | 0 | 1134 |
+| `src/features` | [`src-features.md`](./src-features.md) | 129 | 240 | 0 | 0 | 1129 |
 | `src/lib` | [`src-lib.md`](./src-lib.md) | 23 | 49 | 0 | 0 | 40 |
 | `src/server` | [`src-server.md`](./src-server.md) | 30 | 111 | 0 | 0 | 553 |
 | `src/ui` | [`src-ui.md`](./src-ui.md) | 17 | 16 | 0 | 0 | 14 |

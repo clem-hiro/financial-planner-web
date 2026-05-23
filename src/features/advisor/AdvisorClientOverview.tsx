@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { DashboardPayload } from "@/data/dashboard";
 import { num } from "@/data/mappers";
 import type { BudgetLineRow, FinancialGoalRow, InvestmentRow } from "@/data/supabase/types";
@@ -49,14 +48,15 @@ export function AdvisorClientOverview({
   const monthlyBudgetLines = budgetLines.filter((b) => b.cadence === "monthly");
 
   const composeHref = `/advisor/client/${clientId}?view=compose`;
+  // plain <a>: Next App Router soft-nav (<Link>/router.push) is unreliable in WebKit/Safari for
+  // same-pathname search-param changes — verified flaky across runs (see AdvisorClientDetailNav).
   const composeButton = (
-    <Link
+    <a
       href={composeHref}
-      scroll={false}
       className="inline-flex shrink-0 items-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
     >
       Compose proposal
-    </Link>
+    </a>
   );
 
   return (
@@ -297,9 +297,10 @@ export function AdvisorClientOverview({
               <p className="text-sm leading-relaxed text-slate-600">
                 {draftChangeCount} suggested {draftChangeCount === 1 ? "change" : "changes"}{" "}
                 queued.{" "}
-                <Link href={composeHref} scroll={false} className="font-semibold text-slate-900 underline decoration-slate-300/80 underline-offset-2 transition-colors hover:text-emerald-800 hover:decoration-emerald-300/70">
+                {/* plain <a>: same-route ?view soft-nav is unreliable in WebKit (see AdvisorClientDetailNav). */}
+                <a href={composeHref} className="font-semibold text-slate-900 underline decoration-slate-300/80 underline-offset-2 transition-colors hover:text-emerald-800 hover:decoration-emerald-300/70">
                   Continue composing →
-                </Link>
+                </a>
               </p>
             </CollapsiblePane>
           ) : null}
