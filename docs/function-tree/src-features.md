@@ -72,7 +72,7 @@
 | [`src/features/expenses/ExpenseEditRow.tsx`](#src-features-expenses-expenseeditrow-tsx) | `client-component` | 1 | 12 |
 | [`src/features/expenses/ExpenseForm.tsx`](#src-features-expenses-expenseform-tsx) | `client-component` | 1 | 8 |
 | [`src/features/expenses/ExpenseMonthJump.tsx`](#src-features-expenses-expensemonthjump-tsx) | `client-component` | 1 | 5 |
-| [`src/features/goals/CashAndLiabilitiesPanels.tsx`](#src-features-goals-cashandliabilitiespanels-tsx) | `client-component` | 8 | 29 |
+| [`src/features/goals/CashAndLiabilitiesPanels.tsx`](#src-features-goals-cashandliabilitiespanels-tsx) | `client-component` | 7 | 28 |
 | [`src/features/goals/CpfBalancesForm.tsx`](#src-features-goals-cpfbalancesform-tsx) | `client-component` | 2 | 13 |
 | [`src/features/goals/FinancialGoalsPanels.tsx`](#src-features-goals-financialgoalspanels-tsx) | `regular` | 1 | 17 |
 | [`src/features/goals/GoalEditForm.tsx`](#src-features-goals-goaleditform-tsx) | `client-component` | 1 | 2 |
@@ -112,13 +112,13 @@
 | [`src/features/planning/sections/WealthPlanningSection.tsx`](#src-features-planning-sections-wealthplanningsection-tsx) | `regular` | 1 | 20 |
 | [`src/features/proposals/ProposalProjectionCompare.tsx`](#src-features-proposals-proposalprojectioncompare-tsx) | `client-component` | 1 | 1 |
 | [`src/features/proposals/ProposalReviewView.tsx`](#src-features-proposals-proposalreviewview-tsx) | `client-component` | 4 | 12 |
-| [`src/features/setup-hub/FinancialSetupHub.tsx`](#src-features-setup-hub-financialsetuphub-tsx) | `regular` | 1 | 4 |
+| [`src/features/setup-hub/FinancialSetupHub.tsx`](#src-features-setup-hub-financialsetuphub-tsx) | `regular` | 1 | 6 |
 | [`src/features/setup-hub/SetupModuleCard.tsx`](#src-features-setup-hub-setupmodulecard-tsx) | `regular` | 3 | 5 |
 | [`src/features/setup-hub/SetupModuleStatusBadge.tsx`](#src-features-setup-hub-setupmodulestatusbadge-tsx) | `regular` | 1 | 0 |
 | [`src/features/setup-hub/SetupProgressCard.tsx`](#src-features-setup-hub-setupprogresscard-tsx) | `regular` | 1 | 0 |
 | [`src/features/setup-hub/SetupRecommendedNextStep.tsx`](#src-features-setup-hub-setuprecommendednextstep-tsx) | `regular` | 1 | 1 |
 | [`src/features/setup/BudgetLensProfileForm.tsx`](#src-features-setup-budgetlensprofileform-tsx) | `client-component` | 5 | 21 |
-| [`src/features/setup/SetupTabsNav.tsx`](#src-features-setup-setuptabsnav-tsx) | `regular` | 1 | 1 |
+| [`src/features/setup/SetupTabsNav.tsx`](#src-features-setup-setuptabsnav-tsx) | `regular` | 1 | 2 |
 | [`src/features/spend/SpendGuidancePanel.tsx`](#src-features-spend-spendguidancepanel-tsx) | `regular` | 1 | 0 |
 
 ## Functions
@@ -996,47 +996,42 @@ Classification: `client-component`
 
 Classification: `client-component`
 
-#### `PurposeSelect` — component, L49 _(client-component)_
+#### `PurposeSelect` — component, L42 _(client-component)_
 
 - rendered by: `src/features/goals/CashAndLiabilitiesPanels.tsx#AddCashForm`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`
 
-#### `formatSnapshotDate` — function, L74
+#### `formatSnapshotDate` — function, L67
 
 - called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountHistory`
 
-#### `CashAccountHistory` — component, L84 _(client-component)_
+#### `CashAccountHistory` — component, L77 _(client-component)_
 
 - calls: `src/features/goals/CashAndLiabilitiesPanels.tsx#formatSnapshotDate`, `src/ui/lib/format.ts#formatCurrency`
 - rendered by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`
 
-#### `AddCashForm` — component, L111 _(client-component)_
+#### `AddCashForm` — component, L104 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#createCashAccountAction`
 - renders: `src/features/goals/CashAndLiabilitiesPanels.tsx#PurposeSelect`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`
 
-#### `CashAccountRow` — component, L184 _(client-component)_
+#### `CashAccountRow` — component, L177 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#deleteCashAccountAction`, `src/server/actions.ts#updateCashAccountAction`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountHistory`, `src/features/goals/CashAndLiabilitiesPanels.tsx#PurposeSelect`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`
 - unresolved: 2
 
-#### `groupCashByPurpose` — function, L289
+#### `groupCashByPurpose` — function, L282
 
 - calls: `src/domain/finance/cash-account-purpose.ts#cashPurposeSortOrder`
 - called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`
 
-#### `CashAndLiabilitiesPanels` — component, L301 _(client-component)_
+#### `CashAndLiabilitiesPanels` — component, L294 _(client-component)_
 
 - calls: `[external] react`, `src/features/debts/DebtPlanningPanels.tsx#mapLiabilityRows`, `src/features/goals/CashAndLiabilitiesPanels.tsx#groupCashByPurpose`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `[external] next`, `src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels`, `src/features/goals/CashAndLiabilitiesPanels.tsx#AddCashForm`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
-
-#### `buildCashHistoryByAccountId` — function, L383
-
-- calls: `src/data/mappers.ts#num`
-- called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
 ### `src/features/goals/CpfBalancesForm.tsx` <a id="src-features-goals-cpfbalancesform-tsx"></a>
 
@@ -1647,7 +1642,7 @@ Classification: `regular`
 
 #### `WealthPlanningSection` — component, L36
 
-- calls: `[external] @supabase/auth-js`, `src/data/mappers.ts#num`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview`, `src/domain/finance/investment-review.ts#shouldPromptInvestmentReview`, `src/features/goals/CashAndLiabilitiesPanels.tsx#buildCashHistoryByAccountId`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/lib/validation.ts#birthDateIsValidPast`
+- calls: `[external] @supabase/auth-js`, `src/data/mappers.ts#num`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/cash-account-history.ts#buildCashHistoryByAccountId`, `src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview`, `src/domain/finance/investment-review.ts#shouldPromptInvestmentReview`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/lib/validation.ts#birthDateIsValidPast`
 - renders: `[external] next`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`, `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`, `src/features/goals/HousingLoansPanel.tsx#HousingPanel`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`, `src/features/goals/VehiclesPanel.tsx#VehiclesPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/features/planning/roadmap-modules.tsx#AccountSyncingRoadmapCard`, `src/ui/PageSection.tsx#PageSection`
 - rendered by: `src/app/(app)/planning/[section]/page.tsx#PlanningSectionPage`
 
@@ -1688,9 +1683,10 @@ Classification: `client-component`
 
 Classification: `regular`
 
-#### `FinancialSetupHub` — component, L20
+#### `FinancialSetupHub` — component, L29
 
-- renders: `[external] next`, `src/features/setup-hub/SetupModuleCard.tsx#SetupModuleCard`, `src/features/setup-hub/SetupProgressCard.tsx#SetupProgressCard`, `src/features/setup-hub/SetupRecommendedNextStep.tsx#SetupRecommendedNextStep`
+- calls: `src/lib/setup-tabs.ts#buildSetupTabs`, `src/lib/setup-urls.ts#setupTabPath`
+- renders: `src/features/setup-hub/SetupModuleCard.tsx#SetupModuleCard`, `src/features/setup-hub/SetupProgressCard.tsx#SetupProgressCard`, `src/features/setup-hub/SetupRecommendedNextStep.tsx#SetupRecommendedNextStep`, `src/features/setup/SetupTabsNav.tsx#SetupTabsNav`
 - rendered by: `src/app/(app)/setup/overview/page.tsx#SetupOverviewPage`
 
 ### `src/features/setup-hub/SetupModuleCard.tsx` <a id="src-features-setup-hub-setupmodulecard-tsx"></a>
@@ -1725,7 +1721,7 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `SetupProgressCard` — component, L4
+#### `SetupProgressCard` — component, L3
 
 - rendered by: `src/features/setup-hub/FinancialSetupHub.tsx#FinancialSetupHub`
 
@@ -1733,7 +1729,7 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `SetupRecommendedNextStep` — component, L3
+#### `SetupRecommendedNextStep` — component, L4
 
 - renders: `[external] next`
 - rendered by: `src/features/setup-hub/FinancialSetupHub.tsx#FinancialSetupHub`
@@ -1772,7 +1768,7 @@ Classification: `regular`
 #### `SetupTabsNav` — component, L15
 
 - renders: `[external] next`
-- rendered by: `src/app/(app)/setup/page.tsx#SetupPage`
+- rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/setup-hub/FinancialSetupHub.tsx#FinancialSetupHub`
 - unresolved: 1
 
 ### `src/features/spend/SpendGuidancePanel.tsx` <a id="src-features-spend-spendguidancepanel-tsx"></a>

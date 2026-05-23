@@ -2,7 +2,7 @@
 
 # Function tree — `src/lib`
 
-23 module(s).
+24 module(s).
 
 ## Modules
 
@@ -25,6 +25,7 @@
 | [`src/lib/qr-svg.ts`](#src-lib-qr-svg-ts) | `regular` | 1 | 1 |
 | [`src/lib/relative-time.test.ts`](#src-lib-relative-time-test-ts) | `regular` | 0 | 0 |
 | [`src/lib/relative-time.ts`](#src-lib-relative-time-ts) | `regular` | 1 | 0 |
+| [`src/lib/setup-tabs.ts`](#src-lib-setup-tabs-ts) | `regular` | 1 | 0 |
 | [`src/lib/setup-urls.ts`](#src-lib-setup-urls-ts) | `regular` | 5 | 7 |
 | [`src/lib/site-origin.test.ts`](#src-lib-site-origin-test-ts) | `regular` | 2 | 2 |
 | [`src/lib/site-origin.ts`](#src-lib-site-origin-ts) | `regular` | 3 | 3 |
@@ -260,6 +261,14 @@ Classification: `regular`
 
 - called by: `src/features/setup-hub/SetupModuleCard.tsx#SetupModuleCard`
 
+### `src/lib/setup-tabs.ts` <a id="src-lib-setup-tabs-ts"></a>
+
+Classification: `regular`
+
+#### `buildSetupTabs` — function, L3
+
+- called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/setup-hub/FinancialSetupHub.tsx#FinancialSetupHub`
+
 ### `src/lib/setup-urls.ts` <a id="src-lib-setup-urls-ts"></a>
 
 Classification: `regular`
@@ -285,7 +294,7 @@ Classification: `regular`
 #### `setupTabPath` — function, L45
 
 - calls: `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/setup-urls.ts#setupBudgetPath`
-- called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/domain/finance/cash-flow-setup-guidance.ts#budgetLensAnchor`, `src/domain/finance/cash-flow-setup-guidance.ts#incomeAnchor`
+- called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/domain/finance/cash-flow-setup-guidance.ts#budgetLensAnchor`, `src/domain/finance/cash-flow-setup-guidance.ts#incomeAnchor`, `src/features/setup-hub/FinancialSetupHub.tsx#FinancialSetupHub`
 
 ### `src/lib/site-origin.test.ts` <a id="src-lib-site-origin-test-ts"></a>
 

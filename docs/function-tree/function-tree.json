@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-05-23T15:50:44.475Z",
+  "generated_at": "2026-05-23T17:49:38.213Z",
   "roots": [
     "src/app",
     "src/components",
@@ -1535,23 +1535,21 @@
       ],
       "functions": [
         {
-          "id": "src/app/(app)/setup/page.tsx#buildSetupTabs",
-          "name": "buildSetupTabs",
-          "kind": "function",
-          "line": 47,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
           "id": "src/app/(app)/setup/page.tsx#SetupPage",
           "name": "SetupPage",
           "kind": "component",
-          "line": 65,
+          "line": 51,
           "exported": true,
           "classification": [],
           "edges": [
+            {
+              "kind": "renders",
+              "external": "next"
+            },
+            {
+              "kind": "calls",
+              "external": "next"
+            },
             {
               "kind": "renders",
               "external": "next"
@@ -1562,7 +1560,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/app/(app)/setup/page.tsx#buildSetupTabs"
+              "target": "src/lib/setup-tabs.ts#buildSetupTabs"
             },
             {
               "kind": "calls",
@@ -1622,7 +1620,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/features/goals/CashAndLiabilitiesPanels.tsx#buildCashHistoryByAccountId"
+              "target": "src/domain/finance/cash-account-history.ts#buildCashHistoryByAccountId"
             },
             {
               "kind": "renders",
@@ -3768,6 +3766,25 @@
       ]
     },
     {
+      "path": "src/data/repositories/advisor-access-keys.test.ts",
+      "root": "src/data",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/data/repositories/advisor-access-keys.test.ts#key",
+          "name": "key",
+          "kind": "function",
+          "line": 5,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/data/repositories/advisor-access-keys.ts",
       "root": "src/data",
       "classification": [
@@ -3775,10 +3792,20 @@
       ],
       "functions": [
         {
+          "id": "src/data/repositories/advisor-access-keys.ts#sortAdvisorAccessKeysForDisplay",
+          "name": "sortAdvisorAccessKeysForDisplay",
+          "kind": "function",
+          "line": 18,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
           "id": "src/data/repositories/advisor-access-keys.ts#listAdvisorAccessKeysForAdvisor",
           "name": "listAdvisorAccessKeysForAdvisor",
           "kind": "function",
-          "line": 11,
+          "line": 29,
           "exported": true,
           "classification": [],
           "edges": [
@@ -3792,11 +3819,11 @@
             },
             {
               "kind": "calls",
-              "external": "@supabase/postgrest-js"
+              "external": "@supabase/supabase-js"
             },
             {
               "kind": "calls",
-              "external": "@supabase/supabase-js"
+              "target": "src/data/repositories/advisor-access-keys.ts#sortAdvisorAccessKeysForDisplay"
             }
           ],
           "unresolved": 0
@@ -3805,7 +3832,7 @@
           "id": "src/data/repositories/advisor-access-keys.ts#countAdvisorAccessKeyStatuses",
           "name": "countAdvisorAccessKeyStatuses",
           "kind": "function",
-          "line": 24,
+          "line": 41,
           "exported": true,
           "classification": [],
           "edges": [
@@ -3828,7 +3855,7 @@
           "id": "src/data/repositories/advisor-access-keys.ts#insertAdvisorAccessKeys",
           "name": "insertAdvisorAccessKeys",
           "kind": "function",
-          "line": 48,
+          "line": 65,
           "exported": true,
           "classification": [],
           "edges": [
@@ -8461,6 +8488,30 @@
           "exported": true,
           "classification": [],
           "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/domain/finance/cash-account-history.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/domain/finance/cash-account-history.ts#buildCashHistoryByAccountId",
+          "name": "buildCashHistoryByAccountId",
+          "kind": "function",
+          "line": 10,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/data/mappers.ts#num"
+            }
+          ],
           "unresolved": 0
         }
       ]
@@ -16324,7 +16375,7 @@
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#PurposeSelect",
           "name": "PurposeSelect",
           "kind": "component",
-          "line": 49,
+          "line": 42,
           "exported": false,
           "classification": [
             "client-component"
@@ -16336,7 +16387,7 @@
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#formatSnapshotDate",
           "name": "formatSnapshotDate",
           "kind": "function",
-          "line": 74,
+          "line": 67,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -16346,7 +16397,7 @@
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountHistory",
           "name": "CashAccountHistory",
           "kind": "component",
-          "line": 84,
+          "line": 77,
           "exported": false,
           "classification": [
             "client-component"
@@ -16367,7 +16418,7 @@
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#AddCashForm",
           "name": "AddCashForm",
           "kind": "component",
-          "line": 111,
+          "line": 104,
           "exported": false,
           "classification": [
             "client-component"
@@ -16404,7 +16455,7 @@
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow",
           "name": "CashAccountRow",
           "kind": "component",
-          "line": 184,
+          "line": 177,
           "exported": false,
           "classification": [
             "client-component"
@@ -16461,7 +16512,7 @@
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#groupCashByPurpose",
           "name": "groupCashByPurpose",
           "kind": "function",
-          "line": 289,
+          "line": 282,
           "exported": false,
           "classification": [],
           "edges": [
@@ -16476,7 +16527,7 @@
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels",
           "name": "CashAndLiabilitiesPanels",
           "kind": "component",
-          "line": 301,
+          "line": 294,
           "exported": true,
           "classification": [
             "client-component"
@@ -16513,21 +16564,6 @@
             {
               "kind": "renders",
               "target": "src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#buildCashHistoryByAccountId",
-          "name": "buildCashHistoryByAccountId",
-          "kind": "function",
-          "line": 383,
-          "exported": true,
-          "classification": [],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/data/mappers.ts#num"
             }
           ],
           "unresolved": 0
@@ -19557,7 +19593,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/features/goals/CashAndLiabilitiesPanels.tsx#buildCashHistoryByAccountId"
+              "target": "src/domain/finance/cash-account-history.ts#buildCashHistoryByAccountId"
             },
             {
               "kind": "renders",
@@ -19740,13 +19776,21 @@
           "id": "src/features/setup-hub/FinancialSetupHub.tsx#FinancialSetupHub",
           "name": "FinancialSetupHub",
           "kind": "component",
-          "line": 20,
+          "line": 29,
           "exported": true,
           "classification": [],
           "edges": [
             {
+              "kind": "calls",
+              "target": "src/lib/setup-tabs.ts#buildSetupTabs"
+            },
+            {
               "kind": "renders",
-              "external": "next"
+              "target": "src/features/setup/SetupTabsNav.tsx#SetupTabsNav"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/setup-urls.ts#setupTabPath"
             },
             {
               "kind": "renders",
@@ -19857,7 +19901,7 @@
           "id": "src/features/setup-hub/SetupProgressCard.tsx#SetupProgressCard",
           "name": "SetupProgressCard",
           "kind": "component",
-          "line": 4,
+          "line": 3,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -19876,7 +19920,7 @@
           "id": "src/features/setup-hub/SetupRecommendedNextStep.tsx#SetupRecommendedNextStep",
           "name": "SetupRecommendedNextStep",
           "kind": "component",
-          "line": 3,
+          "line": 4,
           "exported": true,
           "classification": [],
           "edges": [
@@ -20050,6 +20094,10 @@
           "exported": true,
           "classification": [],
           "edges": [
+            {
+              "kind": "renders",
+              "external": "next"
+            },
             {
               "kind": "renders",
               "external": "next"
@@ -20655,6 +20703,25 @@
           "name": "formatRelativeTimeAgo",
           "kind": "function",
           "line": 7,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/lib/setup-tabs.ts",
+      "root": "src/lib",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/lib/setup-tabs.ts#buildSetupTabs",
+          "name": "buildSetupTabs",
+          "kind": "function",
+          "line": 3,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -24373,7 +24440,7 @@
           "id": "src/server/inbox/ensure-advisor-consent-notification.ts#ensureAndCheckClientConsentPrompt",
           "name": "ensureAndCheckClientConsentPrompt",
           "kind": "function",
-          "line": 26,
+          "line": 31,
           "exported": true,
           "classification": [],
           "edges": [
@@ -25030,6 +25097,7 @@
         "src/data/projection.ts#aggregateInvestments",
         "src/data/projection.ts#resolveProjectionSnapshot",
         "src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap",
+        "src/domain/finance/cash-account-history.ts#buildCashHistoryByAccountId",
         "src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow",
         "src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow",
         "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth",
@@ -25049,7 +25117,6 @@
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
         "src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel",
         "src/features/expenses/ExpenseEditRow.tsx#ExpenseEditRow",
-        "src/features/goals/CashAndLiabilitiesPanels.tsx#buildCashHistoryByAccountId",
         "src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm",
         "src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels",
         "src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm",
@@ -26116,6 +26183,9 @@
       "src/app/login/page.tsx#peekQrTokenIfPresent": [
         "src/app/login/page.tsx#LoginPage"
       ],
+      "src/data/repositories/advisor-access-keys.ts#sortAdvisorAccessKeysForDisplay": [
+        "src/data/repositories/advisor-access-keys.ts#listAdvisorAccessKeysForAdvisor"
+      ],
       "src/data/repositories/advisor-clients.ts#computeConsentStatuses": [
         "src/data/repositories/advisor-clients.ts#getMyConsentStatusForAdvisor",
         "src/data/repositories/advisor-clients.ts#withConsentStatus"
@@ -26311,7 +26381,8 @@
       "src/lib/setup-urls.ts#setupTabPath": [
         "src/app/(app)/setup/page.tsx#SetupPage",
         "src/domain/finance/cash-flow-setup-guidance.ts#budgetLensAnchor",
-        "src/domain/finance/cash-flow-setup-guidance.ts#incomeAnchor"
+        "src/domain/finance/cash-flow-setup-guidance.ts#incomeAnchor",
+        "src/features/setup-hub/FinancialSetupHub.tsx#FinancialSetupHub"
       ],
       "src/data/financial-profile.ts#isFinancialProfileIncomplete": [
         "src/app/(app)/dashboard/page.tsx#DashboardPage",
@@ -27178,6 +27249,10 @@
       "src/features/setup/BudgetLensProfileForm.tsx#isFoodBand": [
         "src/features/setup/BudgetLensProfileForm.tsx#BudgetLensProfileForm"
       ],
+      "src/lib/setup-tabs.ts#buildSetupTabs": [
+        "src/app/(app)/setup/page.tsx#SetupPage",
+        "src/features/setup-hub/FinancialSetupHub.tsx#FinancialSetupHub"
+      ],
       "src/lib/relative-time.ts#formatRelativeTimeAgo": [
         "src/features/setup-hub/SetupModuleCard.tsx#SetupModuleCard"
       ],
@@ -27218,14 +27293,11 @@
       "src/data/financial-profile.ts#needsOnboarding": [
         "src/app/(app)/onboarding/page.tsx#OnboardingPage"
       ],
-      "src/app/(app)/setup/page.tsx#buildSetupTabs": [
-        "src/app/(app)/setup/page.tsx#SetupPage"
-      ],
       "src/domain/finance/budget-guided-setup.ts#countReplaceableMonthlyBudgetLines": [
         "src/app/(app)/setup/page.tsx#SetupPage",
         "src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection"
       ],
-      "src/features/goals/CashAndLiabilitiesPanels.tsx#buildCashHistoryByAccountId": [
+      "src/domain/finance/cash-account-history.ts#buildCashHistoryByAccountId": [
         "src/app/(app)/setup/page.tsx#SetupPage",
         "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection"
       ],
@@ -27757,6 +27829,10 @@
       "src/features/proposals/ProposalReviewView.tsx#StatusBanner": [
         "src/features/proposals/ProposalReviewView.tsx#ProposalReviewView"
       ],
+      "src/features/setup/SetupTabsNav.tsx#SetupTabsNav": [
+        "src/app/(app)/setup/page.tsx#SetupPage",
+        "src/features/setup-hub/FinancialSetupHub.tsx#FinancialSetupHub"
+      ],
       "src/features/setup-hub/SetupProgressCard.tsx#SetupProgressCard": [
         "src/features/setup-hub/FinancialSetupHub.tsx#FinancialSetupHub"
       ],
@@ -27814,9 +27890,6 @@
       ],
       "src/features/planning/PlanningLayoutShell.tsx#PlanningLayoutShell": [
         "src/app/(app)/planning/layout.tsx#PlanningLayout"
-      ],
-      "src/features/setup/SetupTabsNav.tsx#SetupTabsNav": [
-        "src/app/(app)/setup/page.tsx#SetupPage"
       ],
       "src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm": [
         "src/app/(app)/setup/page.tsx#SetupPage",

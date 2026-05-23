@@ -1,6 +1,7 @@
 "use client";
 
 import type { User } from "@supabase/supabase-js";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ContactAdvisorButton } from "@/features/app-shell/ContactAdvisorButton";
 import { OpenMethodologyButton } from "@/features/help/OpenMethodologyButton";
@@ -20,12 +21,15 @@ export function AppShellUserMenu({
   displayName,
   inboxSlot,
   showContactAdvisor,
+  showConsentPrompt = false,
 }: {
   user: User;
   /** Profile display name; falls back to email when empty. */
   displayName?: string | null;
   inboxSlot: React.ReactNode;
   showContactAdvisor?: boolean;
+  /** Amber cue when linked advisor lacks active consent (inbox also has the prompt). */
+  showConsentPrompt?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
@@ -49,11 +53,30 @@ export function AppShellUserMenu({
         aria-expanded={open}
         aria-haspopup="menu"
         onClick={() => setOpen((v) => !v)}
-        className="inline-flex max-w-56 min-h-10 items-center gap-2 rounded-full border border-slate-200/90 bg-white px-3 py-2 text-left text-sm font-semibold text-[#0c192f] shadow-sm transition hover:border-emerald-200/90 sm:min-h-0 sm:py-1.5"
+        className={`inline-flex max-w-56 min-h-10 items-center gap-2 rounded-full border bg-white px-3 py-2 text-left text-sm font-semibold text-[#0c192f] shadow-sm transition sm:min-h-0 sm:py-1.5 ${
+          showConsentPrompt
+            ? "border-amber-300/90 hover:border-amber-400/90"
+            : "border-slate-200/90 hover:border-emerald-200/90"
+        }`}
+        aria-describedby={
+          showConsentPrompt ? "account-consent-cue" : undefined
+        }
       >
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#0c192f] to-[#047857] text-xs font-bold text-white">
+        <span className="relative flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-[#0c192f] to-[#047857] text-xs font-bold text-white">
           {label.slice(0, 1).toUpperCase()}
+          {showConsentPrompt ? (
+            <span
+              className="absolute -top-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-amber-500 ring-2 ring-white"
+              aria-hidden
+            />
+          ) : null}
         </span>
+        {showConsentPrompt ? (
+          <span id="account-consent-cue" className="sr-only">
+            Advisor consent pending — open notifications or More → Privacy &amp;
+            Advisor Access
+          </span>
+        ) : null}
         <span className="min-w-0 flex-1 truncate">{label}</span>
         <span className="text-slate-400" aria-hidden>
           ▾
@@ -71,6 +94,23 @@ export function AppShellUserMenu({
                 menuButtonClassName={contactMenuRowClass}
                 onOpened={() => setOpen(false)}
               />
+            </div>
+          ) : null}
+          {showConsentPrompt ? (
+            <div className="px-0 py-0.5">
+              <Link
+                href="/more#privacy-advisor-access"
+                role="menuitem"
+                onClick={() => setOpen(false)}
+                className={`${menuRowClass} text-amber-950 hover:bg-amber-50`}
+              >
+                <span className="flex min-w-0 flex-col gap-0.5">
+                  <span className="font-semibold">Advisor consent pending</span>
+                  <span className="text-xs font-normal text-amber-800/90">
+                    Review in Privacy &amp; Advisor Access
+                  </span>
+                </span>
+              </Link>
             </div>
           ) : null}
           {inboxSlot ? <div className="px-0 py-0.5">{inboxSlot}</div> : null}

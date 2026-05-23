@@ -6,6 +6,7 @@ import {
 import { getMyConsentStatusForAdvisor } from "@/data/repositories/advisor-clients";
 import { getMyAdvisorContact } from "@/data/repositories/coupons";
 import { ClientConsentControl } from "@/features/consent/ClientConsentControl";
+import { ClientConsentMorePrompt } from "@/features/more/ClientConsentMorePrompt";
 import { OpenMethodologyButton } from "@/features/help/OpenMethodologyButton";
 import { CLIENT_UI_VERSION_LABEL } from "@/lib/client-release";
 import { isClient } from "@/lib/profile-role";
@@ -50,6 +51,12 @@ export default async function MorePage() {
           page changes your financial data.
         </p>
       </header>
+
+      {showConsent && consentStatus !== "active" ? (
+        <ClientConsentMorePrompt
+          status={consentStatus === "withdrawn" ? "withdrawn" : "none"}
+        />
+      ) : null}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Link

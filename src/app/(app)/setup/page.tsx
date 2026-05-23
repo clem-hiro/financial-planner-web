@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   num,
   profileAnnualSalaryGrowthNominal,
@@ -35,28 +36,13 @@ import { BudgetLensProfileForm } from "@/features/setup/BudgetLensProfileForm";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth, parseYearMonth, yearFromYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
-import { setupTabPath } from "@/lib/setup-urls";
+import { SETUP_OVERVIEW_PATH, setupTabPath } from "@/lib/setup-urls";
+import { buildSetupTabs } from "@/lib/setup-tabs";
 import { shouldPromptCpfRulesReview } from "@/domain/finance/cpf-rules-review";
 import { shouldPromptInvestmentReview } from "@/domain/finance/investment-review";
 import { birthDateIsValidPast } from "@/lib/validation";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { PageSection } from "@/ui/PageSection";
-
-type SetupTabDef = { id: string; label: string };
-
-function buildSetupTabs(): readonly SetupTabDef[] {
-  return [
-    { id: "profile", label: "Profile" },
-    { id: "add-account", label: "Investments" },
-    { id: "cpf", label: "CPF" },
-    { id: "income_tax", label: "Income tax" },
-    { id: "cash-liabilities", label: "Cash and debts" },
-    { id: "housing", label: "Housing" },
-    { id: "vehicles", label: "Vehicles" },
-    { id: "budget", label: "Budget" },
-    { id: "goals", label: "Goals" },
-  ] as const;
-}
 
 type PageProps = {
   searchParams: Promise<{ tab?: string; month?: string; year?: string }>;
@@ -84,13 +70,18 @@ export default async function SetupPage({ searchParams }: PageProps) {
     );
   }
 
-  const setupTabs = buildSetupTabs();
-
   const sp = await searchParams;
+  if (!sp.tab && !sp.month && !sp.year) {
+    redirect(SETUP_OVERVIEW_PATH);
+  }
+
+  const setupTabs = buildSetupTabs();
   const tabParam =
     sp.tab === "housing-loans" ? "housing" : sp.tab;
   const activeTab =
     tabParam && setupTabs.some((t) => t.id === tabParam) ? tabParam : "profile";
+  const activeTabLabel =
+    setupTabs.find((t) => t.id === activeTab)?.label ?? "Profile";
   const budgetMonth =
     sp.month && parseYearMonth(sp.month)
       ? sp.month
@@ -184,13 +175,27 @@ export default async function SetupPage({ searchParams }: PageProps) {
   return (
     <div className="flex flex-col gap-5 sm:gap-8">
       <div className="order-1 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm sm:px-6 sm:py-5">
-        <h1 className="text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl">
-          Financial setup
-        </h1>
-        <p className="mt-1 text-sm text-zinc-600">
-          Keep balances, budgets, savings goals, and profile assumptions in one place.
-        </p>
-        <p className="mt-2 flex flex-wrap gap-x-3 text-xs text-zinc-600">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+              Financial setup
+            </p>
+            <h1 className="mt-1 text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl">
+              Edit {activeTabLabel}
+            </h1>
+            <p className="mt-1 text-sm text-zinc-600">
+              This is one setup section. Use Overview to see progress and the
+              next recommended step.
+            </p>
+          </div>
+          <Link
+            href={SETUP_OVERVIEW_PATH}
+            className="inline-flex shrink-0 items-center text-sm font-semibold text-slate-600 transition hover:text-slate-900"
+          >
+            Back to overview →
+          </Link>
+        </div>
+        <p className="mt-3 flex flex-wrap gap-x-3 text-xs text-zinc-600">
           <MethodologyOpenLink topicId="net-worth" className={appInlineLinkClass}>
             Net worth methodology →
           </MethodologyOpenLink>
@@ -201,6 +206,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
         <SetupTabsNav
           tabs={setupTabs}
           activeTab={activeTab}
+          overviewHref={SETUP_OVERVIEW_PATH}
           buildHref={(tabId) => setupTabPath(tabId, sp)}
         />
       </div>
@@ -417,34 +423,6 @@ export default async function SetupPage({ searchParams }: PageProps) {
       ) : null}
       </div>
 
-      <section className="order-4 grid gap-2.5 sm:order-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
-        <div className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs">
-            Core setup
-          </p>
-          <p className="mt-0.5 text-sm text-slate-700 sm:mt-1">
-            Profile, CPF, balances, budget, goals.
-          </p>
-        </div>
-        <div className="rounded-xl border border-dashed border-slate-300/90 bg-slate-50/90 p-3 sm:p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 sm:text-xs">
-            Risk scoring
-          </p>
-          <p className="mt-0.5 text-sm font-medium text-slate-500 sm:mt-1">Coming soon</p>
-        </div>
-        <div className="rounded-xl border border-dashed border-slate-300/90 bg-slate-50/90 p-3 sm:p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 sm:text-xs">
-            Portfolio insights
-          </p>
-          <p className="mt-0.5 text-sm font-medium text-slate-500 sm:mt-1">Work in progress</p>
-        </div>
-        <div className="rounded-xl border border-dashed border-slate-300/90 bg-slate-50/90 p-3 sm:p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 sm:text-xs">
-            Automation
-          </p>
-          <p className="mt-0.5 text-sm font-medium text-slate-500 sm:mt-1">Coming soon</p>
-        </div>
-      </section>
     </div>
   );
 }

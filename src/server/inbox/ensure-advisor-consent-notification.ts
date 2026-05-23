@@ -18,8 +18,9 @@ export type ConsentPromptProfile = {
  * Layout-time gate for the consent-first re-consent prompt. For a linked
  * client whose latest consent event is NOT active (never granted, or
  * withdrawn), ensures one inbox row exists (deduped per advisor) and returns
- * `true` so the shell renders the consent banner. The
- * `recordAdvisorConsentAction` grant path clears the same dedupe key.
+ * `true` so the shell can show the compact consent strip and account-menu cue
+ * (independent of whether the inbox row has been marked read).
+ * The `recordAdvisorConsentAction` grant path clears the same dedupe key.
  *
  * Skipped while the client is still in onboarding so consent is only surfaced
  * after they finish setup.

@@ -18,7 +18,7 @@ export const SETUP_MODULE_GROUP_LABELS: Record<SetupModuleGroupId, string> = {
   core: "Core",
   protection: "Protection",
   future: "Future Planning",
-  advisor_system: "Advisor & System",
+  advisor_system: "Records & Readiness",
 };
 
 export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
@@ -40,11 +40,11 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     title: "Income & Expenses",
     description: "Take-home income, budget lines, and monthly spend rhythm.",
     icon: "💵",
-    href: "/planning/cash-flow",
+    href: "/setup?tab=budget",
     priority: 20,
     recommendReason:
       "Cash-flow and safe-to-spend stay approximate until income and expenses are set.",
-    ctaLabel: "Set cash flow",
+    ctaLabel: "Review budget",
   },
   {
     id: "loans",
@@ -64,7 +64,7 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     title: "Emergency Funds",
     description: "Liquid cash buffers for three to six months of essential spend.",
     icon: "🛟",
-    href: "/planning/wealth",
+    href: "/setup?tab=cash-liabilities",
     priority: 30,
     recommendReason:
       "Track cash accounts so resilience and safe-to-spend reflect real liquidity.",
@@ -80,7 +80,7 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     priority: 50,
     recommendReason:
       "Your protection analysis may be inaccurate without insurance data.",
-    ctaLabel: "Open protection",
+    ctaLabel: "View protection workspace",
   },
   {
     id: "dependents",
@@ -92,7 +92,7 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     priority: 110,
     recommendReason:
       "Dependents affect coverage needs and long-term cash-flow planning.",
-    ctaLabel: "Plan protection",
+    ctaLabel: "View dependents roadmap",
   },
   {
     id: "estate",
@@ -104,7 +104,7 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     priority: 120,
     recommendReason:
       "Estate readiness helps advisors align liquidity and beneficiary intent.",
-    ctaLabel: "View checklist",
+    ctaLabel: "View estate roadmap",
   },
   {
     id: "investments",
@@ -172,11 +172,11 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     title: "Documents",
     description: "Statements, policies, and deeds in one secure place.",
     icon: "🗄️",
-    href: "/more",
+    href: "/planning/future",
     priority: 130,
     recommendReason:
       "Uploading key documents speeds up advisor reviews when the vault ships.",
-    ctaLabel: "Learn more",
+    ctaLabel: "View documents roadmap",
   },
 ] as const;
 

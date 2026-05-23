@@ -2,7 +2,7 @@
 
 # Function tree — `src/domain`
 
-90 module(s).
+91 module(s).
 
 ## Modules
 
@@ -28,6 +28,7 @@
 | [`src/domain/finance/budget-review.test.ts`](#src-domain-finance-budget-review-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/budget-review.ts`](#src-domain-finance-budget-review-ts) | `regular` | 1 | 0 |
 | [`src/domain/finance/budget.ts`](#src-domain-finance-budget-ts) | `regular` | 9 | 7 |
+| [`src/domain/finance/cash-account-history.ts`](#src-domain-finance-cash-account-history-ts) | `regular` | 1 | 1 |
 | [`src/domain/finance/cash-account-purpose.test.ts`](#src-domain-finance-cash-account-purpose-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/cash-account-purpose.ts`](#src-domain-finance-cash-account-purpose-ts) | `regular` | 2 | 0 |
 | [`src/domain/finance/cash-flow-accrual.test.ts`](#src-domain-finance-cash-flow-accrual-test-ts) | `regular` | 1 | 1 |
@@ -482,6 +483,15 @@ Classification: `regular`
 #### `topOverBudgetCategories` — function, L218
 
 - called by: `src/data/dashboard.ts#getDashboardPayload`, `src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth`
+
+### `src/domain/finance/cash-account-history.ts` <a id="src-domain-finance-cash-account-history-ts"></a>
+
+Classification: `regular`
+
+#### `buildCashHistoryByAccountId` — function, L10
+
+- calls: `src/data/mappers.ts#num`
+- called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
 ### `src/domain/finance/cash-account-purpose.test.ts` <a id="src-domain-finance-cash-account-purpose-test-ts"></a>
 

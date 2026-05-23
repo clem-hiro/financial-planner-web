@@ -29,7 +29,7 @@ export function SetupModuleStatusBadge({
   const meta = STATUS_META[status];
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] ${meta.className}`}
+      className={`inline-flex shrink-0 items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] ${meta.className}`}
     >
       <span aria-hidden>{meta.icon}</span>
       {meta.label}

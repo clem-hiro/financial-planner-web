@@ -548,7 +548,7 @@ _No top-level functions detected._
 
 Classification: `regular`
 
-#### `ensureAndCheckClientConsentPrompt` — function, L26
+#### `ensureAndCheckClientConsentPrompt` — function, L31
 
 - calls: `src/data/repositories/advisor-clients.ts#getMyConsentStatusForAdvisor`, `src/data/repositories/inbox-notifications.ts#upsertByDedupeKey`
 - called by: `src/app/(app)/layout.tsx#AppLayout`

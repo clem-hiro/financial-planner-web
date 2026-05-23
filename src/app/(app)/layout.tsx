@@ -36,8 +36,8 @@ export default async function AppLayout({
           <AppShellInbox userId={user.id} profile={profile} />
         </Suspense>
       );
-      // Ensure the re-consent inbox prompt + drive the shell banner. Non-
-      // client / unlinked short-circuits with zero DB hops.
+      // Ensure the re-consent inbox prompt + subtle account-menu cue. Non-client /
+      // unlinked short-circuits with zero DB hops.
       const supabase = await getSupabaseServerClient();
       clientConsentNeeded = await ensureAndCheckClientConsentPrompt(
         supabase,

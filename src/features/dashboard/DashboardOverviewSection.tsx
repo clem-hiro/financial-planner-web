@@ -111,7 +111,10 @@ export function DashboardOverviewSection({
           </ul>
         </details>
         <p className="relative mt-2 text-xs text-slate-500">
-          <Link href="/setup#balances-accounts" className={appInlineLinkClass}>
+          <Link
+            href="/setup?tab=add-account#add-investment"
+            className={appInlineLinkClass}
+          >
             Setup
           </Link>
           <span className="text-slate-400"> · </span>
