@@ -779,6 +779,26 @@
       "readme_section": "External dependencies",
       "status": "pending",
       "summary": "integration change in src/features/advisor/AdvisorClientDetailNav.tsx \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-23T11:27:43Z",
+      "trigger_file": "supabase/migrations/20260623000000_unique_entity_names.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260623000000_unique_entity_names.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-23T11:46:42Z",
+      "trigger_file": "supabase/tests/unique_entity_names_scenarios.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/tests/unique_entity_names_scenarios.sql \u2014 Data model (readme) may be stale"
     }
   ]
 }
