@@ -37,7 +37,7 @@
 | `src/app/(app)/review/proposal/[id]/page.tsx` | `src/app` | `page` | 1 | 17 |
 | `src/app/(app)/setup/loading.tsx` | `src/app` | `loading` | 1 | 1 |
 | `src/app/(app)/setup/overview/page.tsx` | `src/app` | `page` | 1 | 4 |
-| `src/app/(app)/setup/page.tsx` | `src/app` | `page` | 2 | 35 |
+| `src/app/(app)/setup/page.tsx` | `src/app` | `page` | 1 | 37 |
 | `src/app/(app)/spending/page.tsx` | `src/app` | `page` | 1 | 1 |
 | `src/app/api/budget/route.ts` | `src/app` | `route-handler` | 1 | 13 |
 | `src/app/api/dashboard/route.ts` | `src/app` | `route-handler` | 1 | 10 |
@@ -68,7 +68,8 @@
 | `src/data/liability-budget-sync.ts` | `src/data` | `regular` | 2 | 12 |
 | `src/data/mappers.ts` | `src/data` | `regular` | 17 | 23 |
 | `src/data/projection.ts` | `src/data` | `regular` | 6 | 10 |
-| `src/data/repositories/advisor-access-keys.ts` | `src/data` | `regular` | 3 | 9 |
+| `src/data/repositories/advisor-access-keys.test.ts` | `src/data` | `regular` | 1 | 0 |
+| `src/data/repositories/advisor-access-keys.ts` | `src/data` | `regular` | 4 | 9 |
 | `src/data/repositories/advisor-clients.test.ts` | `src/data` | `regular` | 6 | 0 |
 | `src/data/repositories/advisor-clients.ts` | `src/data` | `regular` | 7 | 21 |
 | `src/data/repositories/advisor-dashboard.test.ts` | `src/data` | `regular` | 2 | 0 |
@@ -119,6 +120,7 @@
 | `src/domain/finance/budget-review.test.ts` | `src/domain` | `regular` | 0 | 0 |
 | `src/domain/finance/budget-review.ts` | `src/domain` | `regular` | 1 | 0 |
 | `src/domain/finance/budget.ts` | `src/domain` | `regular` | 9 | 7 |
+| `src/domain/finance/cash-account-history.ts` | `src/domain` | `regular` | 1 | 1 |
 | `src/domain/finance/cash-account-purpose.test.ts` | `src/domain` | `regular` | 0 | 0 |
 | `src/domain/finance/cash-account-purpose.ts` | `src/domain` | `regular` | 2 | 0 |
 | `src/domain/finance/cash-flow-accrual.test.ts` | `src/domain` | `regular` | 1 | 1 |
@@ -253,7 +255,7 @@
 | `src/features/expenses/ExpenseEditRow.tsx` | `src/features` | `client-component` | 1 | 12 |
 | `src/features/expenses/ExpenseForm.tsx` | `src/features` | `client-component` | 1 | 8 |
 | `src/features/expenses/ExpenseMonthJump.tsx` | `src/features` | `client-component` | 1 | 5 |
-| `src/features/goals/CashAndLiabilitiesPanels.tsx` | `src/features` | `client-component` | 8 | 29 |
+| `src/features/goals/CashAndLiabilitiesPanels.tsx` | `src/features` | `client-component` | 7 | 28 |
 | `src/features/goals/CpfBalancesForm.tsx` | `src/features` | `client-component` | 2 | 13 |
 | `src/features/goals/FinancialGoalsPanels.tsx` | `src/features` | `regular` | 1 | 17 |
 | `src/features/goals/GoalEditForm.tsx` | `src/features` | `client-component` | 1 | 2 |
@@ -293,13 +295,13 @@
 | `src/features/planning/sections/WealthPlanningSection.tsx` | `src/features` | `regular` | 1 | 20 |
 | `src/features/proposals/ProposalProjectionCompare.tsx` | `src/features` | `client-component` | 1 | 1 |
 | `src/features/proposals/ProposalReviewView.tsx` | `src/features` | `client-component` | 4 | 12 |
-| `src/features/setup-hub/FinancialSetupHub.tsx` | `src/features` | `regular` | 1 | 4 |
+| `src/features/setup-hub/FinancialSetupHub.tsx` | `src/features` | `regular` | 1 | 6 |
 | `src/features/setup-hub/SetupModuleCard.tsx` | `src/features` | `regular` | 3 | 5 |
 | `src/features/setup-hub/SetupModuleStatusBadge.tsx` | `src/features` | `regular` | 1 | 0 |
 | `src/features/setup-hub/SetupProgressCard.tsx` | `src/features` | `regular` | 1 | 0 |
 | `src/features/setup-hub/SetupRecommendedNextStep.tsx` | `src/features` | `regular` | 1 | 1 |
 | `src/features/setup/BudgetLensProfileForm.tsx` | `src/features` | `client-component` | 5 | 21 |
-| `src/features/setup/SetupTabsNav.tsx` | `src/features` | `regular` | 1 | 1 |
+| `src/features/setup/SetupTabsNav.tsx` | `src/features` | `regular` | 1 | 2 |
 | `src/features/spend/SpendGuidancePanel.tsx` | `src/features` | `regular` | 1 | 0 |
 | `src/lib/advisor-access-key-token.ts` | `src/lib` | `regular` | 2 | 1 |
 | `src/lib/body-scroll-lock.ts` | `src/lib` | `regular` | 2 | 1 |
@@ -318,6 +320,7 @@
 | `src/lib/qr-svg.ts` | `src/lib` | `regular` | 1 | 1 |
 | `src/lib/relative-time.test.ts` | `src/lib` | `regular` | 0 | 0 |
 | `src/lib/relative-time.ts` | `src/lib` | `regular` | 1 | 0 |
+| `src/lib/setup-tabs.ts` | `src/lib` | `regular` | 1 | 0 |
 | `src/lib/setup-urls.ts` | `src/lib` | `regular` | 5 | 7 |
 | `src/lib/site-origin.test.ts` | `src/lib` | `regular` | 2 | 2 |
 | `src/lib/site-origin.ts` | `src/lib` | `regular` | 3 | 3 |

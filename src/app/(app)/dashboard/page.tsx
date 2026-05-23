@@ -147,7 +147,7 @@ export default async function DashboardPage() {
           Complete your financial profile to improve savings rate and projection
           quality.
           <div className="mt-2">
-            <Link href="/setup" className="underline">
+            <Link href="/setup?tab=profile#profile-assumptions" className="underline">
               Complete your financial profile
             </Link>
           </div>

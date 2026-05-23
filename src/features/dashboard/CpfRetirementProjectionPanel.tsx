@@ -249,7 +249,10 @@ export function CpfRetirementProjectionPanel({
         </h3>
         <p className="mt-2 text-sm leading-relaxed text-slate-600">
           Add your{" "}
-          <Link href="/setup" className={appInlineLinkClass}>
+          <Link
+            href="/setup?tab=profile#profile-assumptions"
+            className={appInlineLinkClass}
+          >
             birth date in Setup
           </Link>{" "}
           to see how your CPF may be set aside at age 55 and what CPF LIFE could

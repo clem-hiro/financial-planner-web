@@ -2,7 +2,7 @@
 
 # Function tree — `src/data`
 
-44 module(s).
+45 module(s).
 
 ## Modules
 
@@ -21,7 +21,8 @@
 | [`src/data/liability-budget-sync.ts`](#src-data-liability-budget-sync-ts) | `regular` | 2 | 12 |
 | [`src/data/mappers.ts`](#src-data-mappers-ts) | `regular` | 17 | 23 |
 | [`src/data/projection.ts`](#src-data-projection-ts) | `regular` | 6 | 10 |
-| [`src/data/repositories/advisor-access-keys.ts`](#src-data-repositories-advisor-access-keys-ts) | `regular` | 3 | 9 |
+| [`src/data/repositories/advisor-access-keys.test.ts`](#src-data-repositories-advisor-access-keys-test-ts) | `regular` | 1 | 0 |
+| [`src/data/repositories/advisor-access-keys.ts`](#src-data-repositories-advisor-access-keys-ts) | `regular` | 4 | 9 |
 | [`src/data/repositories/advisor-clients.test.ts`](#src-data-repositories-advisor-clients-test-ts) | `regular` | 6 | 0 |
 | [`src/data/repositories/advisor-clients.ts`](#src-data-repositories-advisor-clients-ts) | `regular` | 7 | 21 |
 | [`src/data/repositories/advisor-dashboard.test.ts`](#src-data-repositories-advisor-dashboard-test-ts) | `regular` | 2 | 0 |
@@ -175,7 +176,7 @@ Classification: `regular`
 
 #### `num` — function, L22
 
-- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/onboarding/page.tsx#OnboardingPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/profile/route.ts#PATCH`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/dashboard.ts#housingLoanToProjection`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/data/mappers.ts#budgetLineRowToDomain`, `src/data/mappers.ts#expenseRowToBudgetExpense`, `src/data/mappers.ts#incomeTaxConfigRowToDomain`, `src/data/mappers.ts#investmentValues`, `src/data/mappers.ts#profileAnnualBonus`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileExpenseGrowthNominal`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileMonthlyIncome`, `src/data/mappers.ts#profileRetirementWithdrawalRateAnnual`, `src/data/mappers.ts#sumExpenseAmounts`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/mappers.ts#vehicleRowToValuationInput`, `src/data/projection.ts#aggregateInvestments`, `src/data/projection.ts#resolveProjectionSnapshot`, `src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap`, `src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow`, `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`, `src/domain/housing/compose.ts#loanToMortgage`, `src/domain/housing/compose.ts#propertyRowToView`, `src/domain/housing/compose.ts#syntheticPropertyFromLoan`, `src/domain/setup/evaluators.ts#evaluateCpf`, `src/domain/setup/evaluators.ts#evaluateEmergencyFunds`, `src/domain/setup/evaluators.ts#evaluateIncomeExpenses`, `src/domain/setup/evaluators.ts#evaluateRetirement`, `src/domain/setup/evaluators.ts#housingLoanIsComplete`, `src/domain/setup/evaluators.ts#liabilityIsComplete`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`, `src/features/expenses/ExpenseEditRow.tsx#ExpenseEditRow`, `src/features/goals/CashAndLiabilitiesPanels.tsx#buildCashHistoryByAccountId`, `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm`, `src/features/goals/HousingLoansPanel.tsx#HousingPanel`, `src/features/income-tax/IncomeTaxForm.tsx#IncomeTaxForm`, `src/features/income-tax/IncomeTaxForm.tsx#initialValues`, `src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
+- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/onboarding/page.tsx#OnboardingPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/profile/route.ts#PATCH`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/dashboard.ts#housingLoanToProjection`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/data/mappers.ts#budgetLineRowToDomain`, `src/data/mappers.ts#expenseRowToBudgetExpense`, `src/data/mappers.ts#incomeTaxConfigRowToDomain`, `src/data/mappers.ts#investmentValues`, `src/data/mappers.ts#profileAnnualBonus`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileExpenseGrowthNominal`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileMonthlyIncome`, `src/data/mappers.ts#profileRetirementWithdrawalRateAnnual`, `src/data/mappers.ts#sumExpenseAmounts`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/mappers.ts#vehicleRowToValuationInput`, `src/data/projection.ts#aggregateInvestments`, `src/data/projection.ts#resolveProjectionSnapshot`, `src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap`, `src/domain/finance/cash-account-history.ts#buildCashHistoryByAccountId`, `src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow`, `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`, `src/domain/housing/compose.ts#loanToMortgage`, `src/domain/housing/compose.ts#propertyRowToView`, `src/domain/housing/compose.ts#syntheticPropertyFromLoan`, `src/domain/setup/evaluators.ts#evaluateCpf`, `src/domain/setup/evaluators.ts#evaluateEmergencyFunds`, `src/domain/setup/evaluators.ts#evaluateIncomeExpenses`, `src/domain/setup/evaluators.ts#evaluateRetirement`, `src/domain/setup/evaluators.ts#housingLoanIsComplete`, `src/domain/setup/evaluators.ts#liabilityIsComplete`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`, `src/features/expenses/ExpenseEditRow.tsx#ExpenseEditRow`, `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm`, `src/features/goals/HousingLoansPanel.tsx#HousingPanel`, `src/features/income-tax/IncomeTaxForm.tsx#IncomeTaxForm`, `src/features/income-tax/IncomeTaxForm.tsx#initialValues`, `src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
 #### `sumPlannedMonthlyGoalContributions` — function, L29
 
@@ -286,21 +287,33 @@ Classification: `regular`
 - calls: `src/domain/finance/investment-portfolio-fv.ts#calculateTimeToGoalInvestmentPortfolio`, `src/domain/finance/projection.ts#calculateTimeToGoal`
 - called by: `src/app/api/projection/route.ts#GET`
 
+### `src/data/repositories/advisor-access-keys.test.ts` <a id="src-data-repositories-advisor-access-keys-test-ts"></a>
+
+Classification: `regular`
+
+#### `key` — function, L5
+
+_No tracked edges._
+
 ### `src/data/repositories/advisor-access-keys.ts` <a id="src-data-repositories-advisor-access-keys-ts"></a>
 
 Classification: `regular`
 
-#### `listAdvisorAccessKeysForAdvisor` — function, L11
+#### `sortAdvisorAccessKeysForDisplay` — function, L18
 
-- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
+- called by: `src/data/repositories/advisor-access-keys.ts#listAdvisorAccessKeysForAdvisor`
+
+#### `listAdvisorAccessKeysForAdvisor` — function, L29
+
+- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `src/data/repositories/advisor-access-keys.ts#sortAdvisorAccessKeysForDisplay`
 - called by: `src/features/advisor/AdvisorAccessKeysSection.tsx#AdvisorAccessKeysSection`, `src/server/advisor-access-key-actions.ts#generateAdvisorAccessKeysPocAction`
 
-#### `countAdvisorAccessKeyStatuses` — function, L24
+#### `countAdvisorAccessKeyStatuses` — function, L41
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
 - called by: `src/data/repositories/advisor-dashboard.ts#getAdvisorDashboardData`, `src/features/advisor/AdvisorAccessKeysSection.tsx#AdvisorAccessKeysSection`
 
-#### `insertAdvisorAccessKeys` — function, L48
+#### `insertAdvisorAccessKeys` — function, L65
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
 - called by: `src/server/advisor-access-key-actions.ts#generateAdvisorAccessKeysPocAction`

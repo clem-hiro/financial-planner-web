@@ -306,7 +306,7 @@ export function DashboardRetirementSection({
                 )}
               </div>
               <Link
-                href="/setup"
+                href="/setup?tab=profile#profile-assumptions"
                 className={`inline-flex min-h-10 shrink-0 items-center text-xs font-medium touch-manipulation ${appInlineLinkClass} sm:min-h-0`}
               >
                 Edit profile assumptions →
@@ -509,7 +509,7 @@ export function DashboardRetirementSection({
               <p className="mt-3 text-xs text-emerald-900">
                 Add a <strong>monthly spend in retirement</strong> in{" "}
                 <Link
-                  href="/setup"
+                  href="/setup?tab=profile#profile-assumptions"
                   className={appInlineLinkClass}
                 >
                   Setup
@@ -620,7 +620,7 @@ export function DashboardRetirementSection({
         <p className="mt-2 text-sm text-emerald-900">
           Set your <strong>birth date</strong> in{" "}
           <Link
-            href="/setup"
+            href="/setup?tab=profile#profile-assumptions"
             className={appInlineLinkClass}
           >
             Setup

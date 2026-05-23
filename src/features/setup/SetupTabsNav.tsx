@@ -16,10 +16,12 @@ export function SetupTabsNav({
   tabs,
   activeTab,
   buildHref,
+  overviewHref,
 }: {
   tabs: readonly SetupTab[];
   activeTab: string;
   buildHref: (tabId: string) => string;
+  overviewHref?: string;
 }) {
   return (
     <nav
@@ -30,6 +32,20 @@ export function SetupTabsNav({
         <div
           className={`inline-flex min-w-max snap-x snap-mandatory flex-nowrap items-center gap-2 sm:min-w-0 sm:flex-wrap sm:gap-1.5 ${appTabRailClass} max-sm:rounded-2xl max-sm:border-0 max-sm:bg-transparent max-sm:p-0 max-sm:shadow-none max-sm:ring-0`}
         >
+          {overviewHref ? (
+            <Link
+              href={overviewHref}
+              aria-current={activeTab === "overview" ? "page" : undefined}
+              className={`${appTabPillClass} max-sm:min-h-9 max-sm:px-3.5 max-sm:py-1.5 max-sm:text-[13px] ${
+                activeTab === "overview"
+                  ? appTabPillActiveClass
+                  : `${appTabPillInactiveClass} max-sm:bg-slate-100/80 max-sm:text-slate-500 max-sm:hover:bg-slate-100 max-sm:hover:text-slate-700`
+              }`}
+              style={activeTab === "overview" ? appActiveGradientStyle : undefined}
+            >
+              Overview
+            </Link>
+          ) : null}
           {tabs.map((tab) => {
             const href = buildHref(tab.id);
             const isActive = activeTab === tab.id;

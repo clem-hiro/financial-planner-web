@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   num,
   profileAnnualSalaryGrowthNominal,
@@ -7,7 +8,6 @@ import {
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
 } from "@/data/mappers";
-import { listProposalsForClient } from "@/data/repositories/advisor-proposals";
 import { listBudgetLines } from "@/data/repositories/budget-lines";
 import { getIncomeTaxConfig } from "@/data/repositories/income-tax-configs";
 import { countReplaceableMonthlyBudgetLines } from "@/domain/finance/budget-guided-setup";
@@ -19,7 +19,6 @@ import {
   CashAndLiabilitiesPanels,
   type CashAccountBalanceRow,
 } from "@/features/goals/CashAndLiabilitiesPanels";
-import { buildCashHistoryByAccountId } from "@/features/goals/cash-history";
 import { CpfBalancesForm } from "@/features/goals/CpfBalancesForm";
 import { HousingPanel } from "@/features/goals/HousingLoansPanel";
 import {
@@ -34,33 +33,16 @@ import { loadSetupTabBundle } from "@/features/planning/load-setup-tab-bundle";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { SetupTabsNav } from "@/features/setup/SetupTabsNav";
 import { BudgetLensProfileForm } from "@/features/setup/BudgetLensProfileForm";
-import { ClientProposalsView } from "@/features/proposals/ClientProposalsView";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth, parseYearMonth, yearFromYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
-import { setupTabPath } from "@/lib/setup-urls";
+import { SETUP_OVERVIEW_PATH, setupTabPath } from "@/lib/setup-urls";
+import { buildSetupTabs } from "@/lib/setup-tabs";
 import { shouldPromptCpfRulesReview } from "@/domain/finance/cpf-rules-review";
 import { shouldPromptInvestmentReview } from "@/domain/finance/investment-review";
 import { birthDateIsValidPast } from "@/lib/validation";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { PageSection } from "@/ui/PageSection";
-
-type SetupTabDef = { id: string; label: string };
-
-function buildSetupTabs(): readonly SetupTabDef[] {
-  return [
-    { id: "profile", label: "Profile" },
-    { id: "add-account", label: "Investments" },
-    { id: "cpf", label: "CPF" },
-    { id: "income_tax", label: "Income tax" },
-    { id: "cash-liabilities", label: "Cash and debts" },
-    { id: "housing", label: "Housing" },
-    { id: "vehicles", label: "Vehicles" },
-    { id: "budget", label: "Budget" },
-    { id: "goals", label: "Goals" },
-    { id: "advisor-proposals", label: "Advisor proposals" },
-  ] as const;
-}
 
 type PageProps = {
   searchParams: Promise<{ tab?: string; month?: string; year?: string }>;
@@ -88,13 +70,18 @@ export default async function SetupPage({ searchParams }: PageProps) {
     );
   }
 
-  const setupTabs = buildSetupTabs();
-
   const sp = await searchParams;
+  if (!sp.tab && !sp.month && !sp.year) {
+    redirect(SETUP_OVERVIEW_PATH);
+  }
+
+  const setupTabs = buildSetupTabs();
   const tabParam =
     sp.tab === "housing-loans" ? "housing" : sp.tab;
   const activeTab =
     tabParam && setupTabs.some((t) => t.id === tabParam) ? tabParam : "profile";
+  const activeTabLabel =
+    setupTabs.find((t) => t.id === activeTab)?.label ?? "Profile";
   const budgetMonth =
     sp.month && parseYearMonth(sp.month)
       ? sp.month
@@ -107,19 +94,15 @@ export default async function SetupPage({ searchParams }: PageProps) {
       ? budgetYearParsed
       : yearFromYearMonth(budgetMonth);
 
-  const [tabBundle, incomeTaxConfig, budgetLinesForLens, advisorProposals] =
-    await Promise.all([
-      loadSetupTabBundle(supabase, user.id, new Set([activeTab])),
-      activeTab === "income_tax"
-        ? getIncomeTaxConfig(supabase, user.id)
-        : Promise.resolve(null),
-      activeTab === "profile"
-        ? listBudgetLines(supabase, user.id)
-        : Promise.resolve([]),
-      activeTab === "advisor-proposals"
-        ? listProposalsForClient(supabase, user.id, 25)
-        : Promise.resolve([]),
-    ]);
+  const [tabBundle, incomeTaxConfig, budgetLinesForLens] = await Promise.all([
+    loadSetupTabBundle(supabase, user.id, new Set([activeTab])),
+    activeTab === "income_tax"
+      ? getIncomeTaxConfig(supabase, user.id)
+      : Promise.resolve(null),
+    activeTab === "profile"
+      ? listBudgetLines(supabase, user.id)
+      : Promise.resolve([]),
+  ]);
   const replaceableMonthlyLineCount =
     activeTab === "profile"
       ? countReplaceableMonthlyBudgetLines(budgetLinesForLens)
@@ -192,13 +175,27 @@ export default async function SetupPage({ searchParams }: PageProps) {
   return (
     <div className="flex flex-col gap-5 sm:gap-8">
       <div className="order-1 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm sm:px-6 sm:py-5">
-        <h1 className="text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl">
-          Financial setup
-        </h1>
-        <p className="mt-1 text-sm text-zinc-600">
-          Keep balances, budgets, savings goals, and profile assumptions in one place.
-        </p>
-        <p className="mt-2 flex flex-wrap gap-x-3 text-xs text-zinc-600">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+              Financial setup
+            </p>
+            <h1 className="mt-1 text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl">
+              Edit {activeTabLabel}
+            </h1>
+            <p className="mt-1 text-sm text-zinc-600">
+              This is one setup section. Use Overview to see progress and the
+              next recommended step.
+            </p>
+          </div>
+          <Link
+            href={SETUP_OVERVIEW_PATH}
+            className="inline-flex shrink-0 items-center text-sm font-semibold text-slate-600 transition hover:text-slate-900"
+          >
+            Back to overview →
+          </Link>
+        </div>
+        <p className="mt-3 flex flex-wrap gap-x-3 text-xs text-zinc-600">
           <MethodologyOpenLink topicId="net-worth" className={appInlineLinkClass}>
             Net worth methodology →
           </MethodologyOpenLink>
@@ -209,6 +206,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
         <SetupTabsNav
           tabs={setupTabs}
           activeTab={activeTab}
+          overviewHref={SETUP_OVERVIEW_PATH}
           buildHref={(tabId) => setupTabPath(tabId, sp)}
         />
       </div>
@@ -423,53 +421,8 @@ export default async function SetupPage({ searchParams }: PageProps) {
           />
         </div>
       ) : null}
-
-      {activeTab === "advisor-proposals" ? (
-        <div className="transition-opacity duration-150 ease-out">
-          <PageSection
-            id="advisor-proposals"
-            title="Advisor proposals"
-            description="Plan suggestions from your advisor — pending, accepted, rejected, and withdrawn. Always available here, even after you dismiss the inbox notification."
-          >
-            <ClientProposalsView proposals={advisorProposals} />
-          </PageSection>
-        </div>
-      ) : null}
       </div>
 
-      <section className="order-4 grid gap-2.5 sm:order-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4">
-        <div className="rounded-xl border border-slate-200 bg-white p-3 sm:p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs">
-            Core setup
-          </p>
-          <p className="mt-0.5 text-sm text-slate-700 sm:mt-1">
-            Profile, CPF, balances, budget, goals.
-          </p>
-        </div>
-        <div className="rounded-xl border border-dashed border-slate-300/90 bg-slate-50/90 p-3 sm:p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 sm:text-xs">
-            Risk scoring
-          </p>
-          <p className="mt-0.5 text-sm font-medium text-slate-500 sm:mt-1">Coming soon</p>
-        </div>
-        <div className="rounded-xl border border-dashed border-slate-300/90 bg-slate-50/90 p-3 sm:p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 sm:text-xs">
-            Portfolio insights
-          </p>
-          <p className="mt-0.5 text-sm font-medium text-slate-500 sm:mt-1">Work in progress</p>
-        </div>
-        <Link
-          href="/setup?tab=advisor-proposals"
-          className="group rounded-xl border border-slate-200 bg-white p-3 transition hover:border-slate-300 hover:bg-slate-50/70 sm:p-4"
-        >
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs">
-            Advisor proposals
-          </p>
-          <p className="mt-0.5 text-sm font-medium text-slate-700 group-hover:text-slate-900 sm:mt-1">
-            Review plan suggestions →
-          </p>
-        </Link>
-      </section>
     </div>
   );
 }
