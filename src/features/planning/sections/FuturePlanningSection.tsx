@@ -58,6 +58,7 @@ export async function FuturePlanningSection() {
         goals={bundle.goals}
         investments={bundle.investments}
         currency={currency}
+        userId={user.id}
       />
 
       <section className="space-y-4">

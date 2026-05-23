@@ -22,6 +22,9 @@ const staleInvestment = {
   current_value: "10000",
   monthly_contribution: "500",
   expected_annual_return: "0.07",
+  contribution_growth_annual: "0",
+  withdrawal_monthly: "0",
+  withdrawal_start_years: null,
   updated_at: "2024-01-01T00:00:00Z",
   created_at: "2024-01-01T00:00:00Z",
 };

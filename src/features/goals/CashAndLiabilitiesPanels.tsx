@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useActionState, useState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import {
   createCashAccountAction,
   deleteCashAccountAction,
@@ -13,7 +13,13 @@ import {
   mapLiabilityRows,
   type DebtPlanningRow,
 } from "@/features/debts/DebtPlanningPanels";
-import type { LiabilityRow } from "@/data/supabase/types";
+import type { CashAccountPurpose, LiabilityRow } from "@/data/supabase/types";
+import { num } from "@/data/mappers";
+import {
+  CASH_ACCOUNT_PURPOSE_LABELS,
+  CASH_ACCOUNT_PURPOSES,
+  cashPurposeSortOrder,
+} from "@/domain/finance/cash-account-purpose";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { formatCurrency } from "@/ui/lib/format";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
@@ -22,12 +28,85 @@ export type CashAccountBalanceRow = {
   id: string;
   name: string;
   balance: number;
+  purpose: CashAccountPurpose;
+};
+
+export type CashAccountHistoryPoint = {
+  balance: number;
+  recorded_at: string;
 };
 
 /** @deprecated Use `DebtPlanningRow` from debt planning panels. */
 export type LiabilityBalanceRow = DebtPlanningRow;
 
 const initial = { error: null as string | null };
+
+const HISTORY_LIMIT = 8;
+
+const selectClass =
+  "rounded border border-zinc-300 px-2 py-1 text-xs bg-white";
+
+function PurposeSelect({
+  name,
+  defaultValue = "other",
+}: {
+  name: string;
+  defaultValue?: CashAccountPurpose;
+}) {
+  return (
+    <label className="text-xs">
+      <span className="mb-0.5 block text-zinc-600">Bucket</span>
+      <select
+        name={name}
+        defaultValue={defaultValue}
+        className={`${selectClass} min-w-[9rem]`}
+      >
+        {CASH_ACCOUNT_PURPOSES.map((p) => (
+          <option key={p} value={p}>
+            {CASH_ACCOUNT_PURPOSE_LABELS[p]}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function formatSnapshotDate(iso: string): string {
+  const d = new Date(iso);
+  if (!Number.isFinite(d.getTime())) return iso;
+  return d.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+
+function CashAccountHistory({
+  points,
+  currencyCode,
+}: {
+  points: CashAccountHistoryPoint[];
+  currencyCode: string;
+}) {
+  if (points.length === 0) return null;
+  return (
+    <details className="mt-2 rounded-lg border border-zinc-100 bg-zinc-50/80 px-2 py-1.5">
+      <summary className="cursor-pointer text-[11px] font-medium text-zinc-600">
+        Balance history ({points.length})
+      </summary>
+      <ul className="mt-1.5 space-y-0.5 text-[11px] text-zinc-600">
+        {points.map((p, i) => (
+          <li key={`${p.recorded_at}-${i}`} className="flex justify-between gap-2">
+            <span>{formatSnapshotDate(p.recorded_at)}</span>
+            <span className="font-medium text-zinc-800">
+              {formatCurrency(p.balance, currencyCode)}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
+}
 
 function AddCashForm({ currencyCode }: { currencyCode: string }) {
   const router = useRouter();
@@ -73,6 +152,7 @@ function AddCashForm({ currencyCode }: { currencyCode: string }) {
             className="w-40 rounded border border-zinc-300 px-2 py-1"
           />
         </label>
+        <PurposeSelect name="purpose" defaultValue="everyday_spending" />
         <label className="text-xs">
           <span className="mb-0.5 block text-zinc-600">
             Balance ({currencyCode})
@@ -104,9 +184,11 @@ function AddCashForm({ currencyCode }: { currencyCode: string }) {
 function CashAccountRow({
   row,
   currencyCode,
+  history,
 }: {
   row: CashAccountBalanceRow;
   currencyCode: string;
+  history: CashAccountHistoryPoint[];
 }) {
   const router = useRouter();
   const [deletePending, setDeletePending] = useState(false);
@@ -134,7 +216,7 @@ function CashAccountRow({
         <input type="hidden" name="id" value={row.id} />
         <div className="flex items-center justify-between rounded-lg bg-emerald-50 px-2 py-1">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
-            Saved account
+            {CASH_ACCOUNT_PURPOSE_LABELS[row.purpose]}
           </p>
           <p className="text-xs font-semibold text-zinc-800">
             {formatCurrency(row.balance, currencyCode)}
@@ -156,6 +238,7 @@ function CashAccountRow({
               className="w-40 rounded border border-zinc-300 px-2 py-1"
             />
           </label>
+          <PurposeSelect name="purpose" defaultValue={row.purpose} />
           <label className="text-xs">
             <span className="mb-0.5 block text-zinc-600">
               Balance ({currencyCode})
@@ -181,6 +264,7 @@ function CashAccountRow({
           </div>
         </div>
       </form>
+      <CashAccountHistory points={history} currencyCode={currencyCode} />
       <button
         type="button"
         className="mt-2 text-xs text-red-600 hover:underline"
@@ -202,17 +286,31 @@ function CashAccountRow({
   );
 }
 
+function groupCashByPurpose(rows: CashAccountBalanceRow[]) {
+  const groups = new Map<CashAccountPurpose, CashAccountBalanceRow[]>();
+  for (const row of rows) {
+    const list = groups.get(row.purpose) ?? [];
+    list.push(row);
+    groups.set(row.purpose, list);
+  }
+  return [...groups.entries()].sort(
+    ([a], [b]) => cashPurposeSortOrder(a) - cashPurposeSortOrder(b)
+  );
+}
 
 export function CashAndLiabilitiesPanels({
   cashRows,
+  cashHistoryByAccountId = {},
   liabilityRows,
   currencyCode,
 }: {
   cashRows: CashAccountBalanceRow[];
+  cashHistoryByAccountId?: Record<string, CashAccountHistoryPoint[]>;
   liabilityRows: LiabilityRow[] | LiabilityBalanceRow[];
   currencyCode: string;
 }) {
   const cashTotal = cashRows.reduce((a, r) => a + r.balance, 0);
+  const groupedCash = useMemo(() => groupCashByPurpose(cashRows), [cashRows]);
   const debtRows =
     liabilityRows.length > 0 && "user_id" in liabilityRows[0]
       ? mapLiabilityRows(liabilityRows as LiabilityRow[])
@@ -223,8 +321,8 @@ export function CashAndLiabilitiesPanels({
         <div>
           <h2 className="text-sm font-semibold text-zinc-900">Cash accounts</h2>
           <p className="mt-1 text-xs text-zinc-500">
-            Bank balances, cash buckets, or manual CPF lines—anything not in
-            investments. Counts toward net worth as cash.
+            Bank balances grouped by liquidity bucket. Saving a balance adds a
+            history point for trend tracking.
           </p>
           <p className="mt-2 text-sm text-zinc-700">
             Total cash:{" "}
@@ -234,13 +332,38 @@ export function CashAndLiabilitiesPanels({
           </p>
         </div>
         <AddCashForm currencyCode={currencyCode} />
-        <ul className="space-y-3">
-          {cashRows.map((row) => (
-            <li key={row.id}>
-              <CashAccountRow row={row} currencyCode={currencyCode} />
-            </li>
-          ))}
-        </ul>
+        {groupedCash.length === 0 ? (
+          <p className="text-xs text-zinc-500">No cash accounts yet.</p>
+        ) : (
+          <div className="space-y-4">
+            {groupedCash.map(([purpose, rows]) => {
+              const subtotal = rows.reduce((a, r) => a + r.balance, 0);
+              return (
+                <div key={purpose} className="space-y-2">
+                  <div className="flex items-baseline justify-between gap-2 border-b border-zinc-200/80 pb-1">
+                    <h3 className="text-xs font-semibold text-zinc-800">
+                      {CASH_ACCOUNT_PURPOSE_LABELS[purpose]}
+                    </h3>
+                    <p className="text-[11px] text-zinc-600">
+                      {formatCurrency(subtotal, currencyCode)}
+                    </p>
+                  </div>
+                  <ul className="space-y-3">
+                    {rows.map((row) => (
+                      <li key={row.id}>
+                        <CashAccountRow
+                          row={row}
+                          currencyCode={currencyCode}
+                          history={cashHistoryByAccountId[row.id] ?? []}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       <div className="rounded-2xl border border-zinc-200 bg-zinc-50/30 p-4">
@@ -255,4 +378,20 @@ export function CashAndLiabilitiesPanels({
       </div>
     </div>
   );
+}
+
+export function buildCashHistoryByAccountId(
+  snapshots: { cash_account_id: string; balance: string; recorded_at: string }[]
+): Record<string, CashAccountHistoryPoint[]> {
+  const map: Record<string, CashAccountHistoryPoint[]> = {};
+  for (const s of snapshots) {
+    const list = map[s.cash_account_id] ?? [];
+    if (list.length >= HISTORY_LIMIT) continue;
+    list.push({
+      balance: num(s.balance),
+      recorded_at: s.recorded_at,
+    });
+    map[s.cash_account_id] = list;
+  }
+  return map;
 }

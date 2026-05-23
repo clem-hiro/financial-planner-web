@@ -101,9 +101,15 @@ function applyInvestmentInsert(
     current_value: numStr(m.get("current_value")) ?? "0",
     monthly_contribution: numStr(m.get("monthly_contribution")) ?? "0",
     expected_annual_return: numStr(m.get("expected_annual_return")) ?? "0",
+    contribution_growth_annual:
+      numStr(m.get("contribution_growth_annual")) ?? "0",
     contribution_type: m.get("contribution_type") || null,
     contribution_duration_years: m.get("contribution_duration_years")
       ? String(Number(m.get("contribution_duration_years")))
+      : null,
+    withdrawal_monthly: numStr(m.get("withdrawal_monthly")) ?? "0",
+    withdrawal_start_years: m.get("withdrawal_start_years")
+      ? String(Number(m.get("withdrawal_start_years")))
       : null,
     created_at: "",
     updated_at: "",
@@ -123,10 +129,21 @@ function mergeInvestment(
   if (m.has("expected_annual_return")) {
     next.expected_annual_return = numStr(m.get("expected_annual_return")) ?? "0";
   }
+  if (m.has("contribution_growth_annual")) {
+    next.contribution_growth_annual =
+      numStr(m.get("contribution_growth_annual")) ?? "0";
+  }
   if (m.has("contribution_type")) next.contribution_type = m.get("contribution_type") || null;
   if (m.has("contribution_duration_years")) {
     const v = m.get("contribution_duration_years");
     next.contribution_duration_years = v ? String(Number(v)) : null;
+  }
+  if (m.has("withdrawal_monthly")) {
+    next.withdrawal_monthly = numStr(m.get("withdrawal_monthly")) ?? "0";
+  }
+  if (m.has("withdrawal_start_years")) {
+    const v = m.get("withdrawal_start_years");
+    next.withdrawal_start_years = v ? String(Number(v)) : null;
   }
   return next;
 }

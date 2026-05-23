@@ -52,6 +52,10 @@ export type ProfileRow = {
   last_salary_review_at: string | null;
   /** ISO timestamp of the most recent investment-assumption acknowledgement. */
   last_investment_review_at: string | null;
+  /** ISO timestamp of the most recent CPF rules/assumptions acknowledgement. */
+  last_cpf_rules_review_at: string | null;
+  /** App CPF rules baseline version most recently acknowledged. */
+  last_cpf_rules_review_version: string | null;
   created_at: string;
 };
 
@@ -184,10 +188,16 @@ export type InvestmentRow = {
   current_value: string;
   monthly_contribution: string;
   expected_annual_return: string;
+  /** Annual step-up on monthly contribution (0.03 = 3%). */
+  contribution_growth_annual: string;
   /** until_retirement | fixed_duration; null = legacy / same as until retirement. */
   contribution_type?: string | null;
   /** Years of monthly contributions when type is fixed_duration. */
   contribution_duration_years?: string | null;
+  /** Planned monthly withdrawal after the withdrawal phase starts. */
+  withdrawal_monthly: string;
+  /** Years from today before withdrawals start; null = use retirement age when available. */
+  withdrawal_start_years: string | null;
   /** Reserved for future age-based contribution end. */
   contribution_end_age?: number | null;
   /** Reserved for calendar-based contribution end. */
@@ -196,12 +206,28 @@ export type InvestmentRow = {
   updated_at: string;
 };
 
+export type CashAccountPurpose =
+  | "emergency_fund"
+  | "everyday_spending"
+  | "short_term_savings"
+  | "other";
+
 export type CashAccountRow = {
   id: string;
   user_id: string;
   name: string;
   balance: string;
+  purpose: CashAccountPurpose;
   created_at: string;
+  updated_at: string;
+};
+
+export type CashAccountSnapshotRow = {
+  id: string;
+  user_id: string;
+  cash_account_id: string;
+  balance: string;
+  recorded_at: string;
 };
 
 export type LiabilityRow = {
@@ -273,6 +299,8 @@ export type FinancialGoalRow = {
   current_amount: string;
   monthly_contribution: string;
   expected_annual_return: string;
+  /** Lower = fund first in priority trade-off views. */
+  display_order: number;
   created_at: string;
 };
 

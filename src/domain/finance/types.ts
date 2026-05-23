@@ -6,6 +6,10 @@ export type InvestmentSnapshot = {
   monthlyContribution: Money;
   /** Decimal annual return, e.g. 0.07 for 7%. */
   expectedAnnualReturn: number;
+  /** Decimal annual contribution step-up, e.g. 0.03 for 3%. */
+  contributionGrowthAnnual?: number;
+  /** Planned monthly withdrawal once drawdown starts. */
+  monthlyWithdrawal?: Money;
 };
 
 export type NetWorthInput = {
@@ -37,6 +41,12 @@ export type ProjectFutureValueParams = {
    * Omitted or null = contributions for the full `months` window (legacy behavior).
    */
   contributionMonthsLimit?: number | null;
+  /** Annual step-up applied to monthly contributions, e.g. 0.03 for 3%. */
+  contributionGrowthAnnual?: number | null;
+  /** Monthly withdrawal applied after `withdrawalStartMonth`. */
+  monthlyWithdrawal?: Money | null;
+  /** Zero-based month offset when withdrawals start. Omitted = no withdrawal. */
+  withdrawalStartMonth?: number | null;
 };
 
 export type TimeToGoalParams = {
@@ -46,6 +56,9 @@ export type TimeToGoalParams = {
   targetAmount: Money;
   /** Optional cap on contribution months (same semantics as `ProjectFutureValueParams`). */
   contributionMonthsLimit?: number | null;
+  contributionGrowthAnnual?: number | null;
+  monthlyWithdrawal?: Money | null;
+  withdrawalStartMonth?: number | null;
 };
 
 export type TimeToGoalResult = {

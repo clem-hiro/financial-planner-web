@@ -194,6 +194,8 @@ export const profilePatchSchema = z
       .optional(),
     last_salary_review_at: z.string().datetime().nullable().optional(),
     last_investment_review_at: z.string().datetime().nullable().optional(),
+    last_cpf_rules_review_at: z.string().datetime().nullable().optional(),
+    last_cpf_rules_review_version: z.string().min(1).nullable().optional(),
   })
   .superRefine((data, ctx) => {
     if (
@@ -416,6 +418,19 @@ export const liabilityWriteSchema = z.object({
   repayment_override: z.boolean().optional(),
   start_date: isoDateOnly.nullable().optional(),
   notes: z.string().trim().max(2000).nullable().optional(),
+});
+
+export const cashAccountPurposeSchema = z.enum([
+  "emergency_fund",
+  "everyday_spending",
+  "short_term_savings",
+  "other",
+]);
+
+export const cashAccountWriteSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  balance: z.number().nonnegative().max(100_000_000),
+  purpose: cashAccountPurposeSchema,
 });
 
 export const couponCodeInputSchema = z

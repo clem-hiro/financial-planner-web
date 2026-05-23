@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-05-20T16:48:40.075Z",
+  "generated_at": "2026-05-21T15:39:31.036Z",
   "roots": [
     "src/app",
     "src/components",
@@ -318,7 +318,7 @@
           "id": "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
           "name": "AdvisorClientDetailPage",
           "kind": "component",
-          "line": 75,
+          "line": 78,
           "exported": true,
           "classification": [],
           "edges": [
@@ -1538,7 +1538,7 @@
           "id": "src/app/(app)/setup/page.tsx#buildSetupTabs",
           "name": "buildSetupTabs",
           "kind": "function",
-          "line": 45,
+          "line": 46,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -1548,7 +1548,7 @@
           "id": "src/app/(app)/setup/page.tsx#SetupPage",
           "name": "SetupPage",
           "kind": "component",
-          "line": 63,
+          "line": 64,
           "exported": true,
           "classification": [],
           "edges": [
@@ -1607,6 +1607,14 @@
             {
               "kind": "calls",
               "target": "src/data/mappers.ts#num"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-review.ts#shouldPromptInvestmentReview"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview"
             },
             {
               "kind": "calls",
@@ -6085,7 +6093,7 @@
           "id": "src/data/repositories/investments.ts#listInvestments",
           "name": "listInvestments",
           "kind": "function",
-          "line": 25,
+          "line": 28,
           "exported": true,
           "classification": [],
           "edges": [
@@ -6112,7 +6120,7 @@
           "id": "src/data/repositories/investments.ts#advisorReadInvestments",
           "name": "advisorReadInvestments",
           "kind": "function",
-          "line": 44,
+          "line": 47,
           "exported": true,
           "classification": [],
           "edges": [
@@ -6127,7 +6135,7 @@
           "id": "src/data/repositories/investments.ts#getInvestmentById",
           "name": "getInvestmentById",
           "kind": "function",
-          "line": 55,
+          "line": 58,
           "exported": true,
           "classification": [],
           "edges": [
@@ -6158,7 +6166,7 @@
           "id": "src/data/repositories/investments.ts#insertInvestment",
           "name": "insertInvestment",
           "kind": "function",
-          "line": 79,
+          "line": 85,
           "exported": true,
           "classification": [],
           "edges": [
@@ -6205,7 +6213,7 @@
           "id": "src/data/repositories/investments.ts#updateInvestment",
           "name": "updateInvestment",
           "kind": "function",
-          "line": 137,
+          "line": 157,
           "exported": true,
           "classification": [],
           "edges": [
@@ -6252,7 +6260,7 @@
           "id": "src/data/repositories/investments.ts#deleteInvestment",
           "name": "deleteInvestment",
           "kind": "function",
-          "line": 186,
+          "line": 229,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7062,7 +7070,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.parity.test.ts#coerceRead",
           "name": "coerceRead",
           "kind": "function",
-          "line": 47,
+          "line": 50,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -7072,7 +7080,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.parity.test.ts#makeFakeSupabase",
           "name": "makeFakeSupabase",
           "kind": "function",
-          "line": 56,
+          "line": 59,
           "exported": false,
           "classification": [],
           "edges": [
@@ -7087,7 +7095,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.parity.test.ts#canonical",
           "name": "canonical",
           "kind": "function",
-          "line": 161,
+          "line": 164,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -7097,7 +7105,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.parity.test.ts#ch",
           "name": "ch",
           "kind": "function",
-          "line": 239,
+          "line": 248,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -7107,7 +7115,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.parity.test.ts#investmentValueShape",
           "name": "investmentValueShape",
           "kind": "arrow",
-          "line": 258,
+          "line": 267,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -7161,7 +7169,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#investmentWritePayload",
           "name": "investmentWritePayload",
           "kind": "function",
-          "line": 67,
+          "line": 70,
           "exported": false,
           "classification": [],
           "edges": [
@@ -7176,7 +7184,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
           "name": "applyAcceptedProposalChanges",
           "kind": "function",
-          "line": 85,
+          "line": 92,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7262,7 +7270,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.test.ts#investment",
           "name": "investment",
           "kind": "function",
-          "line": 52,
+          "line": 55,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -7272,7 +7280,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.test.ts#budgetLine",
           "name": "budgetLine",
           "kind": "function",
-          "line": 68,
+          "line": 74,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -7282,7 +7290,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.test.ts#goal",
           "name": "goal",
           "kind": "function",
-          "line": 81,
+          "line": 87,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -7292,7 +7300,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.test.ts#change",
           "name": "change",
           "kind": "function",
-          "line": 97,
+          "line": 103,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -7302,7 +7310,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.test.ts#baseInputs",
           "name": "baseInputs",
           "kind": "function",
-          "line": 116,
+          "line": 122,
           "exported": false,
           "classification": [],
           "edges": [
@@ -7413,7 +7421,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#mergeInvestment",
           "name": "mergeInvestment",
           "kind": "function",
-          "line": 113,
+          "line": 119,
           "exported": false,
           "classification": [],
           "edges": [
@@ -7428,7 +7436,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges",
           "name": "applyProposalChanges",
           "kind": "function",
-          "line": 147,
+          "line": 164,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7472,7 +7480,7 @@
           "id": "src/domain/advisor-proposals/field-registry.ts#fieldMeta",
           "name": "fieldMeta",
           "kind": "function",
-          "line": 59,
+          "line": 62,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -7482,7 +7490,7 @@
           "id": "src/domain/advisor-proposals/field-registry.ts#serializeProposalValue",
           "name": "serializeProposalValue",
           "kind": "function",
-          "line": 86,
+          "line": 89,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -7492,7 +7500,7 @@
           "id": "src/domain/advisor-proposals/field-registry.ts#valuesEqual",
           "name": "valuesEqual",
           "kind": "function",
-          "line": 93,
+          "line": 96,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -8521,6 +8529,58 @@
       ]
     },
     {
+      "path": "src/domain/finance/cpf-rules-review.test.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": []
+    },
+    {
+      "path": "src/domain/finance/cpf-rules-review.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/domain/finance/cpf-rules-review.ts#reviewedInOrAfterMonth",
+          "name": "reviewedInOrAfterMonth",
+          "kind": "function",
+          "line": 13,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview",
+          "name": "shouldPromptCpfRulesReview",
+          "kind": "function",
+          "line": 25,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cpf-rules-review.ts#reviewedInOrAfterMonth"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/cpf-rules-review.ts#cpfRulesReviewDedupeKey",
+          "name": "cpfRulesReviewDedupeKey",
+          "kind": "function",
+          "line": 50,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/domain/finance/debt-repayment.test.ts",
       "root": "src/domain",
       "classification": [
@@ -9526,6 +9586,25 @@
             }
           ],
           "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow",
+          "name": "withdrawalStartMonthFromInvestmentRow",
+          "kind": "function",
+          "line": 41,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/data/mappers.ts#num"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow"
+            }
+          ],
+          "unresolved": 0
         }
       ]
     },
@@ -9540,13 +9619,17 @@
           "id": "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth",
           "name": "futureValueInvestmentPortfolioAtMonth",
           "kind": "function",
-          "line": 9,
+          "line": 12,
           "exported": true,
           "classification": [],
           "edges": [
             {
               "kind": "calls",
               "target": "src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow"
             },
             {
               "kind": "calls",
@@ -9563,7 +9646,7 @@
           "id": "src/domain/finance/investment-portfolio-fv.ts#calculateTimeToGoalInvestmentPortfolio",
           "name": "calculateTimeToGoalInvestmentPortfolio",
           "kind": "function",
-          "line": 37,
+          "line": 47,
           "exported": true,
           "classification": [],
           "edges": [
@@ -9572,6 +9655,106 @@
               "target": "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth"
             }
           ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/domain/finance/investment-review.test.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": []
+    },
+    {
+      "path": "src/domain/finance/investment-review.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/domain/finance/investment-review.ts#monthsSinceTimestamp",
+          "name": "monthsSinceTimestamp",
+          "kind": "function",
+          "line": 12,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/investment-review.ts#investmentRowLastTouchedAt",
+          "name": "investmentRowLastTouchedAt",
+          "kind": "function",
+          "line": 22,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/investment-review.ts#investmentRowIsStale",
+          "name": "investmentRowIsStale",
+          "kind": "function",
+          "line": 31,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-review.ts#investmentRowLastTouchedAt"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-review.ts#monthsSinceTimestamp"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/investment-review.ts#countStaleInvestments",
+          "name": "countStaleInvestments",
+          "kind": "function",
+          "line": 41,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-review.ts#investmentRowIsStale"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/investment-review.ts#shouldPromptInvestmentReview",
+          "name": "shouldPromptInvestmentReview",
+          "kind": "function",
+          "line": 53,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-review.ts#countStaleInvestments"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-review.ts#monthsSinceTimestamp"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/investment-review.ts#investmentReviewDedupeKeyForYear",
+          "name": "investmentReviewDedupeKeyForYear",
+          "kind": "function",
+          "line": 80,
+          "exported": true,
+          "classification": [],
+          "edges": [],
           "unresolved": 0
         }
       ]
@@ -9786,13 +9969,56 @@
           "unresolved": 0
         },
         {
+          "id": "src/domain/finance/projection.ts#hasVariableCashflows",
+          "name": "hasVariableCashflows",
+          "kind": "function",
+          "line": 26,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/projection.ts#monthlyContributionForMonth",
+          "name": "monthlyContributionForMonth",
+          "kind": "function",
+          "line": 37,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/projection.ts#projectFutureValueIterative",
+          "name": "projectFutureValueIterative",
+          "kind": "function",
+          "line": 46,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/projection.ts#monthlyContributionForMonth"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/domain/finance/projection.ts#projectFutureValue",
           "name": "projectFutureValue",
           "kind": "function",
-          "line": 31,
+          "line": 90,
           "exported": true,
           "classification": [],
           "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/projection.ts#hasVariableCashflows"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/projection.ts#projectFutureValueIterative"
+            },
             {
               "kind": "calls",
               "target": "src/domain/finance/projection.ts#futureValueEndOfMonthWindow"
@@ -9804,10 +10030,14 @@
           "id": "src/domain/finance/projection.ts#calculateTimeToGoal",
           "name": "calculateTimeToGoal",
           "kind": "function",
-          "line": 70,
+          "line": 133,
           "exported": true,
           "classification": [],
           "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/projection.ts#hasVariableCashflows"
+            },
             {
               "kind": "calls",
               "target": "src/domain/finance/projection.ts#projectFutureValue"
@@ -12467,13 +12697,25 @@
           "id": "src/features/app-shell/AppShellInbox.tsx#AppShellInbox",
           "name": "AppShellInbox",
           "kind": "component",
-          "line": 16,
+          "line": 24,
           "exported": true,
           "classification": [],
           "edges": [
             {
               "kind": "calls",
               "target": "src/server/inbox/ensure-salary-review-notification.ts#ensureSalaryReviewNotification"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/inbox/ensure-cpf-rules-review-notification.ts#ensureCpfRulesReviewNotification"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/investments.ts#listInvestments"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/inbox/ensure-investment-review-notification.ts#ensureInvestmentReviewNotification"
             },
             {
               "kind": "calls",
@@ -12490,7 +12732,7 @@
           "id": "src/features/app-shell/AppShellInbox.tsx#AppShellInboxFallback",
           "name": "AppShellInboxFallback",
           "kind": "component",
-          "line": 36,
+          "line": 52,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -15554,10 +15796,43 @@
       ],
       "functions": [
         {
+          "id": "src/features/goals/CpfBalancesForm.tsx#CpfRulesReviewPrompt",
+          "name": "CpfRulesReviewPrompt",
+          "kind": "component",
+          "line": 20,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "next"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "next"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/actions.ts#confirmCpfRulesReviewAction"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm",
           "name": "CpfBalancesForm",
           "kind": "component",
-          "line": 14,
+          "line": 65,
           "exported": true,
           "classification": [
             "client-component"
@@ -15582,6 +15857,10 @@
             {
               "kind": "calls",
               "target": "src/data/mappers.ts#num"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/goals/CpfBalancesForm.tsx#CpfRulesReviewPrompt"
             },
             {
               "kind": "renders",
@@ -16147,6 +16426,30 @@
       ]
     },
     {
+      "path": "src/features/goals/InvestmentAssumptionBanner.tsx",
+      "root": "src/features",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner",
+          "name": "InvestmentAssumptionBanner",
+          "kind": "component",
+          "line": 5,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "renders",
+              "target": "src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/features/goals/InvestmentBalancesList.tsx",
       "root": "src/features",
       "classification": [
@@ -16157,7 +16460,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#contributionSummaryLine",
           "name": "contributionSummaryLine",
           "kind": "function",
-          "line": 35,
+          "line": 49,
           "exported": false,
           "classification": [],
           "edges": [
@@ -16172,7 +16475,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#ContributionTimelineHint",
           "name": "ContributionTimelineHint",
           "kind": "component",
-          "line": 53,
+          "line": 75,
           "exported": false,
           "classification": [
             "client-component"
@@ -16189,7 +16492,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary",
           "name": "InvestmentSummary",
           "kind": "component",
-          "line": 103,
+          "line": 125,
           "exported": false,
           "classification": [
             "client-component"
@@ -16198,6 +16501,10 @@
             {
               "kind": "calls",
               "target": "src/features/goals/InvestmentBalancesList.tsx#contributionSummaryLine"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-review.ts#investmentRowIsStale"
             },
             {
               "kind": "renders",
@@ -16214,7 +16521,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm",
           "name": "InvestmentEditForm",
           "kind": "component",
-          "line": 173,
+          "line": 203,
           "exported": false,
           "classification": [
             "client-component"
@@ -16223,6 +16530,18 @@
             {
               "kind": "calls",
               "external": "next"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
             },
             {
               "kind": "calls",
@@ -16281,13 +16600,13 @@
               "target": "src/ui/InfoTooltip.tsx#InfoTooltip"
             }
           ],
-          "unresolved": 8
+          "unresolved": 11
         },
         {
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentRow",
           "name": "InvestmentRow",
           "kind": "component",
-          "line": 451,
+          "line": 547,
           "exported": false,
           "classification": [
             "client-component"
@@ -16341,15 +16660,60 @@
           "unresolved": 6
         },
         {
+          "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentReviewPrompt",
+          "name": "InvestmentReviewPrompt",
+          "kind": "component",
+          "line": 624,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "next"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "next"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/actions.ts#confirmInvestmentReviewAction"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList",
           "name": "InvestmentBalancesList",
           "kind": "component",
-          "line": 528,
+          "line": 675,
           "exported": true,
           "classification": [
             "client-component"
           ],
           "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-review.ts#investmentRowIsStale"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/goals/InvestmentBalancesList.tsx#InvestmentReviewPrompt"
+            },
             {
               "kind": "calls",
               "target": "src/ui/lib/format.ts#formatCurrency"
@@ -16374,7 +16738,7 @@
           "id": "src/features/goals/InvestmentForm.tsx#InvestmentForm",
           "name": "InvestmentForm",
           "kind": "component",
-          "line": 11,
+          "line": 12,
           "exported": true,
           "classification": [
             "client-component"
@@ -16403,6 +16767,10 @@
             {
               "kind": "renders",
               "target": "src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner"
             }
           ],
           "unresolved": 3
@@ -18154,7 +18522,7 @@
           "id": "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection",
           "name": "WealthPlanningSection",
           "kind": "component",
-          "line": 34,
+          "line": 35,
           "exported": true,
           "classification": [],
           "edges": [
@@ -18185,6 +18553,14 @@
             {
               "kind": "calls",
               "target": "src/data/mappers.ts#num"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-review.ts#shouldPromptInvestmentReview"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview"
             },
             {
               "kind": "calls",
@@ -19551,7 +19927,7 @@
           "id": "src/lib/validation.ts#reliefAmount",
           "name": "reliefAmount",
           "kind": "arrow",
-          "line": 321,
+          "line": 324,
           "exported": false,
           "classification": [],
           "edges": [
@@ -19703,7 +20079,19 @@
           "id": "src/server/actions.ts#toClientErrorMessage",
           "name": "toClientErrorMessage",
           "kind": "function",
-          "line": 94,
+          "line": 95,
+          "exported": false,
+          "classification": [
+            "server-action"
+          ],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/server/actions.ts#parseInvestmentPlanningFields",
+          "name": "parseInvestmentPlanningFields",
+          "kind": "function",
+          "line": 104,
           "exported": false,
           "classification": [
             "server-action"
@@ -19715,7 +20103,7 @@
           "id": "src/server/actions.ts#signOutAction",
           "name": "signOutAction",
           "kind": "function",
-          "line": 103,
+          "line": 173,
           "exported": true,
           "classification": [
             "server-action"
@@ -19740,7 +20128,7 @@
           "id": "src/server/actions.ts#createInvestmentAction",
           "name": "createInvestmentAction",
           "kind": "function",
-          "line": 109,
+          "line": 179,
           "exported": true,
           "classification": [
             "server-action"
@@ -19768,7 +20156,15 @@
             },
             {
               "kind": "calls",
+              "target": "src/server/actions.ts#parseInvestmentPlanningFields"
+            },
+            {
+              "kind": "calls",
               "target": "src/data/repositories/investments.ts#insertInvestment"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview"
             },
             {
               "kind": "calls",
@@ -19785,7 +20181,7 @@
           "id": "src/server/actions.ts#updateInvestmentAction",
           "name": "updateInvestmentAction",
           "kind": "function",
-          "line": 181,
+          "line": 238,
           "exported": true,
           "classification": [
             "server-action"
@@ -19825,7 +20221,15 @@
             },
             {
               "kind": "calls",
+              "target": "src/server/actions.ts#parseInvestmentPlanningFields"
+            },
+            {
+              "kind": "calls",
               "target": "src/data/repositories/investments.ts#updateInvestment"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview"
             },
             {
               "kind": "calls",
@@ -19842,7 +20246,7 @@
           "id": "src/server/actions.ts#deleteInvestmentAction",
           "name": "deleteInvestmentAction",
           "kind": "function",
-          "line": 259,
+          "line": 303,
           "exported": true,
           "classification": [
             "server-action"
@@ -19886,6 +20290,92 @@
             },
             {
               "kind": "calls",
+              "target": "src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/actions.ts#toClientErrorMessage"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/planning-revalidate.ts#revalidateSetupAndPlanning"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/server/actions.ts#confirmInvestmentReviewAction",
+          "name": "confirmInvestmentReviewAction",
+          "kind": "function",
+          "line": 335,
+          "exported": true,
+          "classification": [
+            "server-action"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "@supabase/auth-js"
+            },
+            {
+              "kind": "calls",
+              "external": "next"
+            },
+            {
+              "kind": "calls",
+              "external": "next"
+            },
+            {
+              "kind": "calls",
+              "external": "next"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/supabase/server.ts#createSupabaseServerClient"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/actions.ts#toClientErrorMessage"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/planning-revalidate.ts#revalidateSetupAndPlanning"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/server/actions.ts#confirmCpfRulesReviewAction",
+          "name": "confirmCpfRulesReviewAction",
+          "kind": "function",
+          "line": 359,
+          "exported": true,
+          "classification": [
+            "server-action"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "@supabase/auth-js"
+            },
+            {
+              "kind": "calls",
+              "external": "next"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/supabase/server.ts#createSupabaseServerClient"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/inbox/acknowledge-cpf-rules-review.ts#acknowledgeCpfRulesReview"
+            },
+            {
+              "kind": "calls",
               "target": "src/server/actions.ts#toClientErrorMessage"
             },
             {
@@ -19899,7 +20389,7 @@
           "id": "src/server/actions.ts#createCashAccountAction",
           "name": "createCashAccountAction",
           "kind": "function",
-          "line": 290,
+          "line": 381,
           "exported": true,
           "classification": [
             "server-action"
@@ -19932,7 +20422,7 @@
           "id": "src/server/actions.ts#updateCashAccountAction",
           "name": "updateCashAccountAction",
           "kind": "function",
-          "line": 313,
+          "line": 404,
           "exported": true,
           "classification": [
             "server-action"
@@ -19977,7 +20467,7 @@
           "id": "src/server/actions.ts#deleteCashAccountAction",
           "name": "deleteCashAccountAction",
           "kind": "function",
-          "line": 339,
+          "line": 430,
           "exported": true,
           "classification": [
             "server-action"
@@ -20022,7 +20512,7 @@
           "id": "src/server/actions.ts#createLiabilityAction",
           "name": "createLiabilityAction",
           "kind": "function",
-          "line": 360,
+          "line": 451,
           "exported": true,
           "classification": [
             "server-action"
@@ -20071,7 +20561,7 @@
           "id": "src/server/actions.ts#updateLiabilityAction",
           "name": "updateLiabilityAction",
           "kind": "function",
-          "line": 388,
+          "line": 479,
           "exported": true,
           "classification": [
             "server-action"
@@ -20132,7 +20622,7 @@
           "id": "src/server/actions.ts#deleteLiabilityAction",
           "name": "deleteLiabilityAction",
           "kind": "function",
-          "line": 424,
+          "line": 515,
           "exported": true,
           "classification": [
             "server-action"
@@ -20189,7 +20679,7 @@
           "id": "src/server/actions.ts#optionalYearMonth",
           "name": "optionalYearMonth",
           "kind": "function",
-          "line": 448,
+          "line": 539,
           "exported": false,
           "classification": [
             "server-action"
@@ -20206,7 +20696,7 @@
           "id": "src/server/actions.ts#createVehicleAction",
           "name": "createVehicleAction",
           "kind": "function",
-          "line": 457,
+          "line": 548,
           "exported": true,
           "classification": [
             "server-action"
@@ -20243,7 +20733,7 @@
           "id": "src/server/actions.ts#updateVehicleAction",
           "name": "updateVehicleAction",
           "kind": "function",
-          "line": 647,
+          "line": 738,
           "exported": true,
           "classification": [
             "server-action"
@@ -20292,7 +20782,7 @@
           "id": "src/server/actions.ts#deleteVehicleAction",
           "name": "deleteVehicleAction",
           "kind": "function",
-          "line": 838,
+          "line": 929,
           "exported": true,
           "classification": [
             "server-action"
@@ -20337,7 +20827,7 @@
           "id": "src/server/actions.ts#createGoalAction",
           "name": "createGoalAction",
           "kind": "function",
-          "line": 857,
+          "line": 948,
           "exported": true,
           "classification": [
             "server-action"
@@ -20374,7 +20864,7 @@
           "id": "src/server/actions.ts#updateGoalAction",
           "name": "updateGoalAction",
           "kind": "function",
-          "line": 913,
+          "line": 1004,
           "exported": true,
           "classification": [
             "server-action"
@@ -20411,7 +20901,7 @@
           "id": "src/server/actions.ts#createBudgetLineAction",
           "name": "createBudgetLineAction",
           "kind": "function",
-          "line": 976,
+          "line": 1067,
           "exported": true,
           "classification": [
             "server-action"
@@ -20452,7 +20942,7 @@
           "id": "src/server/actions.ts#coerceLifestyle",
           "name": "coerceLifestyle",
           "kind": "function",
-          "line": 1072,
+          "line": 1163,
           "exported": false,
           "classification": [
             "server-action"
@@ -20464,7 +20954,7 @@
           "id": "src/server/actions.ts#coerceStrategy",
           "name": "coerceStrategy",
           "kind": "function",
-          "line": 1080,
+          "line": 1171,
           "exported": false,
           "classification": [
             "server-action"
@@ -20476,7 +20966,7 @@
           "id": "src/server/actions.ts#coerceFoodBand",
           "name": "coerceFoodBand",
           "kind": "function",
-          "line": 1088,
+          "line": 1179,
           "exported": false,
           "classification": [
             "server-action"
@@ -20488,7 +20978,7 @@
           "id": "src/server/actions.ts#applyGuidedBudgetLinesAction",
           "name": "applyGuidedBudgetLinesAction",
           "kind": "function",
-          "line": 1109,
+          "line": 1200,
           "exported": true,
           "classification": [
             "server-action"
@@ -20577,7 +21067,7 @@
           "id": "src/server/actions.ts#updateBudgetLineAmountAction",
           "name": "updateBudgetLineAmountAction",
           "kind": "function",
-          "line": 1196,
+          "line": 1287,
           "exported": true,
           "classification": [
             "server-action"
@@ -20614,7 +21104,7 @@
           "id": "src/server/actions.ts#deleteBudgetLineAction",
           "name": "deleteBudgetLineAction",
           "kind": "function",
-          "line": 1226,
+          "line": 1317,
           "exported": true,
           "classification": [
             "server-action"
@@ -20651,7 +21141,7 @@
           "id": "src/server/actions.ts#setBudgetMonthOverrideAction",
           "name": "setBudgetMonthOverrideAction",
           "kind": "function",
-          "line": 1247,
+          "line": 1338,
           "exported": true,
           "classification": [
             "server-action"
@@ -20692,7 +21182,7 @@
           "id": "src/server/actions.ts#clearBudgetMonthOverrideAction",
           "name": "clearBudgetMonthOverrideAction",
           "kind": "function",
-          "line": 1284,
+          "line": 1375,
           "exported": true,
           "classification": [
             "server-action"
@@ -20733,7 +21223,7 @@
           "id": "src/server/actions.ts#updateBudgetLineScheduleAction",
           "name": "updateBudgetLineScheduleAction",
           "kind": "function",
-          "line": 1311,
+          "line": 1402,
           "exported": true,
           "classification": [
             "server-action"
@@ -20794,7 +21284,7 @@
           "id": "src/server/actions.ts#upsertCpfBalanceAction",
           "name": "upsertCpfBalanceAction",
           "kind": "function",
-          "line": 1369,
+          "line": 1460,
           "exported": true,
           "classification": [
             "server-action"
@@ -20831,7 +21321,7 @@
           "id": "src/server/actions.ts#clearCpfBalanceAction",
           "name": "clearCpfBalanceAction",
           "kind": "function",
-          "line": 1427,
+          "line": 1518,
           "exported": true,
           "classification": [
             "server-action"
@@ -20868,7 +21358,7 @@
           "id": "src/server/actions.ts#parseHousingPaymentForm",
           "name": "parseHousingPaymentForm",
           "kind": "function",
-          "line": 1443,
+          "line": 1534,
           "exported": false,
           "classification": [
             "server-action"
@@ -20893,7 +21383,7 @@
           "id": "src/server/actions.ts#revalidateHousingPaths",
           "name": "revalidateHousingPaths",
           "kind": "function",
-          "line": 1509,
+          "line": 1600,
           "exported": false,
           "classification": [
             "server-action"
@@ -20926,7 +21416,7 @@
           "id": "src/server/actions.ts#insertPropertyForLoan",
           "name": "insertPropertyForLoan",
           "kind": "function",
-          "line": 1517,
+          "line": 1608,
           "exported": false,
           "classification": [
             "server-action"
@@ -20943,7 +21433,7 @@
           "id": "src/server/actions.ts#createHousingPropertyAction",
           "name": "createHousingPropertyAction",
           "kind": "function",
-          "line": 1539,
+          "line": 1630,
           "exported": true,
           "classification": [
             "server-action"
@@ -21000,7 +21490,7 @@
           "id": "src/server/actions.ts#updateHousingPropertyAction",
           "name": "updateHousingPropertyAction",
           "kind": "function",
-          "line": 1701,
+          "line": 1792,
           "exported": true,
           "classification": [
             "server-action"
@@ -21049,7 +21539,7 @@
           "id": "src/server/actions.ts#deleteHousingPropertyAction",
           "name": "deleteHousingPropertyAction",
           "kind": "function",
-          "line": 1752,
+          "line": 1843,
           "exported": true,
           "classification": [
             "server-action"
@@ -21090,7 +21580,7 @@
           "id": "src/server/actions.ts#createHousingLoanAction",
           "name": "createHousingLoanAction",
           "kind": "function",
-          "line": 1768,
+          "line": 1859,
           "exported": true,
           "classification": [
             "server-action"
@@ -21139,7 +21629,7 @@
           "id": "src/server/actions.ts#createHousingLoanQuickAction",
           "name": "createHousingLoanQuickAction",
           "kind": "function",
-          "line": 1890,
+          "line": 1981,
           "exported": true,
           "classification": [
             "server-action"
@@ -21195,10 +21685,6 @@
             },
             {
               "kind": "calls",
-              "target": "src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount"
-            },
-            {
-              "kind": "calls",
               "target": "src/domain/finance/housing-loan-payments.ts#normalizeHousingPaymentForPersist"
             },
             {
@@ -21220,7 +21706,7 @@
           "id": "src/server/actions.ts#updateHousingLoanAction",
           "name": "updateHousingLoanAction",
           "kind": "function",
-          "line": 2148,
+          "line": 2238,
           "exported": true,
           "classification": [
             "server-action"
@@ -21277,7 +21763,7 @@
           "id": "src/server/actions.ts#deleteHousingLoanAction",
           "name": "deleteHousingLoanAction",
           "kind": "function",
-          "line": 2267,
+          "line": 2357,
           "exported": true,
           "classification": [
             "server-action"
@@ -21402,7 +21888,19 @@
           "id": "src/server/advisor-client-actions.ts#clientErrorFromUnknown",
           "name": "clientErrorFromUnknown",
           "kind": "function",
-          "line": 17,
+          "line": 16,
+          "exported": false,
+          "classification": [
+            "server-action"
+          ],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/server/advisor-client-actions.ts#parseInvestmentPlanningFields",
+          "name": "parseInvestmentPlanningFields",
+          "kind": "function",
+          "line": 25,
           "exported": false,
           "classification": [
             "server-action"
@@ -21414,7 +21912,7 @@
           "id": "src/server/advisor-client-actions.ts#revalidateAdvisorClientViews",
           "name": "revalidateAdvisorClientViews",
           "kind": "function",
-          "line": 26,
+          "line": 92,
           "exported": false,
           "classification": [
             "server-action"
@@ -21435,7 +21933,7 @@
           "id": "src/server/advisor-client-actions.ts#requireAdvisorLinkedClient",
           "name": "requireAdvisorLinkedClient",
           "kind": "function",
-          "line": 31,
+          "line": 97,
           "exported": false,
           "classification": [
             "server-action"
@@ -21472,7 +21970,7 @@
           "id": "src/server/advisor-client-actions.ts#patchAdvisorClientProfileAction",
           "name": "patchAdvisorClientProfileAction",
           "kind": "function",
-          "line": 63,
+          "line": 129,
           "exported": true,
           "classification": [
             "server-action"
@@ -21501,7 +21999,7 @@
           "id": "src/server/advisor-client-actions.ts#patchAdvisorClientBudgetLineAmountAction",
           "name": "patchAdvisorClientBudgetLineAmountAction",
           "kind": "function",
-          "line": 154,
+          "line": 220,
           "exported": true,
           "classification": [
             "server-action"
@@ -21530,7 +22028,7 @@
           "id": "src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction",
           "name": "patchAdvisorClientGoalMonthlyContributionAction",
           "kind": "function",
-          "line": 191,
+          "line": 257,
           "exported": true,
           "classification": [
             "server-action"
@@ -21559,7 +22057,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction",
           "name": "createAdvisorClientInvestmentAction",
           "kind": "function",
-          "line": 231,
+          "line": 297,
           "exported": true,
           "classification": [
             "server-action"
@@ -21568,6 +22066,10 @@
             {
               "kind": "calls",
               "target": "src/server/advisor-client-actions.ts#requireAdvisorLinkedClient"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/advisor-client-actions.ts#parseInvestmentPlanningFields"
             },
             {
               "kind": "calls",
@@ -21588,7 +22090,7 @@
           "id": "src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction",
           "name": "updateAdvisorClientInvestmentAction",
           "kind": "function",
-          "line": 312,
+          "line": 375,
           "exported": true,
           "classification": [
             "server-action"
@@ -21616,6 +22118,10 @@
             },
             {
               "kind": "calls",
+              "target": "src/server/advisor-client-actions.ts#parseInvestmentPlanningFields"
+            },
+            {
+              "kind": "calls",
               "target": "src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges"
             },
             {
@@ -21633,7 +22139,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction",
           "name": "deleteAdvisorClientInvestmentAction",
           "kind": "function",
-          "line": 417,
+          "line": 480,
           "exported": true,
           "classification": [
             "server-action"
@@ -22649,6 +23155,70 @@
       ]
     },
     {
+      "path": "src/server/inbox/acknowledge-cpf-rules-review.ts",
+      "root": "src/server",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/server/inbox/acknowledge-cpf-rules-review.ts#acknowledgeCpfRulesReview",
+          "name": "acknowledgeCpfRulesReview",
+          "kind": "function",
+          "line": 10,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/profiles.ts#updateProfile"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/inbox-notifications.ts#markAsReadByDedupeKey"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cpf-rules-review.ts#cpfRulesReviewDedupeKey"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/server/inbox/acknowledge-investment-review.ts",
+      "root": "src/server",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview",
+          "name": "acknowledgeInvestmentReview",
+          "kind": "function",
+          "line": 7,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/profiles.ts#updateProfile"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/inbox-notifications.ts#markAsReadByDedupeKey"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-review.ts#investmentReviewDedupeKeyForYear"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/server/inbox/ensure-advisor-consent-notification.test.ts",
       "root": "src/server",
       "classification": [
@@ -22678,6 +23248,90 @@
             {
               "kind": "calls",
               "target": "src/data/repositories/inbox-notifications.ts#upsertByDedupeKey"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/server/inbox/ensure-cpf-rules-review-notification.test.ts",
+      "root": "src/server",
+      "classification": [
+        "regular"
+      ],
+      "functions": []
+    },
+    {
+      "path": "src/server/inbox/ensure-cpf-rules-review-notification.ts",
+      "root": "src/server",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/server/inbox/ensure-cpf-rules-review-notification.ts#ensureCpfRulesReviewNotification",
+          "name": "ensureCpfRulesReviewNotification",
+          "kind": "function",
+          "line": 14,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/inbox-notifications.ts#upsertByDedupeKey"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cpf-rules-review.ts#cpfRulesReviewDedupeKey"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/server/inbox/ensure-investment-review-notification.test.ts",
+      "root": "src/server",
+      "classification": [
+        "regular"
+      ],
+      "functions": []
+    },
+    {
+      "path": "src/server/inbox/ensure-investment-review-notification.ts",
+      "root": "src/server",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/server/inbox/ensure-investment-review-notification.ts#ensureInvestmentReviewNotification",
+          "name": "ensureInvestmentReviewNotification",
+          "kind": "function",
+          "line": 19,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-review.ts#shouldPromptInvestmentReview"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-review.ts#countStaleInvestments"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/inbox-notifications.ts#upsertByDedupeKey"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-review.ts#investmentReviewDedupeKeyForYear"
             }
           ],
           "unresolved": 0
@@ -23229,6 +23883,7 @@
         "src/data/projection.ts#resolveProjectionSnapshot",
         "src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap",
         "src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow",
+        "src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow",
         "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth",
         "src/domain/housing/compose.ts#loanToMortgage",
         "src/domain/housing/compose.ts#propertyRowToView",
@@ -23290,7 +23945,8 @@
         "src/app/api/projection/route.ts#GET",
         "src/data/dashboard.ts#getDashboardPayload",
         "src/data/projection.ts#resolveProjectionSnapshot",
-        "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges"
+        "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
+        "src/features/app-shell/AppShellInbox.tsx#AppShellInbox"
       ],
       "src/data/repositories/cash-accounts.ts#advisorReadCashAccounts": [
         "src/data/dashboard.ts#getDashboardPayload",
@@ -23773,6 +24429,8 @@
         "src/server/actions.ts#applyGuidedBudgetLinesAction",
         "src/server/actions.ts#clearBudgetMonthOverrideAction",
         "src/server/actions.ts#clearCpfBalanceAction",
+        "src/server/actions.ts#confirmCpfRulesReviewAction",
+        "src/server/actions.ts#confirmInvestmentReviewAction",
         "src/server/actions.ts#createBudgetLineAction",
         "src/server/actions.ts#createCashAccountAction",
         "src/server/actions.ts#createGoalAction",
@@ -23813,11 +24471,23 @@
         "src/server/client-consent-actions.ts#recordAdvisorConsentAction",
         "src/server/inbox-actions.ts#requireUser"
       ],
+      "src/server/actions.ts#parseInvestmentPlanningFields": [
+        "src/server/actions.ts#createInvestmentAction",
+        "src/server/actions.ts#updateInvestmentAction"
+      ],
       "src/data/repositories/investments.ts#insertInvestment": [
         "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
         "src/server/actions.ts#createInvestmentAction"
       ],
+      "src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview": [
+        "src/server/actions.ts#confirmInvestmentReviewAction",
+        "src/server/actions.ts#createInvestmentAction",
+        "src/server/actions.ts#deleteInvestmentAction",
+        "src/server/actions.ts#updateInvestmentAction"
+      ],
       "src/server/actions.ts#toClientErrorMessage": [
+        "src/server/actions.ts#confirmCpfRulesReviewAction",
+        "src/server/actions.ts#confirmInvestmentReviewAction",
         "src/server/actions.ts#createInvestmentAction",
         "src/server/actions.ts#deleteInvestmentAction",
         "src/server/actions.ts#updateInvestmentAction"
@@ -23830,6 +24500,8 @@
         "src/server/actions.ts#applyGuidedBudgetLinesAction",
         "src/server/actions.ts#clearBudgetMonthOverrideAction",
         "src/server/actions.ts#clearCpfBalanceAction",
+        "src/server/actions.ts#confirmCpfRulesReviewAction",
+        "src/server/actions.ts#confirmInvestmentReviewAction",
         "src/server/actions.ts#createBudgetLineAction",
         "src/server/actions.ts#createGoalAction",
         "src/server/actions.ts#createInvestmentAction",
@@ -23854,6 +24526,9 @@
       "src/data/repositories/investments.ts#deleteInvestment": [
         "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
         "src/server/actions.ts#deleteInvestmentAction"
+      ],
+      "src/server/inbox/acknowledge-cpf-rules-review.ts#acknowledgeCpfRulesReview": [
+        "src/server/actions.ts#confirmCpfRulesReviewAction"
       ],
       "src/data/repositories/cash-accounts.ts#insertCashAccount": [
         "src/server/actions.ts#createCashAccountAction"
@@ -23933,7 +24608,9 @@
       "src/data/repositories/profiles.ts#updateProfile": [
         "src/app/api/profile/route.ts#PATCH",
         "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
-        "src/server/actions.ts#applyGuidedBudgetLinesAction"
+        "src/server/actions.ts#applyGuidedBudgetLinesAction",
+        "src/server/inbox/acknowledge-cpf-rules-review.ts#acknowledgeCpfRulesReview",
+        "src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview"
       ],
       "src/data/repositories/budget-line-overrides.ts#upsertBudgetLineMonthOverride": [
         "src/server/actions.ts#setBudgetMonthOverrideAction"
@@ -24003,13 +24680,6 @@
         "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
         "src/server/actions.ts#createHousingLoanQuickAction"
       ],
-      "src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount": [
-        "src/domain/finance/housing-loan-payments.ts#normalizeHousingPaymentForPersist",
-        "src/domain/finance/housing-loan-payments.ts#oaShareForCpfProjection",
-        "src/domain/finance/housing-loan-payments.ts#oaShareForStoredHousingLoan",
-        "src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm",
-        "src/server/actions.ts#createHousingLoanQuickAction"
-      ],
       "src/data/repositories/housing-loans.ts#updateHousingLoan": [
         "src/server/actions.ts#updateHousingLoanAction"
       ],
@@ -24067,6 +24737,10 @@
       ],
       "src/data/repositories/goals.ts#getFinancialGoalById": [
         "src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction"
+      ],
+      "src/server/advisor-client-actions.ts#parseInvestmentPlanningFields": [
+        "src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction",
+        "src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction"
       ],
       "src/server/advisor-client-actions.ts#clientErrorFromUnknown": [
         "src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction",
@@ -24147,7 +24821,9 @@
         "src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction",
         "src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction",
         "src/server/client-consent-actions.ts#recordAdvisorConsentAction",
-        "src/server/inbox-actions.ts#markInboxItemReadByDedupeKeyAction"
+        "src/server/inbox-actions.ts#markInboxItemReadByDedupeKeyAction",
+        "src/server/inbox/acknowledge-cpf-rules-review.ts#acknowledgeCpfRulesReview",
+        "src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview"
       ],
       "src/data/repositories/advisor-proposals.ts#getOrCreateDraftProposal": [
         "src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges"
@@ -24504,6 +25180,9 @@
         "src/domain/finance/cpf-retirement-projection.ts#simulateRaForScenario",
         "src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel"
       ],
+      "src/domain/finance/cpf-rules-review.ts#reviewedInOrAfterMonth": [
+        "src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview"
+      ],
       "src/domain/finance/debt-repayment.ts#normalizeDebtCategoryKey": [
         "src/domain/finance/debt-repayment.ts#isDebtBudgetCategory"
       ],
@@ -24581,6 +25260,12 @@
       "src/domain/finance/housing-loan-payments.ts#resolveHousingPaymentSourceForCash": [
         "src/domain/finance/housing-loan-payments.ts#splitHousingInstalment"
       ],
+      "src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount": [
+        "src/domain/finance/housing-loan-payments.ts#normalizeHousingPaymentForPersist",
+        "src/domain/finance/housing-loan-payments.ts#oaShareForCpfProjection",
+        "src/domain/finance/housing-loan-payments.ts#oaShareForStoredHousingLoan",
+        "src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm"
+      ],
       "src/domain/finance/housing-loan-payments.ts#splitHousingInstalment": [
         "src/domain/finance/housing-loan-payments.ts#buildHousingPaymentInsights",
         "src/domain/finance/housing-loan-payments.ts#normalizeHousingPaymentForPersist",
@@ -24605,7 +25290,27 @@
         "src/domain/finance/investable-surplus.ts#sumInvestableSurplusOverHorizon"
       ],
       "src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow": [
+        "src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow",
         "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth"
+      ],
+      "src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow": [
+        "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth"
+      ],
+      "src/domain/finance/investment-review.ts#investmentRowLastTouchedAt": [
+        "src/domain/finance/investment-review.ts#investmentRowIsStale"
+      ],
+      "src/domain/finance/investment-review.ts#monthsSinceTimestamp": [
+        "src/domain/finance/investment-review.ts#investmentRowIsStale",
+        "src/domain/finance/investment-review.ts#shouldPromptInvestmentReview"
+      ],
+      "src/domain/finance/investment-review.ts#investmentRowIsStale": [
+        "src/domain/finance/investment-review.ts#countStaleInvestments",
+        "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList",
+        "src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary"
+      ],
+      "src/domain/finance/investment-review.ts#countStaleInvestments": [
+        "src/domain/finance/investment-review.ts#shouldPromptInvestmentReview",
+        "src/server/inbox/ensure-investment-review-notification.ts#ensureInvestmentReviewNotification"
       ],
       "src/domain/finance/irregular-expenses.ts#irregularCadenceOccurrences": [
         "src/domain/finance/irregular-expenses.ts#annualAmountFromIrregularInput"
@@ -24615,6 +25320,16 @@
       ],
       "src/domain/finance/net-worth.ts#sum": [
         "src/domain/finance/net-worth.ts#calculateNetWorth"
+      ],
+      "src/domain/finance/projection.ts#monthlyContributionForMonth": [
+        "src/domain/finance/projection.ts#projectFutureValueIterative"
+      ],
+      "src/domain/finance/projection.ts#hasVariableCashflows": [
+        "src/domain/finance/projection.ts#calculateTimeToGoal",
+        "src/domain/finance/projection.ts#projectFutureValue"
+      ],
+      "src/domain/finance/projection.ts#projectFutureValueIterative": [
+        "src/domain/finance/projection.ts#projectFutureValue"
       ],
       "src/domain/finance/projection.ts#futureValueEndOfMonthWindow": [
         "src/domain/finance/projection.ts#projectFutureValue"
@@ -24906,6 +25621,12 @@
       "src/server/inbox/ensure-salary-review-notification.ts#ensureSalaryReviewNotification": [
         "src/features/app-shell/AppShellInbox.tsx#AppShellInbox"
       ],
+      "src/server/inbox/ensure-cpf-rules-review-notification.ts#ensureCpfRulesReviewNotification": [
+        "src/features/app-shell/AppShellInbox.tsx#AppShellInbox"
+      ],
+      "src/server/inbox/ensure-investment-review-notification.ts#ensureInvestmentReviewNotification": [
+        "src/features/app-shell/AppShellInbox.tsx#AppShellInbox"
+      ],
       "src/data/repositories/inbox-notifications.ts#listUnreadByUser": [
         "src/features/app-shell/AppShellInbox.tsx#AppShellInbox"
       ],
@@ -25058,6 +25779,9 @@
       "src/features/debts/DebtPlanningPanels.tsx#mapLiabilityRows": [
         "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels"
       ],
+      "src/server/actions.ts#confirmCpfRulesReviewAction": [
+        "src/features/goals/CpfBalancesForm.tsx#CpfRulesReviewPrompt"
+      ],
       "src/server/actions.ts#clearCpfBalanceAction": [
         "src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm"
       ],
@@ -25100,6 +25824,9 @@
       ],
       "src/server/actions.ts#deleteInvestmentAction": [
         "src/features/goals/InvestmentBalancesList.tsx#InvestmentRow"
+      ],
+      "src/server/actions.ts#confirmInvestmentReviewAction": [
+        "src/features/goals/InvestmentBalancesList.tsx#InvestmentReviewPrompt"
       ],
       "src/data/mappers.ts#vehicleRowToValuationInput": [
         "src/features/goals/VehiclesPanel.tsx#VehicleSummary"
@@ -25186,9 +25913,29 @@
       "src/lib/relative-time.ts#formatRelativeTimeAgo": [
         "src/features/setup-hub/SetupModuleCard.tsx#SetupModuleCard"
       ],
+      "src/domain/finance/cpf-rules-review.ts#cpfRulesReviewDedupeKey": [
+        "src/server/inbox/acknowledge-cpf-rules-review.ts#acknowledgeCpfRulesReview",
+        "src/server/inbox/ensure-cpf-rules-review-notification.ts#ensureCpfRulesReviewNotification"
+      ],
+      "src/domain/finance/investment-review.ts#investmentReviewDedupeKeyForYear": [
+        "src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview",
+        "src/server/inbox/ensure-investment-review-notification.ts#ensureInvestmentReviewNotification"
+      ],
       "src/data/repositories/inbox-notifications.ts#upsertByDedupeKey": [
         "src/server/inbox/ensure-advisor-consent-notification.ts#ensureAndCheckClientConsentPrompt",
+        "src/server/inbox/ensure-cpf-rules-review-notification.ts#ensureCpfRulesReviewNotification",
+        "src/server/inbox/ensure-investment-review-notification.ts#ensureInvestmentReviewNotification",
         "src/server/inbox/ensure-salary-review-notification.ts#ensureSalaryReviewNotification"
+      ],
+      "src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview": [
+        "src/app/(app)/setup/page.tsx#SetupPage",
+        "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection",
+        "src/server/inbox/ensure-cpf-rules-review-notification.ts#ensureCpfRulesReviewNotification"
+      ],
+      "src/domain/finance/investment-review.ts#shouldPromptInvestmentReview": [
+        "src/app/(app)/setup/page.tsx#SetupPage",
+        "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection",
+        "src/server/inbox/ensure-investment-review-notification.ts#ensureInvestmentReviewNotification"
       ],
       "src/data/repositories/advisor-dashboard.ts#getAdvisorDashboardData": [
         "src/app/(app)/advisor/page.tsx#AdvisorDashboardPage"
@@ -25512,6 +26259,7 @@
         "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection",
         "src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm",
         "src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels",
+        "src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner",
         "src/features/goals/VehiclesPanel.tsx#VehiclesPanel",
         "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection"
       ],
@@ -25600,6 +26348,9 @@
       "src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels": [
         "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels"
       ],
+      "src/features/goals/CpfBalancesForm.tsx#CpfRulesReviewPrompt": [
+        "src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm"
+      ],
       "src/features/goals/GoalForm.tsx#GoalForm": [
         "src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels"
       ],
@@ -25639,6 +26390,13 @@
       ],
       "src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm": [
         "src/features/goals/InvestmentBalancesList.tsx#InvestmentRow"
+      ],
+      "src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner": [
+        "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList",
+        "src/features/goals/InvestmentForm.tsx#InvestmentForm"
+      ],
+      "src/features/goals/InvestmentBalancesList.tsx#InvestmentReviewPrompt": [
+        "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList"
       ],
       "src/features/goals/InvestmentBalancesList.tsx#InvestmentRow": [
         "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList"

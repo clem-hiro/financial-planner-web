@@ -10,6 +10,10 @@ import {
   advisorReadCashAccounts,
 } from "@/data/repositories/cash-accounts";
 import {
+  advisorReadCashAccountSnapshots,
+  listCashAccountSnapshots,
+} from "@/data/repositories/cash-account-snapshots";
+import {
   listHousingLoans,
   advisorReadHousingLoans,
 } from "@/data/repositories/housing-loans";
@@ -35,6 +39,7 @@ import {
 } from "@/data/repositories/vehicles";
 import type {
   CashAccountRow,
+  CashAccountSnapshotRow,
   CpfBalanceRow,
   FinancialGoalRow,
   HousingLoanRow,
@@ -47,6 +52,7 @@ import type {
 export type SetupTabBundle = {
   investments: InvestmentRow[];
   cashAccounts: CashAccountRow[];
+  cashSnapshots: CashAccountSnapshotRow[];
   liabilityRows: LiabilityRow[];
   vehicleRows: VehicleRow[];
   cpfRow: CpfBalanceRow | null;
@@ -85,6 +91,7 @@ export async function loadSetupTabBundle(
   const [
     investments,
     cashAccounts,
+    cashSnapshots,
     liabilityRows,
     vehicleRows,
     cpfRow,
@@ -104,6 +111,11 @@ export async function loadSetupTabBundle(
           userId
         )
       : Promise.resolve([] as CashAccountRow[]),
+    needCash
+      ? (isAdvisorViewer
+          ? advisorReadCashAccountSnapshots
+          : listCashAccountSnapshots)(supabase, userId)
+      : Promise.resolve([] as CashAccountSnapshotRow[]),
     needLiabilities
       ? (isAdvisorViewer ? advisorReadLiabilities : listLiabilities)(
           supabase,
@@ -145,6 +157,7 @@ export async function loadSetupTabBundle(
   return {
     investments,
     cashAccounts,
+    cashSnapshots,
     liabilityRows,
     vehicleRows,
     cpfRow,

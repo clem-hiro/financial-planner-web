@@ -15,8 +15,8 @@ import { ProfileIncomeForm } from "@/features/dashboard/ProfileIncomeForm";
 import { IncomeTaxSection } from "@/features/income-tax/IncomeTaxSection";
 import {
   CashAndLiabilitiesPanels,
+  buildCashHistoryByAccountId,
   type CashAccountBalanceRow,
-  type LiabilityBalanceRow,
 } from "@/features/goals/CashAndLiabilitiesPanels";
 import { CpfBalancesForm } from "@/features/goals/CpfBalancesForm";
 import { HousingPanel } from "@/features/goals/HousingLoansPanel";
@@ -36,6 +36,7 @@ import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth, parseYearMonth, yearFromYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
 import { setupTabPath } from "@/lib/setup-urls";
+import { shouldPromptCpfRulesReview } from "@/domain/finance/cpf-rules-review";
 import { shouldPromptInvestmentReview } from "@/domain/finance/investment-review";
 import { birthDateIsValidPast } from "@/lib/validation";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
@@ -118,6 +119,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
   const {
     investments,
     cashAccounts,
+    cashSnapshots,
     liabilityRows,
     vehicleRows,
     cpfRow,
@@ -136,11 +138,18 @@ export default async function SetupPage({ searchParams }: PageProps) {
     current_value: num(i.current_value),
     monthly_contribution: num(i.monthly_contribution),
     expected_annual_return: num(i.expected_annual_return),
+    contribution_growth_annual: num(i.contribution_growth_annual),
     contribution_type: i.contribution_type ?? null,
     contribution_duration_years:
       i.contribution_duration_years != null &&
       String(i.contribution_duration_years).trim() !== ""
         ? num(i.contribution_duration_years as string)
+        : null,
+    withdrawal_monthly: num(i.withdrawal_monthly),
+    withdrawal_start_years:
+      i.withdrawal_start_years != null &&
+      String(i.withdrawal_start_years).trim() !== ""
+        ? num(i.withdrawal_start_years)
         : null,
     updated_at: i.updated_at ?? null,
     created_at: i.created_at ?? null,
@@ -148,6 +157,11 @@ export default async function SetupPage({ searchParams }: PageProps) {
   const showInvestmentReviewPrompt = shouldPromptInvestmentReview({
     investments,
     lastInvestmentReviewAt: financialProfile?.last_investment_review_at ?? null,
+  });
+  const showCpfRulesReviewPrompt = shouldPromptCpfRulesReview({
+    lastCpfRulesReviewAt: financialProfile?.last_cpf_rules_review_at ?? null,
+    lastCpfRulesReviewVersion:
+      financialProfile?.last_cpf_rules_review_version ?? null,
   });
   const investmentPlanningContext =
     financialProfile?.birth_date &&
@@ -163,7 +177,9 @@ export default async function SetupPage({ searchParams }: PageProps) {
     id: r.id,
     name: r.name,
     balance: num(r.balance),
+    purpose: r.purpose ?? "other",
   }));
+  const cashHistoryByAccountId = buildCashHistoryByAccountId(cashSnapshots);
 
   return (
     <div className="flex flex-col gap-5 sm:gap-8">
@@ -306,7 +322,10 @@ export default async function SetupPage({ searchParams }: PageProps) {
               </span>
             }
           >
-            <CpfBalancesForm row={cpfRow} />
+            <CpfBalancesForm
+              row={cpfRow}
+              showRulesReviewPrompt={showCpfRulesReviewPrompt}
+            />
           </PageSection>
         </div>
       ) : null}
@@ -316,6 +335,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           <PageSection id="cash-liabilities" title="Cash and debts">
             <CashAndLiabilitiesPanels
               cashRows={cashBalanceRows}
+              cashHistoryByAccountId={cashHistoryByAccountId}
               liabilityRows={liabilityRows}
               currencyCode={currency}
             />
@@ -381,6 +401,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
             goals={goals}
             investments={investments}
             currency={currency}
+            userId={user.id}
           />
         </div>
       ) : null}

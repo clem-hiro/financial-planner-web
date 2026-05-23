@@ -7,6 +7,9 @@ import {
   ensureInvestmentReviewNotification,
 } from "@/server/inbox/ensure-investment-review-notification";
 import {
+  ensureCpfRulesReviewNotification,
+} from "@/server/inbox/ensure-cpf-rules-review-notification";
+import {
   ensureSalaryReviewNotification,
   type SalaryReviewProfile,
 } from "@/server/inbox/ensure-salary-review-notification";
@@ -32,6 +35,7 @@ export async function AppShellInbox({
     last_salary_review_at: profile.last_salary_review_at,
   };
   await ensureSalaryReviewNotification(supabase, salaryProfile);
+  await ensureCpfRulesReviewNotification(supabase, profile);
   const investments = await listInvestments(supabase, userId);
   await ensureInvestmentReviewNotification(supabase, profile, investments);
   const initialItems = await listUnreadByUser(supabase, userId, 10);
@@ -58,4 +62,3 @@ export function AppShellInboxFallback() {
     </div>
   );
 }
-

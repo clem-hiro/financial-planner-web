@@ -1,6 +1,9 @@
 import { num } from "@/data/mappers";
 import type { InvestmentRow } from "@/data/supabase/types";
-import { contributionMonthsLimitFromInvestmentRow } from "./investment-contribution";
+import {
+  contributionMonthsLimitFromInvestmentRow,
+  withdrawalStartMonthFromInvestmentRow,
+} from "./investment-contribution";
 import { projectFutureValue } from "./projection";
 
 const MAX_PROJECTION_MONTHS = 12 * 150;
@@ -17,6 +20,10 @@ export function futureValueInvestmentPortfolioAtMonth(
       row,
       monthsToRetirementFromNow
     );
+    const withdrawalStartMonth = withdrawalStartMonthFromInvestmentRow(
+      row,
+      monthsToRetirementFromNow
+    );
     return (
       sum +
       projectFutureValue({
@@ -25,6 +32,9 @@ export function futureValueInvestmentPortfolioAtMonth(
         annualReturn: num(row.expected_annual_return),
         months,
         contributionMonthsLimit: lim,
+        contributionGrowthAnnual: num(row.contribution_growth_annual),
+        monthlyWithdrawal: num(row.withdrawal_monthly),
+        withdrawalStartMonth,
       })
     );
   }, 0);
@@ -44,30 +54,14 @@ export function calculateTimeToGoalInvestmentPortfolio(
     return { months: 0 };
   }
 
-  const fvAtMax = futureValueInvestmentPortfolioAtMonth(
-    rows,
-    MAX_PROJECTION_MONTHS,
-    monthsToRetirementFromNow
-  );
-  if (fvAtMax < targetAmount) {
-    return null;
-  }
-
-  let low = 0;
-  let high = MAX_PROJECTION_MONTHS;
-  while (low < high) {
-    const mid = Math.floor((low + high) / 2);
+  for (let months = 1; months <= MAX_PROJECTION_MONTHS; months++) {
     const fv = futureValueInvestmentPortfolioAtMonth(
       rows,
-      mid,
+      months,
       monthsToRetirementFromNow
     );
-    if (fv >= targetAmount) {
-      high = mid;
-    } else {
-      low = mid + 1;
-    }
+    if (fv >= targetAmount) return { months };
   }
 
-  return { months: low };
+  return null;
 }

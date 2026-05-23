@@ -40,10 +40,16 @@ import {
   type BudgetReviewLineInput,
 } from "@/domain/finance/budget-review";
 import {
+  isMonthlyBudgetLineApplicable,
   monthlyBudgetAggregateOverspend,
   normalizeCategory,
   type BudgetVsActualResult,
 } from "@/domain/finance/budget";
+import {
+  cashFlowSetupGaps,
+  shouldShowCashFlowSetupGuidance,
+} from "@/domain/finance/cash-flow-setup-guidance";
+import { CashFlowSetupGuidanceBanner } from "@/features/planning/CashFlowSetupGuidanceBanner";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import {
   appTabPillClass,
@@ -106,6 +112,23 @@ export async function BudgetPlanningView({
   const monthlyAll = model.lineRows.filter((l) => l.cadence === "monthly");
   const { active: activeMonthly, inactive: inactiveMonthly } =
     partitionMonthlyLines(month, monthlyAll);
+  const activeMonthlyBudgetLineCount = monthlyAll.filter((l) =>
+    isMonthlyBudgetLineApplicable(
+      month,
+      l.start_year_month ?? null,
+      l.end_year_month ?? null
+    )
+  ).length;
+  const setupGuidanceInput = {
+    profile,
+    monthlyIncome,
+    activeMonthlyBudgetLineCount,
+    pathVariant: budgetPathVariant,
+    month,
+    calendarYear,
+  };
+  const setupGaps = cashFlowSetupGaps(setupGuidanceInput);
+  const showSetupGuidance = shouldShowCashFlowSetupGuidance(setupGuidanceInput);
   const annualRows = model.lineRows.filter(
     (l) =>
       l.cadence === "annual" &&
@@ -138,6 +161,10 @@ export async function BudgetPlanningView({
 
   return (
     <div className="space-y-12 pb-16">
+      {showSetupGuidance ? (
+        <CashFlowSetupGuidanceBanner gaps={setupGaps} />
+      ) : null}
+
       <BudgetPageHero
         month={month}
         currency={currency}

@@ -4,8 +4,10 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import {
   buildCpfRetirementProjection,
+  CPF_FRS_BASE_COHORT_YEAR,
   CPF_RA_FORMATION_AGE,
   CPF_SCENARIO_EXAMPLES,
+  CURRENT_FRS_SG,
   DEFAULT_CPF_ASSUMPTIONS,
   simulateRaFormationAt55,
   simulateRaForScenario,
@@ -13,7 +15,10 @@ import {
   type CpfRetirementTarget,
   type CpfScenarioExample,
 } from "@/domain/finance/cpf-retirement-projection";
+import { CPF_RULES_VERSION } from "@/domain/finance/cpf-rules-review";
+import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { formatCurrency } from "@/ui/lib/format";
+import { InfoTooltip } from "@/ui/InfoTooltip";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import {
   fpInputClass,
@@ -260,16 +265,39 @@ export function CpfRetirementProjectionPanel({
       className="mt-6 scroll-mt-28 space-y-6 rounded-2xl border border-indigo-100/90 bg-linear-to-br from-indigo-50/40 via-white to-slate-50/30 p-4 shadow-sm ring-1 ring-indigo-100/40 sm:p-5 md:p-6"
     >
       <header className="max-w-2xl space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-indigo-600/90">
-          Retirement planning
-        </p>
-        <h3 className="text-lg font-semibold tracking-tight text-indigo-950 sm:text-xl">
-          CPF Retirement Projection
-        </h3>
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div className="min-w-0 space-y-2">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-indigo-600/90">
+              Retirement planning
+            </p>
+            <h3 className="text-lg font-semibold tracking-tight text-indigo-950 sm:text-xl">
+              CPF Retirement Projection
+            </h3>
+          </div>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <InfoTooltip
+              variant="zinc"
+              ariaLabel="Open methodology: CPF retirement projection"
+              methodologyTopicId="cpf-retirement-projection"
+            >
+              <span className="sr-only">CPF retirement projection methodology</span>
+            </InfoTooltip>
+            <MethodologyOpenLink
+              topicId="cpf-retirement-projection"
+              className="text-xs font-medium text-indigo-900 underline decoration-indigo-300/60 underline-offset-2"
+            >
+              Assumptions →
+            </MethodologyOpenLink>
+          </div>
+        </div>
         <p className="text-sm leading-relaxed text-slate-600">
           See how CPF typically sets aside money at age {CPF_RA_FORMATION_AGE}, what
           your retirement sums might look like, and how SA and OA combine to form your
-          Retirement Account (RA).
+          Retirement Account (RA).{" "}
+          <strong className="font-medium text-slate-700">
+            Illustrative only
+          </strong>{" "}
+          — not guaranteed CPF LIFE income or financial advice.
         </p>
       </header>
 
@@ -437,7 +465,17 @@ export function CpfRetirementProjectionPanel({
         {showAdvanced ? (
           <div className="space-y-4 border-t border-slate-200/70 px-4 pb-4 pt-3">
             <p className="text-xs text-slate-600">
-              For advisors and power users. Defaults work well for most people.
+              For advisors and power users. Defaults work well for most people. App
+              CPF rules baseline: <strong>{CPF_RULES_VERSION}</strong>. Published FRS
+              for members turning 55 in {CPF_FRS_BASE_COHORT_YEAR}:{" "}
+              <strong>{formatCurrency(CURRENT_FRS_SG, currency)}</strong>.
+            </p>
+            <p className="text-xs text-slate-600">
+              Re-check balances and policy values in{" "}
+              <Link href="/setup?tab=cpf#cpf-rules-review" className={appInlineLinkClass}>
+                Setup → CPF
+              </Link>{" "}
+              when the app prompts a CPF assumptions review.
             </p>
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="block text-sm">

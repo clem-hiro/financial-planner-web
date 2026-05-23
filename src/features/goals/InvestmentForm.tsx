@@ -196,13 +196,58 @@ export function InvestmentForm(
           Advanced planning
         </summary>
         <p className="mt-2 leading-relaxed">
-          Contribution start/stop ages, pauses, withdrawals, and drawdown are not
-          modeled yet—we&apos;re keeping the door open without complicating this screen.
+          Optional planning assumptions for step-up savings plans and future drawdown.
+          Leave blank or zero when this account has a flat contribution path.
         </p>
-        <ul className="mt-2 list-inside list-disc space-y-1 text-slate-500">
-          <li>Withdrawal planning — coming soon</li>
-          <li>Stepped or salary-linked contributions — coming soon</li>
-        </ul>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium text-slate-700">
+              Annual contribution step-up
+            </span>
+            <input
+              name="contribution_growth_annual"
+              type="number"
+              min={0}
+              max={1}
+              step="0.001"
+              defaultValue={0}
+              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm tabular-nums text-slate-900 shadow-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/25"
+            />
+            <span className="mt-1 block text-[11px] text-slate-500">
+              Decimal format, e.g. 0.03 for 3% yearly.
+            </span>
+          </label>
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium text-slate-700">
+              Monthly withdrawal
+            </span>
+            <input
+              name="withdrawal_monthly"
+              type="number"
+              min={0}
+              step="0.01"
+              defaultValue={0}
+              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm tabular-nums text-slate-900 shadow-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/25"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium text-slate-700">
+              Withdrawal starts after
+            </span>
+            <input
+              name="withdrawal_start_years"
+              type="number"
+              min={0}
+              max={100}
+              step={0.25}
+              placeholder="Retirement age"
+              className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm tabular-nums text-slate-900 shadow-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/25"
+            />
+            <span className="mt-1 block text-[11px] text-slate-500">
+              Years from today. Blank uses profile retirement age when available.
+            </span>
+          </label>
+        </div>
       </details>
 
       <div className="flex justify-end pt-1">
