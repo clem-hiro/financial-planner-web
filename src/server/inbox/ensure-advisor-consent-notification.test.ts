@@ -56,6 +56,19 @@ describe("ensureAndCheckClientConsentPrompt — short-circuits (zero DB hops)", 
     expect(getMyConsentStatusForAdvisor).not.toHaveBeenCalled();
     expect(upsertByDedupeKey).not.toHaveBeenCalled();
   });
+
+  it("client still onboarding ⇒ false, no DB", async () => {
+    const r = await ensureAndCheckClientConsentPrompt(supabase, {
+      id: "client-1",
+      profile_type: "client",
+      advisor_user_id: "advisor-1",
+      onboarding_required: true,
+      onboarding_completed_at: null,
+    });
+    expect(r).toBe(false);
+    expect(getMyConsentStatusForAdvisor).not.toHaveBeenCalled();
+    expect(upsertByDedupeKey).not.toHaveBeenCalled();
+  });
 });
 
 describe("ensureAndCheckClientConsentPrompt — linked client", () => {
