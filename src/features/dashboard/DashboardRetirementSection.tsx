@@ -231,7 +231,7 @@ export function DashboardRetirementSection({
                       (
                       {profile?.target_retirement_age != null
                         ? "from your profile"
-                        : "default 65 — set in Retirement targets above"}
+                        : "default 65 — set in Setup → Goals"}
                       ), this simplified path projects about{" "}
                       <span className="font-semibold tabular-nums">
                         {formatCurrency(

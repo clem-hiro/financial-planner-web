@@ -11,6 +11,7 @@ import { GoalEditForm } from "@/features/goals/GoalEditForm";
 import { GoalForm } from "@/features/goals/GoalForm";
 import { GoalPriorityTradeoffPanel } from "@/features/goals/GoalPriorityTradeoffPanel";
 import { GoalReorderButtons } from "@/features/goals/GoalReorderButtons";
+import { RetirementTargetsForm } from "@/features/goals/RetirementTargetsForm";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { formatMonthsApprox } from "@/ui/lib/duration";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
@@ -28,6 +29,11 @@ type Props = {
   currency: string;
   /** When set, loads priority trade-off vs current-month surplus. */
   userId?: string;
+  initialTargetRetirementAge?: number | null;
+  initialRetirementMonthlySpendGoal?: number | null;
+  initialExpenseGrowthPercent?: number | null;
+  initialRetirementDividendYieldPercent?: number | null;
+  initialRetirementWithdrawalRatePercent?: number | null;
 };
 
 export function FinancialGoalsPanels({
@@ -35,6 +41,11 @@ export function FinancialGoalsPanels({
   investments,
   currency,
   userId,
+  initialTargetRetirementAge = null,
+  initialRetirementMonthlySpendGoal = null,
+  initialExpenseGrowthPercent = null,
+  initialRetirementDividendYieldPercent = null,
+  initialRetirementWithdrawalRatePercent = null,
 }: Props) {
   const orderedGoals = sortGoalsByPriority(goals);
   const investmentOptions = investments.map((i) => ({
@@ -79,6 +90,15 @@ export function FinancialGoalsPanels({
 
   return (
     <div className="space-y-8">
+      <RetirementTargetsForm
+        initialTargetRetirementAge={initialTargetRetirementAge}
+        initialRetirementMonthlySpendGoal={initialRetirementMonthlySpendGoal}
+        initialExpenseGrowthPercent={initialExpenseGrowthPercent}
+        initialDividendYieldPercent={initialRetirementDividendYieldPercent}
+        initialWithdrawalRatePercent={initialRetirementWithdrawalRatePercent}
+        currencyCode={currency}
+      />
+
       <div className="rounded-xl border border-zinc-200/90 bg-zinc-50/50 px-4 py-3 sm:px-5">
         <p className="text-sm text-zinc-600">
           Savings targets with their own balances and monthly plans. Time-to-goal

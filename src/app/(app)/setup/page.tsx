@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import {
   num,
   profileAnnualSalaryGrowthNominal,
-  profileExpenseGrowthNominal,
   profileCpfAgeBand,
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
@@ -27,6 +26,7 @@ import {
 } from "@/features/goals/InvestmentBalancesList";
 import { InvestmentForm } from "@/features/goals/InvestmentForm";
 import { FinancialGoalsPanels } from "@/features/goals/FinancialGoalsPanels";
+import { profileRetirementTargetsProps } from "@/features/goals/profile-retirement-props";
 import { VehiclesPanel } from "@/features/goals/VehiclesPanel";
 import { BudgetPlanningView } from "@/features/budget/BudgetPlanningView";
 import { loadSetupTabBundle } from "@/features/planning/load-setup-tab-bundle";
@@ -217,7 +217,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           <PageSection id="profile-assumptions" title="Profile basics">
             <div className="space-y-6">
               <ProfileIncomeForm
-                key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${profileExpenseGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.target_retirement_age ?? ""}-${financialProfile?.retirement_monthly_spend_goal ?? ""}-${financialProfile?.retirement_dividend_yield_annual ?? ""}-${financialProfile?.salary_increment_month ?? ""}`}
+                key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.salary_increment_month ?? ""}-${financialProfile?.onboarding_completed_at ?? ""}`}
                 initialIncome={income}
                 initialGross={gross}
                 initialCpfAgeBand={cpfBand}
@@ -227,44 +227,24 @@ export default async function SetupPage({ searchParams }: PageProps) {
                     ? num(financialProfile.annual_bonus)
                     : null
                 }
+                initialAnnualBonusMonths={
+                  financialProfile?.annual_bonus_months != null &&
+                  String(financialProfile.annual_bonus_months).trim() !== ""
+                    ? num(financialProfile.annual_bonus_months)
+                    : null
+                }
                 initialAnnualSalaryGrowthPercent={
                   financialProfile?.annual_salary_growth_nominal != null &&
                   String(financialProfile.annual_salary_growth_nominal).trim() !== ""
                     ? num(financialProfile.annual_salary_growth_nominal) * 100
                     : null
                 }
-                initialExpenseGrowthPercent={
-                  financialProfile?.expense_growth_nominal != null &&
-                  String(financialProfile.expense_growth_nominal).trim() !== ""
-                    ? num(financialProfile.expense_growth_nominal) * 100
-                    : null
-                }
                 initialBirthDate={financialProfile?.birth_date ?? null}
-                initialTargetRetirementAge={
-                  financialProfile?.target_retirement_age != null
-                    ? Number(financialProfile.target_retirement_age)
-                    : null
-                }
-                initialRetirementMonthlySpendGoal={
-                  financialProfile?.retirement_monthly_spend_goal != null &&
-                  String(financialProfile.retirement_monthly_spend_goal).trim() !== ""
-                    ? num(financialProfile.retirement_monthly_spend_goal)
-                    : null
-                }
-                initialRetirementDividendYieldPercent={
-                  financialProfile?.retirement_dividend_yield_annual != null &&
-                  String(financialProfile.retirement_dividend_yield_annual).trim() !== ""
-                    ? num(financialProfile.retirement_dividend_yield_annual) * 100
-                    : null
-                }
-                initialRetirementWithdrawalRatePercent={
-                  financialProfile?.retirement_withdrawal_rate_annual != null &&
-                  String(financialProfile.retirement_withdrawal_rate_annual).trim() !== ""
-                    ? num(financialProfile.retirement_withdrawal_rate_annual) * 100
-                    : null
-                }
                 initialSalaryIncrementMonth={
                   financialProfile?.salary_increment_month ?? null
+                }
+                onboardingCompletedAt={
+                  financialProfile?.onboarding_completed_at ?? null
                 }
                 cpfYearMonth={formatYearMonth(new Date())}
                 currencyCode={currency}
@@ -408,6 +388,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
             investments={investments}
             currency={currency}
             userId={user.id}
+            {...profileRetirementTargetsProps(financialProfile)}
           />
         </div>
       ) : null}
