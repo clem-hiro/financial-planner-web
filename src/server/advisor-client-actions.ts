@@ -13,9 +13,40 @@ import { advisorReadInvestments } from "@/data/repositories/investments";
 import { advisorReadProfile, getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { recordAdvisorProposalChanges } from "@/server/advisor-proposal-recording";
+import {
+  getDraftProposalForClient,
+  listChangesForProposal,
+} from "@/data/repositories/advisor-proposals";
+import { entityNameUniquenessError } from "@/lib/validation";
 import { isAdvisor } from "@/lib/profile-role";
+import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { randomUUID } from "crypto";
+
+// Names of not-yet-accepted entities of `entityType` already pending in this
+// advisor↔client draft. Compose must reject a second new entity that collides
+// with one already staged — the DB index only sees them once accepted.
+async function pendingCreateNames(
+  supabase: SupabaseClient,
+  advisorUserId: string,
+  clientId: string,
+  entityType: AdvisorProposalChangeRow["entity_type"],
+  nameFieldKey: string
+): Promise<string[]> {
+  const draft = await getDraftProposalForClient(supabase, advisorUserId, clientId);
+  if (!draft) return [];
+  const changes = await listChangesForProposal(supabase, draft.id);
+  return changes
+    .filter(
+      (c) =>
+        c.entity_type === entityType &&
+        c.change_op === "create" &&
+        c.field_key === nameFieldKey &&
+        c.new_value != null
+    )
+    .map((c) => c.new_value as string);
+}
 
 function clientErrorFromUnknown(e: unknown): string {
   if (e instanceof Error && e.message.trim()) return e.message;
@@ -353,6 +384,23 @@ export async function createAdvisorClientInvestmentAction(
   const planning = parseInvestmentPlanningFields(formData);
   if (!planning.ok) return { error: planning.error };
 
+  const existingInvestmentNames = (
+    await advisorReadInvestments(supabase, clientId)
+  ).map((i) => i.name);
+  const pendingInvestmentNames = await pendingCreateNames(
+    supabase,
+    advisorUserId,
+    clientId,
+    "investment",
+    "name"
+  );
+  const investmentNameError = entityNameUniquenessError(
+    name,
+    [...existingInvestmentNames, ...pendingInvestmentNames],
+    "an investment"
+  );
+  if (investmentNameError) return { error: investmentNameError };
+
   // Explicit change_op='create' grouped by a server draft_entity_key (no
   // entity_id yet) — symmetric with budget/goal create; no reliance on the
   // fragile all-null legacy heuristic. base_version stays null (nothing to
@@ -637,6 +685,23 @@ export async function createAdvisorClientGoalAction(
   if (!Number.isFinite(monthlyContribution) || monthlyContribution < 0) {
     return { error: "Invalid monthly contribution" };
   }
+
+  const existingGoalNames = (await advisorReadGoals(supabase, clientId)).map(
+    (g) => g.title
+  );
+  const pendingGoalNames = await pendingCreateNames(
+    supabase,
+    advisorUserId,
+    clientId,
+    "goal",
+    "title"
+  );
+  const goalNameError = entityNameUniquenessError(
+    title,
+    [...existingGoalNames, ...pendingGoalNames],
+    "a goal"
+  );
+  if (goalNameError) return { error: goalNameError };
 
   const draftEntityKey = randomUUID();
   const fields: { fieldKey: string; newValue: string | number }[] = [

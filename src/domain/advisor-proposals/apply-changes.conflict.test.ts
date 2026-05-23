@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { applyAcceptedProposalChanges } from "./apply-changes";
+import {
+  applyAcceptedProposalChanges,
+  detectAcceptConflicts,
+  nameConflictFromWriteError,
+} from "./apply-changes";
 import { applyProposalChanges, type OverlayInputs } from "./apply-overlay";
 import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
 
@@ -389,5 +393,179 @@ describe("apply-overlay: draft_entity_key groups distinct new entities", () => {
       "Beta",
     ]);
     expect(new Set(out.investments.map((i) => i.id)).size).toBe(2);
+  });
+});
+
+function invRow(id: string, name: string): Row {
+  return {
+    id,
+    user_id: "c1",
+    name,
+    current_value: "1000",
+    monthly_contribution: "0",
+    expected_annual_return: "0.05",
+    contribution_growth_annual: "0",
+    withdrawal_monthly: "0",
+    withdrawal_start_years: null,
+    created_at: V,
+    updated_at: V,
+  };
+}
+
+describe("name-uniqueness pre-flight (scenario matrix)", () => {
+  it("two create-op investments with the same name (diff case) -> name_in_use", async () => {
+    const fake = makeFakeSupabase(seed());
+    const { conflicts } = await detectAcceptConflicts(fake, "c1", [
+      ch({
+        entity_type: "investment",
+        field_key: "name",
+        new_value: "ilp2",
+        change_op: "create",
+        draft_entity_key: "k1",
+      }),
+      ch({
+        entity_type: "investment",
+        field_key: "name",
+        new_value: "ILP2",
+        change_op: "create",
+        draft_entity_key: "k2",
+      }),
+    ]);
+    expect(conflicts.some((c) => c.reason === "name_in_use")).toBe(true);
+  });
+
+  it("create-op investment colliding with an existing live one (whitespace) -> conflict", async () => {
+    const s = { ...seed(), financial_investments: [invRow("i1", "ILP2")] };
+    const fake = makeFakeSupabase(s);
+    const { conflicts } = await detectAcceptConflicts(fake, "c1", [
+      ch({
+        entity_type: "investment",
+        field_key: "name",
+        new_value: "  ilp2 ",
+        change_op: "create",
+        draft_entity_key: "k1",
+      }),
+    ]);
+    expect(conflicts.some((c) => c.reason === "name_in_use")).toBe(true);
+  });
+
+  it("create-op goal title colliding with existing goal (case-insensitive) -> conflict", async () => {
+    const fake = makeFakeSupabase(seed());
+    const { conflicts } = await detectAcceptConflicts(fake, "c1", [
+      ch({
+        entity_type: "goal",
+        field_key: "title",
+        new_value: "HOUSE",
+        change_op: "create",
+        draft_entity_key: "k1",
+      }),
+    ]);
+    expect(conflicts.some((c) => c.reason === "name_in_use")).toBe(true);
+  });
+
+  it("rename of an existing investment onto another existing name -> conflict", async () => {
+    const s = {
+      ...seed(),
+      financial_investments: [invRow("i1", "Alpha"), invRow("i2", "Beta")],
+    };
+    const fake = makeFakeSupabase(s);
+    const { conflicts } = await detectAcceptConflicts(fake, "c1", [
+      ch({
+        entity_type: "investment",
+        entity_id: "i2",
+        field_key: "name",
+        new_value: "alpha",
+        old_value: "Beta",
+        change_op: "update",
+      }),
+    ]);
+    expect(conflicts.some((c) => c.reason === "name_in_use")).toBe(true);
+  });
+
+  it("distinct create-op name -> no name conflict", async () => {
+    const s = { ...seed(), financial_investments: [invRow("i1", "ILP2")] };
+    const fake = makeFakeSupabase(s);
+    const { conflicts } = await detectAcceptConflicts(fake, "c1", [
+      ch({
+        entity_type: "investment",
+        field_key: "name",
+        new_value: "ILP3",
+        change_op: "create",
+        draft_entity_key: "k1",
+      }),
+    ]);
+    expect(conflicts.some((c) => c.reason === "name_in_use")).toBe(false);
+  });
+});
+
+describe("nameConflictFromWriteError (post-claim 23505 -> name_in_use)", () => {
+  const investChange = ch({
+    entity_type: "investment",
+    field_key: "name",
+    new_value: "ilp2",
+    change_op: "create",
+    draft_entity_key: "k1",
+  });
+
+  it("maps a 23505 on the investments index to a name_in_use conflict with the label", () => {
+    const err = {
+      code: "23505",
+      message:
+        'duplicate key value violates unique constraint "financial_investments_user_name_ci_uq"',
+    };
+    const out = nameConflictFromWriteError(err, [investChange]);
+    expect(out).toEqual([
+      {
+        entityType: "investment",
+        entityId: null,
+        label: "ilp2",
+        reason: "name_in_use",
+      },
+    ]);
+  });
+
+  it("maps a 23505 on the goals index to a goal name_in_use conflict", () => {
+    const err = {
+      code: "23505",
+      details: "Key (user_id, lower(btrim(title)))=(…, house) already exists.",
+      message:
+        'duplicate key value violates unique constraint "financial_goals_user_name_ci_uq"',
+    };
+    const out = nameConflictFromWriteError(err, [
+      ch({
+        entity_type: "goal",
+        field_key: "title",
+        new_value: "House",
+        change_op: "create",
+        draft_entity_key: "g1",
+      }),
+    ]);
+    expect(out?.[0]).toMatchObject({
+      entityType: "goal",
+      reason: "name_in_use",
+      label: "House",
+    });
+  });
+
+  it("returns null for a non-23505 error", () => {
+    expect(
+      nameConflictFromWriteError(
+        { code: "23503", message: "fk violation" },
+        [investChange]
+      )
+    ).toBeNull();
+  });
+
+  it("returns null for a 23505 on a different (non-name) constraint", () => {
+    const err = {
+      code: "23505",
+      message:
+        'duplicate key value violates unique constraint "advisor_proposals_pkey"',
+    };
+    expect(nameConflictFromWriteError(err, [investChange])).toBeNull();
+  });
+
+  it("returns null for a non-object error", () => {
+    expect(nameConflictFromWriteError("boom", [investChange])).toBeNull();
   });
 });

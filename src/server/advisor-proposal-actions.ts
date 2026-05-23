@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import {
   applyAcceptedProposalChanges,
   detectAcceptConflicts,
+  nameConflictFromWriteError,
   type ProposalConflict,
 } from "@/domain/advisor-proposals/apply-changes";
 import { getClientProfileForAdvisor } from "@/data/repositories/advisor-clients";
@@ -280,6 +281,18 @@ export async function acceptAdvisorProposalAction(
     await finalizeAdvisorProposalAccept(supabase, proposalId);
   } catch (e) {
     console.error(e);
+    // TOCTOU: a colliding name slipped past the pre-claim check and the unique
+    // index threw mid-write. Surface the same friendly name_in_use conflict
+    // instead of the generic park message. The proposal still parks in
+    // 'accepting' (C2) — we only improve the message, not the state machine.
+    const nameConflicts = nameConflictFromWriteError(e, changes);
+    if (nameConflicts) {
+      return {
+        error:
+          "A name in this proposal is already in use in your plan. Ask your advisor to rename it before accepting.",
+        conflicts: nameConflicts,
+      };
+    }
     return {
       error:
         "We couldn’t finish applying this proposal. It’s been flagged for your advisor to rebuild.",

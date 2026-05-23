@@ -20,6 +20,7 @@ import {
   rejectAdvisorProposalAction,
 } from "@/server/advisor-proposal-actions";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
+import { CollapsiblePane } from "@/ui/CollapsiblePaneRail";
 import { appCardClass, appCardPadding } from "@/ui/surface-classes";
 import Link from "next/link";
 
@@ -104,6 +105,11 @@ export function ProposalReviewActions({ proposalId }: { proposalId: string }) {
   const conflicts: ProposalConflict[] = acceptState.conflicts ?? [];
   const conflictLabels = [...new Set(conflicts.map((c) => c.label))];
   const conflicted = conflictLabels.length > 0;
+  const nameConflictLabels = [
+    ...new Set(
+      conflicts.filter((c) => c.reason === "name_in_use").map((c) => c.label)
+    ),
+  ];
 
   return (
     <div className="space-y-3">
@@ -111,7 +117,15 @@ export function ProposalReviewActions({ proposalId }: { proposalId: string }) {
         active={actionPending}
         message={acceptPending ? "Applying proposal…" : "Rejecting proposal…"}
       />
-      {conflicted ? (
+      {nameConflictLabels.length > 0 ? (
+        <p className="text-sm font-medium text-amber-800" role="alert">
+          These names are already in use in your plan:{" "}
+          <span className="font-semibold">
+            {nameConflictLabels.join(", ")}
+          </span>
+          . Ask your advisor to rename them before it can be applied.
+        </p>
+      ) : conflicted ? (
         <p className="text-sm font-medium text-amber-800" role="alert">
           Your plan changed since this proposal was created — these items are
           now out of date:{" "}
@@ -160,6 +174,7 @@ export function ProposalReviewView({
   actualProjection = null,
   proposedProjection = null,
   hideFooterActions = false,
+  hideBackLink = false,
   backHref = "/dashboard",
   backLabel = "← Home",
 }: {
@@ -173,6 +188,8 @@ export function ProposalReviewView({
   proposedProjection?: ReactNode;
   /** When true, omit the in-flow footer (caller renders its own action bar). */
   hideFooterActions?: boolean;
+  /** When true, omit the back link (caller renders it outside the grid column). */
+  hideBackLink?: boolean;
   backHref?: string;
   backLabel?: string;
 }) {
@@ -181,14 +198,16 @@ export function ProposalReviewView({
 
   return (
     <div className="mx-auto max-w-3xl space-y-8 pb-16">
-      <p className="text-sm">
-        <Link
-          href={backHref}
-          className="font-medium text-emerald-700 hover:text-emerald-800"
-        >
-          {backLabel}
-        </Link>
-      </p>
+      {hideBackLink ? null : (
+        <p className="text-sm">
+          <Link
+            href={backHref}
+            className="font-medium text-emerald-700 hover:text-emerald-800"
+          >
+            {backLabel}
+          </Link>
+        </p>
+      )}
 
       <header className={`${appCardClass} ${appCardPadding} space-y-4`}>
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
@@ -220,6 +239,70 @@ export function ProposalReviewView({
         )}
       </header>
 
+      {sections.length > 0 ? (
+        <CollapsiblePane title={`Suggested changes (${changes.length})`}>
+          <div className="space-y-6">
+            {sections.map((block) => (
+              <section key={block.section} className="space-y-3">
+                <div>
+                  <h3 className="text-sm font-semibold tracking-tight text-slate-900">
+                    {sectionLabel(block.section)}
+                  </h3>
+                  {block.sectionNote ? (
+                    <p className="mt-1 text-xs leading-relaxed text-slate-500">
+                      {block.sectionNote}
+                    </p>
+                  ) : null}
+                </div>
+                <ul className="space-y-2">
+                  {block.changes.map((c) => {
+                    const meta = fieldMeta(c.entity_type, c.field_key);
+                    const oldDisplay = formatProposalDisplayValue(
+                      c.old_value,
+                      meta,
+                      currencyCode
+                    );
+                    const newDisplay = formatProposalDisplayValue(
+                      c.new_value,
+                      meta,
+                      currencyCode
+                    );
+                    return (
+                      <li
+                        key={c.id}
+                        className="rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-3"
+                      >
+                        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                          <p className="text-sm font-medium text-slate-800">
+                            {c.field_label}
+                          </p>
+                          <div className="flex flex-wrap items-baseline gap-2 text-sm tabular-nums">
+                            <span className="text-slate-400 line-through decoration-slate-300/80">
+                              {oldDisplay}
+                            </span>
+                            <span className="text-slate-300" aria-hidden>
+                              →
+                            </span>
+                            <span className="font-semibold text-slate-900">
+                              {newDisplay}
+                            </span>
+                          </div>
+                        </div>
+                        {c.explanation ? (
+                          <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
+                            {c.explanation}
+                          </p>
+                        ) : null}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            ))}
+          </div>
+        </CollapsiblePane>
+      ) : null}
+
       {hasProjection ? (
         <section className={`${appCardClass} ${appCardPadding} space-y-4`}>
           <h2 className="text-lg font-semibold text-slate-900">
@@ -236,56 +319,6 @@ export function ProposalReviewView({
           />
         </section>
       ) : null}
-
-      <div className="space-y-6">
-        {sections.map((block) => (
-          <section
-            key={block.section}
-            className={`${appCardClass} overflow-hidden`}
-          >
-            <div className="border-b border-slate-100 px-6 py-4 sm:px-8">
-              <h2 className="text-lg font-semibold text-slate-900">
-                {sectionLabel(block.section)}
-              </h2>
-              {block.sectionNote ? (
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{block.sectionNote}</p>
-              ) : null}
-            </div>
-            <ul className="divide-y divide-slate-100">
-              {block.changes.map((c) => {
-                const meta = fieldMeta(c.entity_type, c.field_key);
-                const oldDisplay = formatProposalDisplayValue(
-                  c.old_value,
-                  meta,
-                  currencyCode
-                );
-                const newDisplay = formatProposalDisplayValue(
-                  c.new_value,
-                  meta,
-                  currencyCode
-                );
-                return (
-                  <li key={c.id} className="px-6 py-4 sm:px-8">
-                    <p className="text-sm font-medium text-slate-800">{c.field_label}</p>
-                    <div className="mt-2 flex flex-wrap items-baseline gap-2 text-sm">
-                      <span className="text-slate-400 line-through decoration-slate-300/80">
-                        {oldDisplay}
-                      </span>
-                      <span className="text-slate-400" aria-hidden>
-                        →
-                      </span>
-                      <span className="font-semibold text-slate-900">{newDisplay}</span>
-                    </div>
-                    {c.explanation ? (
-                      <p className="mt-2 text-xs leading-relaxed text-slate-500">{c.explanation}</p>
-                    ) : null}
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ))}
-      </div>
 
       {isPending && !hideFooterActions ? (
         <footer className={`${appCardClass} ${appCardPadding} space-y-4`}>

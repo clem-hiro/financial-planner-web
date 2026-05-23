@@ -29,6 +29,7 @@ import {
   applyProposalChanges,
   type OverlayInputs,
 } from "@/domain/advisor-proposals/apply-overlay";
+import { normalizeEntityName } from "@/lib/validation";
 
 function toNumOrNull(raw: string | null | undefined): number | null {
   if (raw === null || raw === undefined || raw === "") return null;
@@ -168,6 +169,10 @@ export type ProposalConflict = {
   entityType: AdvisorProposalChangeRow["entity_type"];
   entityId: string | null;
   label: string;
+  // Distinguishes the optimistic-concurrency "baseline moved" conflict from a
+  // name-uniqueness collision so the client UI can show the right guidance.
+  // Absent = baseline_moved (back-compat for existing producers/tests).
+  reason?: "baseline_moved" | "name_in_use";
 };
 
 export type AcceptResult = { conflicts: ProposalConflict[] };
@@ -236,10 +241,104 @@ function detectConflicts(
 }
 
 /**
- * Read-only optimistic-concurrency pre-flight. MUST run while the proposal is
- * still 'pending' and BEFORE the C1 claim — a benign baseline-moved conflict
- * has to leave the proposal pending (advisor re-baselines), never park it in
- * 'accepting'. Returns the batched base reads so the writer doesn't re-read.
+ * Per-user name-uniqueness pre-flight. Computes the post-accept state via the
+ * shared overlay mapper and flags any two effective entities of the same type
+ * that share a normalized name (`lower(btrim)`) — exactly what the DB unique
+ * index (migration 20260623000000) would reject mid-accept with a raw 23505.
+ * Catching it pre-claim turns that into a friendly conflict and avoids parking
+ * the proposal in the terminal 'accepting' state. Live rows are already unique
+ * (the index guarantees it), so only the proposal's create/rename ops can
+ * introduce a duplicate — and `effective` reflects exactly those.
+ */
+function detectNameConflicts(
+  changes: AdvisorProposalChangeRow[],
+  base: OverlayInputs
+): ProposalConflict[] {
+  const effective = applyProposalChanges(base, changes);
+  const conflicts: ProposalConflict[] = [];
+
+  const scan = (
+    entityType: ProposalConflict["entityType"],
+    rows: { id: string; name: string }[]
+  ) => {
+    const seen = new Set<string>();
+    for (const row of rows) {
+      const norm = normalizeEntityName(row.name);
+      if (seen.has(norm)) {
+        conflicts.push({
+          entityType,
+          entityId: row.id,
+          label: row.name,
+          reason: "name_in_use",
+        });
+      } else {
+        seen.add(norm);
+      }
+    }
+  };
+
+  scan(
+    "investment",
+    effective.investments.map((i) => ({ id: i.id, name: i.name }))
+  );
+  scan(
+    "goal",
+    effective.goals.map((g) => ({ id: g.id, name: g.title }))
+  );
+  return conflicts;
+}
+
+/**
+ * Map a post-claim unique-violation (SQLSTATE 23505 on a `*_user_name_ci_uq`
+ * index) to the same `name_in_use` conflict surface the pre-claim check uses.
+ * Covers the rare TOCTOU race where a colliding name lands between
+ * `detectNameConflicts` and the write. Returns null for any other error so the
+ * caller keeps its generic handler. Labels come from the proposal's own
+ * create/rename name fields for the violated entity type (the accept path only
+ * writes investments + goals, so the index is one of those two).
+ */
+export function nameConflictFromWriteError(
+  e: unknown,
+  changes: AdvisorProposalChangeRow[]
+): ProposalConflict[] | null {
+  if (!e || typeof e !== "object") return null;
+  if ((e as { code?: unknown }).code !== "23505") return null;
+  const blob = (["message", "details", "hint", "constraint"] as const)
+    .map((k) => (e as Record<string, unknown>)[k])
+    .filter((s): s is string => typeof s === "string")
+    .join(" ");
+  if (!/_user_name_ci_uq/.test(blob)) return null;
+
+  const entityType: ProposalConflict["entityType"] =
+    /financial_goals_user_name_ci_uq/.test(blob) ? "goal" : "investment";
+  const nameField = entityType === "goal" ? "title" : "name";
+  const labels = [
+    ...new Set(
+      changes
+        .filter(
+          (c) =>
+            c.entity_type === entityType &&
+            (c.change_op ?? "update") !== "delete" &&
+            c.field_key === nameField &&
+            c.new_value != null
+        )
+        .map((c) => c.new_value as string)
+    ),
+  ];
+  return (labels.length > 0 ? labels : [""]).map((label) => ({
+    entityType,
+    entityId: null,
+    label,
+    reason: "name_in_use" as const,
+  }));
+}
+
+/**
+ * Read-only pre-flight: optimistic-concurrency (baseline moved) AND per-user
+ * name uniqueness. MUST run while the proposal is still 'pending' and BEFORE
+ * the C1 claim — a benign conflict has to leave the proposal pending (advisor
+ * re-baselines / renames), never park it in 'accepting'. Returns the batched
+ * base reads so the writer doesn't re-read.
  */
 export async function detectAcceptConflicts(
   supabase: SupabaseClient,
@@ -253,7 +352,11 @@ export async function detectAcceptConflicts(
     listFinancialGoals(supabase, clientUserId),
   ]);
   const base: OverlayInputs = { profile, investments, budgetLines, goals };
-  return { conflicts: detectConflicts(changes, base), base };
+  const conflicts = [
+    ...detectConflicts(changes, base),
+    ...detectNameConflicts(changes, base),
+  ];
+  return { conflicts, base };
 }
 
 /**

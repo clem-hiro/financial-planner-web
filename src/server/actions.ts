@@ -27,17 +27,20 @@ import {
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import {
   insertFinancialGoal,
+  listFinancialGoals,
   reorderFinancialGoal,
   updateFinancialGoal,
 } from "@/data/repositories/goals";
 import {
   deleteCashAccount,
   insertCashAccount,
+  listCashAccounts,
   updateCashAccount,
 } from "@/data/repositories/cash-accounts";
 import {
   deleteLiability,
   insertLiability,
+  listLiabilities,
   updateLiability,
 } from "@/data/repositories/liabilities";
 import {
@@ -48,6 +51,7 @@ import { parseLiabilityFormData } from "@/server/liability-form";
 import {
   deleteVehicle,
   insertVehicle,
+  listVehicles,
   updateVehicle,
 } from "@/data/repositories/vehicles";
 import {
@@ -57,16 +61,19 @@ import {
 import {
   deleteHousingLoan,
   insertHousingLoan,
+  listHousingLoans,
   updateHousingLoan,
 } from "@/data/repositories/housing-loans";
 import {
   deleteProperty,
   insertProperty,
+  listProperties,
   updateProperty,
 } from "@/data/repositories/properties";
 import {
   deleteInvestment,
   insertInvestment,
+  listInvestments,
   updateInvestment,
 } from "@/data/repositories/investments";
 import { acknowledgeInvestmentReview } from "@/server/inbox/acknowledge-investment-review";
@@ -91,8 +98,25 @@ import {
   housingPropertyTypeSchema,
   yearMonthSchema,
   cashAccountWriteSchema,
+  entityNameUniquenessError,
 } from "@/lib/validation";
 import { z } from "zod";
+
+// Friendly per-user name-collision message before the DB unique index
+// (migration 20260623000000) throws a raw 23505. `excludeId` skips the row
+// being renamed so an unchanged name on update doesn't self-collide.
+function findNameCollision<T extends { id: string }>(
+  rows: T[],
+  getName: (row: T) => string,
+  candidate: string,
+  entityLabel: string,
+  excludeId?: string
+): string | null {
+  const names = rows
+    .filter((r) => r.id !== excludeId)
+    .map(getName);
+  return entityNameUniquenessError(candidate, names, entityLabel);
+}
 
 function toClientErrorMessage(e: unknown): string {
   if (e instanceof Error && e.message.trim()) return e.message;
@@ -213,6 +237,14 @@ export async function createInvestmentAction(
   const planning = parseInvestmentPlanningFields(formData);
   if (!planning.ok) return { error: planning.error };
 
+  const dup = findNameCollision(
+    await listInvestments(supabase, user.id),
+    (i) => i.name,
+    name,
+    "an investment"
+  );
+  if (dup) return { error: dup };
+
   try {
     await insertInvestment(supabase, user.id, {
       name,
@@ -277,6 +309,15 @@ export async function updateInvestmentAction(
 
   const planning = parseInvestmentPlanningFields(formData);
   if (!planning.ok) return { error: planning.error };
+
+  const dup = findNameCollision(
+    await listInvestments(supabase, user.id),
+    (i) => i.name,
+    name,
+    "an investment",
+    idParsed.data
+  );
+  if (dup) return { error: dup };
 
   try {
     await updateInvestment(supabase, user.id, idParsed.data, {
@@ -406,6 +447,14 @@ export async function createCashAccountAction(
   const body = parseCashAccountForm(formData);
   if (body.error || !body.data) return { error: body.error ?? "Invalid cash account" };
 
+  const dup = findNameCollision(
+    await listCashAccounts(supabase, user.id),
+    (a) => a.name,
+    body.data.name,
+    "a cash account"
+  );
+  if (dup) return { error: dup };
+
   await insertCashAccount(supabase, user.id, body.data);
   revalidatePath("/balances");
   revalidatePath("/dashboard");
@@ -428,6 +477,15 @@ export async function updateCashAccountAction(
 
   const body = parseCashAccountForm(formData);
   if (body.error || !body.data) return { error: body.error ?? "Invalid cash account" };
+
+  const dup = findNameCollision(
+    await listCashAccounts(supabase, user.id),
+    (a) => a.name,
+    body.data.name,
+    "a cash account",
+    idParsed.data
+  );
+  if (dup) return { error: dup };
 
   await updateCashAccount(supabase, user.id, idParsed.data, body.data);
   revalidatePath("/balances");
@@ -471,6 +529,14 @@ export async function createLiabilityAction(
   const parsed = parseLiabilityFormData(formData);
   if (!parsed.ok) return { error: parsed.error };
 
+  const dup = findNameCollision(
+    await listLiabilities(supabase, user.id),
+    (l) => l.name,
+    parsed.data.name,
+    "a debt"
+  );
+  if (dup) return { error: dup };
+
   try {
     const row = await insertLiability(supabase, user.id, parsed.data);
     await syncLiabilityBudgetLine(supabase, user.id, row);
@@ -501,6 +567,15 @@ export async function updateLiabilityAction(
 
   const parsed = parseLiabilityFormData(formData);
   if (!parsed.ok) return { error: parsed.error };
+
+  const dup = findNameCollision(
+    await listLiabilities(supabase, user.id),
+    (l) => l.name,
+    parsed.data.name,
+    "a debt",
+    idParsed.data
+  );
+  if (dup) return { error: dup };
 
   try {
     const row = await updateLiability(
@@ -712,6 +787,14 @@ export async function createVehicleAction(
     return { error: "Loan end month must be YYYY-MM or blank" };
   }
 
+  const dup = findNameCollision(
+    await listVehicles(supabase, user.id),
+    (v) => v.label,
+    label,
+    "a vehicle"
+  );
+  if (dup) return { error: dup };
+
   try {
     await insertVehicle(supabase, user.id, {
       label,
@@ -904,6 +987,15 @@ export async function updateVehicleAction(
     return { error: "Loan end month must be YYYY-MM or blank" };
   }
 
+  const dup = findNameCollision(
+    await listVehicles(supabase, user.id),
+    (v) => v.label,
+    label,
+    "a vehicle",
+    idParsed.data
+  );
+  if (dup) return { error: dup };
+
   try {
     await updateVehicle(supabase, user.id, idParsed.data, {
       label,
@@ -995,6 +1087,14 @@ export async function createGoalAction(
     };
   }
 
+  const dup = findNameCollision(
+    await listFinancialGoals(supabase, user.id),
+    (g) => g.title,
+    title,
+    "a goal"
+  );
+  if (dup) return { error: dup };
+
   await insertFinancialGoal(supabase, user.id, {
     title,
     target_amount: targetAmount,
@@ -1084,6 +1184,15 @@ export async function updateGoalAction(
       error: "Invalid expected return (use 0–1 decimal, e.g. 0.07 for 7%)",
     };
   }
+
+  const dup = findNameCollision(
+    await listFinancialGoals(supabase, user.id),
+    (g) => g.title,
+    title,
+    "a goal",
+    goalId
+  );
+  if (dup) return { error: dup };
 
   try {
     await updateFinancialGoal(supabase, user.id, goalId, {
@@ -1727,6 +1836,14 @@ export async function createHousingPropertyAction(
     return { error: "Rental income must be ≥ 0" };
   }
 
+  const dup = findNameCollision(
+    await listProperties(supabase, user.id),
+    (p) => p.name,
+    name,
+    "a property"
+  );
+  if (dup) return { error: dup };
+
   const property = await insertProperty(supabase, user.id, {
     name,
     property_type: propertyTypeParsed.data,
@@ -1868,6 +1985,15 @@ export async function updateHousingPropertyAction(
     String(formData.get("rental_income_monthly") ?? "0").trim()
   );
 
+  const dup = findNameCollision(
+    await listProperties(supabase, user.id),
+    (p) => p.name,
+    name,
+    "a property",
+    idParsed.data
+  );
+  if (dup) return { error: dup };
+
   await updateProperty(supabase, user.id, idParsed.data, {
     name,
     property_type: propertyTypeParsed.data,
@@ -1991,6 +2117,14 @@ export async function createHousingLoanAction(
   ) {
     return { error: "Principal repaid must be ≥ 0" };
   }
+
+  const dup = findNameCollision(
+    await listHousingLoans(supabase, user.id),
+    (l) => l.label,
+    label,
+    "a home loan"
+  );
+  if (dup) return { error: dup };
 
   const property = await insertPropertyForLoan(supabase, user.id, {
     name: label,
@@ -2236,6 +2370,14 @@ export async function createHousingLoanQuickAction(
       ? (property_kind as import("@/data/supabase/types").PropertyRow["property_type"])
       : "unknown";
 
+  const dup = findNameCollision(
+    await listHousingLoans(supabase, user.id),
+    (l) => l.label,
+    derived.label,
+    "a home loan"
+  );
+  if (dup) return { error: dup };
+
   const property = await insertPropertyForLoan(supabase, user.id, {
     name: derived.label,
     property_type: propertyTypeForQuick,
@@ -2373,6 +2515,15 @@ export async function updateHousingLoanAction(
     cash_payment,
     oa_share_of_payment,
   } = paymentParsed;
+
+  const dup = findNameCollision(
+    await listHousingLoans(supabase, user.id),
+    (l) => l.label,
+    label,
+    "a home loan",
+    idParsed.data
+  );
+  if (dup) return { error: dup };
 
   await updateHousingLoan(supabase, user.id, idParsed.data, {
     label,
