@@ -19,7 +19,7 @@ import {
   CASH_ACCOUNT_PURPOSES,
   cashPurposeSortOrder,
 } from "@/domain/finance/cash-account-purpose";
-import type { CashAccountHistoryPoint } from "@/domain/finance/cash-account-history";
+import type { CashAccountHistoryPoint } from "@/domain/finance/cash-account-history.types";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { formatCurrency } from "@/ui/lib/format";
 import { appInlineLinkClass } from "@/ui/app-link-styles";

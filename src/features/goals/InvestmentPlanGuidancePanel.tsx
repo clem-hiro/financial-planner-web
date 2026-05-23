@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type { InvestmentPlanNature } from "@/server/investment-planning-parse";
+import type { InvestmentPlanNature } from "@/lib/investment-plan-nature";
 
 export function InvestmentPlanGuidancePanel({
   planNature,

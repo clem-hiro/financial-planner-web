@@ -57,9 +57,12 @@ export function CpfProjectionByAgeChart({
   const showCpfis = data.some((d) => d.cpfis > 0.5);
 
   return (
-    <ChartFrame className="h-full min-h-0" clipContent={false}>
-      <div className="h-full min-h-0 w-full">
-        <ResponsiveContainer width="100%" height="100%">
+    <ChartFrame
+      className="h-56 min-h-[200px] sm:h-full sm:min-h-[220px]"
+      clipContent={false}
+    >
+      <div className="h-full w-full min-h-[200px] min-w-0 sm:min-h-0">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
         <LineChart
           data={data}
           margin={{ top: 4, right: 4, left: 0, bottom: 26 }}

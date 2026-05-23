@@ -29,7 +29,7 @@ export function ProjectionMiniChart({
 
   return (
     <ChartFrame>
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
         <LineChart data={data} margin={{ top: 10, right: 10, left: 4, bottom: 4 }}>
           <defs>
             <linearGradient id="projLine" x1="0" y1="0" x2="1" y2="0">

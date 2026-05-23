@@ -11,7 +11,7 @@ import {
   type FixedScheduleMode,
 } from "@/features/goals/InvestmentContributionScheduleFields";
 import { InvestmentPlanGuidancePanel } from "@/features/goals/InvestmentPlanGuidancePanel";
-import type { InvestmentPlanNature } from "@/server/investment-planning-parse";
+import type { InvestmentPlanNature } from "@/lib/investment-plan-nature";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };

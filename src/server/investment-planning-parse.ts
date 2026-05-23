@@ -1,6 +1,6 @@
-export type InvestmentPlanNature =
-  | "pure_investment"
-  | "includes_insurance_coverage";
+import type { InvestmentPlanNature } from "@/lib/investment-plan-nature";
+
+export type { InvestmentPlanNature } from "@/lib/investment-plan-nature";
 
 export type ParsedInvestmentPlanningFields = {
   contribution_type: string | null;

@@ -1,6 +1,6 @@
 import { num } from "@/data/mappers";
 import type { InvestmentRow } from "@/data/supabase/types";
-import type { InvestmentBalanceRow } from "@/features/goals/InvestmentBalancesList";
+import type { InvestmentBalanceRow } from "@/features/goals/investment-balance-types";
 
 export function investmentRowToBalanceRow(row: InvestmentRow): InvestmentBalanceRow {
   return {
