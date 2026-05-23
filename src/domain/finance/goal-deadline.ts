@@ -63,6 +63,23 @@ function lastEndOfMonthOnOrBefore(d: Date): Date {
  * Number of end-of-month contribution periods from the first EOM on/after `from`
  * through the last EOM on/before `targetDeadline` (inclusive).
  */
+/**
+ * Latest calendar date (`YYYY-MM-DD`) that allows exactly `periods` end-of-month
+ * contributions from `from` (inverse of `countEndOfMonthContributionPeriods`).
+ */
+export function targetDateYmdForContributionPeriods(
+  from: Date,
+  periods: number
+): string | null {
+  if (periods <= 0) return null;
+  const firstPay = nextEndOfMonthOnOrAfter(from);
+  let lastPay = new Date(firstPay);
+  for (let i = 1; i < periods; i++) {
+    lastPay = new Date(lastPay.getFullYear(), lastPay.getMonth() + 2, 0);
+  }
+  return formatLocalYmd(lastPay);
+}
+
 export function countEndOfMonthContributionPeriods(
   from: Date,
   targetDeadline: Date

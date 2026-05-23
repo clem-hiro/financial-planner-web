@@ -38,7 +38,14 @@ export {
   analyzeGoalDeadlineGap,
   countEndOfMonthContributionPeriods,
   requiredMonthlyForMonths,
+  targetDateYmdForContributionPeriods,
 } from "./goal-deadline";
+export { analyzeGoalFeasibility } from "./goal-feasibility";
+export type {
+  GoalFeasibilityAnalysis,
+  GoalFeasibilityParams,
+  GoalFeasibilityStatus,
+} from "./goal-feasibility";
 export {
   analyzeGoalPriorityTradeoff,
   sortGoalsByPriority,

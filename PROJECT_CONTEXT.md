@@ -96,7 +96,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | **Cash flow** | **Shipped** | Budget workspace + progressive income/assumptions (`CashFlowPlanningSection`, `BudgetPlanningView`). Hero shows take-home, monthly planned total, **unallocated** (take-home minus budget lines), and footnotes for goal/investment monthly commitments (`budget-cash-flow-allocation.ts`). Incomplete-setup checklist banner when income or monthly plan is missing (`cash-flow-setup-guidance.ts`, `CashFlowSetupGuidanceBanner`). |
 | **Wealth** | **Shipped** | Same underlying data as Setup: investments, CPF, cash/debts, housing, vehicles. Debts support loan categories, repayment estimates (amortized / flat / revolving), budget sync, and payoff-aware projections (`DebtPlanningPanels`, `debt-repayment.ts`). |
 | **Protection** | **Partial** | Emergency-fund **recommendation** + link to Wealth for cash; insurance, dependents, estate, risk cards are **planned** (`ProtectionPlanningSection`). |
-| **Future** | **Partial** | **Goals** CRUD is **shipped** (`FinancialGoalsPanels`); dedicated “retirement studio”, scenario compare, tax lens, exports, vault are **planned** cards (Home already shows projection **charts**). |
+| **Future** | **Partial** | **Goals** CRUD is **shipped** (`FinancialGoalsPanels`); per-goal **feasibility** (deadline math vs priority-funded surplus — extend date or free cash) is **shipped** (`goal-feasibility.ts`, `GoalFeasibilityNotice`). Dedicated “retirement studio”, scenario compare, tax lens, exports, vault are **planned** cards (Home already shows projection **charts**). |
 
 ### Client — Activity & setup
 
@@ -412,4 +412,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 - **Not in scope:** live CPF APIs, actuarial CPF LIFE, exhaustive withdrawal rules.
 - **Future:** persist advisor/client assumption presets; tie RA balance into retirement sustainability / spend coverage; inflation on payouts.
 
-_Last reviewed (2026-05-24): Budget hero **unallocated cash** (take-home − monthly planned lines) with separate goal/investment commitment footnotes; domain `budget-cash-flow-allocation.ts`. Prior: retirement fully on Goals; Profile income & CPF only._
+_Last reviewed (2026-05-24): Goals tab **feasibility notices** (required vs affordable monthly; extend date or spend cut); `goal-feasibility.ts`. Prior: Budget hero unallocated cash; `budget-cash-flow-allocation.ts`._

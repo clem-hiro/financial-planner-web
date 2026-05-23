@@ -176,7 +176,9 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     summary: "Standalone goal math on the Setup → Goals tab.",
     bullets: [
       "Progress uses current saved amount vs target where applicable.",
-      "Time estimates use your entered contributions and return assumptions on that goal or linked investment—simplified and not guaranteed.",
+      "Time estimates use your entered contributions and return assumptions on that goal—simplified and not guaranteed.",
+      "With income in Profile, each goal compares your plan to what monthly surplus can fund after higher-priority goals (same basis as Home).",
+      "If a target date needs more per month than surplus allows, you'll see either a later achievable date at your funded amount or how much monthly spend to free up to keep the date.",
     ],
   },
   {
