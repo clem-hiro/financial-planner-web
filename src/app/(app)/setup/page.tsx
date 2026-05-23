@@ -7,6 +7,7 @@ import {
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
 } from "@/data/mappers";
+import { listProposalsForClient } from "@/data/repositories/advisor-proposals";
 import { listBudgetLines } from "@/data/repositories/budget-lines";
 import { getIncomeTaxConfig } from "@/data/repositories/income-tax-configs";
 import { countReplaceableMonthlyBudgetLines } from "@/domain/finance/budget-guided-setup";
@@ -16,8 +17,8 @@ import { IncomeTaxSection } from "@/features/income-tax/IncomeTaxSection";
 import {
   CashAndLiabilitiesPanels,
   type CashAccountBalanceRow,
-  type LiabilityBalanceRow,
 } from "@/features/goals/CashAndLiabilitiesPanels";
+import { buildCashHistoryByAccountId } from "@/features/goals/cash-history";
 import { CpfBalancesForm } from "@/features/goals/CpfBalancesForm";
 import { HousingPanel } from "@/features/goals/HousingLoansPanel";
 import {
@@ -32,10 +33,12 @@ import { loadSetupTabBundle } from "@/features/planning/load-setup-tab-bundle";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { SetupTabsNav } from "@/features/setup/SetupTabsNav";
 import { BudgetLensProfileForm } from "@/features/setup/BudgetLensProfileForm";
+import { ClientProposalsView } from "@/features/proposals/ClientProposalsView";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth, parseYearMonth, yearFromYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
 import { setupTabPath } from "@/lib/setup-urls";
+import { shouldPromptCpfRulesReview } from "@/domain/finance/cpf-rules-review";
 import { shouldPromptInvestmentReview } from "@/domain/finance/investment-review";
 import { birthDateIsValidPast } from "@/lib/validation";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
@@ -54,6 +57,7 @@ function buildSetupTabs(): readonly SetupTabDef[] {
     { id: "vehicles", label: "Vehicles" },
     { id: "budget", label: "Budget" },
     { id: "goals", label: "Goals" },
+    { id: "advisor-proposals", label: "Advisor proposals" },
   ] as const;
 }
 
@@ -102,15 +106,19 @@ export default async function SetupPage({ searchParams }: PageProps) {
       ? budgetYearParsed
       : yearFromYearMonth(budgetMonth);
 
-  const [tabBundle, incomeTaxConfig, budgetLinesForLens] = await Promise.all([
-    loadSetupTabBundle(supabase, user.id, new Set([activeTab])),
-    activeTab === "income_tax"
-      ? getIncomeTaxConfig(supabase, user.id)
-      : Promise.resolve(null),
-    activeTab === "profile"
-      ? listBudgetLines(supabase, user.id)
-      : Promise.resolve([]),
-  ]);
+  const [tabBundle, incomeTaxConfig, budgetLinesForLens, advisorProposals] =
+    await Promise.all([
+      loadSetupTabBundle(supabase, user.id, new Set([activeTab])),
+      activeTab === "income_tax"
+        ? getIncomeTaxConfig(supabase, user.id)
+        : Promise.resolve(null),
+      activeTab === "profile"
+        ? listBudgetLines(supabase, user.id)
+        : Promise.resolve([]),
+      activeTab === "advisor-proposals"
+        ? listProposalsForClient(supabase, user.id, 25)
+        : Promise.resolve([]),
+    ]);
   const replaceableMonthlyLineCount =
     activeTab === "profile"
       ? countReplaceableMonthlyBudgetLines(budgetLinesForLens)
@@ -118,6 +126,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
   const {
     investments,
     cashAccounts,
+    cashSnapshots,
     liabilityRows,
     vehicleRows,
     cpfRow,
@@ -136,11 +145,18 @@ export default async function SetupPage({ searchParams }: PageProps) {
     current_value: num(i.current_value),
     monthly_contribution: num(i.monthly_contribution),
     expected_annual_return: num(i.expected_annual_return),
+    contribution_growth_annual: num(i.contribution_growth_annual),
     contribution_type: i.contribution_type ?? null,
     contribution_duration_years:
       i.contribution_duration_years != null &&
       String(i.contribution_duration_years).trim() !== ""
         ? num(i.contribution_duration_years as string)
+        : null,
+    withdrawal_monthly: num(i.withdrawal_monthly),
+    withdrawal_start_years:
+      i.withdrawal_start_years != null &&
+      String(i.withdrawal_start_years).trim() !== ""
+        ? num(i.withdrawal_start_years)
         : null,
     updated_at: i.updated_at ?? null,
     created_at: i.created_at ?? null,
@@ -148,6 +164,11 @@ export default async function SetupPage({ searchParams }: PageProps) {
   const showInvestmentReviewPrompt = shouldPromptInvestmentReview({
     investments,
     lastInvestmentReviewAt: financialProfile?.last_investment_review_at ?? null,
+  });
+  const showCpfRulesReviewPrompt = shouldPromptCpfRulesReview({
+    lastCpfRulesReviewAt: financialProfile?.last_cpf_rules_review_at ?? null,
+    lastCpfRulesReviewVersion:
+      financialProfile?.last_cpf_rules_review_version ?? null,
   });
   const investmentPlanningContext =
     financialProfile?.birth_date &&
@@ -163,7 +184,9 @@ export default async function SetupPage({ searchParams }: PageProps) {
     id: r.id,
     name: r.name,
     balance: num(r.balance),
+    purpose: r.purpose ?? "other",
   }));
+  const cashHistoryByAccountId = buildCashHistoryByAccountId(cashSnapshots);
 
   return (
     <div className="flex flex-col gap-5 sm:gap-8">
@@ -306,7 +329,10 @@ export default async function SetupPage({ searchParams }: PageProps) {
               </span>
             }
           >
-            <CpfBalancesForm row={cpfRow} />
+            <CpfBalancesForm
+              row={cpfRow}
+              showRulesReviewPrompt={showCpfRulesReviewPrompt}
+            />
           </PageSection>
         </div>
       ) : null}
@@ -316,6 +342,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           <PageSection id="cash-liabilities" title="Cash and debts">
             <CashAndLiabilitiesPanels
               cashRows={cashBalanceRows}
+              cashHistoryByAccountId={cashHistoryByAccountId}
               liabilityRows={liabilityRows}
               currencyCode={currency}
             />
@@ -381,6 +408,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
             goals={goals}
             investments={investments}
             currency={currency}
+            userId={user.id}
           />
         </div>
       ) : null}
@@ -392,6 +420,18 @@ export default async function SetupPage({ searchParams }: PageProps) {
             config={incomeTaxConfig}
             referenceYearMonth={budgetMonth}
           />
+        </div>
+      ) : null}
+
+      {activeTab === "advisor-proposals" ? (
+        <div className="transition-opacity duration-150 ease-out">
+          <PageSection
+            id="advisor-proposals"
+            title="Advisor proposals"
+            description="Plan suggestions from your advisor — pending, accepted, rejected, and withdrawn. Always available here, even after you dismiss the inbox notification."
+          >
+            <ClientProposalsView proposals={advisorProposals} />
+          </PageSection>
         </div>
       ) : null}
       </div>
@@ -417,12 +457,17 @@ export default async function SetupPage({ searchParams }: PageProps) {
           </p>
           <p className="mt-0.5 text-sm font-medium text-slate-500 sm:mt-1">Work in progress</p>
         </div>
-        <div className="rounded-xl border border-dashed border-slate-300/90 bg-slate-50/90 p-3 sm:p-4">
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 sm:text-xs">
-            Automation
+        <Link
+          href="/setup?tab=advisor-proposals"
+          className="group rounded-xl border border-slate-200 bg-white p-3 transition hover:border-slate-300 hover:bg-slate-50/70 sm:p-4"
+        >
+          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs">
+            Advisor proposals
           </p>
-          <p className="mt-0.5 text-sm font-medium text-slate-500 sm:mt-1">Coming soon</p>
-        </div>
+          <p className="mt-0.5 text-sm font-medium text-slate-700 group-hover:text-slate-900 sm:mt-1">
+            Review plan suggestions →
+          </p>
+        </Link>
       </section>
     </div>
   );

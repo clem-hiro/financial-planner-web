@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  CPF_FRS_BASE_COHORT_YEAR,
   CURRENT_FRS_SG,
   DEFAULT_FRS_ANNUAL_GROWTH_RATE,
   estimateFutureFrs,
@@ -9,6 +10,16 @@ import {
   CPF_SCENARIO_EXAMPLES,
   simulateRaForScenario,
 } from "./cpf-retirement-projection";
+
+/** CPFB published FRS for 2026 cohort (turning 55 in 2026) — update when policy changes. */
+const PUBLISHED_FRS_2026_COHORT = 220_400;
+
+describe("CPF retirement sum constants", () => {
+  it("matches published FRS for the configured cohort year", () => {
+    expect(CPF_FRS_BASE_COHORT_YEAR).toBe(2026);
+    expect(CURRENT_FRS_SG).toBe(PUBLISHED_FRS_2026_COHORT);
+  });
+});
 
 describe("estimateFutureFrs", () => {
   it("compounds growth for years until 55", () => {

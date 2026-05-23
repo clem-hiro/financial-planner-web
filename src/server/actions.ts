@@ -27,16 +27,20 @@ import {
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import {
   insertFinancialGoal,
+  listFinancialGoals,
+  reorderFinancialGoal,
   updateFinancialGoal,
 } from "@/data/repositories/goals";
 import {
   deleteCashAccount,
   insertCashAccount,
+  listCashAccounts,
   updateCashAccount,
 } from "@/data/repositories/cash-accounts";
 import {
   deleteLiability,
   insertLiability,
+  listLiabilities,
   updateLiability,
 } from "@/data/repositories/liabilities";
 import {
@@ -47,6 +51,7 @@ import { parseLiabilityFormData } from "@/server/liability-form";
 import {
   deleteVehicle,
   insertVehicle,
+  listVehicles,
   updateVehicle,
 } from "@/data/repositories/vehicles";
 import {
@@ -56,26 +61,29 @@ import {
 import {
   deleteHousingLoan,
   insertHousingLoan,
+  listHousingLoans,
   updateHousingLoan,
 } from "@/data/repositories/housing-loans";
 import {
   deleteProperty,
   insertProperty,
+  listProperties,
   updateProperty,
 } from "@/data/repositories/properties";
 import {
   deleteInvestment,
   insertInvestment,
+  listInvestments,
   updateInvestment,
 } from "@/data/repositories/investments";
 import { acknowledgeInvestmentReview } from "@/server/inbox/acknowledge-investment-review";
+import { acknowledgeCpfRulesReview } from "@/server/inbox/acknowledge-cpf-rules-review";
 import {
   deriveQuickHousingLoanRow,
   HDB_CONCESSIONARY_RATE_ANNUAL,
   oaInstalmentShareFromPreset,
 } from "@/domain/finance/housing-loan-quick";
 import {
-  firstHousingInstalmentAmount,
   normalizeHousingPaymentForPersist,
   paymentSourceFromLegacyPreset,
 } from "@/domain/finance/housing-loan-payments";
@@ -89,8 +97,26 @@ import {
   housingPropertyStatusSchema,
   housingPropertyTypeSchema,
   yearMonthSchema,
+  cashAccountWriteSchema,
+  entityNameUniquenessError,
 } from "@/lib/validation";
 import { z } from "zod";
+
+// Friendly per-user name-collision message before the DB unique index
+// (migration 20260623000000) throws a raw 23505. `excludeId` skips the row
+// being renamed so an unchanged name on update doesn't self-collide.
+function findNameCollision<T extends { id: string }>(
+  rows: T[],
+  getName: (row: T) => string,
+  candidate: string,
+  entityLabel: string,
+  excludeId?: string
+): string | null {
+  const names = rows
+    .filter((r) => r.id !== excludeId)
+    .map(getName);
+  return entityNameUniquenessError(candidate, names, entityLabel);
+}
 
 function toClientErrorMessage(e: unknown): string {
   if (e instanceof Error && e.message.trim()) return e.message;
@@ -99,6 +125,75 @@ function toClientErrorMessage(e: unknown): string {
     if (typeof m === "string" && m.trim()) return m;
   }
   return "Something went wrong while saving. Please try again.";
+}
+
+function parseInvestmentPlanningFields(formData: FormData):
+  | {
+      ok: true;
+      contribution_type: string | null;
+      contribution_duration_years: number | null;
+      contribution_growth_annual: number;
+      withdrawal_monthly: number;
+      withdrawal_start_years: number | null;
+    }
+  | { ok: false; error: string } {
+  const contributionTypeRaw = String(
+    formData.get("contribution_type") ?? ""
+  ).trim();
+  const isFixed = contributionTypeRaw === "fixed_duration";
+
+  let contribution_type: string | null = null;
+  let contribution_duration_years: number | null = null;
+  if (isFixed) {
+    const y = Number(formData.get("contribution_duration_years"));
+    if (!Number.isFinite(y) || y <= 0 || y > 80) {
+      return {
+        ok: false,
+        error: "Enter contribution duration in years (between 0.25 and 80)",
+      };
+    }
+    contribution_type = "fixed_duration";
+    contribution_duration_years = y;
+  } else if (contributionTypeRaw === "until_retirement") {
+    contribution_type = "until_retirement";
+  }
+
+  const contributionGrowthAnnual = Number(
+    formData.get("contribution_growth_annual") ?? 0
+  );
+  if (
+    !Number.isFinite(contributionGrowthAnnual) ||
+    contributionGrowthAnnual < 0 ||
+    contributionGrowthAnnual > 1
+  ) {
+    return { ok: false, error: "Contribution step-up must be 0–100%." };
+  }
+
+  const withdrawalMonthly = Number(formData.get("withdrawal_monthly") ?? 0);
+  if (!Number.isFinite(withdrawalMonthly) || withdrawalMonthly < 0) {
+    return { ok: false, error: "Invalid monthly withdrawal" };
+  }
+
+  const withdrawalStartRaw = String(
+    formData.get("withdrawal_start_years") ?? ""
+  ).trim();
+  const withdrawalStartYears =
+    withdrawalStartRaw === "" ? null : Number(withdrawalStartRaw);
+  if (
+    withdrawalStartYears != null &&
+    (!Number.isFinite(withdrawalStartYears) || withdrawalStartYears < 0)
+  ) {
+    return { ok: false, error: "Withdrawal start must be 0 or more years." };
+  }
+
+  return {
+    ok: true,
+    contribution_type,
+    contribution_duration_years,
+    contribution_growth_annual: contributionGrowthAnnual,
+    withdrawal_monthly: withdrawalMonthly,
+    withdrawal_start_years: withdrawalStartYears,
+  };
 }
 
 export async function signOutAction() {
@@ -139,25 +234,16 @@ export async function createInvestmentAction(
     return { error: "Invalid expected return (use 0–1, e.g. 0.07)" };
   }
 
-  const contributionTypeRaw = String(
-    formData.get("contribution_type") ?? ""
-  ).trim();
-  const isFixed = contributionTypeRaw === "fixed_duration";
+  const planning = parseInvestmentPlanningFields(formData);
+  if (!planning.ok) return { error: planning.error };
 
-  let contribution_type: string | null = null;
-  let contribution_duration_years: number | null = null;
-  if (isFixed) {
-    const y = Number(formData.get("contribution_duration_years"));
-    if (!Number.isFinite(y) || y <= 0 || y > 80) {
-      return {
-        error: "Enter contribution duration in years (between 0.25 and 80)",
-      };
-    }
-    contribution_type = "fixed_duration";
-    contribution_duration_years = y;
-  } else if (contributionTypeRaw === "until_retirement") {
-    contribution_type = "until_retirement";
-  }
+  const dup = findNameCollision(
+    await listInvestments(supabase, user.id),
+    (i) => i.name,
+    name,
+    "an investment"
+  );
+  if (dup) return { error: dup };
 
   try {
     await insertInvestment(supabase, user.id, {
@@ -165,8 +251,11 @@ export async function createInvestmentAction(
       current_value: currentValue,
       monthly_contribution: monthlyContribution,
       expected_annual_return: expectedAnnualReturn,
-      contribution_type,
-      contribution_duration_years,
+      contribution_type: planning.contribution_type,
+      contribution_duration_years: planning.contribution_duration_years,
+      contribution_growth_annual: planning.contribution_growth_annual,
+      withdrawal_monthly: planning.withdrawal_monthly,
+      withdrawal_start_years: planning.withdrawal_start_years,
     });
     await acknowledgeInvestmentReview(supabase, user.id);
   } catch (e) {
@@ -218,25 +307,17 @@ export async function updateInvestmentAction(
     return { error: "Invalid expected return (use 0–1, e.g. 0.07)" };
   }
 
-  const contributionTypeRaw = String(
-    formData.get("contribution_type") ?? ""
-  ).trim();
-  const isFixed = contributionTypeRaw === "fixed_duration";
+  const planning = parseInvestmentPlanningFields(formData);
+  if (!planning.ok) return { error: planning.error };
 
-  let contribution_type: string | null = null;
-  let contribution_duration_years: number | null = null;
-  if (isFixed) {
-    const y = Number(formData.get("contribution_duration_years"));
-    if (!Number.isFinite(y) || y <= 0 || y > 80) {
-      return {
-        error: "Enter contribution duration in years (between 0.25 and 80)",
-      };
-    }
-    contribution_type = "fixed_duration";
-    contribution_duration_years = y;
-  } else if (contributionTypeRaw === "until_retirement") {
-    contribution_type = "until_retirement";
-  }
+  const dup = findNameCollision(
+    await listInvestments(supabase, user.id),
+    (i) => i.name,
+    name,
+    "an investment",
+    idParsed.data
+  );
+  if (dup) return { error: dup };
 
   try {
     await updateInvestment(supabase, user.id, idParsed.data, {
@@ -244,8 +325,11 @@ export async function updateInvestmentAction(
       current_value: currentValue,
       monthly_contribution: monthlyContribution,
       expected_annual_return: expectedAnnualReturn,
-      contribution_type,
-      contribution_duration_years,
+      contribution_type: planning.contribution_type,
+      contribution_duration_years: planning.contribution_duration_years,
+      contribution_growth_annual: planning.contribution_growth_annual,
+      withdrawal_monthly: planning.withdrawal_monthly,
+      withdrawal_start_years: planning.withdrawal_start_years,
     });
     await acknowledgeInvestmentReview(supabase, user.id);
   } catch (e) {
@@ -315,6 +399,41 @@ export async function confirmInvestmentReviewAction(): Promise<{
   return { error: null };
 }
 
+export async function confirmCpfRulesReviewAction(): Promise<{
+  error: string | null;
+}> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "Sign in required" };
+  }
+
+  try {
+    await acknowledgeCpfRulesReview(supabase, user.id);
+  } catch (e) {
+    return { error: toClientErrorMessage(e) };
+  }
+
+  revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
+  return { error: null };
+}
+
+function parseCashAccountForm(formData: FormData) {
+  const parsed = cashAccountWriteSchema.safeParse({
+    name: String(formData.get("name") ?? ""),
+    balance: Number(formData.get("balance")),
+    purpose: String(formData.get("purpose") ?? "other"),
+  });
+  if (!parsed.success) {
+    const msg = parsed.error.issues[0]?.message ?? "Invalid cash account";
+    return { error: msg as string, data: null };
+  }
+  return { error: null, data: parsed.data };
+}
+
 export async function createCashAccountAction(
   _prev: { error: string | null },
   formData: FormData
@@ -325,16 +444,21 @@ export async function createCashAccountAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Sign in required" };
 
-  const name = String(formData.get("name") ?? "").trim();
-  const balance = Number(formData.get("balance"));
-  if (!name) return { error: "Name is required" };
-  if (!Number.isFinite(balance) || balance < 0) {
-    return { error: "Invalid balance" };
-  }
+  const body = parseCashAccountForm(formData);
+  if (body.error || !body.data) return { error: body.error ?? "Invalid cash account" };
 
-  await insertCashAccount(supabase, user.id, { name, balance });
+  const dup = findNameCollision(
+    await listCashAccounts(supabase, user.id),
+    (a) => a.name,
+    body.data.name,
+    "a cash account"
+  );
+  if (dup) return { error: dup };
+
+  await insertCashAccount(supabase, user.id, body.data);
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
   return { error: null as string | null };
 }
 
@@ -351,16 +475,22 @@ export async function updateCashAccountAction(
   const idParsed = z.string().uuid().safeParse(String(formData.get("id") ?? "").trim());
   if (!idParsed.success) return { error: "Invalid account" };
 
-  const name = String(formData.get("name") ?? "").trim();
-  const balance = Number(formData.get("balance"));
-  if (!name) return { error: "Name is required" };
-  if (!Number.isFinite(balance) || balance < 0) {
-    return { error: "Invalid balance" };
-  }
+  const body = parseCashAccountForm(formData);
+  if (body.error || !body.data) return { error: body.error ?? "Invalid cash account" };
 
-  await updateCashAccount(supabase, user.id, idParsed.data, { name, balance });
+  const dup = findNameCollision(
+    await listCashAccounts(supabase, user.id),
+    (a) => a.name,
+    body.data.name,
+    "a cash account",
+    idParsed.data
+  );
+  if (dup) return { error: dup };
+
+  await updateCashAccount(supabase, user.id, idParsed.data, body.data);
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
   return { error: null as string | null };
 }
 
@@ -383,6 +513,7 @@ export async function deleteCashAccountAction(formData: FormData) {
   }
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
 }
 
 export async function createLiabilityAction(
@@ -397,6 +528,14 @@ export async function createLiabilityAction(
 
   const parsed = parseLiabilityFormData(formData);
   if (!parsed.ok) return { error: parsed.error };
+
+  const dup = findNameCollision(
+    await listLiabilities(supabase, user.id),
+    (l) => l.name,
+    parsed.data.name,
+    "a debt"
+  );
+  if (dup) return { error: dup };
 
   try {
     const row = await insertLiability(supabase, user.id, parsed.data);
@@ -428,6 +567,15 @@ export async function updateLiabilityAction(
 
   const parsed = parseLiabilityFormData(formData);
   if (!parsed.ok) return { error: parsed.error };
+
+  const dup = findNameCollision(
+    await listLiabilities(supabase, user.id),
+    (l) => l.name,
+    parsed.data.name,
+    "a debt",
+    idParsed.data
+  );
+  if (dup) return { error: dup };
 
   try {
     const row = await updateLiability(
@@ -639,6 +787,14 @@ export async function createVehicleAction(
     return { error: "Loan end month must be YYYY-MM or blank" };
   }
 
+  const dup = findNameCollision(
+    await listVehicles(supabase, user.id),
+    (v) => v.label,
+    label,
+    "a vehicle"
+  );
+  if (dup) return { error: dup };
+
   try {
     await insertVehicle(supabase, user.id, {
       label,
@@ -831,6 +987,15 @@ export async function updateVehicleAction(
     return { error: "Loan end month must be YYYY-MM or blank" };
   }
 
+  const dup = findNameCollision(
+    await listVehicles(supabase, user.id),
+    (v) => v.label,
+    label,
+    "a vehicle",
+    idParsed.data
+  );
+  if (dup) return { error: dup };
+
   try {
     await updateVehicle(supabase, user.id, idParsed.data, {
       label,
@@ -922,6 +1087,14 @@ export async function createGoalAction(
     };
   }
 
+  const dup = findNameCollision(
+    await listFinancialGoals(supabase, user.id),
+    (g) => g.title,
+    title,
+    "a goal"
+  );
+  if (dup) return { error: dup };
+
   await insertFinancialGoal(supabase, user.id, {
     title,
     target_amount: targetAmount,
@@ -936,6 +1109,38 @@ export async function createGoalAction(
   revalidateSetupAndPlanning();
   revalidatePath("/dashboard");
   return { error: null as string | null };
+}
+
+export async function reorderFinancialGoalAction(
+  _prev: { error: string | null },
+  formData: FormData
+): Promise<{ error: string | null }> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) {
+    return { error: "Sign in required" };
+  }
+
+  const goalId = String(formData.get("goal_id") ?? "").trim();
+  const direction = String(formData.get("direction") ?? "").trim();
+  if (!goalId) return { error: "Missing goal" };
+  if (direction !== "up" && direction !== "down") {
+    return { error: "Invalid direction" };
+  }
+
+  try {
+    await reorderFinancialGoal(supabase, user.id, goalId, direction);
+  } catch (e) {
+    console.error(e);
+    return { error: "Could not reorder goal" };
+  }
+
+  revalidatePath("/planning/future");
+  revalidateSetupAndPlanning();
+  revalidatePath("/dashboard");
+  return { error: null };
 }
 
 export async function updateGoalAction(
@@ -979,6 +1184,15 @@ export async function updateGoalAction(
       error: "Invalid expected return (use 0–1 decimal, e.g. 0.07 for 7%)",
     };
   }
+
+  const dup = findNameCollision(
+    await listFinancialGoals(supabase, user.id),
+    (g) => g.title,
+    title,
+    "a goal",
+    goalId
+  );
+  if (dup) return { error: dup };
 
   try {
     await updateFinancialGoal(supabase, user.id, goalId, {
@@ -1622,6 +1836,14 @@ export async function createHousingPropertyAction(
     return { error: "Rental income must be ≥ 0" };
   }
 
+  const dup = findNameCollision(
+    await listProperties(supabase, user.id),
+    (p) => p.name,
+    name,
+    "a property"
+  );
+  if (dup) return { error: dup };
+
   const property = await insertProperty(supabase, user.id, {
     name,
     property_type: propertyTypeParsed.data,
@@ -1763,6 +1985,15 @@ export async function updateHousingPropertyAction(
     String(formData.get("rental_income_monthly") ?? "0").trim()
   );
 
+  const dup = findNameCollision(
+    await listProperties(supabase, user.id),
+    (p) => p.name,
+    name,
+    "a property",
+    idParsed.data
+  );
+  if (dup) return { error: dup };
+
   await updateProperty(supabase, user.id, idParsed.data, {
     name,
     property_type: propertyTypeParsed.data,
@@ -1886,6 +2117,14 @@ export async function createHousingLoanAction(
   ) {
     return { error: "Principal repaid must be ≥ 0" };
   }
+
+  const dup = findNameCollision(
+    await listHousingLoans(supabase, user.id),
+    (l) => l.label,
+    label,
+    "a home loan"
+  );
+  if (dup) return { error: dup };
 
   const property = await insertPropertyForLoan(supabase, user.id, {
     name: label,
@@ -2108,7 +2347,6 @@ export async function createHousingLoanQuickAction(
     first_payment_month: derived.first_payment_month,
     oa_share_of_payment: derived.oa_share_of_payment,
   };
-  const instalment = firstHousingInstalmentAmount(loanPaymentBase);
   const cpfRaw = String(formData.get("cpf_oa_payment") ?? "").trim();
   const cashRaw = String(formData.get("cash_payment") ?? "").trim();
   const cpfOaPayment = cpfRaw === "" ? null : Number(cpfRaw);
@@ -2131,6 +2369,14 @@ export async function createHousingLoanQuickAction(
     housingPropertyTypeSchema.safeParse(property_kind).success
       ? (property_kind as import("@/data/supabase/types").PropertyRow["property_type"])
       : "unknown";
+
+  const dup = findNameCollision(
+    await listHousingLoans(supabase, user.id),
+    (l) => l.label,
+    derived.label,
+    "a home loan"
+  );
+  if (dup) return { error: dup };
 
   const property = await insertPropertyForLoan(supabase, user.id, {
     name: derived.label,
@@ -2269,6 +2515,15 @@ export async function updateHousingLoanAction(
     cash_payment,
     oa_share_of_payment,
   } = paymentParsed;
+
+  const dup = findNameCollision(
+    await listHousingLoans(supabase, user.id),
+    (l) => l.label,
+    label,
+    "a home loan",
+    idParsed.data
+  );
+  if (dup) return { error: dup };
 
   await updateHousingLoan(supabase, user.id, idParsed.data, {
     label,

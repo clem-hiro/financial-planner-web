@@ -45,6 +45,8 @@ function profile(over: Partial<ProfileRow> = {}): ProfileRow {
     salary_increment_month: null,
     last_salary_review_at: null,
     last_investment_review_at: null,
+    last_cpf_rules_review_at: null,
+    last_cpf_rules_review_version: null,
     created_at: "2025-01-01T00:00:00Z",
     ...over,
   };
@@ -58,8 +60,11 @@ function investment(over: Partial<InvestmentRow> = {}): InvestmentRow {
     current_value: "10000",
     monthly_contribution: "500",
     expected_annual_return: "0.06",
+    contribution_growth_annual: "0",
     contribution_type: "until_retirement",
     contribution_duration_years: null,
+    withdrawal_monthly: "0",
+    withdrawal_start_years: null,
     created_at: "2025-01-01T00:00:00Z",
     updated_at: "2025-01-01T00:00:00Z",
     ...over,
@@ -90,6 +95,7 @@ function goal(over: Partial<FinancialGoalRow> = {}): FinancialGoalRow {
     current_amount: "5000",
     monthly_contribution: "300",
     expected_annual_return: "0.04",
+    display_order: 0,
     created_at: "2025-01-01T00:00:00Z",
     ...over,
   };

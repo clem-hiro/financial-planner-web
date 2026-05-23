@@ -194,6 +194,8 @@ export const profilePatchSchema = z
       .optional(),
     last_salary_review_at: z.string().datetime().nullable().optional(),
     last_investment_review_at: z.string().datetime().nullable().optional(),
+    last_cpf_rules_review_at: z.string().datetime().nullable().optional(),
+    last_cpf_rules_review_version: z.string().min(1).nullable().optional(),
   })
   .superRefine((data, ctx) => {
     if (
@@ -418,6 +420,19 @@ export const liabilityWriteSchema = z.object({
   notes: z.string().trim().max(2000).nullable().optional(),
 });
 
+export const cashAccountPurposeSchema = z.enum([
+  "emergency_fund",
+  "everyday_spending",
+  "short_term_savings",
+  "other",
+]);
+
+export const cashAccountWriteSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  balance: z.number().nonnegative().max(100_000_000),
+  purpose: cashAccountPurposeSchema,
+});
+
 export const couponCodeInputSchema = z
   .string()
   .trim()
@@ -426,3 +441,35 @@ export const couponCodeInputSchema = z
   .regex(/^[A-Z0-9_-]*$/, "Coupon codes can only use letters, numbers, underscores, or hyphens")
   .optional()
   .default("");
+
+// Per-user entity-name uniqueness. The hard guarantee is the DB functional
+// unique index `lower(btrim(<col>))` (migration 20260623000000); these helpers
+// mirror that normalization so compose/accept/CRUD can produce a friendly
+// message before the 23505 fires. Keep the normalization in lockstep with the
+// index — diverging here lets a name pass JS yet trip the DB constraint.
+export function normalizeEntityName(name: string): string {
+  return name.trim().toLowerCase();
+}
+
+/** True when `candidate` matches any of `existingNames` after normalization. */
+export function entityNameCollides(
+  candidate: string,
+  existingNames: Iterable<string>
+): boolean {
+  const norm = normalizeEntityName(candidate);
+  for (const existing of existingNames) {
+    if (normalizeEntityName(existing) === norm) return true;
+  }
+  return false;
+}
+
+/** Friendly collision message, or null when the name is free. */
+export function entityNameUniquenessError(
+  candidate: string,
+  existingNames: Iterable<string>,
+  entityLabel: string
+): string | null {
+  return entityNameCollides(candidate, existingNames)
+    ? `You already have ${entityLabel} named “${candidate.trim()}”. Use a different name.`
+    : null;
+}

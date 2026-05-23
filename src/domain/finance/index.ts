@@ -15,13 +15,24 @@ export {
   INVESTMENT_REVIEW_STALE_MONTHS,
   INVESTMENT_REVIEW_ACK_VALID_MONTHS,
   countStaleInvestments,
+  investmentReviewReason,
   investmentRowIsStale,
   investmentRowLastTouchedAt,
   investmentReviewDedupeKeyForYear,
   monthsSinceTimestamp,
   shouldPromptInvestmentReview,
 } from "./investment-review";
-export type { InvestmentReviewTimestampRow } from "./investment-review";
+export type {
+  InvestmentReviewReason,
+  InvestmentReviewTimestampRow,
+} from "./investment-review";
+export {
+  CPF_RULES_REVIEW_MONTH,
+  CPF_RULES_VERSION,
+  cpfRulesReviewDedupeKey,
+  shouldPromptCpfRulesReview,
+} from "./cpf-rules-review";
+export type { CpfRulesReviewProfile } from "./cpf-rules-review";
 export {
   goalProgressRatio,
   estimateTimeToGoalStandalone,
@@ -32,6 +43,15 @@ export {
   countEndOfMonthContributionPeriods,
   requiredMonthlyForMonths,
 } from "./goal-deadline";
+export {
+  analyzeGoalPriorityTradeoff,
+  sortGoalsByPriority,
+} from "./goal-priority-tradeoff";
+export type {
+  GoalFundingLine,
+  GoalPriorityTradeoffAnalysis,
+  GoalPriorityTradeoffInput,
+} from "./goal-priority-tradeoff";
 export type {
   GoalDeadlineAnalysis,
   GoalDeadlineAnalysisParams,

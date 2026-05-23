@@ -35,24 +35,67 @@ function numStr(raw: string | null | undefined): string | null {
   return n === null ? null : String(n);
 }
 
+type EntityOp = "create" | "update" | "delete";
+
 type ChangeGroup = {
   entityType: AdvisorProposalChangeRow["entity_type"];
   entityId: string | null;
+  draftKey: string | null;
   changes: AdvisorProposalChangeRow[];
 };
 
 function groupByEntity(changes: AdvisorProposalChangeRow[]): ChangeGroup[] {
   const map = new Map<string, ChangeGroup>();
   for (const c of changes) {
-    const key = `${c.entity_type}:${c.entity_id ?? "profile"}`;
+    const draftKey = c.draft_entity_key ?? null;
+    const key = c.entity_id
+      ? `${c.entity_type}:id:${c.entity_id}`
+      : draftKey
+        ? `${c.entity_type}:draft:${draftKey}`
+        : `${c.entity_type}:profile`;
     let g = map.get(key);
     if (!g) {
-      g = { entityType: c.entity_type, entityId: c.entity_id, changes: [] };
+      g = {
+        entityType: c.entity_type,
+        entityId: c.entity_id,
+        draftKey,
+        changes: [],
+      };
       map.set(key, g);
     }
     g.changes.push(c);
   }
   return [...map.values()];
+}
+
+/**
+ * Explicit change_op ('create'/'delete') wins. Otherwise (undefined, or the
+ * 'update' default that migration 20260602000000 backfills onto pre-P2 rows)
+ * fall back to the original investment-only heuristics — this keeps in-flight
+ * legacy proposals and the existing parity/overlay fixtures byte-identical.
+ */
+function resolveOp(group: ChangeGroup): EntityOp {
+  const explicit = group.changes.find(
+    (c) => c.change_op === "create" || c.change_op === "delete"
+  )?.change_op;
+  if (explicit === "create" || explicit === "delete") return explicit;
+
+  if (group.entityType === "investment") {
+    if (
+      group.changes.some(
+        (c) => c.field_key === "_deleted" && c.new_value === "true"
+      )
+    ) {
+      return "delete";
+    }
+    if (
+      group.changes.length > 0 &&
+      group.changes.every((c) => c.old_value == null || c.old_value === "")
+    ) {
+      return "create";
+    }
+  }
+  return "update";
 }
 
 function fieldMap(changes: AdvisorProposalChangeRow[]): Map<string, string | null> {
@@ -87,13 +130,20 @@ function applyProfile(
   return next;
 }
 
+/**
+ * Stable preview identity for a not-yet-persisted entity. Prefer draft_entity_key
+ * (the P2 grouping token); fall back to the legacy advisor-side placeholder
+ * entity_id so pre-P2 in-flight proposals still render.
+ */
+function newEntityId(group: ChangeGroup, fallback: string): string {
+  return group.draftKey ?? group.entityId ?? fallback;
+}
+
 function applyInvestmentInsert(
   group: ChangeGroup,
   m: Map<string, string | null>
 ): InvestmentRow {
-  // entity_id on a new investment is the advisor-side placeholder UUID; reuse
-  // it so the row has a stable identity in preview.
-  const id = group.entityId ?? "overlay-investment";
+  const id = newEntityId(group, "overlay-investment");
   return {
     id,
     user_id: "",
@@ -101,9 +151,15 @@ function applyInvestmentInsert(
     current_value: numStr(m.get("current_value")) ?? "0",
     monthly_contribution: numStr(m.get("monthly_contribution")) ?? "0",
     expected_annual_return: numStr(m.get("expected_annual_return")) ?? "0",
+    contribution_growth_annual:
+      numStr(m.get("contribution_growth_annual")) ?? "0",
     contribution_type: m.get("contribution_type") || null,
     contribution_duration_years: m.get("contribution_duration_years")
       ? String(Number(m.get("contribution_duration_years")))
+      : null,
+    withdrawal_monthly: numStr(m.get("withdrawal_monthly")) ?? "0",
+    withdrawal_start_years: m.get("withdrawal_start_years")
+      ? String(Number(m.get("withdrawal_start_years")))
       : null,
     created_at: "",
     updated_at: "",
@@ -123,10 +179,110 @@ function mergeInvestment(
   if (m.has("expected_annual_return")) {
     next.expected_annual_return = numStr(m.get("expected_annual_return")) ?? "0";
   }
+  if (m.has("contribution_growth_annual")) {
+    next.contribution_growth_annual =
+      numStr(m.get("contribution_growth_annual")) ?? "0";
+  }
   if (m.has("contribution_type")) next.contribution_type = m.get("contribution_type") || null;
   if (m.has("contribution_duration_years")) {
     const v = m.get("contribution_duration_years");
     next.contribution_duration_years = v ? String(Number(v)) : null;
+  }
+  if (m.has("withdrawal_monthly")) {
+    next.withdrawal_monthly = numStr(m.get("withdrawal_monthly")) ?? "0";
+  }
+  if (m.has("withdrawal_start_years")) {
+    const v = m.get("withdrawal_start_years");
+    next.withdrawal_start_years = v ? String(Number(v)) : null;
+  }
+  return next;
+}
+
+function applyBudgetLineInsert(
+  group: ChangeGroup,
+  m: Map<string, string | null>
+): BudgetLineRow {
+  const cy = m.get("calendar_year");
+  return {
+    id: newEntityId(group, "overlay-budget-line"),
+    user_id: "",
+    category: m.get("category") || "uncategorized",
+    cadence: m.get("cadence") === "annual" ? "annual" : "monthly",
+    amount: numStr(m.get("amount")) ?? "0",
+    calendar_year: cy ? Number(cy) : null,
+    start_year_month: m.get("start_year_month") || null,
+    end_year_month: m.get("end_year_month") || null,
+    created_at: "",
+  };
+}
+
+function mergeBudgetLine(
+  row: BudgetLineRow,
+  m: Map<string, string | null>
+): BudgetLineRow {
+  const next: BudgetLineRow = { ...row };
+  if (m.has("amount")) {
+    const amount = numOrNull(m.get("amount"));
+    if (amount != null) next.amount = String(amount);
+  }
+  if (m.has("category")) next.category = m.get("category") || next.category;
+  if (m.has("calendar_year")) {
+    const v = m.get("calendar_year");
+    next.calendar_year = v ? Number(v) : null;
+  }
+  if (m.has("start_year_month")) {
+    next.start_year_month = m.get("start_year_month") || null;
+  }
+  if (m.has("end_year_month")) {
+    next.end_year_month = m.get("end_year_month") || null;
+  }
+  return next;
+}
+
+function applyGoalInsert(
+  group: ChangeGroup,
+  m: Map<string, string | null>
+): FinancialGoalRow {
+  return {
+    id: newEntityId(group, "overlay-goal"),
+    user_id: "",
+    title: m.get("title") || "Goal",
+    target_amount: numStr(m.get("target_amount")) ?? "0",
+    target_date: m.get("target_date") || null,
+    linked_investment_id: m.get("linked_investment_id") || null,
+    current_amount: numStr(m.get("current_amount")) ?? "0",
+    monthly_contribution: numStr(m.get("monthly_contribution")) ?? "0",
+    expected_annual_return: numStr(m.get("expected_annual_return")) ?? "0",
+    display_order: 0,
+    created_at: "",
+  };
+}
+
+function mergeGoal(
+  row: FinancialGoalRow,
+  m: Map<string, string | null>
+): FinancialGoalRow {
+  const next: FinancialGoalRow = { ...row };
+  if (m.has("monthly_contribution")) {
+    const mc = numOrNull(m.get("monthly_contribution"));
+    if (mc != null) next.monthly_contribution = String(mc);
+  }
+  if (m.has("title")) next.title = m.get("title") || next.title;
+  if (m.has("target_amount")) {
+    const ta = numOrNull(m.get("target_amount"));
+    if (ta != null) next.target_amount = String(ta);
+  }
+  if (m.has("target_date")) next.target_date = m.get("target_date") || null;
+  if (m.has("current_amount")) {
+    const ca = numOrNull(m.get("current_amount"));
+    if (ca != null) next.current_amount = String(ca);
+  }
+  if (m.has("expected_annual_return")) {
+    const er = numOrNull(m.get("expected_annual_return"));
+    if (er != null) next.expected_annual_return = String(er);
+  }
+  if (m.has("linked_investment_id")) {
+    next.linked_investment_id = m.get("linked_investment_id") || null;
   }
   return next;
 }
@@ -163,37 +319,38 @@ export function applyProposalChanges(
       continue;
     }
 
-    if (group.entityType === "budget_line" && group.entityId) {
-      const amount = numOrNull(m.get("amount"));
-      if (amount != null) {
+    const op = resolveOp(group);
+
+    if (group.entityType === "budget_line") {
+      if (op === "delete" && group.entityId) {
+        budgetLines = budgetLines.filter((b) => b.id !== group.entityId);
+      } else if (op === "create") {
+        budgetLines = [...budgetLines, applyBudgetLineInsert(group, m)];
+      } else if (group.entityId) {
         budgetLines = budgetLines.map((b) =>
-          b.id === group.entityId ? { ...b, amount: String(amount) } : b
+          b.id === group.entityId ? mergeBudgetLine(b, m) : b
         );
       }
       continue;
     }
 
-    if (group.entityType === "goal" && group.entityId) {
-      const mc = numOrNull(m.get("monthly_contribution"));
-      if (mc != null) {
+    if (group.entityType === "goal") {
+      if (op === "delete" && group.entityId) {
+        goals = goals.filter((g) => g.id !== group.entityId);
+      } else if (op === "create") {
+        goals = [...goals, applyGoalInsert(group, m)];
+      } else if (group.entityId) {
         goals = goals.map((g) =>
-          g.id === group.entityId
-            ? { ...g, monthly_contribution: String(mc) }
-            : g
+          g.id === group.entityId ? mergeGoal(g, m) : g
         );
       }
       continue;
     }
 
     if (group.entityType === "investment") {
-      if (m.get("_deleted") === "true" && group.entityId) {
+      if (op === "delete" && group.entityId) {
         investments = investments.filter((i) => i.id !== group.entityId);
-        continue;
-      }
-      const isNewEntity = group.changes.every(
-        (c) => c.old_value == null || c.old_value === ""
-      );
-      if (isNewEntity) {
+      } else if (op === "create") {
         investments = [...investments, applyInvestmentInsert(group, m)];
       } else if (group.entityId) {
         investments = investments.map((i) =>

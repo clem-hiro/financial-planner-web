@@ -13,6 +13,7 @@ import {
 } from "@/server/actions";
 import {
   ageCompletedOnDate,
+  investmentReviewReason,
   investmentRowIsStale,
   INVESTMENT_REVIEW_STALE_MONTHS,
 } from "@/domain/finance";
@@ -28,8 +29,11 @@ export type InvestmentBalanceRow = {
   current_value: number;
   monthly_contribution: number;
   expected_annual_return: number;
+  contribution_growth_annual: number;
   contribution_type?: string | null;
   contribution_duration_years?: number | null;
+  withdrawal_monthly: number;
+  withdrawal_start_years?: number | null;
   updated_at?: string | null;
   created_at?: string | null;
 };
@@ -48,7 +52,15 @@ function contributionSummaryLine(
   currencyCode: string
 ): string {
   const pmt = investment.monthly_contribution;
-  const pmtLabel = `${formatCurrency(pmt, currencyCode)}/mo`;
+  const stepUp =
+    investment.contribution_growth_annual > 0
+      ? `, stepping up ${Math.round(investment.contribution_growth_annual * 1000) / 10}%/yr`
+      : "";
+  const withdrawal =
+    investment.withdrawal_monthly > 0
+      ? `; withdraw ${formatCurrency(investment.withdrawal_monthly, currencyCode)}/mo later`
+      : "";
+  const pmtLabel = `${formatCurrency(pmt, currencyCode)}/mo${stepUp}`;
   if (
     investment.contribution_type === "fixed_duration" &&
     investment.contribution_duration_years != null &&
@@ -56,9 +68,9 @@ function contributionSummaryLine(
   ) {
     const y = investment.contribution_duration_years;
     const yLabel = Number.isInteger(y) ? String(y) : String(y);
-    return `${pmtLabel} for ${yLabel} years, then growth only`;
+    return `${pmtLabel} for ${yLabel} years, then growth only${withdrawal}`;
   }
-  return `${pmtLabel} until retirement`;
+  return `${pmtLabel} until retirement${withdrawal}`;
 }
 
 function ContributionTimelineHint({
@@ -132,15 +144,26 @@ function InvestmentSummary({
 }) {
   const returnPct = (investment.expected_annual_return * 100).toFixed(1);
   const flowSummary = contributionSummaryLine(investment, currencyCode);
-  const stale = investmentRowIsStale(investment);
+  const reviewReason = investmentReviewReason(investment);
+  const reviewCopy =
+    reviewReason?.kind === "stale_months"
+      ? `Not updated in ${reviewReason.months} months. Confirm the balance and expected return still match reality.`
+      : reviewReason?.kind === "no_timestamp"
+        ? "This account has no recorded update date. Confirm its details are current."
+        : null;
   return (
     <div className="flex items-start justify-between gap-3 py-3.5">
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <p className="truncate text-sm font-medium text-slate-900">{investment.name}</p>
-          {stale ? (
-            <span className="shrink-0 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-900">
-              Review due
+          {reviewCopy ? (
+            <span className="inline-flex shrink-0 items-center gap-0.5">
+              <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-900">
+                Review due
+              </span>
+              <InfoTooltip ariaLabel="Why this account is due for review">
+                <p>{reviewCopy}</p>
+              </InfoTooltip>
             </span>
           ) : null}
         </div>
@@ -210,6 +233,17 @@ function InvestmentEditForm({
   );
   const [monthlyRaw, setMonthlyRaw] = useState(
     String(investment.monthly_contribution)
+  );
+  const [contributionGrowthRaw, setContributionGrowthRaw] = useState(
+    String(investment.contribution_growth_annual)
+  );
+  const [withdrawalMonthlyRaw, setWithdrawalMonthlyRaw] = useState(
+    String(investment.withdrawal_monthly)
+  );
+  const [withdrawalStartYearsRaw, setWithdrawalStartYearsRaw] = useState(
+    investment.withdrawal_start_years != null
+      ? String(investment.withdrawal_start_years)
+      : ""
   );
   const [returnPctRaw, setReturnPctRaw] = useState(
     String(Math.round(investment.expected_annual_return * 1000) / 10)
@@ -439,10 +473,65 @@ function InvestmentEditForm({
           Advanced planning
         </summary>
         <p className="mt-2 leading-relaxed">
-          Optional fields like contribution end age, calendar stop dates, pauses, and
-          withdrawals are reserved for later—your advisor view stays uncluttered for
-          now.
+          Step up monthly contributions over time or model a future monthly withdrawal
+          from this account. Leave zero or blank for a flat accumulation plan.
         </p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium text-slate-700">
+              Annual contribution step-up
+            </span>
+            <input
+              name="contribution_growth_annual"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              max={1}
+              step={0.001}
+              value={contributionGrowthRaw}
+              onChange={(e) => setContributionGrowthRaw(e.target.value)}
+              className={fieldClass}
+            />
+            <span className="mt-1 block text-[11px] text-slate-500">
+              Decimal format, e.g. 0.03 for 3% yearly.
+            </span>
+          </label>
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium text-slate-700">
+              Monthly withdrawal
+            </span>
+            <input
+              name="withdrawal_monthly"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              step={0.01}
+              value={withdrawalMonthlyRaw}
+              onChange={(e) => setWithdrawalMonthlyRaw(e.target.value)}
+              className={fieldClass}
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium text-slate-700">
+              Withdrawal starts after
+            </span>
+            <input
+              name="withdrawal_start_years"
+              type="number"
+              inputMode="decimal"
+              min={0}
+              max={100}
+              step={0.25}
+              placeholder="Retirement age"
+              value={withdrawalStartYearsRaw}
+              onChange={(e) => setWithdrawalStartYearsRaw(e.target.value)}
+              className={fieldClass}
+            />
+            <span className="mt-1 block text-[11px] text-slate-500">
+              Years from today. Blank uses profile retirement age when available.
+            </span>
+          </label>
+        </div>
       </details>
 
       <div className="flex flex-col-reverse items-stretch gap-2 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
@@ -553,10 +642,7 @@ function InvestmentReviewPrompt({
 }) {
   const router = useRouter();
   const submitLockRef = useRef(false);
-  const wrapped = async (
-    prev: typeof initial,
-    _fd: FormData
-  ): Promise<typeof initial> => {
+  const wrapped = async (prev: typeof initial): Promise<typeof initial> => {
     if (submitLockRef.current) return prev;
     submitLockRef.current = true;
     try {

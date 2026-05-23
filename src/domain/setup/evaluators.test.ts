@@ -63,6 +63,8 @@ describe("setup evaluators", () => {
           salary_increment_month: null,
           last_salary_review_at: null,
           last_investment_review_at: null,
+          last_cpf_rules_review_at: null,
+          last_cpf_rules_review_version: null,
           created_at: "2026-01-01T00:00:00Z",
         },
       })
@@ -125,6 +127,8 @@ describe("setup evaluators", () => {
           salary_increment_month: null,
           last_salary_review_at: null,
           last_investment_review_at: null,
+          last_cpf_rules_review_at: null,
+          last_cpf_rules_review_version: null,
           created_at: "2026-01-01T00:00:00Z",
         },
       })
@@ -175,6 +179,8 @@ describe("setup evaluators", () => {
           salary_increment_month: null,
           last_salary_review_at: null,
           last_investment_review_at: null,
+          last_cpf_rules_review_at: null,
+          last_cpf_rules_review_version: null,
           created_at: "2026-01-01T00:00:00Z",
         },
       })

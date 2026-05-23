@@ -6,8 +6,8 @@ import { loadSetupTabBundle } from "@/features/planning/load-setup-tab-bundle";
 import {
   CashAndLiabilitiesPanels,
   type CashAccountBalanceRow,
-  type LiabilityBalanceRow,
 } from "@/features/goals/CashAndLiabilitiesPanels";
+import { buildCashHistoryByAccountId } from "@/features/goals/cash-history";
 import { CpfBalancesForm } from "@/features/goals/CpfBalancesForm";
 import { HousingPanel } from "@/features/goals/HousingLoansPanel";
 import {
@@ -19,6 +19,7 @@ import { VehiclesPanel } from "@/features/goals/VehiclesPanel";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { AccountSyncingRoadmapCard } from "@/features/planning/roadmap-modules";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
+import { shouldPromptCpfRulesReview } from "@/domain/finance/cpf-rules-review";
 import { shouldPromptInvestmentReview } from "@/domain/finance/investment-review";
 import { birthDateIsValidPast } from "@/lib/validation";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
@@ -62,11 +63,18 @@ export async function WealthPlanningSection() {
       current_value: num(i.current_value),
       monthly_contribution: num(i.monthly_contribution),
       expected_annual_return: num(i.expected_annual_return),
+      contribution_growth_annual: num(i.contribution_growth_annual),
       contribution_type: i.contribution_type ?? null,
       contribution_duration_years:
         i.contribution_duration_years != null &&
         String(i.contribution_duration_years).trim() !== ""
           ? num(i.contribution_duration_years as string)
+          : null,
+      withdrawal_monthly: num(i.withdrawal_monthly),
+      withdrawal_start_years:
+        i.withdrawal_start_years != null &&
+        String(i.withdrawal_start_years).trim() !== ""
+          ? num(i.withdrawal_start_years)
           : null,
       updated_at: i.updated_at ?? null,
       created_at: i.created_at ?? null,
@@ -75,6 +83,11 @@ export async function WealthPlanningSection() {
   const showInvestmentReviewPrompt = shouldPromptInvestmentReview({
     investments: bundle.investments,
     lastInvestmentReviewAt: financialProfile?.last_investment_review_at ?? null,
+  });
+  const showCpfRulesReviewPrompt = shouldPromptCpfRulesReview({
+    lastCpfRulesReviewAt: financialProfile?.last_cpf_rules_review_at ?? null,
+    lastCpfRulesReviewVersion:
+      financialProfile?.last_cpf_rules_review_version ?? null,
   });
   const investmentPlanningContext =
     financialProfile?.birth_date &&
@@ -91,7 +104,11 @@ export async function WealthPlanningSection() {
       id: r.id,
       name: r.name,
       balance: num(r.balance),
+      purpose: r.purpose ?? "other",
     })
+  );
+  const cashHistoryByAccountId = buildCashHistoryByAccountId(
+    bundle.cashSnapshots
   );
 
   return (
@@ -148,12 +165,16 @@ export async function WealthPlanningSection() {
               </span>
             }
           >
-            <CpfBalancesForm row={bundle.cpfRow} />
+            <CpfBalancesForm
+              row={bundle.cpfRow}
+              showRulesReviewPrompt={showCpfRulesReviewPrompt}
+            />
           </PageSection>
 
           <PageSection id="wealth-cash-debts" title="Cash and debts">
             <CashAndLiabilitiesPanels
               cashRows={cashBalanceRows}
+              cashHistoryByAccountId={cashHistoryByAccountId}
               liabilityRows={bundle.liabilityRows}
               currencyCode={currency}
             />

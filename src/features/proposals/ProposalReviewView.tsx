@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, type ReactNode } from "react";
+import { useActionState, useRef, type ReactNode } from "react";
 import { fieldMeta } from "@/domain/advisor-proposals/field-registry";
 import { ProposalProjectionCompare } from "@/features/proposals/ProposalProjectionCompare";
 import { formatProposalDisplayValue } from "@/domain/advisor-proposals/format-display";
@@ -13,11 +13,14 @@ import type {
   AdvisorProposalRow,
   AdvisorProposalSectionNoteRow,
 } from "@/data/supabase/types";
+import type { ProposalConflict } from "@/domain/advisor-proposals/apply-changes";
 import {
   acceptAdvisorProposalAction,
+  type AcceptProposalState,
   rejectAdvisorProposalAction,
 } from "@/server/advisor-proposal-actions";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
+import { CollapsiblePane } from "@/ui/CollapsiblePaneRail";
 import { appCardClass, appCardPadding } from "@/ui/surface-classes";
 import Link from "next/link";
 
@@ -56,6 +59,111 @@ function formatSubmittedDate(iso: string | null): string {
   });
 }
 
+/**
+ * Reusable accept/reject unit (forms + actions + pending overlay +
+ * error/conflict surface). Shared by the in-flow footer here and the
+ * client review's sticky bottom bar — one source so the two never drift.
+ * `acceptState.conflicts` is the typed `ProposalConflict[]` returned by
+ * `acceptAdvisorProposalAction` (backend P2 shipped this shape). On an
+ * optimistic-concurrency conflict the backend has already notified the
+ * advisor to re-baseline (B8); the client cannot self-resolve, so we name
+ * the stale items and block Accept (Reject stays available).
+ */
+export function ProposalReviewActions({ proposalId }: { proposalId: string }) {
+  // Single in-flight guard — belt to the `disabled` suspenders. Blocks a
+  // second submit of accept OR reject from entering the server action via
+  // Enter+click or a pre-hydration double-fire. Same lockRef pattern as
+  // AdvisorProposeRemovalButton (set on entry, cleared in finally,
+  // early-return if already locked); shared so the two can't interleave.
+  const lockRef = useRef(false);
+
+  const [acceptState, acceptAction, acceptPending] = useActionState(
+    async (prev: AcceptProposalState, fd: FormData) => {
+      if (lockRef.current) return prev;
+      lockRef.current = true;
+      try {
+        return await acceptAdvisorProposalAction(prev, fd);
+      } finally {
+        lockRef.current = false;
+      }
+    },
+    { error: null } as AcceptProposalState
+  );
+  const [rejectState, rejectAction, rejectPending] = useActionState(
+    async (prev: { error: string | null }, fd: FormData) => {
+      if (lockRef.current) return prev;
+      lockRef.current = true;
+      try {
+        return await rejectAdvisorProposalAction(prev, fd);
+      } finally {
+        lockRef.current = false;
+      }
+    },
+    { error: null as string | null }
+  );
+  const actionPending = acceptPending || rejectPending;
+  const conflicts: ProposalConflict[] = acceptState.conflicts ?? [];
+  const conflictLabels = [...new Set(conflicts.map((c) => c.label))];
+  const conflicted = conflictLabels.length > 0;
+  const nameConflictLabels = [
+    ...new Set(
+      conflicts.filter((c) => c.reason === "name_in_use").map((c) => c.label)
+    ),
+  ];
+
+  return (
+    <div className="space-y-3">
+      <BlockingSubmitOverlay
+        active={actionPending}
+        message={acceptPending ? "Applying proposal…" : "Rejecting proposal…"}
+      />
+      {nameConflictLabels.length > 0 ? (
+        <p className="text-sm font-medium text-amber-800" role="alert">
+          These names are already in use in your plan:{" "}
+          <span className="font-semibold">
+            {nameConflictLabels.join(", ")}
+          </span>
+          . Ask your advisor to rename them before it can be applied.
+        </p>
+      ) : conflicted ? (
+        <p className="text-sm font-medium text-amber-800" role="alert">
+          Your plan changed since this proposal was created — these items are
+          now out of date:{" "}
+          <span className="font-semibold">{conflictLabels.join(", ")}</span>.
+          Your advisor has been notified to refresh it before it can be
+          applied.
+        </p>
+      ) : acceptState.error || rejectState.error ? (
+        <p className="text-sm font-medium text-rose-700" role="alert">
+          {acceptState.error ?? rejectState.error}
+        </p>
+      ) : null}
+      <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
+        <form action={rejectAction}>
+          <input type="hidden" name="proposal_id" value={proposalId} />
+          <button
+            type="submit"
+            disabled={rejectPending || acceptPending}
+            className="w-full rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50 sm:w-auto"
+          >
+            {rejectPending ? "Rejecting…" : "Reject changes"}
+          </button>
+        </form>
+        <form action={acceptAction}>
+          <input type="hidden" name="proposal_id" value={proposalId} />
+          <button
+            type="submit"
+            disabled={acceptPending || rejectPending || conflicted}
+            className="w-full rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-50 sm:w-auto"
+          >
+            {acceptPending ? "Applying…" : "Accept changes"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 export function ProposalReviewView({
   proposal,
   changes,
@@ -65,6 +173,10 @@ export function ProposalReviewView({
   hasProjection = false,
   actualProjection = null,
   proposedProjection = null,
+  hideFooterActions = false,
+  hideBackLink = false,
+  backHref = "/dashboard",
+  backLabel = "← Home",
 }: {
   proposal: AdvisorProposalRow;
   changes: AdvisorProposalChangeRow[];
@@ -74,33 +186,28 @@ export function ProposalReviewView({
   hasProjection?: boolean;
   actualProjection?: ReactNode;
   proposedProjection?: ReactNode;
+  /** When true, omit the in-flow footer (caller renders its own action bar). */
+  hideFooterActions?: boolean;
+  /** When true, omit the back link (caller renders it outside the grid column). */
+  hideBackLink?: boolean;
+  backHref?: string;
+  backLabel?: string;
 }) {
   const sections = groupBySection(changes, sectionNotes);
   const isPending = proposal.status === "pending";
-  const [acceptState, acceptAction, acceptPending] = useActionState(
-    acceptAdvisorProposalAction,
-    { error: null as string | null }
-  );
-  const [rejectState, rejectAction, rejectPending] = useActionState(
-    rejectAdvisorProposalAction,
-    { error: null as string | null }
-  );
-  const actionPending = acceptPending || rejectPending;
 
   return (
-    <div
-      className="mx-auto max-w-3xl space-y-8 pb-16"
-      {...(actionPending ? { inert: true } : {})}
-    >
-      <BlockingSubmitOverlay
-        active={actionPending}
-        message={acceptPending ? "Applying proposal…" : "Rejecting proposal…"}
-      />
-      <p className="text-sm">
-        <Link href="/dashboard" className="font-medium text-emerald-700 hover:text-emerald-800">
-          ← Home
-        </Link>
-      </p>
+    <div className="mx-auto max-w-3xl space-y-8 pb-16">
+      {hideBackLink ? null : (
+        <p className="text-sm">
+          <Link
+            href={backHref}
+            className="font-medium text-emerald-700 hover:text-emerald-800"
+          >
+            {backLabel}
+          </Link>
+        </p>
+      )}
 
       <header className={`${appCardClass} ${appCardPadding} space-y-4`}>
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
@@ -132,6 +239,70 @@ export function ProposalReviewView({
         )}
       </header>
 
+      {sections.length > 0 ? (
+        <CollapsiblePane title={`Suggested changes (${changes.length})`}>
+          <div className="space-y-6">
+            {sections.map((block) => (
+              <section key={block.section} className="space-y-3">
+                <div>
+                  <h3 className="text-sm font-semibold tracking-tight text-slate-900">
+                    {sectionLabel(block.section)}
+                  </h3>
+                  {block.sectionNote ? (
+                    <p className="mt-1 text-xs leading-relaxed text-slate-500">
+                      {block.sectionNote}
+                    </p>
+                  ) : null}
+                </div>
+                <ul className="space-y-2">
+                  {block.changes.map((c) => {
+                    const meta = fieldMeta(c.entity_type, c.field_key);
+                    const oldDisplay = formatProposalDisplayValue(
+                      c.old_value,
+                      meta,
+                      currencyCode
+                    );
+                    const newDisplay = formatProposalDisplayValue(
+                      c.new_value,
+                      meta,
+                      currencyCode
+                    );
+                    return (
+                      <li
+                        key={c.id}
+                        className="rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-3"
+                      >
+                        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                          <p className="text-sm font-medium text-slate-800">
+                            {c.field_label}
+                          </p>
+                          <div className="flex flex-wrap items-baseline gap-2 text-sm tabular-nums">
+                            <span className="text-slate-400 line-through decoration-slate-300/80">
+                              {oldDisplay}
+                            </span>
+                            <span className="text-slate-300" aria-hidden>
+                              →
+                            </span>
+                            <span className="font-semibold text-slate-900">
+                              {newDisplay}
+                            </span>
+                          </div>
+                        </div>
+                        {c.explanation ? (
+                          <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
+                            {c.explanation}
+                          </p>
+                        ) : null}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            ))}
+          </div>
+        </CollapsiblePane>
+      ) : null}
+
       {hasProjection ? (
         <section className={`${appCardClass} ${appCardPadding} space-y-4`}>
           <h2 className="text-lg font-semibold text-slate-900">
@@ -149,89 +320,13 @@ export function ProposalReviewView({
         </section>
       ) : null}
 
-      <div className="space-y-6">
-        {sections.map((block) => (
-          <section
-            key={block.section}
-            className={`${appCardClass} overflow-hidden`}
-          >
-            <div className="border-b border-slate-100 px-6 py-4 sm:px-8">
-              <h2 className="text-lg font-semibold text-slate-900">
-                {sectionLabel(block.section)}
-              </h2>
-              {block.sectionNote ? (
-                <p className="mt-2 text-sm leading-relaxed text-slate-600">{block.sectionNote}</p>
-              ) : null}
-            </div>
-            <ul className="divide-y divide-slate-100">
-              {block.changes.map((c) => {
-                const meta = fieldMeta(c.entity_type, c.field_key);
-                const oldDisplay = formatProposalDisplayValue(
-                  c.old_value,
-                  meta,
-                  currencyCode
-                );
-                const newDisplay = formatProposalDisplayValue(
-                  c.new_value,
-                  meta,
-                  currencyCode
-                );
-                return (
-                  <li key={c.id} className="px-6 py-4 sm:px-8">
-                    <p className="text-sm font-medium text-slate-800">{c.field_label}</p>
-                    <div className="mt-2 flex flex-wrap items-baseline gap-2 text-sm">
-                      <span className="text-slate-400 line-through decoration-slate-300/80">
-                        {oldDisplay}
-                      </span>
-                      <span className="text-slate-400" aria-hidden>
-                        →
-                      </span>
-                      <span className="font-semibold text-slate-900">{newDisplay}</span>
-                    </div>
-                    {c.explanation ? (
-                      <p className="mt-2 text-xs leading-relaxed text-slate-500">{c.explanation}</p>
-                    ) : null}
-                  </li>
-                );
-              })}
-            </ul>
-          </section>
-        ))}
-      </div>
-
-      {isPending ? (
+      {isPending && !hideFooterActions ? (
         <footer className={`${appCardClass} ${appCardPadding} space-y-4`}>
           <p className="text-sm text-slate-600">
             Accepting applies these updates to your plan. Rejecting leaves your current data
             unchanged.
           </p>
-          {(acceptState.error || rejectState.error) && (
-            <p className="text-sm font-medium text-rose-700" role="alert">
-              {acceptState.error ?? rejectState.error}
-            </p>
-          )}
-          <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
-            <form action={rejectAction}>
-              <input type="hidden" name="proposal_id" value={proposal.id} />
-              <button
-                type="submit"
-                disabled={rejectPending || acceptPending}
-                className="w-full rounded-xl border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50 sm:w-auto"
-              >
-                {rejectPending ? "Rejecting…" : "Reject changes"}
-              </button>
-            </form>
-            <form action={acceptAction}>
-              <input type="hidden" name="proposal_id" value={proposal.id} />
-              <button
-                type="submit"
-                disabled={acceptPending || rejectPending}
-                className="w-full rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-50 sm:w-auto"
-              >
-                {acceptPending ? "Applying…" : "Accept changes"}
-              </button>
-            </form>
-          </div>
+          <ProposalReviewActions proposalId={proposal.id} />
         </footer>
       ) : null}
     </div>

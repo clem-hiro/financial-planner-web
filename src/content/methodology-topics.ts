@@ -12,6 +12,7 @@ export type MethodologyTopicId =
   | "expenses-month"
   | "budget-lines"
   | "cpf-projection"
+  | "cpf-retirement-projection"
   | "cpf-housing-mortgage"
   | "vehicles-sg"
   | "sg-income-tax-ya2026";
@@ -166,6 +167,26 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
       "This is a simplified CPF forecast using your entered balances, salary assumptions, and contribution settings to project OA/SA/MA over time.",
     bullets: [],
     footnote: "Educational illustration only—not tax, legal, or financial advice.",
+  },
+  {
+    id: "cpf-retirement-projection",
+    title: "CPF retirement projection (FRS / BRS / ERS & age 55)",
+    summary:
+      "Educational illustration of retirement sums and Retirement Account (RA) formation at age 55—not actuarial CPF LIFE quotes or regulated advice.",
+    bullets: [
+      "FRS at 55 starts from the published Full Retirement Sum for your cohort year (app baseline), then compounds by the FRS growth % until you reach 55 unless you override it manually.",
+      "BRS is 50% of projected FRS; ERS is 200% of projected FRS. Your retirement target (BRS, FRS, or ERS) sets how much OA+SA must be set aside at 55 in the RA flow.",
+      "Your personalised age-55 OA/SA come from the blue CPF-by-age chart above (same salary, contribution, and housing assumptions).",
+      "RA simulation: SA funds RA first, then OA tops up to the target; remaining OA stays in the illustration. Shortfalls mean total CPF is below the chosen sum.",
+      "CPF LIFE monthly range is a simplified band (annual payout % of RA ÷ 12, ±10%)—not plan-specific actuarial payouts.",
+      "Example scenarios (high SA, mostly OA, below FRS) are fixed teaching numbers and do not change your saved data.",
+    ],
+    formulas: [
+      "projected FRS ≈ baseline FRS × (1 + growth %)^years to 55",
+      "monthly CPF LIFE band ≈ (RA × payout %) ÷ 12, with ±10% around the midpoint",
+    ],
+    footnote:
+      "Confirm balances and policy constants in Setup → CPF when prompted. Re-check after CPF policy updates—outputs are illustrative, not guaranteed income.",
   },
   {
     id: "cpf-housing-mortgage",

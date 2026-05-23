@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { CashAccountRow } from "@/data/supabase/types";
+import type { CashAccountPurpose, CashAccountRow } from "@/data/supabase/types";
+import { insertCashAccountSnapshot } from "@/data/repositories/cash-account-snapshots";
 
 export async function listCashAccounts(
   supabase: SupabaseClient,
@@ -33,7 +34,7 @@ export async function advisorReadCashAccounts(
 export async function insertCashAccount(
   supabase: SupabaseClient,
   userId: string,
-  row: { name: string; balance: number }
+  row: { name: string; balance: number; purpose: CashAccountPurpose }
 ): Promise<CashAccountRow> {
   const { data, error } = await supabase
     .from("financial_cash_accounts")
@@ -41,18 +42,21 @@ export async function insertCashAccount(
       user_id: userId,
       name: row.name,
       balance: row.balance,
+      purpose: row.purpose,
     })
     .select()
     .single();
   if (error) throw error;
-  return data as CashAccountRow;
+  const account = data as CashAccountRow;
+  await insertCashAccountSnapshot(supabase, userId, account.id, row.balance);
+  return account;
 }
 
 export async function updateCashAccount(
   supabase: SupabaseClient,
   userId: string,
   id: string,
-  patch: { name: string; balance: number }
+  patch: { name: string; balance: number; purpose: CashAccountPurpose }
 ): Promise<void> {
   const { error } = await supabase
     .from("financial_cash_accounts")
@@ -60,6 +64,7 @@ export async function updateCashAccount(
     .eq("user_id", userId)
     .eq("id", id);
   if (error) throw error;
+  await insertCashAccountSnapshot(supabase, userId, id, patch.balance);
 }
 
 export async function deleteCashAccount(

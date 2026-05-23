@@ -33,7 +33,10 @@ const NUMERIC_STRING_COLS: Record<string, string[]> = {
     "current_value",
     "monthly_contribution",
     "expected_annual_return",
+    "contribution_growth_annual",
     "contribution_duration_years",
+    "withdrawal_monthly",
+    "withdrawal_start_years",
   ],
   financial_budget_lines: ["amount"],
   financial_goals: [
@@ -193,6 +196,8 @@ function canonical(): OverlayInputs {
       salary_increment_month: null,
       last_salary_review_at: null,
       last_investment_review_at: null,
+      last_cpf_rules_review_at: null,
+      last_cpf_rules_review_version: null,
       created_at: "2025-01-01T00:00:00Z",
     },
     investments: [
@@ -203,8 +208,11 @@ function canonical(): OverlayInputs {
         current_value: "10000",
         monthly_contribution: "500",
         expected_annual_return: "0.06",
+        contribution_growth_annual: "0",
         contribution_type: "until_retirement",
         contribution_duration_years: null,
+        withdrawal_monthly: "0",
+        withdrawal_start_years: null,
         created_at: "2025-01-01T00:00:00Z",
         updated_at: "2025-01-01T00:00:00Z",
       },
@@ -231,6 +239,7 @@ function canonical(): OverlayInputs {
         current_amount: "5000",
         monthly_contribution: "300",
         expected_annual_return: "0.04",
+        display_order: 0,
         created_at: "2025-01-01T00:00:00Z",
       },
     ],
@@ -263,8 +272,11 @@ const investmentValueShape = (rows: Array<Record<string, unknown>>) =>
       current_value: i.current_value,
       monthly_contribution: i.monthly_contribution,
       expected_annual_return: i.expected_annual_return,
+      contribution_growth_annual: i.contribution_growth_annual,
       contribution_type: i.contribution_type ?? null,
       contribution_duration_years: i.contribution_duration_years ?? null,
+      withdrawal_monthly: i.withdrawal_monthly,
+      withdrawal_start_years: i.withdrawal_start_years ?? null,
     }))
     .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 
@@ -283,11 +295,16 @@ describe("C6 anti-drift: overlay == canonical state after the accept path runs",
       ch({ entity_type: "goal", entity_id: "g1", field_key: "monthly_contribution", new_value: "750", old_value: "300", section: "goals" }),
       // partial investment edit — must NOT clobber unchanged fields:
       ch({ entity_type: "investment", entity_id: "inv1", field_key: "monthly_contribution", new_value: "900", old_value: "500", section: "investments" }),
+      ch({ entity_type: "investment", entity_id: "inv1", field_key: "contribution_growth_annual", new_value: "0.03", old_value: "0", section: "investments" }),
+      ch({ entity_type: "investment", entity_id: "inv1", field_key: "withdrawal_monthly", new_value: "1200", old_value: "0", section: "investments" }),
       // brand-new investment:
       ch({ entity_type: "investment", entity_id: "new1", field_key: "name", new_value: "Robo", old_value: null, section: "investments" }),
       ch({ entity_type: "investment", entity_id: "new1", field_key: "current_value", new_value: "2000", old_value: null, section: "investments" }),
       ch({ entity_type: "investment", entity_id: "new1", field_key: "monthly_contribution", new_value: "250", old_value: null, section: "investments" }),
       ch({ entity_type: "investment", entity_id: "new1", field_key: "expected_annual_return", new_value: "0.07", old_value: null, section: "investments" }),
+      ch({ entity_type: "investment", entity_id: "new1", field_key: "contribution_growth_annual", new_value: "0.02", old_value: null, section: "investments" }),
+      ch({ entity_type: "investment", entity_id: "new1", field_key: "withdrawal_monthly", new_value: "500", old_value: null, section: "investments" }),
+      ch({ entity_type: "investment", entity_id: "new1", field_key: "withdrawal_start_years", new_value: "20", old_value: null, section: "investments" }),
     ];
 
     const overlay = applyProposalChanges(base, changes);
