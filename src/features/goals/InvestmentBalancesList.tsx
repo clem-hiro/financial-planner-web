@@ -17,6 +17,13 @@ import {
   INVESTMENT_REVIEW_STALE_MONTHS,
 } from "@/domain/finance";
 import { InvestmentAssumptionBanner } from "@/features/goals/InvestmentAssumptionBanner";
+import {
+  InvestmentContributionScheduleFields,
+  type ContributionMode,
+  type FixedScheduleMode,
+} from "@/features/goals/InvestmentContributionScheduleFields";
+import { InvestmentPlanGuidancePanel } from "@/features/goals/InvestmentPlanGuidancePanel";
+import type { InvestmentPlanNature } from "@/server/investment-planning-parse";
 import { InfoTooltip } from "@/ui/InfoTooltip";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { fpInputClass, fpPrimaryButtonClass } from "@/ui/input-classes";
@@ -31,6 +38,9 @@ export type InvestmentBalanceRow = {
   contribution_growth_annual: number;
   contribution_type?: string | null;
   contribution_duration_years?: number | null;
+  contribution_start_date?: string | null;
+  contribution_end_date?: string | null;
+  plan_nature?: string | null;
   withdrawal_monthly: number;
   withdrawal_start_years?: number | null;
   updated_at?: string | null;
@@ -61,6 +71,17 @@ function contributionSummaryLine(
       : "";
   const pmtLabel = `${formatCurrency(pmt, currencyCode)}/mo${stepUp}`;
   if (
+    investment.contribution_end_date != null &&
+    investment.contribution_end_date.trim() !== ""
+  ) {
+    const start =
+      investment.contribution_start_date != null &&
+      investment.contribution_start_date.trim() !== ""
+        ? investment.contribution_start_date
+        : "today";
+    return `${pmtLabel} until ${investment.contribution_end_date} (from ${start}), then growth only${withdrawal}`;
+  }
+  if (
     investment.contribution_type === "fixed_duration" &&
     investment.contribution_duration_years != null &&
     investment.contribution_duration_years > 0
@@ -82,6 +103,27 @@ function ContributionTimelineHint({
   const asOf = new Date();
   const age0 = ageCompletedOnDate(ctx.birthDate, asOf);
   const targetAge = Math.min(80, Math.max(50, Math.round(ctx.targetRetirementAge)));
+
+  if (
+    investment.contribution_end_date != null &&
+    investment.contribution_end_date.trim() !== ""
+  ) {
+    return (
+      <div className="mt-2 rounded-lg border border-emerald-100 bg-emerald-50/50 px-2.5 py-2 text-[11px] leading-relaxed text-emerald-950/90">
+        <p className="font-semibold text-emerald-950">Premium window (calendar)</p>
+        <p className="mt-1">
+          {investment.contribution_start_date
+            ? `Contributing from ${investment.contribution_start_date}`
+            : "Contributing from today"}{" "}
+          through {investment.contribution_end_date}
+        </p>
+        <p className="mt-0.5">
+          Thereafter through age {targetAge}: balance keeps compounding without new
+          monthly deposits in this model
+        </p>
+      </div>
+    );
+  }
 
   if (
     investment.contribution_type === "fixed_duration" &&
@@ -236,18 +278,36 @@ function InvestmentEditForm({
   const [returnPctRaw, setReturnPctRaw] = useState(
     String(Math.round(investment.expected_annual_return * 1000) / 10)
   );
-  const [contributionMode, setContributionMode] = useState<
-    "until_retirement" | "fixed_duration"
-  >(
-    investment.contribution_type === "fixed_duration"
+  const [planNature, setPlanNature] = useState<InvestmentPlanNature | "">(
+    investment.plan_nature === "pure_investment" ||
+      investment.plan_nature === "includes_insurance_coverage"
+      ? investment.plan_nature
+      : ""
+  );
+  const [contributionMode, setContributionMode] = useState<ContributionMode>(
+    investment.contribution_type === "fixed_duration" ||
+      (investment.contribution_end_date != null &&
+        investment.contribution_end_date.trim() !== "")
       ? "fixed_duration"
       : "until_retirement"
+  );
+  const [fixedScheduleMode, setFixedScheduleMode] = useState<FixedScheduleMode>(
+    investment.contribution_end_date != null &&
+      investment.contribution_end_date.trim() !== ""
+      ? "calendar_dates"
+      : "duration_years"
   );
   const [durationYearsRaw, setDurationYearsRaw] = useState(
     investment.contribution_type === "fixed_duration" &&
       investment.contribution_duration_years != null
       ? String(investment.contribution_duration_years)
       : "15"
+  );
+  const [startDateRaw, setStartDateRaw] = useState(
+    investment.contribution_start_date ?? ""
+  );
+  const [endDateRaw, setEndDateRaw] = useState(
+    investment.contribution_end_date ?? ""
   );
 
   const wrapped = async (
@@ -297,6 +357,11 @@ function InvestmentEditForm({
           {state.error}
         </p>
       )}
+
+      <InvestmentPlanGuidancePanel
+        planNature={planNature}
+        onPlanNatureChange={setPlanNature}
+      />
 
       <div className="rounded-lg border border-slate-100 bg-slate-50/60 p-3">
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -352,68 +417,19 @@ function InvestmentEditForm({
         </label>
       </div>
 
-      <fieldset className="rounded-lg border border-slate-200 bg-white p-3">
-        <legend className="text-sm font-medium text-slate-800">
-          How long will you contribute monthly?
-        </legend>
-        <p className="mt-1 text-xs text-slate-500">
-          After this window, the balance can keep compounding—we only stop adding new
-          monthly deposits.
-        </p>
-        <div className="mt-3 space-y-2.5">
-          <label className="flex cursor-pointer items-start gap-2.5 text-sm text-slate-700">
-            <input
-              type="radio"
-              name="contribution_type"
-              value="until_retirement"
-              className="mt-0.5"
-              checked={contributionMode === "until_retirement"}
-              onChange={() => setContributionMode("until_retirement")}
-            />
-            <span>
-              <span className="font-medium text-slate-900">Until retirement</span>
-              <span className="mt-0.5 block text-xs font-normal text-slate-500">
-                Matches your profile retirement age when available.
-              </span>
-            </span>
-          </label>
-          <label className="flex cursor-pointer items-start gap-2.5 text-sm text-slate-700">
-            <input
-              type="radio"
-              name="contribution_type"
-              value="fixed_duration"
-              className="mt-0.5"
-              checked={contributionMode === "fixed_duration"}
-              onChange={() => setContributionMode("fixed_duration")}
-            />
-            <span>
-              <span className="font-medium text-slate-900">Fixed duration</span>
-              <span className="mt-0.5 block text-xs font-normal text-slate-500">
-                For time-bound premiums or savings phases.
-              </span>
-            </span>
-          </label>
-        </div>
-        {contributionMode === "fixed_duration" ? (
-          <label className="mt-3 block text-sm">
-            <span className="mb-1 block font-medium text-slate-700">
-              Contribution duration (years)
-            </span>
-            <input
-              name="contribution_duration_years"
-              type="number"
-              inputMode="decimal"
-              min={0.25}
-              max={80}
-              step={0.25}
-              required
-              value={durationYearsRaw}
-              onChange={(e) => setDurationYearsRaw(e.target.value)}
-              className={`${fieldClass} max-w-xs`}
-            />
-          </label>
-        ) : null}
-      </fieldset>
+      <InvestmentContributionScheduleFields
+        contributionMode={contributionMode}
+        onContributionModeChange={setContributionMode}
+        fixedScheduleMode={fixedScheduleMode}
+        onFixedScheduleModeChange={setFixedScheduleMode}
+        durationYearsRaw={durationYearsRaw}
+        onDurationYearsChange={setDurationYearsRaw}
+        startDateRaw={startDateRaw}
+        onStartDateChange={setStartDateRaw}
+        endDateRaw={endDateRaw}
+        onEndDateChange={setEndDateRaw}
+        inputClassName={fieldClass}
+      />
 
       <label className="block text-sm">
         <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">

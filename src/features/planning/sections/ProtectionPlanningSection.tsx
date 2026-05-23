@@ -19,7 +19,10 @@ export function ProtectionPlanningSection() {
         </h2>
         <p className="text-sm leading-relaxed text-slate-600">
           Today this area is mostly roadmap — your emergency liquidity still lives under
-          Wealth (cash) until dedicated modules ship.
+          Wealth (cash) until dedicated modules ship. Investment-linked plans (ILPs) with
+          bundled cover: record fund value and premiums under Wealth → Investments; add
+          coverage details here when insurance tracking ships — do not enter the same
+          dollars twice.
         </p>
       </header>
 

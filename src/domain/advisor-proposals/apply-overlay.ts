@@ -107,6 +107,9 @@ function applyInvestmentInsert(
     contribution_duration_years: m.get("contribution_duration_years")
       ? String(Number(m.get("contribution_duration_years")))
       : null,
+    contribution_start_date: m.get("contribution_start_date") || null,
+    contribution_end_date: m.get("contribution_end_date") || null,
+    plan_nature: m.get("plan_nature") || null,
     withdrawal_monthly: numStr(m.get("withdrawal_monthly")) ?? "0",
     withdrawal_start_years: m.get("withdrawal_start_years")
       ? String(Number(m.get("withdrawal_start_years")))
@@ -138,6 +141,13 @@ function mergeInvestment(
     const v = m.get("contribution_duration_years");
     next.contribution_duration_years = v ? String(Number(v)) : null;
   }
+  if (m.has("contribution_start_date")) {
+    next.contribution_start_date = m.get("contribution_start_date") || null;
+  }
+  if (m.has("contribution_end_date")) {
+    next.contribution_end_date = m.get("contribution_end_date") || null;
+  }
+  if (m.has("plan_nature")) next.plan_nature = m.get("plan_nature") || null;
   if (m.has("withdrawal_monthly")) {
     next.withdrawal_monthly = numStr(m.get("withdrawal_monthly")) ?? "0";
   }

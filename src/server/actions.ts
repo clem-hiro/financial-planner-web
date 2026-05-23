@@ -69,6 +69,7 @@ import {
   insertInvestment,
   updateInvestment,
 } from "@/data/repositories/investments";
+import { parseInvestmentPlanningFields } from "@/server/investment-planning-parse";
 import { acknowledgeInvestmentReview } from "@/server/inbox/acknowledge-investment-review";
 import { acknowledgeCpfRulesReview } from "@/server/inbox/acknowledge-cpf-rules-review";
 import {
@@ -101,75 +102,6 @@ function toClientErrorMessage(e: unknown): string {
     if (typeof m === "string" && m.trim()) return m;
   }
   return "Something went wrong while saving. Please try again.";
-}
-
-function parseInvestmentPlanningFields(formData: FormData):
-  | {
-      ok: true;
-      contribution_type: string | null;
-      contribution_duration_years: number | null;
-      contribution_growth_annual: number;
-      withdrawal_monthly: number;
-      withdrawal_start_years: number | null;
-    }
-  | { ok: false; error: string } {
-  const contributionTypeRaw = String(
-    formData.get("contribution_type") ?? ""
-  ).trim();
-  const isFixed = contributionTypeRaw === "fixed_duration";
-
-  let contribution_type: string | null = null;
-  let contribution_duration_years: number | null = null;
-  if (isFixed) {
-    const y = Number(formData.get("contribution_duration_years"));
-    if (!Number.isFinite(y) || y <= 0 || y > 80) {
-      return {
-        ok: false,
-        error: "Enter contribution duration in years (between 0.25 and 80)",
-      };
-    }
-    contribution_type = "fixed_duration";
-    contribution_duration_years = y;
-  } else if (contributionTypeRaw === "until_retirement") {
-    contribution_type = "until_retirement";
-  }
-
-  const contributionGrowthAnnual = Number(
-    formData.get("contribution_growth_annual") ?? 0
-  );
-  if (
-    !Number.isFinite(contributionGrowthAnnual) ||
-    contributionGrowthAnnual < 0 ||
-    contributionGrowthAnnual > 1
-  ) {
-    return { ok: false, error: "Contribution step-up must be 0–100%." };
-  }
-
-  const withdrawalMonthly = Number(formData.get("withdrawal_monthly") ?? 0);
-  if (!Number.isFinite(withdrawalMonthly) || withdrawalMonthly < 0) {
-    return { ok: false, error: "Invalid monthly withdrawal" };
-  }
-
-  const withdrawalStartRaw = String(
-    formData.get("withdrawal_start_years") ?? ""
-  ).trim();
-  const withdrawalStartYears =
-    withdrawalStartRaw === "" ? null : Number(withdrawalStartRaw);
-  if (
-    withdrawalStartYears != null &&
-    (!Number.isFinite(withdrawalStartYears) || withdrawalStartYears < 0)
-  ) {
-    return { ok: false, error: "Withdrawal start must be 0 or more years." };
-  }
-
-  return {
-    ok: true,
-    contribution_type,
-    contribution_duration_years,
-    contribution_growth_annual: contributionGrowthAnnual,
-    withdrawal_monthly: withdrawalMonthly,
-    withdrawal_start_years: withdrawalStartYears,
-  };
 }
 
 export async function signOutAction() {
@@ -221,6 +153,9 @@ export async function createInvestmentAction(
       expected_annual_return: expectedAnnualReturn,
       contribution_type: planning.contribution_type,
       contribution_duration_years: planning.contribution_duration_years,
+      contribution_start_date: planning.contribution_start_date,
+      contribution_end_date: planning.contribution_end_date,
+      plan_nature: planning.plan_nature,
       contribution_growth_annual: planning.contribution_growth_annual,
       withdrawal_monthly: planning.withdrawal_monthly,
       withdrawal_start_years: planning.withdrawal_start_years,
@@ -286,6 +221,9 @@ export async function updateInvestmentAction(
       expected_annual_return: expectedAnnualReturn,
       contribution_type: planning.contribution_type,
       contribution_duration_years: planning.contribution_duration_years,
+      contribution_start_date: planning.contribution_start_date,
+      contribution_end_date: planning.contribution_end_date,
+      plan_nature: planning.plan_nature,
       contribution_growth_annual: planning.contribution_growth_annual,
       withdrawal_monthly: planning.withdrawal_monthly,
       withdrawal_start_years: planning.withdrawal_start_years,

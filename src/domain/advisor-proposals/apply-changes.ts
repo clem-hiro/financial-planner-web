@@ -62,6 +62,9 @@ function investmentDiffers(a: InvestmentRow, b: InvestmentRow): boolean {
     (a.contribution_type ?? null) !== (b.contribution_type ?? null) ||
     (a.contribution_duration_years ?? null) !==
       (b.contribution_duration_years ?? null) ||
+    (a.contribution_start_date ?? null) !== (b.contribution_start_date ?? null) ||
+    (a.contribution_end_date ?? null) !== (b.contribution_end_date ?? null) ||
+    (a.plan_nature ?? null) !== (b.plan_nature ?? null) ||
     a.withdrawal_monthly !== b.withdrawal_monthly ||
     (a.withdrawal_start_years ?? null) !== (b.withdrawal_start_years ?? null)
   );
@@ -78,6 +81,9 @@ function investmentWritePayload(row: InvestmentRow) {
     contribution_type: row.contribution_type || null,
     contribution_duration_years:
       toNumOrNull(row.contribution_duration_years ?? null),
+    contribution_start_date: row.contribution_start_date ?? null,
+    contribution_end_date: row.contribution_end_date ?? null,
+    plan_nature: row.plan_nature ?? null,
     withdrawal_monthly: toNumOrNull(row.withdrawal_monthly) ?? 0,
     withdrawal_start_years: toNumOrNull(row.withdrawal_start_years ?? null),
   };

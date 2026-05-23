@@ -200,8 +200,12 @@ export type InvestmentRow = {
   withdrawal_start_years: string | null;
   /** Reserved for future age-based contribution end. */
   contribution_end_age?: number | null;
-  /** Reserved for calendar-based contribution end. */
+  /** Optional calendar end for premiums (pairs with contribution_start_date). */
   contribution_end_date?: string | null;
+  /** Optional calendar start for premiums (future start defers modeled contributions). */
+  contribution_start_date?: string | null;
+  /** pure_investment | includes_insurance_coverage — ILP / bundled plan guidance. */
+  plan_nature?: string | null;
   created_at: string;
   updated_at: string;
 };

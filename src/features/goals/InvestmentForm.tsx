@@ -5,6 +5,13 @@ import { useActionState, useRef, useState } from "react";
 import { createAdvisorClientInvestmentAction } from "@/server/advisor-client-actions";
 import { createInvestmentAction } from "@/server/actions";
 import { InvestmentAssumptionBanner } from "@/features/goals/InvestmentAssumptionBanner";
+import {
+  InvestmentContributionScheduleFields,
+  type ContributionMode,
+  type FixedScheduleMode,
+} from "@/features/goals/InvestmentContributionScheduleFields";
+import { InvestmentPlanGuidancePanel } from "@/features/goals/InvestmentPlanGuidancePanel";
+import type { InvestmentPlanNature } from "@/server/investment-planning-parse";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };
@@ -33,9 +40,17 @@ export function InvestmentForm(
     }
   };
   const [state, formAction, pending] = useActionState(wrapped, initial);
-  const [contributionMode, setContributionMode] = useState<
-    "until_retirement" | "fixed_duration"
-  >("until_retirement");
+  const [planNature, setPlanNature] = useState<InvestmentPlanNature | "">("");
+  const [contributionMode, setContributionMode] =
+    useState<ContributionMode>("until_retirement");
+  const [fixedScheduleMode, setFixedScheduleMode] =
+    useState<FixedScheduleMode>("duration_years");
+  const [durationYearsRaw, setDurationYearsRaw] = useState("15");
+  const [startDateRaw, setStartDateRaw] = useState("");
+  const [endDateRaw, setEndDateRaw] = useState("");
+
+  const fieldClass =
+    "mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/25";
 
   return (
     <>
@@ -52,11 +67,16 @@ export function InvestmentForm(
       <div>
         <h2 className="text-sm font-semibold text-slate-900">Add an account</h2>
         <p className="mt-1 text-xs leading-relaxed text-slate-500">
-          Capture how much you invest today, what you add each month, and how long
-          those monthly deposits continue. Growth can keep running after contributions
-          stop—closer to real policies and plans.
+          Capture fund value, monthly premiums or contributions, and when they stop.
+          ILPs (e.g. PruVantage) belong here for wealth projections—use the question
+          below if the plan also includes insurance cover.
         </p>
       </div>
+
+      <InvestmentPlanGuidancePanel
+        planNature={planNature}
+        onPlanNatureChange={setPlanNature}
+      />
       {state.error ? (
         <p className="text-sm text-red-600" role="alert">
           {typeof state.error === "string"
@@ -109,67 +129,19 @@ export function InvestmentForm(
         </label>
       </div>
 
-      <fieldset className="rounded-xl border border-slate-200 bg-white p-4">
-        <legend className="text-sm font-medium text-slate-800">
-          How long will you contribute monthly?
-        </legend>
-        <p className="mt-1 text-xs text-slate-500">
-          After this phase, we still grow what you already built—we only stop adding new
-          monthly deposits.
-        </p>
-        <div className="mt-3 space-y-2.5">
-          <label className="flex cursor-pointer items-start gap-2.5 text-sm text-slate-700">
-            <input
-              type="radio"
-              name="contribution_type"
-              value="until_retirement"
-              className="mt-0.5"
-              checked={contributionMode === "until_retirement"}
-              onChange={() => setContributionMode("until_retirement")}
-            />
-            <span>
-              <span className="font-medium text-slate-900">Until retirement</span>
-              <span className="mt-0.5 block text-xs font-normal text-slate-500">
-                Uses your profile retirement age when set; otherwise the full projection
-                window.
-              </span>
-            </span>
-          </label>
-          <label className="flex cursor-pointer items-start gap-2.5 text-sm text-slate-700">
-            <input
-              type="radio"
-              name="contribution_type"
-              value="fixed_duration"
-              className="mt-0.5"
-              checked={contributionMode === "fixed_duration"}
-              onChange={() => setContributionMode("fixed_duration")}
-            />
-            <span>
-              <span className="font-medium text-slate-900">Fixed duration</span>
-              <span className="mt-0.5 block text-xs font-normal text-slate-500">
-                For plans that stop premiums after a set period (e.g. education plans,
-                some ILPs or endowments).
-              </span>
-            </span>
-          </label>
-        </div>
-        {contributionMode === "fixed_duration" ? (
-          <label className="mt-4 block text-sm">
-            <span className="mb-1 block font-medium text-slate-800">
-              Contribution duration (years)
-            </span>
-            <input
-              name="contribution_duration_years"
-              type="number"
-              min={0.25}
-              max={80}
-              step={0.25}
-              required={contributionMode === "fixed_duration"}
-              className="mt-1 w-full max-w-xs rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm tabular-nums text-slate-900 shadow-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/25"
-            />
-          </label>
-        ) : null}
-      </fieldset>
+      <InvestmentContributionScheduleFields
+        contributionMode={contributionMode}
+        onContributionModeChange={setContributionMode}
+        fixedScheduleMode={fixedScheduleMode}
+        onFixedScheduleModeChange={setFixedScheduleMode}
+        durationYearsRaw={durationYearsRaw}
+        onDurationYearsChange={setDurationYearsRaw}
+        startDateRaw={startDateRaw}
+        onStartDateChange={setStartDateRaw}
+        endDateRaw={endDateRaw}
+        onEndDateChange={setEndDateRaw}
+        inputClassName={fieldClass}
+      />
 
       <label className="block text-sm">
         <span className="mb-1 block font-medium text-slate-800">

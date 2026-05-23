@@ -12,6 +12,7 @@ import { recordAdvisorProposalChanges } from "@/server/advisor-proposal-recordin
 import { isAdvisor } from "@/lib/profile-role";
 import { z } from "zod";
 import { randomUUID } from "crypto";
+import { parseInvestmentPlanningFields } from "@/server/investment-planning-parse";
 
 function clientErrorFromUnknown(e: unknown): string {
   if (e instanceof Error && e.message.trim()) return e.message;
@@ -20,73 +21,6 @@ function clientErrorFromUnknown(e: unknown): string {
     if (typeof m === "string" && m.trim()) return m;
   }
   return "Something went wrong while saving. Please try again.";
-}
-
-function parseInvestmentPlanningFields(formData: FormData):
-  | {
-      ok: true;
-      contribution_type: string | null;
-      contribution_duration_years: number | null;
-      contribution_growth_annual: number;
-      withdrawal_monthly: number;
-      withdrawal_start_years: number | null;
-    }
-  | { ok: false; error: string } {
-  const contributionTypeRaw = String(formData.get("contribution_type") ?? "").trim();
-  const isFixed = contributionTypeRaw === "fixed_duration";
-
-  let contribution_type: string | null = null;
-  let contribution_duration_years: number | null = null;
-  if (isFixed) {
-    const y = Number(formData.get("contribution_duration_years"));
-    if (!Number.isFinite(y) || y <= 0 || y > 80) {
-      return {
-        ok: false,
-        error: "Enter contribution duration in years (between 0.25 and 80)",
-      };
-    }
-    contribution_type = "fixed_duration";
-    contribution_duration_years = y;
-  } else if (contributionTypeRaw === "until_retirement") {
-    contribution_type = "until_retirement";
-  }
-
-  const contributionGrowthAnnual = Number(
-    formData.get("contribution_growth_annual") ?? 0
-  );
-  if (
-    !Number.isFinite(contributionGrowthAnnual) ||
-    contributionGrowthAnnual < 0 ||
-    contributionGrowthAnnual > 1
-  ) {
-    return { ok: false, error: "Contribution step-up must be 0–100%." };
-  }
-
-  const withdrawalMonthly = Number(formData.get("withdrawal_monthly") ?? 0);
-  if (!Number.isFinite(withdrawalMonthly) || withdrawalMonthly < 0) {
-    return { ok: false, error: "Invalid monthly withdrawal" };
-  }
-
-  const withdrawalStartRaw = String(
-    formData.get("withdrawal_start_years") ?? ""
-  ).trim();
-  const withdrawalStartYears =
-    withdrawalStartRaw === "" ? null : Number(withdrawalStartRaw);
-  if (
-    withdrawalStartYears != null &&
-    (!Number.isFinite(withdrawalStartYears) || withdrawalStartYears < 0)
-  ) {
-    return { ok: false, error: "Withdrawal start must be 0 or more years." };
-  }
-
-  return {
-    ok: true,
-    contribution_type,
-    contribution_duration_years,
-    contribution_growth_annual: contributionGrowthAnnual,
-    withdrawal_monthly: withdrawalMonthly,
-    withdrawal_start_years: withdrawalStartYears,
-  };
 }
 
 function revalidateAdvisorClientViews(clientId: string) {
@@ -340,6 +274,15 @@ export async function createAdvisorClientInvestmentAction(
       newValue: planning.contribution_duration_years,
     },
     {
+      fieldKey: "contribution_start_date",
+      newValue: planning.contribution_start_date,
+    },
+    {
+      fieldKey: "contribution_end_date",
+      newValue: planning.contribution_end_date,
+    },
+    { fieldKey: "plan_nature", newValue: planning.plan_nature },
+    {
       fieldKey: "contribution_growth_annual",
       newValue: planning.contribution_growth_annual,
     },
@@ -437,6 +380,21 @@ export async function updateAdvisorClientInvestmentAction(
       fieldKey: "contribution_duration_years",
       oldValue: existing.contribution_duration_years,
       newValue: planning.contribution_duration_years,
+    },
+    {
+      fieldKey: "contribution_start_date",
+      oldValue: existing.contribution_start_date ?? null,
+      newValue: planning.contribution_start_date,
+    },
+    {
+      fieldKey: "contribution_end_date",
+      oldValue: existing.contribution_end_date ?? null,
+      newValue: planning.contribution_end_date,
+    },
+    {
+      fieldKey: "plan_nature",
+      oldValue: existing.plan_nature ?? null,
+      newValue: planning.plan_nature,
     },
     {
       fieldKey: "contribution_growth_annual",

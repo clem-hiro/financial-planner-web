@@ -22,8 +22,8 @@ import { CpfBalancesForm } from "@/features/goals/CpfBalancesForm";
 import { HousingPanel } from "@/features/goals/HousingLoansPanel";
 import {
   InvestmentBalancesList,
-  type InvestmentBalanceRow,
 } from "@/features/goals/InvestmentBalancesList";
+import { investmentRowToBalanceRow } from "@/features/goals/investment-balance-row";
 import { InvestmentForm } from "@/features/goals/InvestmentForm";
 import { FinancialGoalsPanels } from "@/features/goals/FinancialGoalsPanels";
 import { profileRetirementTargetsProps } from "@/features/goals/profile-retirement-props";
@@ -123,28 +123,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
   const gross = profileMonthlyGross(financialProfile);
   const cpfBand = profileCpfAgeBand(financialProfile);
   const currency = financialProfile?.base_currency ?? DEFAULT_BASE_CURRENCY;
-  const investmentBalanceRows: InvestmentBalanceRow[] = investments.map((i) => ({
-    id: i.id,
-    name: i.name,
-    current_value: num(i.current_value),
-    monthly_contribution: num(i.monthly_contribution),
-    expected_annual_return: num(i.expected_annual_return),
-    contribution_growth_annual: num(i.contribution_growth_annual),
-    contribution_type: i.contribution_type ?? null,
-    contribution_duration_years:
-      i.contribution_duration_years != null &&
-      String(i.contribution_duration_years).trim() !== ""
-        ? num(i.contribution_duration_years as string)
-        : null,
-    withdrawal_monthly: num(i.withdrawal_monthly),
-    withdrawal_start_years:
-      i.withdrawal_start_years != null &&
-      String(i.withdrawal_start_years).trim() !== ""
-        ? num(i.withdrawal_start_years)
-        : null,
-    updated_at: i.updated_at ?? null,
-    created_at: i.created_at ?? null,
-  }));
+  const investmentBalanceRows = investments.map(investmentRowToBalanceRow);
   const showInvestmentReviewPrompt = shouldPromptInvestmentReview({
     investments,
     lastInvestmentReviewAt: financialProfile?.last_investment_review_at ?? null,
