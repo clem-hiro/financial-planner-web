@@ -16,9 +16,9 @@ import { ProfileIncomeForm } from "@/features/dashboard/ProfileIncomeForm";
 import { IncomeTaxSection } from "@/features/income-tax/IncomeTaxSection";
 import {
   CashAndLiabilitiesPanels,
-  buildCashHistoryByAccountId,
   type CashAccountBalanceRow,
 } from "@/features/goals/CashAndLiabilitiesPanels";
+import { buildCashHistoryByAccountId } from "@/features/goals/cash-history";
 import { CpfBalancesForm } from "@/features/goals/CpfBalancesForm";
 import { HousingPanel } from "@/features/goals/HousingLoansPanel";
 import {

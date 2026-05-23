@@ -5,9 +5,9 @@ import { createSupabaseServerClient } from "@/data/supabase/server";
 import { loadSetupTabBundle } from "@/features/planning/load-setup-tab-bundle";
 import {
   CashAndLiabilitiesPanels,
-  buildCashHistoryByAccountId,
   type CashAccountBalanceRow,
 } from "@/features/goals/CashAndLiabilitiesPanels";
+import { buildCashHistoryByAccountId } from "@/features/goals/cash-history";
 import { CpfBalancesForm } from "@/features/goals/CpfBalancesForm";
 import { HousingPanel } from "@/features/goals/HousingLoansPanel";
 import {

@@ -14,7 +14,7 @@ import {
   type DebtPlanningRow,
 } from "@/features/debts/DebtPlanningPanels";
 import type { CashAccountPurpose, LiabilityRow } from "@/data/supabase/types";
-import { num } from "@/data/mappers";
+import type { CashAccountHistoryPoint } from "@/features/goals/cash-history";
 import {
   CASH_ACCOUNT_PURPOSE_LABELS,
   CASH_ACCOUNT_PURPOSES,
@@ -31,17 +31,10 @@ export type CashAccountBalanceRow = {
   purpose: CashAccountPurpose;
 };
 
-export type CashAccountHistoryPoint = {
-  balance: number;
-  recorded_at: string;
-};
-
 /** @deprecated Use `DebtPlanningRow` from debt planning panels. */
 export type LiabilityBalanceRow = DebtPlanningRow;
 
 const initial = { error: null as string | null };
-
-const HISTORY_LIMIT = 8;
 
 const selectClass =
   "rounded border border-zinc-300 px-2 py-1 text-xs bg-white";
@@ -380,18 +373,3 @@ export function CashAndLiabilitiesPanels({
   );
 }
 
-export function buildCashHistoryByAccountId(
-  snapshots: { cash_account_id: string; balance: string; recorded_at: string }[]
-): Record<string, CashAccountHistoryPoint[]> {
-  const map: Record<string, CashAccountHistoryPoint[]> = {};
-  for (const s of snapshots) {
-    const list = map[s.cash_account_id] ?? [];
-    if (list.length >= HISTORY_LIMIT) continue;
-    list.push({
-      balance: num(s.balance),
-      recorded_at: s.recorded_at,
-    });
-    map[s.cash_account_id] = list;
-  }
-  return map;
-}
