@@ -37,27 +37,36 @@ export function ClientProposalsView({
           {proposals.map((p) => {
             const display = proposalStatusDisplay(p.status, "client");
             const href = `/setup/advisor-proposals/${p.id}`;
+            // Whole-row navigation via one <Link> per cell, not an
+            // `after:absolute inset-0` overlay: an overlay anchored to a <tr>
+            // escapes the row in real Safari and hijacks unrelated clicks.
+            // Per-cell links keep soft-nav, right-click, and middle-click intact.
             return (
-              <tr key={p.id} className="transition hover:bg-slate-50/70">
-                <td className="px-4 py-3 align-middle">
-                  {/* No full-row overlay: an `after:absolute inset-0` anchored to a <tr> escapes the
-                      row in real Safari and covers other UI, hijacking unrelated clicks. Different
-                      pathname → soft-nav is fine, so this stays a <Link>; the badge is the click target. */}
-                  <Link href={href} className="inline-flex items-center">
-                    <span className="sr-only">Review proposal</span>
+              <tr
+                key={p.id}
+                className="cursor-pointer transition hover:bg-slate-50/70"
+              >
+                <td className="p-0 align-middle">
+                  <Link href={href} className="flex items-center px-4 py-3">
                     <AdvisorBadge tone={display.tone}>
                       {display.label}
                     </AdvisorBadge>
                   </Link>
                 </td>
-                <td className="px-4 py-3 align-middle text-slate-600 tabular-nums">
-                  {shortDate(p.submitted_at ?? p.created_at)}
+                <td className="p-0 align-middle text-slate-600 tabular-nums">
+                  <Link href={href} className="block px-4 py-3">
+                    {shortDate(p.submitted_at ?? p.created_at)}
+                  </Link>
                 </td>
-                <td className="px-4 py-3 align-middle text-slate-700">
-                  {summarize(p.advisor_note)}
+                <td className="p-0 align-middle text-slate-700">
+                  <Link href={href} className="block px-4 py-3">
+                    {summarize(p.advisor_note)}
+                  </Link>
                 </td>
-                <td className="px-4 py-3 align-middle text-slate-600 tabular-nums">
-                  {shortDate(p.resolved_at)}
+                <td className="p-0 align-middle text-slate-600 tabular-nums">
+                  <Link href={href} className="block px-4 py-3">
+                    {shortDate(p.resolved_at)}
+                  </Link>
                 </td>
               </tr>
             );

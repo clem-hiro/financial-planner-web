@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ReactNode } from "react";
 import type {
   AdvisorProposalChangeRow,
@@ -43,6 +44,16 @@ export function ClientProposalReviewView({
 
   return (
     <div className="space-y-8">
+      {/* Back link sits above the grid so both columns start at the same top —
+          inside the left column it would push the header card below the rail. */}
+      <p className="text-sm">
+        <Link
+          href="/setup?tab=advisor-proposals"
+          className="font-medium text-emerald-700 hover:text-emerald-800"
+        >
+          ← Proposals
+        </Link>
+      </p>
       <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start xl:gap-10">
         <div className="min-w-0">
           <ProposalReviewView
@@ -55,8 +66,7 @@ export function ClientProposalReviewView({
             actualProjection={actualProjection}
             proposedProjection={proposedProjection}
             hideFooterActions
-            backHref="/setup?tab=advisor-proposals"
-            backLabel="← Proposals"
+            hideBackLink
           />
         </div>
 
