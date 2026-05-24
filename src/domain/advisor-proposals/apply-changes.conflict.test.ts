@@ -705,20 +705,194 @@ describe("change_op writer: create / delete across entity types", () => {
     expect(fake.store.financial_properties).toHaveLength(0);
   });
 
-  it("unsupported entity_type (housing_loan) throws before any write", async () => {
+  it("housing_loan create inserts a financial_housing_loans row (name field is label)", async () => {
+    const fake = makeFakeSupabase(seed());
+    const res = await applyAcceptedProposalChanges(fake, "c1", [
+      ch({
+        entity_type: "housing_loan",
+        field_key: "label",
+        new_value: "Home loan",
+        change_op: "create",
+        draft_entity_key: "nh",
+      }),
+      ch({
+        entity_type: "housing_loan",
+        field_key: "principal",
+        new_value: "400000",
+        change_op: "create",
+        draft_entity_key: "nh",
+      }),
+      ch({
+        entity_type: "housing_loan",
+        field_key: "first_payment_month",
+        new_value: "2026-07",
+        change_op: "create",
+        draft_entity_key: "nh",
+      }),
+    ]);
+    expect(res.conflicts).toEqual([]);
+    expect(fake.store.financial_housing_loans).toHaveLength(1);
+    const created = fake.store.financial_housing_loans[0];
+    expect(created.label).toBe("Home loan");
+    expect(Number(created.principal)).toBe(400000);
+    expect(created.user_id).toBe("c1");
+    expect(created.property_id ?? null).toBeNull();
+  });
+
+  it("same-proposal property + linked loan: loan.property_id resolves to the created property's real id", async () => {
+    const fake = makeFakeSupabase(seed());
+    const res = await applyAcceptedProposalChanges(fake, "c1", [
+      // New property (overlay id = its draft key "kp").
+      ch({
+        entity_type: "property",
+        field_key: "name",
+        new_value: "New condo",
+        change_op: "create",
+        draft_entity_key: "kp",
+      }),
+      // New loan linking to that property via property_id = the draft key.
+      ch({
+        entity_type: "housing_loan",
+        field_key: "label",
+        new_value: "Condo mortgage",
+        change_op: "create",
+        draft_entity_key: "kl",
+      }),
+      ch({
+        entity_type: "housing_loan",
+        field_key: "property_id",
+        new_value: "kp",
+        change_op: "create",
+        draft_entity_key: "kl",
+      }),
+    ]);
+    expect(res.conflicts).toEqual([]);
+    expect(fake.store.financial_properties).toHaveLength(1);
+    expect(fake.store.financial_housing_loans).toHaveLength(1);
+    const realPropertyId = fake.store.financial_properties[0].id as string;
+    // Remapped: the loan points at the REAL inserted property id, not "kp".
+    expect(fake.store.financial_housing_loans[0].property_id).toBe(realPropertyId);
+    expect(realPropertyId).not.toBe("kp");
+  });
+
+  it("cross-proposal link: loan.property_id = a draft key with NO property in this proposal -> throws (BOLA)", async () => {
     const fake = makeFakeSupabase(seed());
     await expect(
       applyAcceptedProposalChanges(fake, "c1", [
         ch({
           entity_type: "housing_loan",
           field_key: "label",
-          new_value: "Mortgage",
+          new_value: "Ghost loan",
           change_op: "create",
-          draft_entity_key: "nh",
+          draft_entity_key: "kl",
+        }),
+        ch({
+          entity_type: "housing_loan",
+          field_key: "property_id",
+          new_value: "ghost-draft-from-another-proposal",
+          change_op: "create",
+          draft_entity_key: "kl",
+        }),
+      ])
+    ).rejects.toThrow(/different proposal/i);
+  });
+
+  it("cross-client link: loan.property_id = a property id not owned by this client -> throws (BOLA)", async () => {
+    const fake = makeFakeSupabase(seed());
+    await expect(
+      applyAcceptedProposalChanges(fake, "c1", [
+        ch({
+          entity_type: "housing_loan",
+          field_key: "label",
+          new_value: "Hijack loan",
+          change_op: "create",
+          draft_entity_key: "kl",
+        }),
+        ch({
+          entity_type: "housing_loan",
+          field_key: "property_id",
+          new_value: "other-client-property-uuid",
+          change_op: "create",
+          draft_entity_key: "kl",
+        }),
+      ])
+    ).rejects.toThrow(/different proposal/i);
+  });
+
+  it("housing_loan accept ignores a mass-assignment attempt (cannot set user_id)", async () => {
+    const fake = makeFakeSupabase(seed());
+    const res = await applyAcceptedProposalChanges(fake, "c1", [
+      ch({
+        entity_type: "housing_loan",
+        field_key: "label",
+        new_value: "Sneaky loan",
+        change_op: "create",
+        draft_entity_key: "nh",
+      }),
+      ch({
+        entity_type: "housing_loan",
+        field_key: "user_id",
+        new_value: "attacker-uid",
+        change_op: "create",
+        draft_entity_key: "nh",
+      }),
+    ]);
+    expect(res.conflicts).toEqual([]);
+    expect(fake.store.financial_housing_loans).toHaveLength(1);
+    expect(fake.store.financial_housing_loans[0].user_id).toBe("c1");
+  });
+
+  it("housing_loan _deleted removes the target loan row", async () => {
+    const fake = makeFakeSupabase({
+      ...seed(),
+      financial_housing_loans: [
+        {
+          id: "loan1",
+          user_id: "c1",
+          property_id: null,
+          label: "Old mortgage",
+          principal: "300000",
+          annual_nominal_rate: "0.03",
+          term_months: 300,
+          completion_month: "2020-01",
+          first_payment_month: "2020-01",
+          downpayment_from_oa: "0",
+          fees_from_oa: "0",
+          oa_share_of_payment: "0",
+          max_oa_per_month: null,
+          lender_type: "bank",
+          original_loan_principal: null,
+          principal_repaid_before_schedule: "0",
+          created_at: V,
+        },
+      ],
+    });
+    const res = await applyAcceptedProposalChanges(fake, "c1", [
+      ch({
+        entity_type: "housing_loan",
+        entity_id: "loan1",
+        field_key: "_deleted",
+        new_value: "true",
+        change_op: "delete",
+      }),
+    ]);
+    expect(res.conflicts).toEqual([]);
+    expect(fake.store.financial_housing_loans).toHaveLength(0);
+  });
+
+  it("unknown entity_type throws before any write (defensive guard)", async () => {
+    const fake = makeFakeSupabase(seed());
+    await expect(
+      applyAcceptedProposalChanges(fake, "c1", [
+        ch({
+          entity_type: "totally_bogus" as never,
+          field_key: "name",
+          new_value: "x",
+          change_op: "create",
+          draft_entity_key: "nb",
         }),
       ])
     ).rejects.toThrow(/unsupported entity type/i);
-    expect(fake.store.financial_housing_loans ?? []).toHaveLength(0);
   });
 });
 
@@ -835,6 +1009,31 @@ describe("name-uniqueness pre-flight (scenario matrix)", () => {
     ]);
     expect(
       conflicts.some((c) => c.reason === "name_in_use" && c.entityType === "property")
+    ).toBe(true);
+  });
+
+  it("two create-op housing loans with the same label (diff case) -> name_in_use", async () => {
+    const fake = makeFakeSupabase(seed());
+    const { conflicts } = await detectAcceptConflicts(fake, "c1", [
+      ch({
+        entity_type: "housing_loan",
+        field_key: "label",
+        new_value: "Home Loan",
+        change_op: "create",
+        draft_entity_key: "h1",
+      }),
+      ch({
+        entity_type: "housing_loan",
+        field_key: "label",
+        new_value: "home loan",
+        change_op: "create",
+        draft_entity_key: "h2",
+      }),
+    ]);
+    expect(
+      conflicts.some(
+        (c) => c.reason === "name_in_use" && c.entityType === "housing_loan"
+      )
     ).toBe(true);
   });
 

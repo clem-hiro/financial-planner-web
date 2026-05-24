@@ -475,6 +475,22 @@ export const propertyWriteSchema = z.object({
   planning_scope: propertyPlanningScopeSchema.default("current"),
 });
 
+export const lenderTypeSchema = z.enum(["hdb", "bank", "other"]);
+
+/** Allowlist for advisor-composed housing-loan proposals. Core editable fields;
+ * accept defaults the OA/BSD modelling columns. Name field is `label`.
+ * `property_id` links to an existing property (or, at accept, a property created
+ * in the same proposal — remapped + BOLA-checked server-side). */
+export const housingLoanWriteSchema = z.object({
+  label: z.string().trim().min(1).max(120),
+  property_id: z.string().uuid().nullable().optional(),
+  principal: z.number().nonnegative().max(1_000_000_000),
+  annual_nominal_rate: z.number().min(0).max(1),
+  term_months: z.number().int().min(0).max(1200),
+  first_payment_month: z.string().trim().min(1).max(7),
+  lender_type: lenderTypeSchema.default("bank"),
+});
+
 export const vehicleStatusSchema = z.enum(["active", "planned"]);
 
 /** Allowlist for advisor-composed vehicle proposals. Core editable fields only;

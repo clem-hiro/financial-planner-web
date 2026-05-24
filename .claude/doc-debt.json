@@ -909,6 +909,36 @@
       "readme_section": "External dependencies",
       "status": "pending",
       "summary": "integration change in src/features/advisor/AdvisorClientPropertySection.tsx \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-24T15:08:46Z",
+      "trigger_file": "src/features/advisor/AdvisorClientHousingLoanSection.tsx",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/features/advisor/AdvisorClientHousingLoanSection.tsx \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-24T15:12:49Z",
+      "trigger_file": "supabase/migrations/20260626000000_housing_loan_property_composite_fk.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260626000000_housing_loan_property_composite_fk.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-24T15:12:56Z",
+      "trigger_file": "supabase/migrations/20260626000000_housing_loan_property_composite_fk.rollback.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260626000000_housing_loan_property_composite_fk.rollback.sql \u2014 Data model (readme) may be stale"
     }
   ]
 }

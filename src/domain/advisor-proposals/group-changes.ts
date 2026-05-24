@@ -41,6 +41,7 @@ function headlineForEntity(changes: AdvisorProposalChangeRow[]): string {
   if (isNew && changes[0]?.entity_type === "liability") return "New liability";
   if (isNew && changes[0]?.entity_type === "vehicle") return "New vehicle";
   if (isNew && changes[0]?.entity_type === "property") return "New property";
+  if (isNew && changes[0]?.entity_type === "housing_loan") return "New housing loan";
   if (changes[0]?.entity_type === "profile") return "Profile fields";
   if (changes[0]?.entity_type === "budget_line") return "Budget line";
   if (changes[0]?.entity_type === "goal") return "Goal contribution";
@@ -48,6 +49,7 @@ function headlineForEntity(changes: AdvisorProposalChangeRow[]): string {
   if (changes[0]?.entity_type === "liability") return "Liability";
   if (changes[0]?.entity_type === "vehicle") return "Vehicle";
   if (changes[0]?.entity_type === "property") return "Property";
+  if (changes[0]?.entity_type === "housing_loan") return "Housing loan";
   return "Update";
 }
 

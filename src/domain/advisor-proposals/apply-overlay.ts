@@ -4,6 +4,7 @@ import type {
   CashAccountPurpose,
   CashAccountRow,
   FinancialGoalRow,
+  HousingLoanRow,
   InvestmentRow,
   LiabilityRow,
   ProfileRow,
@@ -33,6 +34,9 @@ export type OverlayInputs = {
   /** Optional: accept-only threading. Properties are referenced by housing
    * loans (Phase 6) — the accept writer maps draft→real property ids. */
   properties?: PropertyRow[];
+  /** Optional: accept-only threading. A loan's `property_id` may be a draft
+   * property id; the accept writer remaps it to the real id (BOLA-checked). */
+  housingLoans?: HousingLoanRow[];
 };
 
 /** Numeric coercion — byte-identical semantics to the legacy accept path. */
@@ -474,6 +478,62 @@ function mergeProperty(
   return next;
 }
 
+// Loan links to a property via `property_id` (an existing real id, or a draft
+// property id resolved at accept). The advisor form edits a core subset; create
+// defaults the OA/BSD modelling columns (client refines in their own form).
+function applyHousingLoanInsert(
+  group: ChangeGroup,
+  m: Map<string, string | null>
+): HousingLoanRow {
+  const fpm = m.get("first_payment_month") || "";
+  const term = m.get("term_months");
+  return {
+    id: newEntityId(group, "overlay-housing-loan"),
+    user_id: "",
+    property_id: m.get("property_id") || null,
+    label: m.get("label") ?? "Home loan",
+    principal: numStr(m.get("principal")) ?? "0",
+    annual_nominal_rate: numStr(m.get("annual_nominal_rate")) ?? "0",
+    term_months: term != null && term !== "" ? Number(term) : 0,
+    completion_month: m.get("completion_month") || fpm,
+    first_payment_month: fpm,
+    downpayment_from_oa: "0",
+    fees_from_oa: "0",
+    oa_share_of_payment: "0",
+    max_oa_per_month: null,
+    lender_type: (m.get("lender_type") ||
+      "bank") as HousingLoanRow["lender_type"],
+    original_loan_principal: null,
+    principal_repaid_before_schedule: "0",
+    created_at: "",
+  };
+}
+
+function mergeHousingLoan(
+  row: HousingLoanRow,
+  m: Map<string, string | null>
+): HousingLoanRow {
+  const next: HousingLoanRow = { ...row };
+  if (m.has("property_id")) next.property_id = m.get("property_id") || null;
+  if (m.has("label")) next.label = m.get("label") || next.label;
+  if (m.has("principal")) next.principal = numStr(m.get("principal")) ?? "0";
+  if (m.has("annual_nominal_rate")) {
+    next.annual_nominal_rate = numStr(m.get("annual_nominal_rate")) ?? "0";
+  }
+  if (m.has("term_months")) {
+    const v = m.get("term_months");
+    next.term_months = v != null && v !== "" ? Number(v) : 0;
+  }
+  if (m.has("first_payment_month")) {
+    next.first_payment_month = m.get("first_payment_month") || "";
+  }
+  if (m.has("lender_type")) {
+    next.lender_type = (m.get("lender_type") ||
+      next.lender_type) as HousingLoanRow["lender_type"];
+  }
+  return next;
+}
+
 function mergeVehicle(row: VehicleRow, m: Map<string, string | null>): VehicleRow {
   const next: VehicleRow = { ...row };
   if (m.has("label")) next.label = m.get("label") || next.label;
@@ -526,6 +586,7 @@ export function applyProposalChanges(
   let liabilities = inputs.liabilities;
   let vehicles = inputs.vehicles;
   let properties = inputs.properties;
+  let housingLoans = inputs.housingLoans;
 
   for (const group of groupByEntity(changes)) {
     const m = fieldMap(group.changes);
@@ -629,6 +690,21 @@ export function applyProposalChanges(
           p.id === group.entityId ? mergeProperty(p, m) : p
         );
       }
+      continue;
+    }
+
+    // Housing loan — same accept-only contract; property_id remap happens in
+    // the accept writer (this pure overlay just carries the raw value).
+    if (group.entityType === "housing_loan" && housingLoans) {
+      if (op === "delete" && group.entityId) {
+        housingLoans = housingLoans.filter((h) => h.id !== group.entityId);
+      } else if (op === "create") {
+        housingLoans = [...housingLoans, applyHousingLoanInsert(group, m)];
+      } else if (group.entityId) {
+        housingLoans = housingLoans.map((h) =>
+          h.id === group.entityId ? mergeHousingLoan(h, m) : h
+        );
+      }
     }
   }
 
@@ -641,5 +717,6 @@ export function applyProposalChanges(
     liabilities,
     vehicles,
     properties,
+    housingLoans,
   };
 }

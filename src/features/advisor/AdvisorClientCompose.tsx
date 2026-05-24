@@ -4,6 +4,7 @@ import type {
   BudgetLineRow,
   CashAccountRow,
   FinancialGoalRow,
+  HousingLoanRow,
   InvestmentRow,
   LiabilityRow,
   PropertyRow,
@@ -27,6 +28,10 @@ import {
   AdvisorClientPropertySection,
   type AdvisorPropertyRow,
 } from "@/features/advisor/AdvisorClientPropertySection";
+import {
+  AdvisorClientHousingLoanSection,
+  type AdvisorHousingLoanRow,
+} from "@/features/advisor/AdvisorClientHousingLoanSection";
 import { AdvisorBadge, AdvisorSection } from "@/features/advisor/advisor-workspace-primitives";
 import { AdvisorClientHeader } from "@/features/advisor/AdvisorClientHeader";
 import { AdvisorConsentRequired } from "@/features/advisor/AdvisorConsentRequired";
@@ -75,6 +80,8 @@ export function AdvisorClientCompose({
   vehiclesVisible,
   properties,
   propertiesVisible,
+  housingLoans,
+  housingLoansVisible,
   month,
   draftProposalId,
   draftChanges,
@@ -99,6 +106,9 @@ export function AdvisorClientCompose({
   properties: PropertyRow[];
   /** Whether the client has shared the properties category (Phase 1 toggle). */
   propertiesVisible: boolean;
+  housingLoans: HousingLoanRow[];
+  /** Whether the client has shared the housing_loans category (Phase 1 toggle). */
+  housingLoansVisible: boolean;
   month: string;
   draftProposalId: string | null;
   draftChanges: AdvisorProposalChangeRow[];
@@ -205,6 +215,21 @@ export function AdvisorClientCompose({
     ownershipPercent: num(p.ownership_percent),
     rentalIncomeMonthly: num(p.rental_income_monthly),
   }));
+  const housingLoanRows: AdvisorHousingLoanRow[] = housingLoans.map((h) => ({
+    id: h.id,
+    label: h.label,
+    propertyId: h.property_id ?? null,
+    principal: num(h.principal),
+    ratePercent:
+      h.annual_nominal_rate != null && String(h.annual_nominal_rate).trim() !== ""
+        ? num(h.annual_nominal_rate) * 100
+        : 0,
+    termMonths: h.term_months ?? 0,
+    firstPaymentMonth: h.first_payment_month ?? "",
+    lenderType: h.lender_type,
+  }));
+  // Loans link to shared properties; empty when properties aren't shared.
+  const propertyOptions = propertyRows.map((p) => ({ id: p.id, name: p.name }));
 
   // Frozen submit bar is fixed to the viewport bottom; pad the page so the last
   // section isn't occluded. Only shows while a draft exists and not locked.
@@ -444,6 +469,24 @@ export function AdvisorClientCompose({
               />
             ) : (
               <LockedCategoryCard label="Property" />
+            )}
+          </AdvisorSection>
+
+          <AdvisorSection
+            id="housing-loans"
+            title="Housing loans"
+            description="Mortgages — saved as suggestions until the client accepts. Optionally link to a property."
+          >
+            {housingLoansVisible ? (
+              <AdvisorClientHousingLoanSection
+                clientId={clientId}
+                loans={housingLoanRows}
+                propertyOptions={propertyOptions}
+                currencyCode={currency}
+                disabled={hasPendingProposal}
+              />
+            ) : (
+              <LockedCategoryCard label="Housing loans" />
             )}
           </AdvisorSection>
         </div>

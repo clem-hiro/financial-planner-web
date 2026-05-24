@@ -15,6 +15,7 @@ import {
 import type { AdvisorClientListRow } from "@/data/repositories/advisor-clients";
 import { advisorReadBudgetLines } from "@/data/repositories/budget-lines";
 import { advisorReadCashAccounts } from "@/data/repositories/cash-accounts";
+import { advisorReadHousingLoans } from "@/data/repositories/housing-loans";
 import { advisorReadLiabilities } from "@/data/repositories/liabilities";
 import { advisorReadProperties } from "@/data/repositories/properties";
 import { advisorReadVehicles } from "@/data/repositories/vehicles";
@@ -299,16 +300,21 @@ export default async function AdvisorClientDetailPage({
     const liabilitiesVisible = categoryVisibility?.liabilities ?? false;
     const vehiclesVisible = categoryVisibility?.vehicles ?? false;
     const propertiesVisible = categoryVisibility?.properties ?? false;
-    const [cashAccounts, liabilities, vehicles, properties] = await Promise.all([
-      cashVisible ? advisorReadCashAccounts(supabase, clientId) : Promise.resolve([]),
-      liabilitiesVisible
-        ? advisorReadLiabilities(supabase, clientId)
-        : Promise.resolve([]),
-      vehiclesVisible ? advisorReadVehicles(supabase, clientId) : Promise.resolve([]),
-      propertiesVisible
-        ? advisorReadProperties(supabase, clientId)
-        : Promise.resolve([]),
-    ]);
+    const housingLoansVisible = categoryVisibility?.housing_loans ?? false;
+    const [cashAccounts, liabilities, vehicles, properties, housingLoans] =
+      await Promise.all([
+        cashVisible ? advisorReadCashAccounts(supabase, clientId) : Promise.resolve([]),
+        liabilitiesVisible
+          ? advisorReadLiabilities(supabase, clientId)
+          : Promise.resolve([]),
+        vehiclesVisible ? advisorReadVehicles(supabase, clientId) : Promise.resolve([]),
+        propertiesVisible
+          ? advisorReadProperties(supabase, clientId)
+          : Promise.resolve([]),
+        housingLoansVisible
+          ? advisorReadHousingLoans(supabase, clientId)
+          : Promise.resolve([]),
+      ]);
     return (
       <AdvisorClientDetailShell
         clientId={clientId}
@@ -330,6 +336,8 @@ export default async function AdvisorClientDetailPage({
             vehiclesVisible={vehiclesVisible}
             properties={properties}
             propertiesVisible={propertiesVisible}
+            housingLoans={housingLoans}
+            housingLoansVisible={housingLoansVisible}
             month={month}
             draftProposalId={draftId}
             draftChanges={draftChanges}
