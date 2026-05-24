@@ -145,9 +145,9 @@ export async function recordAdvisorConsentAction(
  * this only ever flips a category ON/OFF for the linked advisor.
  */
 export async function updateCategoryVisibilityAction(
-  _prev: { error: string | null },
+  _prev: { error: string | null; visible?: boolean },
   formData: FormData
-): Promise<{ error: string | null }> {
+): Promise<{ error: string | null; visible?: boolean }> {
   const category = String(formData.get("category") ?? "").trim();
   if (!isAdvisorVisibilityCategory(category)) {
     return { error: "Invalid category" };
@@ -181,10 +181,14 @@ export async function updateCategoryVisibilityAction(
   }
 
   // Advisor read/compose access for this category flips on their next read.
+  // /setup + /more both surface the toggle — revalidate so they stay in sync.
   revalidatePath("/advisor/clients");
   revalidatePath(`/advisor/client/${user.id}`);
   revalidatePath("/more");
-  return { error: null };
+  revalidatePath("/setup");
+  // Return the new value so the client can render optimistically + drive a
+  // router.refresh() (revalidatePath alone doesn't re-render the current view).
+  return { error: null, visible: isVisible };
 }
 
 export type AdvisorConsentGate = {

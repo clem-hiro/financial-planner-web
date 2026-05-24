@@ -7,7 +7,9 @@ import {
   updateHousingLoanAction,
 } from "@/server/actions";
 import type { HousingLoanRow, PropertyRow } from "@/data/supabase/types";
+import { CategoryVisibilityToggle } from "@/features/consent/CategoryVisibilityToggle";
 import { PropertyAddForm } from "@/features/housing/PropertyAddForm";
+import type { AdvisorCategoryVisibility } from "@/lib/advisor-visibility";
 import { num } from "@/data/mappers";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { formatCurrency } from "@/ui/lib/format";
@@ -660,15 +662,33 @@ export function HousingPanel({
   properties: _properties,
   loans,
   currencyCode,
+  advisorVisibility = null,
 }: {
   properties: PropertyRow[];
   loans: HousingLoanRow[];
   currencyCode: string;
+  /** When set (client self-view with linked+consented advisor), show the
+   * per-category visibility toggles. Null hides them (advisor view / no consent). */
+  advisorVisibility?: AdvisorCategoryVisibility | null;
 }) {
   const [state, action, pending] = useActionState(createHousingLoanAction, initial);
 
   return (
     <div className="space-y-4">
+      {advisorVisibility ? (
+        <div className="space-y-2 rounded-xl border border-zinc-200 bg-white p-3 sm:p-4">
+          <CategoryVisibilityToggle
+            category="properties"
+            visible={advisorVisibility.properties}
+            showTooltip
+          />
+          <CategoryVisibilityToggle
+            category="housing_loans"
+            visible={advisorVisibility.housing_loans}
+            showTooltip
+          />
+        </div>
+      ) : null}
       <PropertyAddForm currencyCode={currencyCode} />
       <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
       <div className="p-4 sm:p-5">

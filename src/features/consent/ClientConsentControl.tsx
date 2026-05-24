@@ -1,15 +1,13 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import {
-  recordAdvisorConsentAction,
-  updateCategoryVisibilityAction,
-} from "@/server/client-consent-actions";
+import { recordAdvisorConsentAction } from "@/server/client-consent-actions";
 import {
   ADVISOR_VISIBILITY_CATEGORIES,
-  ADVISOR_VISIBILITY_LABELS,
   type AdvisorCategoryVisibility,
 } from "@/lib/advisor-visibility";
+import { CategoryVisibilityToggle } from "@/features/consent/CategoryVisibilityToggle";
+import { InfoTooltip } from "@/ui/InfoTooltip";
 import { fpPrimaryButtonClass } from "@/ui/input-classes";
 
 type Status = "active" | "withdrawn" | "none";
@@ -114,16 +112,15 @@ function CategoryVisibilityToggles({
 }: {
   visibility: AdvisorCategoryVisibility | null;
 }) {
-  const [state, formAction, pending] = useActionState(
-    updateCategoryVisibilityAction,
-    { error: null as string | null }
-  );
-
   return (
     <div className="space-y-3 border-t border-slate-200 pt-4">
       <div>
-        <p className="text-sm font-semibold text-slate-900">
+        <p className="flex items-center gap-1.5 text-sm font-semibold text-slate-900">
           What your advisor can see
+          <InfoTooltip ariaLabel="About category visibility">
+            Each toggle controls whether your linked adviser can see that
+            category of your finances. All are private until you turn them on.
+          </InfoTooltip>
         </p>
         <p className="mt-1 text-xs leading-relaxed text-slate-600">
           Each category below is private by default. Turn one on to let your
@@ -131,43 +128,15 @@ function CategoryVisibilityToggles({
         </p>
       </div>
       <ul className="space-y-2">
-        {ADVISOR_VISIBILITY_CATEGORIES.map((category) => {
-          const on = visibility?.[category] ?? false;
-          return (
-            <li
-              key={category}
-              className="flex items-center justify-between gap-3"
-            >
-              <span className="text-sm text-slate-700">
-                {ADVISOR_VISIBILITY_LABELS[category]}
-              </span>
-              <form action={formAction}>
-                <input type="hidden" name="category" value={category} />
-                <input
-                  type="hidden"
-                  name="is_visible"
-                  value={on ? "false" : "true"}
-                />
-                <button
-                  type="submit"
-                  disabled={pending}
-                  aria-pressed={on}
-                  className={`rounded-full px-4 py-1.5 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60 ${
-                    on
-                      ? "bg-emerald-600 text-white hover:bg-emerald-500"
-                      : "border border-slate-300 text-slate-600 hover:bg-slate-50"
-                  }`}
-                >
-                  {on ? "Visible" : "Private"}
-                </button>
-              </form>
-            </li>
-          );
-        })}
+        {ADVISOR_VISIBILITY_CATEGORIES.map((category) => (
+          <li key={category}>
+            <CategoryVisibilityToggle
+              category={category}
+              visible={visibility?.[category] ?? false}
+            />
+          </li>
+        ))}
       </ul>
-      {state.error ? (
-        <p className="text-sm text-rose-600">{state.error}</p>
-      ) : null}
     </div>
   );
 }

@@ -7,6 +7,10 @@ import {
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
 } from "@/data/mappers";
+import {
+  getMyAdvisorCategoryVisibility,
+  getMyConsentStatusForAdvisor,
+} from "@/data/repositories/advisor-clients";
 import { listProposalsForClient } from "@/data/repositories/advisor-proposals";
 import { listBudgetLines } from "@/data/repositories/budget-lines";
 import { getIncomeTaxConfig } from "@/data/repositories/income-tax-configs";
@@ -36,7 +40,9 @@ import { BudgetLensProfileForm } from "@/features/setup/BudgetLensProfileForm";
 import { ClientProposalsView } from "@/features/proposals/ClientProposalsView";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth, parseYearMonth, yearFromYearMonth } from "@/lib/dates";
+import type { AdvisorCategoryVisibility } from "@/lib/advisor-visibility";
 import { isSupabaseConfigured } from "@/lib/env";
+import { isClient } from "@/lib/profile-role";
 import { setupTabPath } from "@/lib/setup-urls";
 import { shouldPromptCpfRulesReview } from "@/domain/finance/cpf-rules-review";
 import { shouldPromptInvestmentReview } from "@/domain/finance/investment-review";
@@ -106,19 +112,43 @@ export default async function SetupPage({ searchParams }: PageProps) {
       ? budgetYearParsed
       : yearFromYearMonth(budgetMonth);
 
-  const [tabBundle, incomeTaxConfig, budgetLinesForLens, advisorProposals] =
-    await Promise.all([
-      loadSetupTabBundle(supabase, user.id, new Set([activeTab])),
-      activeTab === "income_tax"
-        ? getIncomeTaxConfig(supabase, user.id)
-        : Promise.resolve(null),
-      activeTab === "profile"
-        ? listBudgetLines(supabase, user.id)
-        : Promise.resolve([]),
-      activeTab === "advisor-proposals"
-        ? listProposalsForClient(supabase, user.id, 25)
-        : Promise.resolve([]),
-    ]);
+  // Per-category advisor-visibility toggles render inline on the account tabs,
+  // but only in the client's own self-view with a linked + actively-consented
+  // advisor (same gate as /more#privacy-advisor-access). Null ⇒ hidden.
+  const advisorUserId = financialProfile?.advisor_user_id ?? null;
+  const tabUsesVisibility =
+    activeTab === "cash-liabilities" ||
+    activeTab === "housing" ||
+    activeTab === "vehicles";
+  const visibilityEligible =
+    tabUsesVisibility && isClient(financialProfile) && !!advisorUserId;
+
+  const [
+    tabBundle,
+    incomeTaxConfig,
+    budgetLinesForLens,
+    advisorProposals,
+    advisorVisibility,
+  ] = await Promise.all([
+    loadSetupTabBundle(supabase, user.id, new Set([activeTab])),
+    activeTab === "income_tax"
+      ? getIncomeTaxConfig(supabase, user.id)
+      : Promise.resolve(null),
+    activeTab === "profile"
+      ? listBudgetLines(supabase, user.id)
+      : Promise.resolve([]),
+    activeTab === "advisor-proposals"
+      ? listProposalsForClient(supabase, user.id, 25)
+      : Promise.resolve([]),
+    visibilityEligible && advisorUserId
+      ? Promise.all([
+          getMyConsentStatusForAdvisor(supabase, user.id, advisorUserId),
+          getMyAdvisorCategoryVisibility(supabase, user.id, advisorUserId),
+        ]).then(([status, vis]): AdvisorCategoryVisibility | null =>
+          status === "active" ? vis : null
+        )
+      : Promise.resolve<AdvisorCategoryVisibility | null>(null),
+  ]);
   const replaceableMonthlyLineCount =
     activeTab === "profile"
       ? countReplaceableMonthlyBudgetLines(budgetLinesForLens)
@@ -346,6 +376,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
               cashHistoryByAccountId={cashHistoryByAccountId}
               liabilityRows={liabilityRows}
               currencyCode={currency}
+              advisorVisibility={advisorVisibility}
             />
           </PageSection>
         </div>
@@ -373,6 +404,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
               properties={properties}
               loans={housingLoans}
               currencyCode={currency}
+              advisorVisibility={advisorVisibility}
             />
           </PageSection>
         </div>
@@ -389,7 +421,11 @@ export default async function SetupPage({ searchParams }: PageProps) {
               </span>
             }
           >
-            <VehiclesPanel vehicles={vehicleRows} currencyCode={currency} />
+            <VehiclesPanel
+              vehicles={vehicleRows}
+              currencyCode={currency}
+              advisorVisibility={advisorVisibility}
+            />
           </PageSection>
         </div>
       ) : null}
