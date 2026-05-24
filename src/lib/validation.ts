@@ -433,6 +433,43 @@ export const cashAccountWriteSchema = z.object({
   purpose: cashAccountPurposeSchema,
 });
 
+export const vehicleStatusSchema = z.enum(["active", "planned"]);
+
+/** Allowlist for advisor-composed vehicle proposals. Core editable fields only;
+ * the accept writer defaults the remaining `financial_vehicles` modelling
+ * columns (the client refines them in their own full vehicle form). Name field
+ * is `label`. */
+export const vehicleWriteSchema = z.object({
+  label: z.string().trim().min(1).max(120),
+  vehicle_status: vehicleStatusSchema.default("active"),
+  current_market_value: z
+    .number()
+    .nonnegative()
+    .max(100_000_000)
+    .nullable()
+    .optional(),
+  on_the_road_paid: z
+    .number()
+    .nonnegative()
+    .max(100_000_000)
+    .nullable()
+    .optional(),
+  loan_balance: z.number().nonnegative().max(100_000_000).nullable().optional(),
+  loan_monthly_payment: z
+    .number()
+    .nonnegative()
+    .max(1_000_000)
+    .nullable()
+    .optional(),
+  loan_months_remaining: z
+    .number()
+    .int()
+    .min(0)
+    .max(600)
+    .nullable()
+    .optional(),
+});
+
 export const couponCodeInputSchema = z
   .string()
   .trim()

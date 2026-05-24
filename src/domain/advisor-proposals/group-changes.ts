@@ -39,11 +39,13 @@ function headlineForEntity(changes: AdvisorProposalChangeRow[]): string {
   if (isNew && changes[0]?.entity_type === "investment") return "New investment account";
   if (isNew && changes[0]?.entity_type === "cash_account") return "New cash account";
   if (isNew && changes[0]?.entity_type === "liability") return "New liability";
+  if (isNew && changes[0]?.entity_type === "vehicle") return "New vehicle";
   if (changes[0]?.entity_type === "profile") return "Profile fields";
   if (changes[0]?.entity_type === "budget_line") return "Budget line";
   if (changes[0]?.entity_type === "goal") return "Goal contribution";
   if (changes[0]?.entity_type === "cash_account") return "Cash account";
   if (changes[0]?.entity_type === "liability") return "Liability";
+  if (changes[0]?.entity_type === "vehicle") return "Vehicle";
   return "Update";
 }
 

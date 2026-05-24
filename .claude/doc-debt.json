@@ -889,6 +889,16 @@
       "readme_section": "External dependencies",
       "status": "pending",
       "summary": "integration change in src/features/advisor/AdvisorClientLiabilitySection.tsx \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-24T13:36:04Z",
+      "trigger_file": "src/features/advisor/AdvisorClientVehicleSection.tsx",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/features/advisor/AdvisorClientVehicleSection.tsx \u2014 External dependencies (readme) may be stale"
     }
   ]
 }

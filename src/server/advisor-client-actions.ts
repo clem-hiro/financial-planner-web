@@ -15,6 +15,7 @@ import { advisorReadCashAccounts } from "@/data/repositories/cash-accounts";
 import { advisorReadGoals } from "@/data/repositories/goals";
 import { advisorReadInvestments } from "@/data/repositories/investments";
 import { advisorReadLiabilities } from "@/data/repositories/liabilities";
+import { advisorReadVehicles } from "@/data/repositories/vehicles";
 import { advisorReadProfile, getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { recordAdvisorProposalChanges } from "@/server/advisor-proposal-recording";
@@ -22,7 +23,11 @@ import {
   getDraftProposalForClient,
   listChangesForProposal,
 } from "@/data/repositories/advisor-proposals";
-import { cashAccountWriteSchema, entityNameUniquenessError } from "@/lib/validation";
+import {
+  cashAccountWriteSchema,
+  entityNameUniquenessError,
+  vehicleWriteSchema,
+} from "@/lib/validation";
 import { parseLiabilityFormData } from "@/server/liability-form";
 import type { AdvisorVisibilityCategory } from "@/lib/advisor-visibility";
 import { isAdvisor } from "@/lib/profile-role";
@@ -1002,6 +1007,237 @@ export async function deleteAdvisorClientLiabilityAction(
         newValue: "true",
         changeOp: "delete" as const,
         contextLabel: existing.name,
+      },
+    ]);
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null, proposalRecorded: true };
+}
+
+function optionalFormNumber(formData: FormData, key: string): number | null {
+  const s = String(formData.get(key) ?? "").trim();
+  if (s === "") return null;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : null;
+}
+
+function parseVehicleForm(formData: FormData) {
+  return vehicleWriteSchema.safeParse({
+    label: String(formData.get("label") ?? "").trim(),
+    vehicle_status:
+      String(formData.get("vehicle_status") ?? "").trim() === "planned"
+        ? "planned"
+        : "active",
+    current_market_value: optionalFormNumber(formData, "current_market_value"),
+    on_the_road_paid: optionalFormNumber(formData, "on_the_road_paid"),
+    loan_balance: optionalFormNumber(formData, "loan_balance"),
+    loan_monthly_payment: optionalFormNumber(formData, "loan_monthly_payment"),
+    loan_months_remaining: optionalFormNumber(formData, "loan_months_remaining"),
+  });
+}
+
+export async function createAdvisorClientVehicleAction(
+  _prev: { error: string | null; proposalRecorded?: boolean },
+  formData: FormData
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase, advisorUserId } = ctx;
+
+  const gate = await assertCategoryVisible(supabase, clientId, "vehicles");
+  if (gate) return { error: gate };
+
+  const parsed = parseVehicleForm(formData);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid vehicle" };
+  }
+  const d = parsed.data;
+
+  // Name field is `label`.
+  const existingNames = (await advisorReadVehicles(supabase, clientId)).map(
+    (v) => v.label
+  );
+  const pendingNames = await pendingCreateNames(
+    supabase,
+    advisorUserId,
+    clientId,
+    "vehicle",
+    "label"
+  );
+  const nameError = entityNameUniquenessError(
+    d.label,
+    [...existingNames, ...pendingNames],
+    "a vehicle"
+  );
+  if (nameError) return { error: nameError };
+
+  const draftEntityKey = randomUUID();
+  const fields: { fieldKey: string; newValue: string | number }[] = [
+    { fieldKey: "label", newValue: d.label },
+    { fieldKey: "vehicle_status", newValue: d.vehicle_status },
+  ];
+  if (d.current_market_value != null)
+    fields.push({ fieldKey: "current_market_value", newValue: d.current_market_value });
+  if (d.on_the_road_paid != null)
+    fields.push({ fieldKey: "on_the_road_paid", newValue: d.on_the_road_paid });
+  if (d.loan_balance != null)
+    fields.push({ fieldKey: "loan_balance", newValue: d.loan_balance });
+  if (d.loan_monthly_payment != null)
+    fields.push({ fieldKey: "loan_monthly_payment", newValue: d.loan_monthly_payment });
+  if (d.loan_months_remaining != null)
+    fields.push({ fieldKey: "loan_months_remaining", newValue: d.loan_months_remaining });
+
+  try {
+    await recordAdvisorProposalChanges(
+      supabase,
+      advisorUserId,
+      clientId,
+      fields.map((f) => ({
+        entityType: "vehicle" as const,
+        entityId: null,
+        fieldKey: f.fieldKey,
+        oldValue: null,
+        newValue: f.newValue,
+        changeOp: "create" as const,
+        draftEntityKey,
+        contextLabel: d.label,
+      }))
+    );
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null, proposalRecorded: true };
+}
+
+export async function updateAdvisorClientVehicleAction(
+  _prev: { error: string | null; proposalRecorded?: boolean },
+  formData: FormData
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase, advisorUserId } = ctx;
+
+  const gate = await assertCategoryVisible(supabase, clientId, "vehicles");
+  if (gate) return { error: gate };
+
+  const idParsed = z
+    .string()
+    .uuid()
+    .safeParse(String(formData.get("id") ?? "").trim());
+  if (!idParsed.success) return { error: "Invalid vehicle" };
+
+  const existing =
+    (await advisorReadVehicles(supabase, clientId)).find(
+      (v) => v.id === idParsed.data
+    ) ?? null;
+  if (!existing) return { error: "Vehicle not found" };
+
+  const parsed = parseVehicleForm(formData);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid vehicle" };
+  }
+  const d = parsed.data;
+
+  // financial_vehicles has no updated_at → no base_version concurrency token.
+  const updates: { fieldKey: string; oldValue: unknown; newValue: unknown }[] = [
+    { fieldKey: "label", oldValue: existing.label, newValue: d.label },
+    { fieldKey: "vehicle_status", oldValue: existing.vehicle_status, newValue: d.vehicle_status },
+    {
+      fieldKey: "current_market_value",
+      oldValue: existing.current_market_value ?? null,
+      newValue: d.current_market_value ?? null,
+    },
+    {
+      fieldKey: "on_the_road_paid",
+      oldValue: existing.on_the_road_paid,
+      newValue: d.on_the_road_paid ?? null,
+    },
+    {
+      fieldKey: "loan_balance",
+      oldValue: existing.loan_balance,
+      newValue: d.loan_balance ?? null,
+    },
+    {
+      fieldKey: "loan_monthly_payment",
+      oldValue: existing.loan_monthly_payment,
+      newValue: d.loan_monthly_payment ?? null,
+    },
+    {
+      fieldKey: "loan_months_remaining",
+      oldValue: existing.loan_months_remaining ?? null,
+      newValue: d.loan_months_remaining ?? null,
+    },
+  ];
+
+  try {
+    await recordAdvisorProposalChanges(
+      supabase,
+      advisorUserId,
+      clientId,
+      updates.map((u) => ({
+        entityType: "vehicle" as const,
+        entityId: idParsed.data,
+        fieldKey: u.fieldKey,
+        oldValue: u.oldValue,
+        newValue: u.newValue,
+        contextLabel: d.label,
+      }))
+    );
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null, proposalRecorded: true };
+}
+
+export async function deleteAdvisorClientVehicleAction(
+  _prev: { error: string | null; proposalRecorded?: boolean },
+  formData: FormData
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase, advisorUserId } = ctx;
+
+  const gate = await assertCategoryVisible(supabase, clientId, "vehicles");
+  if (gate) return { error: gate };
+
+  const idParsed = z
+    .string()
+    .uuid()
+    .safeParse(String(formData.get("id") ?? "").trim());
+  if (!idParsed.success) return { error: "Invalid vehicle" };
+
+  const existing =
+    (await advisorReadVehicles(supabase, clientId)).find(
+      (v) => v.id === idParsed.data
+    ) ?? null;
+  if (!existing) return { error: "Vehicle not found" };
+
+  try {
+    await recordAdvisorProposalChanges(supabase, advisorUserId, clientId, [
+      {
+        entityType: "vehicle",
+        entityId: idParsed.data,
+        fieldKey: "_deleted",
+        oldValue: null,
+        newValue: "true",
+        changeOp: "delete" as const,
+        contextLabel: existing.label,
       },
     ]);
   } catch (e) {

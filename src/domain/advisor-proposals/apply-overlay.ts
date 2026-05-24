@@ -7,6 +7,7 @@ import type {
   InvestmentRow,
   LiabilityRow,
   ProfileRow,
+  VehicleRow,
 } from "@/data/supabase/types";
 
 /**
@@ -26,6 +27,8 @@ export type OverlayInputs = {
   /** Optional: same accept-only threading as cashAccounts (liabilities aren't
    * previewed yet). Liability changes are no-ops unless supplied. */
   liabilities?: LiabilityRow[];
+  /** Optional: accept-only threading (vehicles aren't previewed yet). */
+  vehicles?: VehicleRow[];
 };
 
 /** Numeric coercion — byte-identical semantics to the legacy accept path. */
@@ -379,6 +382,66 @@ function mergeLiability(
   return next;
 }
 
+// The advisor compose form edits this subset; create defaults the rest of the
+// financial_vehicles modelling columns (client refines in their own form).
+function applyVehicleInsert(
+  group: ChangeGroup,
+  m: Map<string, string | null>
+): VehicleRow {
+  const months = m.get("loan_months_remaining");
+  return {
+    id: newEntityId(group, "overlay-vehicle"),
+    user_id: "",
+    label: m.get("label") ?? "Vehicle",
+    vehicle_status: m.get("vehicle_status") === "planned" ? "planned" : "active",
+    current_market_value: numStr(m.get("current_market_value")),
+    first_registration_ym: null,
+    on_the_road_paid: numStr(m.get("on_the_road_paid")) ?? "0",
+    arf_for_parf: null,
+    body_open_market_at_purchase: null,
+    body_depreciation_years: 0,
+    coe_expiry_ym: null,
+    parf_if_deregistered_today: null,
+    coe_if_deregistered_today: null,
+    body_scrap_if_deregistered_today: null,
+    loan_balance: numStr(m.get("loan_balance")) ?? "0",
+    loan_monthly_payment: numStr(m.get("loan_monthly_payment")) ?? "0",
+    loan_months_remaining: months != null && months !== "" ? Number(months) : null,
+    loan_end_ym: null,
+    loan_prefer_stored_balance: false,
+    loan_simple_remaining_estimate: false,
+    terminal_recovery_at_coe_expiry: null,
+    loan_annual_nominal_rate: null,
+    display_order: 0,
+    created_at: "",
+  };
+}
+
+function mergeVehicle(row: VehicleRow, m: Map<string, string | null>): VehicleRow {
+  const next: VehicleRow = { ...row };
+  if (m.has("label")) next.label = m.get("label") || next.label;
+  if (m.has("vehicle_status")) {
+    next.vehicle_status = m.get("vehicle_status") === "planned" ? "planned" : "active";
+  }
+  if (m.has("current_market_value")) {
+    next.current_market_value = numStr(m.get("current_market_value"));
+  }
+  if (m.has("on_the_road_paid")) {
+    next.on_the_road_paid = numStr(m.get("on_the_road_paid")) ?? "0";
+  }
+  if (m.has("loan_balance")) {
+    next.loan_balance = numStr(m.get("loan_balance")) ?? "0";
+  }
+  if (m.has("loan_monthly_payment")) {
+    next.loan_monthly_payment = numStr(m.get("loan_monthly_payment")) ?? "0";
+  }
+  if (m.has("loan_months_remaining")) {
+    const v = m.get("loan_months_remaining");
+    next.loan_months_remaining = v != null && v !== "" ? Number(v) : null;
+  }
+  return next;
+}
+
 /**
  * Pure, IO-free composition of `base + proposal changes`. Empty change-set
  * returns the inputs by identity (the no-overlay byte-identical fast path).
@@ -404,6 +467,7 @@ export function applyProposalChanges(
   let goals = inputs.goals;
   let cashAccounts = inputs.cashAccounts;
   let liabilities = inputs.liabilities;
+  let vehicles = inputs.vehicles;
 
   for (const group of groupByEntity(changes)) {
     const m = fieldMap(group.changes);
@@ -479,8 +543,30 @@ export function applyProposalChanges(
           l.id === group.entityId ? mergeLiability(l, m) : l
         );
       }
+      continue;
+    }
+
+    // Vehicle — same accept-only contract.
+    if (group.entityType === "vehicle" && vehicles) {
+      if (op === "delete" && group.entityId) {
+        vehicles = vehicles.filter((v) => v.id !== group.entityId);
+      } else if (op === "create") {
+        vehicles = [...vehicles, applyVehicleInsert(group, m)];
+      } else if (group.entityId) {
+        vehicles = vehicles.map((v) =>
+          v.id === group.entityId ? mergeVehicle(v, m) : v
+        );
+      }
     }
   }
 
-  return { profile, investments, budgetLines, goals, cashAccounts, liabilities };
+  return {
+    profile,
+    investments,
+    budgetLines,
+    goals,
+    cashAccounts,
+    liabilities,
+    vehicles,
+  };
 }

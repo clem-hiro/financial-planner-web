@@ -19,6 +19,13 @@ import {
   type LiabilityWriteInput,
 } from "@/data/repositories/liabilities";
 import {
+  deleteVehicle,
+  insertVehicle,
+  listVehicles,
+  updateVehicle,
+  type VehicleInsert,
+} from "@/data/repositories/vehicles";
+import {
   deleteFinancialGoal,
   insertFinancialGoal,
   listFinancialGoals,
@@ -40,6 +47,7 @@ import type {
   InvestmentRow,
   LiabilityRow,
   ProfileRow,
+  VehicleRow,
 } from "@/data/supabase/types";
 import {
   applyProposalChanges,
@@ -280,6 +288,58 @@ function liabilityDiffers(a: LiabilityRow, b: LiabilityRow): boolean {
   );
 }
 
+function vehicleWritePayload(row: VehicleRow): VehicleInsert {
+  return {
+    label: row.label,
+    vehicle_status: row.vehicle_status,
+    current_market_value: toNumOrNull(row.current_market_value ?? null),
+    first_registration_ym: row.first_registration_ym ?? null,
+    on_the_road_paid: toNumOrNull(row.on_the_road_paid) ?? 0,
+    arf_for_parf: toNumOrNull(row.arf_for_parf ?? null),
+    body_open_market_at_purchase: toNumOrNull(
+      row.body_open_market_at_purchase ?? null
+    ),
+    body_depreciation_years: row.body_depreciation_years ?? 0,
+    coe_expiry_ym: row.coe_expiry_ym ?? null,
+    parf_if_deregistered_today: toNumOrNull(
+      row.parf_if_deregistered_today ?? null
+    ),
+    coe_if_deregistered_today: toNumOrNull(
+      row.coe_if_deregistered_today ?? null
+    ),
+    body_scrap_if_deregistered_today: toNumOrNull(
+      row.body_scrap_if_deregistered_today ?? null
+    ),
+    loan_balance: toNumOrNull(row.loan_balance) ?? 0,
+    loan_monthly_payment: toNumOrNull(row.loan_monthly_payment) ?? 0,
+    loan_months_remaining: row.loan_months_remaining ?? null,
+    loan_end_ym: row.loan_end_ym ?? null,
+    loan_prefer_stored_balance: row.loan_prefer_stored_balance ?? false,
+    loan_simple_remaining_estimate: row.loan_simple_remaining_estimate ?? false,
+    terminal_recovery_at_coe_expiry: toNumOrNull(
+      row.terminal_recovery_at_coe_expiry ?? null
+    ),
+    loan_annual_nominal_rate: toNumOrNull(row.loan_annual_nominal_rate ?? null),
+    display_order: row.display_order ?? 0,
+  };
+}
+
+function vehicleDiffers(a: VehicleRow, b: VehicleRow): boolean {
+  // Only the advisor-editable subset can change via compose.
+  return (
+    a.label !== b.label ||
+    a.vehicle_status !== b.vehicle_status ||
+    (toNumOrNull(a.current_market_value ?? null)) !==
+      (toNumOrNull(b.current_market_value ?? null)) ||
+    (toNumOrNull(a.on_the_road_paid) ?? 0) !==
+      (toNumOrNull(b.on_the_road_paid) ?? 0) ||
+    (toNumOrNull(a.loan_balance) ?? 0) !== (toNumOrNull(b.loan_balance) ?? 0) ||
+    (toNumOrNull(a.loan_monthly_payment) ?? 0) !==
+      (toNumOrNull(b.loan_monthly_payment) ?? 0) ||
+    (a.loan_months_remaining ?? null) !== (b.loan_months_remaining ?? null)
+  );
+}
+
 /** entity_types the accept writer can persist. A change carrying anything else
  * (a CHECK-allowed type whose phase hasn't shipped) is rejected before any
  * write — fail loud rather than silently dropping it. */
@@ -290,6 +350,7 @@ const ACCEPTED_ENTITY_TYPES = new Set<AdvisorProposalChangeRow["entity_type"]>([
   "investment",
   "cash_account",
   "liability",
+  "vehicle",
 ]);
 
 function assertHandledEntityTypes(changes: AdvisorProposalChangeRow[]): void {
@@ -432,6 +493,10 @@ function detectNameConflicts(
     "liability",
     (effective.liabilities ?? []).map((l) => ({ id: l.id, name: l.name }))
   );
+  scan(
+    "vehicle",
+    (effective.vehicles ?? []).map((v) => ({ id: v.id, name: v.label }))
+  );
   return conflicts;
 }
 
@@ -465,8 +530,11 @@ export function nameConflictFromWriteError(
         ? "cash_account"
         : /financial_liabilities_user_name_ci_uq/.test(blob)
           ? "liability"
-          : "investment";
-  const nameField = entityType === "goal" ? "title" : "name";
+          : /financial_vehicles_user_name_ci_uq/.test(blob)
+            ? "vehicle"
+            : "investment";
+  const nameField =
+    entityType === "goal" ? "title" : entityType === "vehicle" ? "label" : "name";
   const labels = [
     ...new Set(
       changes
@@ -501,15 +569,23 @@ export async function detectAcceptConflicts(
   changes: AdvisorProposalChangeRow[]
 ): Promise<{ conflicts: ProposalConflict[]; base: OverlayInputs }> {
   assertHandledEntityTypes(changes);
-  const [profile, investments, budgetLines, goals, cashAccounts, liabilities] =
-    await Promise.all([
-      getProfileById(supabase, clientUserId),
-      listInvestments(supabase, clientUserId),
-      listBudgetLines(supabase, clientUserId),
-      listFinancialGoals(supabase, clientUserId),
-      listCashAccounts(supabase, clientUserId),
-      listLiabilities(supabase, clientUserId),
-    ]);
+  const [
+    profile,
+    investments,
+    budgetLines,
+    goals,
+    cashAccounts,
+    liabilities,
+    vehicles,
+  ] = await Promise.all([
+    getProfileById(supabase, clientUserId),
+    listInvestments(supabase, clientUserId),
+    listBudgetLines(supabase, clientUserId),
+    listFinancialGoals(supabase, clientUserId),
+    listCashAccounts(supabase, clientUserId),
+    listLiabilities(supabase, clientUserId),
+    listVehicles(supabase, clientUserId),
+  ]);
   const base: OverlayInputs = {
     profile,
     investments,
@@ -517,6 +593,7 @@ export async function detectAcceptConflicts(
     goals,
     cashAccounts,
     liabilities,
+    vehicles,
   };
   const conflicts = [
     ...detectConflicts(changes, base),
@@ -554,6 +631,7 @@ export async function applyAcceptedProposalChanges(
       goals,
       cashAccounts,
       liabilities,
+      vehicles,
     ] = await Promise.all([
       getProfileById(supabase, clientUserId),
       listInvestments(supabase, clientUserId),
@@ -561,6 +639,7 @@ export async function applyAcceptedProposalChanges(
       listFinancialGoals(supabase, clientUserId),
       listCashAccounts(supabase, clientUserId),
       listLiabilities(supabase, clientUserId),
+      listVehicles(supabase, clientUserId),
     ]);
     base = {
       profile,
@@ -569,6 +648,7 @@ export async function applyAcceptedProposalChanges(
       goals,
       cashAccounts,
       liabilities,
+      vehicles,
     };
     const conflicts = detectConflicts(changes, base);
     if (conflicts.length > 0) return { conflicts };
@@ -577,6 +657,7 @@ export async function applyAcceptedProposalChanges(
   const { profile, investments, budgetLines, goals } = base;
   const cashAccounts = base.cashAccounts ?? [];
   const liabilities = base.liabilities ?? [];
+  const vehicles = base.vehicles ?? [];
   const effective = applyProposalChanges(base, changes);
 
   if (profile && effective.profile) {
@@ -690,6 +771,16 @@ export async function applyAcceptedProposalChanges(
     insert: (p) => insertLiability(supabase, clientUserId, p),
     update: (id, p) => updateLiability(supabase, clientUserId, id, p),
     remove: (id) => deleteLiability(supabase, clientUserId, id),
+  });
+
+  // Vehicles — same generic diff (no cross-entity linkage).
+  await applyEntityDiff(vehicles, effective.vehicles ?? [], {
+    differs: vehicleDiffers,
+    insertPayload: vehicleWritePayload,
+    updatePayload: (_before, after) => vehicleWritePayload(after),
+    insert: (p) => insertVehicle(supabase, clientUserId, p),
+    update: (id, p) => updateVehicle(supabase, clientUserId, id, p),
+    remove: (id) => deleteVehicle(supabase, clientUserId, id),
   });
 
   return { conflicts: [] };

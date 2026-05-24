@@ -83,6 +83,17 @@ const LIABILITY_FIELDS: Record<string, ProposalFieldMeta> = {
   _deleted: { label: "Liability", section: "cash_flow" },
 };
 
+const VEHICLE_FIELDS: Record<string, ProposalFieldMeta> = {
+  label: { label: "Vehicle", section: "cash_flow" },
+  vehicle_status: { label: "Status", section: "cash_flow" },
+  current_market_value: { label: "Market value", section: "cash_flow", currency: true },
+  on_the_road_paid: { label: "On-the-road price", section: "cash_flow", currency: true },
+  loan_balance: { label: "Loan balance", section: "cash_flow", currency: true },
+  loan_monthly_payment: { label: "Monthly repayment", section: "cash_flow", currency: true },
+  loan_months_remaining: { label: "Months remaining", section: "cash_flow" },
+  _deleted: { label: "Vehicle", section: "cash_flow" },
+};
+
 export function fieldMeta(
   entityType: ProposalEntityType,
   fieldKey: string
@@ -98,7 +109,9 @@ export function fieldMeta(
             ? CASH_ACCOUNT_FIELDS
             : entityType === "liability"
               ? LIABILITY_FIELDS
-              : INVESTMENT_FIELDS;
+              : entityType === "vehicle"
+                ? VEHICLE_FIELDS
+                : INVESTMENT_FIELDS;
   return (
     map[fieldKey] ?? {
       label: fieldKey.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
@@ -109,7 +122,9 @@ export function fieldMeta(
             ? "cash_flow"
             : entityType === "goal"
               ? "goals"
-              : entityType === "cash_account" || entityType === "liability"
+              : entityType === "cash_account" ||
+                  entityType === "liability" ||
+                  entityType === "vehicle"
                 ? "cash_flow"
                 : "investments",
     }

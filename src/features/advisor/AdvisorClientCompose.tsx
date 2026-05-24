@@ -6,6 +6,7 @@ import type {
   FinancialGoalRow,
   InvestmentRow,
   LiabilityRow,
+  VehicleRow,
 } from "@/data/supabase/types";
 import type { ProfileRow } from "@/data/supabase/types";
 import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
@@ -17,6 +18,10 @@ import {
   AdvisorClientLiabilitySection,
   type AdvisorLiabilityRow,
 } from "@/features/advisor/AdvisorClientLiabilitySection";
+import {
+  AdvisorClientVehicleSection,
+  type AdvisorVehicleRow,
+} from "@/features/advisor/AdvisorClientVehicleSection";
 import { AdvisorBadge, AdvisorSection } from "@/features/advisor/advisor-workspace-primitives";
 import { AdvisorClientHeader } from "@/features/advisor/AdvisorClientHeader";
 import { AdvisorConsentRequired } from "@/features/advisor/AdvisorConsentRequired";
@@ -61,6 +66,8 @@ export function AdvisorClientCompose({
   cashVisible,
   liabilities,
   liabilitiesVisible,
+  vehicles,
+  vehiclesVisible,
   month,
   draftProposalId,
   draftChanges,
@@ -79,6 +86,9 @@ export function AdvisorClientCompose({
   liabilities: LiabilityRow[];
   /** Whether the client has shared the liabilities category (Phase 1 toggle). */
   liabilitiesVisible: boolean;
+  vehicles: VehicleRow[];
+  /** Whether the client has shared the vehicles category (Phase 1 toggle). */
+  vehiclesVisible: boolean;
   month: string;
   draftProposalId: string | null;
   draftChanges: AdvisorProposalChangeRow[];
@@ -144,6 +154,30 @@ export function AdvisorClientCompose({
       l.monthly_repayment != null && String(l.monthly_repayment).trim() !== ""
         ? num(l.monthly_repayment)
         : null,
+  }));
+  const vehicleRows: AdvisorVehicleRow[] = vehicles.map((v) => ({
+    id: v.id,
+    label: v.label,
+    status: v.vehicle_status,
+    marketValue:
+      v.current_market_value != null &&
+      String(v.current_market_value).trim() !== ""
+        ? num(v.current_market_value)
+        : null,
+    onTheRoadPaid:
+      v.on_the_road_paid != null && String(v.on_the_road_paid).trim() !== ""
+        ? num(v.on_the_road_paid)
+        : null,
+    loanBalance:
+      v.loan_balance != null && String(v.loan_balance).trim() !== ""
+        ? num(v.loan_balance)
+        : null,
+    loanMonthlyPayment:
+      v.loan_monthly_payment != null &&
+      String(v.loan_monthly_payment).trim() !== ""
+        ? num(v.loan_monthly_payment)
+        : null,
+    loanMonthsRemaining: v.loan_months_remaining ?? null,
   }));
 
   // Frozen submit bar is fixed to the viewport bottom; pad the page so the last
@@ -350,6 +384,23 @@ export function AdvisorClientCompose({
               />
             ) : (
               <LockedCategoryCard label="Liabilities" />
+            )}
+          </AdvisorSection>
+
+          <AdvisorSection
+            id="vehicles"
+            title="Vehicles"
+            description="Cars and other vehicles — saved as suggestions until the client accepts."
+          >
+            {vehiclesVisible ? (
+              <AdvisorClientVehicleSection
+                clientId={clientId}
+                vehicles={vehicleRows}
+                currencyCode={currency}
+                disabled={hasPendingProposal}
+              />
+            ) : (
+              <LockedCategoryCard label="Vehicles" />
             )}
           </AdvisorSection>
         </div>

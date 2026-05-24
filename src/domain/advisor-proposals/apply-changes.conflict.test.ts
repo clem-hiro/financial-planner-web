@@ -523,21 +523,113 @@ describe("change_op writer: create / delete across entity types", () => {
     expect(fake.store.financial_liabilities).toHaveLength(0);
   });
 
-  it("unsupported entity_type (vehicle) throws before any write", async () => {
+  it("vehicle create inserts a financial_vehicles row (name field is label)", async () => {
+    const fake = makeFakeSupabase(seed());
+    const res = await applyAcceptedProposalChanges(fake, "c1", [
+      ch({
+        entity_type: "vehicle",
+        field_key: "label",
+        new_value: "Family car",
+        change_op: "create",
+        draft_entity_key: "nv",
+      }),
+      ch({
+        entity_type: "vehicle",
+        field_key: "vehicle_status",
+        new_value: "active",
+        change_op: "create",
+        draft_entity_key: "nv",
+      }),
+      ch({
+        entity_type: "vehicle",
+        field_key: "current_market_value",
+        new_value: "40000",
+        change_op: "create",
+        draft_entity_key: "nv",
+      }),
+    ]);
+    expect(res.conflicts).toEqual([]);
+    expect(fake.store.financial_vehicles).toHaveLength(1);
+    const created = fake.store.financial_vehicles[0];
+    expect(created.label).toBe("Family car");
+    expect(Number(created.current_market_value)).toBe(40000);
+    expect(created.user_id).toBe("c1");
+  });
+
+  it("vehicle accept ignores a mass-assignment attempt (cannot set user_id)", async () => {
+    const fake = makeFakeSupabase(seed());
+    const res = await applyAcceptedProposalChanges(fake, "c1", [
+      ch({
+        entity_type: "vehicle",
+        field_key: "label",
+        new_value: "Sneaky car",
+        change_op: "create",
+        draft_entity_key: "nv",
+      }),
+      ch({
+        entity_type: "vehicle",
+        field_key: "user_id",
+        new_value: "attacker-uid",
+        change_op: "create",
+        draft_entity_key: "nv",
+      }),
+    ]);
+    expect(res.conflicts).toEqual([]);
+    expect(fake.store.financial_vehicles).toHaveLength(1);
+    expect(fake.store.financial_vehicles[0].user_id).toBe("c1");
+  });
+
+  it("vehicle _deleted removes the target vehicle row", async () => {
+    const fake = makeFakeSupabase({
+      ...seed(),
+      financial_vehicles: [
+        {
+          id: "veh1",
+          user_id: "c1",
+          label: "Old car",
+          vehicle_status: "active",
+          on_the_road_paid: "0",
+          body_depreciation_years: 0,
+          loan_balance: "0",
+          loan_monthly_payment: "0",
+          display_order: 0,
+          first_registration_ym: null,
+          arf_for_parf: null,
+          body_open_market_at_purchase: null,
+          loan_months_remaining: null,
+          loan_annual_nominal_rate: null,
+          created_at: V,
+        },
+      ],
+    });
+    const res = await applyAcceptedProposalChanges(fake, "c1", [
+      ch({
+        entity_type: "vehicle",
+        entity_id: "veh1",
+        field_key: "_deleted",
+        new_value: "true",
+        change_op: "delete",
+      }),
+    ]);
+    expect(res.conflicts).toEqual([]);
+    expect(fake.store.financial_vehicles).toHaveLength(0);
+  });
+
+  it("unsupported entity_type (property) throws before any write", async () => {
     const fake = makeFakeSupabase(seed());
     await expect(
       applyAcceptedProposalChanges(fake, "c1", [
         ch({
-          entity_type: "vehicle",
-          field_key: "label",
-          new_value: "Car",
+          entity_type: "property",
+          field_key: "name",
+          new_value: "Condo",
           change_op: "create",
-          draft_entity_key: "nv",
+          draft_entity_key: "np",
         }),
       ])
     ).rejects.toThrow(/unsupported entity type/i);
     // Pre-write guard: nothing persisted for the unbuilt type.
-    expect(fake.store.financial_vehicles ?? []).toHaveLength(0);
+    expect(fake.store.financial_properties ?? []).toHaveLength(0);
   });
 });
 
@@ -609,6 +701,29 @@ describe("name-uniqueness pre-flight (scenario matrix)", () => {
       }),
     ]);
     expect(conflicts.some((c) => c.reason === "name_in_use")).toBe(true);
+  });
+
+  it("two create-op vehicles with the same label (diff case) -> name_in_use", async () => {
+    const fake = makeFakeSupabase(seed());
+    const { conflicts } = await detectAcceptConflicts(fake, "c1", [
+      ch({
+        entity_type: "vehicle",
+        field_key: "label",
+        new_value: "Family Car",
+        change_op: "create",
+        draft_entity_key: "v1",
+      }),
+      ch({
+        entity_type: "vehicle",
+        field_key: "label",
+        new_value: "family car",
+        change_op: "create",
+        draft_entity_key: "v2",
+      }),
+    ]);
+    expect(
+      conflicts.some((c) => c.reason === "name_in_use" && c.entityType === "vehicle")
+    ).toBe(true);
   });
 
   it("create-op investment colliding with an existing live one (whitespace) -> conflict", async () => {
