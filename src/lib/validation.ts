@@ -433,6 +433,48 @@ export const cashAccountWriteSchema = z.object({
   purpose: cashAccountPurposeSchema,
 });
 
+export const propertyTypeSchema = z.enum([
+  "hdb",
+  "condo",
+  "ec",
+  "landed",
+  "overseas",
+  "other",
+  "unknown",
+]);
+export const propertyStatusSchema = z.enum([
+  "living_in",
+  "renting_out",
+  "under_construction",
+  "fully_paid",
+]);
+export const propertyPlanningScopeSchema = z.enum([
+  "current",
+  "future_simulation",
+]);
+
+/** Allowlist for advisor-composed property proposals. Name field is `name`. */
+export const propertyWriteSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  property_type: propertyTypeSchema.default("unknown"),
+  purchase_price: z
+    .number()
+    .nonnegative()
+    .max(1_000_000_000)
+    .nullable()
+    .optional(),
+  current_valuation: z
+    .number()
+    .nonnegative()
+    .max(1_000_000_000)
+    .nullable()
+    .optional(),
+  ownership_percent: z.number().min(0).max(100).default(100),
+  status: propertyStatusSchema.default("living_in"),
+  rental_income_monthly: z.number().nonnegative().max(10_000_000).default(0),
+  planning_scope: propertyPlanningScopeSchema.default("current"),
+});
+
 export const vehicleStatusSchema = z.enum(["active", "planned"]);
 
 /** Allowlist for advisor-composed vehicle proposals. Core editable fields only;

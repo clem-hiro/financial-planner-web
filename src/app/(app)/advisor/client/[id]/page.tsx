@@ -16,6 +16,7 @@ import type { AdvisorClientListRow } from "@/data/repositories/advisor-clients";
 import { advisorReadBudgetLines } from "@/data/repositories/budget-lines";
 import { advisorReadCashAccounts } from "@/data/repositories/cash-accounts";
 import { advisorReadLiabilities } from "@/data/repositories/liabilities";
+import { advisorReadProperties } from "@/data/repositories/properties";
 import { advisorReadVehicles } from "@/data/repositories/vehicles";
 import { advisorReadGoals } from "@/data/repositories/goals";
 import { advisorReadInvestments } from "@/data/repositories/investments";
@@ -297,12 +298,16 @@ export default async function AdvisorClientDetailPage({
     const cashVisible = categoryVisibility?.cash_accounts ?? false;
     const liabilitiesVisible = categoryVisibility?.liabilities ?? false;
     const vehiclesVisible = categoryVisibility?.vehicles ?? false;
-    const [cashAccounts, liabilities, vehicles] = await Promise.all([
+    const propertiesVisible = categoryVisibility?.properties ?? false;
+    const [cashAccounts, liabilities, vehicles, properties] = await Promise.all([
       cashVisible ? advisorReadCashAccounts(supabase, clientId) : Promise.resolve([]),
       liabilitiesVisible
         ? advisorReadLiabilities(supabase, clientId)
         : Promise.resolve([]),
       vehiclesVisible ? advisorReadVehicles(supabase, clientId) : Promise.resolve([]),
+      propertiesVisible
+        ? advisorReadProperties(supabase, clientId)
+        : Promise.resolve([]),
     ]);
     return (
       <AdvisorClientDetailShell
@@ -323,6 +328,8 @@ export default async function AdvisorClientDetailPage({
             liabilitiesVisible={liabilitiesVisible}
             vehicles={vehicles}
             vehiclesVisible={vehiclesVisible}
+            properties={properties}
+            propertiesVisible={propertiesVisible}
             month={month}
             draftProposalId={draftId}
             draftChanges={draftChanges}

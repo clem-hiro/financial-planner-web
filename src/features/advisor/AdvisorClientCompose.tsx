@@ -6,6 +6,7 @@ import type {
   FinancialGoalRow,
   InvestmentRow,
   LiabilityRow,
+  PropertyRow,
   VehicleRow,
 } from "@/data/supabase/types";
 import type { ProfileRow } from "@/data/supabase/types";
@@ -22,6 +23,10 @@ import {
   AdvisorClientVehicleSection,
   type AdvisorVehicleRow,
 } from "@/features/advisor/AdvisorClientVehicleSection";
+import {
+  AdvisorClientPropertySection,
+  type AdvisorPropertyRow,
+} from "@/features/advisor/AdvisorClientPropertySection";
 import { AdvisorBadge, AdvisorSection } from "@/features/advisor/advisor-workspace-primitives";
 import { AdvisorClientHeader } from "@/features/advisor/AdvisorClientHeader";
 import { AdvisorConsentRequired } from "@/features/advisor/AdvisorConsentRequired";
@@ -68,6 +73,8 @@ export function AdvisorClientCompose({
   liabilitiesVisible,
   vehicles,
   vehiclesVisible,
+  properties,
+  propertiesVisible,
   month,
   draftProposalId,
   draftChanges,
@@ -89,6 +96,9 @@ export function AdvisorClientCompose({
   vehicles: VehicleRow[];
   /** Whether the client has shared the vehicles category (Phase 1 toggle). */
   vehiclesVisible: boolean;
+  properties: PropertyRow[];
+  /** Whether the client has shared the properties category (Phase 1 toggle). */
+  propertiesVisible: boolean;
   month: string;
   draftProposalId: string | null;
   draftChanges: AdvisorProposalChangeRow[];
@@ -178,6 +188,22 @@ export function AdvisorClientCompose({
         ? num(v.loan_monthly_payment)
         : null,
     loanMonthsRemaining: v.loan_months_remaining ?? null,
+  }));
+  const propertyRows: AdvisorPropertyRow[] = properties.map((p) => ({
+    id: p.id,
+    name: p.name,
+    propertyType: p.property_type,
+    status: p.status,
+    purchasePrice:
+      p.purchase_price != null && String(p.purchase_price).trim() !== ""
+        ? num(p.purchase_price)
+        : null,
+    currentValuation:
+      p.current_valuation != null && String(p.current_valuation).trim() !== ""
+        ? num(p.current_valuation)
+        : null,
+    ownershipPercent: num(p.ownership_percent),
+    rentalIncomeMonthly: num(p.rental_income_monthly),
   }));
 
   // Frozen submit bar is fixed to the viewport bottom; pad the page so the last
@@ -401,6 +427,23 @@ export function AdvisorClientCompose({
               />
             ) : (
               <LockedCategoryCard label="Vehicles" />
+            )}
+          </AdvisorSection>
+
+          <AdvisorSection
+            id="properties"
+            title="Property"
+            description="Properties owned — saved as suggestions until the client accepts."
+          >
+            {propertiesVisible ? (
+              <AdvisorClientPropertySection
+                clientId={clientId}
+                properties={propertyRows}
+                currencyCode={currency}
+                disabled={hasPendingProposal}
+              />
+            ) : (
+              <LockedCategoryCard label="Property" />
             )}
           </AdvisorSection>
         </div>

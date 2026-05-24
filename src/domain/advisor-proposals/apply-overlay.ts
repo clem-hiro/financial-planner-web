@@ -7,6 +7,7 @@ import type {
   InvestmentRow,
   LiabilityRow,
   ProfileRow,
+  PropertyRow,
   VehicleRow,
 } from "@/data/supabase/types";
 
@@ -29,6 +30,9 @@ export type OverlayInputs = {
   liabilities?: LiabilityRow[];
   /** Optional: accept-only threading (vehicles aren't previewed yet). */
   vehicles?: VehicleRow[];
+  /** Optional: accept-only threading. Properties are referenced by housing
+   * loans (Phase 6) — the accept writer maps draft→real property ids. */
+  properties?: PropertyRow[];
 };
 
 /** Numeric coercion — byte-identical semantics to the legacy accept path. */
@@ -417,6 +421,59 @@ function applyVehicleInsert(
   };
 }
 
+function applyPropertyInsert(
+  group: ChangeGroup,
+  m: Map<string, string | null>
+): PropertyRow {
+  return {
+    id: newEntityId(group, "overlay-property"),
+    user_id: "",
+    name: m.get("name") ?? "Property",
+    property_type: (m.get("property_type") ||
+      "unknown") as PropertyRow["property_type"],
+    purchase_price: numStr(m.get("purchase_price")),
+    current_valuation: numStr(m.get("current_valuation")),
+    ownership_percent: numStr(m.get("ownership_percent")) ?? "100",
+    status: (m.get("status") || "living_in") as PropertyRow["status"],
+    rental_income_monthly: numStr(m.get("rental_income_monthly")) ?? "0",
+    planning_scope: (m.get("planning_scope") ||
+      "current") as PropertyRow["planning_scope"],
+    display_order: 0,
+    created_at: "",
+    updated_at: "",
+  };
+}
+
+function mergeProperty(
+  row: PropertyRow,
+  m: Map<string, string | null>
+): PropertyRow {
+  const next: PropertyRow = { ...row };
+  if (m.has("name")) next.name = m.get("name") || next.name;
+  if (m.has("property_type")) {
+    next.property_type = (m.get("property_type") ||
+      next.property_type) as PropertyRow["property_type"];
+  }
+  if (m.has("purchase_price")) next.purchase_price = numStr(m.get("purchase_price"));
+  if (m.has("current_valuation")) {
+    next.current_valuation = numStr(m.get("current_valuation"));
+  }
+  if (m.has("ownership_percent")) {
+    next.ownership_percent = numStr(m.get("ownership_percent")) ?? "100";
+  }
+  if (m.has("status")) {
+    next.status = (m.get("status") || next.status) as PropertyRow["status"];
+  }
+  if (m.has("rental_income_monthly")) {
+    next.rental_income_monthly = numStr(m.get("rental_income_monthly")) ?? "0";
+  }
+  if (m.has("planning_scope")) {
+    next.planning_scope = (m.get("planning_scope") ||
+      next.planning_scope) as PropertyRow["planning_scope"];
+  }
+  return next;
+}
+
 function mergeVehicle(row: VehicleRow, m: Map<string, string | null>): VehicleRow {
   const next: VehicleRow = { ...row };
   if (m.has("label")) next.label = m.get("label") || next.label;
@@ -468,6 +525,7 @@ export function applyProposalChanges(
   let cashAccounts = inputs.cashAccounts;
   let liabilities = inputs.liabilities;
   let vehicles = inputs.vehicles;
+  let properties = inputs.properties;
 
   for (const group of groupByEntity(changes)) {
     const m = fieldMap(group.changes);
@@ -557,6 +615,20 @@ export function applyProposalChanges(
           v.id === group.entityId ? mergeVehicle(v, m) : v
         );
       }
+      continue;
+    }
+
+    // Property — same accept-only contract.
+    if (group.entityType === "property" && properties) {
+      if (op === "delete" && group.entityId) {
+        properties = properties.filter((p) => p.id !== group.entityId);
+      } else if (op === "create") {
+        properties = [...properties, applyPropertyInsert(group, m)];
+      } else if (group.entityId) {
+        properties = properties.map((p) =>
+          p.id === group.entityId ? mergeProperty(p, m) : p
+        );
+      }
     }
   }
 
@@ -568,5 +640,6 @@ export function applyProposalChanges(
     cashAccounts,
     liabilities,
     vehicles,
+    properties,
   };
 }

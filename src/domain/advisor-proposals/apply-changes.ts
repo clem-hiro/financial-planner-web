@@ -26,6 +26,13 @@ import {
   type VehicleInsert,
 } from "@/data/repositories/vehicles";
 import {
+  deleteProperty,
+  insertProperty,
+  listProperties,
+  updateProperty,
+  type PropertyInsert,
+} from "@/data/repositories/properties";
+import {
   deleteFinancialGoal,
   insertFinancialGoal,
   listFinancialGoals,
@@ -47,6 +54,7 @@ import type {
   InvestmentRow,
   LiabilityRow,
   ProfileRow,
+  PropertyRow,
   VehicleRow,
 } from "@/data/supabase/types";
 import {
@@ -340,6 +348,35 @@ function vehicleDiffers(a: VehicleRow, b: VehicleRow): boolean {
   );
 }
 
+function propertyWritePayload(row: PropertyRow): PropertyInsert {
+  return {
+    name: row.name,
+    property_type: row.property_type,
+    purchase_price: toNumOrNull(row.purchase_price),
+    current_valuation: toNumOrNull(row.current_valuation),
+    ownership_percent: toNumOrNull(row.ownership_percent) ?? 100,
+    status: row.status,
+    rental_income_monthly: toNumOrNull(row.rental_income_monthly) ?? 0,
+    planning_scope: row.planning_scope,
+    display_order: row.display_order ?? 0,
+  };
+}
+
+function propertyDiffers(a: PropertyRow, b: PropertyRow): boolean {
+  return (
+    a.name !== b.name ||
+    a.property_type !== b.property_type ||
+    (toNumOrNull(a.purchase_price)) !== (toNumOrNull(b.purchase_price)) ||
+    (toNumOrNull(a.current_valuation)) !== (toNumOrNull(b.current_valuation)) ||
+    (toNumOrNull(a.ownership_percent) ?? 100) !==
+      (toNumOrNull(b.ownership_percent) ?? 100) ||
+    a.status !== b.status ||
+    (toNumOrNull(a.rental_income_monthly) ?? 0) !==
+      (toNumOrNull(b.rental_income_monthly) ?? 0) ||
+    a.planning_scope !== b.planning_scope
+  );
+}
+
 /** entity_types the accept writer can persist. A change carrying anything else
  * (a CHECK-allowed type whose phase hasn't shipped) is rejected before any
  * write — fail loud rather than silently dropping it. */
@@ -351,6 +388,7 @@ const ACCEPTED_ENTITY_TYPES = new Set<AdvisorProposalChangeRow["entity_type"]>([
   "cash_account",
   "liability",
   "vehicle",
+  "property",
 ]);
 
 function assertHandledEntityTypes(changes: AdvisorProposalChangeRow[]): void {
@@ -413,7 +451,9 @@ function detectConflicts(
           ? base.goals.find((g) => g.id === entityId)
           : entityType === "cash_account"
             ? base.cashAccounts?.find((c) => c.id === entityId)
-            : base.investments.find((i) => i.id === entityId);
+            : entityType === "property"
+              ? base.properties?.find((p) => p.id === entityId)
+              : base.investments.find((i) => i.id === entityId);
     return { present: !!row, version: row?.updated_at };
   };
 
@@ -497,6 +537,10 @@ function detectNameConflicts(
     "vehicle",
     (effective.vehicles ?? []).map((v) => ({ id: v.id, name: v.label }))
   );
+  scan(
+    "property",
+    (effective.properties ?? []).map((p) => ({ id: p.id, name: p.name }))
+  );
   return conflicts;
 }
 
@@ -532,7 +576,9 @@ export function nameConflictFromWriteError(
           ? "liability"
           : /financial_vehicles_user_name_ci_uq/.test(blob)
             ? "vehicle"
-            : "investment";
+            : /financial_properties_user_name_ci_uq/.test(blob)
+              ? "property"
+              : "investment";
   const nameField =
     entityType === "goal" ? "title" : entityType === "vehicle" ? "label" : "name";
   const labels = [
@@ -577,6 +623,7 @@ export async function detectAcceptConflicts(
     cashAccounts,
     liabilities,
     vehicles,
+    properties,
   ] = await Promise.all([
     getProfileById(supabase, clientUserId),
     listInvestments(supabase, clientUserId),
@@ -585,6 +632,7 @@ export async function detectAcceptConflicts(
     listCashAccounts(supabase, clientUserId),
     listLiabilities(supabase, clientUserId),
     listVehicles(supabase, clientUserId),
+    listProperties(supabase, clientUserId),
   ]);
   const base: OverlayInputs = {
     profile,
@@ -594,6 +642,7 @@ export async function detectAcceptConflicts(
     cashAccounts,
     liabilities,
     vehicles,
+    properties,
   };
   const conflicts = [
     ...detectConflicts(changes, base),
@@ -632,6 +681,7 @@ export async function applyAcceptedProposalChanges(
       cashAccounts,
       liabilities,
       vehicles,
+      properties,
     ] = await Promise.all([
       getProfileById(supabase, clientUserId),
       listInvestments(supabase, clientUserId),
@@ -640,6 +690,7 @@ export async function applyAcceptedProposalChanges(
       listCashAccounts(supabase, clientUserId),
       listLiabilities(supabase, clientUserId),
       listVehicles(supabase, clientUserId),
+      listProperties(supabase, clientUserId),
     ]);
     base = {
       profile,
@@ -649,6 +700,7 @@ export async function applyAcceptedProposalChanges(
       cashAccounts,
       liabilities,
       vehicles,
+      properties,
     };
     const conflicts = detectConflicts(changes, base);
     if (conflicts.length > 0) return { conflicts };
@@ -658,6 +710,7 @@ export async function applyAcceptedProposalChanges(
   const cashAccounts = base.cashAccounts ?? [];
   const liabilities = base.liabilities ?? [];
   const vehicles = base.vehicles ?? [];
+  const properties = base.properties ?? [];
   const effective = applyProposalChanges(base, changes);
 
   if (profile && effective.profile) {
@@ -782,6 +835,55 @@ export async function applyAcceptedProposalChanges(
     update: (id, p) => updateVehicle(supabase, clientUserId, id, p),
     remove: (id) => deleteVehicle(supabase, clientUserId, id),
   });
+
+  // Properties — bespoke (not applyEntityDiff) so we can capture the draft-key→
+  // real-id map for the Phase 6 housing-loan property_id remap. Mirrors the
+  // investmentIdMap pass. Properties first so a loan created in the same
+  // proposal can resolve to a property created here.
+  const effectiveProperties = effective.properties ?? [];
+  const propBeforeIds = new Set(properties.map((p) => p.id));
+  const propAfterIds = new Set(effectiveProperties.map((p) => p.id));
+  const propertyIdMap = new Map<string, string>();
+
+  for (const before of properties) {
+    if (!propAfterIds.has(before.id)) {
+      await deleteProperty(supabase, clientUserId, before.id);
+    }
+  }
+  for (const after of effectiveProperties) {
+    if (!propBeforeIds.has(after.id)) {
+      const inserted = await insertProperty(
+        supabase,
+        clientUserId,
+        propertyWritePayload(after)
+      );
+      propertyIdMap.set(after.id, inserted.id);
+      continue;
+    }
+    const before = properties.find((p) => p.id === after.id);
+    if (before && propertyDiffers(before, after)) {
+      await updateProperty(
+        supabase,
+        clientUserId,
+        after.id,
+        propertyWritePayload(after)
+      );
+    }
+  }
+  // Phase 6 prep coupling (load-bearing): the housing-loan accept remaps a
+  // loan's property_id through propertyIdMap, then asserts the resolved id is
+  // in validPropertyIds — this client's EXISTING property ids ∪ the ids created
+  // in THIS proposal. Proposal-scoped, NOT global: a loan may only link to a
+  // property the client already owns or one created in the same proposal
+  // (OWASP BOLA / tenant isolation). Built now; consumed in Phase 6.
+  const validPropertyIds = new Set<string>([
+    ...properties.map((p) => p.id),
+    ...propertyIdMap.values(),
+  ]);
+  // Consumed in Phase 6 (housing-loan property_id remap); `void` marks it
+  // intentionally-built-now so the proposal-scoped set is computed in the same
+  // pass that creates the properties.
+  void validPropertyIds;
 
   return { conflicts: [] };
 }

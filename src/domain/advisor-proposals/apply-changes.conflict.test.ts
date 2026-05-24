@@ -615,21 +615,110 @@ describe("change_op writer: create / delete across entity types", () => {
     expect(fake.store.financial_vehicles).toHaveLength(0);
   });
 
-  it("unsupported entity_type (property) throws before any write", async () => {
+  it("property create inserts a financial_properties row", async () => {
+    const fake = makeFakeSupabase(seed());
+    const res = await applyAcceptedProposalChanges(fake, "c1", [
+      ch({
+        entity_type: "property",
+        field_key: "name",
+        new_value: "Home",
+        change_op: "create",
+        draft_entity_key: "np",
+      }),
+      ch({
+        entity_type: "property",
+        field_key: "current_valuation",
+        new_value: "850000",
+        change_op: "create",
+        draft_entity_key: "np",
+      }),
+    ]);
+    expect(res.conflicts).toEqual([]);
+    expect(fake.store.financial_properties).toHaveLength(1);
+    const created = fake.store.financial_properties[0];
+    expect(created.name).toBe("Home");
+    expect(Number(created.current_valuation)).toBe(850000);
+    expect(created.user_id).toBe("c1");
+    // Groundwork for Phase 6: the insert mints a REAL id (not the draft key
+    // "np") — that's the value propertyIdMap captures (draft-key→real-id) for
+    // the housing-loan property_id remap. (Map is internal; this row id is the
+    // observable proxy; the full remap is verified end-to-end in Phase 6.)
+    expect(created.id).toMatch(/^db-/);
+    expect(created.id).not.toBe("np");
+  });
+
+  it("property accept ignores a mass-assignment attempt (cannot set user_id)", async () => {
+    const fake = makeFakeSupabase(seed());
+    const res = await applyAcceptedProposalChanges(fake, "c1", [
+      ch({
+        entity_type: "property",
+        field_key: "name",
+        new_value: "Sneaky condo",
+        change_op: "create",
+        draft_entity_key: "np",
+      }),
+      ch({
+        entity_type: "property",
+        field_key: "user_id",
+        new_value: "attacker-uid",
+        change_op: "create",
+        draft_entity_key: "np",
+      }),
+    ]);
+    expect(res.conflicts).toEqual([]);
+    expect(fake.store.financial_properties).toHaveLength(1);
+    expect(fake.store.financial_properties[0].user_id).toBe("c1");
+  });
+
+  it("property _deleted removes the target property row", async () => {
+    const fake = makeFakeSupabase({
+      ...seed(),
+      financial_properties: [
+        {
+          id: "prop1",
+          user_id: "c1",
+          name: "Old home",
+          property_type: "hdb",
+          purchase_price: null,
+          current_valuation: "500000",
+          ownership_percent: "100",
+          status: "living_in",
+          rental_income_monthly: "0",
+          planning_scope: "current",
+          display_order: 0,
+          created_at: V,
+          updated_at: V,
+        },
+      ],
+    });
+    const res = await applyAcceptedProposalChanges(fake, "c1", [
+      ch({
+        entity_type: "property",
+        entity_id: "prop1",
+        field_key: "_deleted",
+        new_value: "true",
+        change_op: "delete",
+        base_version: V,
+      }),
+    ]);
+    expect(res.conflicts).toEqual([]);
+    expect(fake.store.financial_properties).toHaveLength(0);
+  });
+
+  it("unsupported entity_type (housing_loan) throws before any write", async () => {
     const fake = makeFakeSupabase(seed());
     await expect(
       applyAcceptedProposalChanges(fake, "c1", [
         ch({
-          entity_type: "property",
-          field_key: "name",
-          new_value: "Condo",
+          entity_type: "housing_loan",
+          field_key: "label",
+          new_value: "Mortgage",
           change_op: "create",
-          draft_entity_key: "np",
+          draft_entity_key: "nh",
         }),
       ])
     ).rejects.toThrow(/unsupported entity type/i);
-    // Pre-write guard: nothing persisted for the unbuilt type.
-    expect(fake.store.financial_properties ?? []).toHaveLength(0);
+    expect(fake.store.financial_housing_loans ?? []).toHaveLength(0);
   });
 });
 
@@ -723,6 +812,29 @@ describe("name-uniqueness pre-flight (scenario matrix)", () => {
     ]);
     expect(
       conflicts.some((c) => c.reason === "name_in_use" && c.entityType === "vehicle")
+    ).toBe(true);
+  });
+
+  it("two create-op properties with the same name (diff case) -> name_in_use", async () => {
+    const fake = makeFakeSupabase(seed());
+    const { conflicts } = await detectAcceptConflicts(fake, "c1", [
+      ch({
+        entity_type: "property",
+        field_key: "name",
+        new_value: "Home",
+        change_op: "create",
+        draft_entity_key: "p1",
+      }),
+      ch({
+        entity_type: "property",
+        field_key: "name",
+        new_value: "home",
+        change_op: "create",
+        draft_entity_key: "p2",
+      }),
+    ]);
+    expect(
+      conflicts.some((c) => c.reason === "name_in_use" && c.entityType === "property")
     ).toBe(true);
   });
 
