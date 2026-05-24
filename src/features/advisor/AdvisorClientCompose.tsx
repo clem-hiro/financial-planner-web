@@ -1,12 +1,24 @@
 import type { DashboardPayload } from "@/data/dashboard";
 import { num } from "@/data/mappers";
-import type { BudgetLineRow, FinancialGoalRow, InvestmentRow } from "@/data/supabase/types";
+import type {
+  BudgetLineRow,
+  CashAccountRow,
+  FinancialGoalRow,
+  InvestmentRow,
+} from "@/data/supabase/types";
 import type { ProfileRow } from "@/data/supabase/types";
 import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
+import {
+  AdvisorClientCashSection,
+  type AdvisorCashRow,
+} from "@/features/advisor/AdvisorClientCashSection";
 import { AdvisorBadge, AdvisorSection } from "@/features/advisor/advisor-workspace-primitives";
 import { AdvisorClientHeader } from "@/features/advisor/AdvisorClientHeader";
 import { AdvisorConsentRequired } from "@/features/advisor/AdvisorConsentRequired";
-import { AdvisorProposalDraftPanel } from "@/features/advisor/AdvisorProposalDraftPanel";
+import {
+  DraftSummaryPanel,
+  SubmitProposalBar,
+} from "@/features/advisor/AdvisorProposalDraftPanel";
 import { AdvisorProposeRemovalButton } from "@/features/advisor/AdvisorProposeRemovalButton";
 import { AdvisorSuggestionModeBanner } from "@/features/advisor/AdvisorSuggestionModeBanner";
 import { AdvisorBudgetLineAmountForm } from "@/features/advisor/forms/AdvisorBudgetLineAmountForm";
@@ -40,6 +52,8 @@ export function AdvisorClientCompose({
   goals,
   budgetLines,
   investments,
+  cashAccounts,
+  cashVisible,
   month,
   draftProposalId,
   draftChanges,
@@ -52,6 +66,9 @@ export function AdvisorClientCompose({
   goals: FinancialGoalRow[];
   budgetLines: BudgetLineRow[];
   investments: InvestmentRow[];
+  cashAccounts: CashAccountRow[];
+  /** Whether the client has shared the cash_accounts category (Phase 1 toggle). */
+  cashVisible: boolean;
   month: string;
   draftProposalId: string | null;
   draftChanges: AdvisorProposalChangeRow[];
@@ -94,9 +111,19 @@ export function AdvisorClientCompose({
         }
       : null;
   const monthlyBudgetLines = budgetLines.filter((b) => b.cadence === "monthly");
+  const cashRows: AdvisorCashRow[] = cashAccounts.map((c) => ({
+    id: c.id,
+    name: c.name,
+    balance: num(c.balance),
+    purpose: c.purpose,
+  }));
+
+  // Frozen submit bar is fixed to the viewport bottom; pad the page so the last
+  // section isn't occluded. Only shows while a draft exists and not locked.
+  const showSubmitBar = !hasPendingProposal && !!draftProposalId;
 
   return (
-    <div className="space-y-8 lg:space-y-10">
+    <div className={`space-y-8 lg:space-y-10 ${showSubmitBar ? "pb-44" : ""}`}>
       <AdvisorClientHeader profile={profile} payload={payload} month={month} />
 
       <AdvisorSuggestionModeBanner
@@ -105,7 +132,7 @@ export function AdvisorClientCompose({
       />
 
       <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start xl:gap-10">
-        <div className="space-y-8">
+        <div id="advisor-compose-left" className="space-y-8">
           <AdvisorSection
             id="profile"
             eyebrow="Operational"
@@ -263,12 +290,43 @@ export function AdvisorClientCompose({
               </div>
             </div>
           </AdvisorSection>
+
+          <AdvisorSection
+            id="cash-accounts"
+            title="Cash accounts"
+            description="Bank and savings balances — saved as suggestions until the client accepts."
+          >
+            {cashVisible ? (
+              <AdvisorClientCashSection
+                clientId={clientId}
+                accounts={cashRows}
+                currencyCode={currency}
+                disabled={hasPendingProposal}
+              />
+            ) : (
+              <div className="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
+                <span aria-hidden className="mt-0.5 text-slate-400">🔒</span>
+                <div className="space-y-1">
+                  <p className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                    Cash accounts
+                    <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+                      Private
+                    </span>
+                  </p>
+                  <p className="text-xs text-slate-500">
+                    Client chose not to share this category. Ask them to enable
+                    it under Privacy &amp; Advisor Access to view or propose changes.
+                  </p>
+                </div>
+              </div>
+            )}
+          </AdvisorSection>
         </div>
 
         <CollapsiblePaneRail>
           <CollapsiblePane title="Suggested Plans Consolidation" defaultOpen>
             <div className="space-y-4">
-              <AdvisorProposalDraftPanel
+              <DraftSummaryPanel
                 proposalId={draftProposalId}
                 changes={draftChanges}
                 currencyCode={currency}
@@ -297,6 +355,13 @@ export function AdvisorClientCompose({
           </CollapsiblePane>
         </CollapsiblePaneRail>
       </div>
+
+      <SubmitProposalBar
+        proposalId={draftProposalId}
+        changeCount={draftChangeCount}
+        disabled={hasPendingProposal}
+        alignToId="advisor-compose-left"
+      />
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import type {
   AdvisorProposalChangeRow,
   BudgetLineRow,
+  CashAccountPurpose,
+  CashAccountRow,
   FinancialGoalRow,
   InvestmentRow,
   ProfileRow,
@@ -16,6 +18,10 @@ export type OverlayInputs = {
   investments: InvestmentRow[];
   budgetLines: BudgetLineRow[];
   goals: FinancialGoalRow[];
+  /** Optional: the accept writer threads cash accounts through; the dashboard
+   * preview omits it (cash isn't previewed in projections yet). Cash changes
+   * are no-ops in the overlay unless this is supplied. */
+  cashAccounts?: CashAccountRow[];
 };
 
 /** Numeric coercion — byte-identical semantics to the legacy accept path. */
@@ -287,6 +293,34 @@ function mergeGoal(
   return next;
 }
 
+function applyCashAccountInsert(
+  group: ChangeGroup,
+  m: Map<string, string | null>
+): CashAccountRow {
+  return {
+    id: newEntityId(group, "overlay-cash-account"),
+    user_id: "",
+    name: m.get("name") ?? "Cash account",
+    balance: numStr(m.get("balance")) ?? "0",
+    purpose: ((m.get("purpose") || "other") as CashAccountPurpose),
+    created_at: "",
+    updated_at: "",
+  };
+}
+
+function mergeCashAccount(
+  row: CashAccountRow,
+  m: Map<string, string | null>
+): CashAccountRow {
+  const next: CashAccountRow = { ...row };
+  if (m.has("name")) next.name = m.get("name") || next.name;
+  if (m.has("balance")) next.balance = numStr(m.get("balance")) ?? "0";
+  if (m.has("purpose")) {
+    next.purpose = ((m.get("purpose") || next.purpose) as CashAccountPurpose);
+  }
+  return next;
+}
+
 /**
  * Pure, IO-free composition of `base + proposal changes`. Empty change-set
  * returns the inputs by identity (the no-overlay byte-identical fast path).
@@ -310,6 +344,7 @@ export function applyProposalChanges(
   let investments = inputs.investments;
   let budgetLines = inputs.budgetLines;
   let goals = inputs.goals;
+  let cashAccounts = inputs.cashAccounts;
 
   for (const group of groupByEntity(changes)) {
     const m = fieldMap(group.changes);
@@ -357,8 +392,22 @@ export function applyProposalChanges(
           i.id === group.entityId ? mergeInvestment(i, m) : i
         );
       }
+      continue;
+    }
+
+    // Cash is a no-op unless the caller supplied cashAccounts (accept path).
+    if (group.entityType === "cash_account" && cashAccounts) {
+      if (op === "delete" && group.entityId) {
+        cashAccounts = cashAccounts.filter((c) => c.id !== group.entityId);
+      } else if (op === "create") {
+        cashAccounts = [...cashAccounts, applyCashAccountInsert(group, m)];
+      } else if (group.entityId) {
+        cashAccounts = cashAccounts.map((c) =>
+          c.id === group.entityId ? mergeCashAccount(c, m) : c
+        );
+      }
     }
   }
 
-  return { profile, investments, budgetLines, goals };
+  return { profile, investments, budgetLines, goals, cashAccounts };
 }

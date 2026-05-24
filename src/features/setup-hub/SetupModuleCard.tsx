@@ -9,6 +9,7 @@ const STATUS_RING: Record<SetupModuleEvaluation["status"], string> = {
   complete: "ring-emerald-200/60",
   partial: "ring-amber-200/50",
   not_started: "ring-slate-200/60",
+  pending: "ring-sky-200/60",
 };
 
 export function SetupModuleCard({

@@ -184,6 +184,8 @@ export async function submitAdvisorProposalAction(
 export type AcceptProposalState = {
   error: string | null;
   conflicts?: ProposalConflict[];
+  /** True only on a fully-applied accept — drives the client approval dialog. */
+  ok?: boolean;
 };
 
 export async function withdrawAdvisorProposalAction(
@@ -312,7 +314,7 @@ export async function acceptAdvisorProposalAction(
   }
 
   revalidateProposalViews(user.id, proposalId);
-  return { error: null };
+  return { error: null, ok: true };
 }
 
 export async function rejectAdvisorProposalAction(

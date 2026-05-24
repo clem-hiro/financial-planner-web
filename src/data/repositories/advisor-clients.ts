@@ -275,6 +275,49 @@ export async function advisorCanReadClient(
 }
 
 /**
+ * Per-category advisor gate (master consent AND the client's per-category
+ * opt-in). Used by compose actions as defense-in-depth before recording a
+ * change for a sensitive category. Fail-closed: any error ⇒ false.
+ */
+export async function advisorCanReadCategory(
+  supabase: SupabaseClient,
+  clientId: string,
+  category: AdvisorVisibilityCategory
+): Promise<boolean> {
+  const { data, error } = await supabase.rpc("advisor_can_read_category", {
+    p_client: clientId,
+    p_category: category,
+  });
+  if (error) return false;
+  return data === true;
+}
+
+/**
+ * Advisor-facing per-category visibility flags (which sensitive categories the
+ * client shares) — flags only, never data. Drives locked-card vs editable UI on
+ * the compose surface. Fail-closed: any error / no master consent ⇒ all private.
+ */
+export async function advisorReadCategoryVisibility(
+  supabase: SupabaseClient,
+  clientId: string
+): Promise<AdvisorCategoryVisibility> {
+  const result = defaultCategoryVisibility();
+  const { data, error } = await supabase.rpc("advisor_read_category_visibility", {
+    p_client: clientId,
+  });
+  if (error || !data) return result;
+  for (const row of data as {
+    visibility_category: string;
+    is_visible: boolean;
+  }[]) {
+    if (isAdvisorVisibilityCategory(row.visibility_category)) {
+      result[row.visibility_category] = row.is_visible === true;
+    }
+  }
+  return result;
+}
+
+/**
  * The CLIENT's own current consent status toward their linked advisor
  * (latest-event-wins). RLS `advisor_client_consents_select_own_client` lets
  * the client read their own rows; the same C1-correct `computeConsentStatuses`

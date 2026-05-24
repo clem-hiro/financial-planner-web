@@ -357,7 +357,16 @@ export type AdvisorProposalChangeRow = {
   id: string;
   proposal_id: string;
   section: string;
-  entity_type: "profile" | "budget_line" | "goal" | "investment";
+  entity_type:
+    | "profile"
+    | "budget_line"
+    | "goal"
+    | "investment"
+    | "cash_account"
+    | "liability"
+    | "property"
+    | "housing_loan"
+    | "vehicle";
   entity_id: string | null;
   field_key: string;
   field_label: string;

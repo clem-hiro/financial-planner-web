@@ -62,6 +62,13 @@ const INVESTMENT_FIELDS: Record<string, ProposalFieldMeta> = {
   _deleted: { label: "Account", section: "investments" },
 };
 
+const CASH_ACCOUNT_FIELDS: Record<string, ProposalFieldMeta> = {
+  name: { label: "Account name", section: "cash_flow" },
+  balance: { label: "Balance", section: "cash_flow", currency: true },
+  purpose: { label: "Purpose", section: "cash_flow" },
+  _deleted: { label: "Cash account", section: "cash_flow" },
+};
+
 export function fieldMeta(
   entityType: ProposalEntityType,
   fieldKey: string
@@ -73,7 +80,9 @@ export function fieldMeta(
         ? BUDGET_LINE_FIELDS
         : entityType === "goal"
           ? GOAL_FIELDS
-          : INVESTMENT_FIELDS;
+          : entityType === "cash_account"
+            ? CASH_ACCOUNT_FIELDS
+            : INVESTMENT_FIELDS;
   return (
     map[fieldKey] ?? {
       label: fieldKey.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
@@ -84,7 +93,9 @@ export function fieldMeta(
             ? "cash_flow"
             : entityType === "goal"
               ? "goals"
-              : "investments",
+              : entityType === "cash_account"
+                ? "cash_flow"
+                : "investments",
     }
   );
 }

@@ -6,6 +6,12 @@ import {
   updateBudgetLine,
 } from "@/data/repositories/budget-lines";
 import {
+  deleteCashAccount,
+  insertCashAccount,
+  listCashAccounts,
+  updateCashAccount,
+} from "@/data/repositories/cash-accounts";
+import {
   deleteFinancialGoal,
   insertFinancialGoal,
   listFinancialGoals,
@@ -21,6 +27,8 @@ import { getProfileById, updateProfile } from "@/data/repositories/profiles";
 import type {
   AdvisorProposalChangeRow,
   BudgetLineRow,
+  CashAccountPurpose,
+  CashAccountRow,
   FinancialGoalRow,
   InvestmentRow,
   ProfileRow,
@@ -107,6 +115,19 @@ function budgetLineWritePayload(row: BudgetLineRow) {
   };
 }
 
+function budgetLineDiffers(a: BudgetLineRow, b: BudgetLineRow): boolean {
+  return (
+    a.category !== b.category ||
+    (toNumOrNull(a.amount) ?? 0) !== (toNumOrNull(b.amount) ?? 0) ||
+    (a.calendar_year ?? null) !== (b.calendar_year ?? null) ||
+    (a.start_year_month ?? null) !== (b.start_year_month ?? null) ||
+    (a.end_year_month ?? null) !== (b.end_year_month ?? null)
+  );
+}
+
+// Minimal patch (changed fields only) — keeps the update write byte-identical
+// to the pre-refactor behavior so the C6 preview==read-after-accept parity
+// holds (a full payload would write null start/end columns the overlay omits).
 function budgetLinePatch(
   before: BudgetLineRow,
   after: BudgetLineRow
@@ -165,6 +186,80 @@ function goalPatch(
   return patch;
 }
 
+function cashAccountWritePayload(row: CashAccountRow) {
+  return {
+    name: row.name,
+    balance: toNumOrNull(row.balance) ?? 0,
+    purpose: row.purpose as CashAccountPurpose,
+  };
+}
+
+function cashAccountDiffers(a: CashAccountRow, b: CashAccountRow): boolean {
+  return (
+    a.name !== b.name ||
+    (toNumOrNull(a.balance) ?? 0) !== (toNumOrNull(b.balance) ?? 0) ||
+    a.purpose !== b.purpose
+  );
+}
+
+/**
+ * Generic create/update/delete diff for entities with NO cross-entity linkage
+ * (budget lines, cash accounts, and the future liability/property/vehicle
+ * types). Investments + goals stay bespoke — their investment-id remap and
+ * goal→investment FK validation are load-bearing and must not be folded in.
+ * `differs` should compare on the NORMALIZED form (toNumOrNull both sides) so
+ * numeric representation noise never forces a spurious write.
+ */
+async function applyEntityDiff<T extends { id: string }, IP, UP>(
+  before: T[],
+  after: T[],
+  ops: {
+    differs: (b: T, a: T) => boolean;
+    /** Full row payload for inserts. */
+    insertPayload: (row: T) => IP;
+    /** Update payload — a minimal patch (budget) or the full row (cash). */
+    updatePayload: (before: T, after: T) => UP;
+    insert: (payload: IP) => Promise<unknown>;
+    update: (id: string, payload: UP) => Promise<unknown>;
+    remove: (id: string) => Promise<unknown>;
+  }
+): Promise<void> {
+  const beforeIds = new Set(before.map((r) => r.id));
+  const afterIds = new Set(after.map((r) => r.id));
+  for (const b of before) {
+    if (!afterIds.has(b.id)) await ops.remove(b.id);
+  }
+  for (const a of after) {
+    if (!beforeIds.has(a.id)) {
+      await ops.insert(ops.insertPayload(a));
+      continue;
+    }
+    const b = before.find((r) => r.id === a.id);
+    if (b && ops.differs(b, a)) await ops.update(a.id, ops.updatePayload(b, a));
+  }
+}
+
+/** entity_types the accept writer can persist. A change carrying anything else
+ * (a CHECK-allowed type whose phase hasn't shipped) is rejected before any
+ * write — fail loud rather than silently dropping it. */
+const ACCEPTED_ENTITY_TYPES = new Set<AdvisorProposalChangeRow["entity_type"]>([
+  "profile",
+  "budget_line",
+  "goal",
+  "investment",
+  "cash_account",
+]);
+
+function assertHandledEntityTypes(changes: AdvisorProposalChangeRow[]): void {
+  for (const c of changes) {
+    if (!ACCEPTED_ENTITY_TYPES.has(c.entity_type)) {
+      throw new Error(
+        `Cannot accept proposal: unsupported entity type "${c.entity_type}".`
+      );
+    }
+  }
+}
+
 export type ProposalConflict = {
   entityType: AdvisorProposalChangeRow["entity_type"];
   entityId: string | null;
@@ -213,7 +308,9 @@ function detectConflicts(
         ? base.budgetLines.find((b) => b.id === entityId)
         : entityType === "goal"
           ? base.goals.find((g) => g.id === entityId)
-          : base.investments.find((i) => i.id === entityId);
+          : entityType === "cash_account"
+            ? base.cashAccounts?.find((c) => c.id === entityId)
+            : base.investments.find((i) => i.id === entityId);
     return { present: !!row, version: row?.updated_at };
   };
 
@@ -285,6 +382,10 @@ function detectNameConflicts(
     "goal",
     effective.goals.map((g) => ({ id: g.id, name: g.title }))
   );
+  scan(
+    "cash_account",
+    (effective.cashAccounts ?? []).map((c) => ({ id: c.id, name: c.name }))
+  );
   return conflicts;
 }
 
@@ -294,8 +395,10 @@ function detectNameConflicts(
  * Covers the rare TOCTOU race where a colliding name lands between
  * `detectNameConflicts` and the write. Returns null for any other error so the
  * caller keeps its generic handler. Labels come from the proposal's own
- * create/rename name fields for the violated entity type (the accept path only
- * writes investments + goals, so the index is one of those two).
+ * create/rename name fields for the violated entity type. The accept path
+ * writes investments, goals, and cash accounts; only those three carry a
+ * `*_user_name_ci_uq` index, so the violated index maps to one of them
+ * (budget lines have no name-uniqueness index).
  */
 export function nameConflictFromWriteError(
   e: unknown,
@@ -310,7 +413,11 @@ export function nameConflictFromWriteError(
   if (!/_user_name_ci_uq/.test(blob)) return null;
 
   const entityType: ProposalConflict["entityType"] =
-    /financial_goals_user_name_ci_uq/.test(blob) ? "goal" : "investment";
+    /financial_goals_user_name_ci_uq/.test(blob)
+      ? "goal"
+      : /financial_cash_accounts_user_name_ci_uq/.test(blob)
+        ? "cash_account"
+        : "investment";
   const nameField = entityType === "goal" ? "title" : "name";
   const labels = [
     ...new Set(
@@ -345,13 +452,22 @@ export async function detectAcceptConflicts(
   clientUserId: string,
   changes: AdvisorProposalChangeRow[]
 ): Promise<{ conflicts: ProposalConflict[]; base: OverlayInputs }> {
-  const [profile, investments, budgetLines, goals] = await Promise.all([
-    getProfileById(supabase, clientUserId),
-    listInvestments(supabase, clientUserId),
-    listBudgetLines(supabase, clientUserId),
-    listFinancialGoals(supabase, clientUserId),
-  ]);
-  const base: OverlayInputs = { profile, investments, budgetLines, goals };
+  assertHandledEntityTypes(changes);
+  const [profile, investments, budgetLines, goals, cashAccounts] =
+    await Promise.all([
+      getProfileById(supabase, clientUserId),
+      listInvestments(supabase, clientUserId),
+      listBudgetLines(supabase, clientUserId),
+      listFinancialGoals(supabase, clientUserId),
+      listCashAccounts(supabase, clientUserId),
+    ]);
+  const base: OverlayInputs = {
+    profile,
+    investments,
+    budgetLines,
+    goals,
+    cashAccounts,
+  };
   const conflicts = [
     ...detectConflicts(changes, base),
     ...detectNameConflicts(changes, base),
@@ -376,22 +492,26 @@ export async function applyAcceptedProposalChanges(
   changes: AdvisorProposalChangeRow[],
   preCheckedBase?: OverlayInputs
 ): Promise<AcceptResult> {
+  assertHandledEntityTypes(changes);
   let base: OverlayInputs;
   if (preCheckedBase) {
     base = preCheckedBase;
   } else {
-    const [profile, investments, budgetLines, goals] = await Promise.all([
-      getProfileById(supabase, clientUserId),
-      listInvestments(supabase, clientUserId),
-      listBudgetLines(supabase, clientUserId),
-      listFinancialGoals(supabase, clientUserId),
-    ]);
-    base = { profile, investments, budgetLines, goals };
+    const [profile, investments, budgetLines, goals, cashAccounts] =
+      await Promise.all([
+        getProfileById(supabase, clientUserId),
+        listInvestments(supabase, clientUserId),
+        listBudgetLines(supabase, clientUserId),
+        listFinancialGoals(supabase, clientUserId),
+        listCashAccounts(supabase, clientUserId),
+      ]);
+    base = { profile, investments, budgetLines, goals, cashAccounts };
     const conflicts = detectConflicts(changes, base);
     if (conflicts.length > 0) return { conflicts };
   }
 
   const { profile, investments, budgetLines, goals } = base;
+  const cashAccounts = base.cashAccounts ?? [];
   const effective = applyProposalChanges(base, changes);
 
   if (profile && effective.profile) {
@@ -433,31 +553,14 @@ export async function applyAcceptedProposalChanges(
     }
   }
 
-  const blBeforeIds = new Set(budgetLines.map((b) => b.id));
-  const blAfterIds = new Set(effective.budgetLines.map((b) => b.id));
-
-  for (const before of budgetLines) {
-    if (!blAfterIds.has(before.id)) {
-      await deleteBudgetLine(supabase, clientUserId, before.id);
-    }
-  }
-  for (const after of effective.budgetLines) {
-    if (!blBeforeIds.has(after.id)) {
-      await insertBudgetLine(
-        supabase,
-        clientUserId,
-        budgetLineWritePayload(after)
-      );
-      continue;
-    }
-    const before = budgetLines.find((b) => b.id === after.id);
-    if (before) {
-      const patch = budgetLinePatch(before, after);
-      if (Object.keys(patch).length > 0) {
-        await updateBudgetLine(supabase, clientUserId, after.id, patch);
-      }
-    }
-  }
+  await applyEntityDiff(budgetLines, effective.budgetLines, {
+    differs: budgetLineDiffers,
+    insertPayload: budgetLineWritePayload,
+    updatePayload: budgetLinePatch,
+    insert: (p) => insertBudgetLine(supabase, clientUserId, p),
+    update: (id, p) => updateBudgetLine(supabase, clientUserId, id, p),
+    remove: (id) => deleteBudgetLine(supabase, clientUserId, id),
+  });
 
   // H1 — a goal may only link to an investment that is canonical-existing or
   // created within THIS proposal. A draft key from another pending proposal
@@ -503,6 +606,16 @@ export async function applyAcceptedProposalChanges(
       }
     }
   }
+
+  // Cash accounts — no cross-entity linkage, same generic diff as budget lines.
+  await applyEntityDiff(cashAccounts, effective.cashAccounts ?? [], {
+    differs: cashAccountDiffers,
+    insertPayload: cashAccountWritePayload,
+    updatePayload: (_before, after) => cashAccountWritePayload(after),
+    insert: (p) => insertCashAccount(supabase, clientUserId, p),
+    update: (id, p) => updateCashAccount(supabase, clientUserId, id, p),
+    remove: (id) => deleteCashAccount(supabase, clientUserId, id),
+  });
 
   return { conflicts: [] };
 }

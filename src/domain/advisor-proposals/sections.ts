@@ -34,7 +34,16 @@ export const PROPOSAL_SECTION_ORDER: ProposalSectionId[] = [
   "dependents",
 ];
 
-export type ProposalEntityType = "profile" | "budget_line" | "goal" | "investment";
+export type ProposalEntityType =
+  | "profile"
+  | "budget_line"
+  | "goal"
+  | "investment"
+  | "cash_account"
+  | "liability"
+  | "property"
+  | "housing_loan"
+  | "vehicle";
 
 export function sectionLabel(section: string): string {
   if (section in PROPOSAL_SECTION_LABELS) {

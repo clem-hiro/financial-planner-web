@@ -16,10 +16,13 @@ export function SetupTabsNav({
   tabs,
   activeTab,
   buildHref,
+  badges,
 }: {
   tabs: readonly SetupTab[];
   activeTab: string;
   buildHref: (tabId: string) => string;
+  /** Per-tab count pills (e.g. pending advisor proposals); rendered when > 0. */
+  badges?: Record<string, number>;
 }) {
   return (
     <nav
@@ -33,13 +36,14 @@ export function SetupTabsNav({
           {tabs.map((tab) => {
             const href = buildHref(tab.id);
             const isActive = activeTab === tab.id;
+            const badge = badges?.[tab.id] ?? 0;
             return (
               <Link
                 key={tab.id}
                 href={href}
                 scroll={false}
                 aria-current={isActive ? "page" : undefined}
-                className={`${appTabPillClass} max-sm:min-h-9 max-sm:px-3.5 max-sm:py-1.5 max-sm:text-[13px] ${
+                className={`${appTabPillClass} inline-flex items-center gap-1.5 max-sm:min-h-9 max-sm:px-3.5 max-sm:py-1.5 max-sm:text-[13px] ${
                   isActive
                     ? appTabPillActiveClass
                     : `${appTabPillInactiveClass} max-sm:bg-slate-100/80 max-sm:text-slate-500 max-sm:hover:bg-slate-100 max-sm:hover:text-slate-700`
@@ -47,6 +51,14 @@ export function SetupTabsNav({
                 style={isActive ? appActiveGradientStyle : undefined}
               >
                 {tab.label}
+                {badge > 0 ? (
+                  <span
+                    className="inline-flex min-w-5 items-center justify-center rounded-full bg-rose-600 px-1.5 text-[11px] font-semibold leading-5 text-white"
+                    aria-label={`${badge} pending`}
+                  >
+                    {badge}
+                  </span>
+                ) : null}
               </Link>
             );
           })}

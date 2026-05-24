@@ -799,6 +799,86 @@
       "readme_section": "Data model",
       "status": "pending",
       "summary": "schema change in supabase/tests/unique_entity_names_scenarios.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-23T23:22:15Z",
+      "trigger_file": "/Users/hiroshifujiwara/.claude/plans/right-now-the-client-soft-glacier.md",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in /Users/hiroshifujiwara/.claude/plans/right-now-the-client-soft-glacier.md \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-24T00:21:14Z",
+      "trigger_file": "supabase/migrations/20260624000000_advisor_consent_category_visibility.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260624000000_advisor_consent_category_visibility.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-24T00:39:16Z",
+      "trigger_file": "supabase/migrations/20260624000000_advisor_consent_category_visibility.rollback.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260624000000_advisor_consent_category_visibility.rollback.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-24T05:02:00Z",
+      "trigger_file": "supabase/migrations/20260625000000_proposal_entity_types_and_visibility_read.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260625000000_proposal_entity_types_and_visibility_read.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-24T05:06:40Z",
+      "trigger_file": "src/features/advisor/AdvisorClientCashSection.tsx",
+      "change_type": "integration",
+      "target_doc": "readme",
+      "doc_section": "External dependencies",
+      "readme_section": "External dependencies",
+      "status": "pending",
+      "summary": "integration change in src/features/advisor/AdvisorClientCashSection.tsx \u2014 External dependencies (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-24T05:09:34Z",
+      "trigger_file": "supabase/migrations/20260625000000_proposal_entity_types_and_visibility_read.rollback.sql",
+      "change_type": "schema",
+      "target_doc": "readme",
+      "doc_section": "Data model",
+      "readme_section": "Data model",
+      "status": "pending",
+      "summary": "schema change in supabase/migrations/20260625000000_proposal_entity_types_and_visibility_read.rollback.sql \u2014 Data model (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-24T05:21:46Z",
+      "trigger_file": ".claude/agent-memory/refactoring-expert/project_advisor_proposal_per_type_pattern.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/refactoring-expert/project_advisor_proposal_per_type_pattern.md \u2014 Architecture (readme) may be stale"
+    },
+    {
+      "timestamp": "2026-05-24T05:21:50Z",
+      "trigger_file": ".claude/agent-memory/refactoring-expert/MEMORY.md",
+      "change_type": "orchestration",
+      "target_doc": "readme",
+      "doc_section": "Architecture",
+      "readme_section": "Architecture",
+      "status": "pending",
+      "summary": "orchestration change in .claude/agent-memory/refactoring-expert/MEMORY.md \u2014 Architecture (readme) may be stale"
     }
   ]
 }

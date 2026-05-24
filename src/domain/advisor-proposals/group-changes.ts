@@ -37,9 +37,11 @@ function headlineForEntity(changes: AdvisorProposalChangeRow[]): string {
   }
   const isNew = changes.every((c) => !c.old_value);
   if (isNew && changes[0]?.entity_type === "investment") return "New investment account";
+  if (isNew && changes[0]?.entity_type === "cash_account") return "New cash account";
   if (changes[0]?.entity_type === "profile") return "Profile fields";
   if (changes[0]?.entity_type === "budget_line") return "Budget line";
   if (changes[0]?.entity_type === "goal") return "Goal contribution";
+  if (changes[0]?.entity_type === "cash_account") return "Cash account";
   return "Update";
 }
 

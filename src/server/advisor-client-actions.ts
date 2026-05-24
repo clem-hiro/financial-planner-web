@@ -1,13 +1,17 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { getClientProfileForAdvisor } from "@/data/repositories/advisor-clients";
+import {
+  advisorCanReadCategory,
+  getClientProfileForAdvisor,
+} from "@/data/repositories/advisor-clients";
 import { assertConsent } from "@/server/advisor-consent";
 // Client read-backs MUST route through the consent-gated SECURITY DEFINER
 // advisor_read_* RPCs: consent-Phase-2 dropped the advisor's direct SELECT
 // RLS on financial_*, so a direct .from() returns "not found" for a
 // legitimately-linked advisor and silently breaks authoring (security-Medium).
 import { advisorReadBudgetLines } from "@/data/repositories/budget-lines";
+import { advisorReadCashAccounts } from "@/data/repositories/cash-accounts";
 import { advisorReadGoals } from "@/data/repositories/goals";
 import { advisorReadInvestments } from "@/data/repositories/investments";
 import { advisorReadProfile, getProfileById } from "@/data/repositories/profiles";
@@ -17,7 +21,7 @@ import {
   getDraftProposalForClient,
   listChangesForProposal,
 } from "@/data/repositories/advisor-proposals";
-import { entityNameUniquenessError } from "@/lib/validation";
+import { cashAccountWriteSchema, entityNameUniquenessError } from "@/lib/validation";
 import { isAdvisor } from "@/lib/profile-role";
 import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -587,6 +591,202 @@ export async function deleteAdvisorClientInvestmentAction(
     await recordAdvisorProposalChanges(supabase, advisorUserId, clientId, [
       {
         entityType: "investment",
+        entityId: idParsed.data,
+        fieldKey: "_deleted",
+        oldValue: null,
+        newValue: "true",
+        changeOp: "delete" as const,
+        baseVersion: existing.updated_at ?? null,
+        contextLabel: existing.name,
+      },
+    ]);
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null, proposalRecorded: true };
+}
+
+// Sensitive categories are gated behind the client's per-category visibility
+// opt-in (Phase 1) in ADDITION to master consent. The advisor UI hides the
+// form when private; this is the server-side backstop.
+async function assertCategoryVisible(
+  supabase: SupabaseClient,
+  clientId: string,
+  category: "cash_accounts"
+): Promise<string | null> {
+  const ok = await advisorCanReadCategory(supabase, clientId, category);
+  return ok ? null : "This category is private — the client hasn't shared it.";
+}
+
+export async function createAdvisorClientCashAccountAction(
+  _prev: { error: string | null; proposalRecorded?: boolean },
+  formData: FormData
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase, advisorUserId } = ctx;
+
+  const gate = await assertCategoryVisible(supabase, clientId, "cash_accounts");
+  if (gate) return { error: gate };
+
+  const parsed = cashAccountWriteSchema.safeParse({
+    name: String(formData.get("name") ?? "").trim(),
+    balance: Number(formData.get("balance")),
+    purpose: String(formData.get("purpose") ?? "").trim(),
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid cash account" };
+  }
+  const { name, balance, purpose } = parsed.data;
+
+  const existingCashNames = (
+    await advisorReadCashAccounts(supabase, clientId)
+  ).map((c) => c.name);
+  const pendingCashNames = await pendingCreateNames(
+    supabase,
+    advisorUserId,
+    clientId,
+    "cash_account",
+    "name"
+  );
+  const cashNameError = entityNameUniquenessError(
+    name,
+    [...existingCashNames, ...pendingCashNames],
+    "a cash account"
+  );
+  if (cashNameError) return { error: cashNameError };
+
+  const draftEntityKey = randomUUID();
+  const fields: { fieldKey: string; newValue: string | number }[] = [
+    { fieldKey: "name", newValue: name },
+    { fieldKey: "balance", newValue: balance },
+    { fieldKey: "purpose", newValue: purpose },
+  ];
+
+  try {
+    await recordAdvisorProposalChanges(
+      supabase,
+      advisorUserId,
+      clientId,
+      fields.map((f) => ({
+        entityType: "cash_account" as const,
+        entityId: null,
+        fieldKey: f.fieldKey,
+        oldValue: null,
+        newValue: f.newValue,
+        changeOp: "create" as const,
+        draftEntityKey,
+        contextLabel: name,
+      }))
+    );
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null, proposalRecorded: true };
+}
+
+export async function updateAdvisorClientCashAccountAction(
+  _prev: { error: string | null; proposalRecorded?: boolean },
+  formData: FormData
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase, advisorUserId } = ctx;
+
+  const gate = await assertCategoryVisible(supabase, clientId, "cash_accounts");
+  if (gate) return { error: gate };
+
+  const idParsed = z
+    .string()
+    .uuid()
+    .safeParse(String(formData.get("id") ?? "").trim());
+  if (!idParsed.success) return { error: "Invalid cash account" };
+
+  const existing =
+    (await advisorReadCashAccounts(supabase, clientId)).find(
+      (c) => c.id === idParsed.data
+    ) ?? null;
+  if (!existing) return { error: "Cash account not found" };
+
+  const parsed = cashAccountWriteSchema.safeParse({
+    name: String(formData.get("name") ?? "").trim(),
+    balance: Number(formData.get("balance")),
+    purpose: String(formData.get("purpose") ?? "").trim(),
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid cash account" };
+  }
+  const { name, balance, purpose } = parsed.data;
+
+  const updates = [
+    { fieldKey: "name", oldValue: existing.name, newValue: name },
+    { fieldKey: "balance", oldValue: existing.balance, newValue: balance },
+    { fieldKey: "purpose", oldValue: existing.purpose, newValue: purpose },
+  ];
+
+  try {
+    await recordAdvisorProposalChanges(
+      supabase,
+      advisorUserId,
+      clientId,
+      updates.map((u) => ({
+        entityType: "cash_account" as const,
+        entityId: idParsed.data,
+        fieldKey: u.fieldKey,
+        oldValue: u.oldValue,
+        newValue: u.newValue,
+        baseVersion: existing.updated_at ?? null,
+        contextLabel: name,
+      }))
+    );
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null, proposalRecorded: true };
+}
+
+export async function deleteAdvisorClientCashAccountAction(
+  _prev: { error: string | null; proposalRecorded?: boolean },
+  formData: FormData
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase, advisorUserId } = ctx;
+
+  const gate = await assertCategoryVisible(supabase, clientId, "cash_accounts");
+  if (gate) return { error: gate };
+
+  const idParsed = z
+    .string()
+    .uuid()
+    .safeParse(String(formData.get("id") ?? "").trim());
+  if (!idParsed.success) return { error: "Invalid cash account" };
+
+  const existing =
+    (await advisorReadCashAccounts(supabase, clientId)).find(
+      (c) => c.id === idParsed.data
+    ) ?? null;
+  if (!existing) return { error: "Cash account not found" };
+
+  try {
+    await recordAdvisorProposalChanges(supabase, advisorUserId, clientId, [
+      {
+        entityType: "cash_account",
         entityId: idParsed.data,
         fieldKey: "_deleted",
         oldValue: null,

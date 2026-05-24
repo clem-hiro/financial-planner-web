@@ -362,6 +362,91 @@ describe("change_op writer: create / delete across entity types", () => {
     expect(created).toBeTruthy();
     expect(String(created?.amount)).toBe("120");
   });
+
+  // Cash accept-writer scenario matrix:
+  //   input                          | expected
+  //   cash create (draft group)      | one financial_cash_accounts row written
+  //   cash _deleted                  | the target row removed
+  //   unsupported type (liability)   | throws pre-write, store untouched
+  it("cash create inserts a financial_cash_accounts row from its draft group", async () => {
+    const fake = makeFakeSupabase(seed());
+    const res = await applyAcceptedProposalChanges(fake, "c1", [
+      ch({
+        entity_type: "cash_account",
+        field_key: "name",
+        new_value: "Emergency fund",
+        change_op: "create",
+        draft_entity_key: "ncash",
+      }),
+      ch({
+        entity_type: "cash_account",
+        field_key: "balance",
+        new_value: "5000",
+        change_op: "create",
+        draft_entity_key: "ncash",
+      }),
+      ch({
+        entity_type: "cash_account",
+        field_key: "purpose",
+        new_value: "emergency_fund",
+        change_op: "create",
+        draft_entity_key: "ncash",
+      }),
+    ]);
+    expect(res.conflicts).toEqual([]);
+    expect(fake.store.financial_cash_accounts).toHaveLength(1);
+    const created = fake.store.financial_cash_accounts[0];
+    expect(created.name).toBe("Emergency fund");
+    expect(Number(created.balance)).toBe(5000);
+    expect(created.purpose).toBe("emergency_fund");
+    expect(created.user_id).toBe("c1");
+  });
+
+  it("cash _deleted removes the target cash account row", async () => {
+    const fake = makeFakeSupabase({
+      ...seed(),
+      financial_cash_accounts: [
+        {
+          id: "cash1",
+          user_id: "c1",
+          name: "Old savings",
+          balance: "1000",
+          purpose: "other",
+          created_at: V,
+          updated_at: V,
+        },
+      ],
+    });
+    const res = await applyAcceptedProposalChanges(fake, "c1", [
+      ch({
+        entity_type: "cash_account",
+        entity_id: "cash1",
+        field_key: "_deleted",
+        new_value: "true",
+        change_op: "delete",
+        base_version: V,
+      }),
+    ]);
+    expect(res.conflicts).toEqual([]);
+    expect(fake.store.financial_cash_accounts).toHaveLength(0);
+  });
+
+  it("unsupported entity_type (liability) throws before any write", async () => {
+    const fake = makeFakeSupabase(seed());
+    await expect(
+      applyAcceptedProposalChanges(fake, "c1", [
+        ch({
+          entity_type: "liability",
+          field_key: "name",
+          new_value: "Car loan",
+          change_op: "create",
+          draft_entity_key: "nl",
+        }),
+      ])
+    ).rejects.toThrow(/unsupported entity type/i);
+    // Pre-write guard: nothing persisted for the unbuilt type.
+    expect(fake.store.financial_liabilities ?? []).toHaveLength(0);
+  });
 });
 
 describe("apply-overlay: draft_entity_key groups distinct new entities", () => {

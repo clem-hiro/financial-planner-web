@@ -9,10 +9,12 @@ import {
 } from "@/data/repositories/advisor-proposals";
 import {
   advisorCanReadClient,
+  advisorReadCategoryVisibility,
   getClientProfileForAdvisor,
 } from "@/data/repositories/advisor-clients";
 import type { AdvisorClientListRow } from "@/data/repositories/advisor-clients";
 import { advisorReadBudgetLines } from "@/data/repositories/budget-lines";
+import { advisorReadCashAccounts } from "@/data/repositories/cash-accounts";
 import { advisorReadGoals } from "@/data/repositories/goals";
 import { advisorReadInvestments } from "@/data/repositories/investments";
 import { getProfileById, advisorReadProfile } from "@/data/repositories/profiles";
@@ -229,6 +231,7 @@ export default async function AdvisorClientDetailPage({
     investments,
     draftProposal,
     consentGranted,
+    categoryVisibility,
   ] = await Promise.all([
     advisorReadProfile(supabase, clientId),
     getDashboardPayload(supabase, clientId, month, { viewer: "advisor" }),
@@ -237,6 +240,11 @@ export default async function AdvisorClientDetailPage({
     advisorReadInvestments(supabase, clientId),
     getDraftProposalForClient(supabase, user.id, clientId),
     advisorCanReadClient(supabase, clientId),
+    // Compose-only: visibility flags drive the locked-card vs editable section.
+    // Dependency-free, so it joins this fan-out rather than a serial read.
+    view === "compose"
+      ? advisorReadCategoryVisibility(supabase, clientId)
+      : Promise.resolve(null),
   ]);
 
   const pendingProposal = await getPendingProposalForClient(
@@ -281,6 +289,13 @@ export default async function AdvisorClientDetailPage({
     : payload;
 
   if (view === "compose") {
+    // Visibility was fetched in the fan-out above. Cash DATA is fetched ONLY
+    // when the category is shared (the RPC is also fail-closed — belt-and-
+    // suspenders against any leak).
+    const cashVisible = categoryVisibility?.cash_accounts ?? false;
+    const cashAccounts = cashVisible
+      ? await advisorReadCashAccounts(supabase, clientId)
+      : [];
     return (
       <AdvisorClientDetailShell
         clientId={clientId}
@@ -294,6 +309,8 @@ export default async function AdvisorClientDetailPage({
             goals={goals}
             budgetLines={budgetLines}
             investments={investments}
+            cashAccounts={cashAccounts}
+            cashVisible={cashVisible}
             month={month}
             draftProposalId={draftId}
             draftChanges={draftChanges}

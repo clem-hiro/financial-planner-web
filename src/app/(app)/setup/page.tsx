@@ -11,7 +11,10 @@ import {
   getMyAdvisorCategoryVisibility,
   getMyConsentStatusForAdvisor,
 } from "@/data/repositories/advisor-clients";
-import { listProposalsForClient } from "@/data/repositories/advisor-proposals";
+import {
+  countPendingProposalsForClient,
+  listProposalsForClient,
+} from "@/data/repositories/advisor-proposals";
 import { listBudgetLines } from "@/data/repositories/budget-lines";
 import { getIncomeTaxConfig } from "@/data/repositories/income-tax-configs";
 import { countReplaceableMonthlyBudgetLines } from "@/domain/finance/budget-guided-setup";
@@ -129,6 +132,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
     budgetLinesForLens,
     advisorProposals,
     advisorVisibility,
+    pendingProposalCount,
   ] = await Promise.all([
     loadSetupTabBundle(supabase, user.id, new Set([activeTab])),
     activeTab === "income_tax"
@@ -148,6 +152,8 @@ export default async function SetupPage({ searchParams }: PageProps) {
           status === "active" ? vis : null
         )
       : Promise.resolve<AdvisorCategoryVisibility | null>(null),
+    // Pending-proposal badge — fetched on every load (cheap head count).
+    countPendingProposalsForClient(supabase, user.id),
   ]);
   const replaceableMonthlyLineCount =
     activeTab === "profile"
@@ -239,6 +245,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           tabs={setupTabs}
           activeTab={activeTab}
           buildHref={(tabId) => setupTabPath(tabId, sp)}
+          badges={{ "advisor-proposals": pendingProposalCount }}
         />
       </div>
 
@@ -498,8 +505,16 @@ export default async function SetupPage({ searchParams }: PageProps) {
           href="/setup?tab=advisor-proposals"
           className="group rounded-xl border border-slate-200 bg-white p-3 transition hover:border-slate-300 hover:bg-slate-50/70 sm:p-4"
         >
-          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs">
+          <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs">
             Advisor proposals
+            {pendingProposalCount > 0 ? (
+              <span
+                className="inline-flex min-w-5 items-center justify-center rounded-full bg-rose-600 px-1.5 text-[11px] font-semibold leading-5 text-white"
+                aria-label={`${pendingProposalCount} pending`}
+              >
+                {pendingProposalCount}
+              </span>
+            ) : null}
           </p>
           <p className="mt-0.5 text-sm font-medium text-slate-700 group-hover:text-slate-900 sm:mt-1">
             Review plan suggestions →
