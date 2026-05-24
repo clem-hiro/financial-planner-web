@@ -1,4 +1,10 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import {
+  type AdvisorCategoryVisibility,
+  type AdvisorVisibilityCategory,
+  defaultCategoryVisibility,
+  isAdvisorVisibilityCategory,
+} from "@/lib/advisor-visibility";
 
 /** Safe, non-financial fields for advisor workspace lists (expand deliberately later). */
 export type AdvisorClientListRow = {
@@ -290,4 +296,62 @@ export async function getMyConsentStatusForAdvisor(
   return (
     computeConsentStatuses(data as ConsentEventRow[]).get(clientId) ?? "none"
   );
+}
+
+/**
+ * The CLIENT's own per-category advisor visibility toward their linked advisor.
+ * RLS `advisor_consent_category_visibility_select_own` lets the client read
+ * their own rows. Fail-closed: any error/absence ⇒ all categories private,
+ * matching the DB-side default-deny (coalesce(false)) — never a false "visible".
+ */
+export async function getMyAdvisorCategoryVisibility(
+  supabase: SupabaseClient,
+  clientId: string,
+  advisorUserId: string
+): Promise<AdvisorCategoryVisibility> {
+  const result = defaultCategoryVisibility();
+  const { data, error } = await supabase
+    .from("advisor_consent_category_visibility")
+    .select("visibility_category,is_visible")
+    .eq("client_user_id", clientId)
+    .eq("advisor_user_id", advisorUserId);
+  if (error || !data) return result;
+  for (const row of data as {
+    visibility_category: string;
+    is_visible: boolean;
+  }[]) {
+    if (isAdvisorVisibilityCategory(row.visibility_category)) {
+      result[row.visibility_category] = row.is_visible === true;
+    }
+  }
+  return result;
+}
+
+/**
+ * Upsert one (client, advisor, category) visibility row. Caller MUST resolve
+ * clientId from the session and advisorUserId from the client's own linkage —
+ * never from form input (the RLS with-check on `client_user_id` is the backstop).
+ */
+export async function upsertAdvisorCategoryVisibility(
+  supabase: SupabaseClient,
+  params: {
+    clientId: string;
+    advisorUserId: string;
+    category: AdvisorVisibilityCategory;
+    isVisible: boolean;
+  }
+): Promise<void> {
+  const { error } = await supabase
+    .from("advisor_consent_category_visibility")
+    .upsert(
+      {
+        client_user_id: params.clientId,
+        advisor_user_id: params.advisorUserId,
+        visibility_category: params.category,
+        is_visible: params.isVisible,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "client_user_id,advisor_user_id,visibility_category" }
+    );
+  if (error) throw error;
 }
