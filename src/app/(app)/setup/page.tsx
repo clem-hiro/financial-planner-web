@@ -304,6 +304,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
                     currencyCode={currency}
                     planningContext={investmentPlanningContext}
                     showReviewPrompt={showInvestmentReviewPrompt}
+                    showAssumptionBanner={false}
                   />
                 </div>
               ) : null}

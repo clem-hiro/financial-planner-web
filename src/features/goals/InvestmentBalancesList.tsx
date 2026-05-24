@@ -548,7 +548,7 @@ function InvestmentEditForm({
           disabled={pending || disabled}
           className={`${fpPrimaryButtonClass} disabled:cursor-not-allowed disabled:opacity-60`}
         >
-          {pending ? "Saving…" : advisorClientId ? "Suggest changes" : "Save changes"}
+          {pending ? "Saving…" : "Save"}
         </button>
       </div>
     </form>
@@ -692,6 +692,7 @@ export function InvestmentBalancesList({
   advisorSuggestionDisabled = false,
   accountsHeading = "Your accounts",
   showReviewPrompt = false,
+  showAssumptionBanner = true,
 }: {
   items: InvestmentBalanceRow[];
   currencyCode: string;
@@ -703,6 +704,8 @@ export function InvestmentBalancesList({
   accountsHeading?: string;
   /** Show annual review prompt when balances/returns may be outdated. */
   showReviewPrompt?: boolean;
+  /** Suppress when a sibling pane already renders the banner (avoid stacked duplicates). */
+  showAssumptionBanner?: boolean;
 }) {
   const total = items.reduce((acc, i) => acc + i.current_value, 0);
   const staleCount = items.filter((i) => investmentRowIsStale(i)).length;
@@ -713,7 +716,7 @@ export function InvestmentBalancesList({
 
   return (
     <section className="space-y-3">
-      <InvestmentAssumptionBanner />
+      {showAssumptionBanner ? <InvestmentAssumptionBanner /> : null}
       {showReviewPrompt && staleCount > 0 && !advisorClientId ? (
         <InvestmentReviewPrompt
           staleCount={staleCount}

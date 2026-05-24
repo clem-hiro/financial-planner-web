@@ -14,6 +14,7 @@ import { AdvisorGoalContributionForm } from "@/features/advisor/forms/AdvisorGoa
 import { AdvisorNewBudgetLineForm } from "@/features/advisor/forms/AdvisorNewBudgetLineForm";
 import { AdvisorNewGoalForm } from "@/features/advisor/forms/AdvisorNewGoalForm";
 import { AdvisorProfilePatchForm } from "@/features/advisor/forms/AdvisorProfilePatchForm";
+import { InvestmentAssumptionBanner } from "@/features/goals/InvestmentAssumptionBanner";
 import {
   InvestmentBalancesList,
   type InvestmentBalanceRow,
@@ -238,13 +239,8 @@ export function AdvisorClientCompose({
             title="Investments & savings"
             description="Add, edit, or remove investment accounts — saved as suggestions until the client accepts."
           >
+            <InvestmentAssumptionBanner className="mb-4" />
             <div className="overflow-hidden rounded-xl border border-slate-100 bg-white divide-y divide-slate-100">
-              <div className="p-4 sm:p-5">
-                <InvestmentForm
-                  advisorClientId={clientId}
-                  advisorSuggestionDisabled={hasPendingProposal}
-                />
-              </div>
               {investmentBalanceRows.length > 0 ? (
                 <div className="p-4 sm:p-5">
                   <InvestmentBalancesList
@@ -254,9 +250,17 @@ export function AdvisorClientCompose({
                     advisorClientId={clientId}
                     advisorSuggestionDisabled={hasPendingProposal}
                     accountsHeading="Client accounts"
+                    showAssumptionBanner={false}
                   />
                 </div>
               ) : null}
+              <div className="p-4 sm:p-5">
+                <InvestmentForm
+                  advisorClientId={clientId}
+                  advisorSuggestionDisabled={hasPendingProposal}
+                  showAssumptionBanner={false}
+                />
+              </div>
             </div>
           </AdvisorSection>
         </div>
