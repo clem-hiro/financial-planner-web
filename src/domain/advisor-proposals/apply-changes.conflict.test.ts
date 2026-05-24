@@ -367,7 +367,7 @@ describe("change_op writer: create / delete across entity types", () => {
   //   input                          | expected
   //   cash create (draft group)      | one financial_cash_accounts row written
   //   cash _deleted                  | the target row removed
-  //   unsupported type (liability)   | throws pre-write, store untouched
+  //   unsupported type (vehicle)     | throws pre-write, store untouched
   it("cash create inserts a financial_cash_accounts row from its draft group", async () => {
     const fake = makeFakeSupabase(seed());
     const res = await applyAcceptedProposalChanges(fake, "c1", [
@@ -431,21 +431,113 @@ describe("change_op writer: create / delete across entity types", () => {
     expect(fake.store.financial_cash_accounts).toHaveLength(0);
   });
 
-  it("unsupported entity_type (liability) throws before any write", async () => {
+  it("liability create inserts a financial_liabilities row from its draft group", async () => {
+    const fake = makeFakeSupabase(seed());
+    const res = await applyAcceptedProposalChanges(fake, "c1", [
+      ch({
+        entity_type: "liability",
+        field_key: "name",
+        new_value: "Car loan",
+        change_op: "create",
+        draft_entity_key: "nl",
+      }),
+      ch({
+        entity_type: "liability",
+        field_key: "balance",
+        new_value: "20000",
+        change_op: "create",
+        draft_entity_key: "nl",
+      }),
+      ch({
+        entity_type: "liability",
+        field_key: "category",
+        new_value: "vehicle",
+        change_op: "create",
+        draft_entity_key: "nl",
+      }),
+    ]);
+    expect(res.conflicts).toEqual([]);
+    expect(fake.store.financial_liabilities).toHaveLength(1);
+    const created = fake.store.financial_liabilities[0];
+    expect(created.name).toBe("Car loan");
+    expect(Number(created.balance)).toBe(20000);
+    expect(created.category).toBe("vehicle");
+    expect(created.user_id).toBe("c1");
+  });
+
+  it("liability accept ignores a mass-assignment attempt (cannot set user_id)", async () => {
+    const fake = makeFakeSupabase(seed());
+    const res = await applyAcceptedProposalChanges(fake, "c1", [
+      ch({
+        entity_type: "liability",
+        field_key: "name",
+        new_value: "Sneaky loan",
+        change_op: "create",
+        draft_entity_key: "nl",
+      }),
+      ch({
+        entity_type: "liability",
+        field_key: "balance",
+        new_value: "5000",
+        change_op: "create",
+        draft_entity_key: "nl",
+      }),
+      // Injected non-allowlisted field — must NOT reach the row.
+      ch({
+        entity_type: "liability",
+        field_key: "user_id",
+        new_value: "attacker-uid",
+        change_op: "create",
+        draft_entity_key: "nl",
+      }),
+    ]);
+    expect(res.conflicts).toEqual([]);
+    expect(fake.store.financial_liabilities).toHaveLength(1);
+    // user_id is set server-side from the accepting client, never the payload.
+    expect(fake.store.financial_liabilities[0].user_id).toBe("c1");
+  });
+
+  it("liability _deleted removes the target liability row", async () => {
+    const fake = makeFakeSupabase({
+      ...seed(),
+      financial_liabilities: [
+        {
+          id: "liab1",
+          user_id: "c1",
+          name: "Old loan",
+          balance: "1000",
+          created_at: V,
+        },
+      ],
+    });
+    const res = await applyAcceptedProposalChanges(fake, "c1", [
+      ch({
+        entity_type: "liability",
+        entity_id: "liab1",
+        field_key: "_deleted",
+        new_value: "true",
+        change_op: "delete",
+      }),
+    ]);
+    expect(res.conflicts).toEqual([]);
+    expect(fake.store.financial_liabilities).toHaveLength(0);
+  });
+
+  it("unsupported entity_type (vehicle) throws before any write", async () => {
     const fake = makeFakeSupabase(seed());
     await expect(
       applyAcceptedProposalChanges(fake, "c1", [
         ch({
-          entity_type: "liability",
-          field_key: "name",
-          new_value: "Car loan",
+          entity_type: "vehicle",
+          field_key: "label",
+          new_value: "Car",
           change_op: "create",
-          draft_entity_key: "nl",
+          draft_entity_key: "nv",
         }),
       ])
     ).rejects.toThrow(/unsupported entity type/i);
     // Pre-write guard: nothing persisted for the unbuilt type.
-    expect(fake.store.financial_liabilities ?? []).toHaveLength(0);
+    expect(fake.store.financial_vehicles ?? []).toHaveLength(0);
   });
 });
 

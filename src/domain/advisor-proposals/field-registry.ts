@@ -69,6 +69,20 @@ const CASH_ACCOUNT_FIELDS: Record<string, ProposalFieldMeta> = {
   _deleted: { label: "Cash account", section: "cash_flow" },
 };
 
+const LIABILITY_FIELDS: Record<string, ProposalFieldMeta> = {
+  name: { label: "Liability name", section: "cash_flow" },
+  balance: { label: "Outstanding balance", section: "cash_flow", currency: true },
+  category: { label: "Category", section: "cash_flow" },
+  loan_type: { label: "Loan type", section: "cash_flow" },
+  interest_rate_annual: { label: "Interest rate", section: "cash_flow", percent: true },
+  remaining_tenure_months: { label: "Remaining tenure (months)", section: "cash_flow" },
+  monthly_repayment: { label: "Monthly repayment", section: "cash_flow", currency: true },
+  repayment_override: { label: "Manual repayment", section: "cash_flow" },
+  start_date: { label: "Start date", section: "cash_flow" },
+  notes: { label: "Notes", section: "cash_flow" },
+  _deleted: { label: "Liability", section: "cash_flow" },
+};
+
 export function fieldMeta(
   entityType: ProposalEntityType,
   fieldKey: string
@@ -82,7 +96,9 @@ export function fieldMeta(
           ? GOAL_FIELDS
           : entityType === "cash_account"
             ? CASH_ACCOUNT_FIELDS
-            : INVESTMENT_FIELDS;
+            : entityType === "liability"
+              ? LIABILITY_FIELDS
+              : INVESTMENT_FIELDS;
   return (
     map[fieldKey] ?? {
       label: fieldKey.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
@@ -93,7 +109,7 @@ export function fieldMeta(
             ? "cash_flow"
             : entityType === "goal"
               ? "goals"
-              : entityType === "cash_account"
+              : entityType === "cash_account" || entityType === "liability"
                 ? "cash_flow"
                 : "investments",
     }

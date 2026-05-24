@@ -14,6 +14,7 @@ import { advisorReadBudgetLines } from "@/data/repositories/budget-lines";
 import { advisorReadCashAccounts } from "@/data/repositories/cash-accounts";
 import { advisorReadGoals } from "@/data/repositories/goals";
 import { advisorReadInvestments } from "@/data/repositories/investments";
+import { advisorReadLiabilities } from "@/data/repositories/liabilities";
 import { advisorReadProfile, getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { recordAdvisorProposalChanges } from "@/server/advisor-proposal-recording";
@@ -22,6 +23,8 @@ import {
   listChangesForProposal,
 } from "@/data/repositories/advisor-proposals";
 import { cashAccountWriteSchema, entityNameUniquenessError } from "@/lib/validation";
+import { parseLiabilityFormData } from "@/server/liability-form";
+import type { AdvisorVisibilityCategory } from "@/lib/advisor-visibility";
 import { isAdvisor } from "@/lib/profile-role";
 import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -614,7 +617,7 @@ export async function deleteAdvisorClientInvestmentAction(
 async function assertCategoryVisible(
   supabase: SupabaseClient,
   clientId: string,
-  category: "cash_accounts"
+  category: AdvisorVisibilityCategory
 ): Promise<string | null> {
   const ok = await advisorCanReadCategory(supabase, clientId, category);
   return ok ? null : "This category is private — the client hasn't shared it.";
@@ -793,6 +796,211 @@ export async function deleteAdvisorClientCashAccountAction(
         newValue: "true",
         changeOp: "delete" as const,
         baseVersion: existing.updated_at ?? null,
+        contextLabel: existing.name,
+      },
+    ]);
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null, proposalRecorded: true };
+}
+
+export async function createAdvisorClientLiabilityAction(
+  _prev: { error: string | null; proposalRecorded?: boolean },
+  formData: FormData
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase, advisorUserId } = ctx;
+
+  const gate = await assertCategoryVisible(supabase, clientId, "liabilities");
+  if (gate) return { error: gate };
+
+  const parsed = parseLiabilityFormData(formData);
+  if (!parsed.ok) return { error: parsed.error };
+  const d = parsed.data;
+
+  const existingNames = (await advisorReadLiabilities(supabase, clientId)).map(
+    (l) => l.name
+  );
+  const pendingNames = await pendingCreateNames(
+    supabase,
+    advisorUserId,
+    clientId,
+    "liability",
+    "name"
+  );
+  const nameError = entityNameUniquenessError(
+    d.name,
+    [...existingNames, ...pendingNames],
+    "a liability"
+  );
+  if (nameError) return { error: nameError };
+
+  const draftEntityKey = randomUUID();
+  const fields: { fieldKey: string; newValue: string | number }[] = [
+    { fieldKey: "name", newValue: d.name },
+    { fieldKey: "balance", newValue: d.balance },
+  ];
+  if (d.category != null) fields.push({ fieldKey: "category", newValue: d.category });
+  if (d.loan_type != null) fields.push({ fieldKey: "loan_type", newValue: d.loan_type });
+  if (d.interest_rate_annual != null)
+    fields.push({ fieldKey: "interest_rate_annual", newValue: d.interest_rate_annual });
+  if (d.remaining_tenure_months != null)
+    fields.push({ fieldKey: "remaining_tenure_months", newValue: d.remaining_tenure_months });
+  if (d.monthly_repayment != null)
+    fields.push({ fieldKey: "monthly_repayment", newValue: d.monthly_repayment });
+  if (d.repayment_override) fields.push({ fieldKey: "repayment_override", newValue: "true" });
+  if (d.start_date != null) fields.push({ fieldKey: "start_date", newValue: d.start_date });
+  if (d.notes != null) fields.push({ fieldKey: "notes", newValue: d.notes });
+
+  try {
+    await recordAdvisorProposalChanges(
+      supabase,
+      advisorUserId,
+      clientId,
+      fields.map((f) => ({
+        entityType: "liability" as const,
+        entityId: null,
+        fieldKey: f.fieldKey,
+        oldValue: null,
+        newValue: f.newValue,
+        changeOp: "create" as const,
+        draftEntityKey,
+        contextLabel: d.name,
+      }))
+    );
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null, proposalRecorded: true };
+}
+
+export async function updateAdvisorClientLiabilityAction(
+  _prev: { error: string | null; proposalRecorded?: boolean },
+  formData: FormData
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase, advisorUserId } = ctx;
+
+  const gate = await assertCategoryVisible(supabase, clientId, "liabilities");
+  if (gate) return { error: gate };
+
+  const idParsed = z
+    .string()
+    .uuid()
+    .safeParse(String(formData.get("id") ?? "").trim());
+  if (!idParsed.success) return { error: "Invalid liability" };
+
+  const existing =
+    (await advisorReadLiabilities(supabase, clientId)).find(
+      (l) => l.id === idParsed.data
+    ) ?? null;
+  if (!existing) return { error: "Liability not found" };
+
+  const parsed = parseLiabilityFormData(formData);
+  if (!parsed.ok) return { error: parsed.error };
+  const d = parsed.data;
+
+  // No updated_at on financial_liabilities → no base_version concurrency token
+  // (the accept conflict check skips null base_version rows).
+  const updates: { fieldKey: string; oldValue: unknown; newValue: unknown }[] = [
+    { fieldKey: "name", oldValue: existing.name, newValue: d.name },
+    { fieldKey: "balance", oldValue: existing.balance, newValue: d.balance },
+    { fieldKey: "category", oldValue: existing.category ?? null, newValue: d.category ?? null },
+    { fieldKey: "loan_type", oldValue: existing.loan_type ?? null, newValue: d.loan_type ?? null },
+    {
+      fieldKey: "interest_rate_annual",
+      oldValue: existing.interest_rate_annual ?? null,
+      newValue: d.interest_rate_annual ?? null,
+    },
+    {
+      fieldKey: "remaining_tenure_months",
+      oldValue: existing.remaining_tenure_months ?? null,
+      newValue: d.remaining_tenure_months ?? null,
+    },
+    {
+      fieldKey: "monthly_repayment",
+      oldValue: existing.monthly_repayment ?? null,
+      newValue: d.monthly_repayment ?? null,
+    },
+    {
+      fieldKey: "repayment_override",
+      oldValue: existing.repayment_override ? "true" : null,
+      newValue: d.repayment_override ? "true" : null,
+    },
+    { fieldKey: "start_date", oldValue: existing.start_date ?? null, newValue: d.start_date ?? null },
+    { fieldKey: "notes", oldValue: existing.notes ?? null, newValue: d.notes ?? null },
+  ];
+
+  try {
+    await recordAdvisorProposalChanges(
+      supabase,
+      advisorUserId,
+      clientId,
+      updates.map((u) => ({
+        entityType: "liability" as const,
+        entityId: idParsed.data,
+        fieldKey: u.fieldKey,
+        oldValue: u.oldValue,
+        newValue: u.newValue,
+        contextLabel: d.name,
+      }))
+    );
+  } catch (e) {
+    return { error: clientErrorFromUnknown(e) };
+  }
+
+  revalidateAdvisorClientViews(clientId);
+  return { error: null, proposalRecorded: true };
+}
+
+export async function deleteAdvisorClientLiabilityAction(
+  _prev: { error: string | null; proposalRecorded?: boolean },
+  formData: FormData
+): Promise<{ error: string | null; proposalRecorded?: boolean }> {
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (!clientId) return { error: "Missing client" };
+
+  const ctx = await requireAdvisorLinkedClient(clientId);
+  if (!ctx.ok) return { error: ctx.error };
+  const { supabase, advisorUserId } = ctx;
+
+  const gate = await assertCategoryVisible(supabase, clientId, "liabilities");
+  if (gate) return { error: gate };
+
+  const idParsed = z
+    .string()
+    .uuid()
+    .safeParse(String(formData.get("id") ?? "").trim());
+  if (!idParsed.success) return { error: "Invalid liability" };
+
+  const existing =
+    (await advisorReadLiabilities(supabase, clientId)).find(
+      (l) => l.id === idParsed.data
+    ) ?? null;
+  if (!existing) return { error: "Liability not found" };
+
+  try {
+    await recordAdvisorProposalChanges(supabase, advisorUserId, clientId, [
+      {
+        entityType: "liability",
+        entityId: idParsed.data,
+        fieldKey: "_deleted",
+        oldValue: null,
+        newValue: "true",
+        changeOp: "delete" as const,
         contextLabel: existing.name,
       },
     ]);

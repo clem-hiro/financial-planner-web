@@ -15,6 +15,7 @@ import {
 import type { AdvisorClientListRow } from "@/data/repositories/advisor-clients";
 import { advisorReadBudgetLines } from "@/data/repositories/budget-lines";
 import { advisorReadCashAccounts } from "@/data/repositories/cash-accounts";
+import { advisorReadLiabilities } from "@/data/repositories/liabilities";
 import { advisorReadGoals } from "@/data/repositories/goals";
 import { advisorReadInvestments } from "@/data/repositories/investments";
 import { getProfileById, advisorReadProfile } from "@/data/repositories/profiles";
@@ -293,9 +294,13 @@ export default async function AdvisorClientDetailPage({
     // when the category is shared (the RPC is also fail-closed — belt-and-
     // suspenders against any leak).
     const cashVisible = categoryVisibility?.cash_accounts ?? false;
-    const cashAccounts = cashVisible
-      ? await advisorReadCashAccounts(supabase, clientId)
-      : [];
+    const liabilitiesVisible = categoryVisibility?.liabilities ?? false;
+    const [cashAccounts, liabilities] = await Promise.all([
+      cashVisible ? advisorReadCashAccounts(supabase, clientId) : Promise.resolve([]),
+      liabilitiesVisible
+        ? advisorReadLiabilities(supabase, clientId)
+        : Promise.resolve([]),
+    ]);
     return (
       <AdvisorClientDetailShell
         clientId={clientId}
@@ -311,6 +316,8 @@ export default async function AdvisorClientDetailPage({
             investments={investments}
             cashAccounts={cashAccounts}
             cashVisible={cashVisible}
+            liabilities={liabilities}
+            liabilitiesVisible={liabilitiesVisible}
             month={month}
             draftProposalId={draftId}
             draftChanges={draftChanges}

@@ -5,6 +5,7 @@ import type {
   CashAccountRow,
   FinancialGoalRow,
   InvestmentRow,
+  LiabilityRow,
 } from "@/data/supabase/types";
 import type { ProfileRow } from "@/data/supabase/types";
 import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
@@ -12,6 +13,10 @@ import {
   AdvisorClientCashSection,
   type AdvisorCashRow,
 } from "@/features/advisor/AdvisorClientCashSection";
+import {
+  AdvisorClientLiabilitySection,
+  type AdvisorLiabilityRow,
+} from "@/features/advisor/AdvisorClientLiabilitySection";
 import { AdvisorBadge, AdvisorSection } from "@/features/advisor/advisor-workspace-primitives";
 import { AdvisorClientHeader } from "@/features/advisor/AdvisorClientHeader";
 import { AdvisorConsentRequired } from "@/features/advisor/AdvisorConsentRequired";
@@ -54,6 +59,8 @@ export function AdvisorClientCompose({
   investments,
   cashAccounts,
   cashVisible,
+  liabilities,
+  liabilitiesVisible,
   month,
   draftProposalId,
   draftChanges,
@@ -69,6 +76,9 @@ export function AdvisorClientCompose({
   cashAccounts: CashAccountRow[];
   /** Whether the client has shared the cash_accounts category (Phase 1 toggle). */
   cashVisible: boolean;
+  liabilities: LiabilityRow[];
+  /** Whether the client has shared the liabilities category (Phase 1 toggle). */
+  liabilitiesVisible: boolean;
   month: string;
   draftProposalId: string | null;
   draftChanges: AdvisorProposalChangeRow[];
@@ -116,6 +126,24 @@ export function AdvisorClientCompose({
     name: c.name,
     balance: num(c.balance),
     purpose: c.purpose,
+  }));
+  const liabilityRows: AdvisorLiabilityRow[] = liabilities.map((l) => ({
+    id: l.id,
+    name: l.name,
+    balance: num(l.balance),
+    category: l.category ?? null,
+    interestRatePercent:
+      l.interest_rate_annual != null && String(l.interest_rate_annual).trim() !== ""
+        ? num(l.interest_rate_annual) * 100
+        : null,
+    remainingTenureYears:
+      l.remaining_tenure_months != null
+        ? Math.round((l.remaining_tenure_months / 12) * 10) / 10
+        : null,
+    monthlyRepayment:
+      l.monthly_repayment != null && String(l.monthly_repayment).trim() !== ""
+        ? num(l.monthly_repayment)
+        : null,
   }));
 
   // Frozen submit bar is fixed to the viewport bottom; pad the page so the last
@@ -304,21 +332,24 @@ export function AdvisorClientCompose({
                 disabled={hasPendingProposal}
               />
             ) : (
-              <div className="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5">
-                <span aria-hidden className="mt-0.5 text-slate-400">🔒</span>
-                <div className="space-y-1">
-                  <p className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                    Cash accounts
-                    <span className="rounded-full bg-slate-200 px-2 py-0.5 text-[11px] font-medium text-slate-600">
-                      Private
-                    </span>
-                  </p>
-                  <p className="text-xs text-slate-500">
-                    Client chose not to share this category. Ask them to enable
-                    it under Privacy &amp; Advisor Access to view or propose changes.
-                  </p>
-                </div>
-              </div>
+              <LockedCategoryCard label="Cash accounts" />
+            )}
+          </AdvisorSection>
+
+          <AdvisorSection
+            id="liabilities"
+            title="Liabilities"
+            description="Loans and debts — saved as suggestions until the client accepts."
+          >
+            {liabilitiesVisible ? (
+              <AdvisorClientLiabilitySection
+                clientId={clientId}
+                liabilities={liabilityRows}
+                currencyCode={currency}
+                disabled={hasPendingProposal}
+              />
+            ) : (
+              <LockedCategoryCard label="Liabilities" />
             )}
           </AdvisorSection>
         </div>
@@ -362,6 +393,32 @@ export function AdvisorClientCompose({
         disabled={hasPendingProposal}
         alignToId="advisor-compose-left"
       />
+    </div>
+  );
+}
+
+/** Shown when a sensitive category is private (client hasn't opted in): a
+ * neutral locked card, no data fetched/displayed. The category name is omitted
+ * here — the parent AdvisorSection header already shows it; `label` only feeds
+ * the aria-label for screen readers. */
+function LockedCategoryCard({ label }: { label: string }) {
+  return (
+    <div
+      aria-label={`${label} — private`}
+      className="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5"
+    >
+      <span aria-hidden className="mt-0.5 text-slate-400">
+        🔒
+      </span>
+      <div className="space-y-1">
+        <span className="inline-flex rounded-full bg-slate-200 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+          Private
+        </span>
+        <p className="text-xs text-slate-500">
+          Client chose not to share this category. Ask them to enable it under
+          Privacy &amp; Advisor Access to view or propose changes.
+        </p>
+      </div>
     </div>
   );
 }

@@ -12,6 +12,13 @@ import {
   updateCashAccount,
 } from "@/data/repositories/cash-accounts";
 import {
+  deleteLiability,
+  insertLiability,
+  listLiabilities,
+  updateLiability,
+  type LiabilityWriteInput,
+} from "@/data/repositories/liabilities";
+import {
   deleteFinancialGoal,
   insertFinancialGoal,
   listFinancialGoals,
@@ -31,6 +38,7 @@ import type {
   CashAccountRow,
   FinancialGoalRow,
   InvestmentRow,
+  LiabilityRow,
   ProfileRow,
 } from "@/data/supabase/types";
 import {
@@ -239,6 +247,39 @@ async function applyEntityDiff<T extends { id: string }, IP, UP>(
   }
 }
 
+function liabilityWritePayload(row: LiabilityRow): LiabilityWriteInput {
+  return {
+    name: row.name,
+    balance: toNumOrNull(row.balance) ?? 0,
+    category: row.category ?? null,
+    loan_type: row.loan_type ?? null,
+    interest_rate_annual: toNumOrNull(row.interest_rate_annual ?? null),
+    remaining_tenure_months: row.remaining_tenure_months ?? null,
+    monthly_repayment: toNumOrNull(row.monthly_repayment ?? null),
+    repayment_override: row.repayment_override ?? false,
+    start_date: row.start_date ?? null,
+    notes: row.notes ?? null,
+  };
+}
+
+function liabilityDiffers(a: LiabilityRow, b: LiabilityRow): boolean {
+  return (
+    a.name !== b.name ||
+    (toNumOrNull(a.balance) ?? 0) !== (toNumOrNull(b.balance) ?? 0) ||
+    (a.category ?? null) !== (b.category ?? null) ||
+    (a.loan_type ?? null) !== (b.loan_type ?? null) ||
+    (toNumOrNull(a.interest_rate_annual ?? null)) !==
+      (toNumOrNull(b.interest_rate_annual ?? null)) ||
+    (a.remaining_tenure_months ?? null) !==
+      (b.remaining_tenure_months ?? null) ||
+    (toNumOrNull(a.monthly_repayment ?? null)) !==
+      (toNumOrNull(b.monthly_repayment ?? null)) ||
+    (a.repayment_override ?? false) !== (b.repayment_override ?? false) ||
+    (a.start_date ?? null) !== (b.start_date ?? null) ||
+    (a.notes ?? null) !== (b.notes ?? null)
+  );
+}
+
 /** entity_types the accept writer can persist. A change carrying anything else
  * (a CHECK-allowed type whose phase hasn't shipped) is rejected before any
  * write — fail loud rather than silently dropping it. */
@@ -248,6 +289,7 @@ const ACCEPTED_ENTITY_TYPES = new Set<AdvisorProposalChangeRow["entity_type"]>([
   "goal",
   "investment",
   "cash_account",
+  "liability",
 ]);
 
 function assertHandledEntityTypes(changes: AdvisorProposalChangeRow[]): void {
@@ -386,6 +428,10 @@ function detectNameConflicts(
     "cash_account",
     (effective.cashAccounts ?? []).map((c) => ({ id: c.id, name: c.name }))
   );
+  scan(
+    "liability",
+    (effective.liabilities ?? []).map((l) => ({ id: l.id, name: l.name }))
+  );
   return conflicts;
 }
 
@@ -417,7 +463,9 @@ export function nameConflictFromWriteError(
       ? "goal"
       : /financial_cash_accounts_user_name_ci_uq/.test(blob)
         ? "cash_account"
-        : "investment";
+        : /financial_liabilities_user_name_ci_uq/.test(blob)
+          ? "liability"
+          : "investment";
   const nameField = entityType === "goal" ? "title" : "name";
   const labels = [
     ...new Set(
@@ -453,13 +501,14 @@ export async function detectAcceptConflicts(
   changes: AdvisorProposalChangeRow[]
 ): Promise<{ conflicts: ProposalConflict[]; base: OverlayInputs }> {
   assertHandledEntityTypes(changes);
-  const [profile, investments, budgetLines, goals, cashAccounts] =
+  const [profile, investments, budgetLines, goals, cashAccounts, liabilities] =
     await Promise.all([
       getProfileById(supabase, clientUserId),
       listInvestments(supabase, clientUserId),
       listBudgetLines(supabase, clientUserId),
       listFinancialGoals(supabase, clientUserId),
       listCashAccounts(supabase, clientUserId),
+      listLiabilities(supabase, clientUserId),
     ]);
   const base: OverlayInputs = {
     profile,
@@ -467,6 +516,7 @@ export async function detectAcceptConflicts(
     budgetLines,
     goals,
     cashAccounts,
+    liabilities,
   };
   const conflicts = [
     ...detectConflicts(changes, base),
@@ -497,21 +547,36 @@ export async function applyAcceptedProposalChanges(
   if (preCheckedBase) {
     base = preCheckedBase;
   } else {
-    const [profile, investments, budgetLines, goals, cashAccounts] =
-      await Promise.all([
-        getProfileById(supabase, clientUserId),
-        listInvestments(supabase, clientUserId),
-        listBudgetLines(supabase, clientUserId),
-        listFinancialGoals(supabase, clientUserId),
-        listCashAccounts(supabase, clientUserId),
-      ]);
-    base = { profile, investments, budgetLines, goals, cashAccounts };
+    const [
+      profile,
+      investments,
+      budgetLines,
+      goals,
+      cashAccounts,
+      liabilities,
+    ] = await Promise.all([
+      getProfileById(supabase, clientUserId),
+      listInvestments(supabase, clientUserId),
+      listBudgetLines(supabase, clientUserId),
+      listFinancialGoals(supabase, clientUserId),
+      listCashAccounts(supabase, clientUserId),
+      listLiabilities(supabase, clientUserId),
+    ]);
+    base = {
+      profile,
+      investments,
+      budgetLines,
+      goals,
+      cashAccounts,
+      liabilities,
+    };
     const conflicts = detectConflicts(changes, base);
     if (conflicts.length > 0) return { conflicts };
   }
 
   const { profile, investments, budgetLines, goals } = base;
   const cashAccounts = base.cashAccounts ?? [];
+  const liabilities = base.liabilities ?? [];
   const effective = applyProposalChanges(base, changes);
 
   if (profile && effective.profile) {
@@ -615,6 +680,16 @@ export async function applyAcceptedProposalChanges(
     insert: (p) => insertCashAccount(supabase, clientUserId, p),
     update: (id, p) => updateCashAccount(supabase, clientUserId, id, p),
     remove: (id) => deleteCashAccount(supabase, clientUserId, id),
+  });
+
+  // Liabilities — same generic diff (no cross-entity linkage).
+  await applyEntityDiff(liabilities, effective.liabilities ?? [], {
+    differs: liabilityDiffers,
+    insertPayload: liabilityWritePayload,
+    updatePayload: (_before, after) => liabilityWritePayload(after),
+    insert: (p) => insertLiability(supabase, clientUserId, p),
+    update: (id, p) => updateLiability(supabase, clientUserId, id, p),
+    remove: (id) => deleteLiability(supabase, clientUserId, id),
   });
 
   return { conflicts: [] };

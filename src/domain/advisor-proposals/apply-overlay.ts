@@ -5,6 +5,7 @@ import type {
   CashAccountRow,
   FinancialGoalRow,
   InvestmentRow,
+  LiabilityRow,
   ProfileRow,
 } from "@/data/supabase/types";
 
@@ -22,6 +23,9 @@ export type OverlayInputs = {
    * preview omits it (cash isn't previewed in projections yet). Cash changes
    * are no-ops in the overlay unless this is supplied. */
   cashAccounts?: CashAccountRow[];
+  /** Optional: same accept-only threading as cashAccounts (liabilities aren't
+   * previewed yet). Liability changes are no-ops unless supplied. */
+  liabilities?: LiabilityRow[];
 };
 
 /** Numeric coercion — byte-identical semantics to the legacy accept path. */
@@ -321,6 +325,60 @@ function mergeCashAccount(
   return next;
 }
 
+function applyLiabilityInsert(
+  group: ChangeGroup,
+  m: Map<string, string | null>
+): LiabilityRow {
+  const tenure = m.get("remaining_tenure_months");
+  return {
+    id: newEntityId(group, "overlay-liability"),
+    user_id: "",
+    name: m.get("name") ?? "Liability",
+    balance: numStr(m.get("balance")) ?? "0",
+    created_at: "",
+    category: (m.get("category") || null) as LiabilityRow["category"],
+    loan_type: (m.get("loan_type") || null) as LiabilityRow["loan_type"],
+    interest_rate_annual: numStr(m.get("interest_rate_annual")),
+    remaining_tenure_months:
+      tenure != null && tenure !== "" ? Number(tenure) : null,
+    monthly_repayment: numStr(m.get("monthly_repayment")),
+    repayment_override: m.get("repayment_override") === "true",
+    start_date: m.get("start_date") || null,
+    notes: m.get("notes") || null,
+  };
+}
+
+function mergeLiability(
+  row: LiabilityRow,
+  m: Map<string, string | null>
+): LiabilityRow {
+  const next: LiabilityRow = { ...row };
+  if (m.has("name")) next.name = m.get("name") || next.name;
+  if (m.has("balance")) next.balance = numStr(m.get("balance")) ?? "0";
+  if (m.has("category")) {
+    next.category = (m.get("category") || null) as LiabilityRow["category"];
+  }
+  if (m.has("loan_type")) {
+    next.loan_type = (m.get("loan_type") || null) as LiabilityRow["loan_type"];
+  }
+  if (m.has("interest_rate_annual")) {
+    next.interest_rate_annual = numStr(m.get("interest_rate_annual"));
+  }
+  if (m.has("remaining_tenure_months")) {
+    const v = m.get("remaining_tenure_months");
+    next.remaining_tenure_months = v != null && v !== "" ? Number(v) : null;
+  }
+  if (m.has("monthly_repayment")) {
+    next.monthly_repayment = numStr(m.get("monthly_repayment"));
+  }
+  if (m.has("repayment_override")) {
+    next.repayment_override = m.get("repayment_override") === "true";
+  }
+  if (m.has("start_date")) next.start_date = m.get("start_date") || null;
+  if (m.has("notes")) next.notes = m.get("notes") || null;
+  return next;
+}
+
 /**
  * Pure, IO-free composition of `base + proposal changes`. Empty change-set
  * returns the inputs by identity (the no-overlay byte-identical fast path).
@@ -345,6 +403,7 @@ export function applyProposalChanges(
   let budgetLines = inputs.budgetLines;
   let goals = inputs.goals;
   let cashAccounts = inputs.cashAccounts;
+  let liabilities = inputs.liabilities;
 
   for (const group of groupByEntity(changes)) {
     const m = fieldMap(group.changes);
@@ -406,8 +465,22 @@ export function applyProposalChanges(
           c.id === group.entityId ? mergeCashAccount(c, m) : c
         );
       }
+      continue;
+    }
+
+    // Liability — same accept-only no-op-unless-supplied contract as cash.
+    if (group.entityType === "liability" && liabilities) {
+      if (op === "delete" && group.entityId) {
+        liabilities = liabilities.filter((l) => l.id !== group.entityId);
+      } else if (op === "create") {
+        liabilities = [...liabilities, applyLiabilityInsert(group, m)];
+      } else if (group.entityId) {
+        liabilities = liabilities.map((l) =>
+          l.id === group.entityId ? mergeLiability(l, m) : l
+        );
+      }
     }
   }
 
-  return { profile, investments, budgetLines, goals, cashAccounts };
+  return { profile, investments, budgetLines, goals, cashAccounts, liabilities };
 }
