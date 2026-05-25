@@ -60,7 +60,7 @@
 | `src/data/cash-account-history-build.ts` | `src/data` | `regular` | 1 | 1 |
 | `src/data/dashboard-advisor-viewer.test.ts` | `src/data` | `regular` | 0 | 0 |
 | `src/data/dashboard-overlay.test.ts` | `src/data` | `regular` | 0 | 0 |
-| `src/data/dashboard.ts` | `src/data` | `regular` | 5 | 69 |
+| `src/data/dashboard.ts` | `src/data` | `regular` | 8 | 74 |
 | `src/data/expense-budget-guard.ts` | `src/data` | `regular` | 1 | 6 |
 | `src/data/financial-profile.ts` | `src/data` | `regular` | 2 | 1 |
 | `src/data/goal-tradeoff-context.ts` | `src/data` | `regular` | 1 | 17 |
@@ -132,7 +132,7 @@
 | `src/domain/finance/cash-flow-setup-guidance.test.ts` | `src/domain` | `regular` | 1 | 0 |
 | `src/domain/finance/cash-flow-setup-guidance.ts` | `src/domain` | `regular` | 5 | 7 |
 | `src/domain/finance/cpf-monthly-projection.test.ts` | `src/domain` | `regular` | 0 | 0 |
-| `src/domain/finance/cpf-monthly-projection.ts` | `src/domain` | `regular` | 7 | 13 |
+| `src/domain/finance/cpf-monthly-projection.ts` | `src/domain` | `regular` | 8 | 14 |
 | `src/domain/finance/cpf-retirement-projection.test.ts` | `src/domain` | `regular` | 0 | 0 |
 | `src/domain/finance/cpf-retirement-projection.ts` | `src/domain` | `regular` | 11 | 17 |
 | `src/domain/finance/cpf-rules-review.test.ts` | `src/domain` | `regular` | 0 | 0 |
@@ -179,7 +179,7 @@
 | `src/domain/finance/retirement-spend-vs-portfolio.ts` | `src/domain` | `regular` | 2 | 0 |
 | `src/domain/finance/savings-rate.ts` | `src/domain` | `regular` | 1 | 0 |
 | `src/domain/finance/sg-cpf-bonus-and-horizon.test.ts` | `src/domain` | `regular` | 0 | 0 |
-| `src/domain/finance/sg-cpf-contribution-buckets.ts` | `src/domain` | `regular` | 6 | 5 |
+| `src/domain/finance/sg-cpf-contribution-buckets.ts` | `src/domain` | `regular` | 7 | 6 |
 | `src/domain/finance/sg-cpf.ts` | `src/domain` | `regular` | 8 | 8 |
 | `src/domain/finance/sg-income-tax.test.ts` | `src/domain` | `regular` | 0 | 0 |
 | `src/domain/finance/sg-income-tax.ts` | `src/domain` | `regular` | 8 | 10 |
@@ -250,7 +250,7 @@
 | `src/features/dashboard/CpfRetirementProjectionPanel.tsx` | `src/features` | `client-component` | 5 | 21 |
 | `src/features/dashboard/DashboardMonthSection.tsx` | `src/features` | `regular` | 1 | 9 |
 | `src/features/dashboard/DashboardOverviewSection.tsx` | `src/features` | `regular` | 1 | 8 |
-| `src/features/dashboard/DashboardRetirementSection.tsx` | `src/features` | `regular` | 1 | 15 |
+| `src/features/dashboard/DashboardRetirementSection.tsx` | `src/features` | `regular` | 2 | 18 |
 | `src/features/dashboard/DashboardSubnav.tsx` | `src/features` | `client-component` | 1 | 6 |
 | `src/features/dashboard/ProfileIncomeForm.tsx` | `src/features` | `client-component` | 3 | 28 |
 | `src/features/dashboard/ProjectionMiniChart.tsx` | `src/features` | `client-component` | 1 | 8 |
@@ -264,7 +264,7 @@
 | `src/features/expenses/ExpenseForm.tsx` | `src/features` | `client-component` | 1 | 8 |
 | `src/features/expenses/ExpenseMonthJump.tsx` | `src/features` | `client-component` | 1 | 5 |
 | `src/features/goals/CashAndLiabilitiesPanels.tsx` | `src/features` | `client-component` | 7 | 28 |
-| `src/features/goals/CpfBalancesForm.tsx` | `src/features` | `client-component` | 2 | 15 |
+| `src/features/goals/CpfBalancesForm.tsx` | `src/features` | `client-component` | 2 | 16 |
 | `src/features/goals/FinancialGoalsPanels.tsx` | `src/features` | `regular` | 1 | 21 |
 | `src/features/goals/GoalEditForm.tsx` | `src/features` | `client-component` | 1 | 2 |
 | `src/features/goals/GoalFeasibilityNotice.tsx` | `src/features` | `regular` | 2 | 3 |
@@ -347,7 +347,7 @@
 | `src/lib/validation.test.ts` | `src/lib` | `regular` | 0 | 0 |
 | `src/lib/validation.ts` | `src/lib` | `regular` | 2 | 6 |
 | `src/middleware.ts` | `src/server` | `middleware` | 1 | 22 |
-| `src/server/actions.ts` | `src/server` | `server-action` | 49 | 328 |
+| `src/server/actions.ts` | `src/server` | `server-action` | 49 | 330 |
 | `src/server/advisor-access-key-actions.ts` | `src/server` | `server-action` | 2 | 10 |
 | `src/server/advisor-client-actions.ts` | `src/server` | `server-action` | 9 | 42 |
 | `src/server/advisor-consent-gate.test.ts` | `src/server` | `regular` | 1 | 0 |

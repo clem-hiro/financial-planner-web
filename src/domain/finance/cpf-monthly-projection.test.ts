@@ -2,6 +2,87 @@ import { describe, expect, it } from "vitest";
 import { buildCpfMonthlyProjectionSeries } from "./cpf-monthly-projection";
 
 describe("buildCpfMonthlyProjectionSeries", () => {
+  it("uses 2026 CPF allocation ratios for age 35 and below", () => {
+    const series = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-06",
+      horizonMonths: 1,
+      birthDate: "1995-01-15",
+      grossMonthly: 7_000,
+      initial: {
+        oa: 0,
+        sa: 0,
+        ma: 0,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [],
+    });
+
+    expect(series[0].oa).toBeCloseTo(1_610.2, 2);
+    expect(series[0].sa).toBeCloseTo(419.84, 2);
+    expect(series[0].ma).toBeCloseTo(559.96, 2);
+  });
+
+  it("moves the retirement allocation to RA after 55", () => {
+    const series = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-06",
+      horizonMonths: 1,
+      birthDate: "1970-01-15",
+      grossMonthly: 7_000,
+      initial: {
+        oa: 0,
+        sa: 0,
+        ma: 0,
+        ra: 0,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [],
+    });
+
+    expect(series[0].oa).toBeCloseTo(840.14, 2);
+    expect(series[0].sa).toBe(0);
+    expect(series[0].ra).toBeCloseTo(804.92, 2);
+    expect(series[0].ma).toBeCloseTo(734.94, 2);
+  });
+
+  it("applies the next CPF age band from the month after the birthday month", () => {
+    const series = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-05",
+      horizonMonths: 2,
+      birthDate: "1971-05-01",
+      grossMonthly: 7_000,
+      initial: {
+        oa: 0,
+        sa: 0,
+        ma: 0,
+        ra: 0,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [],
+    });
+
+    expect(series[0].yearMonth).toBe("2026-05");
+    expect(series[0].oa).toBeCloseTo(1_050.25, 2);
+    expect(series[0].sa).toBeCloseTo(804.97, 2);
+    expect(series[0].ra).toBe(0);
+    expect(series[1].yearMonth).toBe("2026-06");
+    expect(series[1].ra).toBeCloseTo(804.92, 2);
+  });
+
   it("reduces OA by downpayment in completion month", () => {
     const series = buildCpfMonthlyProjectionSeries({
       startYearMonth: "2026-01",

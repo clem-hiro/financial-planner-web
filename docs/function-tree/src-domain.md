@@ -38,7 +38,7 @@
 | [`src/domain/finance/cash-flow-setup-guidance.test.ts`](#src-domain-finance-cash-flow-setup-guidance-test-ts) | `regular` | 1 | 0 |
 | [`src/domain/finance/cash-flow-setup-guidance.ts`](#src-domain-finance-cash-flow-setup-guidance-ts) | `regular` | 5 | 7 |
 | [`src/domain/finance/cpf-monthly-projection.test.ts`](#src-domain-finance-cpf-monthly-projection-test-ts) | `regular` | 0 | 0 |
-| [`src/domain/finance/cpf-monthly-projection.ts`](#src-domain-finance-cpf-monthly-projection-ts) | `regular` | 7 | 13 |
+| [`src/domain/finance/cpf-monthly-projection.ts`](#src-domain-finance-cpf-monthly-projection-ts) | `regular` | 8 | 14 |
 | [`src/domain/finance/cpf-retirement-projection.test.ts`](#src-domain-finance-cpf-retirement-projection-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/cpf-retirement-projection.ts`](#src-domain-finance-cpf-retirement-projection-ts) | `regular` | 11 | 17 |
 | [`src/domain/finance/cpf-rules-review.test.ts`](#src-domain-finance-cpf-rules-review-test-ts) | `regular` | 0 | 0 |
@@ -85,7 +85,7 @@
 | [`src/domain/finance/retirement-spend-vs-portfolio.ts`](#src-domain-finance-retirement-spend-vs-portfolio-ts) | `regular` | 2 | 0 |
 | [`src/domain/finance/savings-rate.ts`](#src-domain-finance-savings-rate-ts) | `regular` | 1 | 0 |
 | [`src/domain/finance/sg-cpf-bonus-and-horizon.test.ts`](#src-domain-finance-sg-cpf-bonus-and-horizon-test-ts) | `regular` | 0 | 0 |
-| [`src/domain/finance/sg-cpf-contribution-buckets.ts`](#src-domain-finance-sg-cpf-contribution-buckets-ts) | `regular` | 6 | 5 |
+| [`src/domain/finance/sg-cpf-contribution-buckets.ts`](#src-domain-finance-sg-cpf-contribution-buckets-ts) | `regular` | 7 | 6 |
 | [`src/domain/finance/sg-cpf.ts`](#src-domain-finance-sg-cpf-ts) | `regular` | 8 | 8 |
 | [`src/domain/finance/sg-income-tax.test.ts`](#src-domain-finance-sg-income-tax-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/sg-income-tax.ts`](#src-domain-finance-sg-income-tax-ts) | `regular` | 8 | 10 |
@@ -614,24 +614,28 @@ Classification: `regular`
 
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
 
-#### `monthDiff` — function, L80
+#### `endOfPreviousYearMonthDate` — function, L80
 
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
 
-#### `validYearMonth` — function, L86
+#### `monthDiff` — function, L85
 
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
 
-#### `fixedBandAgeProxy` — function, L90
+#### `validYearMonth` — function, L91
 
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
 
-#### `buildCpfMonthlyProjectionSeries` — function, L104
+#### `fixedBandAgeProxy` — function, L95
 
-- calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/cpf-monthly-projection.ts#endOfYearMonthDate`, `src/domain/finance/cpf-monthly-projection.ts#fixedBandAgeProxy`, `src/domain/finance/cpf-monthly-projection.ts#monthDiff`, `src/domain/finance/cpf-monthly-projection.ts#round2`, `src/domain/finance/cpf-monthly-projection.ts#validYearMonth`, `src/domain/finance/cpf-retirement-projection.ts#routeCpfSaInvestmentMaturityProceeds`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`, `src/domain/finance/sg-cpf-contribution-buckets.ts#monthlyCpfInflowsFromOwSubject`, `src/domain/finance/sg-cpf-contribution-buckets.ts#ordinaryWagesSubjectWithYtd`, `src/domain/finance/sg-cpf-contribution-buckets.ts#sgCpfAgeBandForCompletedAge`, `src/domain/finance/sg-cpf.ts#additionalWageCeilingRemaining`, `src/lib/dates.ts#addMonthsToYearMonth`
+- called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
+
+#### `buildCpfMonthlyProjectionSeries` — function, L109
+
+- calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/cpf-monthly-projection.ts#endOfPreviousYearMonthDate`, `src/domain/finance/cpf-monthly-projection.ts#endOfYearMonthDate`, `src/domain/finance/cpf-monthly-projection.ts#fixedBandAgeProxy`, `src/domain/finance/cpf-monthly-projection.ts#monthDiff`, `src/domain/finance/cpf-monthly-projection.ts#round2`, `src/domain/finance/cpf-monthly-projection.ts#validYearMonth`, `src/domain/finance/cpf-retirement-projection.ts#routeCpfSaInvestmentMaturityProceeds`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`, `src/domain/finance/sg-cpf-contribution-buckets.ts#monthlyCpfInflowsFromOwSubject`, `src/domain/finance/sg-cpf-contribution-buckets.ts#ordinaryWagesSubjectWithYtd`, `src/domain/finance/sg-cpf-contribution-buckets.ts#sgCpfAgeBandForCompletedAge`, `src/domain/finance/sg-cpf.ts#additionalWageCeilingRemaining`, `src/lib/dates.ts#addMonthsToYearMonth`
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `downsampleCpfSeries` — function, L366
+#### `downsampleCpfSeries` — function, L382
 
 _No tracked edges._
 
@@ -1389,32 +1393,36 @@ _No top-level functions detected._
 
 Classification: `regular`
 
-#### `employerCpfRateSg` — function, L30
+#### `employerCpfRateSg` — function, L54
 
 - called by: `src/domain/finance/sg-cpf-contribution-buckets.ts#totalCpfContributionRateSg`
 
-#### `totalCpfContributionRateSg` — function, L34
+#### `totalCpfContributionRateSg` — function, L58
 
 - calls: `src/domain/finance/sg-cpf-contribution-buckets.ts#employerCpfRateSg`, `src/domain/finance/sg-cpf.ts#employeeCpfRateSg`
 - called by: `src/domain/finance/sg-cpf-contribution-buckets.ts#monthlyCpfInflowsFromOwSubject`
 
-#### `monthlyCpfInflowsFromOwSubject` — function, L42
+#### `monthlyCpfInflowsFromOwSubject` — function, L66
 
-- calls: `src/domain/finance/sg-cpf-contribution-buckets.ts#roundMoney`, `src/domain/finance/sg-cpf-contribution-buckets.ts#totalCpfContributionRateSg`
+- calls: `src/domain/finance/sg-cpf-contribution-buckets.ts#allocationAgeBandForCpfContribution`, `src/domain/finance/sg-cpf-contribution-buckets.ts#roundMoney`, `src/domain/finance/sg-cpf-contribution-buckets.ts#totalCpfContributionRateSg`
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
 
-#### `roundMoney` — function, L59
+#### `roundMoney` — function, L107
 
 - called by: `src/domain/finance/sg-cpf-contribution-buckets.ts#monthlyCpfInflowsFromOwSubject`
 
-#### `ordinaryWagesSubjectWithYtd` — function, L72
+#### `ordinaryWagesSubjectWithYtd` — function, L120
 
 - calls: `src/domain/finance/sg-cpf.ts#ordinaryWageCeilingSg`
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
 
-#### `sgCpfAgeBandForCompletedAge` — function, L93
+#### `sgCpfAgeBandForCompletedAge` — function, L141
 
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/features/dashboard/ProfileIncomeForm.tsx#derivedCpfBandFromBirthDate`
+
+#### `allocationAgeBandForCpfContribution` — function, L149
+
+- called by: `src/domain/finance/sg-cpf-contribution-buckets.ts#monthlyCpfInflowsFromOwSubject`
 
 ### `src/domain/finance/sg-cpf.ts` <a id="src-domain-finance-sg-cpf-ts"></a>
 

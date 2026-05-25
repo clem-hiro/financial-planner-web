@@ -59,7 +59,7 @@
 | [`src/features/dashboard/CpfRetirementProjectionPanel.tsx`](#src-features-dashboard-cpfretirementprojectionpanel-tsx) | `client-component` | 5 | 21 |
 | [`src/features/dashboard/DashboardMonthSection.tsx`](#src-features-dashboard-dashboardmonthsection-tsx) | `regular` | 1 | 9 |
 | [`src/features/dashboard/DashboardOverviewSection.tsx`](#src-features-dashboard-dashboardoverviewsection-tsx) | `regular` | 1 | 8 |
-| [`src/features/dashboard/DashboardRetirementSection.tsx`](#src-features-dashboard-dashboardretirementsection-tsx) | `regular` | 1 | 15 |
+| [`src/features/dashboard/DashboardRetirementSection.tsx`](#src-features-dashboard-dashboardretirementsection-tsx) | `regular` | 2 | 18 |
 | [`src/features/dashboard/DashboardSubnav.tsx`](#src-features-dashboard-dashboardsubnav-tsx) | `client-component` | 1 | 6 |
 | [`src/features/dashboard/ProfileIncomeForm.tsx`](#src-features-dashboard-profileincomeform-tsx) | `client-component` | 3 | 28 |
 | [`src/features/dashboard/ProjectionMiniChart.tsx`](#src-features-dashboard-projectionminichart-tsx) | `client-component` | 1 | 8 |
@@ -73,7 +73,7 @@
 | [`src/features/expenses/ExpenseForm.tsx`](#src-features-expenses-expenseform-tsx) | `client-component` | 1 | 8 |
 | [`src/features/expenses/ExpenseMonthJump.tsx`](#src-features-expenses-expensemonthjump-tsx) | `client-component` | 1 | 5 |
 | [`src/features/goals/CashAndLiabilitiesPanels.tsx`](#src-features-goals-cashandliabilitiespanels-tsx) | `client-component` | 7 | 28 |
-| [`src/features/goals/CpfBalancesForm.tsx`](#src-features-goals-cpfbalancesform-tsx) | `client-component` | 2 | 15 |
+| [`src/features/goals/CpfBalancesForm.tsx`](#src-features-goals-cpfbalancesform-tsx) | `client-component` | 2 | 16 |
 | [`src/features/goals/FinancialGoalsPanels.tsx`](#src-features-goals-financialgoalspanels-tsx) | `regular` | 1 | 21 |
 | [`src/features/goals/GoalEditForm.tsx`](#src-features-goals-goaleditform-tsx) | `client-component` | 1 | 2 |
 | [`src/features/goals/GoalFeasibilityNotice.tsx`](#src-features-goals-goalfeasibilitynotice-tsx) | `regular` | 2 | 3 |
@@ -820,10 +820,16 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `DashboardRetirementSection` — component, L15
+#### `CpfProjectionStatusPanel` — component, L15
+
+- calls: `src/ui/lib/format.ts#formatCurrency`
+- renders: `[external] next`
+- rendered by: `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`
+
+#### `DashboardRetirementSection` — component, L88
 
 - calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/ui/lib/format.ts#formatCurrency`, `src/ui/lib/format.ts#formatPercent`
-- renders: `[external] next`, `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart`, `src/features/dashboard/CpfProjectionByAgeChart.tsx#CpfProjectionByAgeChart`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/ui/InfoTooltip.tsx#InfoTooltip`
+- renders: `[external] next`, `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart`, `src/features/dashboard/CpfProjectionByAgeChart.tsx#CpfProjectionByAgeChart`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`, `src/features/dashboard/DashboardRetirementSection.tsx#CpfProjectionStatusPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/ui/InfoTooltip.tsx#InfoTooltip`
 - rendered by: `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`
 
 ### `src/features/dashboard/DashboardSubnav.tsx` <a id="src-features-dashboard-dashboardsubnav-tsx"></a>
@@ -1048,14 +1054,14 @@ Classification: `client-component`
 
 Classification: `client-component`
 
-#### `CpfRulesReviewPrompt` — component, L22 _(client-component)_
+#### `CpfRulesReviewPrompt` — component, L23 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#confirmCpfRulesReviewAction`
 - rendered by: `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`
 
-#### `CpfBalancesForm` — component, L67 _(client-component)_
+#### `CpfBalancesForm` — component, L68 _(client-component)_
 
-- calls: `[external] react`, `src/data/mappers.ts#num`, `src/server/actions.ts#clearCpfBalanceAction`
+- calls: `[external] react`, `src/data/mappers.ts#num`, `src/lib/dates.ts#formatYearMonth`, `src/server/actions.ts#clearCpfBalanceAction`
 - renders: `src/features/goals/CpfBalancesForm.tsx#CpfRulesReviewPrompt`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 - unresolved: 4

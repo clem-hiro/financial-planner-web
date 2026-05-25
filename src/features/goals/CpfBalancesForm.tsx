@@ -13,6 +13,7 @@ import {
 import type { CpfBalanceRow, CpfInvestmentRow } from "@/data/supabase/types";
 import { num } from "@/data/mappers";
 import { CPF_RULES_VERSION } from "@/domain/finance/cpf-rules-review";
+import { formatYearMonth } from "@/lib/dates";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };
@@ -82,6 +83,8 @@ export function CpfBalancesForm({
   );
   const [clearPending, setClearPending] = useState(false);
   const [cpfInvestmentAccount, setCpfInvestmentAccount] = useState<"oa" | "sa">("oa");
+  const defaultBalanceAsOfMonth =
+    row?.balance_as_of_month ?? formatYearMonth(new Date());
   const [showCpfisAdvanced, setShowCpfisAdvanced] = useState(() => {
     if (!row) return false;
     return (
@@ -150,6 +153,20 @@ export function CpfBalancesForm({
             />
           </label>
         </div>
+        <label className="block max-w-xs text-sm">
+          <span className="mb-1 block text-zinc-600">CPF balance as of</span>
+          <input
+            name="balance_as_of_month"
+            type="month"
+            required
+            defaultValue={defaultBalanceAsOfMonth}
+            className={numberInputClass}
+          />
+          <span className="mt-1 block text-xs leading-relaxed text-zinc-500">
+            Choose the latest CPF month already reflected in these balances. The
+            projection starts from the following month to avoid double-counting.
+          </span>
+        </label>
         <div className="border-t border-zinc-200 pt-4">
           <button
             type="button"

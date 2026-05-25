@@ -77,6 +77,11 @@ function endOfYearMonthDate(ym: string): Date {
   return new Date(y, m, 0, 12, 0, 0, 0);
 }
 
+function endOfPreviousYearMonthDate(ym: string): Date {
+  const [y, m] = ym.split("-").map(Number);
+  return new Date(y, m - 1, 0, 12, 0, 0, 0);
+}
+
 function monthDiff(startYm: string, endYm: string): number {
   const [sy, sm] = startYm.split("-").map(Number);
   const [ey, em] = endYm.split("-").map(Number);
@@ -223,12 +228,13 @@ export function buildCpfMonthlyProjectionSeries(params: {
       }
     }
 
-    const band: SgCpfAgeBand =
+    const completedAgeForCpfMonth =
       birthDate != null
-        ? sgCpfAgeBandForCompletedAge(
-            ageCompletedOnDate(birthDate, endOfYearMonthDate(ym))
-          )
-        : (fixedCpfAgeBand ?? "below_55");
+        ? ageCompletedOnDate(birthDate, endOfPreviousYearMonthDate(ym))
+        : fixedBandAgeProxy(fixedCpfAgeBand);
+    const band: SgCpfAgeBand = sgCpfAgeBandForCompletedAge(
+      completedAgeForCpfMonth
+    );
 
     if (effectiveGross > 750) {
       const { subject, ytdOwSubjectAfter } = ordinaryWagesSubjectWithYtd(
@@ -237,10 +243,15 @@ export function buildCpfMonthlyProjectionSeries(params: {
         ytdOw
       );
       ytdOw = ytdOwSubjectAfter;
-      const flows = monthlyCpfInflowsFromOwSubject(subject, band);
+      const flows = monthlyCpfInflowsFromOwSubject(subject, band, {
+        completedAge: completedAgeForCpfMonth,
+        currentRaBalance: ra,
+        cpfRaTarget: cpfRaTargetAt55,
+      });
       oa += flows.oa;
       sa += flows.sa;
       ma += flows.ma;
+      ra += flows.ra;
     }
 
     if (annualBonusSafe > 0 && Number(ym.slice(5, 7)) === payoutMonth) {
@@ -249,10 +260,15 @@ export function buildCpfMonthlyProjectionSeries(params: {
         additionalWageCeilingRemaining(ytdOw)
       );
       if (awSubject > 0) {
-        const awFlows = monthlyCpfInflowsFromOwSubject(awSubject, band);
+        const awFlows = monthlyCpfInflowsFromOwSubject(awSubject, band, {
+          completedAge: completedAgeForCpfMonth,
+          currentRaBalance: ra,
+          cpfRaTarget: cpfRaTargetAt55,
+        });
         oa += awFlows.oa;
         sa += awFlows.sa;
         ma += awFlows.ma;
+        ra += awFlows.ra;
       }
     }
 

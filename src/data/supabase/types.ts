@@ -313,6 +313,7 @@ export type CpfBalanceRow = {
   oa: string;
   sa: string;
   ma: string;
+  balance_as_of_month: string | null;
   oa_annual_rate: string | null;
   sa_annual_rate: string | null;
   ma_annual_rate: string | null;

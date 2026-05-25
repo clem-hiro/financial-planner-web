@@ -237,6 +237,19 @@ export const goalImportBodySchema = z
 
 export const yearMonthSchema = z.string().regex(/^\d{4}-\d{2}$/);
 
+export const cpfBalanceWriteSchema = z.object({
+  oa: z.number().nonnegative().max(100_000_000),
+  sa: z.number().nonnegative().max(100_000_000),
+  ma: z.number().nonnegative().max(100_000_000),
+  balance_as_of_month: yearMonthSchema,
+  oa_annual_rate: z.number().min(0).max(0.25).nullable(),
+  sa_annual_rate: z.number().min(0).max(0.25).nullable(),
+  ma_annual_rate: z.number().min(0).max(0.25).nullable(),
+  cpfis_monthly_from_oa: z.number().nonnegative().max(10_000_000),
+  cpfis_notional_balance: z.number().nonnegative().max(100_000_000),
+  cpfis_annual_return: z.number().min(0).max(1),
+});
+
 export const cpfInvestmentWriteSchema = z
   .object({
     account: z.enum(["oa", "sa"]),

@@ -96,6 +96,7 @@ import {
   housingPropertyTypeSchema,
   yearMonthSchema,
   cashAccountWriteSchema,
+  cpfBalanceWriteSchema,
   cpfInvestmentWriteSchema,
 } from "@/lib/validation";
 import { z } from "zod";
@@ -1455,6 +1456,9 @@ export async function upsertCpfBalanceAction(
   const oa = Number(formData.get("oa"));
   const sa = Number(formData.get("sa"));
   const ma = Number(formData.get("ma"));
+  const balanceAsOfMonth = String(
+    formData.get("balance_as_of_month") ?? ""
+  ).trim();
   const oaRRaw = String(formData.get("oa_annual_rate") ?? "").trim();
   const saRRaw = String(formData.get("sa_annual_rate") ?? "").trim();
   const maRRaw = String(formData.get("ma_annual_rate") ?? "").trim();
@@ -1465,28 +1469,17 @@ export async function upsertCpfBalanceAction(
   const cpfisB = Number(formData.get("cpfis_notional_balance"));
   const cpfisRet = Number(formData.get("cpfis_annual_return"));
 
-  if (![oa, sa, ma].every((n) => Number.isFinite(n) && n >= 0)) {
-    return { error: "OA, SA, and MA must be numbers ≥ 0" };
-  }
   const optRate = (v: number) =>
     !Number.isFinite(v) || v < 0 || v > 0.25 ? null : v;
   const oa_annual_rate = optRate(oaR);
   const sa_annual_rate = optRate(saR);
   const ma_annual_rate = optRate(maR);
-  if (!Number.isFinite(cpfisM) || cpfisM < 0) {
-    return { error: "Invalid CPFIS monthly from OA" };
-  }
-  if (!Number.isFinite(cpfisB) || cpfisB < 0) {
-    return { error: "Invalid CPFIS notional balance" };
-  }
-  if (!Number.isFinite(cpfisRet) || cpfisRet < 0 || cpfisRet > 1) {
-    return { error: "CPFIS annual return must be 0–1" };
-  }
 
-  await upsertCpfBalance(supabase, user.id, {
+  const parsed = cpfBalanceWriteSchema.safeParse({
     oa,
     sa,
     ma,
+    balance_as_of_month: balanceAsOfMonth,
     oa_annual_rate,
     sa_annual_rate,
     ma_annual_rate,
@@ -1494,6 +1487,12 @@ export async function upsertCpfBalanceAction(
     cpfis_notional_balance: cpfisB,
     cpfis_annual_return: cpfisRet,
   });
+  if (!parsed.success) return { error: "Check your CPF balance inputs" };
+  if (parsed.data.balance_as_of_month > formatYearMonth(new Date())) {
+    return { error: "CPF balance as-of month cannot be in the future" };
+  }
+
+  await upsertCpfBalance(supabase, user.id, parsed.data);
   revalidatePath("/dashboard");
   revalidatePath("/balances");
   revalidateSetupAndPlanning();
