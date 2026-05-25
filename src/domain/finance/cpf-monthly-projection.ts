@@ -20,6 +20,24 @@ export const DEFAULT_CPF_OA_CREDITING_ANNUAL = 0.025;
 export const DEFAULT_CPF_SA_CREDITING_ANNUAL = 0.04;
 export const DEFAULT_CPF_MA_CREDITING_ANNUAL = 0.04;
 
+export const CPF_BHS_ESTIMATED_ANNUAL_GROWTH_SG = 0.04;
+export const CPF_BHS_OFFICIAL_BY_YEAR_SG = {
+  2016: 49_800,
+  2017: 52_000,
+  2018: 54_500,
+  2019: 57_200,
+  2020: 60_000,
+  2021: 63_000,
+  2022: 66_000,
+  2023: 68_500,
+  2024: 71_500,
+  2025: 75_500,
+  2026: 79_000,
+} as const;
+export const CPF_BHS_LATEST_OFFICIAL_YEAR_SG = 2026;
+
+const CPF_BHS_EARLIEST_OFFICIAL_YEAR_SG = 2016;
+
 export type CpfBalanceSnapshot = {
   oa: number;
   sa: number;
@@ -68,6 +86,12 @@ export type CpfMonthPoint = {
   totalCpf: number;
 };
 
+export type BasicHealthcareSumProjection = {
+  amount: number;
+  policyYear: number;
+  isEstimated: boolean;
+};
+
 function round2(n: number): number {
   return Math.round(n * 100) / 100;
 }
@@ -90,6 +114,69 @@ function monthDiff(startYm: string, endYm: string): number {
 
 function validYearMonth(ym: string): boolean {
   return /^\d{4}-\d{2}$/.test(ym);
+}
+
+export function basicHealthcareSumForYearSg(
+  policyYear: number
+): BasicHealthcareSumProjection {
+  const year = Math.trunc(policyYear);
+  const official =
+    CPF_BHS_OFFICIAL_BY_YEAR_SG[
+      year as keyof typeof CPF_BHS_OFFICIAL_BY_YEAR_SG
+    ];
+  if (official != null) {
+    return { amount: official, policyYear: year, isEstimated: false };
+  }
+  if (year <= CPF_BHS_EARLIEST_OFFICIAL_YEAR_SG) {
+    return {
+      amount: CPF_BHS_OFFICIAL_BY_YEAR_SG[CPF_BHS_EARLIEST_OFFICIAL_YEAR_SG],
+      policyYear: CPF_BHS_EARLIEST_OFFICIAL_YEAR_SG,
+      isEstimated: false,
+    };
+  }
+  const yearsAfterLatest = Math.max(0, year - CPF_BHS_LATEST_OFFICIAL_YEAR_SG);
+  const latestAmount =
+    CPF_BHS_OFFICIAL_BY_YEAR_SG[CPF_BHS_LATEST_OFFICIAL_YEAR_SG];
+  return {
+    amount: round2(
+      latestAmount *
+        Math.pow(1 + CPF_BHS_ESTIMATED_ANNUAL_GROWTH_SG, yearsAfterLatest)
+    ),
+    policyYear: year,
+    isEstimated: true,
+  };
+}
+
+function applicableBasicHealthcareSumForMonthSg(
+  yearMonth: string,
+  birthDate: string | null
+): BasicHealthcareSumProjection {
+  const projectionYear = Number(yearMonth.slice(0, 4));
+  const birthYear =
+    birthDate != null && /^\d{4}-\d{2}-\d{2}$/.test(birthDate)
+      ? Number(birthDate.slice(0, 4))
+      : null;
+  const policyYear =
+    birthYear == null
+      ? projectionYear
+      : Math.min(projectionYear, birthYear + 65);
+  return basicHealthcareSumForYearSg(policyYear);
+}
+
+function overflowMediSaveAboveBhsToSpecialAccount(params: {
+  ma: number;
+  sa: number;
+  bhs: number;
+}): { ma: number; sa: number } {
+  const cap = Math.max(0, params.bhs);
+  const excessMa = round2(Math.max(0, params.ma - cap));
+  if (excessMa <= 0) {
+    return { ma: params.ma, sa: params.sa };
+  }
+  return {
+    ma: cap,
+    sa: round2(params.sa + excessMa),
+  };
 }
 
 function fixedBandAgeProxy(ageBand: SgCpfAgeBand | undefined): number {
@@ -271,6 +358,13 @@ export function buildCpfMonthlyProjectionSeries(params: {
         ra += awFlows.ra;
       }
     }
+
+    const bhs = applicableBasicHealthcareSumForMonthSg(ym, birthDate);
+    ({ ma, sa } = overflowMediSaveAboveBhsToSpecialAccount({
+      ma,
+      sa,
+      bhs: bhs.amount,
+    }));
 
     for (const { loan } of paymentByYmByLoan) {
       const explicitEvents = loan.upfrontOaEvents?.filter(

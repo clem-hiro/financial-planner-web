@@ -38,7 +38,7 @@
 | [`src/domain/finance/cash-flow-setup-guidance.test.ts`](#src-domain-finance-cash-flow-setup-guidance-test-ts) | `regular` | 1 | 0 |
 | [`src/domain/finance/cash-flow-setup-guidance.ts`](#src-domain-finance-cash-flow-setup-guidance-ts) | `regular` | 5 | 7 |
 | [`src/domain/finance/cpf-monthly-projection.test.ts`](#src-domain-finance-cpf-monthly-projection-test-ts) | `regular` | 0 | 0 |
-| [`src/domain/finance/cpf-monthly-projection.ts`](#src-domain-finance-cpf-monthly-projection-ts) | `regular` | 8 | 14 |
+| [`src/domain/finance/cpf-monthly-projection.ts`](#src-domain-finance-cpf-monthly-projection-ts) | `regular` | 11 | 19 |
 | [`src/domain/finance/cpf-retirement-projection.test.ts`](#src-domain-finance-cpf-retirement-projection-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/cpf-retirement-projection.ts`](#src-domain-finance-cpf-retirement-projection-ts) | `regular` | 11 | 17 |
 | [`src/domain/finance/cpf-rules-review.test.ts`](#src-domain-finance-cpf-rules-review-test-ts) | `regular` | 0 | 0 |
@@ -606,36 +606,51 @@ _No top-level functions detected._
 
 Classification: `regular`
 
-#### `round2` — function, L71
+#### `round2` — function, L95
+
+- called by: `src/domain/finance/cpf-monthly-projection.ts#basicHealthcareSumForYearSg`, `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/domain/finance/cpf-monthly-projection.ts#overflowMediSaveAboveBhsToSpecialAccount`
+
+#### `endOfYearMonthDate` — function, L99
 
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
 
-#### `endOfYearMonthDate` — function, L75
+#### `endOfPreviousYearMonthDate` — function, L104
 
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
 
-#### `endOfPreviousYearMonthDate` — function, L80
+#### `monthDiff` — function, L109
 
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
 
-#### `monthDiff` — function, L85
+#### `validYearMonth` — function, L115
 
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
 
-#### `validYearMonth` — function, L91
+#### `basicHealthcareSumForYearSg` — function, L119
+
+- calls: `src/domain/finance/cpf-monthly-projection.ts#round2`
+- called by: `src/domain/finance/cpf-monthly-projection.ts#applicableBasicHealthcareSumForMonthSg`
+
+#### `applicableBasicHealthcareSumForMonthSg` — function, L150
+
+- calls: `src/domain/finance/cpf-monthly-projection.ts#basicHealthcareSumForYearSg`
+- called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
+
+#### `overflowMediSaveAboveBhsToSpecialAccount` — function, L166
+
+- calls: `src/domain/finance/cpf-monthly-projection.ts#round2`
+- called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
+
+#### `fixedBandAgeProxy` — function, L182
 
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
 
-#### `fixedBandAgeProxy` — function, L95
+#### `buildCpfMonthlyProjectionSeries` — function, L196
 
-- called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
-
-#### `buildCpfMonthlyProjectionSeries` — function, L109
-
-- calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/cpf-monthly-projection.ts#endOfPreviousYearMonthDate`, `src/domain/finance/cpf-monthly-projection.ts#endOfYearMonthDate`, `src/domain/finance/cpf-monthly-projection.ts#fixedBandAgeProxy`, `src/domain/finance/cpf-monthly-projection.ts#monthDiff`, `src/domain/finance/cpf-monthly-projection.ts#round2`, `src/domain/finance/cpf-monthly-projection.ts#validYearMonth`, `src/domain/finance/cpf-retirement-projection.ts#routeCpfSaInvestmentMaturityProceeds`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`, `src/domain/finance/sg-cpf-contribution-buckets.ts#monthlyCpfInflowsFromOwSubject`, `src/domain/finance/sg-cpf-contribution-buckets.ts#ordinaryWagesSubjectWithYtd`, `src/domain/finance/sg-cpf-contribution-buckets.ts#sgCpfAgeBandForCompletedAge`, `src/domain/finance/sg-cpf.ts#additionalWageCeilingRemaining`, `src/lib/dates.ts#addMonthsToYearMonth`
+- calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/cpf-monthly-projection.ts#applicableBasicHealthcareSumForMonthSg`, `src/domain/finance/cpf-monthly-projection.ts#endOfPreviousYearMonthDate`, `src/domain/finance/cpf-monthly-projection.ts#endOfYearMonthDate`, `src/domain/finance/cpf-monthly-projection.ts#fixedBandAgeProxy`, `src/domain/finance/cpf-monthly-projection.ts#monthDiff`, `src/domain/finance/cpf-monthly-projection.ts#overflowMediSaveAboveBhsToSpecialAccount`, `src/domain/finance/cpf-monthly-projection.ts#round2`, `src/domain/finance/cpf-monthly-projection.ts#validYearMonth`, `src/domain/finance/cpf-retirement-projection.ts#routeCpfSaInvestmentMaturityProceeds`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`, `src/domain/finance/sg-cpf-contribution-buckets.ts#monthlyCpfInflowsFromOwSubject`, `src/domain/finance/sg-cpf-contribution-buckets.ts#ordinaryWagesSubjectWithYtd`, `src/domain/finance/sg-cpf-contribution-buckets.ts#sgCpfAgeBandForCompletedAge`, `src/domain/finance/sg-cpf.ts#additionalWageCeilingRemaining`, `src/lib/dates.ts#addMonthsToYearMonth`
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `downsampleCpfSeries` — function, L382
+#### `downsampleCpfSeries` — function, L476
 
 _No tracked edges._
 

@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-05-25T16:26:44.788Z",
+  "generated_at": "2026-05-25T16:44:53.415Z",
   "roots": [
     "src/app",
     "src/components",
@@ -2630,7 +2630,7 @@
           "id": "src/content/methodology-topics.ts#methodologyTopic",
           "name": "methodologyTopic",
           "kind": "function",
-          "line": 278,
+          "line": 282,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -9019,7 +9019,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#round2",
           "name": "round2",
           "kind": "function",
-          "line": 71,
+          "line": 95,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -9029,7 +9029,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#endOfYearMonthDate",
           "name": "endOfYearMonthDate",
           "kind": "function",
-          "line": 75,
+          "line": 99,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -9039,7 +9039,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#endOfPreviousYearMonthDate",
           "name": "endOfPreviousYearMonthDate",
           "kind": "function",
-          "line": 80,
+          "line": 104,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -9049,7 +9049,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#monthDiff",
           "name": "monthDiff",
           "kind": "function",
-          "line": 85,
+          "line": 109,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -9059,17 +9059,62 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#validYearMonth",
           "name": "validYearMonth",
           "kind": "function",
-          "line": 91,
+          "line": 115,
           "exported": false,
           "classification": [],
           "edges": [],
           "unresolved": 0
         },
         {
+          "id": "src/domain/finance/cpf-monthly-projection.ts#basicHealthcareSumForYearSg",
+          "name": "basicHealthcareSumForYearSg",
+          "kind": "function",
+          "line": 119,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cpf-monthly-projection.ts#round2"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/cpf-monthly-projection.ts#applicableBasicHealthcareSumForMonthSg",
+          "name": "applicableBasicHealthcareSumForMonthSg",
+          "kind": "function",
+          "line": 150,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cpf-monthly-projection.ts#basicHealthcareSumForYearSg"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/cpf-monthly-projection.ts#overflowMediSaveAboveBhsToSpecialAccount",
+          "name": "overflowMediSaveAboveBhsToSpecialAccount",
+          "kind": "function",
+          "line": 166,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cpf-monthly-projection.ts#round2"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/domain/finance/cpf-monthly-projection.ts#fixedBandAgeProxy",
           "name": "fixedBandAgeProxy",
           "kind": "function",
-          "line": 95,
+          "line": 182,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -9079,7 +9124,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries",
           "name": "buildCpfMonthlyProjectionSeries",
           "kind": "function",
-          "line": 109,
+          "line": 196,
           "exported": true,
           "classification": [],
           "edges": [
@@ -9133,6 +9178,14 @@
             },
             {
               "kind": "calls",
+              "target": "src/domain/finance/cpf-monthly-projection.ts#applicableBasicHealthcareSumForMonthSg"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/cpf-monthly-projection.ts#overflowMediSaveAboveBhsToSpecialAccount"
+            },
+            {
+              "kind": "calls",
               "target": "src/domain/finance/cpf-monthly-projection.ts#endOfYearMonthDate"
             },
             {
@@ -9146,7 +9199,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#downsampleCpfSeries",
           "name": "downsampleCpfSeries",
           "kind": "function",
-          "line": 382,
+          "line": 476,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -27645,15 +27698,20 @@
         "src/domain/finance/cash-flow-setup-guidance.ts#shouldShowCashFlowSetupGuidance",
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
       ],
+      "src/domain/finance/cpf-monthly-projection.ts#round2": [
+        "src/domain/finance/cpf-monthly-projection.ts#basicHealthcareSumForYearSg",
+        "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries",
+        "src/domain/finance/cpf-monthly-projection.ts#overflowMediSaveAboveBhsToSpecialAccount"
+      ],
+      "src/domain/finance/cpf-monthly-projection.ts#basicHealthcareSumForYearSg": [
+        "src/domain/finance/cpf-monthly-projection.ts#applicableBasicHealthcareSumForMonthSg"
+      ],
       "src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule": [
         "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries",
         "src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount",
         "src/domain/finance/housing-loan-payments.ts#housingInstalmentForMonth",
         "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
         "src/features/housing/PropertyAddForm.tsx#monthlyInstalment"
-      ],
-      "src/domain/finance/cpf-monthly-projection.ts#round2": [
-        "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries"
       ],
       "src/domain/finance/cpf-monthly-projection.ts#validYearMonth": [
         "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries"
@@ -27680,6 +27738,12 @@
       "src/domain/finance/sg-cpf.ts#additionalWageCeilingRemaining": [
         "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries",
         "src/domain/finance/sg-cpf.ts#annualEmployeeCpfTakeHomeWithBonusSg"
+      ],
+      "src/domain/finance/cpf-monthly-projection.ts#applicableBasicHealthcareSumForMonthSg": [
+        "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries"
+      ],
+      "src/domain/finance/cpf-monthly-projection.ts#overflowMediSaveAboveBhsToSpecialAccount": [
+        "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries"
       ],
       "src/domain/finance/cpf-monthly-projection.ts#endOfYearMonthDate": [
         "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries"

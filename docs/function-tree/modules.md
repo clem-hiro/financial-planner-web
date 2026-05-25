@@ -132,7 +132,7 @@
 | `src/domain/finance/cash-flow-setup-guidance.test.ts` | `src/domain` | `regular` | 1 | 0 |
 | `src/domain/finance/cash-flow-setup-guidance.ts` | `src/domain` | `regular` | 5 | 7 |
 | `src/domain/finance/cpf-monthly-projection.test.ts` | `src/domain` | `regular` | 0 | 0 |
-| `src/domain/finance/cpf-monthly-projection.ts` | `src/domain` | `regular` | 8 | 14 |
+| `src/domain/finance/cpf-monthly-projection.ts` | `src/domain` | `regular` | 11 | 19 |
 | `src/domain/finance/cpf-retirement-projection.test.ts` | `src/domain` | `regular` | 0 | 0 |
 | `src/domain/finance/cpf-retirement-projection.ts` | `src/domain` | `regular` | 11 | 17 |
 | `src/domain/finance/cpf-rules-review.test.ts` | `src/domain` | `regular` | 0 | 0 |

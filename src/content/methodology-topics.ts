@@ -186,7 +186,11 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     title: "CPF projection (OA / SA / MA)",
     summary:
       "This is a simplified CPF forecast using your entered balances, salary assumptions, and contribution settings to project OA/SA/MA over time.",
-    bullets: [],
+    bullets: [
+      "MA is capped at the applicable Basic Healthcare Sum (BHS). If MA reaches the cap, MA inflows above the cap are routed into SA in this MVP model.",
+      "The app stores official BHS values through 2026 ($79,000 for the 2026 prevailing / age-65 cohort amount). Future BHS values use a 4% p.a. estimate until CPF releases official figures.",
+      "For members who have turned 65, the BHS uses the cohort year they turned 65; otherwise it uses the prevailing projection year.",
+    ],
     footnote: "Educational illustration only—not tax, legal, or financial advice.",
   },
   {

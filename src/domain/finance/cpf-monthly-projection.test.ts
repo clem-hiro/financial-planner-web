@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { buildCpfMonthlyProjectionSeries } from "./cpf-monthly-projection";
+import {
+  basicHealthcareSumForYearSg,
+  buildCpfMonthlyProjectionSeries,
+} from "./cpf-monthly-projection";
 
 describe("buildCpfMonthlyProjectionSeries", () => {
   it("uses 2026 CPF allocation ratios for age 35 and below", () => {
@@ -254,6 +257,43 @@ describe("buildCpfMonthlyProjectionSeries", () => {
     const nov = series.find((p) => p.yearMonth === "2026-11");
     const dec = series.find((p) => p.yearMonth === "2026-12");
     expect(dec?.totalCpf ?? 0).toBeGreaterThan(nov?.totalCpf ?? 0);
+  });
+
+  it("caps MA at the 2026 Basic Healthcare Sum and overflows excess to SA", () => {
+    const series = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-06",
+      horizonMonths: 1,
+      birthDate: "1995-01-15",
+      grossMonthly: 7_000,
+      initial: {
+        oa: 0,
+        sa: 10_000,
+        ma: 79_000,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [],
+    });
+
+    expect(series[0].ma).toBe(79_000);
+    expect(series[0].sa).toBeCloseTo(10_419.84 + 559.96, 2);
+  });
+
+  it("estimates future Basic Healthcare Sum values at 4% per year", () => {
+    expect(basicHealthcareSumForYearSg(2026)).toEqual({
+      amount: 79_000,
+      policyYear: 2026,
+      isEstimated: false,
+    });
+    expect(basicHealthcareSumForYearSg(2027)).toEqual({
+      amount: 82_160,
+      policyYear: 2027,
+      isEstimated: true,
+    });
   });
 
   it("respects annual wage cap when bonus exceeds AW headroom", () => {

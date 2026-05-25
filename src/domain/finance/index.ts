@@ -167,8 +167,12 @@ export type {
   HousingPaymentSource,
 } from "./housing-loan-payments";
 export {
+  basicHealthcareSumForYearSg,
   buildCpfMonthlyProjectionSeries,
   downsampleCpfSeries,
+  CPF_BHS_ESTIMATED_ANNUAL_GROWTH_SG,
+  CPF_BHS_LATEST_OFFICIAL_YEAR_SG,
+  CPF_BHS_OFFICIAL_BY_YEAR_SG,
   DEFAULT_CPF_OA_CREDITING_ANNUAL,
   DEFAULT_CPF_SA_CREDITING_ANNUAL,
   DEFAULT_CPF_MA_CREDITING_ANNUAL,
@@ -195,6 +199,7 @@ export type {
   CpfBalanceSnapshot,
   CpfInvestmentProjectionInput,
   CpfMonthPoint,
+  BasicHealthcareSumProjection,
   HousingLoanProjectionInput,
 } from "./cpf-monthly-projection";
 export {
