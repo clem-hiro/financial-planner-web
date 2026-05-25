@@ -86,9 +86,9 @@
 | [`src/features/goals/investment-balance-row.ts`](#src-features-goals-investment-balance-row-ts) | `regular` | 1 | 1 |
 | [`src/features/goals/investment-balance-types.ts`](#src-features-goals-investment-balance-types-ts) | `regular` | 0 | 0 |
 | [`src/features/goals/InvestmentAssumptionBanner.tsx`](#src-features-goals-investmentassumptionbanner-tsx) | `regular` | 1 | 1 |
-| [`src/features/goals/InvestmentBalancesList.tsx`](#src-features-goals-investmentbalanceslist-tsx) | `client-component` | 7 | 51 |
+| [`src/features/goals/InvestmentBalancesList.tsx`](#src-features-goals-investmentbalanceslist-tsx) | `client-component` | 8 | 53 |
 | [`src/features/goals/InvestmentContributionScheduleFields.tsx`](#src-features-goals-investmentcontributionschedulefields-tsx) | `client-component` | 1 | 0 |
-| [`src/features/goals/InvestmentForm.tsx`](#src-features-goals-investmentform-tsx) | `client-component` | 1 | 14 |
+| [`src/features/goals/InvestmentForm.tsx`](#src-features-goals-investmentform-tsx) | `client-component` | 1 | 15 |
 | [`src/features/goals/InvestmentPlanGuidancePanel.tsx`](#src-features-goals-investmentplanguidancepanel-tsx) | `client-component` | 1 | 2 |
 | [`src/features/goals/profile-retirement-props.ts`](#src-features-goals-profile-retirement-props-ts) | `regular` | 1 | 1 |
 | [`src/features/goals/RetirementTargetsForm.tsx`](#src-features-goals-retirementtargetsform-tsx) | `client-component` | 1 | 14 |
@@ -1220,42 +1220,46 @@ Classification: `regular`
 
 Classification: `client-component`
 
-#### `contributionSummaryLine` — function, L45
+#### `withdrawalStartDisplayValue` — function, L45
+
+- called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`
+
+#### `contributionSummaryLine` — function, L72
 
 - calls: `src/ui/lib/format.ts#formatCurrency`
 - called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary`
 
-#### `ContributionTimelineHint` — component, L82 _(client-component)_
+#### `ContributionTimelineHint` — component, L109 _(client-component)_
 
 - calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary`
 
-#### `InvestmentSummary` — component, L153 _(client-component)_
+#### `InvestmentSummary` — component, L180 _(client-component)_
 
 - calls: `src/domain/finance/investment-review.ts#investmentRowIsStale`, `src/features/goals/InvestmentBalancesList.tsx#contributionSummaryLine`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/goals/InvestmentBalancesList.tsx#ContributionTimelineHint`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
 
-#### `InvestmentEditForm` — component, L231 _(client-component)_
+#### `InvestmentEditForm` — component, L258 _(client-component)_
 
-- calls: `[external] next`, `[external] react`, `src/server/actions.ts#updateInvestmentAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`
+- calls: `[external] next`, `[external] react`, `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/features/goals/InvestmentBalancesList.tsx#withdrawalStartDisplayValue`, `src/server/actions.ts#updateInvestmentAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`
 - renders: `src/features/goals/InvestmentContributionScheduleFields.tsx#InvestmentContributionScheduleFields`, `src/features/goals/InvestmentPlanGuidancePanel.tsx#InvestmentPlanGuidancePanel`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`, `src/ui/InfoTooltip.tsx#InfoTooltip`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
 - unresolved: 8
 
-#### `InvestmentRow` — component, L549 _(client-component)_
+#### `InvestmentRow` — component, L595 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#deleteInvestmentAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction`
 - renders: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`
 - unresolved: 6
 
-#### `InvestmentReviewPrompt` — component, L626 _(client-component)_
+#### `InvestmentReviewPrompt` — component, L673 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#confirmInvestmentReviewAction`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`
 
-#### `InvestmentBalancesList` — component, L677 _(client-component)_
+#### `InvestmentBalancesList` — component, L724 _(client-component)_
 
 - calls: `src/domain/finance/investment-review.ts#investmentRowIsStale`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentReviewPrompt`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
@@ -1274,9 +1278,9 @@ Classification: `client-component`
 
 Classification: `client-component`
 
-#### `InvestmentForm` — component, L19 _(client-component)_
+#### `InvestmentForm` — component, L21 _(client-component)_
 
-- calls: `[external] next`, `[external] react`
+- calls: `[external] next`, `[external] react`, `src/domain/finance/age-projection.ts#ageCompletedOnDate`
 - renders: `src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner`, `src/features/goals/InvestmentContributionScheduleFields.tsx#InvestmentContributionScheduleFields`, `src/features/goals/InvestmentPlanGuidancePanel.tsx#InvestmentPlanGuidancePanel`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 - unresolved: 1

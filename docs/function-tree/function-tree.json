@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-05-25T08:59:56.602Z",
+  "generated_at": "2026-05-25T11:22:58.388Z",
   "roots": [
     "src/app",
     "src/components",
@@ -18034,10 +18034,20 @@
       ],
       "functions": [
         {
+          "id": "src/features/goals/InvestmentBalancesList.tsx#withdrawalStartDisplayValue",
+          "name": "withdrawalStartDisplayValue",
+          "kind": "function",
+          "line": 45,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
           "id": "src/features/goals/InvestmentBalancesList.tsx#contributionSummaryLine",
           "name": "contributionSummaryLine",
           "kind": "function",
-          "line": 45,
+          "line": 72,
           "exported": false,
           "classification": [],
           "edges": [
@@ -18052,7 +18062,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#ContributionTimelineHint",
           "name": "ContributionTimelineHint",
           "kind": "component",
-          "line": 82,
+          "line": 109,
           "exported": false,
           "classification": [
             "client-component"
@@ -18069,7 +18079,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary",
           "name": "InvestmentSummary",
           "kind": "component",
-          "line": 153,
+          "line": 180,
           "exported": false,
           "classification": [
             "client-component"
@@ -18098,7 +18108,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm",
           "name": "InvestmentEditForm",
           "kind": "component",
-          "line": 231,
+          "line": 258,
           "exported": false,
           "classification": [
             "client-component"
@@ -18175,6 +18185,14 @@
             {
               "kind": "calls",
               "external": "react"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/age-projection.ts#ageCompletedOnDate"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/goals/InvestmentBalancesList.tsx#withdrawalStartDisplayValue"
             },
             {
               "kind": "calls",
@@ -18207,7 +18225,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentRow",
           "name": "InvestmentRow",
           "kind": "component",
-          "line": 549,
+          "line": 595,
           "exported": false,
           "classification": [
             "client-component"
@@ -18264,7 +18282,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentReviewPrompt",
           "name": "InvestmentReviewPrompt",
           "kind": "component",
-          "line": 626,
+          "line": 673,
           "exported": false,
           "classification": [
             "client-component"
@@ -18297,7 +18315,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList",
           "name": "InvestmentBalancesList",
           "kind": "component",
-          "line": 677,
+          "line": 724,
           "exported": true,
           "classification": [
             "client-component"
@@ -18360,7 +18378,7 @@
           "id": "src/features/goals/InvestmentForm.tsx#InvestmentForm",
           "name": "InvestmentForm",
           "kind": "component",
-          "line": 19,
+          "line": 21,
           "exported": true,
           "classification": [
             "client-component"
@@ -18405,6 +18423,10 @@
             {
               "kind": "calls",
               "external": "react"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/age-projection.ts#ageCompletedOnDate"
             },
             {
               "kind": "renders",
@@ -25647,6 +25669,25 @@
       ]
     },
     {
+      "path": "src/server/investment-planning-parse.test.ts",
+      "root": "src/server",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/server/investment-planning-parse.test.ts#baseFormData",
+          "name": "baseFormData",
+          "kind": "function",
+          "line": 4,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/server/investment-planning-parse.ts",
       "root": "src/server",
       "classification": [
@@ -26253,6 +26294,8 @@
         "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection",
         "src/features/dashboard/ProfileIncomeForm.tsx#derivedCpfBandFromBirthDate",
         "src/features/goals/InvestmentBalancesList.tsx#ContributionTimelineHint",
+        "src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm",
+        "src/features/goals/InvestmentForm.tsx#InvestmentForm",
         "src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs"
       ],
       "src/data/dashboard.ts#ageAtEndOfYearMonth": [
@@ -28367,6 +28410,9 @@
       ],
       "src/features/goals/InvestmentBalancesList.tsx#contributionSummaryLine": [
         "src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary"
+      ],
+      "src/features/goals/InvestmentBalancesList.tsx#withdrawalStartDisplayValue": [
+        "src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm"
       ],
       "src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction": [
         "src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm"

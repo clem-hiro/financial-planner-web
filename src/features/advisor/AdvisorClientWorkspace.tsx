@@ -414,6 +414,7 @@ export function AdvisorClientWorkspace({
                 <InvestmentForm
                   advisorClientId={clientId}
                   advisorSuggestionDisabled={hasPendingProposal}
+                  planningContext={investmentPlanningContext}
                 />
               </div>
               {investmentBalanceRows.length > 0 ? (

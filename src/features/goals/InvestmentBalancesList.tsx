@@ -42,6 +42,33 @@ const initial = { error: null as string | null };
 
 const fieldClass = `${fpInputClass} max-w-none`;
 
+function withdrawalStartDisplayValue(
+  investment: InvestmentBalanceRow,
+  planningContext: InvestmentPlanningContext | null,
+  currentAge: number | null
+): string {
+  if (investment.withdrawal_start_years == null) return "";
+  if (planningContext == null || currentAge == null) {
+    return String(investment.withdrawal_start_years);
+  }
+
+  const yearsToRetirement = Math.max(
+    0,
+    planningContext.targetRetirementAge - currentAge
+  );
+  // Older UI copy implied this field accepted an age. If a stored value looks
+  // like age 50+ instead of an offset, display it as entered so the next save
+  // normalizes it into years from today.
+  if (
+    investment.withdrawal_start_years >= 50 &&
+    investment.withdrawal_start_years > yearsToRetirement
+  ) {
+    return String(investment.withdrawal_start_years);
+  }
+
+  return String(currentAge + investment.withdrawal_start_years);
+}
+
 function contributionSummaryLine(
   investment: InvestmentBalanceRow,
   currencyCode: string
@@ -233,12 +260,14 @@ function InvestmentEditForm({
   currencyCode,
   onClose,
   advisorClientId,
+  planningContext,
   disabled = false,
 }: {
   investment: InvestmentBalanceRow;
   currencyCode: string;
   onClose: () => void;
   advisorClientId?: string;
+  planningContext: InvestmentPlanningContext | null;
   disabled?: boolean;
 }) {
   const router = useRouter();
@@ -256,10 +285,12 @@ function InvestmentEditForm({
   const [withdrawalMonthlyRaw, setWithdrawalMonthlyRaw] = useState(
     String(investment.withdrawal_monthly)
   );
+  const currentAge =
+    planningContext != null
+      ? ageCompletedOnDate(planningContext.birthDate, new Date())
+      : null;
   const [withdrawalStartYearsRaw, setWithdrawalStartYearsRaw] = useState(
-    investment.withdrawal_start_years != null
-      ? String(investment.withdrawal_start_years)
-      : ""
+    withdrawalStartDisplayValue(investment, planningContext, currentAge)
   );
   const [returnPctRaw, setReturnPctRaw] = useState(
     String(Math.round(investment.expected_annual_return * 1000) / 10)
@@ -295,6 +326,8 @@ function InvestmentEditForm({
   const [endDateRaw, setEndDateRaw] = useState(
     investment.contribution_end_date ?? ""
   );
+  const withdrawalStartName =
+    currentAge != null ? "withdrawal_start_age" : "withdrawal_start_years";
 
   const wrapped = async (
     prev: typeof initial,
@@ -503,22 +536,35 @@ function InvestmentEditForm({
           </label>
           <label className="block text-sm">
             <span className="mb-1 block font-medium text-slate-700">
-              Withdrawal starts after
+              {currentAge != null ? "Withdrawal starts at age" : "Withdrawal starts after"}
             </span>
+            {currentAge != null ? (
+              <input
+                type="hidden"
+                name="withdrawal_current_age"
+                value={currentAge}
+              />
+            ) : null}
             <input
-              name="withdrawal_start_years"
+              name={withdrawalStartName}
               type="number"
               inputMode="decimal"
               min={0}
-              max={100}
+              max={currentAge != null ? 120 : 100}
               step={0.25}
-              placeholder="Retirement age"
+              placeholder={
+                currentAge != null
+                  ? String(planningContext?.targetRetirementAge ?? 65)
+                  : "Years from today"
+              }
               value={withdrawalStartYearsRaw}
               onChange={(e) => setWithdrawalStartYearsRaw(e.target.value)}
               className={fieldClass}
             />
             <span className="mt-1 block text-[11px] text-slate-500">
-              Years from today. Blank uses profile retirement age when available.
+              {currentAge != null
+                ? "Age. Blank uses profile retirement age when available."
+                : "Years from today. Blank uses profile retirement age when available."}
             </span>
           </label>
         </div>
@@ -619,6 +665,7 @@ function InvestmentRow({
       onClose={() => setEditing(false)}
       advisorClientId={advisorClientId}
       disabled={advisorSuggestionDisabled}
+      planningContext={planningContext}
     />
   );
 }

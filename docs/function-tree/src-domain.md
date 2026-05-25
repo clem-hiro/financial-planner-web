@@ -368,7 +368,7 @@ Classification: `regular`
 #### `ageCompletedOnDate` — function, L20
 
 - calls: `src/domain/finance/age-projection.ts#parseYmd`
-- called by: `src/app/api/projection/route.ts#GET`, `src/data/dashboard.ts#ageAtEndOfYearMonth`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/domain/finance/age-projection.ts#buildNetWorthByAgeProjection`, `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/dashboard/ProfileIncomeForm.tsx#derivedCpfBandFromBirthDate`, `src/features/goals/InvestmentBalancesList.tsx#ContributionTimelineHint`, `src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs`
+- called by: `src/app/api/projection/route.ts#GET`, `src/data/dashboard.ts#ageAtEndOfYearMonth`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/domain/finance/age-projection.ts#buildNetWorthByAgeProjection`, `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/dashboard/ProfileIncomeForm.tsx#derivedCpfBandFromBirthDate`, `src/features/goals/InvestmentBalancesList.tsx#ContributionTimelineHint`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`, `src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs`
 
 #### `buildNetWorthByAgeProjection` — function, L41
 

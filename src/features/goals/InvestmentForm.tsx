@@ -11,15 +11,25 @@ import {
   type FixedScheduleMode,
 } from "@/features/goals/InvestmentContributionScheduleFields";
 import { InvestmentPlanGuidancePanel } from "@/features/goals/InvestmentPlanGuidancePanel";
+import type { InvestmentPlanningContext } from "@/features/goals/InvestmentBalancesList";
+import { ageCompletedOnDate } from "@/domain/finance";
 import type { InvestmentPlanNature } from "@/lib/investment-plan-nature";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };
 
 export function InvestmentForm(
-  props: { advisorClientId?: string; advisorSuggestionDisabled?: boolean } = {}
+  props: {
+    advisorClientId?: string;
+    advisorSuggestionDisabled?: boolean;
+    planningContext?: InvestmentPlanningContext | null;
+  } = {}
 ) {
-  const { advisorClientId, advisorSuggestionDisabled = false } = props;
+  const {
+    advisorClientId,
+    advisorSuggestionDisabled = false,
+    planningContext = null,
+  } = props;
   const router = useRouter();
   const submitLockRef = useRef(false);
   const saveAction = advisorClientId
@@ -48,6 +58,12 @@ export function InvestmentForm(
   const [durationYearsRaw, setDurationYearsRaw] = useState("15");
   const [startDateRaw, setStartDateRaw] = useState("");
   const [endDateRaw, setEndDateRaw] = useState("");
+  const currentAge =
+    planningContext != null
+      ? ageCompletedOnDate(planningContext.birthDate, new Date())
+      : null;
+  const withdrawalStartName =
+    currentAge != null ? "withdrawal_start_age" : "withdrawal_start_years";
 
   const fieldClass =
     "mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/25";
@@ -204,19 +220,32 @@ export function InvestmentForm(
           </label>
           <label className="block text-sm">
             <span className="mb-1 block font-medium text-slate-700">
-              Withdrawal starts after
+              {currentAge != null ? "Withdrawal starts at age" : "Withdrawal starts after"}
             </span>
+            {currentAge != null ? (
+              <input
+                type="hidden"
+                name="withdrawal_current_age"
+                value={currentAge}
+              />
+            ) : null}
             <input
-              name="withdrawal_start_years"
+              name={withdrawalStartName}
               type="number"
               min={0}
-              max={100}
+              max={currentAge != null ? 120 : 100}
               step={0.25}
-              placeholder="Retirement age"
+              placeholder={
+                currentAge != null
+                  ? String(planningContext?.targetRetirementAge ?? 65)
+                  : "Years from today"
+              }
               className="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm tabular-nums text-slate-900 shadow-sm outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/25"
             />
             <span className="mt-1 block text-[11px] text-slate-500">
-              Years from today. Blank uses profile retirement age when available.
+              {currentAge != null
+                ? "Age. Blank uses profile retirement age when available."
+                : "Years from today. Blank uses profile retirement age when available."}
             </span>
           </label>
         </div>

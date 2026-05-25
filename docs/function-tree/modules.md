@@ -277,9 +277,9 @@
 | `src/features/goals/investment-balance-row.ts` | `src/features` | `regular` | 1 | 1 |
 | `src/features/goals/investment-balance-types.ts` | `src/features` | `regular` | 0 | 0 |
 | `src/features/goals/InvestmentAssumptionBanner.tsx` | `src/features` | `regular` | 1 | 1 |
-| `src/features/goals/InvestmentBalancesList.tsx` | `src/features` | `client-component` | 7 | 51 |
+| `src/features/goals/InvestmentBalancesList.tsx` | `src/features` | `client-component` | 8 | 53 |
 | `src/features/goals/InvestmentContributionScheduleFields.tsx` | `src/features` | `client-component` | 1 | 0 |
-| `src/features/goals/InvestmentForm.tsx` | `src/features` | `client-component` | 1 | 14 |
+| `src/features/goals/InvestmentForm.tsx` | `src/features` | `client-component` | 1 | 15 |
 | `src/features/goals/InvestmentPlanGuidancePanel.tsx` | `src/features` | `client-component` | 1 | 2 |
 | `src/features/goals/profile-retirement-props.ts` | `src/features` | `regular` | 1 | 1 |
 | `src/features/goals/RetirementTargetsForm.tsx` | `src/features` | `client-component` | 1 | 14 |
@@ -371,6 +371,7 @@
 | `src/server/inbox/ensure-investment-review-notification.ts` | `src/server` | `regular` | 1 | 4 |
 | `src/server/inbox/ensure-salary-review-notification.test.ts` | `src/server` | `regular` | 0 | 0 |
 | `src/server/inbox/ensure-salary-review-notification.ts` | `src/server` | `regular` | 1 | 1 |
+| `src/server/investment-planning-parse.test.ts` | `src/server` | `regular` | 1 | 0 |
 | `src/server/investment-planning-parse.ts` | `src/server` | `regular` | 2 | 1 |
 | `src/server/liability-form.ts` | `src/server` | `regular` | 2 | 3 |
 | `src/ui/app-link-styles.ts` | `src/ui` | `regular` | 0 | 0 |

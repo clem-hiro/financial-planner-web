@@ -266,7 +266,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           >
             <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
               <div className="p-4 sm:p-5">
-                <InvestmentForm />
+                <InvestmentForm planningContext={investmentPlanningContext} />
               </div>
               {investmentBalanceRows.length > 0 ? (
                 <div className="p-4 sm:p-5">

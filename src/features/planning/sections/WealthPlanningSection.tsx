@@ -125,7 +125,7 @@ export async function WealthPlanningSection() {
           >
             <div className="overflow-hidden rounded-2xl bg-white/90 ring-1 ring-slate-200/70 divide-y divide-slate-200/80">
               <div className="p-4 sm:p-5">
-                <InvestmentForm />
+                <InvestmentForm planningContext={investmentPlanningContext} />
               </div>
               {investmentBalanceRows.length > 0 ? (
                 <div className="p-4 sm:p-5">

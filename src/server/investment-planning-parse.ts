@@ -117,8 +117,31 @@ export function parseInvestmentPlanningFields(formData: FormData):
   const withdrawalStartRaw = String(
     formData.get("withdrawal_start_years") ?? ""
   ).trim();
-  const withdrawal_start_years =
+  const withdrawalStartAgeRaw = String(
+    formData.get("withdrawal_start_age") ?? ""
+  ).trim();
+  const withdrawalCurrentAgeRaw = String(
+    formData.get("withdrawal_current_age") ?? ""
+  ).trim();
+  let withdrawal_start_years =
     withdrawalStartRaw === "" ? null : Number(withdrawalStartRaw);
+
+  if (withdrawalStartAgeRaw !== "") {
+    const withdrawalStartAge = Number(withdrawalStartAgeRaw);
+    const withdrawalCurrentAge = Number(withdrawalCurrentAgeRaw);
+    if (
+      !Number.isFinite(withdrawalStartAge) ||
+      withdrawalStartAge < 0 ||
+      withdrawalStartAge > 120 ||
+      !Number.isFinite(withdrawalCurrentAge) ||
+      withdrawalCurrentAge < 0 ||
+      withdrawalCurrentAge > 120
+    ) {
+      return { ok: false, error: "Withdrawal start age must be a valid age." };
+    }
+    withdrawal_start_years = Math.max(0, withdrawalStartAge - withdrawalCurrentAge);
+  }
+
   if (
     withdrawal_start_years != null &&
     (!Number.isFinite(withdrawal_start_years) || withdrawal_start_years < 0)
