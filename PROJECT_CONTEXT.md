@@ -130,7 +130,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | Capability | Status | Notes |
 |------------|--------|--------|
 | Advisor home / operations snapshot (keys, client counts) | **Shipped** | `getAdvisorDashboardData`; mismatch hints if keys claimed but roster empty. |
-| Client roster (search, sort, pagination, health signals) | **Shipped** | RPC-backed list when migrated (`advisor_client_list_metrics`). |
+| Client roster (search, sort, pagination, health signals) | **Shipped** | RPC-backed list when migrated (`advisor_client_list_metrics`). Quick filters: pending onboarding, consent not granted / withdrawn, needs attention (`filter` query on `/advisor/clients`). |
 | Per-client workspace (profile, goals, budget edits, month readouts) | **Shipped** | RLS-backed; `AdvisorClientWorkspace`. |
 | **Advisor proposal & change review** (suggestion mode) | **Shipped** | Advisors queue **field-level** edits on a draft proposal; client reviews on **`/review/proposal/[id]`** and accepts/rejects before canonical data updates. Inbox CTA via `financial_inbox_notifications` (`kind: advisor_proposal`). |
 | Access key create/list/revoke | **Shipped** | `/advisor/access-keys`, server actions. |
@@ -249,7 +249,7 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 | `/profile` | **Client alias** → `/setup?tab=profile` (`(app)/(client)/profile/page.tsx`). |
 | `/more` | Secondary hub: profile, planning entry, activity, methodology, and **Client UI version** strip (`(app)/more/page.tsx`, `src/lib/client-release.ts`). |
 | `/advisor` | **Advisor** workspace home: client/key snapshot cards (`(app)/advisor/page.tsx`). |
-| `/advisor/clients` | **Advisor** client roster: search, sort, pagination, card grid with health signals (`advisor_client_list_metrics` RPC when migrated). |
+| `/advisor/clients` | **Advisor** client roster: search, quick filters, sort, pagination, table with health signals and consent (`advisor_client_list_metrics` RPC when migrated). |
 | `/advisor/opportunities` | **Advisor** placeholder hub for future product/opportunity workflows (`Coming Soon`). |
 | `/advisor/activity` | **Advisor** placeholder cross-client activity feed (`Work in Progress`). |
 | `/advisor/access-keys` | **Advisor** access key management (moved out of client Setup). |
@@ -414,4 +414,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 - **Not in scope:** live CPF APIs, actuarial CPF LIFE, exhaustive withdrawal rules.
 - **Future:** persist advisor/client assumption presets; tie RA balance into retirement sustainability / spend coverage; inflation on payouts.
 
-_Last reviewed (2026-05-26): CPF monthly projection now caps MA at the applicable Basic Healthcare Sum (BHS), stores official BHS values through 2026, estimates future BHS at 4% p.a. until CPF releases figures, and routes MA excess to SA. Prior: debt loan details now capture remaining tenure as years + months; investment withdrawal start age UX converts age into years-from-today offset; CPF balance-as-of month + Dec year-end CPF snapshot; 2026 CPF allocation ratios, post-55 RA contribution routing, and month-after-birthday age-band handling in `cpf-monthly-projection.ts` / `sg-cpf-contribution-buckets.ts`; migration `20260626000000`._
+_Last reviewed (2026-05-26): Advisor client roster quick filters (onboarding, consent, needs attention) on `/advisor/clients`. Prior: CPF monthly projection BHS cap and MA excess routing; debt tenure years+months; CPF balance-as-of month; migration `20260626000000`._

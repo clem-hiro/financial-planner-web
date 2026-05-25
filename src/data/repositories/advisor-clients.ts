@@ -1,4 +1,9 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import {
+  parseAdvisorClientListFilterPreset,
+  rowMatchesAdvisorClientListFilter,
+  type AdvisorClientListFilterPreset,
+} from "@/lib/advisor-client-list-filters";
 
 /** Safe, non-financial fields for advisor workspace lists (expand deliberately later). */
 export type AdvisorClientListRow = {
@@ -135,16 +140,19 @@ export async function listAdvisorClientsWorkspace(
     offset?: number;
     search?: string | null;
     sort?: AdvisorClientListSort;
+    filter?: AdvisorClientListFilterPreset;
   }
 ): Promise<{ rows: AdvisorClientWorkspaceListRow[]; totalCount: number }> {
   const limit = Math.min(200, Math.max(1, options.limit ?? 48));
   const offset = Math.max(0, options.offset ?? 0);
   const search = options.search?.trim() || null;
   const sort = options.sort ?? "created_desc";
+  const filter = parseAdvisorClientListFilterPreset(options.filter);
+  const filterActive = filter !== "all";
 
   const { data, error } = await supabase.rpc("advisor_client_list_metrics", {
-    p_limit: limit,
-    p_offset: offset,
+    p_limit: filterActive ? 200 : limit,
+    p_offset: filterActive ? 0 : offset,
     p_search: search,
     p_sort: sort,
   });
@@ -170,32 +178,48 @@ export async function listAdvisorClientsWorkspace(
           })
         );
       }
-      const sliced = fallback.slice(offset, offset + limit);
-      const rows: AdvisorClientWorkspaceListRow[] = sliced.map((r) => ({
-        id: r.id,
-        display_name: r.display_name,
-        profile_type: "client",
-        onboarding_required: r.onboarding_required,
-        onboarding_completed_at: r.onboarding_completed_at,
-        created_at: r.created_at,
-        monthly_income: null,
-        savings_target_monthly: null,
-        fixed_expenses_monthly: null,
-        monthly_gross_salary: null,
-        last_expense_spent_at: null,
-        expense_count: "0",
-        total_count: String(fallback.length),
-        consent_status: "none",
-      }));
-      return {
-        rows: await withConsentStatus(supabase, advisorUserId, rows),
-        totalCount: fallback.length,
-      };
+      let enriched = await withConsentStatus(
+        supabase,
+        advisorUserId,
+        fallback.map((r) => ({
+          id: r.id,
+          display_name: r.display_name,
+          profile_type: "client",
+          onboarding_required: r.onboarding_required,
+          onboarding_completed_at: r.onboarding_completed_at,
+          created_at: r.created_at,
+          monthly_income: null,
+          savings_target_monthly: null,
+          fixed_expenses_monthly: null,
+          monthly_gross_salary: null,
+          last_expense_spent_at: null,
+          expense_count: "0",
+          total_count: String(fallback.length),
+          consent_status: "none" as const,
+        }))
+      );
+      if (filterActive) {
+        enriched = enriched.filter((r) =>
+          rowMatchesAdvisorClientListFilter(r, filter)
+        );
+      }
+      const totalCount = enriched.length;
+      const rows = enriched.slice(offset, offset + limit);
+      return { rows, totalCount };
     }
     throw error;
   }
 
   const raw = (data ?? []) as AdvisorClientWorkspaceListRow[];
+  let enriched = await withConsentStatus(supabase, advisorUserId, raw);
+
+  if (filterActive) {
+    enriched = enriched.filter((r) => rowMatchesAdvisorClientListFilter(r, filter));
+    const totalCount = enriched.length;
+    const sliced = enriched.slice(offset, offset + limit);
+    return { rows: sliced, totalCount };
+  }
+
   let totalCount = 0;
   if (raw.length > 0) {
     totalCount = Number(raw[0].total_count ?? 0);
@@ -211,10 +235,7 @@ export async function listAdvisorClientsWorkspace(
     }
   }
 
-  return {
-    rows: await withConsentStatus(supabase, advisorUserId, raw),
-    totalCount,
-  };
+  return { rows: enriched, totalCount };
 }
 
 /**
