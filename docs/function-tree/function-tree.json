@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-05-25T11:22:58.388Z",
+  "generated_at": "2026-05-25T16:26:44.788Z",
   "roots": [
     "src/app",
     "src/components",
@@ -16434,10 +16434,20 @@
       ],
       "functions": [
         {
+          "id": "src/features/debts/DebtFormFields.tsx#normalizeTenureMonthInput",
+          "name": "normalizeTenureMonthInput",
+          "kind": "function",
+          "line": 42,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
           "id": "src/features/debts/DebtFormFields.tsx#DebtFormFields",
           "name": "DebtFormFields",
           "kind": "component",
-          "line": 42,
+          "line": 57,
           "exported": true,
           "classification": [
             "client-component"
@@ -16457,10 +16467,14 @@
             },
             {
               "kind": "calls",
+              "target": "src/features/debts/DebtFormFields.tsx#normalizeTenureMonthInput"
+            },
+            {
+              "kind": "calls",
               "target": "src/ui/lib/format.ts#formatCurrency"
             }
           ],
-          "unresolved": 10
+          "unresolved": 11
         }
       ]
     },
@@ -16550,7 +16564,7 @@
           "id": "src/features/debts/DebtPlanningPanels.tsx#rowToFormValues",
           "name": "rowToFormValues",
           "kind": "function",
-          "line": 54,
+          "line": 55,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -16560,7 +16574,7 @@
           "id": "src/features/debts/DebtPlanningPanels.tsx#DebtCard",
           "name": "DebtCard",
           "kind": "component",
-          "line": 75,
+          "line": 78,
           "exported": false,
           "classification": [
             "client-component"
@@ -16661,7 +16675,7 @@
           "id": "src/features/debts/DebtPlanningPanels.tsx#AddDebtForm",
           "name": "AddDebtForm",
           "kind": "component",
-          "line": 272,
+          "line": 275,
           "exported": false,
           "classification": [
             "client-component"
@@ -16710,7 +16724,7 @@
           "id": "src/features/debts/DebtPlanningPanels.tsx#mapLiabilityRows",
           "name": "mapLiabilityRows",
           "kind": "function",
-          "line": 331,
+          "line": 334,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -16720,7 +16734,7 @@
           "id": "src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels",
           "name": "DebtPlanningPanels",
           "kind": "component",
-          "line": 335,
+          "line": 338,
           "exported": true,
           "classification": [
             "client-component"
@@ -25722,6 +25736,25 @@
       ]
     },
     {
+      "path": "src/server/liability-form.test.ts",
+      "root": "src/server",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/server/liability-form.test.ts#baseFormData",
+          "name": "baseFormData",
+          "kind": "function",
+          "line": 4,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/server/liability-form.ts",
       "root": "src/server",
       "classification": [
@@ -28320,6 +28353,9 @@
       ],
       "src/server/inbox-actions.ts#markInboxItemReadByDedupeKeyAction": [
         "src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm"
+      ],
+      "src/features/debts/DebtFormFields.tsx#normalizeTenureMonthInput": [
+        "src/features/debts/DebtFormFields.tsx#DebtFormFields"
       ],
       "src/domain/finance/debt-payoff-strategies.ts#compareDebtPayoffStrategies": [
         "src/features/debts/DebtPayoffStrategyComparison.tsx#DebtPayoffStrategyComparison"

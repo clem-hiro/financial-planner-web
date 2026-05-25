@@ -65,7 +65,7 @@
 | [`src/features/dashboard/ProjectionMiniChart.tsx`](#src-features-dashboard-projectionminichart-tsx) | `client-component` | 1 | 8 |
 | [`src/features/debts/debt-constants.ts`](#src-features-debts-debt-constants-ts) | `regular` | 4 | 0 |
 | [`src/features/debts/DebtEducationalExamples.tsx`](#src-features-debts-debteducationalexamples-tsx) | `client-component` | 2 | 4 |
-| [`src/features/debts/DebtFormFields.tsx`](#src-features-debts-debtformfields-tsx) | `client-component` | 1 | 4 |
+| [`src/features/debts/DebtFormFields.tsx`](#src-features-debts-debtformfields-tsx) | `client-component` | 2 | 5 |
 | [`src/features/debts/DebtPayoffStrategyComparison.tsx`](#src-features-debts-debtpayoffstrategycomparison-tsx) | `client-component` | 2 | 8 |
 | [`src/features/debts/DebtPlanningPanels.tsx`](#src-features-debts-debtplanningpanels-tsx) | `client-component` | 6 | 37 |
 | [`src/features/expenses/CategoryBarChart.tsx`](#src-features-expenses-categorybarchart-tsx) | `client-component` | 1 | 9 |
@@ -911,11 +911,15 @@ Classification: `client-component`
 
 Classification: `client-component`
 
-#### `DebtFormFields` — component, L42 _(client-component)_
+#### `normalizeTenureMonthInput` — function, L42
 
-- calls: `[external] react`, `src/domain/finance/debt-repayment.ts#defaultLoanTypeForCategory`, `src/domain/finance/debt-repayment.ts#estimateMonthlyRepayment`, `src/ui/lib/format.ts#formatCurrency`
+- called by: `src/features/debts/DebtFormFields.tsx#DebtFormFields`
+
+#### `DebtFormFields` — component, L57 _(client-component)_
+
+- calls: `[external] react`, `src/domain/finance/debt-repayment.ts#defaultLoanTypeForCategory`, `src/domain/finance/debt-repayment.ts#estimateMonthlyRepayment`, `src/features/debts/DebtFormFields.tsx#normalizeTenureMonthInput`, `src/ui/lib/format.ts#formatCurrency`
 - rendered by: `src/features/debts/DebtPlanningPanels.tsx#AddDebtForm`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
-- unresolved: 10
+- unresolved: 11
 
 ### `src/features/debts/DebtPayoffStrategyComparison.tsx` <a id="src-features-debts-debtpayoffstrategycomparison-tsx"></a>
 
@@ -939,29 +943,29 @@ Classification: `client-component`
 
 - called by: `src/features/debts/DebtPlanningPanels.tsx#AddDebtForm`
 
-#### `rowToFormValues` — function, L54
+#### `rowToFormValues` — function, L55
 
 - called by: `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
 
-#### `DebtCard` — component, L75 _(client-component)_
+#### `DebtCard` — component, L78 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/domain/finance/debt-repayment.ts#debtRepaymentEndYearMonth`, `src/domain/finance/debt-repayment.ts#debtRepaymentStartYearMonth`, `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`, `src/features/debts/DebtPlanningPanels.tsx#rowToFormValues`, `src/features/debts/debt-constants.ts#debtCategoryIcon`, `src/features/debts/debt-constants.ts#debtCategoryLabel`, `src/features/debts/debt-constants.ts#formatRatePercent`, `src/features/debts/debt-constants.ts#formatTenureYears`, `src/lib/dates.ts#formatYearMonth`, `src/server/actions.ts#deleteLiabilityAction`, `src/server/actions.ts#updateLiabilityAction`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/debts/DebtFormFields.tsx#DebtFormFields`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels`
 - unresolved: 8
 
-#### `AddDebtForm` — component, L272 _(client-component)_
+#### `AddDebtForm` — component, L275 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/features/debts/DebtPlanningPanels.tsx#emptyFormValues`, `src/server/actions.ts#createLiabilityAction`
 - renders: `src/features/debts/DebtFormFields.tsx#DebtFormFields`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels`
 - unresolved: 4
 
-#### `mapLiabilityRows` — function, L331
+#### `mapLiabilityRows` — function, L334
 
 - called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`
 
-#### `DebtPlanningPanels` — component, L335 _(client-component)_
+#### `DebtPlanningPanels` — component, L338 _(client-component)_
 
 - calls: `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/debts/DebtEducationalExamples.tsx#DebtEducationalExamples`, `src/features/debts/DebtPayoffStrategyComparison.tsx#DebtPayoffStrategyComparison`, `src/features/debts/DebtPlanningPanels.tsx#AddDebtForm`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`

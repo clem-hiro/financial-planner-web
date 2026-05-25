@@ -256,7 +256,7 @@
 | `src/features/dashboard/ProjectionMiniChart.tsx` | `src/features` | `client-component` | 1 | 8 |
 | `src/features/debts/debt-constants.ts` | `src/features` | `regular` | 4 | 0 |
 | `src/features/debts/DebtEducationalExamples.tsx` | `src/features` | `client-component` | 2 | 4 |
-| `src/features/debts/DebtFormFields.tsx` | `src/features` | `client-component` | 1 | 4 |
+| `src/features/debts/DebtFormFields.tsx` | `src/features` | `client-component` | 2 | 5 |
 | `src/features/debts/DebtPayoffStrategyComparison.tsx` | `src/features` | `client-component` | 2 | 8 |
 | `src/features/debts/DebtPlanningPanels.tsx` | `src/features` | `client-component` | 6 | 37 |
 | `src/features/expenses/CategoryBarChart.tsx` | `src/features` | `client-component` | 1 | 9 |
@@ -373,6 +373,7 @@
 | `src/server/inbox/ensure-salary-review-notification.ts` | `src/server` | `regular` | 1 | 1 |
 | `src/server/investment-planning-parse.test.ts` | `src/server` | `regular` | 1 | 0 |
 | `src/server/investment-planning-parse.ts` | `src/server` | `regular` | 2 | 1 |
+| `src/server/liability-form.test.ts` | `src/server` | `regular` | 1 | 0 |
 | `src/server/liability-form.ts` | `src/server` | `regular` | 2 | 3 |
 | `src/ui/app-link-styles.ts` | `src/ui` | `regular` | 0 | 0 |
 | `src/ui/app-tab-styles.ts` | `src/ui` | `regular` | 0 | 0 |

@@ -24,6 +24,7 @@ export type DebtFormValues = {
   loanType: LoanType | "";
   interestRatePercent: number | "";
   remainingTenureYears: number | "";
+  remainingTenureMonths: number | "";
   monthlyRepayment: number | "";
   repaymentOverride: boolean;
   startDate: string;
@@ -36,8 +37,22 @@ type DebtFormFieldsProps = {
   onChange: (patch: Partial<DebtFormValues>) => void;
   showAdvanced: boolean;
   onToggleAdvanced: () => void;
-  idPrefix?: string;
 };
+
+function normalizeTenureMonthInput(
+  years: number | "",
+  months: number
+): Partial<DebtFormValues> {
+  if (!Number.isFinite(months) || months < 12) {
+    return { remainingTenureMonths: months };
+  }
+
+  const currentYears = years === "" ? 0 : years;
+  return {
+    remainingTenureYears: currentYears + Math.floor(months / 12),
+    remainingTenureMonths: months % 12,
+  };
+}
 
 export function DebtFormFields({
   currencyCode,
@@ -45,7 +60,6 @@ export function DebtFormFields({
   onChange,
   showAdvanced,
   onToggleAdvanced,
-  idPrefix = "debt",
 }: DebtFormFieldsProps) {
   const loanType =
     (values.loanType ||
@@ -60,10 +74,14 @@ export function DebtFormFields({
       values.interestRatePercent === ""
         ? null
         : Number(values.interestRatePercent) / 100;
+    const hasTenure =
+      values.remainingTenureYears !== "" ||
+      (values.remainingTenureMonths !== "" && values.remainingTenureMonths > 0);
     const months =
-      values.remainingTenureYears === ""
+      !hasTenure
         ? null
-        : Math.round(Number(values.remainingTenureYears) * 12);
+        : Math.round(Number(values.remainingTenureYears || 0) * 12) +
+          Math.round(Number(values.remainingTenureMonths || 0));
     if (!Number.isFinite(balance) || balance <= 0) return null;
     return estimateMonthlyRepayment({
       balance,
@@ -170,27 +188,53 @@ export function DebtFormFields({
                 className={fpInputNarrowClass}
               />
             </label>
-            <label className="block text-xs">
-              <span className="mb-1 block font-medium text-slate-600">
-                Remaining tenure (years)
-              </span>
-              <input
-                name="remaining_tenure_years"
-                type="number"
-                min={0}
-                max={50}
-                step="0.5"
-                value={values.remainingTenureYears}
-                onChange={(e) =>
-                  onChange({
-                    remainingTenureYears:
-                      e.target.value === "" ? "" : Number(e.target.value),
-                  })
-                }
-                placeholder="24"
-                className={fpInputNarrowClass}
-              />
-            </label>
+            <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_7rem]">
+              <label className="block text-xs">
+                <span className="mb-1 block font-medium text-slate-600">
+                  Remaining tenure (years)
+                </span>
+                <input
+                  name="remaining_tenure_years"
+                  type="number"
+                  min={0}
+                  max={50}
+                  step="1"
+                  value={values.remainingTenureYears}
+                  onChange={(e) =>
+                    onChange({
+                      remainingTenureYears:
+                        e.target.value === "" ? "" : Number(e.target.value),
+                    })
+                  }
+                  placeholder="24"
+                  className={fpInputNarrowClass}
+                />
+              </label>
+              <label className="block text-xs">
+                <span className="mb-1 block font-medium text-slate-600">
+                  Months
+                </span>
+                <input
+                  name="remaining_tenure_months"
+                  type="number"
+                  min={0}
+                  step="1"
+                  value={values.remainingTenureMonths}
+                  onChange={(e) => {
+                    onChange(
+                      e.target.value === ""
+                        ? { remainingTenureMonths: "" }
+                        : normalizeTenureMonthInput(
+                            values.remainingTenureYears,
+                            Number(e.target.value)
+                          )
+                    );
+                  }}
+                  placeholder="0"
+                  className={fpInputNarrowClass}
+                />
+              </label>
+            </div>
           </div>
 
           <label className="block text-xs">
