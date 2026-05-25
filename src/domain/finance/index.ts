@@ -235,6 +235,8 @@ export {
   BUDGET_STRATEGY_PRESETS,
   FOOD_SPEND_BAND_PRESETS,
   LIFESTYLE_PRESETS,
+  ONBOARDING_LIFESTYLE_PRESETS,
+  listOnboardingLifestylePresets,
   budgetBucketForCategoryLabel,
   countReplaceableMonthlyBudgetLines,
   generateGuidedMonthlyBudgetLines,

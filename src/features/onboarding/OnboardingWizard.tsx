@@ -7,6 +7,7 @@ import {
   BUDGET_STRATEGY_PRESETS,
   FOOD_SPEND_BAND_PRESETS,
   LIFESTYLE_PRESETS,
+  listOnboardingLifestylePresets,
   generateGuidedMonthlyBudgetLines,
   type BudgetingStrategyId,
   type FoodSpendBandId,
@@ -182,6 +183,11 @@ export function OnboardingWizard(props: Props) {
       foodSpendBand: foodBand,
     });
   }, [takeHomeForBudget, lifestyle, strategy, foodBand]);
+
+  const lifestyleOptions = useMemo(
+    () => listOnboardingLifestylePresets(lifestyle),
+    [lifestyle]
+  );
 
   function resolveBonusPayload(gross: number | null): {
     annual_bonus: number | null;
@@ -592,8 +598,8 @@ export function OnboardingWizard(props: Props) {
         <div className="space-y-6" {...(pending ? { inert: true } : {})}>
           <div className={`${onboardingCardClass} space-y-4`}>
             <p className="text-sm font-semibold text-slate-900">Lifestyle</p>
-            <div className="grid max-h-[min(52vh,22rem)] gap-2.5 overflow-y-auto pr-1 sm:max-h-none sm:grid-cols-2">
-              {LIFESTYLE_PRESETS.map((p) => (
+            <div className="grid gap-2.5 sm:grid-cols-2">
+              {lifestyleOptions.map((p) => (
                 <button
                   key={p.id}
                   type="button"

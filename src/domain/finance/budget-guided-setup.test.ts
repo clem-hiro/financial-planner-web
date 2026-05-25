@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   generateGuidedMonthlyBudgetLines,
   isPreservedOnGuidedBudgetReplace,
+  listOnboardingLifestylePresets,
   strategyNeedsWantsSavings,
   sumBucketAmounts,
 } from "./budget-guided-setup";
@@ -27,6 +28,21 @@ describe("isPreservedOnGuidedBudgetReplace", () => {
       isPreservedOnGuidedBudgetReplace("debt repayments — car loan")
     ).toBe(true);
     expect(isPreservedOnGuidedBudgetReplace("Income tax (GIRO)")).toBe(true);
+  });
+});
+
+describe("listOnboardingLifestylePresets", () => {
+  it("returns six generic presets by default", () => {
+    expect(listOnboardingLifestylePresets(null)).toHaveLength(6);
+    expect(listOnboardingLifestylePresets("young_professional")[0]?.label).toBe(
+      "Balanced starter"
+    );
+  });
+
+  it("prepends a legacy saved preset when outside the onboarding subset", () => {
+    const opts = listOnboardingLifestylePresets("business_owner");
+    expect(opts).toHaveLength(7);
+    expect(opts[0]?.id).toBe("business_owner");
   });
 });
 
