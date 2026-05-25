@@ -63,7 +63,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 
 | Capability | Status | Notes |
 |------------|--------|--------|
-| Sign-in / sign-up (Supabase Auth) | **Shipped** | `LoginForm`, `/login`. |
+| Sign-in / sign-up (Supabase Auth) | **Shipped** | `LoginForm`, `/login`. Root `/` shows a light branded splash when signed out; signed-in users route by role/onboarding via `resolveRootDestination` (`src/lib/root-destination.ts`). |
 | Advisor vs client profiles + middleware gating | **Shipped** | `middleware.ts`, `(app)/layout.tsx`, `financial_profiles.profile_type`. |
 | Client onboarding wizard | **Shipped** | Gross salary + CPF take-home preview, bonus-month selector, back navigation, illustrated budget wording. Seeds `financial_profiles` (single source of truth for Income / Budget / Goals). See [Onboarding philosophy](#onboarding-philosophy). |
 | Invite-only **client** signup via advisor **access key** | **Shipped** | Claim flow in `handle_new_user`; `validate_client_access_key_for_signup` RPC. |
@@ -73,7 +73,7 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | **Consent-gated advisor access** + client consent control | **Shipped** | Advisor reads of client financial data require **active client consent**, enforced in-DB via SECURITY DEFINER `advisor_read_*` RPCs (chokepoint; legacy direct-advisor `financial_*` RLS dropped). Client grants/withdraws on **`/more`** → Privacy & Advisor Access (`ClientConsentControl`); pending consent surfaces via **inbox** (`advisor_consent_request`, mark-read clears notification only), a compact persistent **shell strip** + **account-menu** row until consent is active, and a page-local callout on `/more`. Consent dialog on **Contact advisor** (`ContactAdvisorButton`). Append-only `advisor_client_consents` ledger, latest-event-wins with monotonic `seq`; per-event verbatim `consent_text`/`consent_version` (`2026-05-18.option-b`). Migration `20260529000000`; ship gate `verify_consent_gated_access()` = `OK` on prod. |
 | **Client UI v2** shell: Home, Planning, Activity, More | **Shipped** | `AppShell`, `AppShellNav` (`AppShellMobileNav` / `AppShellDesktopNav`); mobile header + scrollable setup tabs; version label `src/lib/client-release.ts`, shown on `/more`. |
 | Classic URL redirects to v2 IA | **Shipped** | `/balances` → wealth, `/budget` → cash-flow, etc. |
-| Email confirmation redirect `/auth/callback` | **Shipped** | `src/app/auth/callback/route.ts` — exchanges the one-time `code` for a session via `supabase.auth.exchangeCodeForSession`, then redirects (default `/dashboard`; middleware then routes by role). Required when Supabase **Confirm Email** is ON. Doubles as the landing for magic-link / OAuth flows if those are added later. |
+| Email confirmation redirect `/auth/callback` | **Shipped** | `src/app/auth/callback/route.ts` — exchanges the one-time `code` for a session via `supabase.auth.exchangeCodeForSession`, then redirects (default `/`; root page routes by role). Required when Supabase **Confirm Email** is ON. Doubles as the landing for magic-link / OAuth flows if those are added later. |
 | Review advisor-proposed plan changes | **Shipped** | Full-page **`/review/proposal/[id]`** — before/after by section, advisor note, accept/reject. Canonical tracker updates only on accept. |
 | Financial inbox notifications (bell) | **Shipped** | `financial_inbox_notifications`; salary-review + advisor-proposal producers. |
 
@@ -235,7 +235,7 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
 | Path | Role |
 |------|------|
-| `/` | Redirects to `/dashboard` (advisors are then sent to `/advisor` by middleware). |
+| `/` | **Root splash** when signed out; **smart router** when signed in — client → `/dashboard` or `/onboarding` or `/account-issue`; advisor → `/advisor` (`src/app/page.tsx`, `resolveRootDestination`). |
 | `/login` | Standalone sign-in / sign-up (`src/app/login/page.tsx`, `LoginForm`). Not wrapped in `(app)` shell. |
 | `/dashboard` | **Client Home / command center**: net worth, savings, month activity, retirement/CPF (`(app)/dashboard`). Advisors hitting client routes are redirected to `/advisor`. |
 | `/home` | **Client alias** → `/dashboard` (`(app)/(client)/home/page.tsx`). |
@@ -414,4 +414,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 - **Not in scope:** live CPF APIs, actuarial CPF LIFE, exhaustive withdrawal rules.
 - **Future:** persist advisor/client assumption presets; tie RA balance into retirement sustainability / spend coverage; inflation on payouts.
 
-_Last reviewed (2026-05-26): Advisor client roster quick filters (onboarding, consent, needs attention) on `/advisor/clients`. Prior: CPF monthly projection BHS cap and MA excess routing; debt tenure years+months; CPF balance-as-of month; migration `20260626000000`._
+_Last reviewed (2026-05-26): Root `/` branded splash for signed-out visitors and smart role/onboarding router when signed in; auth callback default `next` is `/`. Prior: advisor client roster quick filters on `/advisor/clients`._
