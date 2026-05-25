@@ -2,16 +2,16 @@
 
 # Function tree — `src/server`
 
-26 module(s).
+27 module(s).
 
 ## Modules
 
 | Module | Classification | Fns | Edges out |
 | --- | --- | ---: | ---: |
 | [`src/middleware.ts`](#src-middleware-ts) | `middleware` | 1 | 22 |
-| [`src/server/actions.ts`](#src-server-actions-ts) | `server-action` | 48 | 313 |
+| [`src/server/actions.ts`](#src-server-actions-ts) | `server-action` | 49 | 328 |
 | [`src/server/advisor-access-key-actions.ts`](#src-server-advisor-access-key-actions-ts) | `server-action` | 2 | 10 |
-| [`src/server/advisor-client-actions.ts`](#src-server-advisor-client-actions-ts) | `server-action` | 10 | 42 |
+| [`src/server/advisor-client-actions.ts`](#src-server-advisor-client-actions-ts) | `server-action` | 9 | 42 |
 | [`src/server/advisor-consent-gate.test.ts`](#src-server-advisor-consent-gate-test-ts) | `regular` | 1 | 0 |
 | [`src/server/advisor-consent.ts`](#src-server-advisor-consent-ts) | `regular` | 2 | 1 |
 | [`src/server/advisor-key-purchase-actions.ts`](#src-server-advisor-key-purchase-actions-ts) | `server-action` | 5 | 21 |
@@ -33,6 +33,7 @@
 | [`src/server/inbox/ensure-investment-review-notification.ts`](#src-server-inbox-ensure-investment-review-notification-ts) | `regular` | 1 | 4 |
 | [`src/server/inbox/ensure-salary-review-notification.test.ts`](#src-server-inbox-ensure-salary-review-notification-test-ts) | `regular` | 0 | 0 |
 | [`src/server/inbox/ensure-salary-review-notification.ts`](#src-server-inbox-ensure-salary-review-notification-ts) | `regular` | 1 | 1 |
+| [`src/server/investment-planning-parse.ts`](#src-server-investment-planning-parse-ts) | `regular` | 2 | 1 |
 | [`src/server/liability-form.ts`](#src-server-liability-form-ts) | `regular` | 2 | 3 |
 
 ## Functions
@@ -49,219 +50,223 @@ Classification: `middleware`
 
 Classification: `server-action`
 
-#### `toClientErrorMessage` — function, L97 _(server-action)_
+#### `toClientErrorMessage` — function, L103 _(server-action)_
 
-- called by: `src/server/actions.ts#confirmCpfRulesReviewAction`, `src/server/actions.ts#confirmInvestmentReviewAction`, `src/server/actions.ts#createInvestmentAction`, `src/server/actions.ts#deleteInvestmentAction`, `src/server/actions.ts#updateInvestmentAction`
+- called by: `src/server/actions.ts#confirmCpfRulesReviewAction`, `src/server/actions.ts#confirmInvestmentReviewAction`, `src/server/actions.ts#createCpfInvestmentAction`, `src/server/actions.ts#createInvestmentAction`, `src/server/actions.ts#deleteInvestmentAction`, `src/server/actions.ts#updateInvestmentAction`
 
-#### `parseInvestmentPlanningFields` — function, L106 _(server-action)_
-
-- called by: `src/server/actions.ts#createInvestmentAction`, `src/server/actions.ts#updateInvestmentAction`
-
-#### `signOutAction` — function, L175 _(server-action)_
+#### `signOutAction` — function, L112 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/supabase/server.ts#createSupabaseServerClient`
 
-#### `createInvestmentAction` — function, L181 _(server-action)_
+#### `createInvestmentAction` — function, L118 _(server-action)_
 
-- calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/investments.ts#insertInvestment`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#parseInvestmentPlanningFields`, `src/server/actions.ts#toClientErrorMessage`, `src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview`
+- calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/investments.ts#insertInvestment`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#toClientErrorMessage`, `src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview`, `src/server/investment-planning-parse.ts#parseInvestmentPlanningFields`
 
-#### `updateInvestmentAction` — function, L240 _(server-action)_
+#### `updateInvestmentAction` — function, L180 _(server-action)_
 
-- calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/investments.ts#updateInvestment`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#parseInvestmentPlanningFields`, `src/server/actions.ts#toClientErrorMessage`, `src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview`
+- calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/investments.ts#updateInvestment`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#toClientErrorMessage`, `src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview`, `src/server/investment-planning-parse.ts#parseInvestmentPlanningFields`
 - called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`
 
-#### `deleteInvestmentAction` — function, L305 _(server-action)_
+#### `deleteInvestmentAction` — function, L248 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/investments.ts#deleteInvestment`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#toClientErrorMessage`, `src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview`
 - called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
 
-#### `confirmInvestmentReviewAction` — function, L337 _(server-action)_
+#### `confirmInvestmentReviewAction` — function, L280 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#toClientErrorMessage`, `src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview`
 - called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentReviewPrompt`
 
-#### `confirmCpfRulesReviewAction` — function, L361 _(server-action)_
+#### `confirmCpfRulesReviewAction` — function, L304 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#toClientErrorMessage`, `src/server/inbox/acknowledge-cpf-rules-review.ts#acknowledgeCpfRulesReview`
 - called by: `src/features/goals/CpfBalancesForm.tsx#CpfRulesReviewPrompt`
 
-#### `parseCashAccountForm` — function, L383 _(server-action)_
+#### `parseCashAccountForm` — function, L326 _(server-action)_
 
 - calls: `[external] zod`
 - called by: `src/server/actions.ts#createCashAccountAction`, `src/server/actions.ts#updateCashAccountAction`
 
-#### `createCashAccountAction` — function, L396 _(server-action)_
+#### `createCashAccountAction` — function, L339 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/cash-accounts.ts#insertCashAccount`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#parseCashAccountForm`
 - called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#AddCashForm`
 
-#### `updateCashAccountAction` — function, L416 _(server-action)_
+#### `updateCashAccountAction` — function, L359 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/cash-accounts.ts#updateCashAccount`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#parseCashAccountForm`
 - called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`
 
-#### `deleteCashAccountAction` — function, L439 _(server-action)_
+#### `deleteCashAccountAction` — function, L382 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/cash-accounts.ts#deleteCashAccount`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 - called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`
 
-#### `createLiabilityAction` — function, L461 _(server-action)_
+#### `createLiabilityAction` — function, L404 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/data/repositories/liabilities.ts#insertLiability`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/liability-form.ts#parseLiabilityFormData`
 - called by: `src/features/debts/DebtPlanningPanels.tsx#AddDebtForm`
 
-#### `updateLiabilityAction` — function, L489 _(server-action)_
+#### `updateLiabilityAction` — function, L432 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/data/repositories/liabilities.ts#updateLiability`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/liability-form.ts#parseLiabilityFormData`
 - called by: `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
 
-#### `deleteLiabilityAction` — function, L525 _(server-action)_
+#### `deleteLiabilityAction` — function, L468 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/liability-budget-sync.ts#removeLiabilityBudgetLines`, `src/data/repositories/liabilities.ts#deleteLiability`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 - called by: `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
 
-#### `optionalYearMonth` — function, L549 _(server-action)_
+#### `optionalYearMonth` — function, L492 _(server-action)_
 
 - calls: `[external] zod`
 - called by: `src/server/actions.ts#createVehicleAction`, `src/server/actions.ts#updateVehicleAction`
 
-#### `createVehicleAction` — function, L558 _(server-action)_
+#### `createVehicleAction` — function, L501 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/vehicles.ts#insertVehicle`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#optionalYearMonth`
 - called by: `src/features/goals/VehiclesPanel.tsx#AddVehicleForm`
 
-#### `updateVehicleAction` — function, L748 _(server-action)_
+#### `updateVehicleAction` — function, L691 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/vehicles.ts#updateVehicle`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#optionalYearMonth`
 - called by: `src/features/goals/VehiclesPanel.tsx#VehicleEditForm`
 
-#### `deleteVehicleAction` — function, L939 _(server-action)_
+#### `deleteVehicleAction` — function, L882 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/vehicles.ts#deleteVehicle`, `src/data/supabase/server.ts#createSupabaseServerClient`
 - called by: `src/features/goals/VehiclesPanel.tsx#VehicleDeleteForm`
 
-#### `createGoalAction` — function, L958 _(server-action)_
+#### `createGoalAction` — function, L901 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/goals.ts#insertFinancialGoal`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 
-#### `reorderFinancialGoalAction` — function, L1014 _(server-action)_
+#### `reorderFinancialGoalAction` — function, L957 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/goals.ts#reorderFinancialGoal`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 
-#### `updateGoalAction` — function, L1046 _(server-action)_
+#### `updateGoalAction` — function, L989 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/goals.ts#updateFinancialGoal`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 
-#### `createBudgetLineAction` — function, L1109 _(server-action)_
+#### `createBudgetLineAction` — function, L1052 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/budget-lines.ts#insertBudgetLine`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget.ts#isValidYearMonth`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 
-#### `coerceLifestyle` — function, L1205 _(server-action)_
+#### `coerceLifestyle` — function, L1148 _(server-action)_
 
 - called by: `src/server/actions.ts#applyGuidedBudgetLinesAction`
 
-#### `coerceStrategy` — function, L1213 _(server-action)_
+#### `coerceStrategy` — function, L1156 _(server-action)_
 
 - called by: `src/server/actions.ts#applyGuidedBudgetLinesAction`
 
-#### `coerceFoodBand` — function, L1221 _(server-action)_
+#### `coerceFoodBand` — function, L1164 _(server-action)_
 
 - called by: `src/server/actions.ts#applyGuidedBudgetLinesAction`
 
-#### `applyGuidedBudgetLinesAction` — function, L1242 _(server-action)_
+#### `applyGuidedBudgetLinesAction` — function, L1185 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/repositories/budget-lines.ts#deleteBudgetLine`, `src/data/repositories/budget-lines.ts#insertBudgetLine`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/repositories/profiles.ts#updateProfile`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget-guided-setup.ts#generateGuidedMonthlyBudgetLines`, `src/domain/finance/budget-guided-setup.ts#isPreservedOnGuidedBudgetReplace`, `src/lib/dates.ts#formatYearMonth`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#coerceFoodBand`, `src/server/actions.ts#coerceLifestyle`, `src/server/actions.ts#coerceStrategy`
 - called by: `src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard`, `src/features/setup/BudgetLensProfileForm.tsx#BudgetLensProfileForm`
 
-#### `updateBudgetLineAmountAction` — function, L1329 _(server-action)_
+#### `updateBudgetLineAmountAction` — function, L1272 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/budget-lines.ts#updateBudgetLine`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 
-#### `deleteBudgetLineAction` — function, L1359 _(server-action)_
+#### `deleteBudgetLineAction` — function, L1302 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/budget-lines.ts#deleteBudgetLine`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 - called by: `src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible`
 
-#### `setBudgetMonthOverrideAction` — function, L1380 _(server-action)_
+#### `setBudgetMonthOverrideAction` — function, L1323 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/budget-line-overrides.ts#upsertBudgetLineMonthOverride`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget.ts#isValidYearMonth`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 
-#### `clearBudgetMonthOverrideAction` — function, L1417 _(server-action)_
+#### `clearBudgetMonthOverrideAction` — function, L1360 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/budget-line-overrides.ts#deleteBudgetLineMonthOverride`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget.ts#isValidYearMonth`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 - called by: `src/features/budget/BudgetMonthOverrideForm.tsx#BudgetMonthOverrideForm`
 
-#### `updateBudgetLineScheduleAction` — function, L1444 _(server-action)_
+#### `updateBudgetLineScheduleAction` — function, L1387 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `[external] next`, `src/data/repositories/budget-lines.ts#updateBudgetLine`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget.ts#isValidYearMonth`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 
-#### `upsertCpfBalanceAction` — function, L1502 _(server-action)_
+#### `upsertCpfBalanceAction` — function, L1445 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/cpf-balances.ts#upsertCpfBalance`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 - unresolved: 3
 
-#### `clearCpfBalanceAction` — function, L1560 _(server-action)_
+#### `clearCpfBalanceAction` — function, L1503 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/cpf-balances.ts#deleteCpfBalance`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 - called by: `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`
 
-#### `parseHousingPaymentForm` — function, L1576 _(server-action)_
+#### `createCpfInvestmentAction` — function, L1519 _(server-action)_
+
+- calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/cpf-investments.ts#insertCpfInvestment`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#toClientErrorMessage`
+
+#### `deleteCpfInvestmentAction` — function, L1561 _(server-action)_
+
+- calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/cpf-investments.ts#deleteCpfInvestment`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
+
+#### `parseHousingPaymentForm` — function, L1580 _(server-action)_
 
 - calls: `[external] zod`, `src/domain/finance/housing-loan-payments.ts#normalizeHousingPaymentForPersist`, `src/domain/finance/housing-loan-payments.ts#paymentSourceFromLegacyPreset`
 - called by: `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingPropertyAction`, `src/server/actions.ts#updateHousingLoanAction`
 
-#### `revalidateHousingPaths` — function, L1642 _(server-action)_
+#### `revalidateHousingPaths` — function, L1646 _(server-action)_
 
 - calls: `[external] next`
 - called by: `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingLoanQuickAction`, `src/server/actions.ts#createHousingPropertyAction`, `src/server/actions.ts#deleteHousingLoanAction`, `src/server/actions.ts#deleteHousingPropertyAction`, `src/server/actions.ts#updateHousingLoanAction`, `src/server/actions.ts#updateHousingPropertyAction`
 
-#### `parseOptionalMoneyField` — function, L1650 _(server-action)_
+#### `parseOptionalMoneyField` — function, L1654 _(server-action)_
 
 - called by: `src/server/actions.ts#createHousingPropertyAction`
 
-#### `parseOptionalPurchaseYear` — function, L1659 _(server-action)_
+#### `parseOptionalPurchaseYear` — function, L1663 _(server-action)_
 
 - called by: `src/server/actions.ts#createHousingPropertyAction`
 
-#### `normalizeOptionalMmyy` — function, L1666 _(server-action)_
+#### `normalizeOptionalMmyy` — function, L1670 _(server-action)_
 
 - called by: `src/server/actions.ts#optionalYearMonthOrMmyy`
 
-#### `optionalYearMonthOrMmyy` — function, L1684 _(server-action)_
+#### `optionalYearMonthOrMmyy` — function, L1688 _(server-action)_
 
 - calls: `[external] zod`, `src/server/actions.ts#normalizeOptionalMmyy`
 - called by: `src/server/actions.ts#createHousingPropertyAction`
 
-#### `insertPropertyForLoan` — function, L1695 _(server-action)_
+#### `insertPropertyForLoan` — function, L1699 _(server-action)_
 
 - calls: `src/data/repositories/properties.ts#insertProperty`
 - called by: `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingLoanQuickAction`
 
-#### `createHousingPropertyAction` — function, L1719 _(server-action)_
+#### `createHousingPropertyAction` — function, L1723 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#insertHousingLoan`, `src/data/repositories/properties.ts#insertProperty`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#optionalYearMonthOrMmyy`, `src/server/actions.ts#parseHousingPaymentForm`, `src/server/actions.ts#parseOptionalMoneyField`, `src/server/actions.ts#parseOptionalPurchaseYear`, `src/server/actions.ts#revalidateHousingPaths`
 
-#### `updateHousingPropertyAction` — function, L1995 _(server-action)_
+#### `updateHousingPropertyAction` — function, L1999 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/properties.ts#updateProperty`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#revalidateHousingPaths`
 
-#### `deleteHousingPropertyAction` — function, L2046 _(server-action)_
+#### `deleteHousingPropertyAction` — function, L2050 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/properties.ts#deleteProperty`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#revalidateHousingPaths`
 
-#### `createHousingLoanAction` — function, L2062 _(server-action)_
+#### `createHousingLoanAction` — function, L2066 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#insertHousingLoan`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#insertPropertyForLoan`, `src/server/actions.ts#parseHousingPaymentForm`, `src/server/actions.ts#revalidateHousingPaths`
 
-#### `createHousingLoanQuickAction` — function, L2184 _(server-action)_
+#### `createHousingLoanQuickAction` — function, L2188 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#insertHousingLoan`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/housing-loan-payments.ts#normalizeHousingPaymentForPersist`, `src/domain/finance/housing-loan-payments.ts#paymentSourceFromLegacyPreset`, `src/domain/finance/housing-loan-quick.ts#deriveQuickHousingLoanRow`, `src/domain/finance/housing-loan-quick.ts#oaInstalmentShareFromPreset`, `src/domain/finance/property-financing-plan.ts#resolveGuidedCashDownpayment`, `src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty`, `src/server/actions.ts#insertPropertyForLoan`, `src/server/actions.ts#revalidateHousingPaths`
 
-#### `updateHousingLoanAction` — function, L2441 _(server-action)_
+#### `updateHousingLoanAction` — function, L2445 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#updateHousingLoan`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#parseHousingPaymentForm`, `src/server/actions.ts#revalidateHousingPaths`
 
-#### `deleteHousingLoanAction` — function, L2560 _(server-action)_
+#### `deleteHousingLoanAction` — function, L2564 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#deleteHousingLoan`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#revalidateHousingPaths`
 - called by: `src/features/goals/HousingLoansPanel.tsx#HousingLoanDeleteForm`
@@ -283,46 +288,42 @@ Classification: `server-action`
 
 Classification: `server-action`
 
-#### `clientErrorFromUnknown` — function, L16 _(server-action)_
+#### `clientErrorFromUnknown` — function, L17 _(server-action)_
 
 - called by: `src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`
 
-#### `parseInvestmentPlanningFields` — function, L25 _(server-action)_
-
-- called by: `src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`
-
-#### `revalidateAdvisorClientViews` — function, L92 _(server-action)_
+#### `revalidateAdvisorClientViews` — function, L26 _(server-action)_
 
 - calls: `[external] next`
 - called by: `src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientBudgetLineAmountAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientProfileAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`
 
-#### `requireAdvisorLinkedClient` — function, L97 _(server-action)_
+#### `requireAdvisorLinkedClient` — function, L31 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `src/data/repositories/advisor-clients.ts#getClientProfileForAdvisor`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/profile-role.ts#isAdvisor`, `src/server/advisor-consent.ts#assertConsent`
 - called by: `src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientBudgetLineAmountAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientProfileAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`
 
-#### `patchAdvisorClientProfileAction` — function, L129 _(server-action)_
+#### `patchAdvisorClientProfileAction` — function, L63 _(server-action)_
 
 - calls: `src/data/repositories/profiles.ts#getProfileById`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `patchAdvisorClientBudgetLineAmountAction` — function, L220 _(server-action)_
+#### `patchAdvisorClientBudgetLineAmountAction` — function, L154 _(server-action)_
 
 - calls: `src/data/repositories/budget-lines.ts#getBudgetLineById`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `patchAdvisorClientGoalMonthlyContributionAction` — function, L257 _(server-action)_
+#### `patchAdvisorClientGoalMonthlyContributionAction` — function, L191 _(server-action)_
 
 - calls: `src/data/repositories/goals.ts#getFinancialGoalById`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `createAdvisorClientInvestmentAction` — function, L297 _(server-action)_
+#### `createAdvisorClientInvestmentAction` — function, L231 _(server-action)_
 
-- calls: `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#parseInvestmentPlanningFields`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
+- calls: `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`, `src/server/investment-planning-parse.ts#parseInvestmentPlanningFields`
 
-#### `updateAdvisorClientInvestmentAction` — function, L375 _(server-action)_
+#### `updateAdvisorClientInvestmentAction` — function, L318 _(server-action)_
 
-- calls: `[external] zod`, `src/data/repositories/investments.ts#getInvestmentById`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#parseInvestmentPlanningFields`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
+- calls: `[external] zod`, `src/data/repositories/investments.ts#getInvestmentById`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`, `src/server/investment-planning-parse.ts#parseInvestmentPlanningFields`
 - called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`
 
-#### `deleteAdvisorClientInvestmentAction` — function, L480 _(server-action)_
+#### `deleteAdvisorClientInvestmentAction` — function, L438 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/investments.ts#getInvestmentById`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 - called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
@@ -548,7 +549,7 @@ _No top-level functions detected._
 
 Classification: `regular`
 
-#### `ensureAndCheckClientConsentPrompt` — function, L31
+#### `ensureAndCheckClientConsentPrompt` — function, L32
 
 - calls: `src/data/repositories/advisor-clients.ts#getMyConsentStatusForAdvisor`, `src/data/repositories/inbox-notifications.ts#upsertByDedupeKey`
 - called by: `src/app/(app)/layout.tsx#AppLayout`
@@ -597,6 +598,19 @@ Classification: `regular`
 
 - calls: `src/data/repositories/inbox-notifications.ts#upsertByDedupeKey`
 - called by: `src/features/app-shell/AppShellInbox.tsx#AppShellInbox`
+
+### `src/server/investment-planning-parse.ts` <a id="src-server-investment-planning-parse-ts"></a>
+
+Classification: `regular`
+
+#### `parseIsoDateField` — function, L16
+
+- called by: `src/server/investment-planning-parse.ts#parseInvestmentPlanningFields`
+
+#### `parseInvestmentPlanningFields` — function, L31
+
+- calls: `src/server/investment-planning-parse.ts#parseIsoDateField`
+- called by: `src/server/actions.ts#createInvestmentAction`, `src/server/actions.ts#updateInvestmentAction`, `src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`
 
 ### `src/server/liability-form.ts` <a id="src-server-liability-form-ts"></a>
 

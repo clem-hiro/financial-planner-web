@@ -2,7 +2,7 @@
 
 # Function tree — `src/features`
 
-112 module(s).
+122 module(s).
 
 ## Modules
 
@@ -29,8 +29,8 @@
 | [`src/features/app-shell/AppShell.tsx`](#src-features-app-shell-appshell-tsx) | `client-component` | 1 | 12 |
 | [`src/features/app-shell/AppShellInbox.tsx`](#src-features-app-shell-appshellinbox-tsx) | `regular` | 2 | 6 |
 | [`src/features/app-shell/AppShellNav.tsx`](#src-features-app-shell-appshellnav-tsx) | `client-component` | 4 | 17 |
-| [`src/features/app-shell/AppShellUserMenu.tsx`](#src-features-app-shell-appshellusermenu-tsx) | `client-component` | 1 | 5 |
-| [`src/features/app-shell/ClientConsentBanner.tsx`](#src-features-app-shell-clientconsentbanner-tsx) | `regular` | 1 | 1 |
+| [`src/features/app-shell/AppShellUserMenu.tsx`](#src-features-app-shell-appshellusermenu-tsx) | `client-component` | 1 | 6 |
+| [`src/features/app-shell/ClientConsentStrip.tsx`](#src-features-app-shell-clientconsentstrip-tsx) | `regular` | 1 | 1 |
 | [`src/features/app-shell/ContactAdvisorButton.tsx`](#src-features-app-shell-contactadvisorbutton-tsx) | `client-component` | 1 | 17 |
 | [`src/features/auth/LoginForm.tsx`](#src-features-auth-loginform-tsx) | `client-component` | 1 | 34 |
 | [`src/features/auth/PhoneInputField.tsx`](#src-features-auth-phoneinputfield-tsx) | `client-component` | 3 | 2 |
@@ -46,8 +46,8 @@
 | [`src/features/budget/BudgetMonthJump.tsx`](#src-features-budget-budgetmonthjump-tsx) | `client-component` | 1 | 6 |
 | [`src/features/budget/BudgetMonthlyCategoriesSection.tsx`](#src-features-budget-budgetmonthlycategoriessection-tsx) | `regular` | 5 | 21 |
 | [`src/features/budget/BudgetMonthOverrideForm.tsx`](#src-features-budget-budgetmonthoverrideform-tsx) | `client-component` | 1 | 5 |
-| [`src/features/budget/BudgetPageHero.tsx`](#src-features-budget-budgetpagehero-tsx) | `regular` | 3 | 11 |
-| [`src/features/budget/BudgetPlanningView.tsx`](#src-features-budget-budgetplanningview-tsx) | `regular` | 2 | 43 |
+| [`src/features/budget/BudgetPageHero.tsx`](#src-features-budget-budgetpagehero-tsx) | `regular` | 3 | 15 |
+| [`src/features/budget/BudgetPlanningView.tsx`](#src-features-budget-budgetplanningview-tsx) | `regular` | 2 | 46 |
 | [`src/features/budget/BudgetQuickAddPresets.tsx`](#src-features-budget-budgetquickaddpresets-tsx) | `client-component` | 1 | 6 |
 | [`src/features/budget/BudgetRecommendationHints.tsx`](#src-features-budget-budgetrecommendationhints-tsx) | `regular` | 1 | 0 |
 | [`src/features/budget/BudgetReviewWorkflowPanel.tsx`](#src-features-budget-budgetreviewworkflowpanel-tsx) | `regular` | 2 | 2 |
@@ -55,13 +55,13 @@
 | [`src/features/budget/BudgetUpdateAmountForm.tsx`](#src-features-budget-budgetupdateamountform-tsx) | `client-component` | 1 | 2 |
 | [`src/features/consent/ClientConsentControl.tsx`](#src-features-consent-clientconsentcontrol-tsx) | `client-component` | 1 | 2 |
 | [`src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx`](#src-features-dashboard-agecombinedassetsprojectionchart-tsx) | `client-component` | 4 | 17 |
-| [`src/features/dashboard/CpfProjectionByAgeChart.tsx`](#src-features-dashboard-cpfprojectionbyagechart-tsx) | `client-component` | 1 | 15 |
+| [`src/features/dashboard/CpfProjectionByAgeChart.tsx`](#src-features-dashboard-cpfprojectionbyagechart-tsx) | `client-component` | 1 | 16 |
 | [`src/features/dashboard/CpfRetirementProjectionPanel.tsx`](#src-features-dashboard-cpfretirementprojectionpanel-tsx) | `client-component` | 5 | 21 |
 | [`src/features/dashboard/DashboardMonthSection.tsx`](#src-features-dashboard-dashboardmonthsection-tsx) | `regular` | 1 | 9 |
 | [`src/features/dashboard/DashboardOverviewSection.tsx`](#src-features-dashboard-dashboardoverviewsection-tsx) | `regular` | 1 | 8 |
 | [`src/features/dashboard/DashboardRetirementSection.tsx`](#src-features-dashboard-dashboardretirementsection-tsx) | `regular` | 1 | 15 |
 | [`src/features/dashboard/DashboardSubnav.tsx`](#src-features-dashboard-dashboardsubnav-tsx) | `client-component` | 1 | 6 |
-| [`src/features/dashboard/ProfileIncomeForm.tsx`](#src-features-dashboard-profileincomeform-tsx) | `client-component` | 3 | 32 |
+| [`src/features/dashboard/ProfileIncomeForm.tsx`](#src-features-dashboard-profileincomeform-tsx) | `client-component` | 3 | 28 |
 | [`src/features/dashboard/ProjectionMiniChart.tsx`](#src-features-dashboard-projectionminichart-tsx) | `client-component` | 1 | 8 |
 | [`src/features/debts/debt-constants.ts`](#src-features-debts-debt-constants-ts) | `regular` | 4 | 0 |
 | [`src/features/debts/DebtEducationalExamples.tsx`](#src-features-debts-debteducationalexamples-tsx) | `client-component` | 2 | 4 |
@@ -73,18 +73,25 @@
 | [`src/features/expenses/ExpenseForm.tsx`](#src-features-expenses-expenseform-tsx) | `client-component` | 1 | 8 |
 | [`src/features/expenses/ExpenseMonthJump.tsx`](#src-features-expenses-expensemonthjump-tsx) | `client-component` | 1 | 5 |
 | [`src/features/goals/CashAndLiabilitiesPanels.tsx`](#src-features-goals-cashandliabilitiespanels-tsx) | `client-component` | 7 | 28 |
-| [`src/features/goals/CpfBalancesForm.tsx`](#src-features-goals-cpfbalancesform-tsx) | `client-component` | 2 | 13 |
-| [`src/features/goals/FinancialGoalsPanels.tsx`](#src-features-goals-financialgoalspanels-tsx) | `regular` | 1 | 17 |
+| [`src/features/goals/CpfBalancesForm.tsx`](#src-features-goals-cpfbalancesform-tsx) | `client-component` | 2 | 15 |
+| [`src/features/goals/FinancialGoalsPanels.tsx`](#src-features-goals-financialgoalspanels-tsx) | `regular` | 1 | 21 |
 | [`src/features/goals/GoalEditForm.tsx`](#src-features-goals-goaleditform-tsx) | `client-component` | 1 | 2 |
+| [`src/features/goals/GoalFeasibilityNotice.tsx`](#src-features-goals-goalfeasibilitynotice-tsx) | `regular` | 2 | 3 |
 | [`src/features/goals/GoalForm.tsx`](#src-features-goals-goalform-tsx) | `client-component` | 1 | 2 |
 | [`src/features/goals/GoalPriorityTradeoffPanel.tsx`](#src-features-goals-goalprioritytradeoffpanel-tsx) | `regular` | 1 | 5 |
 | [`src/features/goals/GoalReorderButtons.tsx`](#src-features-goals-goalreorderbuttons-tsx) | `client-component` | 1 | 2 |
 | [`src/features/goals/HousingLoanQuickAddForm.tsx`](#src-features-goals-housingloanquickaddform-tsx) | `client-component` | 1 | 28 |
 | [`src/features/goals/HousingLoansPanel.tsx`](#src-features-goals-housingloanspanel-tsx) | `client-component` | 7 | 38 |
 | [`src/features/goals/HousingPaymentSourceFields.tsx`](#src-features-goals-housingpaymentsourcefields-tsx) | `client-component` | 1 | 2 |
+| [`src/features/goals/investment-balance-row.ts`](#src-features-goals-investment-balance-row-ts) | `regular` | 1 | 1 |
+| [`src/features/goals/investment-balance-types.ts`](#src-features-goals-investment-balance-types-ts) | `regular` | 0 | 0 |
 | [`src/features/goals/InvestmentAssumptionBanner.tsx`](#src-features-goals-investmentassumptionbanner-tsx) | `regular` | 1 | 1 |
-| [`src/features/goals/InvestmentBalancesList.tsx`](#src-features-goals-investmentbalanceslist-tsx) | `client-component` | 7 | 45 |
-| [`src/features/goals/InvestmentForm.tsx`](#src-features-goals-investmentform-tsx) | `client-component` | 1 | 7 |
+| [`src/features/goals/InvestmentBalancesList.tsx`](#src-features-goals-investmentbalanceslist-tsx) | `client-component` | 7 | 51 |
+| [`src/features/goals/InvestmentContributionScheduleFields.tsx`](#src-features-goals-investmentcontributionschedulefields-tsx) | `client-component` | 1 | 0 |
+| [`src/features/goals/InvestmentForm.tsx`](#src-features-goals-investmentform-tsx) | `client-component` | 1 | 14 |
+| [`src/features/goals/InvestmentPlanGuidancePanel.tsx`](#src-features-goals-investmentplanguidancepanel-tsx) | `client-component` | 1 | 2 |
+| [`src/features/goals/profile-retirement-props.ts`](#src-features-goals-profile-retirement-props-ts) | `regular` | 1 | 1 |
+| [`src/features/goals/RetirementTargetsForm.tsx`](#src-features-goals-retirementtargetsform-tsx) | `client-component` | 1 | 14 |
 | [`src/features/goals/VehiclesPanel.tsx`](#src-features-goals-vehiclespanel-tsx) | `client-component` | 10 | 46 |
 | [`src/features/help/methodology-context.tsx`](#src-features-help-methodology-context-tsx) | `client-component` | 2 | 7 |
 | [`src/features/help/MethodologyOpenLink.tsx`](#src-features-help-methodologyopenlink-tsx) | `client-component` | 1 | 1 |
@@ -97,19 +104,22 @@
 | [`src/features/income-tax/IncomeTaxSection.tsx`](#src-features-income-tax-incometaxsection-tsx) | `regular` | 2 | 10 |
 | [`src/features/income-tax/TaxComputedSummary.tsx`](#src-features-income-tax-taxcomputedsummary-tsx) | `regular` | 1 | 2 |
 | [`src/features/income-tax/TaxMethodologyTooltip.tsx`](#src-features-income-tax-taxmethodologytooltip-tsx) | `regular` | 1 | 1 |
+| [`src/features/more/ClientConsentMorePrompt.tsx`](#src-features-more-clientconsentmoreprompt-tsx) | `regular` | 1 | 1 |
 | [`src/features/onboarding/BonusMonthSelector.tsx`](#src-features-onboarding-bonusmonthselector-tsx) | `client-component` | 1 | 0 |
 | [`src/features/onboarding/onboarding-module-sync.ts`](#src-features-onboarding-onboarding-module-sync-ts) | `regular` | 0 | 0 |
+| [`src/features/onboarding/onboarding-profile-hints.test.ts`](#src-features-onboarding-onboarding-profile-hints-test-ts) | `regular` | 0 | 0 |
+| [`src/features/onboarding/onboarding-profile-hints.ts`](#src-features-onboarding-onboarding-profile-hints-ts) | `regular` | 2 | 0 |
 | [`src/features/onboarding/OnboardingWizard.tsx`](#src-features-onboarding-onboardingwizard-tsx) | `client-component` | 6 | 39 |
 | [`src/features/planning/CashFlowSetupGuidanceBanner.tsx`](#src-features-planning-cashflowsetupguidancebanner-tsx) | `regular` | 1 | 1 |
-| [`src/features/planning/load-setup-tab-bundle.ts`](#src-features-planning-load-setup-tab-bundle-ts) | `regular` | 1 | 9 |
+| [`src/features/planning/load-setup-tab-bundle.ts`](#src-features-planning-load-setup-tab-bundle-ts) | `regular` | 1 | 10 |
 | [`src/features/planning/PlanningLayoutShell.tsx`](#src-features-planning-planninglayoutshell-tsx) | `client-component` | 1 | 1 |
 | [`src/features/planning/PlanningSectionNav.tsx`](#src-features-planning-planningsectionnav-tsx) | `client-component` | 1 | 2 |
 | [`src/features/planning/roadmap-modules.tsx`](#src-features-planning-roadmap-modules-tsx) | `regular` | 12 | 12 |
 | [`src/features/planning/sections/CashFlowPlanningSection.tsx`](#src-features-planning-sections-cashflowplanningsection-tsx) | `regular` | 1 | 19 |
-| [`src/features/planning/sections/FuturePlanningSection.tsx`](#src-features-planning-sections-futureplanningsection-tsx) | `regular` | 1 | 11 |
+| [`src/features/planning/sections/FuturePlanningSection.tsx`](#src-features-planning-sections-futureplanningsection-tsx) | `regular` | 1 | 12 |
 | [`src/features/planning/sections/OverviewPlanningSection.tsx`](#src-features-planning-sections-overviewplanningsection-tsx) | `regular` | 1 | 12 |
 | [`src/features/planning/sections/ProtectionPlanningSection.tsx`](#src-features-planning-sections-protectionplanningsection-tsx) | `regular` | 1 | 6 |
-| [`src/features/planning/sections/WealthPlanningSection.tsx`](#src-features-planning-sections-wealthplanningsection-tsx) | `regular` | 1 | 20 |
+| [`src/features/planning/sections/WealthPlanningSection.tsx`](#src-features-planning-sections-wealthplanningsection-tsx) | `regular` | 1 | 21 |
 | [`src/features/proposals/ProposalProjectionCompare.tsx`](#src-features-proposals-proposalprojectioncompare-tsx) | `client-component` | 1 | 1 |
 | [`src/features/proposals/ProposalReviewView.tsx`](#src-features-proposals-proposalreviewview-tsx) | `client-component` | 4 | 12 |
 | [`src/features/setup-hub/FinancialSetupHub.tsx`](#src-features-setup-hub-financialsetuphub-tsx) | `regular` | 1 | 6 |
@@ -372,7 +382,7 @@ Classification: `client-component`
 #### `AppShell` — component, L19 _(client-component)_
 
 - calls: `[external] next`, `[external] react`
-- renders: `[external] next`, `src/features/app-shell/AdvisorPhonePromptBanner.tsx#AdvisorPhonePromptBanner`, `src/features/app-shell/AppShellNav.tsx#AppShellDesktopNav`, `src/features/app-shell/AppShellNav.tsx#AppShellMobileNav`, `src/features/app-shell/AppShellUserMenu.tsx#AppShellUserMenu`, `src/features/app-shell/ClientConsentBanner.tsx#ClientConsentBanner`, `src/features/help/MethodologySheet.tsx#MethodologySheet`, `src/features/help/methodology-context.tsx#MethodologyProvider`, `src/ui/ScrollToTopButton.tsx#ScrollToTopButton`
+- renders: `[external] next`, `src/features/app-shell/AdvisorPhonePromptBanner.tsx#AdvisorPhonePromptBanner`, `src/features/app-shell/AppShellNav.tsx#AppShellDesktopNav`, `src/features/app-shell/AppShellNav.tsx#AppShellMobileNav`, `src/features/app-shell/AppShellUserMenu.tsx#AppShellUserMenu`, `src/features/app-shell/ClientConsentStrip.tsx#ClientConsentStrip`, `src/features/help/MethodologySheet.tsx#MethodologySheet`, `src/features/help/methodology-context.tsx#MethodologyProvider`, `src/ui/ScrollToTopButton.tsx#ScrollToTopButton`
 - rendered by: `src/app/(app)/layout.tsx#AppLayout`
 
 ### `src/features/app-shell/AppShellInbox.tsx` <a id="src-features-app-shell-appshellinbox-tsx"></a>
@@ -422,18 +432,18 @@ Classification: `client-component`
 
 Classification: `client-component`
 
-#### `AppShellUserMenu` — component, L18 _(client-component)_
+#### `AppShellUserMenu` — component, L19 _(client-component)_
 
 - calls: `[external] react`
-- renders: `src/features/app-shell/ContactAdvisorButton.tsx#ContactAdvisorButton`, `src/features/help/OpenMethodologyButton.tsx#OpenMethodologyButton`
+- renders: `[external] next`, `src/features/app-shell/ContactAdvisorButton.tsx#ContactAdvisorButton`, `src/features/help/OpenMethodologyButton.tsx#OpenMethodologyButton`
 - rendered by: `src/features/app-shell/AppShell.tsx#AppShell`
-- unresolved: 4
+- unresolved: 5
 
-### `src/features/app-shell/ClientConsentBanner.tsx` <a id="src-features-app-shell-clientconsentbanner-tsx"></a>
+### `src/features/app-shell/ClientConsentStrip.tsx` <a id="src-features-app-shell-clientconsentstrip-tsx"></a>
 
 Classification: `regular`
 
-#### `ClientConsentBanner` — component, L10
+#### `ClientConsentStrip` — component, L8
 
 - renders: `[external] next`
 - rendered by: `src/features/app-shell/AppShell.tsx#AppShell`
@@ -621,32 +631,33 @@ Classification: `client-component`
 
 Classification: `regular`
 
-#### `formatPlanMonthTitle` — function, L15
+#### `formatPlanMonthTitle` — function, L17
 
 - called by: `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`
 
-#### `BudgetRingProgress` — component, L22
+#### `BudgetRingProgress` — component, L24
 
 - rendered by: `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`
 
-#### `BudgetPageHero` — component, L75
+#### `BudgetPageHero` — component, L78
 
 - calls: `src/data/mappers.ts#num`, `src/domain/finance/budget-guided-setup.ts#sumBucketAmounts`, `src/domain/finance/budget.ts#monthlyBudgetAggregateOverspend`, `src/features/budget/BudgetPageHero.tsx#formatPlanMonthTitle`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/setup-urls.ts#budgetMonthHref`, `src/ui/lib/format.ts#formatCurrency`
-- renders: `[external] next`, `src/features/budget/BudgetMonthJump.tsx#BudgetMonthJump`, `src/features/budget/BudgetPageHero.tsx#BudgetRingProgress`
+- renders: `[external] next`, `src/features/budget/BudgetMonthJump.tsx#BudgetMonthJump`, `src/features/budget/BudgetPageHero.tsx#BudgetRingProgress`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`
 - rendered by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
+- unresolved: 1
 
 ### `src/features/budget/BudgetPlanningView.tsx` <a id="src-features-budget-budgetplanningview-tsx"></a>
 
 Classification: `regular`
 
-#### `varianceForLine` — function, L62
+#### `varianceForLine` — function, L67
 
 - calls: `src/domain/finance/budget.ts#normalizeCategory`
 - called by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
 
-#### `BudgetPlanningView` — component, L70
+#### `BudgetPlanningView` — component, L75
 
-- calls: `[external] @supabase/auth-js`, `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget-review.ts#buildBudgetReviewWorkflow`, `src/domain/finance/budget.ts#isMonthlyBudgetLineApplicable`, `src/domain/finance/budget.ts#monthlyBudgetAggregateOverspend`, `src/domain/finance/cash-flow-setup-guidance.ts#cashFlowSetupGaps`, `src/domain/finance/cash-flow-setup-guidance.ts#shouldShowCashFlowSetupGuidance`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines`, `src/features/budget/BudgetPlanningView.tsx#varianceForLine`, `src/features/budget/budget-category-icons.ts#budgetCategoryEmoji`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#defaultExpenseDateForBudgetMonth`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/setup-urls.ts#budgetMonthHref`, `src/ui/lib/format.ts#formatCurrency`
+- calls: `[external] @supabase/auth-js`, `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget-cash-flow-allocation.ts#computeBudgetCashFlowAllocation`, `src/domain/finance/budget-cash-flow-allocation.ts#sumPlannedMonthlyInvestmentContributions`, `src/domain/finance/budget-review.ts#buildBudgetReviewWorkflow`, `src/domain/finance/budget.ts#isMonthlyBudgetLineApplicable`, `src/domain/finance/budget.ts#monthlyBudgetAggregateOverspend`, `src/domain/finance/cash-flow-setup-guidance.ts#cashFlowSetupGaps`, `src/domain/finance/cash-flow-setup-guidance.ts#shouldShowCashFlowSetupGuidance`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines`, `src/features/budget/BudgetPlanningView.tsx#varianceForLine`, `src/features/budget/budget-category-icons.ts#budgetCategoryEmoji`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#defaultExpenseDateForBudgetMonth`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/setup-urls.ts#budgetMonthHref`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `[external] next`, `src/features/budget/BudgetAddForm.tsx#BudgetAddForm`, `src/features/budget/BudgetIrregularExpenseReservePanel.tsx#BudgetIrregularExpenseReservePanel`, `src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible`, `src/features/budget/BudgetLineScheduleForm.tsx#BudgetLineScheduleForm`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetQuickAddPresets.tsx#BudgetQuickAddPresets`, `src/features/budget/BudgetRecommendationHints.tsx#BudgetRecommendationHints`, `src/features/budget/BudgetReviewWorkflowPanel.tsx#BudgetReviewWorkflowPanel`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/features/planning/CashFlowSetupGuidanceBanner.tsx#CashFlowSetupGuidanceBanner`, `src/features/spend/SpendGuidancePanel.tsx#SpendGuidancePanel`, `src/ui/PageSection.tsx#PageSection`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`
 
@@ -738,7 +749,7 @@ Classification: `client-component`
 - renders: `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#TooltipDetail`
 - rendered by: `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart`
 
-#### `AgeCombinedAssetsProjectionChart` — component, L370 _(client-component)_
+#### `AgeCombinedAssetsProjectionChart` — component, L384 _(client-component)_
 
 - calls: `src/ui/use-narrow-screen.ts#useNarrowScreen`
 - renders: `[external] recharts`, `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AssetTooltip`, `src/ui/ChartFrame.tsx#ChartFrame`
@@ -748,7 +759,7 @@ Classification: `client-component`
 
 Classification: `client-component`
 
-#### `CpfProjectionByAgeChart` — component, L37 _(client-component)_
+#### `CpfProjectionByAgeChart` — component, L39 _(client-component)_
 
 - calls: `src/ui/use-narrow-screen.ts#useNarrowScreen`
 - renders: `[external] recharts`, `src/ui/ChartFrame.tsx#ChartFrame`
@@ -829,21 +840,21 @@ Classification: `client-component`
 
 Classification: `client-component`
 
-#### `isSgCpfAgeBand` — function, L40
+#### `isSgCpfAgeBand` — function, L44
 
 - called by: `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`
 
-#### `derivedCpfBandFromBirthDate` — function, L44
+#### `derivedCpfBandFromBirthDate` — function, L48
 
 - calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/sg-cpf-contribution-buckets.ts#sgCpfAgeBandForCompletedAge`
 - called by: `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`
 
-#### `ProfileIncomeForm` — component, L53 _(client-component)_
+#### `ProfileIncomeForm` — component, L57 _(client-component)_
 
-- calls: `[external] next`, `[external] react`, `src/domain/finance/sg-cpf.ts#annualEmployeeCpfTakeHomeWithBonusSg`, `src/features/dashboard/ProfileIncomeForm.tsx#derivedCpfBandFromBirthDate`, `src/features/dashboard/ProfileIncomeForm.tsx#isSgCpfAgeBand`, `src/server/inbox-actions.ts#markInboxItemReadByDedupeKeyAction`
+- calls: `[external] next`, `[external] react`, `src/domain/finance/sg-cpf.ts#annualEmployeeCpfTakeHomeWithBonusSg`, `src/features/dashboard/ProfileIncomeForm.tsx#derivedCpfBandFromBirthDate`, `src/features/dashboard/ProfileIncomeForm.tsx#isSgCpfAgeBand`, `src/features/onboarding/onboarding-profile-hints.ts#formatOnboardingBonusCaption`, `src/features/onboarding/onboarding-profile-hints.ts#profileHasOnboardingIncomeLink`, `src/server/inbox-actions.ts#markInboxItemReadByDedupeKeyAction`
 - renders: `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`, `src/ui/InfoTooltip.tsx#InfoTooltip`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`
-- unresolved: 44
+- unresolved: 28
 
 ### `src/features/dashboard/ProjectionMiniChart.tsx` <a id="src-features-dashboard-projectionminichart-tsx"></a>
 
@@ -1037,26 +1048,26 @@ Classification: `client-component`
 
 Classification: `client-component`
 
-#### `CpfRulesReviewPrompt` — component, L20 _(client-component)_
+#### `CpfRulesReviewPrompt` — component, L22 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#confirmCpfRulesReviewAction`
 - rendered by: `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`
 
-#### `CpfBalancesForm` — component, L65 _(client-component)_
+#### `CpfBalancesForm` — component, L67 _(client-component)_
 
 - calls: `[external] react`, `src/data/mappers.ts#num`, `src/server/actions.ts#clearCpfBalanceAction`
 - renders: `src/features/goals/CpfBalancesForm.tsx#CpfRulesReviewPrompt`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
-- unresolved: 3
+- unresolved: 4
 
 ### `src/features/goals/FinancialGoalsPanels.tsx` <a id="src-features-goals-financialgoalspanels-tsx"></a>
 
 Classification: `regular`
 
-#### `FinancialGoalsPanels` — component, L33
+#### `FinancialGoalsPanels` — component, L42
 
-- calls: `src/data/mappers.ts#num`, `src/domain/finance/goal-deadline.ts#analyzeGoalDeadlineGap`, `src/domain/finance/goal-priority-tradeoff.ts#sortGoalsByPriority`, `src/domain/finance/goal-standalone.ts#estimateTimeToGoalStandalone`, `src/domain/finance/goal-standalone.ts#goalProgressRatio`, `src/ui/lib/duration.ts#formatMonthsApprox`, `src/ui/lib/format.ts#formatCurrency`, `src/ui/lib/format.ts#formatPercent`
-- renders: `[external] next`, `src/features/goals/GoalEditForm.tsx#GoalEditForm`, `src/features/goals/GoalForm.tsx#GoalForm`, `src/features/goals/GoalPriorityTradeoffPanel.tsx#GoalPriorityTradeoffPanel`, `src/features/goals/GoalReorderButtons.tsx#GoalReorderButtons`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/ui/PageSection.tsx#PageSection`
+- calls: `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/mappers.ts#num`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/goal-feasibility.ts#analyzeGoalFeasibility`, `src/domain/finance/goal-priority-tradeoff.ts#sortGoalsByPriority`, `src/domain/finance/goal-standalone.ts#estimateTimeToGoalStandalone`, `src/domain/finance/goal-standalone.ts#goalProgressRatio`, `src/ui/lib/duration.ts#formatMonthsApprox`, `src/ui/lib/format.ts#formatCurrency`, `src/ui/lib/format.ts#formatPercent`
+- renders: `[external] next`, `src/features/goals/GoalEditForm.tsx#GoalEditForm`, `src/features/goals/GoalFeasibilityNotice.tsx#GoalFeasibilityNotice`, `src/features/goals/GoalForm.tsx#GoalForm`, `src/features/goals/GoalPriorityTradeoffPanel.tsx#GoalPriorityTradeoffPanel`, `src/features/goals/GoalReorderButtons.tsx#GoalReorderButtons`, `src/features/goals/RetirementTargetsForm.tsx#RetirementTargetsForm`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/ui/PageSection.tsx#PageSection`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/FuturePlanningSection.tsx#FuturePlanningSection`
 
 ### `src/features/goals/GoalEditForm.tsx` <a id="src-features-goals-goaleditform-tsx"></a>
@@ -1067,6 +1078,19 @@ Classification: `client-component`
 
 - calls: `[external] react`
 - renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
+- rendered by: `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`
+
+### `src/features/goals/GoalFeasibilityNotice.tsx` <a id="src-features-goals-goalfeasibilitynotice-tsx"></a>
+
+Classification: `regular`
+
+#### `noticeClass` — function, L11
+
+- called by: `src/features/goals/GoalFeasibilityNotice.tsx#GoalFeasibilityNotice`
+
+#### `GoalFeasibilityNotice` — component, L18
+
+- calls: `src/features/goals/GoalFeasibilityNotice.tsx#noticeClass`, `src/ui/lib/duration.ts#formatMonthsApprox`, `src/ui/lib/format.ts#formatCurrency`
 - rendered by: `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`
 
 ### `src/features/goals/GoalForm.tsx` <a id="src-features-goals-goalform-tsx"></a>
@@ -1083,7 +1107,7 @@ Classification: `client-component`
 
 Classification: `regular`
 
-#### `GoalPriorityTradeoffPanel` — component, L12
+#### `GoalPriorityTradeoffPanel` — component, L17
 
 - calls: `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `[external] next`
@@ -1163,6 +1187,20 @@ Classification: `client-component`
 - rendered by: `src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm`, `src/features/goals/HousingLoansPanel.tsx#HousingLoanManualAddForm`, `src/features/housing/PropertyAddForm.tsx#PropertyAddForm`
 - unresolved: 6
 
+### `src/features/goals/investment-balance-row.ts` <a id="src-features-goals-investment-balance-row-ts"></a>
+
+Classification: `regular`
+
+#### `investmentRowToBalanceRow` — function, L5
+
+- calls: `src/data/mappers.ts#num`
+
+### `src/features/goals/investment-balance-types.ts` <a id="src-features-goals-investment-balance-types-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
 ### `src/features/goals/InvestmentAssumptionBanner.tsx` <a id="src-features-goals-investmentassumptionbanner-tsx"></a>
 
 Classification: `regular`
@@ -1176,57 +1214,96 @@ Classification: `regular`
 
 Classification: `client-component`
 
-#### `contributionSummaryLine` — function, L49
+#### `contributionSummaryLine` — function, L45
 
 - calls: `src/ui/lib/format.ts#formatCurrency`
 - called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary`
 
-#### `ContributionTimelineHint` — component, L75 _(client-component)_
+#### `ContributionTimelineHint` — component, L82 _(client-component)_
 
 - calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary`
 
-#### `InvestmentSummary` — component, L125 _(client-component)_
+#### `InvestmentSummary` — component, L153 _(client-component)_
 
 - calls: `src/domain/finance/investment-review.ts#investmentRowIsStale`, `src/features/goals/InvestmentBalancesList.tsx#contributionSummaryLine`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/goals/InvestmentBalancesList.tsx#ContributionTimelineHint`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
 
-#### `InvestmentEditForm` — component, L203 _(client-component)_
+#### `InvestmentEditForm` — component, L231 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#updateInvestmentAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`
-- renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`, `src/ui/InfoTooltip.tsx#InfoTooltip`
+- renders: `src/features/goals/InvestmentContributionScheduleFields.tsx#InvestmentContributionScheduleFields`, `src/features/goals/InvestmentPlanGuidancePanel.tsx#InvestmentPlanGuidancePanel`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`, `src/ui/InfoTooltip.tsx#InfoTooltip`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
-- unresolved: 11
+- unresolved: 8
 
-#### `InvestmentRow` — component, L547 _(client-component)_
+#### `InvestmentRow` — component, L549 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#deleteInvestmentAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction`
 - renders: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`
 - unresolved: 6
 
-#### `InvestmentReviewPrompt` — component, L624 _(client-component)_
+#### `InvestmentReviewPrompt` — component, L626 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#confirmInvestmentReviewAction`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`
 
-#### `InvestmentBalancesList` — component, L675 _(client-component)_
+#### `InvestmentBalancesList` — component, L677 _(client-component)_
 
 - calls: `src/domain/finance/investment-review.ts#investmentRowIsStale`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentReviewPrompt`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
+### `src/features/goals/InvestmentContributionScheduleFields.tsx` <a id="src-features-goals-investmentcontributionschedulefields-tsx"></a>
+
+Classification: `client-component`
+
+#### `InvestmentContributionScheduleFields` — component, L6 _(client-component)_
+
+- rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`
+- unresolved: 7
+
 ### `src/features/goals/InvestmentForm.tsx` <a id="src-features-goals-investmentform-tsx"></a>
 
 Classification: `client-component`
 
-#### `InvestmentForm` — component, L12 _(client-component)_
+#### `InvestmentForm` — component, L19 _(client-component)_
 
 - calls: `[external] next`, `[external] react`
-- renders: `src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
+- renders: `src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner`, `src/features/goals/InvestmentContributionScheduleFields.tsx#InvestmentContributionScheduleFields`, `src/features/goals/InvestmentPlanGuidancePanel.tsx#InvestmentPlanGuidancePanel`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
-- unresolved: 3
+- unresolved: 1
+
+### `src/features/goals/InvestmentPlanGuidancePanel.tsx` <a id="src-features-goals-investmentplanguidancepanel-tsx"></a>
+
+Classification: `client-component`
+
+#### `InvestmentPlanGuidancePanel` — component, L6 _(client-component)_
+
+- renders: `[external] next`
+- rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`
+- unresolved: 2
+
+### `src/features/goals/profile-retirement-props.ts` <a id="src-features-goals-profile-retirement-props-ts"></a>
+
+Classification: `regular`
+
+#### `profileRetirementTargetsProps` — function, L5
+
+- calls: `src/data/mappers.ts#num`
+- called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/FuturePlanningSection.tsx#FuturePlanningSection`
+
+### `src/features/goals/RetirementTargetsForm.tsx` <a id="src-features-goals-retirementtargetsform-tsx"></a>
+
+Classification: `client-component`
+
+#### `RetirementTargetsForm` — component, L25 _(client-component)_
+
+- calls: `[external] next`, `[external] react`
+- renders: `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`, `src/ui/InfoTooltip.tsx#InfoTooltip`
+- rendered by: `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`
+- unresolved: 22
 
 ### `src/features/goals/VehiclesPanel.tsx` <a id="src-features-goals-vehiclespanel-tsx"></a>
 
@@ -1308,7 +1385,7 @@ Classification: `client-component`
 #### `MethodologyOpenLink` — component, L7 _(client-component)_
 
 - calls: `src/features/help/methodology-context.tsx#useMethodology`
-- rendered by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`, `src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner`, `src/features/goals/VehiclesPanel.tsx#VehiclesPanel`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
+- rendered by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`, `src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection`, `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`, `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner`, `src/features/goals/RetirementTargetsForm.tsx#RetirementTargetsForm`, `src/features/goals/VehiclesPanel.tsx#VehiclesPanel`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 - unresolved: 1
 
 ### `src/features/help/MethodologySheet.tsx` <a id="src-features-help-methodologysheet-tsx"></a>
@@ -1449,6 +1526,15 @@ Classification: `regular`
 - renders: `src/ui/InfoTooltip.tsx#InfoTooltip`
 - rendered by: `src/features/income-tax/IncomeTaxSection.tsx#IncomeTaxSection`
 
+### `src/features/more/ClientConsentMorePrompt.tsx` <a id="src-features-more-clientconsentmoreprompt-tsx"></a>
+
+Classification: `regular`
+
+#### `ClientConsentMorePrompt` — component, L5
+
+- renders: `[external] next`
+- rendered by: `src/app/(app)/more/page.tsx#MorePage`
+
 ### `src/features/onboarding/BonusMonthSelector.tsx` <a id="src-features-onboarding-bonusmonthselector-tsx"></a>
 
 Classification: `client-component`
@@ -1463,6 +1549,24 @@ Classification: `client-component`
 Classification: `regular`
 
 _No top-level functions detected._
+
+### `src/features/onboarding/onboarding-profile-hints.test.ts` <a id="src-features-onboarding-onboarding-profile-hints-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/features/onboarding/onboarding-profile-hints.ts` <a id="src-features-onboarding-onboarding-profile-hints-ts"></a>
+
+Classification: `regular`
+
+#### `profileHasOnboardingIncomeLink` — function, L6
+
+- called by: `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`
+
+#### `formatOnboardingBonusCaption` — function, L21
+
+- called by: `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`
 
 ### `src/features/onboarding/OnboardingWizard.tsx` <a id="src-features-onboarding-onboardingwizard-tsx"></a>
 
@@ -1508,9 +1612,9 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `loadSetupTabBundle` — function, L74
+#### `loadSetupTabBundle` — function, L80
 
-- calls: `src/data/repositories/cash-account-snapshots.ts#advisorReadCashAccountSnapshots`, `src/data/repositories/cash-accounts.ts#advisorReadCashAccounts`, `src/data/repositories/cpf-balances.ts#advisorReadCpfBalances`, `src/data/repositories/goals.ts#advisorReadGoals`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/investments.ts#advisorReadInvestments`, `src/data/repositories/liabilities.ts#advisorReadLiabilities`, `src/data/repositories/properties.ts#advisorReadProperties`, `src/data/repositories/vehicles.ts#advisorReadVehicles`
+- calls: `src/data/repositories/cash-account-snapshots.ts#advisorReadCashAccountSnapshots`, `src/data/repositories/cash-accounts.ts#advisorReadCashAccounts`, `src/data/repositories/cpf-balances.ts#advisorReadCpfBalances`, `src/data/repositories/cpf-investments.ts#advisorReadCpfInvestments`, `src/data/repositories/goals.ts#advisorReadGoals`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/investments.ts#advisorReadInvestments`, `src/data/repositories/liabilities.ts#advisorReadLiabilities`, `src/data/repositories/properties.ts#advisorReadProperties`, `src/data/repositories/vehicles.ts#advisorReadVehicles`
 - called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/data/setup-status.ts#loadSetupEvaluationContext`, `src/features/planning/sections/FuturePlanningSection.tsx#FuturePlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
 ### `src/features/planning/PlanningLayoutShell.tsx` <a id="src-features-planning-planninglayoutshell-tsx"></a>
@@ -1600,9 +1704,9 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `CashFlowPlanningSection` — component, L24
+#### `CashFlowPlanningSection` — component, L23
 
-- calls: `[external] @supabase/auth-js`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileCpfAgeBand`, `src/data/mappers.ts#profileExpenseGrowthNominal`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget-guided-setup.ts#countReplaceableMonthlyBudgetLines`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`
+- calls: `[external] @supabase/auth-js`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileCpfAgeBand`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget-guided-setup.ts#countReplaceableMonthlyBudgetLines`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`
 - renders: `[external] next`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`, `src/features/setup/BudgetLensProfileForm.tsx#BudgetLensProfileForm`, `src/ui/PageSection.tsx#PageSection`
 - rendered by: `src/app/(app)/planning/[section]/page.tsx#PlanningSectionPage`
 
@@ -1610,9 +1714,9 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `FuturePlanningSection` — component, L18
+#### `FuturePlanningSection` — component, L19
 
-- calls: `[external] @supabase/auth-js`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`
+- calls: `[external] @supabase/auth-js`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/features/goals/profile-retirement-props.ts#profileRetirementTargetsProps`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`
 - renders: `[external] next`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/planning/roadmap-modules.tsx#DocumentsVaultRoadmapCard`, `src/features/planning/roadmap-modules.tsx#ReportsRoadmapCard`, `src/features/planning/roadmap-modules.tsx#RetirementRoadmapCard`, `src/features/planning/roadmap-modules.tsx#ScenarioSimulatorRoadmapCard`, `src/features/planning/roadmap-modules.tsx#TaxEstimationRoadmapCard`
 - rendered by: `src/app/(app)/planning/[section]/page.tsx#PlanningSectionPage`
 
@@ -1640,9 +1744,9 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `WealthPlanningSection` — component, L36
+#### `WealthPlanningSection` — component, L37
 
-- calls: `[external] @supabase/auth-js`, `src/data/mappers.ts#num`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/cash-account-history.ts#buildCashHistoryByAccountId`, `src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview`, `src/domain/finance/investment-review.ts#shouldPromptInvestmentReview`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/lib/validation.ts#birthDateIsValidPast`
+- calls: `[external] @supabase/auth-js`, `src/data/cash-account-history-build.ts#buildCashHistoryByAccountId`, `src/data/mappers.ts#num`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview`, `src/domain/finance/investment-review.ts#shouldPromptInvestmentReview`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/lib/dates.ts#formatYearMonth`, `src/lib/validation.ts#birthDateIsValidPast`
 - renders: `[external] next`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`, `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`, `src/features/goals/HousingLoansPanel.tsx#HousingPanel`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`, `src/features/goals/VehiclesPanel.tsx#VehiclesPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/features/planning/roadmap-modules.tsx#AccountSyncingRoadmapCard`, `src/ui/PageSection.tsx#PageSection`
 - rendered by: `src/app/(app)/planning/[section]/page.tsx#PlanningSectionPage`
 

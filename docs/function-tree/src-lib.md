@@ -2,7 +2,7 @@
 
 # Function tree — `src/lib`
 
-24 module(s).
+25 module(s).
 
 ## Modules
 
@@ -16,6 +16,7 @@
 | [`src/lib/currency.ts`](#src-lib-currency-ts) | `regular` | 0 | 0 |
 | [`src/lib/dates.ts`](#src-lib-dates-ts) | `regular` | 8 | 4 |
 | [`src/lib/env.ts`](#src-lib-env-ts) | `regular` | 2 | 1 |
+| [`src/lib/investment-plan-nature.ts`](#src-lib-investment-plan-nature-ts) | `regular` | 0 | 0 |
 | [`src/lib/phone-format.test.ts`](#src-lib-phone-format-test-ts) | `regular` | 0 | 0 |
 | [`src/lib/phone-format.ts`](#src-lib-phone-format-ts) | `regular` | 3 | 2 |
 | [`src/lib/planning-revalidate.ts`](#src-lib-planning-revalidate-ts) | `regular` | 2 | 4 |
@@ -111,7 +112,7 @@ Classification: `regular`
 
 #### `formatYearMonth` — function, L9
 
-- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/budget/page.tsx#BudgetPage`, `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/budget/route.ts#GET`, `src/app/api/dashboard/route.ts#GET`, `src/app/api/profile/route.ts#PATCH`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals`, `src/domain/finance/vehicle-sg.ts#completedMonthsSinceReg`, `src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash`, `src/domain/finance/vehicle-sg.ts#loanMonthsRemainingResolved`, `src/domain/finance/vehicle-sg.ts#vehicleGrossAssetEstimate`, `src/domain/finance/vehicle-sg.ts#vehicleGrossFromPurchaseToTerminalLinear`, `src/domain/finance/vehicle-sg.ts#vehicleGrossFromRebatesRemainingToTerminal`, `src/domain/finance/vehicle-sg.ts#vehicleNetListedBeforeLiquidation`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`, `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`, `src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#defaultExpenseDateForBudgetMonth`, `src/lib/setup-urls.ts#setupTabPath`, `src/server/actions.ts#applyGuidedBudgetLinesAction`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/budget/page.tsx#BudgetPage`, `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/budget/route.ts#GET`, `src/app/api/dashboard/route.ts#GET`, `src/app/api/profile/route.ts#PATCH`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals`, `src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth`, `src/domain/finance/vehicle-sg.ts#completedMonthsSinceReg`, `src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash`, `src/domain/finance/vehicle-sg.ts#loanMonthsRemainingResolved`, `src/domain/finance/vehicle-sg.ts#vehicleGrossAssetEstimate`, `src/domain/finance/vehicle-sg.ts#vehicleGrossFromPurchaseToTerminalLinear`, `src/domain/finance/vehicle-sg.ts#vehicleGrossFromRebatesRemainingToTerminal`, `src/domain/finance/vehicle-sg.ts#vehicleNetListedBeforeLiquidation`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`, `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`, `src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#defaultExpenseDateForBudgetMonth`, `src/lib/setup-urls.ts#setupTabPath`, `src/server/actions.ts#applyGuidedBudgetLinesAction`
 
 #### `parseYearMonth` — function, L15
 
@@ -152,6 +153,12 @@ Classification: `regular`
 - calls: `[external] zod`
 - called by: `src/data/supabase/server.ts#createSupabaseServerClient`
 
+### `src/lib/investment-plan-nature.ts` <a id="src-lib-investment-plan-nature-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
 ### `src/lib/phone-format.test.ts` <a id="src-lib-phone-format-test-ts"></a>
 
 Classification: `regular`
@@ -186,7 +193,7 @@ Classification: `regular`
 #### `revalidateSetupAndPlanning` — function, L12
 
 - calls: `[external] next`, `src/lib/planning-revalidate.ts#revalidatePlanningWorkspace`
-- called by: `src/app/api/expenses/[id]/route.ts#DELETE`, `src/app/api/expenses/[id]/route.ts#PATCH`, `src/app/api/expenses/route.ts#POST`, `src/app/api/income-tax/route.ts#PATCH`, `src/server/actions.ts#applyGuidedBudgetLinesAction`, `src/server/actions.ts#clearBudgetMonthOverrideAction`, `src/server/actions.ts#clearCpfBalanceAction`, `src/server/actions.ts#confirmCpfRulesReviewAction`, `src/server/actions.ts#confirmInvestmentReviewAction`, `src/server/actions.ts#createBudgetLineAction`, `src/server/actions.ts#createCashAccountAction`, `src/server/actions.ts#createGoalAction`, `src/server/actions.ts#createInvestmentAction`, `src/server/actions.ts#createLiabilityAction`, `src/server/actions.ts#deleteBudgetLineAction`, `src/server/actions.ts#deleteCashAccountAction`, `src/server/actions.ts#deleteInvestmentAction`, `src/server/actions.ts#deleteLiabilityAction`, `src/server/actions.ts#reorderFinancialGoalAction`, `src/server/actions.ts#setBudgetMonthOverrideAction`, `src/server/actions.ts#updateBudgetLineAmountAction`, `src/server/actions.ts#updateBudgetLineScheduleAction`, `src/server/actions.ts#updateCashAccountAction`, `src/server/actions.ts#updateGoalAction`, `src/server/actions.ts#updateInvestmentAction`, `src/server/actions.ts#updateLiabilityAction`, `src/server/actions.ts#upsertCpfBalanceAction`, `src/server/advisor-proposal-actions.ts#revalidateProposalViews`, `src/server/client-consent-actions.ts#recordAdvisorConsentAction`
+- called by: `src/app/api/expenses/[id]/route.ts#DELETE`, `src/app/api/expenses/[id]/route.ts#PATCH`, `src/app/api/expenses/route.ts#POST`, `src/app/api/income-tax/route.ts#PATCH`, `src/server/actions.ts#applyGuidedBudgetLinesAction`, `src/server/actions.ts#clearBudgetMonthOverrideAction`, `src/server/actions.ts#clearCpfBalanceAction`, `src/server/actions.ts#confirmCpfRulesReviewAction`, `src/server/actions.ts#confirmInvestmentReviewAction`, `src/server/actions.ts#createBudgetLineAction`, `src/server/actions.ts#createCashAccountAction`, `src/server/actions.ts#createCpfInvestmentAction`, `src/server/actions.ts#createGoalAction`, `src/server/actions.ts#createInvestmentAction`, `src/server/actions.ts#createLiabilityAction`, `src/server/actions.ts#deleteBudgetLineAction`, `src/server/actions.ts#deleteCashAccountAction`, `src/server/actions.ts#deleteCpfInvestmentAction`, `src/server/actions.ts#deleteInvestmentAction`, `src/server/actions.ts#deleteLiabilityAction`, `src/server/actions.ts#reorderFinancialGoalAction`, `src/server/actions.ts#setBudgetMonthOverrideAction`, `src/server/actions.ts#updateBudgetLineAmountAction`, `src/server/actions.ts#updateBudgetLineScheduleAction`, `src/server/actions.ts#updateCashAccountAction`, `src/server/actions.ts#updateGoalAction`, `src/server/actions.ts#updateInvestmentAction`, `src/server/actions.ts#updateLiabilityAction`, `src/server/actions.ts#upsertCpfBalanceAction`, `src/server/advisor-proposal-actions.ts#revalidateProposalViews`, `src/server/client-consent-actions.ts#recordAdvisorConsentAction`
 
 ### `src/lib/planning-sections.ts` <a id="src-lib-planning-sections-ts"></a>
 
@@ -358,6 +365,6 @@ Classification: `regular`
 
 - called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/projection/route.ts#GET`, `src/data/dashboard.ts#getDashboardPayload`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
-#### `reliefAmount` — arrow, L328
+#### `reliefAmount` — arrow, L343
 
 - calls: `[external] zod`

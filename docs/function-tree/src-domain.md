@@ -2,7 +2,7 @@
 
 # Function tree — `src/domain`
 
-91 module(s).
+97 module(s).
 
 ## Modules
 
@@ -23,12 +23,14 @@
 | [`src/domain/finance/age-asset-projection.test.ts`](#src-domain-finance-age-asset-projection-test-ts) | `regular` | 4 | 0 |
 | [`src/domain/finance/age-asset-projection.ts`](#src-domain-finance-age-asset-projection-ts) | `regular` | 1 | 4 |
 | [`src/domain/finance/age-projection.ts`](#src-domain-finance-age-projection-ts) | `regular` | 3 | 4 |
+| [`src/domain/finance/budget-cash-flow-allocation.test.ts`](#src-domain-finance-budget-cash-flow-allocation-test-ts) | `regular` | 1 | 0 |
+| [`src/domain/finance/budget-cash-flow-allocation.ts`](#src-domain-finance-budget-cash-flow-allocation-ts) | `regular` | 4 | 6 |
 | [`src/domain/finance/budget-guided-setup.test.ts`](#src-domain-finance-budget-guided-setup-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/budget-guided-setup.ts`](#src-domain-finance-budget-guided-setup-ts) | `regular` | 10 | 10 |
 | [`src/domain/finance/budget-review.test.ts`](#src-domain-finance-budget-review-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/budget-review.ts`](#src-domain-finance-budget-review-ts) | `regular` | 1 | 0 |
 | [`src/domain/finance/budget.ts`](#src-domain-finance-budget-ts) | `regular` | 9 | 7 |
-| [`src/domain/finance/cash-account-history.ts`](#src-domain-finance-cash-account-history-ts) | `regular` | 1 | 1 |
+| [`src/domain/finance/cash-account-history.types.ts`](#src-domain-finance-cash-account-history-types-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/cash-account-purpose.test.ts`](#src-domain-finance-cash-account-purpose-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/cash-account-purpose.ts`](#src-domain-finance-cash-account-purpose-ts) | `regular` | 2 | 0 |
 | [`src/domain/finance/cash-flow-accrual.test.ts`](#src-domain-finance-cash-flow-accrual-test-ts) | `regular` | 1 | 1 |
@@ -36,9 +38,9 @@
 | [`src/domain/finance/cash-flow-setup-guidance.test.ts`](#src-domain-finance-cash-flow-setup-guidance-test-ts) | `regular` | 1 | 0 |
 | [`src/domain/finance/cash-flow-setup-guidance.ts`](#src-domain-finance-cash-flow-setup-guidance-ts) | `regular` | 5 | 7 |
 | [`src/domain/finance/cpf-monthly-projection.test.ts`](#src-domain-finance-cpf-monthly-projection-test-ts) | `regular` | 0 | 0 |
-| [`src/domain/finance/cpf-monthly-projection.ts`](#src-domain-finance-cpf-monthly-projection-ts) | `regular` | 4 | 9 |
+| [`src/domain/finance/cpf-monthly-projection.ts`](#src-domain-finance-cpf-monthly-projection-ts) | `regular` | 7 | 13 |
 | [`src/domain/finance/cpf-retirement-projection.test.ts`](#src-domain-finance-cpf-retirement-projection-test-ts) | `regular` | 0 | 0 |
-| [`src/domain/finance/cpf-retirement-projection.ts`](#src-domain-finance-cpf-retirement-projection-ts) | `regular` | 10 | 16 |
+| [`src/domain/finance/cpf-retirement-projection.ts`](#src-domain-finance-cpf-retirement-projection-ts) | `regular` | 11 | 17 |
 | [`src/domain/finance/cpf-rules-review.test.ts`](#src-domain-finance-cpf-rules-review-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/cpf-rules-review.ts`](#src-domain-finance-cpf-rules-review-ts) | `regular` | 3 | 1 |
 | [`src/domain/finance/debt-payoff-strategies.test.ts`](#src-domain-finance-debt-payoff-strategies-test-ts) | `regular` | 0 | 0 |
@@ -46,7 +48,9 @@
 | [`src/domain/finance/debt-repayment.test.ts`](#src-domain-finance-debt-repayment-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/debt-repayment.ts`](#src-domain-finance-debt-repayment-ts) | `regular` | 15 | 16 |
 | [`src/domain/finance/expense-budget-lock.ts`](#src-domain-finance-expense-budget-lock-ts) | `regular` | 3 | 3 |
-| [`src/domain/finance/goal-deadline.ts`](#src-domain-finance-goal-deadline-ts) | `regular` | 10 | 11 |
+| [`src/domain/finance/goal-deadline.ts`](#src-domain-finance-goal-deadline-ts) | `regular` | 11 | 13 |
+| [`src/domain/finance/goal-feasibility.test.ts`](#src-domain-finance-goal-feasibility-test-ts) | `regular` | 0 | 0 |
+| [`src/domain/finance/goal-feasibility.ts`](#src-domain-finance-goal-feasibility-ts) | `regular` | 4 | 9 |
 | [`src/domain/finance/goal-priority-tradeoff.test.ts`](#src-domain-finance-goal-priority-tradeoff-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/goal-priority-tradeoff.ts`](#src-domain-finance-goal-priority-tradeoff-ts) | `regular` | 2 | 1 |
 | [`src/domain/finance/goal-standalone.ts`](#src-domain-finance-goal-standalone-ts) | `regular` | 2 | 1 |
@@ -60,8 +64,10 @@
 | [`src/domain/finance/insights.ts`](#src-domain-finance-insights-ts) | `regular` | 1 | 0 |
 | [`src/domain/finance/investable-surplus.test.ts`](#src-domain-finance-investable-surplus-test-ts) | `regular` | 1 | 0 |
 | [`src/domain/finance/investable-surplus.ts`](#src-domain-finance-investable-surplus-ts) | `regular` | 1 | 3 |
-| [`src/domain/finance/investment-contribution.ts`](#src-domain-finance-investment-contribution-ts) | `regular` | 2 | 3 |
-| [`src/domain/finance/investment-portfolio-fv.ts`](#src-domain-finance-investment-portfolio-fv-ts) | `regular` | 2 | 5 |
+| [`src/domain/finance/investment-contribution-dates.test.ts`](#src-domain-finance-investment-contribution-dates-test-ts) | `regular` | 0 | 0 |
+| [`src/domain/finance/investment-contribution-dates.ts`](#src-domain-finance-investment-contribution-dates-ts) | `regular` | 3 | 2 |
+| [`src/domain/finance/investment-contribution.ts`](#src-domain-finance-investment-contribution-ts) | `regular` | 3 | 5 |
+| [`src/domain/finance/investment-portfolio-fv.ts`](#src-domain-finance-investment-portfolio-fv-ts) | `regular` | 2 | 6 |
 | [`src/domain/finance/investment-review.test.ts`](#src-domain-finance-investment-review-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/investment-review.ts`](#src-domain-finance-investment-review-ts) | `regular` | 6 | 5 |
 | [`src/domain/finance/irregular-expenses.test.ts`](#src-domain-finance-irregular-expenses-test-ts) | `regular` | 0 | 0 |
@@ -144,12 +150,12 @@ Classification: `regular`
 
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 
-#### `investmentWritePayload` — function, L70
+#### `investmentWritePayload` — function, L73
 
 - calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 
-#### `applyAcceptedProposalChanges` — function, L92
+#### `applyAcceptedProposalChanges` — function, L98
 
 - calls: `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/budget-lines.ts#updateBudgetLine`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/goals.ts#updateFinancialGoal`, `src/data/repositories/investments.ts#deleteInvestment`, `src/data/repositories/investments.ts#insertInvestment`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/investments.ts#updateInvestment`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/repositories/profiles.ts#updateProfile`, `src/domain/advisor-proposals/apply-changes.ts#investmentDiffers`, `src/domain/advisor-proposals/apply-changes.ts#investmentWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#profilePatch`, `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 - called by: `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`
@@ -213,12 +219,12 @@ Classification: `regular`
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `mergeInvestment` — function, L119
+#### `mergeInvestment` — function, L122
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `applyProposalChanges` — function, L164
+#### `applyProposalChanges` — function, L174
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#applyInvestmentInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyProfile`, `src/domain/advisor-proposals/apply-overlay.ts#fieldMap`, `src/domain/advisor-proposals/apply-overlay.ts#groupByEntity`, `src/domain/advisor-proposals/apply-overlay.ts#mergeInvestment`, `src/domain/advisor-proposals/apply-overlay.ts#numOrNull`
 - called by: `src/data/dashboard.ts#getDashboardPayload`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
@@ -227,15 +233,15 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `fieldMeta` — function, L62
+#### `fieldMeta` — function, L65
 
 - called by: `src/data/repositories/advisor-proposals.ts#upsertProposalChange`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#AdvisorProposalDraftPanel`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
 
-#### `serializeProposalValue` — function, L89
+#### `serializeProposalValue` — function, L92
 
 - called by: `src/data/repositories/advisor-proposals.ts#upsertProposalChange`
 
-#### `valuesEqual` — function, L96
+#### `valuesEqual` — function, L99
 
 - called by: `src/data/repositories/advisor-proposals.ts#upsertProposalChange`
 
@@ -369,6 +375,36 @@ Classification: `regular`
 - calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`, `src/domain/finance/projection.ts#projectFutureValue`
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
+### `src/domain/finance/budget-cash-flow-allocation.test.ts` <a id="src-domain-finance-budget-cash-flow-allocation-test-ts"></a>
+
+Classification: `regular`
+
+#### `inv` — function, L9
+
+_No tracked edges._
+
+### `src/domain/finance/budget-cash-flow-allocation.ts` <a id="src-domain-finance-budget-cash-flow-allocation-ts"></a>
+
+Classification: `regular`
+
+#### `yearMonthCompare` — function, L7
+
+- called by: `src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth`
+
+#### `isInvestmentContributionActiveInYearMonth` — function, L14
+
+- calls: `src/data/mappers.ts#num`, `src/domain/finance/budget-cash-flow-allocation.ts#yearMonthCompare`, `src/domain/finance/investment-contribution-dates.ts#parseIsoDateOnly`, `src/lib/dates.ts#formatYearMonth`
+- called by: `src/domain/finance/budget-cash-flow-allocation.ts#sumPlannedMonthlyInvestmentContributions`
+
+#### `sumPlannedMonthlyInvestmentContributions` — function, L43
+
+- calls: `src/data/mappers.ts#num`, `src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth`
+- called by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
+
+#### `computeBudgetCashFlowAllocation` — function, L69
+
+- called by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
+
 ### `src/domain/finance/budget-guided-setup.test.ts` <a id="src-domain-finance-budget-guided-setup-test-ts"></a>
 
 Classification: `regular`
@@ -484,14 +520,11 @@ Classification: `regular`
 
 - called by: `src/data/dashboard.ts#getDashboardPayload`, `src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth`
 
-### `src/domain/finance/cash-account-history.ts` <a id="src-domain-finance-cash-account-history-ts"></a>
+### `src/domain/finance/cash-account-history.types.ts` <a id="src-domain-finance-cash-account-history-types-ts"></a>
 
 Classification: `regular`
 
-#### `buildCashHistoryByAccountId` — function, L10
-
-- calls: `src/data/mappers.ts#num`
-- called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
+_No top-level functions detected._
 
 ### `src/domain/finance/cash-account-purpose.test.ts` <a id="src-domain-finance-cash-account-purpose-test-ts"></a>
 
@@ -573,20 +606,32 @@ _No top-level functions detected._
 
 Classification: `regular`
 
-#### `round2` — function, L56
+#### `round2` — function, L71
 
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
 
-#### `endOfYearMonthDate` — function, L60
+#### `endOfYearMonthDate` — function, L75
 
 - called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
 
-#### `buildCpfMonthlyProjectionSeries` — function, L70
+#### `monthDiff` — function, L80
 
-- calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/cpf-monthly-projection.ts#endOfYearMonthDate`, `src/domain/finance/cpf-monthly-projection.ts#round2`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`, `src/domain/finance/sg-cpf-contribution-buckets.ts#monthlyCpfInflowsFromOwSubject`, `src/domain/finance/sg-cpf-contribution-buckets.ts#ordinaryWagesSubjectWithYtd`, `src/domain/finance/sg-cpf-contribution-buckets.ts#sgCpfAgeBandForCompletedAge`, `src/domain/finance/sg-cpf.ts#additionalWageCeilingRemaining`, `src/lib/dates.ts#addMonthsToYearMonth`
+- called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
+
+#### `validYearMonth` — function, L86
+
+- called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
+
+#### `fixedBandAgeProxy` — function, L90
+
+- called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
+
+#### `buildCpfMonthlyProjectionSeries` — function, L104
+
+- calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/cpf-monthly-projection.ts#endOfYearMonthDate`, `src/domain/finance/cpf-monthly-projection.ts#fixedBandAgeProxy`, `src/domain/finance/cpf-monthly-projection.ts#monthDiff`, `src/domain/finance/cpf-monthly-projection.ts#round2`, `src/domain/finance/cpf-monthly-projection.ts#validYearMonth`, `src/domain/finance/cpf-retirement-projection.ts#routeCpfSaInvestmentMaturityProceeds`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`, `src/domain/finance/sg-cpf-contribution-buckets.ts#monthlyCpfInflowsFromOwSubject`, `src/domain/finance/sg-cpf-contribution-buckets.ts#ordinaryWagesSubjectWithYtd`, `src/domain/finance/sg-cpf-contribution-buckets.ts#sgCpfAgeBandForCompletedAge`, `src/domain/finance/sg-cpf.ts#additionalWageCeilingRemaining`, `src/lib/dates.ts#addMonthsToYearMonth`
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `downsampleCpfSeries` — function, L240
+#### `downsampleCpfSeries` — function, L366
 
 _No tracked edges._
 
@@ -600,50 +645,55 @@ _No top-level functions detected._
 
 Classification: `regular`
 
-#### `round2` — function, L90
+#### `round2` — function, L97
 
-- called by: `src/domain/finance/cpf-retirement-projection.ts#brsFromFrs`, `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`, `src/domain/finance/cpf-retirement-projection.ts#ersFromFrs`, `src/domain/finance/cpf-retirement-projection.ts#estimateCpfLifeMonthlyPayoutRange`, `src/domain/finance/cpf-retirement-projection.ts#estimateFutureFrs`, `src/domain/finance/cpf-retirement-projection.ts#retirementTargetAmount`, `src/domain/finance/cpf-retirement-projection.ts#simulateRaFormationAt55`
+- called by: `src/domain/finance/cpf-retirement-projection.ts#brsFromFrs`, `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`, `src/domain/finance/cpf-retirement-projection.ts#ersFromFrs`, `src/domain/finance/cpf-retirement-projection.ts#estimateCpfLifeMonthlyPayoutRange`, `src/domain/finance/cpf-retirement-projection.ts#estimateFutureFrs`, `src/domain/finance/cpf-retirement-projection.ts#retirementTargetAmount`, `src/domain/finance/cpf-retirement-projection.ts#routeCpfSaInvestmentMaturityProceeds`, `src/domain/finance/cpf-retirement-projection.ts#simulateRaFormationAt55`
 
-#### `yearsUntilAge` — function, L94
+#### `yearsUntilAge` — function, L101
 
 - called by: `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`
 
-#### `estimateFutureFrs` — function, L105
+#### `estimateFutureFrs` — function, L112
 
 - calls: `src/domain/finance/cpf-retirement-projection.ts#round2`
 - called by: `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`
 
-#### `brsFromFrs` — function, L117
+#### `brsFromFrs` — function, L124
 
 - calls: `src/domain/finance/cpf-retirement-projection.ts#round2`
 - called by: `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`, `src/domain/finance/cpf-retirement-projection.ts#retirementTargetAmount`
 
-#### `ersFromFrs` — function, L121
+#### `ersFromFrs` — function, L128
 
 - calls: `src/domain/finance/cpf-retirement-projection.ts#round2`
 - called by: `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`, `src/domain/finance/cpf-retirement-projection.ts#retirementTargetAmount`
 
-#### `retirementTargetAmount` — function, L125
+#### `retirementTargetAmount` — function, L132
 
 - calls: `src/domain/finance/cpf-retirement-projection.ts#brsFromFrs`, `src/domain/finance/cpf-retirement-projection.ts#ersFromFrs`, `src/domain/finance/cpf-retirement-projection.ts#round2`
 - called by: `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`
 
-#### `estimateCpfLifeMonthlyPayoutRange` — function, L139
+#### `estimateCpfLifeMonthlyPayoutRange` — function, L146
 
 - calls: `src/domain/finance/cpf-retirement-projection.ts#round2`
 - called by: `src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection`
 
-#### `buildCpfRetirementProjection` — function, L151
+#### `buildCpfRetirementProjection` — function, L158
 
 - calls: `src/domain/finance/cpf-retirement-projection.ts#brsFromFrs`, `src/domain/finance/cpf-retirement-projection.ts#ersFromFrs`, `src/domain/finance/cpf-retirement-projection.ts#estimateCpfLifeMonthlyPayoutRange`, `src/domain/finance/cpf-retirement-projection.ts#estimateFutureFrs`, `src/domain/finance/cpf-retirement-projection.ts#retirementTargetAmount`, `src/domain/finance/cpf-retirement-projection.ts#round2`, `src/domain/finance/cpf-retirement-projection.ts#yearsUntilAge`
 - called by: `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`
 
-#### `simulateRaFormationAt55` — function, L196
+#### `simulateRaFormationAt55` — function, L203
 
 - calls: `src/domain/finance/cpf-retirement-projection.ts#round2`
 - called by: `src/domain/finance/cpf-retirement-projection.ts#simulateRaForScenario`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`
 
-#### `simulateRaForScenario` — function, L222
+#### `routeCpfSaInvestmentMaturityProceeds` — function, L233
+
+- calls: `src/domain/finance/cpf-retirement-projection.ts#round2`
+- called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`
+
+#### `simulateRaForScenario` — function, L265
 
 - calls: `src/domain/finance/cpf-retirement-projection.ts#simulateRaFormationAt55`
 - called by: `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`
@@ -809,7 +859,7 @@ Classification: `regular`
 
 #### `formatLocalYmd` — function, L33
 
-- called by: `src/domain/finance/goal-deadline.ts#analyzeGoalDeadlineGap`
+- called by: `src/domain/finance/goal-deadline.ts#analyzeGoalDeadlineGap`, `src/domain/finance/goal-deadline.ts#targetDateYmdForContributionPeriods`
 
 #### `endOfLocalDayFromYmd` — function, L41
 
@@ -822,29 +872,63 @@ Classification: `regular`
 #### `nextEndOfMonthOnOrAfter` — function, L51
 
 - calls: `src/domain/finance/goal-deadline.ts#endOfCalendarMonth`
-- called by: `src/domain/finance/goal-deadline.ts#countEndOfMonthContributionPeriods`
+- called by: `src/domain/finance/goal-deadline.ts#countEndOfMonthContributionPeriods`, `src/domain/finance/goal-deadline.ts#targetDateYmdForContributionPeriods`
 
 #### `lastEndOfMonthOnOrBefore` — function, L56
 
 - calls: `src/domain/finance/goal-deadline.ts#endOfCalendarMonth`
 - called by: `src/domain/finance/goal-deadline.ts#countEndOfMonthContributionPeriods`
 
-#### `countEndOfMonthContributionPeriods` — function, L66
+#### `targetDateYmdForContributionPeriods` — function, L70
+
+- calls: `src/domain/finance/goal-deadline.ts#formatLocalYmd`, `src/domain/finance/goal-deadline.ts#nextEndOfMonthOnOrAfter`
+- called by: `src/domain/finance/goal-feasibility.ts#analyzeGoalFeasibility`
+
+#### `countEndOfMonthContributionPeriods` — function, L83
 
 - calls: `src/domain/finance/goal-deadline.ts#lastEndOfMonthOnOrBefore`, `src/domain/finance/goal-deadline.ts#nextEndOfMonthOnOrAfter`
 - called by: `src/domain/finance/goal-deadline.ts#analyzeGoalDeadlineGap`
 
-#### `requiredMonthlyForMonths` — function, L86
+#### `requiredMonthlyForMonths` — function, L103
+
+- called by: `src/domain/finance/goal-deadline.ts#analyzeGoalDeadlineGap`, `src/domain/finance/goal-feasibility.ts#requiredForDeadline`
+
+#### `roundMoneyUp` — function, L127
 
 - called by: `src/domain/finance/goal-deadline.ts#analyzeGoalDeadlineGap`
 
-#### `roundMoneyUp` — function, L110
-
-- called by: `src/domain/finance/goal-deadline.ts#analyzeGoalDeadlineGap`
-
-#### `analyzeGoalDeadlineGap` — function, L128
+#### `analyzeGoalDeadlineGap` — function, L145
 
 - calls: `src/domain/finance/goal-deadline.ts#countEndOfMonthContributionPeriods`, `src/domain/finance/goal-deadline.ts#endOfLocalDayFromYmd`, `src/domain/finance/goal-deadline.ts#formatLocalYmd`, `src/domain/finance/goal-deadline.ts#isValidYmd`, `src/domain/finance/goal-deadline.ts#requiredMonthlyForMonths`, `src/domain/finance/goal-deadline.ts#roundMoneyUp`, `src/domain/finance/projection.ts#projectFutureValue`
+- called by: `src/domain/finance/goal-feasibility.ts#analyzeGoalFeasibility`
+
+### `src/domain/finance/goal-feasibility.test.ts` <a id="src-domain-finance-goal-feasibility-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/domain/finance/goal-feasibility.ts` <a id="src-domain-finance-goal-feasibility-ts"></a>
+
+Classification: `regular`
+
+#### `roundMoneyUp` — function, L12
+
+- called by: `src/domain/finance/goal-feasibility.ts#analyzeGoalFeasibility`, `src/domain/finance/goal-feasibility.ts#requiredForDeadline`
+
+#### `etaMonths` — function, L55
+
+- calls: `src/domain/finance/goal-standalone.ts#estimateTimeToGoalStandalone`
+- called by: `src/domain/finance/goal-feasibility.ts#analyzeGoalFeasibility`
+
+#### `requiredForDeadline` — function, L71
+
+- calls: `src/domain/finance/goal-deadline.ts#requiredMonthlyForMonths`, `src/domain/finance/goal-feasibility.ts#roundMoneyUp`
+- called by: `src/domain/finance/goal-feasibility.ts#analyzeGoalFeasibility`
+
+#### `analyzeGoalFeasibility` — function, L92
+
+- calls: `src/domain/finance/goal-deadline.ts#analyzeGoalDeadlineGap`, `src/domain/finance/goal-deadline.ts#targetDateYmdForContributionPeriods`, `src/domain/finance/goal-feasibility.ts#etaMonths`, `src/domain/finance/goal-feasibility.ts#requiredForDeadline`, `src/domain/finance/goal-feasibility.ts#roundMoneyUp`, `src/domain/finance/projection.ts#calculateTimeToGoal`
 - called by: `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`
 
 ### `src/domain/finance/goal-priority-tradeoff.test.ts` <a id="src-domain-finance-goal-priority-tradeoff-test-ts"></a>
@@ -877,7 +961,7 @@ Classification: `regular`
 #### `estimateTimeToGoalStandalone` — function, L26
 
 - calls: `src/domain/finance/projection.ts#calculateTimeToGoal`
-- called by: `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`
+- called by: `src/domain/finance/goal-feasibility.ts#etaMonths`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`
 
 ### `src/domain/finance/housing-loan-estimate.test.ts` <a id="src-domain-finance-housing-loan-estimate-test-ts"></a>
 
@@ -1042,16 +1126,44 @@ Classification: `regular`
 - calls: `src/domain/finance/budget.ts#plannedMonthlyBudgetTotalForMonth`, `src/domain/finance/sg-cpf.ts#countAnnualBonusPayoutsInHorizon`, `src/lib/dates.ts#addMonthsToYearMonth`
 - called by: `src/domain/finance/age-asset-projection.ts#buildAgeAssetProjection`
 
+### `src/domain/finance/investment-contribution-dates.test.ts` <a id="src-domain-finance-investment-contribution-dates-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/domain/finance/investment-contribution-dates.ts` <a id="src-domain-finance-investment-contribution-dates-ts"></a>
+
+Classification: `regular`
+
+#### `calendarMonthsBetween` — function, L2
+
+- called by: `src/domain/finance/investment-contribution-dates.ts#contributionScheduleFromDates`
+
+#### `parseIsoDateOnly` — function, L12
+
+- called by: `src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth`, `src/domain/finance/investment-contribution-dates.ts#contributionScheduleFromDates`
+
+#### `contributionScheduleFromDates` — function, L29
+
+- calls: `src/domain/finance/investment-contribution-dates.ts#calendarMonthsBetween`, `src/domain/finance/investment-contribution-dates.ts#parseIsoDateOnly`
+- called by: `src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#contributionStartMonthFromInvestmentRow`
+
 ### `src/domain/finance/investment-contribution.ts` <a id="src-domain-finance-investment-contribution-ts"></a>
 
 Classification: `regular`
 
-#### `contributionMonthsLimitFromInvestmentRow` — function, L8
+#### `contributionMonthsLimitFromInvestmentRow` — function, L17
 
-- calls: `src/data/mappers.ts#num`
+- calls: `src/data/mappers.ts#num`, `src/domain/finance/investment-contribution-dates.ts#contributionScheduleFromDates`
 - called by: `src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow`, `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`
 
-#### `withdrawalStartMonthFromInvestmentRow` — function, L41
+#### `contributionStartMonthFromInvestmentRow` — function, L56
+
+- calls: `src/domain/finance/investment-contribution-dates.ts#contributionScheduleFromDates`
+- called by: `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`
+
+#### `withdrawalStartMonthFromInvestmentRow` — function, L69
 
 - calls: `src/data/mappers.ts#num`, `src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow`
 - called by: `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`
@@ -1060,12 +1172,12 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `futureValueInvestmentPortfolioAtMonth` — function, L12
+#### `futureValueInvestmentPortfolioAtMonth` — function, L13
 
-- calls: `src/data/mappers.ts#num`, `src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow`, `src/domain/finance/projection.ts#projectFutureValue`
+- calls: `src/data/mappers.ts#num`, `src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#contributionStartMonthFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow`, `src/domain/finance/projection.ts#projectFutureValue`
 - called by: `src/data/dashboard.ts#getDashboardPayload`, `src/data/projection.ts#buildInvestmentProjectionSeries`, `src/domain/finance/age-projection.ts#buildNetWorthByAgeProjection`, `src/domain/finance/investment-portfolio-fv.ts#calculateTimeToGoalInvestmentPortfolio`
 
-#### `calculateTimeToGoalInvestmentPortfolio` — function, L47
+#### `calculateTimeToGoalInvestmentPortfolio` — function, L50
 
 - calls: `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`
 - called by: `src/data/projection.ts#timeToGoalForTarget`
@@ -1213,15 +1325,15 @@ Classification: `regular`
 - calls: `src/domain/finance/projection.ts#monthlyContributionForMonth`
 - called by: `src/domain/finance/projection.ts#projectFutureValue`
 
-#### `projectFutureValue` — function, L90
+#### `projectFutureValue` — function, L98
 
 - calls: `src/domain/finance/projection.ts#futureValueEndOfMonthWindow`, `src/domain/finance/projection.ts#hasVariableCashflows`, `src/domain/finance/projection.ts#projectFutureValueIterative`
 - called by: `src/data/projection.ts#buildProjectionSeries`, `src/domain/finance/age-projection.ts#buildNetWorthByAgeProjection`, `src/domain/finance/goal-deadline.ts#analyzeGoalDeadlineGap`, `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`, `src/domain/finance/projection.ts#calculateTimeToGoal`
 
-#### `calculateTimeToGoal` — function, L133
+#### `calculateTimeToGoal` — function, L171
 
 - calls: `src/domain/finance/projection.ts#hasVariableCashflows`, `src/domain/finance/projection.ts#projectFutureValue`
-- called by: `src/data/projection.ts#timeToGoalForTarget`, `src/domain/finance/goal-standalone.ts#estimateTimeToGoalStandalone`
+- called by: `src/data/projection.ts#timeToGoalForTarget`, `src/domain/finance/goal-feasibility.ts#analyzeGoalFeasibility`, `src/domain/finance/goal-standalone.ts#estimateTimeToGoalStandalone`
 
 ### `src/domain/finance/property-financing-plan.test.ts` <a id="src-domain-finance-property-financing-plan-test-ts"></a>
 

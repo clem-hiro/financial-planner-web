@@ -114,6 +114,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
     liabilityRows,
     vehicleRows,
     cpfRow,
+    cpfInvestments,
     properties,
     housingLoans,
     goals,
@@ -133,6 +134,18 @@ export default async function SetupPage({ searchParams }: PageProps) {
     lastCpfRulesReviewVersion:
       financialProfile?.last_cpf_rules_review_version ?? null,
   });
+  const defaultSaMaturityMonth =
+    financialProfile?.birth_date &&
+    typeof financialProfile.birth_date === "string" &&
+    birthDateIsValidPast(financialProfile.birth_date)
+      ? formatYearMonth(
+          new Date(
+            Number(financialProfile.birth_date.slice(0, 4)) + 55,
+            Number(financialProfile.birth_date.slice(5, 7)) - 1,
+            1
+          )
+        )
+      : null;
   const investmentPlanningContext =
     financialProfile?.birth_date &&
     typeof financialProfile.birth_date === "string" &&
@@ -274,10 +287,10 @@ export default async function SetupPage({ searchParams }: PageProps) {
         <div className="transition-opacity duration-150 ease-out">
           <PageSection
             id="cpf-balances"
-            title="CPF &amp; CPFIS"
+            title="CPF &amp; CPF Investments"
             description={
               <span className="text-xs text-zinc-600">
-                OA / SA / MA and optional CPFIS assumptions.{" "}
+                OA / SA / MA and CPF investment entries.{" "}
                 <MethodologyOpenLink
                   topicId="cpf-projection"
                   className={appInlineLinkClass}
@@ -289,6 +302,8 @@ export default async function SetupPage({ searchParams }: PageProps) {
           >
             <CpfBalancesForm
               row={cpfRow}
+              cpfInvestments={cpfInvestments}
+              defaultSaMaturityMonth={defaultSaMaturityMonth}
               showRulesReviewPrompt={showCpfRulesReviewPrompt}
             />
           </PageSection>

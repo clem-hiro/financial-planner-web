@@ -22,7 +22,10 @@ import {
   vehicleGrossAssetEstimate,
   vehicleNetListedBeforeLiquidation,
 } from "@/domain/finance";
-import type { HousingLoanProjectionInput } from "@/domain/finance";
+import type {
+  CpfInvestmentProjectionInput,
+  HousingLoanProjectionInput,
+} from "@/domain/finance";
 import type { RetirementDividendVsSpendResult } from "@/domain/finance";
 import {
   type SgCpfAgeBand,
@@ -64,6 +67,10 @@ import {
   advisorReadCpfBalances,
 } from "@/data/repositories/cpf-balances";
 import {
+  advisorReadCpfInvestments,
+  listCpfInvestments,
+} from "@/data/repositories/cpf-investments";
+import {
   listFinancialGoals,
   advisorReadGoals,
 } from "@/data/repositories/goals";
@@ -95,7 +102,7 @@ import {
 } from "@/data/repositories/investments";
 import { buildSyntheticTaxExpense } from "@/data/income-tax-synthetic-expense";
 import { buildSyntheticHousingCashExpense } from "@/data/housing-cash-synthetic-expense";
-import type { HousingLoanRow } from "@/data/supabase/types";
+import type { CpfInvestmentRow, HousingLoanRow } from "@/data/supabase/types";
 import {
   buildInvestmentProjectionSeries,
   projectionSnapshotFromInvestmentRows,
@@ -157,6 +164,7 @@ export type DashboardPayload = {
     sa: number;
     ma: number;
     cpfis: number;
+    ra: number;
     totalCpf: number;
   }> | null;
   /** Vertical markers on the CPF chart (e.g. keys / repayment start). */
@@ -215,6 +223,7 @@ export type DashboardPayload = {
       oa: number;
       sa: number;
       ma: number;
+      ra: number;
       cpfis: number;
       totalCpf: number;
     } | null;
@@ -330,6 +339,19 @@ function housingLoanToProjection(
   };
 }
 
+function cpfInvestmentToProjection(
+  row: CpfInvestmentRow
+): CpfInvestmentProjectionInput {
+  return {
+    account: row.account,
+    purchaseMonth: row.purchase_month,
+    premiumType: row.premium_type,
+    amount: num(row.amount),
+    projectedGrowthAnnual: num(row.projected_growth_annual),
+    maturityMonth: row.maturity_month,
+  };
+}
+
 function ageAtEndOfYearMonth(birthYmd: string, yearMonth: string): number {
   const [y, m] = yearMonth.split("-").map(Number);
   const asOf = new Date(y, m, 0, 12, 0, 0, 0);
@@ -379,6 +401,7 @@ export async function getDashboardPayload(
     overrideRows,
     baseGoals,
     cpfRow,
+    cpfInvestmentRows,
     housingLoanRows,
     vehicleRows,
     incomeTaxConfig,
@@ -421,6 +444,9 @@ export async function getDashboardPayload(
     isAdvisorViewer
       ? advisorReadCpfBalances(supabase, userId)
       : getCpfBalanceByUserId(supabase, userId),
+    isAdvisorViewer
+      ? advisorReadCpfInvestments(supabase, userId)
+      : listCpfInvestments(supabase, userId),
     isAdvisorViewer
       ? advisorReadHousingLoans(supabase, userId)
       : listHousingLoans(supabase, userId),
@@ -682,7 +708,7 @@ export async function getDashboardPayload(
       liabilitiesTotal +
       vehiclesNetAtRet;
 
-    if (cpfRow) {
+    if (cpfRow || cpfInvestmentRows.length > 0) {
       const maxAgeOnAxis = Math.max(...nwAgePoints.map((p) => p.age));
       const horizonMonths = Math.max(
         1,
@@ -707,29 +733,33 @@ export async function getDashboardPayload(
         annualBonus: profileAnnualBonus(profile),
         annualSalaryGrowthNominal: profileAnnualSalaryGrowthNominal(profile),
         initial: {
-          oa: num(cpfRow.oa),
-          sa: num(cpfRow.sa),
-          ma: num(cpfRow.ma),
+          oa: cpfRow ? num(cpfRow.oa) : 0,
+          sa: cpfRow ? num(cpfRow.sa) : 0,
+          ma: cpfRow ? num(cpfRow.ma) : 0,
           oaAnnualRate:
+            cpfRow &&
             cpfRow.oa_annual_rate != null &&
             String(cpfRow.oa_annual_rate).trim() !== ""
               ? num(cpfRow.oa_annual_rate)
               : undefined,
           saAnnualRate:
+            cpfRow &&
             cpfRow.sa_annual_rate != null &&
             String(cpfRow.sa_annual_rate).trim() !== ""
               ? num(cpfRow.sa_annual_rate)
               : undefined,
           maAnnualRate:
+            cpfRow &&
             cpfRow.ma_annual_rate != null &&
             String(cpfRow.ma_annual_rate).trim() !== ""
               ? num(cpfRow.ma_annual_rate)
               : undefined,
-          cpfisMonthlyFromOa: num(cpfRow.cpfis_monthly_from_oa),
-          cpfisNotionalBalance: num(cpfRow.cpfis_notional_balance),
-          cpfisAnnualReturn: num(cpfRow.cpfis_annual_return),
+          cpfisMonthlyFromOa: cpfRow ? num(cpfRow.cpfis_monthly_from_oa) : 0,
+          cpfisNotionalBalance: cpfRow ? num(cpfRow.cpfis_notional_balance) : 0,
+          cpfisAnnualReturn: cpfRow ? num(cpfRow.cpfis_annual_return) : 0,
         },
         housingLoans: housingLoanRows.map(housingLoanToProjection),
+        cpfInvestments: cpfInvestmentRows.map(cpfInvestmentToProjection),
       });
       cpfProjectionByAge = nwAgePoints.map((p) => {
         const idx = Math.min(
@@ -742,6 +772,7 @@ export async function getDashboardPayload(
           oa: row?.oa ?? 0,
           sa: row?.sa ?? 0,
           ma: row?.ma ?? 0,
+          ra: row?.ra ?? 0,
           cpfis: row?.cpfis ?? 0,
           totalCpf: row?.totalCpf ?? 0,
         };
@@ -771,6 +802,7 @@ export async function getDashboardPayload(
           oa: rowAtTarget.oa,
           sa: rowAtTarget.sa,
           ma: rowAtTarget.ma,
+          ra: rowAtTarget.ra,
           cpfis: rowAtTarget.cpfis,
           totalCpf: rowAtTarget.totalCpf,
         };
@@ -834,6 +866,7 @@ export async function getDashboardPayload(
         cpfOa: cpfRowAge?.oa ?? 0,
         cpfSa: cpfRowAge?.sa ?? 0,
         cpfMa: cpfRowAge?.ma ?? 0,
+        cpfRa: cpfRowAge?.ra ?? 0,
         cpfCpfis: cpfRowAge?.cpfis ?? 0,
         liabilities: liabilitiesTotal,
         vehiclesNet: vehiclesNetHorizon,

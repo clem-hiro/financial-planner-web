@@ -237,6 +237,21 @@ export const goalImportBodySchema = z
 
 export const yearMonthSchema = z.string().regex(/^\d{4}-\d{2}$/);
 
+export const cpfInvestmentWriteSchema = z
+  .object({
+    account: z.enum(["oa", "sa"]),
+    premium_type: z.enum(["single", "regular"]),
+    purchase_month: yearMonthSchema,
+    amount: z.number().positive().max(10_000_000),
+    projected_growth_annual: z.number().min(-0.5).max(1),
+    maturity_month: yearMonthSchema,
+    note: z.string().max(500).nullable().optional(),
+  })
+  .refine((data) => data.maturity_month > data.purchase_month, {
+    path: ["maturity_month"],
+    message: "Maturity month must be after purchase month",
+  });
+
 export const housingLenderTypeSchema = z.enum(["hdb", "bank", "other"]);
 
 export const housingPropertyKindSchema = z.enum([

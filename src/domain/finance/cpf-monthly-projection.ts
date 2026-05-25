@@ -11,6 +11,10 @@ import {
   additionalWageCeilingRemaining,
   DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
 } from "./sg-cpf";
+import {
+  CURRENT_FRS_SG,
+  routeCpfSaInvestmentMaturityProceeds,
+} from "./cpf-retirement-projection";
 
 export const DEFAULT_CPF_OA_CREDITING_ANNUAL = 0.025;
 export const DEFAULT_CPF_SA_CREDITING_ANNUAL = 0.04;
@@ -20,12 +24,22 @@ export type CpfBalanceSnapshot = {
   oa: number;
   sa: number;
   ma: number;
+  ra?: number | null;
   oaAnnualRate?: number | null;
   saAnnualRate?: number | null;
   maAnnualRate?: number | null;
   cpfisMonthlyFromOa: number;
   cpfisNotionalBalance: number;
   cpfisAnnualReturn: number;
+};
+
+export type CpfInvestmentProjectionInput = {
+  account: "oa" | "sa";
+  purchaseMonth: string;
+  premiumType: "single" | "regular";
+  amount: number;
+  projectedGrowthAnnual: number;
+  maturityMonth: string;
 };
 
 export type HousingLoanProjectionInput = {
@@ -49,6 +63,7 @@ export type CpfMonthPoint = {
   oa: number;
   sa: number;
   ma: number;
+  ra: number;
   cpfis: number;
   totalCpf: number;
 };
@@ -60,6 +75,25 @@ function round2(n: number): number {
 function endOfYearMonthDate(ym: string): Date {
   const [y, m] = ym.split("-").map(Number);
   return new Date(y, m, 0, 12, 0, 0, 0);
+}
+
+function monthDiff(startYm: string, endYm: string): number {
+  const [sy, sm] = startYm.split("-").map(Number);
+  const [ey, em] = endYm.split("-").map(Number);
+  return (ey - sy) * 12 + (em - sm);
+}
+
+function validYearMonth(ym: string): boolean {
+  return /^\d{4}-\d{2}$/.test(ym);
+}
+
+function fixedBandAgeProxy(ageBand: SgCpfAgeBand | undefined): number {
+  if (ageBand === "below_55") return 54;
+  if (ageBand === "above_55_to_60") return 55;
+  if (ageBand === "above_60_to_65") return 60;
+  if (ageBand === "above_65_to_70") return 65;
+  if (ageBand === "above_70") return 70;
+  return 54;
 }
 
 /**
@@ -86,6 +120,8 @@ export function buildCpfMonthlyProjectionSeries(params: {
   annualBonusPayoutMonth?: number;
   initial: CpfBalanceSnapshot;
   housingLoans: HousingLoanProjectionInput[];
+  cpfInvestments?: CpfInvestmentProjectionInput[];
+  cpfRaTargetAt55?: number;
 }): CpfMonthPoint[] {
   const {
     startYearMonth,
@@ -98,6 +134,8 @@ export function buildCpfMonthlyProjectionSeries(params: {
     annualBonusPayoutMonth = DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
     initial,
     housingLoans,
+    cpfInvestments = [],
+    cpfRaTargetAt55 = CURRENT_FRS_SG,
   } = params;
 
   if (horizonMonths <= 0) return [];
@@ -119,12 +157,39 @@ export function buildCpfMonthlyProjectionSeries(params: {
   let oa = round2(initial.oa);
   let sa = round2(initial.sa);
   let ma = round2(initial.ma);
+  let ra = round2(initial.ra ?? 0);
   let cpfis = round2(initial.cpfisNotionalBalance);
 
   const roa = initial.oaAnnualRate ?? DEFAULT_CPF_OA_CREDITING_ANNUAL;
   const rsa = initial.saAnnualRate ?? DEFAULT_CPF_SA_CREDITING_ANNUAL;
   const rma = initial.maAnnualRate ?? DEFAULT_CPF_MA_CREDITING_ANNUAL;
   const rCpfis = Math.max(0, initial.cpfisAnnualReturn);
+  const cpfInvestmentStates = cpfInvestments
+    .filter(
+      (investment) =>
+        validYearMonth(investment.purchaseMonth) &&
+        validYearMonth(investment.maturityMonth) &&
+        monthDiff(investment.purchaseMonth, investment.maturityMonth) >= 0 &&
+        investment.amount > 0
+    )
+    .map((investment) => {
+      let balance = 0;
+      const monthlyRate =
+        Math.max(-0.5, Math.min(1, investment.projectedGrowthAnnual)) / 12;
+      let ym = investment.purchaseMonth;
+      while (ym < startYearMonth && ym < investment.maturityMonth) {
+        balance = round2(balance * (1 + monthlyRate));
+        const shouldContribute =
+          investment.premiumType === "single"
+            ? ym === investment.purchaseMonth
+            : ym >= investment.purchaseMonth;
+        if (shouldContribute) {
+          balance = round2(balance + investment.amount);
+        }
+        ym = addMonthsToYearMonth(ym, 1);
+      }
+      return { investment, balance, monthlyRate, matured: false };
+    });
 
   const out: CpfMonthPoint[] = [];
   let ytdOw = 0;
@@ -152,6 +217,11 @@ export function buildCpfMonthlyProjectionSeries(params: {
     sa += round2((sa * rsa) / 12);
     ma += round2((ma * rma) / 12);
     cpfis += round2((cpfis * rCpfis) / 12);
+    for (const state of cpfInvestmentStates) {
+      if (!state.matured && state.balance > 0) {
+        state.balance = round2(state.balance * (1 + state.monthlyRate));
+      }
+    }
 
     const band: SgCpfAgeBand =
       birthDate != null
@@ -212,6 +282,54 @@ export function buildCpfMonthlyProjectionSeries(params: {
       oa = round2(oa - fromOa);
     }
 
+    for (const state of cpfInvestmentStates) {
+      if (state.matured) continue;
+      const investment = state.investment;
+
+      if (ym === investment.maturityMonth) {
+        const proceeds = round2(state.balance);
+        if (proceeds > 0) {
+          if (investment.account === "oa") {
+            oa = round2(oa + proceeds);
+          } else {
+            const memberAgeAtMaturity =
+              birthDate != null
+                ? ageCompletedOnDate(birthDate, endOfYearMonthDate(ym))
+                : fixedBandAgeProxy(fixedCpfAgeBand);
+            const routed = routeCpfSaInvestmentMaturityProceeds({
+              proceeds,
+              memberAgeAtMaturity,
+              currentRaBalance: ra,
+              targetRetirementSum: cpfRaTargetAt55,
+            });
+            sa = round2(sa + routed.toSa);
+            ra = round2(ra + routed.toRa);
+            oa = round2(oa + routed.toOa);
+          }
+        }
+        state.balance = 0;
+        state.matured = true;
+        continue;
+      }
+
+      const shouldContribute =
+        ym >= investment.purchaseMonth &&
+        ym < investment.maturityMonth &&
+        (investment.premiumType === "regular" ||
+          ym === investment.purchaseMonth);
+      if (!shouldContribute) continue;
+
+      if (investment.account === "oa") {
+        const fromOa = round2(Math.min(oa, investment.amount));
+        oa = round2(oa - fromOa);
+        state.balance = round2(state.balance + fromOa);
+      } else {
+        const fromSa = round2(Math.min(sa, investment.amount));
+        sa = round2(sa - fromSa);
+        state.balance = round2(state.balance + fromSa);
+      }
+    }
+
     const xfer = Math.min(oa, Math.max(0, initial.cpfisMonthlyFromOa));
     oa = round2(oa - xfer);
     cpfis = round2(cpfis + xfer);
@@ -219,6 +337,13 @@ export function buildCpfMonthlyProjectionSeries(params: {
     oa = round2(Math.max(0, oa));
     sa = round2(Math.max(0, sa));
     ma = round2(Math.max(0, ma));
+    ra = round2(Math.max(0, ra));
+    const cpfInvestmentsNotional = round2(
+      cpfInvestmentStates.reduce(
+        (sum, state) => sum + (state.matured ? 0 : state.balance),
+        0
+      )
+    );
     cpfis = round2(Math.max(0, cpfis));
 
     out.push({
@@ -226,8 +351,9 @@ export function buildCpfMonthlyProjectionSeries(params: {
       oa,
       sa,
       ma,
-      cpfis,
-      totalCpf: round2(oa + sa + ma + cpfis),
+      ra,
+      cpfis: round2(cpfis + cpfInvestmentsNotional),
+      totalCpf: round2(oa + sa + ma + ra + cpfis + cpfInvestmentsNotional),
     });
   }
 

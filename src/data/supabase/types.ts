@@ -322,6 +322,20 @@ export type CpfBalanceRow = {
   updated_at: string;
 };
 
+export type CpfInvestmentRow = {
+  id: string;
+  user_id: string;
+  account: "oa" | "sa";
+  purchase_month: string;
+  premium_type: "single" | "regular";
+  amount: string;
+  projected_growth_annual: string;
+  maturity_month: string;
+  note: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type AdvisorProposalStatus =
   | "draft"
   | "pending"

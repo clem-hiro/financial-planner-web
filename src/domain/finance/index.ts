@@ -176,6 +176,7 @@ export {
 export {
   buildCpfRetirementProjection,
   simulateRaFormationAt55,
+  routeCpfSaInvestmentMaturityProceeds,
   estimateFutureFrs,
   CURRENT_FRS_SG,
   CPF_RA_FORMATION_AGE,
@@ -186,11 +187,13 @@ export type {
   CpfAssumptions,
   CpfRetirementProjection,
   CpfRaSimulation,
+  CpfSaInvestmentMaturityRouting,
   CpfRetirementTarget,
   CpfScenarioExample,
 } from "./cpf-retirement-projection";
 export type {
   CpfBalanceSnapshot,
+  CpfInvestmentProjectionInput,
   CpfMonthPoint,
   HousingLoanProjectionInput,
 } from "./cpf-monthly-projection";

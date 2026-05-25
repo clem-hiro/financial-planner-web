@@ -19,6 +19,7 @@ import { VehiclesPanel } from "@/features/goals/VehiclesPanel";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { AccountSyncingRoadmapCard } from "@/features/planning/roadmap-modules";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
+import { formatYearMonth } from "@/lib/dates";
 import { shouldPromptCpfRulesReview } from "@/domain/finance/cpf-rules-review";
 import { shouldPromptInvestmentReview } from "@/domain/finance/investment-review";
 import { birthDateIsValidPast } from "@/lib/validation";
@@ -66,6 +67,18 @@ export async function WealthPlanningSection() {
     lastCpfRulesReviewVersion:
       financialProfile?.last_cpf_rules_review_version ?? null,
   });
+  const defaultSaMaturityMonth =
+    financialProfile?.birth_date &&
+    typeof financialProfile.birth_date === "string" &&
+    birthDateIsValidPast(financialProfile.birth_date)
+      ? formatYearMonth(
+          new Date(
+            Number(financialProfile.birth_date.slice(0, 4)) + 55,
+            Number(financialProfile.birth_date.slice(5, 7)) - 1,
+            1
+          )
+        )
+      : null;
   const investmentPlanningContext =
     financialProfile?.birth_date &&
     typeof financialProfile.birth_date === "string" &&
@@ -129,10 +142,10 @@ export async function WealthPlanningSection() {
 
           <PageSection
             id="wealth-cpf"
-            title="CPF & CPFIS"
+            title="CPF & CPF Investments"
             description={
               <span className="text-xs text-zinc-600">
-                OA / SA / MA and optional CPFIS assumptions.{" "}
+                OA / SA / MA and CPF investment entries.{" "}
                 <MethodologyOpenLink
                   topicId="cpf-projection"
                   className={appInlineLinkClass}
@@ -144,6 +157,8 @@ export async function WealthPlanningSection() {
           >
             <CpfBalancesForm
               row={bundle.cpfRow}
+              cpfInvestments={bundle.cpfInvestments}
+              defaultSaMaturityMonth={defaultSaMaturityMonth}
               showRulesReviewPrompt={showCpfRulesReviewPrompt}
             />
           </PageSection>

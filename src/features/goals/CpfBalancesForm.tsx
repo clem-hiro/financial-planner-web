@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 import {
   clearCpfBalanceAction,
   confirmCpfRulesReviewAction,
+  createCpfInvestmentAction,
+  deleteCpfInvestmentAction,
   upsertCpfBalanceAction,
 } from "@/server/actions";
-import type { CpfBalanceRow } from "@/data/supabase/types";
+import type { CpfBalanceRow, CpfInvestmentRow } from "@/data/supabase/types";
 import { num } from "@/data/mappers";
 import { CPF_RULES_VERSION } from "@/domain/finance/cpf-rules-review";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
@@ -64,13 +66,22 @@ function CpfRulesReviewPrompt({ disabled = false }: { disabled?: boolean }) {
 
 export function CpfBalancesForm({
   row,
+  cpfInvestments = [],
+  defaultSaMaturityMonth,
   showRulesReviewPrompt = false,
 }: {
   row: CpfBalanceRow | null;
+  cpfInvestments?: CpfInvestmentRow[];
+  defaultSaMaturityMonth?: string | null;
   showRulesReviewPrompt?: boolean;
 }) {
   const [state, action, pending] = useActionState(upsertCpfBalanceAction, initial);
+  const [investmentState, investmentAction, investmentPending] = useActionState(
+    createCpfInvestmentAction,
+    initial
+  );
   const [clearPending, setClearPending] = useState(false);
+  const [cpfInvestmentAccount, setCpfInvestmentAccount] = useState<"oa" | "sa">("oa");
   const [showCpfisAdvanced, setShowCpfisAdvanced] = useState(() => {
     if (!row) return false;
     return (
@@ -148,7 +159,7 @@ export function CpfBalancesForm({
             aria-controls="advanced-cpfis-modeling"
           >
             <span className="text-xs font-medium text-zinc-700">
-              Advanced CPFIS modeling (optional)
+              Legacy CPFIS notional (optional)
             </span>
             <span className="text-xs text-zinc-500">
               {showCpfisAdvanced ? "Hide" : "Show"}
@@ -158,7 +169,8 @@ export function CpfBalancesForm({
             <div id="advanced-cpfis-modeling">
               <p className="mt-1 text-xs text-zinc-500">
                 Monthly OA outflow and a separate notional balance with its own
-                return assumption — rough stand-in for CPFIS-style flows.
+                return assumption. Prefer the CPF Investments entries below for
+                account-specific maturity routing.
               </p>
               <div className="mt-2 grid gap-3 sm:grid-cols-3">
                 <label className="text-sm">
@@ -212,6 +224,177 @@ export function CpfBalancesForm({
           </button>
         </div>
       </form>
+        <div className="border-t border-zinc-200 pt-4">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <h3 className="text-xs font-semibold text-zinc-800">
+                CPF Investments
+              </h3>
+              <p className="mt-1 text-xs leading-relaxed text-zinc-500">
+                Add OA or SA investments separately. Future premiums reduce the
+                selected CPF bucket; maturity proceeds return to OA, or for SA after
+                age 55, RA first and then OA.
+              </p>
+            </div>
+          </div>
+          {investmentState.error ? (
+            <p className="mt-2 text-sm text-red-600" role="alert">
+              {investmentState.error}
+            </p>
+          ) : null}
+          <form action={investmentAction} className="mt-3 space-y-3">
+            <BlockingSubmitOverlay
+              active={investmentPending}
+              message="Saving CPF investment…"
+            />
+            <div className="grid gap-3 sm:grid-cols-3">
+              <label className="text-sm">
+                <span className="mb-1 block text-zinc-600">Account</span>
+                <select
+                  name="account"
+                  defaultValue="oa"
+                  onChange={(event) =>
+                    setCpfInvestmentAccount(event.target.value === "sa" ? "sa" : "oa")
+                  }
+                  className={numberInputClass}
+                >
+                  <option value="oa">OA</option>
+                  <option value="sa">SA</option>
+                </select>
+              </label>
+              <label className="text-sm">
+                <span className="mb-1 block text-zinc-600">Purchase month</span>
+                <input
+                  name="purchase_month"
+                  type="month"
+                  required
+                  className={numberInputClass}
+                />
+              </label>
+              <label className="text-sm">
+                <span className="mb-1 block text-zinc-600">Premium type</span>
+                <select
+                  name="premium_type"
+                  defaultValue="single"
+                  className={numberInputClass}
+                >
+                  <option value="single">Single premium</option>
+                  <option value="regular">Regular monthly</option>
+                </select>
+              </label>
+              <label className="text-sm">
+                <span className="mb-1 block text-zinc-600">Amount</span>
+                <input
+                  name="amount"
+                  type="number"
+                  min={0.01}
+                  step="0.01"
+                  required
+                  className={numberInputClass}
+                />
+              </label>
+              <label className="text-sm">
+                <span className="mb-1 block text-zinc-600">
+                  Projected growth (0.04 = 4%)
+                </span>
+                <input
+                  name="projected_growth_annual"
+                  type="number"
+                  min={-0.5}
+                  max={1}
+                  step="0.001"
+                  required
+                  defaultValue={0.04}
+                  className={numberInputClass}
+                />
+              </label>
+              <label className="text-sm">
+                <span className="mb-1 block text-zinc-600">Maturity month</span>
+                <input
+                  key={cpfInvestmentAccount}
+                  name="maturity_month"
+                  type="month"
+                  required
+                  defaultValue={
+                    cpfInvestmentAccount === "sa"
+                      ? (defaultSaMaturityMonth ?? undefined)
+                      : undefined
+                  }
+                  className={numberInputClass}
+                />
+              </label>
+            </div>
+            <label className="block text-sm">
+              <span className="mb-1 block text-zinc-600">Notes</span>
+              <input
+                name="note"
+                type="text"
+                maxLength={500}
+                className={numberInputClass}
+                placeholder="Optional product or policy reference"
+              />
+            </label>
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                disabled={investmentPending}
+                className="rounded-md border border-zinc-300 bg-white px-3 py-1.5 text-sm font-medium text-zinc-900 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {investmentPending ? "Adding…" : "Add CPF investment"}
+              </button>
+            </div>
+          </form>
+          {cpfInvestments.length > 0 ? (
+            <div className="mt-4 overflow-hidden rounded-md border border-zinc-200">
+              <div className="grid grid-cols-[1fr_auto] gap-3 border-b border-zinc-200 bg-zinc-50 px-3 py-2 text-xs font-semibold text-zinc-600">
+                <span>Saved entries</span>
+                <span>Action</span>
+              </div>
+              <div className="divide-y divide-zinc-200">
+                {cpfInvestments.map((investment) => (
+                  <div
+                    key={investment.id}
+                    className="grid grid-cols-[1fr_auto] gap-3 px-3 py-2 text-xs text-zinc-700"
+                  >
+                    <div>
+                      <p className="font-medium text-zinc-900">
+                        {investment.account.toUpperCase()} ·{" "}
+                        {investment.premium_type === "regular"
+                          ? "Regular monthly"
+                          : "Single premium"}{" "}
+                        · {num(investment.amount).toLocaleString(undefined, {
+                          maximumFractionDigits: 0,
+                        })}
+                      </p>
+                      <p className="mt-0.5 text-zinc-500">
+                        {investment.purchase_month} → {investment.maturity_month} ·{" "}
+                        {(num(investment.projected_growth_annual) * 100).toFixed(1)}%
+                        p.a.
+                      </p>
+                      {investment.note ? (
+                        <p className="mt-0.5 text-zinc-500">{investment.note}</p>
+                      ) : null}
+                    </div>
+                    <form action={deleteCpfInvestmentAction}>
+                      <input type="hidden" name="id" value={investment.id} />
+                      <button
+                        type="submit"
+                        className="text-xs font-medium text-rose-700 hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </form>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <p className="mt-3 rounded-md border border-dashed border-zinc-300 px-3 py-2 text-xs text-zinc-500">
+              No CPF Investments recorded. That can mean none, or that this is an
+              advisor discovery opportunity.
+            </p>
+          )}
+        </div>
       {row && (
         <form
           onSubmit={(event) => {

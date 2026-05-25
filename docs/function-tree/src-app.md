@@ -31,7 +31,7 @@
 | [`src/app/(app)/goals/page.tsx`](#src-app-app-goals-page-tsx) | `page` | 1 | 1 |
 | [`src/app/(app)/layout.tsx`](#src-app-app-layout-tsx) | `layout` | 1 | 7 |
 | [`src/app/(app)/loading.tsx`](#src-app-app-loading-tsx) | `client-component, loading` | 1 | 0 |
-| [`src/app/(app)/more/page.tsx`](#src-app-app-more-page-tsx) | `page` | 1 | 9 |
+| [`src/app/(app)/more/page.tsx`](#src-app-app-more-page-tsx) | `page` | 1 | 10 |
 | [`src/app/(app)/onboarding/page.tsx`](#src-app-app-onboarding-page-tsx) | `page` | 1 | 10 |
 | [`src/app/(app)/planning/[section]/page.tsx`](#src-app-app-planning-section-page-tsx) | `page` | 1 | 7 |
 | [`src/app/(app)/planning/layout.tsx`](#src-app-app-planning-layout-tsx) | `layout` | 1 | 1 |
@@ -272,10 +272,10 @@ _No tracked edges._
 
 Classification: `page`
 
-#### `MorePage` — component, L15
+#### `MorePage` — component, L16
 
 - calls: `src/data/repositories/advisor-clients.ts#getMyConsentStatusForAdvisor`, `src/data/repositories/coupons.ts#getMyAdvisorContact`, `src/lib/profile-role.ts#isClient`, `src/server/advisor-consent.ts#renderConsentText`
-- renders: `[external] next`, `src/features/consent/ClientConsentControl.tsx#ClientConsentControl`, `src/features/help/OpenMethodologyButton.tsx#OpenMethodologyButton`
+- renders: `[external] next`, `src/features/consent/ClientConsentControl.tsx#ClientConsentControl`, `src/features/help/OpenMethodologyButton.tsx#OpenMethodologyButton`, `src/features/more/ClientConsentMorePrompt.tsx#ClientConsentMorePrompt`
 - unresolved: 2
 
 ### `src/app/(app)/onboarding/page.tsx` <a id="src-app-app-onboarding-page-tsx"></a>
@@ -361,7 +361,7 @@ Classification: `page`
 
 #### `SetupPage` — component, L51
 
-- calls: `[external] next`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileCpfAgeBand`, `src/data/mappers.ts#profileExpenseGrowthNominal`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/income-tax-configs.ts#getIncomeTaxConfig`, `src/domain/finance/budget-guided-setup.ts#countReplaceableMonthlyBudgetLines`, `src/domain/finance/cash-account-history.ts#buildCashHistoryByAccountId`, `src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview`, `src/domain/finance/investment-review.ts#shouldPromptInvestmentReview`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/setup-tabs.ts#buildSetupTabs`, `src/lib/setup-urls.ts#setupTabPath`, `src/lib/validation.ts#birthDateIsValidPast`
+- calls: `[external] next`, `src/data/cash-account-history-build.ts#buildCashHistoryByAccountId`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileCpfAgeBand`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/income-tax-configs.ts#getIncomeTaxConfig`, `src/domain/finance/budget-guided-setup.ts#countReplaceableMonthlyBudgetLines`, `src/domain/finance/cpf-rules-review.ts#shouldPromptCpfRulesReview`, `src/domain/finance/investment-review.ts#shouldPromptInvestmentReview`, `src/features/goals/profile-retirement-props.ts#profileRetirementTargetsProps`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/env.ts#isSupabaseConfigured`, `src/lib/setup-tabs.ts#buildSetupTabs`, `src/lib/setup-urls.ts#setupTabPath`, `src/lib/validation.ts#birthDateIsValidPast`
 - renders: `[external] next`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`, `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/HousingLoansPanel.tsx#HousingPanel`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`, `src/features/goals/VehiclesPanel.tsx#VehiclesPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/features/income-tax/IncomeTaxSection.tsx#IncomeTaxSection`, `src/features/setup/BudgetLensProfileForm.tsx#BudgetLensProfileForm`, `src/features/setup/SetupTabsNav.tsx#SetupTabsNav`, `src/ui/PageSection.tsx#PageSection`
 - unresolved: 1
 

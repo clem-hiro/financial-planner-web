@@ -220,4 +220,118 @@ describe("buildCpfMonthlyProjectionSeries", () => {
       1
     );
   });
+
+  it("deducts a future OA single premium and returns maturity proceeds to OA", () => {
+    const series = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-01",
+      horizonMonths: 4,
+      birthDate: "1990-01-15",
+      grossMonthly: 0,
+      initial: {
+        oa: 10_000,
+        sa: 0,
+        ma: 0,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [],
+      cpfInvestments: [
+        {
+          account: "oa",
+          purchaseMonth: "2026-02",
+          premiumType: "single",
+          amount: 1_000,
+          projectedGrowthAnnual: 0.12,
+          maturityMonth: "2026-04",
+        },
+      ],
+    });
+
+    expect(series.find((p) => p.yearMonth === "2026-02")?.oa).toBe(9_000);
+    expect(series.find((p) => p.yearMonth === "2026-02")?.cpfis).toBe(1_000);
+    expect(series.find((p) => p.yearMonth === "2026-04")?.oa).toBeCloseTo(
+      10_020.1,
+      2
+    );
+    expect(series.find((p) => p.yearMonth === "2026-04")?.cpfis).toBe(0);
+  });
+
+  it("routes SA investment maturity to RA first after age 55, then OA", () => {
+    const series = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-01",
+      horizonMonths: 3,
+      birthDate: "1970-01-15",
+      grossMonthly: 0,
+      initial: {
+        oa: 1_000,
+        sa: 100_000,
+        ma: 0,
+        ra: 180_000,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [],
+      cpfRaTargetAt55: 220_400,
+      cpfInvestments: [
+        {
+          account: "sa",
+          purchaseMonth: "2025-01",
+          premiumType: "single",
+          amount: 100_000,
+          projectedGrowthAnnual: 0,
+          maturityMonth: "2026-02",
+        },
+      ],
+    });
+
+    const feb = series.find((p) => p.yearMonth === "2026-02");
+    expect(feb?.sa).toBe(100_000);
+    expect(feb?.ra).toBe(220_400);
+    expect(feb?.oa).toBe(60_600);
+    expect(feb?.cpfis).toBe(0);
+  });
+
+  it("returns SA investment maturity to SA before age 55", () => {
+    const series = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-01",
+      horizonMonths: 3,
+      birthDate: "1980-01-15",
+      grossMonthly: 0,
+      initial: {
+        oa: 0,
+        sa: 50_000,
+        ma: 0,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [],
+      cpfInvestments: [
+        {
+          account: "sa",
+          purchaseMonth: "2025-01",
+          premiumType: "single",
+          amount: 20_000,
+          projectedGrowthAnnual: 0,
+          maturityMonth: "2026-02",
+        },
+      ],
+    });
+
+    const feb = series.find((p) => p.yearMonth === "2026-02");
+    expect(feb?.sa).toBe(70_000);
+    expect(feb?.ra).toBe(0);
+    expect(feb?.oa).toBe(0);
+  });
 });

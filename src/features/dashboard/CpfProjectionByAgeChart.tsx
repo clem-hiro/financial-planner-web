@@ -24,6 +24,7 @@ export type CpfAgePoint = {
   oa: number;
   sa: number;
   ma: number;
+  ra: number;
   cpfis: number;
   totalCpf: number;
 };
@@ -31,6 +32,7 @@ export type CpfAgePoint = {
 const OA = "#4f46e5";
 const SA = "#7c3aed";
 const MA = "#059669";
+const RA = "#0f766e";
 const CPFIS = "#d97706";
 const TOTAL = "#64748b";
 
@@ -55,6 +57,7 @@ export function CpfProjectionByAgeChart({
     }).format(Number(v ?? 0));
 
   const showCpfis = data.some((d) => d.cpfis > 0.5);
+  const showRa = data.some((d) => d.ra > 0.5);
 
   return (
     <ChartFrame
@@ -165,6 +168,17 @@ export function CpfProjectionByAgeChart({
             dot={false}
             activeDot={{ r: 4, fill: MA, stroke: "#fff", strokeWidth: 1 }}
           />
+          {showRa && (
+            <Line
+              type="monotone"
+              dataKey="ra"
+              name="RA"
+              stroke={RA}
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 4, fill: RA, stroke: "#fff", strokeWidth: 1 }}
+            />
+          )}
           {showCpfis && (
             <Line
               type="monotone"

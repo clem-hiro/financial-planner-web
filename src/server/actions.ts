@@ -55,6 +55,10 @@ import {
   upsertCpfBalance,
 } from "@/data/repositories/cpf-balances";
 import {
+  deleteCpfInvestment,
+  insertCpfInvestment,
+} from "@/data/repositories/cpf-investments";
+import {
   deleteHousingLoan,
   insertHousingLoan,
   updateHousingLoan,
@@ -92,6 +96,7 @@ import {
   housingPropertyTypeSchema,
   yearMonthSchema,
   cashAccountWriteSchema,
+  cpfInvestmentWriteSchema,
 } from "@/lib/validation";
 import { z } from "zod";
 
@@ -1508,6 +1513,67 @@ export async function clearCpfBalanceAction() {
   }
   revalidatePath("/dashboard");
   revalidatePath("/balances");
+  revalidateSetupAndPlanning();
+}
+
+export async function createCpfInvestmentAction(
+  _prev: { error: string | null },
+  formData: FormData
+): Promise<{ error: string | null }> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sign in required" };
+
+  const accountRaw = String(formData.get("account") ?? "").trim();
+  const premiumTypeRaw = String(formData.get("premium_type") ?? "").trim();
+  const purchaseMonth = String(formData.get("purchase_month") ?? "").trim();
+  const maturityMonth = String(formData.get("maturity_month") ?? "").trim();
+  const amount = Number(formData.get("amount"));
+  const projectedGrowthAnnual = Number(formData.get("projected_growth_annual"));
+  const noteRaw = String(formData.get("note") ?? "").trim();
+  const parsed = cpfInvestmentWriteSchema.safeParse({
+    account: accountRaw,
+    premium_type: premiumTypeRaw,
+    purchase_month: purchaseMonth,
+    amount,
+    projected_growth_annual: projectedGrowthAnnual,
+    maturity_month: maturityMonth,
+    note: noteRaw === "" ? null : noteRaw,
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid CPF investment" };
+  }
+
+  try {
+    await insertCpfInvestment(supabase, user.id, parsed.data);
+  } catch (e) {
+    console.error(e);
+    return { error: toClientErrorMessage(e) };
+  }
+
+  revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
+  return { error: null };
+}
+
+export async function deleteCpfInvestmentAction(formData: FormData) {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const id = String(formData.get("id") ?? "").trim();
+  if (!z.string().uuid().safeParse(id).success) return;
+
+  try {
+    await deleteCpfInvestment(supabase, user.id, id);
+  } catch (e) {
+    console.error(e);
+  }
+  revalidatePath("/dashboard");
   revalidateSetupAndPlanning();
 }
 

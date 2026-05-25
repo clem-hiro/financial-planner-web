@@ -124,7 +124,7 @@ export function DashboardRetirementSection({
                 <p className="mt-1 hidden text-xs text-indigo-900/85 sm:block">
                   Separate trend lines per account, plus total. Vertical markers
                   show keys / repayment start from your housing loan rows. Uses
-                  gross salary, optional CPFIS, and{" "}
+                  gross salary, CPF Investments, and{" "}
                   <strong>OA for housing</strong> only when you have loan rows
                   under{" "}
                   <Link
@@ -280,6 +280,18 @@ export function DashboardRetirementSection({
                           payload.baseCurrency
                         )}
                       </dd>
+                      {payload.ageProjection.cpfBucketsAtTargetRetirement.ra >
+                        0.5 && (
+                        <>
+                          <dt className="text-indigo-800/90">RA</dt>
+                          <dd className="text-right font-semibold text-indigo-950">
+                            {formatCurrency(
+                              payload.ageProjection.cpfBucketsAtTargetRetirement.ra,
+                              payload.baseCurrency
+                            )}
+                          </dd>
+                        </>
+                      )}
                       {payload.ageProjection.cpfBucketsAtTargetRetirement.cpfis >
                         0.5 && (
                         <>
