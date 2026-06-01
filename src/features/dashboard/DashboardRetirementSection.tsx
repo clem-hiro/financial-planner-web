@@ -11,6 +11,79 @@ import { appEmeraldPanelClass } from "@/ui/surface-classes";
 import { InfoTooltip } from "@/ui/InfoTooltip";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 
+function CpfProjectionStatusPanel({ payload }: { payload: DashboardPayload }) {
+  if (payload.cpfProjectionMissingInputs.length > 0) {
+    return (
+      <div className="mt-5 rounded-lg border border-amber-300/70 bg-amber-50/80 p-3 text-xs text-amber-950">
+        <h3 className="text-sm font-semibold text-amber-950">
+          Complete CPF projection inputs
+        </h3>
+        <p className="mt-1 leading-relaxed">
+          Add the missing information below before showing contribution-based CPF
+          projection.
+        </p>
+        <ul className="mt-2 list-disc space-y-1 pl-4">
+          {payload.cpfProjectionMissingInputs.map((item) => (
+            <li key={item.label}>
+              <Link href={item.href} className={appInlineLinkClass}>
+                {item.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+
+  if (!payload.cpfYearEndProjection) return null;
+
+  const p = payload.cpfYearEndProjection;
+  return (
+    <div className="mt-5 rounded-lg border border-indigo-200/70 bg-indigo-50/60 p-3 text-xs text-indigo-950">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h3 className="text-sm font-semibold text-indigo-950">
+            CPF year-end projection
+          </h3>
+          <p className="mt-1 leading-relaxed text-indigo-900/90">
+            Balances are treated as updated through {p.balanceAsOfMonth}.{" "}
+            {p.projectedMonths > 0 && p.startYearMonth != null
+              ? `Projection starts from ${p.startYearMonth} and runs to ${p.targetYearMonth}.`
+              : `No future month is added before ${p.targetYearMonth}.`}
+          </p>
+        </div>
+        <p className="text-right text-lg font-bold tabular-nums text-indigo-950">
+          {formatCurrency(p.totalCpf, payload.baseCurrency)}
+        </p>
+      </div>
+      <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 font-mono tabular-nums sm:grid-cols-5">
+        <div>
+          <dt className="text-indigo-800/80">OA</dt>
+          <dd className="font-semibold">{formatCurrency(p.oa, payload.baseCurrency)}</dd>
+        </div>
+        <div>
+          <dt className="text-indigo-800/80">SA</dt>
+          <dd className="font-semibold">{formatCurrency(p.sa, payload.baseCurrency)}</dd>
+        </div>
+        <div>
+          <dt className="text-indigo-800/80">MA</dt>
+          <dd className="font-semibold">{formatCurrency(p.ma, payload.baseCurrency)}</dd>
+        </div>
+        <div>
+          <dt className="text-indigo-800/80">RA</dt>
+          <dd className="font-semibold">{formatCurrency(p.ra, payload.baseCurrency)}</dd>
+        </div>
+        <div>
+          <dt className="text-indigo-800/80">CPFIS</dt>
+          <dd className="font-semibold">
+            {formatCurrency(p.cpfis, payload.baseCurrency)}
+          </dd>
+        </div>
+      </dl>
+    </div>
+  );
+}
+
 export function DashboardRetirementSection({
   payload,
   profile,
@@ -79,6 +152,7 @@ export function DashboardRetirementSection({
               annualBonusPayoutMonth={payload.ageProjection.annualBonusPayoutMonth}
             />
           </div>
+          <CpfProjectionStatusPanel payload={payload} />
           {payload.cpfProjectionByAge &&
             payload.cpfProjectionByAge.length > 0 && (
               <div className="mt-5 rounded-lg border border-indigo-200/60 bg-white/60 p-3">
@@ -122,7 +196,7 @@ export function DashboardRetirementSection({
                 <p className="mt-1 hidden text-xs text-indigo-900/85 sm:block">
                   Separate trend lines per account, plus total. Vertical markers
                   show keys / repayment start from your housing loan rows. Uses
-                  gross salary, optional CPFIS, and{" "}
+                  gross salary, CPF Investments, and{" "}
                   <strong>OA for housing</strong> only when you have loan rows
                   under{" "}
                   <Link
@@ -229,7 +303,7 @@ export function DashboardRetirementSection({
                       (
                       {profile?.target_retirement_age != null
                         ? "from your profile"
-                        : "default 65 — set in Retirement targets above"}
+                        : "default 65 — set in Setup → Goals"}
                       ), this simplified path projects about{" "}
                       <span className="font-semibold tabular-nums">
                         {formatCurrency(
@@ -278,6 +352,18 @@ export function DashboardRetirementSection({
                           payload.baseCurrency
                         )}
                       </dd>
+                      {payload.ageProjection.cpfBucketsAtTargetRetirement.ra >
+                        0.5 && (
+                        <>
+                          <dt className="text-indigo-800/90">RA</dt>
+                          <dd className="text-right font-semibold text-indigo-950">
+                            {formatCurrency(
+                              payload.ageProjection.cpfBucketsAtTargetRetirement.ra,
+                              payload.baseCurrency
+                            )}
+                          </dd>
+                        </>
+                      )}
                       {payload.ageProjection.cpfBucketsAtTargetRetirement.cpfis >
                         0.5 && (
                         <>
@@ -617,16 +703,19 @@ export function DashboardRetirementSection({
           </details>
         </>
       ) : (
-        <p className="mt-2 text-sm text-emerald-900">
-          Set your <strong>birth date</strong> in{" "}
-          <Link
-            href="/setup?tab=profile#profile-assumptions"
-            className={appInlineLinkClass}
-          >
-            Setup
-          </Link>{" "}
-          to see projected net worth by age and monthly dividend estimates.
-        </p>
+        <>
+          <CpfProjectionStatusPanel payload={payload} />
+          <p className="mt-2 text-sm text-emerald-900">
+            Set your <strong>birth date</strong> in{" "}
+            <Link
+              href="/setup?tab=profile#profile-assumptions"
+              className={appInlineLinkClass}
+            >
+              Setup
+            </Link>{" "}
+            to see projected net worth by age and monthly dividend estimates.
+          </p>
+        </>
       )}
     </div>
   );

@@ -1,12 +1,9 @@
 import { num } from "@/data/mappers";
-
-export type CashAccountHistoryPoint = {
-  balance: number;
-  recorded_at: string;
-};
+import type { CashAccountHistoryPoint } from "@/domain/finance/cash-account-history.types";
 
 export const CASH_ACCOUNT_HISTORY_LIMIT = 8;
 
+/** Server-safe: group cash snapshot rows by account for UI history lists. */
 export function buildCashHistoryByAccountId(
   snapshots: { cash_account_id: string; balance: string; recorded_at: string }[]
 ): Record<string, CashAccountHistoryPoint[]> {

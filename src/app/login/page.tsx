@@ -79,10 +79,10 @@ export default async function LoginPage({ searchParams }: PageProps) {
           />
         )}
         <Link
-          href="/dashboard"
+          href="/"
           className="inline-block text-sm font-medium text-slate-600 underline decoration-slate-300/80 underline-offset-4 transition hover:text-emerald-800 hover:decoration-emerald-300/70"
         >
-          Back to dashboard
+          Back to home
         </Link>
       </div>
     </div>

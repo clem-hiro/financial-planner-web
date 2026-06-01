@@ -47,10 +47,8 @@ import { AdvisorNewBudgetLineForm } from "@/features/advisor/forms/AdvisorNewBud
 import { AdvisorNewGoalForm } from "@/features/advisor/forms/AdvisorNewGoalForm";
 import { AdvisorProfilePatchForm } from "@/features/advisor/forms/AdvisorProfilePatchForm";
 import { InvestmentAssumptionBanner } from "@/features/goals/InvestmentAssumptionBanner";
-import {
-  InvestmentBalancesList,
-  type InvestmentBalanceRow,
-} from "@/features/goals/InvestmentBalancesList";
+import { InvestmentBalancesList } from "@/features/goals/InvestmentBalancesList";
+import { investmentRowToBalanceRow } from "@/features/goals/investment-balance-row";
 import { InvestmentForm } from "@/features/goals/InvestmentForm";
 import {
   deleteAdvisorClientBudgetLineAction,
@@ -120,26 +118,7 @@ export function AdvisorClientCompose({
 
   const draftChangeCount = draftChanges.length;
   const currency = profile.base_currency ?? DEFAULT_BASE_CURRENCY;
-  const investmentBalanceRows: InvestmentBalanceRow[] = investments.map((i) => ({
-    id: i.id,
-    name: i.name,
-    current_value: num(i.current_value),
-    monthly_contribution: num(i.monthly_contribution),
-    expected_annual_return: num(i.expected_annual_return),
-    contribution_growth_annual: num(i.contribution_growth_annual),
-    contribution_type: i.contribution_type ?? null,
-    contribution_duration_years:
-      i.contribution_duration_years != null &&
-      String(i.contribution_duration_years).trim() !== ""
-        ? num(i.contribution_duration_years as string)
-        : null,
-    withdrawal_monthly: num(i.withdrawal_monthly),
-    withdrawal_start_years:
-      i.withdrawal_start_years != null &&
-      String(i.withdrawal_start_years).trim() !== ""
-        ? num(i.withdrawal_start_years)
-        : null,
-  }));
+  const investmentBalanceRows = investments.map(investmentRowToBalanceRow);
   const investmentPlanningContext =
     profile.birth_date &&
     typeof profile.birth_date === "string" &&
@@ -399,6 +378,7 @@ export function AdvisorClientCompose({
                   advisorClientId={clientId}
                   advisorSuggestionDisabled={hasPendingProposal}
                   showAssumptionBanner={false}
+                  planningContext={investmentPlanningContext}
                 />
               </div>
             </div>

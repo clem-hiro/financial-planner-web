@@ -13,6 +13,9 @@ function isUnknownInvestmentContributionColumnError(error: unknown): boolean {
   return (
     (msg.includes("contribution_duration_years") ||
       msg.includes("contribution_type") ||
+      msg.includes("contribution_start_date") ||
+      msg.includes("contribution_end_date") ||
+      msg.includes("plan_nature") ||
       msg.includes("contribution_growth_annual") ||
       msg.includes("withdrawal_monthly") ||
       msg.includes("withdrawal_start_years")) &&
@@ -78,6 +81,9 @@ export type NewInvestment = {
   contribution_growth_annual?: number | null;
   contribution_type?: string | null;
   contribution_duration_years?: number | null;
+  contribution_start_date?: string | null;
+  contribution_end_date?: string | null;
+  plan_nature?: string | null;
   withdrawal_monthly?: number | null;
   withdrawal_start_years?: number | null;
 };
@@ -96,6 +102,9 @@ export async function insertInvestment(
     contribution_growth_annual: row.contribution_growth_annual ?? 0,
     contribution_type: row.contribution_type ?? null,
     contribution_duration_years: row.contribution_duration_years ?? null,
+    contribution_start_date: row.contribution_start_date ?? null,
+    contribution_end_date: row.contribution_end_date ?? null,
+    plan_nature: row.plan_nature ?? null,
     withdrawal_monthly: row.withdrawal_monthly ?? 0,
     withdrawal_start_years: row.withdrawal_start_years ?? null,
   };
@@ -111,6 +120,9 @@ export async function insertInvestment(
       row.contribution_type === "fixed_duration" ||
       (row.contribution_duration_years != null &&
         Number.isFinite(row.contribution_duration_years)) ||
+      (row.contribution_start_date != null && row.contribution_start_date !== "") ||
+      (row.contribution_end_date != null && row.contribution_end_date !== "") ||
+      (row.plan_nature != null && row.plan_nature !== "") ||
       (row.contribution_growth_annual != null &&
         Number.isFinite(row.contribution_growth_annual) &&
         row.contribution_growth_annual !== 0) ||
@@ -150,6 +162,9 @@ export type InvestmentPatch = {
   contribution_growth_annual?: number | null;
   contribution_type?: string | null;
   contribution_duration_years?: number | null;
+  contribution_start_date?: string | null;
+  contribution_end_date?: string | null;
+  plan_nature?: string | null;
   withdrawal_monthly?: number | null;
   withdrawal_start_years?: number | null;
 };
@@ -163,6 +178,9 @@ export async function updateInvestment(
   const {
     contribution_type: ct,
     contribution_duration_years: cdy,
+    contribution_start_date: csd,
+    contribution_end_date: ced,
+    plan_nature: pn,
     contribution_growth_annual: cga,
     withdrawal_monthly: wm,
     withdrawal_start_years: wsy,
@@ -174,6 +192,13 @@ export async function updateInvestment(
   if ("contribution_duration_years" in patch) {
     fullPatch.contribution_duration_years = cdy ?? null;
   }
+  if ("contribution_start_date" in patch) {
+    fullPatch.contribution_start_date = csd ?? null;
+  }
+  if ("contribution_end_date" in patch) {
+    fullPatch.contribution_end_date = ced ?? null;
+  }
+  if ("plan_nature" in patch) fullPatch.plan_nature = pn ?? null;
   if ("contribution_growth_annual" in patch) {
     fullPatch.contribution_growth_annual = cga ?? 0;
   }
@@ -196,6 +221,15 @@ export async function updateInvestment(
       ("contribution_duration_years" in patch &&
         patch.contribution_duration_years != null &&
         Number.isFinite(patch.contribution_duration_years)) ||
+      ("contribution_start_date" in patch &&
+        patch.contribution_start_date != null &&
+        patch.contribution_start_date !== "") ||
+      ("contribution_end_date" in patch &&
+        patch.contribution_end_date != null &&
+        patch.contribution_end_date !== "") ||
+      ("plan_nature" in patch &&
+        patch.plan_nature != null &&
+        patch.plan_nature !== "") ||
       ("contribution_growth_annual" in patch &&
         patch.contribution_growth_annual != null &&
         Number.isFinite(patch.contribution_growth_annual) &&

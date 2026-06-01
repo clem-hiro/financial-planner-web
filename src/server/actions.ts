@@ -59,6 +59,10 @@ import {
   upsertCpfBalance,
 } from "@/data/repositories/cpf-balances";
 import {
+  deleteCpfInvestment,
+  insertCpfInvestment,
+} from "@/data/repositories/cpf-investments";
+import {
   deleteHousingLoan,
   insertHousingLoan,
   listHousingLoans,
@@ -76,6 +80,7 @@ import {
   listInvestments,
   updateInvestment,
 } from "@/data/repositories/investments";
+import { parseInvestmentPlanningFields } from "@/server/investment-planning-parse";
 import { acknowledgeInvestmentReview } from "@/server/inbox/acknowledge-investment-review";
 import { acknowledgeCpfRulesReview } from "@/server/inbox/acknowledge-cpf-rules-review";
 import {
@@ -99,6 +104,8 @@ import {
   yearMonthSchema,
   cashAccountWriteSchema,
   entityNameUniquenessError,
+  cpfBalanceWriteSchema,
+  cpfInvestmentWriteSchema,
 } from "@/lib/validation";
 import { z } from "zod";
 
@@ -125,75 +132,6 @@ function toClientErrorMessage(e: unknown): string {
     if (typeof m === "string" && m.trim()) return m;
   }
   return "Something went wrong while saving. Please try again.";
-}
-
-function parseInvestmentPlanningFields(formData: FormData):
-  | {
-      ok: true;
-      contribution_type: string | null;
-      contribution_duration_years: number | null;
-      contribution_growth_annual: number;
-      withdrawal_monthly: number;
-      withdrawal_start_years: number | null;
-    }
-  | { ok: false; error: string } {
-  const contributionTypeRaw = String(
-    formData.get("contribution_type") ?? ""
-  ).trim();
-  const isFixed = contributionTypeRaw === "fixed_duration";
-
-  let contribution_type: string | null = null;
-  let contribution_duration_years: number | null = null;
-  if (isFixed) {
-    const y = Number(formData.get("contribution_duration_years"));
-    if (!Number.isFinite(y) || y <= 0 || y > 80) {
-      return {
-        ok: false,
-        error: "Enter contribution duration in years (between 0.25 and 80)",
-      };
-    }
-    contribution_type = "fixed_duration";
-    contribution_duration_years = y;
-  } else if (contributionTypeRaw === "until_retirement") {
-    contribution_type = "until_retirement";
-  }
-
-  const contributionGrowthAnnual = Number(
-    formData.get("contribution_growth_annual") ?? 0
-  );
-  if (
-    !Number.isFinite(contributionGrowthAnnual) ||
-    contributionGrowthAnnual < 0 ||
-    contributionGrowthAnnual > 1
-  ) {
-    return { ok: false, error: "Contribution step-up must be 0–100%." };
-  }
-
-  const withdrawalMonthly = Number(formData.get("withdrawal_monthly") ?? 0);
-  if (!Number.isFinite(withdrawalMonthly) || withdrawalMonthly < 0) {
-    return { ok: false, error: "Invalid monthly withdrawal" };
-  }
-
-  const withdrawalStartRaw = String(
-    formData.get("withdrawal_start_years") ?? ""
-  ).trim();
-  const withdrawalStartYears =
-    withdrawalStartRaw === "" ? null : Number(withdrawalStartRaw);
-  if (
-    withdrawalStartYears != null &&
-    (!Number.isFinite(withdrawalStartYears) || withdrawalStartYears < 0)
-  ) {
-    return { ok: false, error: "Withdrawal start must be 0 or more years." };
-  }
-
-  return {
-    ok: true,
-    contribution_type,
-    contribution_duration_years,
-    contribution_growth_annual: contributionGrowthAnnual,
-    withdrawal_monthly: withdrawalMonthly,
-    withdrawal_start_years: withdrawalStartYears,
-  };
 }
 
 export async function signOutAction() {
@@ -253,6 +191,9 @@ export async function createInvestmentAction(
       expected_annual_return: expectedAnnualReturn,
       contribution_type: planning.contribution_type,
       contribution_duration_years: planning.contribution_duration_years,
+      contribution_start_date: planning.contribution_start_date,
+      contribution_end_date: planning.contribution_end_date,
+      plan_nature: planning.plan_nature,
       contribution_growth_annual: planning.contribution_growth_annual,
       withdrawal_monthly: planning.withdrawal_monthly,
       withdrawal_start_years: planning.withdrawal_start_years,
@@ -327,6 +268,9 @@ export async function updateInvestmentAction(
       expected_annual_return: expectedAnnualReturn,
       contribution_type: planning.contribution_type,
       contribution_duration_years: planning.contribution_duration_years,
+      contribution_start_date: planning.contribution_start_date,
+      contribution_end_date: planning.contribution_end_date,
+      plan_nature: planning.plan_nature,
       contribution_growth_annual: planning.contribution_growth_annual,
       withdrawal_monthly: planning.withdrawal_monthly,
       withdrawal_start_years: planning.withdrawal_start_years,
@@ -1621,6 +1565,9 @@ export async function upsertCpfBalanceAction(
   const oa = Number(formData.get("oa"));
   const sa = Number(formData.get("sa"));
   const ma = Number(formData.get("ma"));
+  const balanceAsOfMonth = String(
+    formData.get("balance_as_of_month") ?? ""
+  ).trim();
   const oaRRaw = String(formData.get("oa_annual_rate") ?? "").trim();
   const saRRaw = String(formData.get("sa_annual_rate") ?? "").trim();
   const maRRaw = String(formData.get("ma_annual_rate") ?? "").trim();
@@ -1631,28 +1578,17 @@ export async function upsertCpfBalanceAction(
   const cpfisB = Number(formData.get("cpfis_notional_balance"));
   const cpfisRet = Number(formData.get("cpfis_annual_return"));
 
-  if (![oa, sa, ma].every((n) => Number.isFinite(n) && n >= 0)) {
-    return { error: "OA, SA, and MA must be numbers ≥ 0" };
-  }
   const optRate = (v: number) =>
     !Number.isFinite(v) || v < 0 || v > 0.25 ? null : v;
   const oa_annual_rate = optRate(oaR);
   const sa_annual_rate = optRate(saR);
   const ma_annual_rate = optRate(maR);
-  if (!Number.isFinite(cpfisM) || cpfisM < 0) {
-    return { error: "Invalid CPFIS monthly from OA" };
-  }
-  if (!Number.isFinite(cpfisB) || cpfisB < 0) {
-    return { error: "Invalid CPFIS notional balance" };
-  }
-  if (!Number.isFinite(cpfisRet) || cpfisRet < 0 || cpfisRet > 1) {
-    return { error: "CPFIS annual return must be 0–1" };
-  }
 
-  await upsertCpfBalance(supabase, user.id, {
+  const parsed = cpfBalanceWriteSchema.safeParse({
     oa,
     sa,
     ma,
+    balance_as_of_month: balanceAsOfMonth,
     oa_annual_rate,
     sa_annual_rate,
     ma_annual_rate,
@@ -1660,6 +1596,12 @@ export async function upsertCpfBalanceAction(
     cpfis_notional_balance: cpfisB,
     cpfis_annual_return: cpfisRet,
   });
+  if (!parsed.success) return { error: "Check your CPF balance inputs" };
+  if (parsed.data.balance_as_of_month > formatYearMonth(new Date())) {
+    return { error: "CPF balance as-of month cannot be in the future" };
+  }
+
+  await upsertCpfBalance(supabase, user.id, parsed.data);
   revalidatePath("/dashboard");
   revalidatePath("/balances");
   revalidateSetupAndPlanning();
@@ -1679,6 +1621,67 @@ export async function clearCpfBalanceAction() {
   }
   revalidatePath("/dashboard");
   revalidatePath("/balances");
+  revalidateSetupAndPlanning();
+}
+
+export async function createCpfInvestmentAction(
+  _prev: { error: string | null },
+  formData: FormData
+): Promise<{ error: string | null }> {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sign in required" };
+
+  const accountRaw = String(formData.get("account") ?? "").trim();
+  const premiumTypeRaw = String(formData.get("premium_type") ?? "").trim();
+  const purchaseMonth = String(formData.get("purchase_month") ?? "").trim();
+  const maturityMonth = String(formData.get("maturity_month") ?? "").trim();
+  const amount = Number(formData.get("amount"));
+  const projectedGrowthAnnual = Number(formData.get("projected_growth_annual"));
+  const noteRaw = String(formData.get("note") ?? "").trim();
+  const parsed = cpfInvestmentWriteSchema.safeParse({
+    account: accountRaw,
+    premium_type: premiumTypeRaw,
+    purchase_month: purchaseMonth,
+    amount,
+    projected_growth_annual: projectedGrowthAnnual,
+    maturity_month: maturityMonth,
+    note: noteRaw === "" ? null : noteRaw,
+  });
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid CPF investment" };
+  }
+
+  try {
+    await insertCpfInvestment(supabase, user.id, parsed.data);
+  } catch (e) {
+    console.error(e);
+    return { error: toClientErrorMessage(e) };
+  }
+
+  revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
+  return { error: null };
+}
+
+export async function deleteCpfInvestmentAction(formData: FormData) {
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+
+  const id = String(formData.get("id") ?? "").trim();
+  if (!z.string().uuid().safeParse(id).success) return;
+
+  try {
+    await deleteCpfInvestment(supabase, user.id, id);
+  } catch (e) {
+    console.error(e);
+  }
+  revalidatePath("/dashboard");
   revalidateSetupAndPlanning();
 }
 

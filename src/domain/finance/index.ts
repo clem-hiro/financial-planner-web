@@ -42,7 +42,14 @@ export {
   analyzeGoalDeadlineGap,
   countEndOfMonthContributionPeriods,
   requiredMonthlyForMonths,
+  targetDateYmdForContributionPeriods,
 } from "./goal-deadline";
+export { analyzeGoalFeasibility } from "./goal-feasibility";
+export type {
+  GoalFeasibilityAnalysis,
+  GoalFeasibilityParams,
+  GoalFeasibilityStatus,
+} from "./goal-feasibility";
 export {
   analyzeGoalPriorityTradeoff,
   sortGoalsByPriority,
@@ -164,8 +171,12 @@ export type {
   HousingPaymentSource,
 } from "./housing-loan-payments";
 export {
+  basicHealthcareSumForYearSg,
   buildCpfMonthlyProjectionSeries,
   downsampleCpfSeries,
+  CPF_BHS_ESTIMATED_ANNUAL_GROWTH_SG,
+  CPF_BHS_LATEST_OFFICIAL_YEAR_SG,
+  CPF_BHS_OFFICIAL_BY_YEAR_SG,
   DEFAULT_CPF_OA_CREDITING_ANNUAL,
   DEFAULT_CPF_SA_CREDITING_ANNUAL,
   DEFAULT_CPF_MA_CREDITING_ANNUAL,
@@ -173,6 +184,7 @@ export {
 export {
   buildCpfRetirementProjection,
   simulateRaFormationAt55,
+  routeCpfSaInvestmentMaturityProceeds,
   estimateFutureFrs,
   CURRENT_FRS_SG,
   CPF_RA_FORMATION_AGE,
@@ -183,12 +195,15 @@ export type {
   CpfAssumptions,
   CpfRetirementProjection,
   CpfRaSimulation,
+  CpfSaInvestmentMaturityRouting,
   CpfRetirementTarget,
   CpfScenarioExample,
 } from "./cpf-retirement-projection";
 export type {
   CpfBalanceSnapshot,
+  CpfInvestmentProjectionInput,
   CpfMonthPoint,
+  BasicHealthcareSumProjection,
   HousingLoanProjectionInput,
 } from "./cpf-monthly-projection";
 export {
@@ -224,6 +239,8 @@ export {
   BUDGET_STRATEGY_PRESETS,
   FOOD_SPEND_BAND_PRESETS,
   LIFESTYLE_PRESETS,
+  ONBOARDING_LIFESTYLE_PRESETS,
+  listOnboardingLifestylePresets,
   budgetBucketForCategoryLabel,
   countReplaceableMonthlyBudgetLines,
   generateGuidedMonthlyBudgetLines,

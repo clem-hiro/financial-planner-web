@@ -3,6 +3,7 @@ import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { loadSetupTabBundle } from "@/features/planning/load-setup-tab-bundle";
 import { FinancialGoalsPanels } from "@/features/goals/FinancialGoalsPanels";
+import { profileRetirementTargetsProps } from "@/features/goals/profile-retirement-props";
 import {
   DocumentsVaultRoadmapCard,
   ReportsRoadmapCard,
@@ -59,6 +60,7 @@ export async function FuturePlanningSection() {
         investments={bundle.investments}
         currency={currency}
         userId={user.id}
+        {...profileRetirementTargetsProps(financialProfile)}
       />
 
       <section className="space-y-4">

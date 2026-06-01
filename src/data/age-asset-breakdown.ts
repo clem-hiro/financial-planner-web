@@ -6,10 +6,11 @@ export type AgeAssetBreakdownPoint = {
   investments: number;
   cash: number;
   cpf: number;
-  /** OA / SA / MA / notional CPFIS when a CPF projection exists; else zero. */
+  /** OA / SA / MA / RA / notional CPFIS when a CPF projection exists; else zero. */
   cpfOa: number;
   cpfSa: number;
   cpfMa: number;
+  cpfRa: number;
   cpfCpfis: number;
   liabilities: number;
   vehiclesNet: number;

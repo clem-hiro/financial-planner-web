@@ -34,10 +34,14 @@ function parseLiabilityFormData(formData: FormData):
   const tenureMonthsDirect = optionalNumber(
     formData.get("remaining_tenure_months")
   );
-  let remaining_tenure_months: number | null = tenureMonthsDirect;
-  if (tenureYears != null && tenureYears > 0) {
-    remaining_tenure_months = Math.round(tenureYears * 12);
-  }
+  const hasTenureYears = tenureYears != null;
+  const hasTenureMonths =
+    tenureMonthsDirect != null && (hasTenureYears || tenureMonthsDirect > 0);
+  const remaining_tenure_months =
+    hasTenureYears || hasTenureMonths
+      ? Math.round((tenureYears ?? 0) * 12) +
+        Math.round(tenureMonthsDirect ?? 0)
+      : null;
 
   const monthly_repayment = optionalNumber(formData.get("monthly_repayment"));
   const repayment_override =

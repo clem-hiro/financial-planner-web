@@ -206,8 +206,12 @@ export type InvestmentRow = {
   withdrawal_start_years: string | null;
   /** Reserved for future age-based contribution end. */
   contribution_end_age?: number | null;
-  /** Reserved for calendar-based contribution end. */
+  /** Optional calendar end for premiums (pairs with contribution_start_date). */
   contribution_end_date?: string | null;
+  /** Optional calendar start for premiums (future start defers modeled contributions). */
+  contribution_start_date?: string | null;
+  /** pure_investment | includes_insurance_coverage — ILP / bundled plan guidance. */
+  plan_nature?: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -318,12 +322,27 @@ export type CpfBalanceRow = {
   oa: string;
   sa: string;
   ma: string;
+  balance_as_of_month: string | null;
   oa_annual_rate: string | null;
   sa_annual_rate: string | null;
   ma_annual_rate: string | null;
   cpfis_monthly_from_oa: string;
   cpfis_notional_balance: string;
   cpfis_annual_return: string;
+  updated_at: string;
+};
+
+export type CpfInvestmentRow = {
+  id: string;
+  user_id: string;
+  account: "oa" | "sa";
+  purchase_month: string;
+  premium_type: "single" | "regular";
+  amount: string;
+  projected_growth_annual: string;
+  maturity_month: string;
+  note: string | null;
+  created_at: string;
   updated_at: string;
 };
 

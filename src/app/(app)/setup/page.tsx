@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import {
   num,
   profileAnnualSalaryGrowthNominal,
-  profileExpenseGrowthNominal,
   profileCpfAgeBand,
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
@@ -22,7 +21,7 @@ import { countReplaceableMonthlyBudgetLines } from "@/domain/finance/budget-guid
 import { getRequestAuth } from "@/data/supabase/request-context";
 import { ProfileIncomeForm } from "@/features/dashboard/ProfileIncomeForm";
 import { IncomeTaxSection } from "@/features/income-tax/IncomeTaxSection";
-import { buildCashHistoryByAccountId } from "@/domain/finance/cash-account-history";
+import { buildCashHistoryByAccountId } from "@/data/cash-account-history-build";
 import {
   CashAndLiabilitiesPanels,
   type CashAccountBalanceRow,
@@ -31,10 +30,11 @@ import { CpfBalancesForm } from "@/features/goals/CpfBalancesForm";
 import { HousingPanel } from "@/features/goals/HousingLoansPanel";
 import {
   InvestmentBalancesList,
-  type InvestmentBalanceRow,
 } from "@/features/goals/InvestmentBalancesList";
+import { investmentRowToBalanceRow } from "@/features/goals/investment-balance-row";
 import { InvestmentForm } from "@/features/goals/InvestmentForm";
 import { FinancialGoalsPanels } from "@/features/goals/FinancialGoalsPanels";
+import { profileRetirementTargetsProps } from "@/features/goals/profile-retirement-props";
 import { VehiclesPanel } from "@/features/goals/VehiclesPanel";
 import { BudgetPlanningView } from "@/features/budget/BudgetPlanningView";
 import { loadSetupTabBundle } from "@/features/planning/load-setup-tab-bundle";
@@ -156,6 +156,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
     liabilityRows,
     vehicleRows,
     cpfRow,
+    cpfInvestments,
     properties,
     housingLoans,
     goals,
@@ -165,28 +166,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
   const gross = profileMonthlyGross(financialProfile);
   const cpfBand = profileCpfAgeBand(financialProfile);
   const currency = financialProfile?.base_currency ?? DEFAULT_BASE_CURRENCY;
-  const investmentBalanceRows: InvestmentBalanceRow[] = investments.map((i) => ({
-    id: i.id,
-    name: i.name,
-    current_value: num(i.current_value),
-    monthly_contribution: num(i.monthly_contribution),
-    expected_annual_return: num(i.expected_annual_return),
-    contribution_growth_annual: num(i.contribution_growth_annual),
-    contribution_type: i.contribution_type ?? null,
-    contribution_duration_years:
-      i.contribution_duration_years != null &&
-      String(i.contribution_duration_years).trim() !== ""
-        ? num(i.contribution_duration_years as string)
-        : null,
-    withdrawal_monthly: num(i.withdrawal_monthly),
-    withdrawal_start_years:
-      i.withdrawal_start_years != null &&
-      String(i.withdrawal_start_years).trim() !== ""
-        ? num(i.withdrawal_start_years)
-        : null,
-    updated_at: i.updated_at ?? null,
-    created_at: i.created_at ?? null,
-  }));
+  const investmentBalanceRows = investments.map(investmentRowToBalanceRow);
   const showInvestmentReviewPrompt = shouldPromptInvestmentReview({
     investments,
     lastInvestmentReviewAt: financialProfile?.last_investment_review_at ?? null,
@@ -196,6 +176,18 @@ export default async function SetupPage({ searchParams }: PageProps) {
     lastCpfRulesReviewVersion:
       financialProfile?.last_cpf_rules_review_version ?? null,
   });
+  const defaultSaMaturityMonth =
+    financialProfile?.birth_date &&
+    typeof financialProfile.birth_date === "string" &&
+    birthDateIsValidPast(financialProfile.birth_date)
+      ? formatYearMonth(
+          new Date(
+            Number(financialProfile.birth_date.slice(0, 4)) + 55,
+            Number(financialProfile.birth_date.slice(5, 7)) - 1,
+            1
+          )
+        )
+      : null;
   const investmentPlanningContext =
     financialProfile?.birth_date &&
     typeof financialProfile.birth_date === "string" &&
@@ -260,7 +252,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           <PageSection id="profile-assumptions" title="Profile basics">
             <div className="space-y-6">
               <ProfileIncomeForm
-                key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${profileExpenseGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.target_retirement_age ?? ""}-${financialProfile?.retirement_monthly_spend_goal ?? ""}-${financialProfile?.retirement_dividend_yield_annual ?? ""}-${financialProfile?.salary_increment_month ?? ""}`}
+                key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.salary_increment_month ?? ""}-${financialProfile?.onboarding_completed_at ?? ""}`}
                 initialIncome={income}
                 initialGross={gross}
                 initialCpfAgeBand={cpfBand}
@@ -270,44 +262,24 @@ export default async function SetupPage({ searchParams }: PageProps) {
                     ? num(financialProfile.annual_bonus)
                     : null
                 }
+                initialAnnualBonusMonths={
+                  financialProfile?.annual_bonus_months != null &&
+                  String(financialProfile.annual_bonus_months).trim() !== ""
+                    ? num(financialProfile.annual_bonus_months)
+                    : null
+                }
                 initialAnnualSalaryGrowthPercent={
                   financialProfile?.annual_salary_growth_nominal != null &&
                   String(financialProfile.annual_salary_growth_nominal).trim() !== ""
                     ? num(financialProfile.annual_salary_growth_nominal) * 100
                     : null
                 }
-                initialExpenseGrowthPercent={
-                  financialProfile?.expense_growth_nominal != null &&
-                  String(financialProfile.expense_growth_nominal).trim() !== ""
-                    ? num(financialProfile.expense_growth_nominal) * 100
-                    : null
-                }
                 initialBirthDate={financialProfile?.birth_date ?? null}
-                initialTargetRetirementAge={
-                  financialProfile?.target_retirement_age != null
-                    ? Number(financialProfile.target_retirement_age)
-                    : null
-                }
-                initialRetirementMonthlySpendGoal={
-                  financialProfile?.retirement_monthly_spend_goal != null &&
-                  String(financialProfile.retirement_monthly_spend_goal).trim() !== ""
-                    ? num(financialProfile.retirement_monthly_spend_goal)
-                    : null
-                }
-                initialRetirementDividendYieldPercent={
-                  financialProfile?.retirement_dividend_yield_annual != null &&
-                  String(financialProfile.retirement_dividend_yield_annual).trim() !== ""
-                    ? num(financialProfile.retirement_dividend_yield_annual) * 100
-                    : null
-                }
-                initialRetirementWithdrawalRatePercent={
-                  financialProfile?.retirement_withdrawal_rate_annual != null &&
-                  String(financialProfile.retirement_withdrawal_rate_annual).trim() !== ""
-                    ? num(financialProfile.retirement_withdrawal_rate_annual) * 100
-                    : null
-                }
                 initialSalaryIncrementMonth={
                   financialProfile?.salary_increment_month ?? null
+                }
+                onboardingCompletedAt={
+                  financialProfile?.onboarding_completed_at ?? null
                 }
                 cpfYearMonth={formatYearMonth(new Date())}
                 currencyCode={currency}
@@ -337,7 +309,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           >
             <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
               <div className="p-4 sm:p-5">
-                <InvestmentForm />
+                <InvestmentForm planningContext={investmentPlanningContext} />
               </div>
               {investmentBalanceRows.length > 0 ? (
                 <div className="p-4 sm:p-5">
@@ -359,10 +331,10 @@ export default async function SetupPage({ searchParams }: PageProps) {
         <div className="transition-opacity duration-150 ease-out">
           <PageSection
             id="cpf-balances"
-            title="CPF &amp; CPFIS"
+            title="CPF &amp; CPF Investments"
             description={
               <span className="text-xs text-zinc-600">
-                OA / SA / MA and optional CPFIS assumptions.{" "}
+                OA / SA / MA and CPF investment entries.{" "}
                 <MethodologyOpenLink
                   topicId="cpf-projection"
                   className={appInlineLinkClass}
@@ -374,6 +346,8 @@ export default async function SetupPage({ searchParams }: PageProps) {
           >
             <CpfBalancesForm
               row={cpfRow}
+              cpfInvestments={cpfInvestments}
+              defaultSaMaturityMonth={defaultSaMaturityMonth}
               showRulesReviewPrompt={showCpfRulesReviewPrompt}
             />
           </PageSection>
@@ -458,6 +432,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
             investments={investments}
             currency={currency}
             userId={user.id}
+            {...profileRetirementTargetsProps(financialProfile)}
           />
         </div>
       ) : null}

@@ -2,7 +2,6 @@ import Link from "next/link";
 import {
   num,
   profileAnnualSalaryGrowthNominal,
-  profileExpenseGrowthNominal,
   profileCpfAgeBand,
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
@@ -75,7 +74,11 @@ export async function CashFlowPlanningSection({
         </h2>
         <p className="text-sm leading-relaxed text-slate-600">
           Start with the monthly budget. Expand advanced assumptions only when you need
-          to tune income, CPF banding, or retirement targets.
+          to tune income or CPF banding. Retirement targets live under{" "}
+          <Link href="/setup?tab=goals" className={appInlineLinkClass}>
+            Setup → Goals
+          </Link>
+          .
         </p>
       </header>
 
@@ -96,9 +99,9 @@ export async function CashFlowPlanningSection({
           </span>
         </summary>
         <div className="space-y-8 border-t border-slate-200/70 px-5 pb-6 pt-2">
-          <PageSection id="planning-cashflow-profile" title="Income &amp; retirement">
+          <PageSection id="planning-cashflow-profile" title="Income &amp; CPF">
             <ProfileIncomeForm
-              key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${profileExpenseGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.target_retirement_age ?? ""}-${financialProfile?.retirement_monthly_spend_goal ?? ""}-${financialProfile?.retirement_dividend_yield_annual ?? ""}`}
+              key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.onboarding_completed_at ?? ""}`}
               initialIncome={income}
               initialGross={gross}
               initialCpfAgeBand={cpfBand}
@@ -108,42 +111,21 @@ export async function CashFlowPlanningSection({
                   ? num(financialProfile.annual_bonus)
                   : null
               }
+              initialAnnualBonusMonths={
+                financialProfile?.annual_bonus_months != null &&
+                String(financialProfile.annual_bonus_months).trim() !== ""
+                  ? num(financialProfile.annual_bonus_months)
+                  : null
+              }
               initialAnnualSalaryGrowthPercent={
                 financialProfile?.annual_salary_growth_nominal != null &&
                 String(financialProfile.annual_salary_growth_nominal).trim() !== ""
                   ? num(financialProfile.annual_salary_growth_nominal) * 100
                   : null
               }
-              initialExpenseGrowthPercent={
-                financialProfile?.expense_growth_nominal != null &&
-                String(financialProfile.expense_growth_nominal).trim() !== ""
-                  ? num(financialProfile.expense_growth_nominal) * 100
-                  : null
-              }
               initialBirthDate={financialProfile?.birth_date ?? null}
-              initialTargetRetirementAge={
-                financialProfile?.target_retirement_age != null
-                  ? Number(financialProfile.target_retirement_age)
-                  : null
-              }
-              initialRetirementMonthlySpendGoal={
-                financialProfile?.retirement_monthly_spend_goal != null &&
-                String(financialProfile.retirement_monthly_spend_goal).trim() !== ""
-                  ? num(financialProfile.retirement_monthly_spend_goal)
-                  : null
-              }
-              initialRetirementDividendYieldPercent={
-                financialProfile?.retirement_dividend_yield_annual != null &&
-                String(financialProfile.retirement_dividend_yield_annual).trim() !== ""
-                  ? num(financialProfile.retirement_dividend_yield_annual) * 100
-                  : null
-              }
-              initialRetirementWithdrawalRatePercent={
-                financialProfile?.retirement_withdrawal_rate_annual != null &&
-                String(financialProfile.retirement_withdrawal_rate_annual).trim() !==
-                  ""
-                  ? num(financialProfile.retirement_withdrawal_rate_annual) * 100
-                  : null
+              onboardingCompletedAt={
+                financialProfile?.onboarding_completed_at ?? null
               }
               cpfYearMonth={formatYearMonth(new Date())}
               currencyCode={currency}

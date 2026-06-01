@@ -1,17 +1,31 @@
 import { num } from "@/data/mappers";
 import type { InvestmentRow } from "@/data/supabase/types";
+import { contributionScheduleFromDates } from "./investment-contribution-dates";
+
+export type InvestmentContributionRowSlice = Pick<
+  InvestmentRow,
+  | "contribution_type"
+  | "contribution_duration_years"
+  | "contribution_start_date"
+  | "contribution_end_date"
+>;
 
 /**
  * Months from “today” during which end-of-month contributions apply.
  * `undefined` = same as total horizon (legacy / no retirement cap available).
  */
 export function contributionMonthsLimitFromInvestmentRow(
-  row: Pick<
-    InvestmentRow,
-    "contribution_type" | "contribution_duration_years"
-  >,
+  row: InvestmentContributionRowSlice,
   monthsToRetirementFromNow: number | null
 ): number | undefined {
+  const fromDates = contributionScheduleFromDates(
+    row.contribution_start_date,
+    row.contribution_end_date
+  );
+  if (fromDates) {
+    return fromDates.contributionMonthsLimit;
+  }
+
   const rawType = row.contribution_type;
   const isFixed = rawType === "fixed_duration";
 
@@ -38,11 +52,27 @@ export function contributionMonthsLimitFromInvestmentRow(
   return undefined;
 }
 
+/** Zero-based month index when contributions begin (future premium start). */
+export function contributionStartMonthFromInvestmentRow(
+  row: InvestmentContributionRowSlice
+): number | undefined {
+  const fromDates = contributionScheduleFromDates(
+    row.contribution_start_date,
+    row.contribution_end_date
+  );
+  if (fromDates && fromDates.contributionStartMonth > 0) {
+    return fromDates.contributionStartMonth;
+  }
+  return undefined;
+}
+
 export function withdrawalStartMonthFromInvestmentRow(
   row: Pick<
     InvestmentRow,
     | "contribution_type"
     | "contribution_duration_years"
+    | "contribution_start_date"
+    | "contribution_end_date"
     | "withdrawal_monthly"
     | "withdrawal_start_years"
   >,

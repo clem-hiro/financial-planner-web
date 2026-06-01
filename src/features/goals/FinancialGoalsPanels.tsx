@@ -1,16 +1,20 @@
 import Link from "next/link";
+import { loadGoalTradeoffContext } from "@/data/goal-tradeoff-context";
 import { num } from "@/data/mappers";
+import { createSupabaseServerClient } from "@/data/supabase/server";
 import {
-  analyzeGoalDeadlineGap,
+  analyzeGoalFeasibility,
   estimateTimeToGoalStandalone,
   goalProgressRatio,
   sortGoalsByPriority,
 } from "@/domain/finance";
 import type { FinancialGoalRow, InvestmentRow } from "@/data/supabase/types";
 import { GoalEditForm } from "@/features/goals/GoalEditForm";
+import { GoalFeasibilityNotice } from "@/features/goals/GoalFeasibilityNotice";
 import { GoalForm } from "@/features/goals/GoalForm";
 import { GoalPriorityTradeoffPanel } from "@/features/goals/GoalPriorityTradeoffPanel";
 import { GoalReorderButtons } from "@/features/goals/GoalReorderButtons";
+import { RetirementTargetsForm } from "@/features/goals/RetirementTargetsForm";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { formatMonthsApprox } from "@/ui/lib/duration";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
@@ -28,19 +32,41 @@ type Props = {
   currency: string;
   /** When set, loads priority trade-off vs current-month surplus. */
   userId?: string;
+  initialTargetRetirementAge?: number | null;
+  initialRetirementMonthlySpendGoal?: number | null;
+  initialExpenseGrowthPercent?: number | null;
+  initialRetirementDividendYieldPercent?: number | null;
+  initialRetirementWithdrawalRatePercent?: number | null;
 };
 
-export function FinancialGoalsPanels({
+export async function FinancialGoalsPanels({
   goals,
   investments,
   currency,
   userId,
+  initialTargetRetirementAge = null,
+  initialRetirementMonthlySpendGoal = null,
+  initialExpenseGrowthPercent = null,
+  initialRetirementDividendYieldPercent = null,
+  initialRetirementWithdrawalRatePercent = null,
 }: Props) {
   const orderedGoals = sortGoalsByPriority(goals);
   const investmentOptions = investments.map((i) => ({
     id: i.id,
     name: i.name,
   }));
+
+  const tradeoffCtx = userId
+    ? await loadGoalTradeoffContext(
+        await createSupabaseServerClient(),
+        userId
+      )
+    : null;
+
+  const hasCashContext = tradeoffCtx?.analysis.surplusBeforeGoals != null;
+  const affordableByGoalId = new Map(
+    tradeoffCtx?.analysis.lines.map((l) => [l.goalId, l.fundedMonthly]) ?? []
+  );
 
   const today = new Date();
 
@@ -57,20 +83,23 @@ export function FinancialGoalsPanels({
     );
     const progress = goalProgressRatio(current, target);
     const remaining = Math.max(0, target - current);
-    const deadline = analyzeGoalDeadlineGap({
+    const feasibility = analyzeGoalFeasibility({
       today,
       targetDateYmd: g.target_date,
       currentAmount: current,
-      monthlyContribution: pmt,
-      expectedAnnualReturn: ret,
       targetAmount: target,
+      plannedMonthly: pmt,
+      expectedAnnualReturn: ret,
+      affordableMonthly: hasCashContext
+        ? (affordableByGoalId.get(g.id) ?? 0)
+        : null,
     });
     return {
       g,
       estimate,
       progress,
       remaining,
-      deadline,
+      feasibility,
       priorityRank: index + 1,
       canMoveUp: index > 0,
       canMoveDown: index < orderedGoals.length - 1,
@@ -79,6 +108,15 @@ export function FinancialGoalsPanels({
 
   return (
     <div className="space-y-8">
+      <RetirementTargetsForm
+        initialTargetRetirementAge={initialTargetRetirementAge}
+        initialRetirementMonthlySpendGoal={initialRetirementMonthlySpendGoal}
+        initialExpenseGrowthPercent={initialExpenseGrowthPercent}
+        initialDividendYieldPercent={initialRetirementDividendYieldPercent}
+        initialWithdrawalRatePercent={initialRetirementWithdrawalRatePercent}
+        currencyCode={currency}
+      />
+
       <div className="rounded-xl border border-zinc-200/90 bg-zinc-50/50 px-4 py-3 sm:px-5">
         <p className="text-sm text-zinc-600">
           Savings targets with their own balances and monthly plans. Time-to-goal
@@ -117,7 +155,11 @@ export function FinancialGoalsPanels({
       </div>
 
       {userId ? (
-        <GoalPriorityTradeoffPanel userId={userId} currency={currency} />
+        <GoalPriorityTradeoffPanel
+          userId={userId}
+          currency={currency}
+          tradeoffCtx={tradeoffCtx}
+        />
       ) : null}
 
       <PageSection
@@ -152,7 +194,7 @@ export function FinancialGoalsPanels({
                 estimate,
                 progress,
                 remaining,
-                deadline,
+                feasibility,
                 priorityRank,
                 canMoveUp,
                 canMoveDown,
@@ -189,59 +231,11 @@ export function FinancialGoalsPanels({
                   {formatPercent(progress)} complete ·{" "}
                   {formatCurrency(remaining, currency)} remaining
                 </p>
-                {deadline.kind === "short" && (
-                  <p
-                    className="mt-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-950"
-                    role="status"
-                  >
-                    <span className="font-medium">Behind your target date: </span>
-                    at your current pace you won&apos;t reach the goal by{" "}
-                    {g.target_date}. To hit it on time (assuming{" "}
-                    {deadline.monthsRemaining} end-of-month deposit
-                    {deadline.monthsRemaining === 1 ? "" : "s"} and your
-                    expected return), plan about{" "}
-                    <strong>
-                      {formatCurrency(deadline.requiredMonthly, currency)}
-                    </strong>
-                    /mo — increase your monthly contribution by about{" "}
-                    <strong>
-                      {formatCurrency(deadline.increaseBy, currency)}
-                    </strong>
-                    /mo.
-                  </p>
-                )}
-                {deadline.kind === "past_deadline" && (
-                  <p
-                    className="mt-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-950"
-                    role="status"
-                  >
-                    <span className="font-medium">Target date has passed. </span>
-                    You still need about{" "}
-                    <strong>
-                      {formatCurrency(deadline.remaining, currency)}
-                    </strong>{" "}
-                    to reach this goal.
-                  </p>
-                )}
-                {deadline.kind === "no_contribution_periods" && (
-                  <p
-                    className="mt-2 rounded-md border border-amber-200 bg-amber-50/80 px-3 py-2 text-sm text-amber-950"
-                    role="status"
-                  >
-                    Your target date is too soon for another end-of-month deposit
-                    before the deadline (same rules as the projection). Move the
-                    date later or add to &quot;already saved&quot; now.
-                  </p>
-                )}
-                {deadline.kind === "cannot_catch_up" && (
-                  <p
-                    className="mt-2 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950"
-                    role="status"
-                  >
-                    Could not compute a monthly catch-up for this deadline;
-                    check amounts and dates.
-                  </p>
-                )}
+                <GoalFeasibilityNotice
+                  feasibility={feasibility}
+                  targetDateYmd={g.target_date}
+                  currency={currency}
+                />
                 <p className="mt-1 text-sm text-zinc-700">
                   {estimate.kind === "met" && (
                     <span>

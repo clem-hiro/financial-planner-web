@@ -21,11 +21,7 @@ export default async function OnboardingPage() {
   if (!needsOnboarding(profile)) redirect("/dashboard");
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-semibold text-slate-900">Let&apos;s set up your plan</h1>
-      <p className="text-sm text-slate-600">
-        Start simple now. You can edit everything later in Financial Settings.
-      </p>
+    <div className="mx-auto w-full max-w-xl">
       <OnboardingWizard
         initialDisplayName={profile?.display_name ?? ""}
         initialGrossMonthly={

@@ -61,6 +61,7 @@ function payload(): DashboardPayload {
     monthlyPlannedMonthlyBudgetTotal: 3000,
     monthlyExpensesTotal: 2800,
     monthlyBudgetAggregate: { overBy: 0 },
+    cpfProjectionMissingInputs: [],
   } as unknown as DashboardPayload;
 }
 

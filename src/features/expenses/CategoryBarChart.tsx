@@ -39,7 +39,7 @@ export function CategoryBarChart({
 
   return (
     <ChartFrame>
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height="100%" minWidth={0}>
         <BarChart data={data} margin={{ top: 10, right: 10, left: 4, bottom: 52 }}>
           <CartesianGrid
             strokeDasharray="3 6"

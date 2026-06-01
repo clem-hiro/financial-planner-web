@@ -18,26 +18,22 @@ import {
   INVESTMENT_REVIEW_STALE_MONTHS,
 } from "@/domain/finance";
 import { InvestmentAssumptionBanner } from "@/features/goals/InvestmentAssumptionBanner";
+import {
+  InvestmentContributionScheduleFields,
+  type ContributionMode,
+  type FixedScheduleMode,
+} from "@/features/goals/InvestmentContributionScheduleFields";
+import { InvestmentPlanGuidancePanel } from "@/features/goals/InvestmentPlanGuidancePanel";
+import type { InvestmentPlanNature } from "@/lib/investment-plan-nature";
 import { InfoTooltip } from "@/ui/InfoTooltip";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { ConfirmDialog } from "@/ui/ConfirmDialog";
 import { fpInputClass, fpPrimaryButtonClass } from "@/ui/input-classes";
 import { formatCurrency } from "@/ui/lib/format";
 
-export type InvestmentBalanceRow = {
-  id: string;
-  name: string;
-  current_value: number;
-  monthly_contribution: number;
-  expected_annual_return: number;
-  contribution_growth_annual: number;
-  contribution_type?: string | null;
-  contribution_duration_years?: number | null;
-  withdrawal_monthly: number;
-  withdrawal_start_years?: number | null;
-  updated_at?: string | null;
-  created_at?: string | null;
-};
+import type { InvestmentBalanceRow } from "@/features/goals/investment-balance-types";
+
+export type { InvestmentBalanceRow } from "@/features/goals/investment-balance-types";
 
 export type InvestmentPlanningContext = {
   birthDate: string;
@@ -47,6 +43,33 @@ export type InvestmentPlanningContext = {
 const initial = { error: null as string | null };
 
 const fieldClass = `${fpInputClass} max-w-none`;
+
+function withdrawalStartDisplayValue(
+  investment: InvestmentBalanceRow,
+  planningContext: InvestmentPlanningContext | null,
+  currentAge: number | null
+): string {
+  if (investment.withdrawal_start_years == null) return "";
+  if (planningContext == null || currentAge == null) {
+    return String(investment.withdrawal_start_years);
+  }
+
+  const yearsToRetirement = Math.max(
+    0,
+    planningContext.targetRetirementAge - currentAge
+  );
+  // Older UI copy implied this field accepted an age. If a stored value looks
+  // like age 50+ instead of an offset, display it as entered so the next save
+  // normalizes it into years from today.
+  if (
+    investment.withdrawal_start_years >= 50 &&
+    investment.withdrawal_start_years > yearsToRetirement
+  ) {
+    return String(investment.withdrawal_start_years);
+  }
+
+  return String(currentAge + investment.withdrawal_start_years);
+}
 
 function contributionSummaryLine(
   investment: InvestmentBalanceRow,
@@ -62,6 +85,17 @@ function contributionSummaryLine(
       ? `; withdraw ${formatCurrency(investment.withdrawal_monthly, currencyCode)}/mo later`
       : "";
   const pmtLabel = `${formatCurrency(pmt, currencyCode)}/mo${stepUp}`;
+  if (
+    investment.contribution_end_date != null &&
+    investment.contribution_end_date.trim() !== ""
+  ) {
+    const start =
+      investment.contribution_start_date != null &&
+      investment.contribution_start_date.trim() !== ""
+        ? investment.contribution_start_date
+        : "today";
+    return `${pmtLabel} until ${investment.contribution_end_date} (from ${start}), then growth only${withdrawal}`;
+  }
   if (
     investment.contribution_type === "fixed_duration" &&
     investment.contribution_duration_years != null &&
@@ -84,6 +118,27 @@ function ContributionTimelineHint({
   const asOf = new Date();
   const age0 = ageCompletedOnDate(ctx.birthDate, asOf);
   const targetAge = Math.min(80, Math.max(50, Math.round(ctx.targetRetirementAge)));
+
+  if (
+    investment.contribution_end_date != null &&
+    investment.contribution_end_date.trim() !== ""
+  ) {
+    return (
+      <div className="mt-2 rounded-lg border border-emerald-100 bg-emerald-50/50 px-2.5 py-2 text-[11px] leading-relaxed text-emerald-950/90">
+        <p className="font-semibold text-emerald-950">Premium window (calendar)</p>
+        <p className="mt-1">
+          {investment.contribution_start_date
+            ? `Contributing from ${investment.contribution_start_date}`
+            : "Contributing from today"}{" "}
+          through {investment.contribution_end_date}
+        </p>
+        <p className="mt-0.5">
+          Thereafter through age {targetAge}: balance keeps compounding without new
+          monthly deposits in this model
+        </p>
+      </div>
+    );
+  }
 
   if (
     investment.contribution_type === "fixed_duration" &&
@@ -218,12 +273,14 @@ function InvestmentEditForm({
   currencyCode,
   onClose,
   advisorClientId,
+  planningContext,
   disabled = false,
 }: {
   investment: InvestmentBalanceRow;
   currencyCode: string;
   onClose: () => void;
   advisorClientId?: string;
+  planningContext: InvestmentPlanningContext | null;
   disabled?: boolean;
 }) {
   const router = useRouter();
@@ -241,20 +298,34 @@ function InvestmentEditForm({
   const [withdrawalMonthlyRaw, setWithdrawalMonthlyRaw] = useState(
     String(investment.withdrawal_monthly)
   );
+  const currentAge =
+    planningContext != null
+      ? ageCompletedOnDate(planningContext.birthDate, new Date())
+      : null;
   const [withdrawalStartYearsRaw, setWithdrawalStartYearsRaw] = useState(
-    investment.withdrawal_start_years != null
-      ? String(investment.withdrawal_start_years)
-      : ""
+    withdrawalStartDisplayValue(investment, planningContext, currentAge)
   );
   const [returnPctRaw, setReturnPctRaw] = useState(
     String(Math.round(investment.expected_annual_return * 1000) / 10)
   );
-  const [contributionMode, setContributionMode] = useState<
-    "until_retirement" | "fixed_duration"
-  >(
-    investment.contribution_type === "fixed_duration"
+  const [planNature, setPlanNature] = useState<InvestmentPlanNature | "">(
+    investment.plan_nature === "pure_investment" ||
+      investment.plan_nature === "includes_insurance_coverage"
+      ? investment.plan_nature
+      : ""
+  );
+  const [contributionMode, setContributionMode] = useState<ContributionMode>(
+    investment.contribution_type === "fixed_duration" ||
+      (investment.contribution_end_date != null &&
+        investment.contribution_end_date.trim() !== "")
       ? "fixed_duration"
       : "until_retirement"
+  );
+  const [fixedScheduleMode, setFixedScheduleMode] = useState<FixedScheduleMode>(
+    investment.contribution_end_date != null &&
+      investment.contribution_end_date.trim() !== ""
+      ? "calendar_dates"
+      : "duration_years"
   );
   const [durationYearsRaw, setDurationYearsRaw] = useState(
     investment.contribution_type === "fixed_duration" &&
@@ -262,6 +333,14 @@ function InvestmentEditForm({
       ? String(investment.contribution_duration_years)
       : "15"
   );
+  const [startDateRaw, setStartDateRaw] = useState(
+    investment.contribution_start_date ?? ""
+  );
+  const [endDateRaw, setEndDateRaw] = useState(
+    investment.contribution_end_date ?? ""
+  );
+  const withdrawalStartName =
+    currentAge != null ? "withdrawal_start_age" : "withdrawal_start_years";
 
   const wrapped = async (
     prev: typeof initial,
@@ -310,6 +389,11 @@ function InvestmentEditForm({
           {state.error}
         </p>
       )}
+
+      <InvestmentPlanGuidancePanel
+        planNature={planNature}
+        onPlanNatureChange={setPlanNature}
+      />
 
       <div className="rounded-lg border border-slate-100 bg-slate-50/60 p-3">
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -365,68 +449,19 @@ function InvestmentEditForm({
         </label>
       </div>
 
-      <fieldset className="rounded-lg border border-slate-200 bg-white p-3">
-        <legend className="text-sm font-medium text-slate-800">
-          How long will you contribute monthly?
-        </legend>
-        <p className="mt-1 text-xs text-slate-500">
-          After this window, the balance can keep compounding—we only stop adding new
-          monthly deposits.
-        </p>
-        <div className="mt-3 space-y-2.5">
-          <label className="flex cursor-pointer items-start gap-2.5 text-sm text-slate-700">
-            <input
-              type="radio"
-              name="contribution_type"
-              value="until_retirement"
-              className="mt-0.5"
-              checked={contributionMode === "until_retirement"}
-              onChange={() => setContributionMode("until_retirement")}
-            />
-            <span>
-              <span className="font-medium text-slate-900">Until retirement</span>
-              <span className="mt-0.5 block text-xs font-normal text-slate-500">
-                Matches your profile retirement age when available.
-              </span>
-            </span>
-          </label>
-          <label className="flex cursor-pointer items-start gap-2.5 text-sm text-slate-700">
-            <input
-              type="radio"
-              name="contribution_type"
-              value="fixed_duration"
-              className="mt-0.5"
-              checked={contributionMode === "fixed_duration"}
-              onChange={() => setContributionMode("fixed_duration")}
-            />
-            <span>
-              <span className="font-medium text-slate-900">Fixed duration</span>
-              <span className="mt-0.5 block text-xs font-normal text-slate-500">
-                For time-bound premiums or savings phases.
-              </span>
-            </span>
-          </label>
-        </div>
-        {contributionMode === "fixed_duration" ? (
-          <label className="mt-3 block text-sm">
-            <span className="mb-1 block font-medium text-slate-700">
-              Contribution duration (years)
-            </span>
-            <input
-              name="contribution_duration_years"
-              type="number"
-              inputMode="decimal"
-              min={0.25}
-              max={80}
-              step={0.25}
-              required
-              value={durationYearsRaw}
-              onChange={(e) => setDurationYearsRaw(e.target.value)}
-              className={`${fieldClass} max-w-xs`}
-            />
-          </label>
-        ) : null}
-      </fieldset>
+      <InvestmentContributionScheduleFields
+        contributionMode={contributionMode}
+        onContributionModeChange={setContributionMode}
+        fixedScheduleMode={fixedScheduleMode}
+        onFixedScheduleModeChange={setFixedScheduleMode}
+        durationYearsRaw={durationYearsRaw}
+        onDurationYearsChange={setDurationYearsRaw}
+        startDateRaw={startDateRaw}
+        onStartDateChange={setStartDateRaw}
+        endDateRaw={endDateRaw}
+        onEndDateChange={setEndDateRaw}
+        inputClassName={fieldClass}
+      />
 
       <label className="block text-sm">
         <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
@@ -514,22 +549,35 @@ function InvestmentEditForm({
           </label>
           <label className="block text-sm">
             <span className="mb-1 block font-medium text-slate-700">
-              Withdrawal starts after
+              {currentAge != null ? "Withdrawal starts at age" : "Withdrawal starts after"}
             </span>
+            {currentAge != null ? (
+              <input
+                type="hidden"
+                name="withdrawal_current_age"
+                value={currentAge}
+              />
+            ) : null}
             <input
-              name="withdrawal_start_years"
+              name={withdrawalStartName}
               type="number"
               inputMode="decimal"
               min={0}
-              max={100}
+              max={currentAge != null ? 120 : 100}
               step={0.25}
-              placeholder="Retirement age"
+              placeholder={
+                currentAge != null
+                  ? String(planningContext?.targetRetirementAge ?? 65)
+                  : "Years from today"
+              }
               value={withdrawalStartYearsRaw}
               onChange={(e) => setWithdrawalStartYearsRaw(e.target.value)}
               className={fieldClass}
             />
             <span className="mt-1 block text-[11px] text-slate-500">
-              Years from today. Blank uses profile retirement age when available.
+              {currentAge != null
+                ? "Age. Blank uses profile retirement age when available."
+                : "Years from today. Blank uses profile retirement age when available."}
             </span>
           </label>
         </div>
@@ -642,6 +690,7 @@ function InvestmentRow({
       onClose={() => setEditing(false)}
       advisorClientId={advisorClientId}
       disabled={advisorSuggestionDisabled}
+      planningContext={planningContext}
     />
   );
 }

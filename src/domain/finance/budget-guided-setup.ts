@@ -124,6 +124,57 @@ export const LIFESTYLE_PRESETS: ReadonlyArray<{
   },
 ];
 
+export type LifestylePresetOption = (typeof LIFESTYLE_PRESETS)[number];
+
+/** Generic copy for onboarding — maps to the same `LifestyleProfileId` weights as `LIFESTYLE_PRESETS`. */
+export const ONBOARDING_LIFESTYLE_PRESETS: ReadonlyArray<LifestylePresetOption> = [
+  {
+    id: "young_professional",
+    label: "Balanced starter",
+    blurb: "A good default for most budgets.",
+  },
+  {
+    id: "student",
+    label: "Lean essentials",
+    blurb: "Keeps fixed costs lower.",
+  },
+  {
+    id: "married_couple",
+    label: "Shared household",
+    blurb: "More for rent and shared living costs.",
+  },
+  {
+    id: "young_family",
+    label: "Family priorities",
+    blurb: "More for home and essentials.",
+  },
+  {
+    id: "freelancer",
+    label: "Variable income",
+    blurb: "Extra buffer for uneven months.",
+  },
+  {
+    id: "flexible_lifestyle",
+    label: "Lifestyle-forward",
+    blurb: "More room for dining, shopping, and fun.",
+  },
+];
+
+const ONBOARDING_LIFESTYLE_IDS = new Set(
+  ONBOARDING_LIFESTYLE_PRESETS.map((p) => p.id)
+);
+
+/** Onboarding grid presets; includes a saved legacy id when it is outside the subset. */
+export function listOnboardingLifestylePresets(
+  savedId: LifestyleProfileId | null | undefined
+): ReadonlyArray<LifestylePresetOption> {
+  if (savedId == null || ONBOARDING_LIFESTYLE_IDS.has(savedId)) {
+    return ONBOARDING_LIFESTYLE_PRESETS;
+  }
+  const legacy = LIFESTYLE_PRESETS.find((p) => p.id === savedId);
+  return legacy ? [legacy, ...ONBOARDING_LIFESTYLE_PRESETS] : ONBOARDING_LIFESTYLE_PRESETS;
+}
+
 export const BUDGET_STRATEGY_PRESETS: ReadonlyArray<{
   id: BudgetingStrategyId;
   label: string;

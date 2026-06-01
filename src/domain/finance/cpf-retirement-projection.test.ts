@@ -4,6 +4,7 @@ import {
   CURRENT_FRS_SG,
   DEFAULT_FRS_ANNUAL_GROWTH_RATE,
   estimateFutureFrs,
+  routeCpfSaInvestmentMaturityProceeds,
   simulateRaFormationAt55,
   buildCpfRetirementProjection,
   retirementTargetAmount,
@@ -62,6 +63,56 @@ describe("simulateRaFormationAt55", () => {
     expect(sim.afterRaCreation.ra).toBe(120_000);
     expect(sim.shortfall).toBe(380_000);
     expect(sim.fullyFunded).toBe(false);
+  });
+});
+
+describe("routeCpfSaInvestmentMaturityProceeds", () => {
+  it("returns CPFIS-SA proceeds to SA before age 55", () => {
+    const routed = routeCpfSaInvestmentMaturityProceeds({
+      proceeds: 80_000,
+      memberAgeAtMaturity: 54,
+      currentRaBalance: 0,
+      targetRetirementSum: 220_400,
+    });
+
+    expect(routed).toEqual({
+      toSa: 80_000,
+      toRa: 0,
+      toOa: 0,
+      raShortfallAfterRouting: 220_400,
+    });
+  });
+
+  it("tops up RA first after SA closure, then routes excess to OA", () => {
+    const routed = routeCpfSaInvestmentMaturityProceeds({
+      proceeds: 100_000,
+      memberAgeAtMaturity: 56,
+      currentRaBalance: 180_000,
+      targetRetirementSum: 220_400,
+    });
+
+    expect(routed).toEqual({
+      toSa: 0,
+      toRa: 40_400,
+      toOa: 59_600,
+      raShortfallAfterRouting: 0,
+    });
+  });
+
+  it("keeps the RA shortfall when proceeds are not enough after age 55", () => {
+    const routed = routeCpfSaInvestmentMaturityProceeds({
+      proceeds: 15_000,
+      memberAgeAtMaturity: 55,
+      currentRaBalance: 180_000,
+      targetRetirementSum: 220_400,
+    });
+
+    expect(routed).toEqual({
+      toSa: 0,
+      toRa: 15_000,
+      toOa: 0,
+      raShortfallAfterRouting: 25_400,
+    });
   });
 });
 

@@ -145,6 +145,14 @@ function AssetTooltip({
           <dd className="text-right font-mono text-[10px] tabular-nums text-slate-300">
             {formatMoney(row.cpfMa ?? 0, currency)}
           </dd>
+          {(row.cpfRa ?? 0) > 0.5 ? (
+            <>
+              <dt className="pl-2 text-[10px] font-normal text-slate-400">RA</dt>
+              <dd className="text-right font-mono text-[10px] tabular-nums text-slate-300">
+                {formatMoney(row.cpfRa ?? 0, currency)}
+              </dd>
+            </>
+          ) : null}
           {(row.cpfCpfis ?? 0) > 0.5 ? (
             <>
               <dt className="pl-2 text-[10px] font-normal text-slate-400">CPFIS</dt>
@@ -275,6 +283,12 @@ function AssetTooltip({
               <span className="text-slate-400">MA</span>
               <span>{formatMoney(row.cpfMa ?? 0, currency)}</span>
             </div>
+            {(row.cpfRa ?? 0) > 0.5 ? (
+              <div className="flex justify-between gap-4">
+                <span className="text-slate-400">RA</span>
+                <span>{formatMoney(row.cpfRa ?? 0, currency)}</span>
+              </div>
+            ) : null}
             {(row.cpfCpfis ?? 0) > 0.5 ? (
               <div className="flex justify-between gap-4">
                 <span className="text-slate-400">CPFIS</span>
@@ -290,7 +304,7 @@ function AssetTooltip({
               <li>
                 Same month-step model as the blue CPF-by-age chart:{" "}
                 <strong>Balances → CPF</strong> balances, gross salary (and growth),
-                age band, optional CPFIS, and <strong>housing loan</strong> OA lumps
+                age band, CPF Investments, and <strong>housing loan</strong> OA lumps
                 / instalment share when saved.
               </li>
               <li>
@@ -394,7 +408,7 @@ export function AgeCombinedAssetsProjectionChart({
       clipContent={false}
     >
       <div className="h-full w-full min-h-0">
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%" minWidth={0}>
           <ComposedChart
             data={data}
             margin={{ top: 4, right: 4, left: 0, bottom: 24 }}

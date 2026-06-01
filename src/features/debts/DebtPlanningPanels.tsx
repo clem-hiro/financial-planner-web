@@ -44,6 +44,7 @@ function emptyFormValues(): DebtFormValues {
     loanType: "",
     interestRatePercent: "",
     remainingTenureYears: "",
+    remainingTenureMonths: 0,
     monthlyRepayment: "",
     repaymentOverride: false,
     startDate: "",
@@ -63,8 +64,10 @@ function rowToFormValues(row: DebtPlanningRow): DebtFormValues {
         : "",
     remainingTenureYears:
       row.remainingTenureMonths != null
-        ? Math.round((row.remainingTenureMonths / 12) * 10) / 10
+        ? Math.floor(row.remainingTenureMonths / 12)
         : "",
+    remainingTenureMonths:
+      row.remainingTenureMonths != null ? row.remainingTenureMonths % 12 : 0,
     monthlyRepayment: row.monthlyRepayment ?? "",
     repaymentOverride: row.repaymentOverride,
     startDate: row.startDate ?? "",

@@ -22,7 +22,10 @@ import {
   vehicleGrossAssetEstimate,
   vehicleNetListedBeforeLiquidation,
 } from "@/domain/finance";
-import type { HousingLoanProjectionInput } from "@/domain/finance";
+import type {
+  CpfInvestmentProjectionInput,
+  HousingLoanProjectionInput,
+} from "@/domain/finance";
 import type { RetirementDividendVsSpendResult } from "@/domain/finance";
 import {
   type SgCpfAgeBand,
@@ -64,6 +67,10 @@ import {
   advisorReadCpfBalances,
 } from "@/data/repositories/cpf-balances";
 import {
+  advisorReadCpfInvestments,
+  listCpfInvestments,
+} from "@/data/repositories/cpf-investments";
+import {
   listFinancialGoals,
   advisorReadGoals,
 } from "@/data/repositories/goals";
@@ -95,7 +102,11 @@ import {
 } from "@/data/repositories/investments";
 import { buildSyntheticTaxExpense } from "@/data/income-tax-synthetic-expense";
 import { buildSyntheticHousingCashExpense } from "@/data/housing-cash-synthetic-expense";
-import type { HousingLoanRow } from "@/data/supabase/types";
+import type {
+  CpfBalanceRow,
+  CpfInvestmentRow,
+  HousingLoanRow,
+} from "@/data/supabase/types";
 import {
   buildInvestmentProjectionSeries,
   projectionSnapshotFromInvestmentRows,
@@ -105,6 +116,7 @@ import { birthDateIsValidPast } from "@/lib/validation";
 import type { AgeAssetBreakdownPoint } from "@/data/age-asset-breakdown";
 import { applyProposalChanges } from "@/domain/advisor-proposals/apply-overlay";
 import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
+import { addMonthsToYearMonth } from "@/lib/dates";
 
 /**
  * Server-only, role-gated. When `proposalOverlay` is present the four
@@ -157,8 +169,25 @@ export type DashboardPayload = {
     sa: number;
     ma: number;
     cpfis: number;
+    ra: number;
     totalCpf: number;
   }> | null;
+  cpfYearEndProjection: {
+    balanceAsOfMonth: string;
+    startYearMonth: string | null;
+    targetYearMonth: string;
+    projectedMonths: number;
+    oa: number;
+    sa: number;
+    ma: number;
+    ra: number;
+    cpfis: number;
+    totalCpf: number;
+  } | null;
+  cpfProjectionMissingInputs: Array<{
+    label: string;
+    href: string;
+  }>;
   /** Vertical markers on the CPF chart (e.g. keys / repayment start). */
   cpfHousingMarkers: Array<{ age: number; label: string }>;
   /**
@@ -215,6 +244,7 @@ export type DashboardPayload = {
       oa: number;
       sa: number;
       ma: number;
+      ra: number;
       cpfis: number;
       totalCpf: number;
     } | null;
@@ -330,10 +360,63 @@ function housingLoanToProjection(
   };
 }
 
+function cpfInvestmentToProjection(
+  row: CpfInvestmentRow
+): CpfInvestmentProjectionInput {
+  return {
+    account: row.account,
+    purchaseMonth: row.purchase_month,
+    premiumType: row.premium_type,
+    amount: num(row.amount),
+    projectedGrowthAnnual: num(row.projected_growth_annual),
+    maturityMonth: row.maturity_month,
+  };
+}
+
 function ageAtEndOfYearMonth(birthYmd: string, yearMonth: string): number {
   const [y, m] = yearMonth.split("-").map(Number);
   const asOf = new Date(y, m, 0, 12, 0, 0, 0);
   return ageCompletedOnDate(birthYmd, asOf);
+}
+
+function isYearMonth(value: string | null | undefined): value is string {
+  return value != null && /^\d{4}-\d{2}$/.test(value);
+}
+
+function monthDistance(startYm: string, endYm: string): number {
+  const [sy, sm] = startYm.split("-").map(Number);
+  const [ey, em] = endYm.split("-").map(Number);
+  return (ey - sy) * 12 + (em - sm);
+}
+
+function cpfInitialSnapshot(cpfRow: CpfBalanceRow | null) {
+  return {
+    oa: cpfRow ? num(cpfRow.oa) : 0,
+    sa: cpfRow ? num(cpfRow.sa) : 0,
+    ma: cpfRow ? num(cpfRow.ma) : 0,
+    ra: 0,
+    oaAnnualRate:
+      cpfRow &&
+      cpfRow.oa_annual_rate != null &&
+      String(cpfRow.oa_annual_rate).trim() !== ""
+        ? num(cpfRow.oa_annual_rate)
+        : undefined,
+    saAnnualRate:
+      cpfRow &&
+      cpfRow.sa_annual_rate != null &&
+      String(cpfRow.sa_annual_rate).trim() !== ""
+        ? num(cpfRow.sa_annual_rate)
+        : undefined,
+    maAnnualRate:
+      cpfRow &&
+      cpfRow.ma_annual_rate != null &&
+      String(cpfRow.ma_annual_rate).trim() !== ""
+        ? num(cpfRow.ma_annual_rate)
+        : undefined,
+    cpfisMonthlyFromOa: cpfRow ? num(cpfRow.cpfis_monthly_from_oa) : 0,
+    cpfisNotionalBalance: cpfRow ? num(cpfRow.cpfis_notional_balance) : 0,
+    cpfisAnnualReturn: cpfRow ? num(cpfRow.cpfis_annual_return) : 0,
+  };
 }
 
 function buildCpfHousingMarkers(
@@ -379,6 +462,7 @@ export async function getDashboardPayload(
     overrideRows,
     baseGoals,
     cpfRow,
+    cpfInvestmentRows,
     housingLoanRows,
     vehicleRows,
     incomeTaxConfig,
@@ -421,6 +505,9 @@ export async function getDashboardPayload(
     isAdvisorViewer
       ? advisorReadCpfBalances(supabase, userId)
       : getCpfBalanceByUserId(supabase, userId),
+    isAdvisorViewer
+      ? advisorReadCpfInvestments(supabase, userId)
+      : listCpfInvestments(supabase, userId),
     isAdvisorViewer
       ? advisorReadHousingLoans(supabase, userId)
       : listHousingLoans(supabase, userId),
@@ -545,6 +632,109 @@ export async function getDashboardPayload(
     birthRaw &&
     typeof birthRaw === "string" &&
     birthDateIsValidPast(birthRaw);
+  const grossMonthlyForCpf = profileMonthlyGross(profile);
+  const bandStrForCpf = profileCpfAgeBand(profile);
+  const fixedCpfBand: SgCpfAgeBand | undefined =
+    bandStrForCpf === "below_55" ||
+    bandStrForCpf === "above_55_to_60" ||
+    bandStrForCpf === "above_60_to_65" ||
+    bandStrForCpf === "above_65_to_70" ||
+    bandStrForCpf === "above_70"
+      ? bandStrForCpf
+      : undefined;
+  const cpfProjectionMissingInputs: DashboardPayload["cpfProjectionMissingInputs"] =
+    [];
+  if (!cpfRow) {
+    cpfProjectionMissingInputs.push({
+      label: "CPF OA / SA / MA balances",
+      href: "/setup?tab=cpf#cpf-balances",
+    });
+  }
+  if (cpfRow && !isYearMonth(cpfRow.balance_as_of_month)) {
+    cpfProjectionMissingInputs.push({
+      label: "CPF balance as-of month",
+      href: "/setup?tab=cpf#cpf-balances",
+    });
+  }
+  if (grossMonthlyForCpf == null || grossMonthlyForCpf <= 0) {
+    cpfProjectionMissingInputs.push({
+      label: "Monthly gross salary",
+      href: "/setup?tab=profile#profile-assumptions",
+    });
+  }
+  if (!birthValidForAge && fixedCpfBand == null) {
+    cpfProjectionMissingInputs.push({
+      label: "Birth date or CPF age band",
+      href: "/setup?tab=profile#profile-assumptions",
+    });
+  }
+  const cpfBalanceAsOfMonth = cpfRow?.balance_as_of_month ?? null;
+  const cpfProjectionStartYearMonth = isYearMonth(cpfBalanceAsOfMonth)
+    ? addMonthsToYearMonth(cpfBalanceAsOfMonth, 1)
+    : null;
+  const cpfYearEndTargetYearMonth = `${yearMonth.slice(0, 4)}-12`;
+  let cpfYearEndProjection: DashboardPayload["cpfYearEndProjection"] = null;
+  let cpfMonthlySeriesForProjection:
+    | ReturnType<typeof buildCpfMonthlyProjectionSeries>
+    | null = null;
+  if (
+    cpfProjectionMissingInputs.length === 0 &&
+    cpfRow &&
+    cpfProjectionStartYearMonth != null &&
+    grossMonthlyForCpf != null
+  ) {
+    const monthsToYearEnd = monthDistance(
+      cpfProjectionStartYearMonth,
+      cpfYearEndTargetYearMonth
+    );
+    if (monthsToYearEnd < 0) {
+      const initialCpf = cpfInitialSnapshot(cpfRow);
+      const cpfis = initialCpf.cpfisNotionalBalance;
+      cpfYearEndProjection = {
+        balanceAsOfMonth: cpfRow.balance_as_of_month!,
+        startYearMonth: null,
+        targetYearMonth: cpfYearEndTargetYearMonth,
+        projectedMonths: 0,
+        oa: initialCpf.oa,
+        sa: initialCpf.sa,
+        ma: initialCpf.ma,
+        ra: initialCpf.ra ?? 0,
+        cpfis,
+        totalCpf: initialCpf.oa + initialCpf.sa + initialCpf.ma + cpfis,
+      };
+    } else {
+      const yearEndHorizonMonths = monthsToYearEnd + 1;
+      cpfMonthlySeriesForProjection = buildCpfMonthlyProjectionSeries({
+        startYearMonth: cpfProjectionStartYearMonth,
+        horizonMonths: yearEndHorizonMonths,
+        birthDate:
+          birthValidForAge && typeof birthRaw === "string" ? birthRaw : null,
+        fixedCpfAgeBand: fixedCpfBand,
+        grossMonthly: grossMonthlyForCpf,
+        annualBonus: profileAnnualBonus(profile),
+        annualSalaryGrowthNominal: profileAnnualSalaryGrowthNominal(profile),
+        initial: cpfInitialSnapshot(cpfRow),
+        housingLoans: housingLoanRows.map(housingLoanToProjection),
+        cpfInvestments: cpfInvestmentRows.map(cpfInvestmentToProjection),
+      });
+      const yearEndRow =
+        cpfMonthlySeriesForProjection[cpfMonthlySeriesForProjection.length - 1];
+      if (yearEndRow) {
+        cpfYearEndProjection = {
+          balanceAsOfMonth: cpfRow.balance_as_of_month!,
+          startYearMonth: cpfProjectionStartYearMonth,
+          targetYearMonth: cpfYearEndTargetYearMonth,
+          projectedMonths: yearEndHorizonMonths,
+          oa: yearEndRow.oa,
+          sa: yearEndRow.sa,
+          ma: yearEndRow.ma,
+          ra: yearEndRow.ra,
+          cpfis: yearEndRow.cpfis,
+          totalCpf: yearEndRow.totalCpf,
+        };
+      }
+    }
+  }
   const monthsToRetirementHorizon: number | null = birthValidForAge
     ? Math.max(
         0,
@@ -682,58 +872,43 @@ export async function getDashboardPayload(
       liabilitiesTotal +
       vehiclesNetAtRet;
 
-    if (cpfRow) {
+    if (
+      cpfMonthlySeriesForProjection != null &&
+      cpfRow &&
+      cpfProjectionStartYearMonth != null &&
+      grossMonthlyForCpf != null
+    ) {
       const maxAgeOnAxis = Math.max(...nwAgePoints.map((p) => p.age));
-      const horizonMonths = Math.max(
-        1,
-        (maxAgeOnAxis - currentAge) * 12 + 1
+      const lastAgePointYearMonth = addMonthsToYearMonth(
+        yearMonth,
+        (maxAgeOnAxis - currentAge) * 12
       );
-      const grossMonthly = profileMonthlyGross(profile) ?? 0;
-      const bandStr = profileCpfAgeBand(profile);
-      const fixedBand: SgCpfAgeBand | undefined =
-        bandStr === "below_55" ||
-        bandStr === "above_55_to_60" ||
-        bandStr === "above_60_to_65" ||
-        bandStr === "above_65_to_70" ||
-        bandStr === "above_70"
-          ? bandStr
-          : undefined;
-      const monthlySeries = buildCpfMonthlyProjectionSeries({
-        startYearMonth: yearMonth,
+      const horizonMonths = Math.max(
+        cpfMonthlySeriesForProjection.length,
+        monthDistance(cpfProjectionStartYearMonth, lastAgePointYearMonth) + 1
+      );
+      const monthlySeries =
+        cpfMonthlySeriesForProjection.length >= horizonMonths
+          ? cpfMonthlySeriesForProjection
+          : buildCpfMonthlyProjectionSeries({
+        startYearMonth: cpfProjectionStartYearMonth,
         horizonMonths,
         birthDate: birthRaw,
-        fixedCpfAgeBand: fixedBand,
-        grossMonthly,
+        fixedCpfAgeBand: fixedCpfBand,
+        grossMonthly: grossMonthlyForCpf,
         annualBonus: profileAnnualBonus(profile),
         annualSalaryGrowthNominal: profileAnnualSalaryGrowthNominal(profile),
-        initial: {
-          oa: num(cpfRow.oa),
-          sa: num(cpfRow.sa),
-          ma: num(cpfRow.ma),
-          oaAnnualRate:
-            cpfRow.oa_annual_rate != null &&
-            String(cpfRow.oa_annual_rate).trim() !== ""
-              ? num(cpfRow.oa_annual_rate)
-              : undefined,
-          saAnnualRate:
-            cpfRow.sa_annual_rate != null &&
-            String(cpfRow.sa_annual_rate).trim() !== ""
-              ? num(cpfRow.sa_annual_rate)
-              : undefined,
-          maAnnualRate:
-            cpfRow.ma_annual_rate != null &&
-            String(cpfRow.ma_annual_rate).trim() !== ""
-              ? num(cpfRow.ma_annual_rate)
-              : undefined,
-          cpfisMonthlyFromOa: num(cpfRow.cpfis_monthly_from_oa),
-          cpfisNotionalBalance: num(cpfRow.cpfis_notional_balance),
-          cpfisAnnualReturn: num(cpfRow.cpfis_annual_return),
-        },
+        initial: cpfInitialSnapshot(cpfRow),
         housingLoans: housingLoanRows.map(housingLoanToProjection),
-      });
+        cpfInvestments: cpfInvestmentRows.map(cpfInvestmentToProjection),
+          });
       cpfProjectionByAge = nwAgePoints.map((p) => {
+        const targetYearMonth = addMonthsToYearMonth(
+          yearMonth,
+          (p.age - currentAge) * 12
+        );
         const idx = Math.min(
-          Math.max(0, (p.age - currentAge) * 12),
+          Math.max(0, monthDistance(cpfProjectionStartYearMonth, targetYearMonth)),
           monthlySeries.length - 1
         );
         const row = monthlySeries[idx];
@@ -742,12 +917,20 @@ export async function getDashboardPayload(
           oa: row?.oa ?? 0,
           sa: row?.sa ?? 0,
           ma: row?.ma ?? 0,
+          ra: row?.ra ?? 0,
           cpfis: row?.cpfis ?? 0,
           totalCpf: row?.totalCpf ?? 0,
         };
       });
       cpfHousingMarkers = buildCpfHousingMarkers(birthRaw, housingLoanRows);
-      const retIdx = Math.min(monthsToRet, monthlySeries.length - 1);
+      const retirementYearMonth = addMonthsToYearMonth(yearMonth, monthsToRet);
+      const retIdx = Math.min(
+        Math.max(
+          0,
+          monthDistance(cpfProjectionStartYearMonth, retirementYearMonth)
+        ),
+        monthlySeries.length - 1
+      );
       const cpfAtRetirement = monthlySeries[retIdx]?.totalCpf ?? 0;
       projectedAtRetirement =
         invAtRet +
@@ -771,6 +954,7 @@ export async function getDashboardPayload(
           oa: rowAtTarget.oa,
           sa: rowAtTarget.sa,
           ma: rowAtTarget.ma,
+          ra: rowAtTarget.ra,
           cpfis: rowAtTarget.cpfis,
           totalCpf: rowAtTarget.totalCpf,
         };
@@ -834,6 +1018,7 @@ export async function getDashboardPayload(
         cpfOa: cpfRowAge?.oa ?? 0,
         cpfSa: cpfRowAge?.sa ?? 0,
         cpfMa: cpfRowAge?.ma ?? 0,
+        cpfRa: cpfRowAge?.ra ?? 0,
         cpfCpfis: cpfRowAge?.cpfis ?? 0,
         liabilities: liabilitiesTotal,
         vehiclesNet: vehiclesNetHorizon,
@@ -928,6 +1113,8 @@ export async function getDashboardPayload(
     projectionPreview,
     ageProjection,
     cpfProjectionByAge,
+    cpfYearEndProjection,
+    cpfProjectionMissingInputs,
     cpfHousingMarkers,
     cpfHousingLoanCountInProjection: housingLoanRows.length,
     hasCpfBalanceRecord: !!cpfRow,
