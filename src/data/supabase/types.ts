@@ -357,7 +357,16 @@ export type AdvisorProposalChangeRow = {
   id: string;
   proposal_id: string;
   section: string;
-  entity_type: "profile" | "budget_line" | "goal" | "investment";
+  entity_type:
+    | "profile"
+    | "budget_line"
+    | "goal"
+    | "investment"
+    | "cash_account"
+    | "liability"
+    | "property"
+    | "housing_loan"
+    | "vehicle";
   entity_id: string | null;
   field_key: string;
   field_label: string;
@@ -379,6 +388,23 @@ export type AdvisorProposalSectionNoteRow = {
   proposal_id: string;
   section: string;
   note: string;
+};
+
+export type AdvisorConsentVisibilityCategory =
+  | "cash_accounts"
+  | "liabilities"
+  | "properties"
+  | "housing_loans"
+  | "vehicles";
+
+export type AdvisorConsentCategoryVisibilityRow = {
+  id: string;
+  client_user_id: string;
+  advisor_user_id: string;
+  visibility_category: AdvisorConsentVisibilityCategory;
+  is_visible: boolean;
+  created_at: string;
+  updated_at: string;
 };
 
 /** Generic inbox row (migration `20260519000000`). Dedupe-keyed per user. */

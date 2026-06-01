@@ -2,13 +2,14 @@
 
 # Function tree — `src/lib`
 
-24 module(s).
+25 module(s).
 
 ## Modules
 
 | Module | Classification | Fns | Edges out |
 | --- | --- | ---: | ---: |
 | [`src/lib/advisor-access-key-token.ts`](#src-lib-advisor-access-key-token-ts) | `regular` | 2 | 1 |
+| [`src/lib/advisor-visibility.ts`](#src-lib-advisor-visibility-ts) | `regular` | 2 | 0 |
 | [`src/lib/body-scroll-lock.ts`](#src-lib-body-scroll-lock-ts) | `regular` | 2 | 1 |
 | [`src/lib/client-main-nav.test.ts`](#src-lib-client-main-nav-test-ts) | `regular` | 1 | 0 |
 | [`src/lib/client-main-nav.ts`](#src-lib-client-main-nav-ts) | `regular` | 4 | 0 |
@@ -31,7 +32,7 @@
 | [`src/lib/site-origin.ts`](#src-lib-site-origin-ts) | `regular` | 3 | 3 |
 | [`src/lib/supabase-error.ts`](#src-lib-supabase-error-ts) | `regular` | 3 | 2 |
 | [`src/lib/validation.test.ts`](#src-lib-validation-test-ts) | `regular` | 0 | 0 |
-| [`src/lib/validation.ts`](#src-lib-validation-ts) | `regular` | 2 | 6 |
+| [`src/lib/validation.ts`](#src-lib-validation-ts) | `regular` | 5 | 8 |
 
 ## Functions
 
@@ -48,6 +49,18 @@ Classification: `regular`
 - calls: `src/lib/advisor-access-key-token.ts#generateAdvisorAccessKeyToken`
 - called by: `src/server/advisor-access-key-actions.ts#generateAdvisorAccessKeysPocAction`
 
+### `src/lib/advisor-visibility.ts` <a id="src-lib-advisor-visibility-ts"></a>
+
+Classification: `regular`
+
+#### `isAdvisorVisibilityCategory` — function, L27
+
+- called by: `src/data/repositories/advisor-clients.ts#advisorReadCategoryVisibility`, `src/data/repositories/advisor-clients.ts#getMyAdvisorCategoryVisibility`, `src/server/client-consent-actions.ts#updateCategoryVisibilityAction`
+
+#### `defaultCategoryVisibility` — function, L39
+
+- called by: `src/data/repositories/advisor-clients.ts#advisorReadCategoryVisibility`, `src/data/repositories/advisor-clients.ts#getMyAdvisorCategoryVisibility`
+
 ### `src/lib/body-scroll-lock.ts` <a id="src-lib-body-scroll-lock-ts"></a>
 
 Classification: `regular`
@@ -59,7 +72,7 @@ Classification: `regular`
 #### `lockBodyScroll` — function, L11
 
 - calls: `src/lib/body-scroll-lock.ts#getLockCount`
-- called by: `src/features/app-shell/AppShellNav.tsx#AppShellMobileNav`, `src/features/help/MethodologySheet.tsx#MethodologySheet`
+- called by: `src/features/app-shell/AppShellNav.tsx#AppShellMobileNav`, `src/features/help/MethodologySheet.tsx#MethodologySheet`, `src/ui/ConfirmDialog.tsx#ConfirmDialog`
 
 ### `src/lib/client-main-nav.test.ts` <a id="src-lib-client-main-nav-test-ts"></a>
 
@@ -111,7 +124,7 @@ Classification: `regular`
 
 #### `formatYearMonth` — function, L9
 
-- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/budget/page.tsx#BudgetPage`, `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/budget/route.ts#GET`, `src/app/api/dashboard/route.ts#GET`, `src/app/api/profile/route.ts#PATCH`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals`, `src/domain/finance/vehicle-sg.ts#completedMonthsSinceReg`, `src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash`, `src/domain/finance/vehicle-sg.ts#loanMonthsRemainingResolved`, `src/domain/finance/vehicle-sg.ts#vehicleGrossAssetEstimate`, `src/domain/finance/vehicle-sg.ts#vehicleGrossFromPurchaseToTerminalLinear`, `src/domain/finance/vehicle-sg.ts#vehicleGrossFromRebatesRemainingToTerminal`, `src/domain/finance/vehicle-sg.ts#vehicleNetListedBeforeLiquidation`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`, `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`, `src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#defaultExpenseDateForBudgetMonth`, `src/lib/setup-urls.ts#setupTabPath`, `src/server/actions.ts#applyGuidedBudgetLinesAction`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/budget/page.tsx#BudgetPage`, `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/budget/route.ts#GET`, `src/app/api/dashboard/route.ts#GET`, `src/app/api/profile/route.ts#PATCH`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals`, `src/domain/finance/vehicle-sg.ts#completedMonthsSinceReg`, `src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash`, `src/domain/finance/vehicle-sg.ts#loanMonthsRemainingResolved`, `src/domain/finance/vehicle-sg.ts#vehicleGrossAssetEstimate`, `src/domain/finance/vehicle-sg.ts#vehicleGrossFromPurchaseToTerminalLinear`, `src/domain/finance/vehicle-sg.ts#vehicleGrossFromRebatesRemainingToTerminal`, `src/domain/finance/vehicle-sg.ts#vehicleNetListedBeforeLiquidation`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`, `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`, `src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#defaultExpenseDateForBudgetMonth`, `src/lib/setup-urls.ts#setupTabPath`, `src/server/actions.ts#applyGuidedBudgetLinesAction`
 
 #### `parseYearMonth` — function, L15
 
@@ -119,7 +132,7 @@ Classification: `regular`
 
 #### `yearFromYearMonth` — function, L20
 
-- called by: `src/app/(app)/budget/page.tsx#BudgetPage`, `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/budget/BudgetMonthJump.tsx#BudgetMonthJump`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection`, `src/features/dashboard/DashboardOverviewSection.tsx#DashboardOverviewSection`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/lib/setup-urls.ts#setupTabPath`
+- called by: `src/app/(app)/budget/page.tsx#BudgetPage`, `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/budget/BudgetMonthJump.tsx#BudgetMonthJump`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection`, `src/features/dashboard/DashboardOverviewSection.tsx#DashboardOverviewSection`, `src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/lib/setup-urls.ts#setupTabPath`
 
 #### `addMonthsToYearMonth` — function, L25
 
@@ -145,7 +158,7 @@ Classification: `regular`
 
 #### `isSupabaseConfigured` — function, L8
 
-- called by: `src/app/(app)/account-issue/page.tsx#AccountIssuePage`, `src/app/(app)/advisor/access-keys/page.tsx#AdvisorAccessKeysPage`, `src/app/(app)/advisor/buy-keys/page.tsx#AdvisorBuyKeysPage`, `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/advisor/clients/page.tsx#AdvisorClientsPage`, `src/app/(app)/advisor/page.tsx#AdvisorDashboardPage`, `src/app/(app)/advisor/profile/page.tsx#AdvisorProfilePage`, `src/app/(app)/budget/page.tsx#BudgetPage`, `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/layout.tsx#AppLayout`, `src/app/(app)/onboarding/page.tsx#OnboardingPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/overview/page.tsx#SetupOverviewPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/budget/route.ts#GET`, `src/app/api/dashboard/route.ts#GET`, `src/app/api/expenses/[id]/route.ts#DELETE`, `src/app/api/expenses/[id]/route.ts#PATCH`, `src/app/api/expenses/route.ts#POST`, `src/app/api/income-tax/route.ts#PATCH`, `src/app/api/profile/route.ts#PATCH`, `src/app/api/projection/route.ts#GET`, `src/app/login/page.tsx#LoginPage`
+- called by: `src/app/(app)/account-issue/page.tsx#AccountIssuePage`, `src/app/(app)/advisor/access-keys/page.tsx#AdvisorAccessKeysPage`, `src/app/(app)/advisor/buy-keys/page.tsx#AdvisorBuyKeysPage`, `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/advisor/clients/page.tsx#AdvisorClientsPage`, `src/app/(app)/advisor/page.tsx#AdvisorDashboardPage`, `src/app/(app)/advisor/profile/page.tsx#AdvisorProfilePage`, `src/app/(app)/budget/page.tsx#BudgetPage`, `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/layout.tsx#AppLayout`, `src/app/(app)/onboarding/page.tsx#OnboardingPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`, `src/app/(app)/setup/overview/page.tsx#SetupOverviewPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/budget/route.ts#GET`, `src/app/api/dashboard/route.ts#GET`, `src/app/api/expenses/[id]/route.ts#DELETE`, `src/app/api/expenses/[id]/route.ts#PATCH`, `src/app/api/expenses/route.ts#POST`, `src/app/api/income-tax/route.ts#PATCH`, `src/app/api/profile/route.ts#PATCH`, `src/app/api/projection/route.ts#GET`, `src/app/login/page.tsx#LoginPage`
 
 #### `requireSupabaseEnv` — function, L15
 
@@ -212,12 +225,12 @@ Classification: `regular`
 #### `isAdvisor` — function, L17
 
 - calls: `src/lib/profile-role.ts#getCurrentUserRole`
-- called by: `src/app/(app)/advisor/access-keys/page.tsx#AdvisorAccessKeysPage`, `src/app/(app)/advisor/buy-keys/page.tsx#AdvisorBuyKeysPage`, `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/advisor/clients/page.tsx#AdvisorClientsPage`, `src/app/(app)/advisor/page.tsx#AdvisorDashboardPage`, `src/app/(app)/advisor/profile/page.tsx#AdvisorProfilePage`, `src/app/(app)/layout.tsx#AppLayout`, `src/lib/profile-role.ts#isAdvisorProfile`, `src/server/advisor-access-key-actions.ts#generateAdvisorAccessKeysPocAction`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-key-purchase-actions.ts#requireAdvisorSession`, `src/server/advisor-proposal-actions.ts#requireAdvisorDraftProposal`, `src/server/advisor-qr-share-actions.ts#refreshAdvisorQrShareAction`
+- called by: `src/app/(app)/advisor/access-keys/page.tsx#AdvisorAccessKeysPage`, `src/app/(app)/advisor/buy-keys/page.tsx#AdvisorBuyKeysPage`, `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/advisor/clients/page.tsx#AdvisorClientsPage`, `src/app/(app)/advisor/page.tsx#AdvisorDashboardPage`, `src/app/(app)/advisor/profile/page.tsx#AdvisorProfilePage`, `src/app/(app)/layout.tsx#AppLayout`, `src/lib/profile-role.ts#isAdvisorProfile`, `src/server/advisor-access-key-actions.ts#generateAdvisorAccessKeysPocAction`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-key-purchase-actions.ts#requireAdvisorSession`, `src/server/advisor-proposal-actions.ts#requireAdvisorProposalInStatus`, `src/server/advisor-qr-share-actions.ts#refreshAdvisorQrShareAction`
 
 #### `isClient` — function, L21
 
 - calls: `src/lib/profile-role.ts#getCurrentUserRole`
-- called by: `src/app/(app)/more/page.tsx#MorePage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/lib/profile-role.ts#clientAdvisorRelationshipOk`, `src/lib/profile-role.ts#isClientProfile`, `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction`, `src/server/client-consent-actions.ts#getAdvisorConsentGateAction`, `src/server/client-consent-actions.ts#recordAdvisorConsentAction`
+- called by: `src/app/(app)/more/page.tsx#MorePage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/lib/profile-role.ts#clientAdvisorRelationshipOk`, `src/lib/profile-role.ts#isClientProfile`, `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction`, `src/server/client-consent-actions.ts#getAdvisorConsentGateAction`, `src/server/client-consent-actions.ts#recordAdvisorConsentAction`, `src/server/client-consent-actions.ts#updateCategoryVisibilityAction`
 
 #### `isAdvisorProfile` — function, L25
 
@@ -356,8 +369,22 @@ Classification: `regular`
 
 #### `birthDateIsValidPast` — function, L49
 
-- called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/projection/route.ts#GET`, `src/data/dashboard.ts#getDashboardPayload`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
+- called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/projection/route.ts#GET`, `src/data/dashboard.ts#getDashboardPayload`, `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
 #### `reliefAmount` — arrow, L328
 
 - calls: `[external] zod`
+
+#### `normalizeEntityName` — function, L536
+
+- called by: `src/domain/advisor-proposals/apply-changes.ts#detectNameConflicts`, `src/lib/validation.ts#entityNameCollides`
+
+#### `entityNameCollides` — function, L541
+
+- calls: `src/lib/validation.ts#normalizeEntityName`
+- called by: `src/lib/validation.ts#entityNameUniquenessError`
+
+#### `entityNameUniquenessError` — function, L553
+
+- calls: `src/lib/validation.ts#entityNameCollides`
+- called by: `src/server/actions.ts#findNameCollision`, `src/server/advisor-client-actions.ts#createAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#createAdvisorClientGoalAction`, `src/server/advisor-client-actions.ts#createAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#createAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#createAdvisorClientVehicleAction`

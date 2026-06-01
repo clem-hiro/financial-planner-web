@@ -1,13 +1,12 @@
 "use client";
 
-import { useActionState, useRef, type ReactNode } from "react";
+import { useActionState, useEffect, useRef, useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import { fieldMeta } from "@/domain/advisor-proposals/field-registry";
 import { ProposalProjectionCompare } from "@/features/proposals/ProposalProjectionCompare";
 import { formatProposalDisplayValue } from "@/domain/advisor-proposals/format-display";
-import {
-  compareSectionOrder,
-  sectionLabel,
-} from "@/domain/advisor-proposals/sections";
+import { groupChangesBySection } from "@/domain/advisor-proposals/group-changes";
+import { sectionLabel } from "@/domain/advisor-proposals/sections";
 import type {
   AdvisorProposalChangeRow,
   AdvisorProposalRow,
@@ -21,34 +20,9 @@ import {
 } from "@/server/advisor-proposal-actions";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { CollapsiblePane } from "@/ui/CollapsiblePaneRail";
+import { ConfirmDialog } from "@/ui/ConfirmDialog";
 import { appCardClass, appCardPadding } from "@/ui/surface-classes";
 import Link from "next/link";
-
-type SectionBlock = {
-  section: string;
-  changes: AdvisorProposalChangeRow[];
-  sectionNote: string | null;
-};
-
-function groupBySection(
-  changes: AdvisorProposalChangeRow[],
-  sectionNotes: AdvisorProposalSectionNoteRow[]
-): SectionBlock[] {
-  const noteMap = new Map(sectionNotes.map((n) => [n.section, n.note]));
-  const map = new Map<string, AdvisorProposalChangeRow[]>();
-  for (const c of changes) {
-    const list = map.get(c.section) ?? [];
-    list.push(c);
-    map.set(c.section, list);
-  }
-  return [...map.entries()]
-    .sort(([a], [b]) => compareSectionOrder(a, b))
-    .map(([section, sectionChanges]) => ({
-      section,
-      changes: sectionChanges,
-      sectionNote: noteMap.get(section) ?? null,
-    }));
-}
 
 function formatSubmittedDate(iso: string | null): string {
   if (!iso) return "";
@@ -69,13 +43,30 @@ function formatSubmittedDate(iso: string | null): string {
  * advisor to re-baseline (B8); the client cannot self-resolve, so we name
  * the stale items and block Accept (Reject stays available).
  */
-export function ProposalReviewActions({ proposalId }: { proposalId: string }) {
+export function ProposalReviewActions({
+  proposalId,
+  status,
+  surface = "footer",
+}: {
+  proposalId: string;
+  /** Drives pending-only action UI. The dialog host stays mounted across the
+   * accept→accepted flip so the approval dialog survives the revalidate
+   * re-render (it would unmount if gated by isPending in the parent). */
+  status: AdvisorProposalRow["status"];
+  /** Chrome around the pending action row: in-flow card vs frozen bottom bar. */
+  surface?: "footer" | "fixedBar";
+}) {
+  const router = useRouter();
+  const isPending = status === "pending";
   // Single in-flight guard — belt to the `disabled` suspenders. Blocks a
   // second submit of accept OR reject from entering the server action via
   // Enter+click or a pre-hydration double-fire. Same lockRef pattern as
   // AdvisorProposeRemovalButton (set on entry, cleared in finally,
   // early-return if already locked); shared so the two can't interleave.
   const lockRef = useRef(false);
+  const acceptFormRef = useRef<HTMLFormElement>(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [approvalOpen, setApprovalOpen] = useState(false);
 
   const [acceptState, acceptAction, acceptPending] = useActionState(
     async (prev: AcceptProposalState, fd: FormData) => {
@@ -101,6 +92,15 @@ export function ProposalReviewActions({ proposalId }: { proposalId: string }) {
     },
     { error: null as string | null }
   );
+  // A fully-applied accept flips ok → swap the confirm dialog for the approval
+  // dialog. (ok is set only on success; conflict/error leave it falsy.)
+  useEffect(() => {
+    if (acceptState.ok) {
+      setConfirmOpen(false);
+      setApprovalOpen(true);
+    }
+  }, [acceptState.ok]);
+
   const actionPending = acceptPending || rejectPending;
   const conflicts: ProposalConflict[] = acceptState.conflicts ?? [];
   const conflictLabels = [...new Set(conflicts.map((c) => c.label))];
@@ -111,7 +111,7 @@ export function ProposalReviewActions({ proposalId }: { proposalId: string }) {
     ),
   ];
 
-  return (
+  const actionBody = (
     <div className="space-y-3">
       <BlockingSubmitOverlay
         active={actionPending}
@@ -149,18 +149,72 @@ export function ProposalReviewActions({ proposalId }: { proposalId: string }) {
             {rejectPending ? "Rejecting…" : "Reject changes"}
           </button>
         </form>
-        <form action={acceptAction}>
+        {/* Hidden form is the submit mechanism; the visible button opens the
+            confirm dialog, which calls requestSubmit() on confirm (keeps the
+            lockRef + progressive-enhancement action path). */}
+        <form ref={acceptFormRef} action={acceptAction}>
           <input type="hidden" name="proposal_id" value={proposalId} />
-          <button
-            type="submit"
-            disabled={acceptPending || rejectPending || conflicted}
-            className="w-full rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-50 sm:w-auto"
-          >
-            {acceptPending ? "Applying…" : "Accept changes"}
-          </button>
         </form>
+        <button
+          type="button"
+          onClick={() => setConfirmOpen(true)}
+          disabled={acceptPending || rejectPending || conflicted}
+          className="w-full rounded-xl bg-slate-900 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-50 sm:w-auto"
+        >
+          {acceptPending ? "Applying…" : "Accept changes"}
+        </button>
       </div>
     </div>
+  );
+
+  return (
+    <>
+      {/* Action row renders only while pending; the dialogs below stay mounted
+          regardless so the approval dialog persists past accept→accepted. */}
+      {isPending ? (
+        surface === "fixedBar" ? (
+          // fixed (not sticky): a sticky bottom-0 bar lifts off the viewport at
+          // page bottom in WebKit. Mirrors OnboardingWizard's fixed nav.
+          <div className="fixed inset-x-0 bottom-0 z-20 border-t border-slate-200/90 bg-white/95 px-4 py-3 backdrop-blur-sm supports-[backdrop-filter]:bg-white/80 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            <div className="mx-auto max-w-3xl">{actionBody}</div>
+          </div>
+        ) : (
+          <footer className={`${appCardClass} ${appCardPadding} space-y-4`}>
+            <p className="text-sm text-slate-600">
+              Accepting applies these updates to your plan. Rejecting leaves your
+              current data unchanged.
+            </p>
+            {actionBody}
+          </footer>
+        )
+      ) : null}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Apply these changes?"
+        body="Apply these changes to your plan? Your plan updates immediately."
+        confirmLabel="Apply changes"
+        cancelLabel="Cancel"
+        onConfirm={() => {
+          setConfirmOpen(false);
+          acceptFormRef.current?.requestSubmit();
+        }}
+        onCancel={() => setConfirmOpen(false)}
+      />
+
+      <ConfirmDialog
+        open={approvalOpen}
+        title="Proposal Approved"
+        body={'Head to "Setup" tab to view?'}
+        confirmLabel="Go to page"
+        cancelLabel="Stay on page"
+        onConfirm={() => router.push("/setup?tab=profile")}
+        onCancel={() => {
+          setApprovalOpen(false);
+          router.refresh();
+        }}
+      />
+    </>
   );
 }
 
@@ -193,8 +247,8 @@ export function ProposalReviewView({
   backHref?: string;
   backLabel?: string;
 }) {
-  const sections = groupBySection(changes, sectionNotes);
-  const isPending = proposal.status === "pending";
+  const sections = groupChangesBySection(changes);
+  const noteMap = new Map(sectionNotes.map((n) => [n.section, n.note]));
 
   return (
     <div className="mx-auto max-w-3xl space-y-8 pb-16">
@@ -240,65 +294,77 @@ export function ProposalReviewView({
       </header>
 
       {sections.length > 0 ? (
-        <CollapsiblePane title={`Suggested changes (${changes.length})`}>
+        <CollapsiblePane title="Advisor Proposals">
           <div className="space-y-6">
-            {sections.map((block) => (
-              <section key={block.section} className="space-y-3">
-                <div>
-                  <h3 className="text-sm font-semibold tracking-tight text-slate-900">
-                    {sectionLabel(block.section)}
-                  </h3>
-                  {block.sectionNote ? (
-                    <p className="mt-1 text-xs leading-relaxed text-slate-500">
-                      {block.sectionNote}
-                    </p>
+            {sections.map((block) => {
+              const note = noteMap.get(block.section) ?? null;
+              return (
+                <div key={block.section} className="space-y-3">
+                  {note ? (
+                    <p className="text-xs leading-relaxed text-slate-500">{note}</p>
                   ) : null}
+                  {block.entities.map((entity) => (
+                    <section
+                      key={`${entity.entityType}:${entity.entityId ?? "profile"}`}
+                      className="space-y-2"
+                    >
+                      {/* Account is now the heading, so the field labels drop
+                          their redundant " (Account)" suffix below. */}
+                      <h3 className="text-sm font-semibold tracking-tight text-slate-900">
+                        {sectionLabel(block.section)} — {entity.headline}
+                      </h3>
+                      <ul className="space-y-2">
+                        {entity.changes.map((c) => {
+                          const meta = fieldMeta(c.entity_type, c.field_key);
+                          const label = c.field_label.replace(
+                            /\s*\([^)]+\)\s*$/,
+                            ""
+                          );
+                          const oldDisplay = formatProposalDisplayValue(
+                            c.old_value,
+                            meta,
+                            currencyCode
+                          );
+                          const newDisplay = formatProposalDisplayValue(
+                            c.new_value,
+                            meta,
+                            currencyCode
+                          );
+                          return (
+                            <li
+                              key={c.id}
+                              className="rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-3"
+                            >
+                              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                                <p className="text-sm font-medium text-slate-800">
+                                  {label}
+                                </p>
+                                <div className="flex flex-wrap items-baseline gap-2 text-sm tabular-nums">
+                                  <span className="text-slate-400 line-through decoration-slate-300/80">
+                                    {oldDisplay}
+                                  </span>
+                                  <span className="text-slate-300" aria-hidden>
+                                    →
+                                  </span>
+                                  <span className="font-semibold text-slate-900">
+                                    {newDisplay}
+                                  </span>
+                                </div>
+                              </div>
+                              {c.explanation ? (
+                                <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
+                                  {c.explanation}
+                                </p>
+                              ) : null}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </section>
+                  ))}
                 </div>
-                <ul className="space-y-2">
-                  {block.changes.map((c) => {
-                    const meta = fieldMeta(c.entity_type, c.field_key);
-                    const oldDisplay = formatProposalDisplayValue(
-                      c.old_value,
-                      meta,
-                      currencyCode
-                    );
-                    const newDisplay = formatProposalDisplayValue(
-                      c.new_value,
-                      meta,
-                      currencyCode
-                    );
-                    return (
-                      <li
-                        key={c.id}
-                        className="rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-3"
-                      >
-                        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-                          <p className="text-sm font-medium text-slate-800">
-                            {c.field_label}
-                          </p>
-                          <div className="flex flex-wrap items-baseline gap-2 text-sm tabular-nums">
-                            <span className="text-slate-400 line-through decoration-slate-300/80">
-                              {oldDisplay}
-                            </span>
-                            <span className="text-slate-300" aria-hidden>
-                              →
-                            </span>
-                            <span className="font-semibold text-slate-900">
-                              {newDisplay}
-                            </span>
-                          </div>
-                        </div>
-                        {c.explanation ? (
-                          <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
-                            {c.explanation}
-                          </p>
-                        ) : null}
-                      </li>
-                    );
-                  })}
-                </ul>
-              </section>
-            ))}
+              );
+            })}
           </div>
         </CollapsiblePane>
       ) : null}
@@ -320,14 +386,11 @@ export function ProposalReviewView({
         </section>
       ) : null}
 
-      {isPending && !hideFooterActions ? (
-        <footer className={`${appCardClass} ${appCardPadding} space-y-4`}>
-          <p className="text-sm text-slate-600">
-            Accepting applies these updates to your plan. Rejecting leaves your current data
-            unchanged.
-          </p>
-          <ProposalReviewActions proposalId={proposal.id} />
-        </footer>
+      {/* Mounted regardless of status (footer chrome shows only while pending,
+          inside the component) so the approval dialog survives accept→accepted.
+          hideFooterActions = caller renders its own ProposalReviewActions. */}
+      {!hideFooterActions ? (
+        <ProposalReviewActions proposalId={proposal.id} status={proposal.status} />
       ) : null}
     </div>
   );

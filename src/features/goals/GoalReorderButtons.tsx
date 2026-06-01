@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useRef } from "react";
 import { reorderFinancialGoalAction } from "@/server/actions";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
@@ -15,10 +16,19 @@ export function GoalReorderButtons({
   canMoveUp: boolean;
   canMoveDown: boolean;
 }) {
+  const router = useRouter();
   const [state, formAction, pending] = useActionState(
     reorderFinancialGoalAction,
     initial
   );
+  // The reorder action returns no success flag, so detect the pending→done
+  // edge and refresh once on success (revalidatePath doesn't re-render the
+  // current view). router.refresh() leaves pending/error untouched ⇒ no loop.
+  const wasPending = useRef(false);
+  useEffect(() => {
+    if (wasPending.current && !pending && !state.error) router.refresh();
+    wasPending.current = pending;
+  }, [pending, state.error, router]);
 
   if (!canMoveUp && !canMoveDown) return null;
 

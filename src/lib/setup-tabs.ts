@@ -11,5 +11,6 @@ export function buildSetupTabs(): readonly SetupTabDef[] {
     { id: "vehicles", label: "Vehicles" },
     { id: "budget", label: "Budget" },
     { id: "goals", label: "Goals" },
+    { id: "advisor-proposals", label: "Advisor proposals" },
   ] as const;
 }

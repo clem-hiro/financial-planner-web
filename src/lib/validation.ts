@@ -437,6 +437,88 @@ export const cashAccountWriteSchema = z.object({
   purpose: cashAccountPurposeSchema,
 });
 
+export const propertyTypeSchema = housingPropertyTypeSchema;
+export const propertyStatusSchema = housingPropertyStatusSchema;
+export const propertyPlanningScopeSchema = z.enum([
+  "current",
+  "future_simulation",
+]);
+
+/** Allowlist for advisor-composed property proposals. Name field is `name`. */
+export const propertyWriteSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  property_type: propertyTypeSchema.default("unknown"),
+  purchase_price: z
+    .number()
+    .nonnegative()
+    .max(1_000_000_000)
+    .nullable()
+    .optional(),
+  current_valuation: z
+    .number()
+    .nonnegative()
+    .max(1_000_000_000)
+    .nullable()
+    .optional(),
+  ownership_percent: z.number().min(0).max(100).default(100),
+  status: propertyStatusSchema.default("living_in"),
+  rental_income_monthly: z.number().nonnegative().max(10_000_000).default(0),
+  planning_scope: propertyPlanningScopeSchema.default("current"),
+});
+
+export const lenderTypeSchema = z.enum(["hdb", "bank", "other"]);
+
+/** Allowlist for advisor-composed housing-loan proposals. Core editable fields;
+ * accept defaults the OA/BSD modelling columns. Name field is `label`.
+ * `property_id` links to an existing property (or, at accept, a property created
+ * in the same proposal — remapped + BOLA-checked server-side). */
+export const housingLoanWriteSchema = z.object({
+  label: z.string().trim().min(1).max(120),
+  property_id: z.string().uuid().nullable().optional(),
+  principal: z.number().nonnegative().max(1_000_000_000),
+  annual_nominal_rate: z.number().min(0).max(1),
+  term_months: z.number().int().min(0).max(1200),
+  first_payment_month: z.string().trim().min(1).max(7),
+  lender_type: lenderTypeSchema.default("bank"),
+});
+
+export const vehicleStatusSchema = z.enum(["active", "planned"]);
+
+/** Allowlist for advisor-composed vehicle proposals. Core editable fields only;
+ * the accept writer defaults the remaining `financial_vehicles` modelling
+ * columns (the client refines them in their own full vehicle form). Name field
+ * is `label`. */
+export const vehicleWriteSchema = z.object({
+  label: z.string().trim().min(1).max(120),
+  vehicle_status: vehicleStatusSchema.default("active"),
+  current_market_value: z
+    .number()
+    .nonnegative()
+    .max(100_000_000)
+    .nullable()
+    .optional(),
+  on_the_road_paid: z
+    .number()
+    .nonnegative()
+    .max(100_000_000)
+    .nullable()
+    .optional(),
+  loan_balance: z.number().nonnegative().max(100_000_000).nullable().optional(),
+  loan_monthly_payment: z
+    .number()
+    .nonnegative()
+    .max(1_000_000)
+    .nullable()
+    .optional(),
+  loan_months_remaining: z
+    .number()
+    .int()
+    .min(0)
+    .max(600)
+    .nullable()
+    .optional(),
+});
+
 export const couponCodeInputSchema = z
   .string()
   .trim()

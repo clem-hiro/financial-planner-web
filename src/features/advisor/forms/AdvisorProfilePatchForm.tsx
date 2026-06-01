@@ -104,7 +104,7 @@ export function AdvisorProfilePatchForm({
           disabled={pending || disabled}
           className="inline-flex rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-60"
         >
-          {pending ? "Saving…" : "Suggest change"}
+          {pending ? "Saving…" : "Save"}
         </button>
       </div>
     </form>

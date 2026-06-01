@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
+import { ConfirmDialog } from "@/ui/ConfirmDialog";
 
 type RemovalAction = (
   prev: { error: string | null },
@@ -33,17 +34,11 @@ export function AdvisorProposeRemovalButton({
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const lockRef = useRef(false);
 
   const run = async () => {
     if (lockRef.current) return;
-    if (
-      !window.confirm(
-        `Suggest removing “${entityName}”? Your client reviews this before their plan changes.`
-      )
-    ) {
-      return;
-    }
     lockRef.current = true;
     setError(null);
     setPending(true);
@@ -68,7 +63,7 @@ export function AdvisorProposeRemovalButton({
       <BlockingSubmitOverlay active={pending} message="Recording suggestion…" />
       <button
         type="button"
-        onClick={run}
+        onClick={() => setConfirmOpen(true)}
         disabled={pending || disabled}
         className="text-xs font-medium text-slate-500 underline-offset-2 hover:text-rose-700 hover:underline disabled:opacity-50"
       >
@@ -79,6 +74,18 @@ export function AdvisorProposeRemovalButton({
           {error}
         </span>
       ) : null}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Suggest removal"
+        body={`Suggest removing “${entityName}”? Your client reviews this before their plan changes.`}
+        confirmLabel="Remove"
+        cancelLabel="Cancel"
+        onConfirm={() => {
+          setConfirmOpen(false);
+          void run();
+        }}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </span>
   );
 }

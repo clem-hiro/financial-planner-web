@@ -7,9 +7,11 @@ import { markAsReadByDedupeKey } from "@/data/repositories/inbox-notifications";
 import { getMyAdvisorContact } from "@/data/repositories/coupons";
 import {
   getMyConsentStatusForAdvisor,
+  upsertAdvisorCategoryVisibility,
   type AdvisorClientConsentStatus,
 } from "@/data/repositories/advisor-clients";
 import { createSupabaseServerClient } from "@/data/supabase/server";
+import { isAdvisorVisibilityCategory } from "@/lib/advisor-visibility";
 import { isClient } from "@/lib/profile-role";
 import {
   CONSENT_PURPOSE,
@@ -132,6 +134,61 @@ export async function recordAdvisorConsentAction(
   revalidatePath("/dashboard");
   revalidateSetupAndPlanning();
   return { error: null, status };
+}
+
+/**
+ * Client-only per-category visibility toggle (default PRIVATE). Same trust
+ * boundary as the consent writer: the writer is the CLIENT (session uid), and
+ * `advisor_user_id` is read from the client's OWN profile linkage — never form
+ * input, so a forged advisor id cannot bind visibility elsewhere. `category` is
+ * validated against the fixed 5-category set. The DB gate is default-deny, so
+ * this only ever flips a category ON/OFF for the linked advisor.
+ */
+export async function updateCategoryVisibilityAction(
+  _prev: { error: string | null; visible?: boolean },
+  formData: FormData
+): Promise<{ error: string | null; visible?: boolean }> {
+  const category = String(formData.get("category") ?? "").trim();
+  if (!isAdvisorVisibilityCategory(category)) {
+    return { error: "Invalid category" };
+  }
+  const isVisible = String(formData.get("is_visible") ?? "").trim() === "true";
+
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Sign in required" };
+
+  const me = await getProfileById(supabase, user.id);
+  if (!isClient(me)) return { error: "Not allowed" };
+
+  const advisorUserId = me?.advisor_user_id;
+  if (!advisorUserId) {
+    return { error: "No linked advisor to update visibility for" };
+  }
+
+  try {
+    await upsertAdvisorCategoryVisibility(supabase, {
+      clientId: user.id, // session uid — never form input
+      advisorUserId, // profile linkage — never form input
+      category,
+      isVisible,
+    });
+  } catch (e) {
+    console.error(e);
+    return { error: "Could not update visibility. Please try again." };
+  }
+
+  // Advisor read/compose access for this category flips on their next read.
+  // /setup + /more both surface the toggle — revalidate so they stay in sync.
+  revalidatePath("/advisor/clients");
+  revalidatePath(`/advisor/client/${user.id}`);
+  revalidatePath("/more");
+  revalidatePath("/setup");
+  // Return the new value so the client can render optimistically + drive a
+  // router.refresh() (revalidatePath alone doesn't re-render the current view).
+  return { error: null, visible: isVisible };
 }
 
 export type AdvisorConsentGate = {

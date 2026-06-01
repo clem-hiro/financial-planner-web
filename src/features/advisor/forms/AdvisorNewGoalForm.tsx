@@ -83,7 +83,7 @@ export function AdvisorNewGoalForm({
           disabled={pending || disabled}
           className="rounded-lg bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-slate-800 disabled:opacity-50"
         >
-          {pending ? "Suggesting…" : "Suggest new goal"}
+          {pending ? "Saving…" : "Save"}
         </button>
       </div>
     </form>

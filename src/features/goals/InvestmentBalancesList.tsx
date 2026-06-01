@@ -20,6 +20,7 @@ import {
 import { InvestmentAssumptionBanner } from "@/features/goals/InvestmentAssumptionBanner";
 import { InfoTooltip } from "@/ui/InfoTooltip";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
+import { ConfirmDialog } from "@/ui/ConfirmDialog";
 import { fpInputClass, fpPrimaryButtonClass } from "@/ui/input-classes";
 import { formatCurrency } from "@/ui/lib/format";
 
@@ -548,7 +549,7 @@ function InvestmentEditForm({
           disabled={pending || disabled}
           className={`${fpPrimaryButtonClass} disabled:cursor-not-allowed disabled:opacity-60`}
         >
-          {pending ? "Saving…" : advisorClientId ? "Suggest changes" : "Save changes"}
+          {pending ? "Saving…" : "Save"}
         </button>
       </div>
     </form>
@@ -573,17 +574,17 @@ function InvestmentRow({
   const [editing, setEditing] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deletePending, setDeletePending] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const deleteLockRef = useRef(false);
 
-  const runDelete = async () => {
+  // Advisor compose only STAGES a removal proposal (withdrawable/rejectable),
+  // so it must not say "cannot be undone" — match AdvisorProposeRemovalButton.
+  const confirmMessage = advisorClientId
+    ? `Suggest removing “${investment.name}”? Your client reviews this before their plan changes.`
+    : `Remove “${investment.name}” from the plan? This cannot be undone.`;
+
+  const performDelete = async () => {
     if (deleteLockRef.current) return;
-    if (
-      !window.confirm(
-        `Remove “${investment.name}” from the plan? This cannot be undone.`
-      )
-    ) {
-      return;
-    }
     deleteLockRef.current = true;
     setDeleteError(null);
     setDeletePending(true);
@@ -614,10 +615,22 @@ function InvestmentRow({
           currencyCode={currencyCode}
           planningContext={planningContext}
           onEdit={() => setEditing(true)}
-          onDelete={runDelete}
+          onDelete={() => setConfirmOpen(true)}
           deleteError={deleteError}
           deletePending={deletePending}
           actionsDisabled={advisorSuggestionDisabled}
+        />
+        <ConfirmDialog
+          open={confirmOpen}
+          title={advisorClientId ? "Suggest removal" : "Remove account"}
+          body={confirmMessage}
+          confirmLabel="Remove"
+          cancelLabel="Cancel"
+          onConfirm={() => {
+            setConfirmOpen(false);
+            void performDelete();
+          }}
+          onCancel={() => setConfirmOpen(false)}
         />
       </>
     );
@@ -692,6 +705,7 @@ export function InvestmentBalancesList({
   advisorSuggestionDisabled = false,
   accountsHeading = "Your accounts",
   showReviewPrompt = false,
+  showAssumptionBanner = true,
 }: {
   items: InvestmentBalanceRow[];
   currencyCode: string;
@@ -703,6 +717,8 @@ export function InvestmentBalancesList({
   accountsHeading?: string;
   /** Show annual review prompt when balances/returns may be outdated. */
   showReviewPrompt?: boolean;
+  /** Suppress when a sibling pane already renders the banner (avoid stacked duplicates). */
+  showAssumptionBanner?: boolean;
 }) {
   const total = items.reduce((acc, i) => acc + i.current_value, 0);
   const staleCount = items.filter((i) => investmentRowIsStale(i)).length;
@@ -713,7 +729,7 @@ export function InvestmentBalancesList({
 
   return (
     <section className="space-y-3">
-      <InvestmentAssumptionBanner />
+      {showAssumptionBanner ? <InvestmentAssumptionBanner /> : null}
       {showReviewPrompt && staleCount > 0 && !advisorClientId ? (
         <InvestmentReviewPrompt
           staleCount={staleCount}

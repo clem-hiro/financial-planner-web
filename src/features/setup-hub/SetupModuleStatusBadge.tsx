@@ -19,6 +19,11 @@ const STATUS_META: Record<
     icon: "○",
     className: "border-slate-200/80 bg-slate-50/90 text-slate-600",
   },
+  pending: {
+    label: "Pending",
+    icon: "🕐",
+    className: "border-sky-200/80 bg-sky-50/90 text-sky-900",
+  },
 };
 
 export function SetupModuleStatusBadge({

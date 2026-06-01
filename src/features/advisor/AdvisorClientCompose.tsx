@@ -1,12 +1,44 @@
 import type { DashboardPayload } from "@/data/dashboard";
 import { num } from "@/data/mappers";
-import type { BudgetLineRow, FinancialGoalRow, InvestmentRow } from "@/data/supabase/types";
+import type {
+  BudgetLineRow,
+  CashAccountRow,
+  FinancialGoalRow,
+  HousingLoanRow,
+  InvestmentRow,
+  LiabilityRow,
+  PropertyRow,
+  VehicleRow,
+} from "@/data/supabase/types";
 import type { ProfileRow } from "@/data/supabase/types";
 import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
+import {
+  AdvisorClientCashSection,
+  type AdvisorCashRow,
+} from "@/features/advisor/AdvisorClientCashSection";
+import {
+  AdvisorClientLiabilitySection,
+  type AdvisorLiabilityRow,
+} from "@/features/advisor/AdvisorClientLiabilitySection";
+import {
+  AdvisorClientVehicleSection,
+  type AdvisorVehicleRow,
+} from "@/features/advisor/AdvisorClientVehicleSection";
+import {
+  AdvisorClientPropertySection,
+  type AdvisorPropertyRow,
+} from "@/features/advisor/AdvisorClientPropertySection";
+import {
+  AdvisorClientHousingLoanSection,
+  type AdvisorHousingLoanRow,
+} from "@/features/advisor/AdvisorClientHousingLoanSection";
 import { AdvisorBadge, AdvisorSection } from "@/features/advisor/advisor-workspace-primitives";
 import { AdvisorClientHeader } from "@/features/advisor/AdvisorClientHeader";
 import { AdvisorConsentRequired } from "@/features/advisor/AdvisorConsentRequired";
-import { AdvisorProposalDraftPanel } from "@/features/advisor/AdvisorProposalDraftPanel";
+import {
+  DraftSummaryPanel,
+  SubmitProposalBar,
+} from "@/features/advisor/AdvisorProposalDraftPanel";
 import { AdvisorProposeRemovalButton } from "@/features/advisor/AdvisorProposeRemovalButton";
 import { AdvisorSuggestionModeBanner } from "@/features/advisor/AdvisorSuggestionModeBanner";
 import { AdvisorBudgetLineAmountForm } from "@/features/advisor/forms/AdvisorBudgetLineAmountForm";
@@ -14,6 +46,7 @@ import { AdvisorGoalContributionForm } from "@/features/advisor/forms/AdvisorGoa
 import { AdvisorNewBudgetLineForm } from "@/features/advisor/forms/AdvisorNewBudgetLineForm";
 import { AdvisorNewGoalForm } from "@/features/advisor/forms/AdvisorNewGoalForm";
 import { AdvisorProfilePatchForm } from "@/features/advisor/forms/AdvisorProfilePatchForm";
+import { InvestmentAssumptionBanner } from "@/features/goals/InvestmentAssumptionBanner";
 import {
   InvestmentBalancesList,
   type InvestmentBalanceRow,
@@ -39,6 +72,16 @@ export function AdvisorClientCompose({
   goals,
   budgetLines,
   investments,
+  cashAccounts,
+  cashVisible,
+  liabilities,
+  liabilitiesVisible,
+  vehicles,
+  vehiclesVisible,
+  properties,
+  propertiesVisible,
+  housingLoans,
+  housingLoansVisible,
   month,
   draftProposalId,
   draftChanges,
@@ -51,6 +94,21 @@ export function AdvisorClientCompose({
   goals: FinancialGoalRow[];
   budgetLines: BudgetLineRow[];
   investments: InvestmentRow[];
+  cashAccounts: CashAccountRow[];
+  /** Whether the client has shared the cash_accounts category (Phase 1 toggle). */
+  cashVisible: boolean;
+  liabilities: LiabilityRow[];
+  /** Whether the client has shared the liabilities category (Phase 1 toggle). */
+  liabilitiesVisible: boolean;
+  vehicles: VehicleRow[];
+  /** Whether the client has shared the vehicles category (Phase 1 toggle). */
+  vehiclesVisible: boolean;
+  properties: PropertyRow[];
+  /** Whether the client has shared the properties category (Phase 1 toggle). */
+  propertiesVisible: boolean;
+  housingLoans: HousingLoanRow[];
+  /** Whether the client has shared the housing_loans category (Phase 1 toggle). */
+  housingLoansVisible: boolean;
   month: string;
   draftProposalId: string | null;
   draftChanges: AdvisorProposalChangeRow[];
@@ -93,9 +151,92 @@ export function AdvisorClientCompose({
         }
       : null;
   const monthlyBudgetLines = budgetLines.filter((b) => b.cadence === "monthly");
+  const cashRows: AdvisorCashRow[] = cashAccounts.map((c) => ({
+    id: c.id,
+    name: c.name,
+    balance: num(c.balance),
+    purpose: c.purpose,
+  }));
+  const liabilityRows: AdvisorLiabilityRow[] = liabilities.map((l) => ({
+    id: l.id,
+    name: l.name,
+    balance: num(l.balance),
+    category: l.category ?? null,
+    interestRatePercent:
+      l.interest_rate_annual != null && String(l.interest_rate_annual).trim() !== ""
+        ? num(l.interest_rate_annual) * 100
+        : null,
+    remainingTenureYears:
+      l.remaining_tenure_months != null
+        ? Math.round((l.remaining_tenure_months / 12) * 10) / 10
+        : null,
+    monthlyRepayment:
+      l.monthly_repayment != null && String(l.monthly_repayment).trim() !== ""
+        ? num(l.monthly_repayment)
+        : null,
+  }));
+  const vehicleRows: AdvisorVehicleRow[] = vehicles.map((v) => ({
+    id: v.id,
+    label: v.label,
+    status: v.vehicle_status,
+    marketValue:
+      v.current_market_value != null &&
+      String(v.current_market_value).trim() !== ""
+        ? num(v.current_market_value)
+        : null,
+    onTheRoadPaid:
+      v.on_the_road_paid != null && String(v.on_the_road_paid).trim() !== ""
+        ? num(v.on_the_road_paid)
+        : null,
+    loanBalance:
+      v.loan_balance != null && String(v.loan_balance).trim() !== ""
+        ? num(v.loan_balance)
+        : null,
+    loanMonthlyPayment:
+      v.loan_monthly_payment != null &&
+      String(v.loan_monthly_payment).trim() !== ""
+        ? num(v.loan_monthly_payment)
+        : null,
+    loanMonthsRemaining: v.loan_months_remaining ?? null,
+  }));
+  const propertyRows: AdvisorPropertyRow[] = properties.map((p) => ({
+    id: p.id,
+    name: p.name,
+    propertyType: p.property_type,
+    status: p.status,
+    purchasePrice:
+      p.purchase_price != null && String(p.purchase_price).trim() !== ""
+        ? num(p.purchase_price)
+        : null,
+    currentValuation:
+      p.current_valuation != null && String(p.current_valuation).trim() !== ""
+        ? num(p.current_valuation)
+        : null,
+    ownershipPercent: num(p.ownership_percent),
+    rentalIncomeMonthly: num(p.rental_income_monthly),
+  }));
+  const housingLoanRows: AdvisorHousingLoanRow[] = housingLoans.map((h) => ({
+    id: h.id,
+    label: h.label,
+    propertyId: h.property_id ?? null,
+    principal: num(h.principal),
+    ratePercent:
+      h.annual_nominal_rate != null && String(h.annual_nominal_rate).trim() !== ""
+        ? num(h.annual_nominal_rate) * 100
+        : 0,
+    termMonths: h.term_months ?? 0,
+    firstPaymentMonth: h.first_payment_month ?? "",
+    lenderType: h.lender_type,
+  }));
+  // Loans link to shared properties; empty when properties aren't shared.
+  const propertyOptions = propertyRows.map((p) => ({ id: p.id, name: p.name }));
+
+  // Frozen submit bar is fixed to the viewport bottom; pad the page so the last
+  // section isn't occluded. Only shows while a draft exists and not locked.
+  const showSubmitBar = !hasPendingProposal && !!draftProposalId;
 
   return (
-    <div className="space-y-8 lg:space-y-10">
+    <div className={`space-y-8 lg:space-y-10 ${showSubmitBar ? "pb-44" : ""}`}>
       <AdvisorClientHeader profile={profile} payload={payload} month={month} />
 
       <AdvisorSuggestionModeBanner
@@ -104,7 +245,7 @@ export function AdvisorClientCompose({
       />
 
       <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start xl:gap-10">
-        <div className="space-y-8">
+        <div id="advisor-compose-left" className="space-y-8">
           <AdvisorSection
             id="profile"
             eyebrow="Operational"
@@ -238,13 +379,8 @@ export function AdvisorClientCompose({
             title="Investments & savings"
             description="Add, edit, or remove investment accounts — saved as suggestions until the client accepts."
           >
+            <InvestmentAssumptionBanner className="mb-4" />
             <div className="overflow-hidden rounded-xl border border-slate-100 bg-white divide-y divide-slate-100">
-              <div className="p-4 sm:p-5">
-                <InvestmentForm
-                  advisorClientId={clientId}
-                  advisorSuggestionDisabled={hasPendingProposal}
-                />
-              </div>
               {investmentBalanceRows.length > 0 ? (
                 <div className="p-4 sm:p-5">
                   <InvestmentBalancesList
@@ -254,17 +390,111 @@ export function AdvisorClientCompose({
                     advisorClientId={clientId}
                     advisorSuggestionDisabled={hasPendingProposal}
                     accountsHeading="Client accounts"
+                    showAssumptionBanner={false}
                   />
                 </div>
               ) : null}
+              <div className="p-4 sm:p-5">
+                <InvestmentForm
+                  advisorClientId={clientId}
+                  advisorSuggestionDisabled={hasPendingProposal}
+                  showAssumptionBanner={false}
+                />
+              </div>
             </div>
+          </AdvisorSection>
+
+          <AdvisorSection
+            id="cash-accounts"
+            title="Cash accounts"
+            description="Bank and savings balances — saved as suggestions until the client accepts."
+          >
+            {cashVisible ? (
+              <AdvisorClientCashSection
+                clientId={clientId}
+                accounts={cashRows}
+                currencyCode={currency}
+                disabled={hasPendingProposal}
+              />
+            ) : (
+              <LockedCategoryCard label="Cash accounts" />
+            )}
+          </AdvisorSection>
+
+          <AdvisorSection
+            id="liabilities"
+            title="Liabilities"
+            description="Loans and debts — saved as suggestions until the client accepts."
+          >
+            {liabilitiesVisible ? (
+              <AdvisorClientLiabilitySection
+                clientId={clientId}
+                liabilities={liabilityRows}
+                currencyCode={currency}
+                disabled={hasPendingProposal}
+              />
+            ) : (
+              <LockedCategoryCard label="Liabilities" />
+            )}
+          </AdvisorSection>
+
+          <AdvisorSection
+            id="vehicles"
+            title="Vehicles"
+            description="Cars and other vehicles — saved as suggestions until the client accepts."
+          >
+            {vehiclesVisible ? (
+              <AdvisorClientVehicleSection
+                clientId={clientId}
+                vehicles={vehicleRows}
+                currencyCode={currency}
+                disabled={hasPendingProposal}
+              />
+            ) : (
+              <LockedCategoryCard label="Vehicles" />
+            )}
+          </AdvisorSection>
+
+          <AdvisorSection
+            id="properties"
+            title="Property"
+            description="Properties owned — saved as suggestions until the client accepts."
+          >
+            {propertiesVisible ? (
+              <AdvisorClientPropertySection
+                clientId={clientId}
+                properties={propertyRows}
+                currencyCode={currency}
+                disabled={hasPendingProposal}
+              />
+            ) : (
+              <LockedCategoryCard label="Property" />
+            )}
+          </AdvisorSection>
+
+          <AdvisorSection
+            id="housing-loans"
+            title="Housing loans"
+            description="Mortgages — saved as suggestions until the client accepts. Optionally link to a property."
+          >
+            {housingLoansVisible ? (
+              <AdvisorClientHousingLoanSection
+                clientId={clientId}
+                loans={housingLoanRows}
+                propertyOptions={propertyOptions}
+                currencyCode={currency}
+                disabled={hasPendingProposal}
+              />
+            ) : (
+              <LockedCategoryCard label="Housing loans" />
+            )}
           </AdvisorSection>
         </div>
 
         <CollapsiblePaneRail>
           <CollapsiblePane title="Suggested Plans Consolidation" defaultOpen>
             <div className="space-y-4">
-              <AdvisorProposalDraftPanel
+              <DraftSummaryPanel
                 proposalId={draftProposalId}
                 changes={draftChanges}
                 currencyCode={currency}
@@ -292,6 +522,39 @@ export function AdvisorClientCompose({
             </p>
           </CollapsiblePane>
         </CollapsiblePaneRail>
+      </div>
+
+      <SubmitProposalBar
+        proposalId={draftProposalId}
+        changeCount={draftChangeCount}
+        disabled={hasPendingProposal}
+        alignToId="advisor-compose-left"
+      />
+    </div>
+  );
+}
+
+/** Shown when a sensitive category is private (client hasn't opted in): a
+ * neutral locked card, no data fetched/displayed. The category name is omitted
+ * here — the parent AdvisorSection header already shows it; `label` only feeds
+ * the aria-label for screen readers. */
+function LockedCategoryCard({ label }: { label: string }) {
+  return (
+    <div
+      aria-label={`${label} — private`}
+      className="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5"
+    >
+      <span aria-hidden className="mt-0.5 text-slate-400">
+        🔒
+      </span>
+      <div className="space-y-1">
+        <span className="inline-flex rounded-full bg-slate-200 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+          Private
+        </span>
+        <p className="text-xs text-slate-500">
+          Client chose not to share this category. Ask them to enable it under
+          Privacy &amp; Advisor Access to view or propose changes.
+        </p>
       </div>
     </div>
   );

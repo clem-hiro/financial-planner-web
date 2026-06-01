@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { countPendingProposalsForClient } from "@/data/repositories/advisor-proposals";
 import { getSetupHubSnapshot } from "@/data/setup-status";
 import { getRequestAuth } from "@/data/supabase/request-context";
 import { FinancialSetupHub } from "@/features/setup-hub/FinancialSetupHub";
@@ -27,7 +28,15 @@ export default async function SetupOverviewPage() {
     );
   }
 
-  const snapshot = await getSetupHubSnapshot(supabase, user.id, profile);
+  const [snapshot, pendingProposalCount] = await Promise.all([
+    getSetupHubSnapshot(supabase, user.id, profile),
+    countPendingProposalsForClient(supabase, user.id),
+  ]);
 
-  return <FinancialSetupHub snapshot={snapshot} />;
+  return (
+    <FinancialSetupHub
+      snapshot={snapshot}
+      advisorProposalPending={pendingProposalCount > 0}
+    />
+  );
 }

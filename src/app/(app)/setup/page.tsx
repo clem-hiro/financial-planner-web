@@ -8,6 +8,14 @@ import {
   profileMonthlyGross,
   profileSalaryTakeHomeMonthly,
 } from "@/data/mappers";
+import {
+  getMyAdvisorCategoryVisibility,
+  getMyConsentStatusForAdvisor,
+} from "@/data/repositories/advisor-clients";
+import {
+  countPendingProposalsForClient,
+  listProposalsForClient,
+} from "@/data/repositories/advisor-proposals";
 import { listBudgetLines } from "@/data/repositories/budget-lines";
 import { getIncomeTaxConfig } from "@/data/repositories/income-tax-configs";
 import { countReplaceableMonthlyBudgetLines } from "@/domain/finance/budget-guided-setup";
@@ -33,9 +41,12 @@ import { loadSetupTabBundle } from "@/features/planning/load-setup-tab-bundle";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { SetupTabsNav } from "@/features/setup/SetupTabsNav";
 import { BudgetLensProfileForm } from "@/features/setup/BudgetLensProfileForm";
+import { ClientProposalsView } from "@/features/proposals/ClientProposalsView";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth, parseYearMonth, yearFromYearMonth } from "@/lib/dates";
+import type { AdvisorCategoryVisibility } from "@/lib/advisor-visibility";
 import { isSupabaseConfigured } from "@/lib/env";
+import { isClient } from "@/lib/profile-role";
 import { SETUP_OVERVIEW_PATH, setupTabPath } from "@/lib/setup-urls";
 import { buildSetupTabs } from "@/lib/setup-tabs";
 import { shouldPromptCpfRulesReview } from "@/domain/finance/cpf-rules-review";
@@ -94,7 +105,25 @@ export default async function SetupPage({ searchParams }: PageProps) {
       ? budgetYearParsed
       : yearFromYearMonth(budgetMonth);
 
-  const [tabBundle, incomeTaxConfig, budgetLinesForLens] = await Promise.all([
+  // Per-category advisor-visibility toggles render inline on the account tabs,
+  // but only in the client's own self-view with a linked + actively-consented
+  // advisor (same gate as /more#privacy-advisor-access). Null ⇒ hidden.
+  const advisorUserId = financialProfile?.advisor_user_id ?? null;
+  const tabUsesVisibility =
+    activeTab === "cash-liabilities" ||
+    activeTab === "housing" ||
+    activeTab === "vehicles";
+  const visibilityEligible =
+    tabUsesVisibility && isClient(financialProfile) && !!advisorUserId;
+
+  const [
+    tabBundle,
+    incomeTaxConfig,
+    budgetLinesForLens,
+    advisorProposals,
+    advisorVisibility,
+    pendingProposalCount,
+  ] = await Promise.all([
     loadSetupTabBundle(supabase, user.id, new Set([activeTab])),
     activeTab === "income_tax"
       ? getIncomeTaxConfig(supabase, user.id)
@@ -102,6 +131,19 @@ export default async function SetupPage({ searchParams }: PageProps) {
     activeTab === "profile"
       ? listBudgetLines(supabase, user.id)
       : Promise.resolve([]),
+    activeTab === "advisor-proposals"
+      ? listProposalsForClient(supabase, user.id, 25)
+      : Promise.resolve([]),
+    visibilityEligible && advisorUserId
+      ? Promise.all([
+          getMyConsentStatusForAdvisor(supabase, user.id, advisorUserId),
+          getMyAdvisorCategoryVisibility(supabase, user.id, advisorUserId),
+        ]).then(([status, vis]): AdvisorCategoryVisibility | null =>
+          status === "active" ? vis : null
+        )
+      : Promise.resolve<AdvisorCategoryVisibility | null>(null),
+    // Pending-proposal badge — fetched on every load (cheap head count).
+    countPendingProposalsForClient(supabase, user.id),
   ]);
   const replaceableMonthlyLineCount =
     activeTab === "profile"
@@ -208,6 +250,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           activeTab={activeTab}
           overviewHref={SETUP_OVERVIEW_PATH}
           buildHref={(tabId) => setupTabPath(tabId, sp)}
+          badges={{ "advisor-proposals": pendingProposalCount }}
         />
       </div>
 
@@ -303,6 +346,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
                     currencyCode={currency}
                     planningContext={investmentPlanningContext}
                     showReviewPrompt={showInvestmentReviewPrompt}
+                    showAssumptionBanner={false}
                   />
                 </div>
               ) : null}
@@ -344,6 +388,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
               cashHistoryByAccountId={cashHistoryByAccountId}
               liabilityRows={liabilityRows}
               currencyCode={currency}
+              advisorVisibility={advisorVisibility}
             />
           </PageSection>
         </div>
@@ -371,6 +416,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
               properties={properties}
               loans={housingLoans}
               currencyCode={currency}
+              advisorVisibility={advisorVisibility}
             />
           </PageSection>
         </div>
@@ -387,7 +433,11 @@ export default async function SetupPage({ searchParams }: PageProps) {
               </span>
             }
           >
-            <VehiclesPanel vehicles={vehicleRows} currencyCode={currency} />
+            <VehiclesPanel
+              vehicles={vehicleRows}
+              currencyCode={currency}
+              advisorVisibility={advisorVisibility}
+            />
           </PageSection>
         </div>
       ) : null}
@@ -421,8 +471,19 @@ export default async function SetupPage({ searchParams }: PageProps) {
           />
         </div>
       ) : null}
-      </div>
 
+      {activeTab === "advisor-proposals" ? (
+        <div className="transition-opacity duration-150 ease-out">
+          <PageSection
+            id="advisor-proposals"
+            title="Advisor proposals"
+            description="Plan suggestions from your advisor — pending, accepted, rejected, and withdrawn. Always available here, even after you dismiss the inbox notification."
+          >
+            <ClientProposalsView proposals={advisorProposals} />
+          </PageSection>
+        </div>
+      ) : null}
+      </div>
     </div>
   );
 }
