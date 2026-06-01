@@ -39,10 +39,13 @@ const PROFILE_FIELDS: Record<string, ProposalFieldMeta> = {
 };
 
 const BUDGET_LINE_FIELDS: Record<string, ProposalFieldMeta> = {
+  category: { label: "Category", section: "cash_flow" },
   amount: { label: "Planned amount", section: "cash_flow", currency: true },
 };
 
 const GOAL_FIELDS: Record<string, ProposalFieldMeta> = {
+  title: { label: "Goal name", section: "goals" },
+  target_amount: { label: "Target amount", section: "goals", currency: true },
   monthly_contribution: { label: "Monthly contribution", section: "goals", currency: true },
 };
 
@@ -62,6 +65,61 @@ const INVESTMENT_FIELDS: Record<string, ProposalFieldMeta> = {
   _deleted: { label: "Account", section: "investments" },
 };
 
+const CASH_ACCOUNT_FIELDS: Record<string, ProposalFieldMeta> = {
+  name: { label: "Account name", section: "cash_flow" },
+  balance: { label: "Balance", section: "cash_flow", currency: true },
+  purpose: { label: "Purpose", section: "cash_flow" },
+  _deleted: { label: "Cash account", section: "cash_flow" },
+};
+
+const LIABILITY_FIELDS: Record<string, ProposalFieldMeta> = {
+  name: { label: "Liability name", section: "cash_flow" },
+  balance: { label: "Outstanding balance", section: "cash_flow", currency: true },
+  category: { label: "Category", section: "cash_flow" },
+  loan_type: { label: "Loan type", section: "cash_flow" },
+  interest_rate_annual: { label: "Interest rate", section: "cash_flow", percent: true },
+  remaining_tenure_months: { label: "Remaining tenure (months)", section: "cash_flow" },
+  monthly_repayment: { label: "Monthly repayment", section: "cash_flow", currency: true },
+  repayment_override: { label: "Manual repayment", section: "cash_flow" },
+  start_date: { label: "Start date", section: "cash_flow" },
+  notes: { label: "Notes", section: "cash_flow" },
+  _deleted: { label: "Liability", section: "cash_flow" },
+};
+
+const PROPERTY_FIELDS: Record<string, ProposalFieldMeta> = {
+  name: { label: "Property name", section: "cash_flow" },
+  property_type: { label: "Type", section: "cash_flow" },
+  purchase_price: { label: "Purchase price", section: "cash_flow", currency: true },
+  current_valuation: { label: "Current valuation", section: "cash_flow", currency: true },
+  ownership_percent: { label: "Ownership %", section: "cash_flow" },
+  status: { label: "Status", section: "cash_flow" },
+  rental_income_monthly: { label: "Rental income", section: "cash_flow", currency: true },
+  planning_scope: { label: "Planning scope", section: "cash_flow" },
+  _deleted: { label: "Property", section: "cash_flow" },
+};
+
+const HOUSING_LOAN_FIELDS: Record<string, ProposalFieldMeta> = {
+  label: { label: "Loan", section: "cash_flow" },
+  property_id: { label: "Linked property", section: "cash_flow" },
+  principal: { label: "Outstanding principal", section: "cash_flow", currency: true },
+  annual_nominal_rate: { label: "Interest rate", section: "cash_flow", percent: true },
+  term_months: { label: "Term (months)", section: "cash_flow" },
+  first_payment_month: { label: "First payment month", section: "cash_flow" },
+  lender_type: { label: "Lender", section: "cash_flow" },
+  _deleted: { label: "Housing loan", section: "cash_flow" },
+};
+
+const VEHICLE_FIELDS: Record<string, ProposalFieldMeta> = {
+  label: { label: "Vehicle", section: "cash_flow" },
+  vehicle_status: { label: "Status", section: "cash_flow" },
+  current_market_value: { label: "Market value", section: "cash_flow", currency: true },
+  on_the_road_paid: { label: "On-the-road price", section: "cash_flow", currency: true },
+  loan_balance: { label: "Loan balance", section: "cash_flow", currency: true },
+  loan_monthly_payment: { label: "Monthly repayment", section: "cash_flow", currency: true },
+  loan_months_remaining: { label: "Months remaining", section: "cash_flow" },
+  _deleted: { label: "Vehicle", section: "cash_flow" },
+};
+
 export function fieldMeta(
   entityType: ProposalEntityType,
   fieldKey: string
@@ -73,7 +131,17 @@ export function fieldMeta(
         ? BUDGET_LINE_FIELDS
         : entityType === "goal"
           ? GOAL_FIELDS
-          : INVESTMENT_FIELDS;
+          : entityType === "cash_account"
+            ? CASH_ACCOUNT_FIELDS
+            : entityType === "liability"
+              ? LIABILITY_FIELDS
+              : entityType === "vehicle"
+                ? VEHICLE_FIELDS
+                : entityType === "property"
+                  ? PROPERTY_FIELDS
+                  : entityType === "housing_loan"
+                    ? HOUSING_LOAN_FIELDS
+                    : INVESTMENT_FIELDS;
   return (
     map[fieldKey] ?? {
       label: fieldKey.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
@@ -84,7 +152,13 @@ export function fieldMeta(
             ? "cash_flow"
             : entityType === "goal"
               ? "goals"
-              : "investments",
+              : entityType === "cash_account" ||
+                  entityType === "liability" ||
+                  entityType === "vehicle" ||
+                  entityType === "property" ||
+                  entityType === "housing_loan"
+                ? "cash_flow"
+                : "investments",
     }
   );
 }

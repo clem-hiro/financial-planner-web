@@ -1,7 +1,10 @@
 import { describe, expect, it } from "vitest";
 import {
   clientAccessKeyInputSchema,
+  entityNameCollides,
+  entityNameUniquenessError,
   incomeTaxConfigPatchSchema,
+  normalizeEntityName,
   qrShareTokenSchema,
 } from "@/lib/validation";
 
@@ -140,5 +143,50 @@ describe("clientAccessKeyInputSchema", () => {
     expect(
       clientAccessKeyInputSchema.safeParse("GHIJKLMNOPQRSTUV").success
     ).toBe(false);
+  });
+});
+
+describe("entity name uniqueness (mirrors DB lower(btrim) index)", () => {
+  it("normalizeEntityName lowercases and trims", () => {
+    expect(normalizeEntityName("  ILP2 ")).toBe("ilp2");
+    expect(normalizeEntityName("Home Loan")).toBe("home loan");
+  });
+
+  it("detects a case-insensitive collision", () => {
+    expect(entityNameCollides("ilp2", ["ILP2"])).toBe(true);
+  });
+
+  it("detects a whitespace-only collision (leading/trailing)", () => {
+    expect(entityNameCollides("  ilp2  ", ["ilp2"])).toBe(true);
+  });
+
+  it("detects a combined case + whitespace collision", () => {
+    expect(entityNameCollides(" Ilp2 ", ["iLp2"])).toBe(true);
+  });
+
+  it("does not flag a genuinely distinct name", () => {
+    expect(entityNameCollides("ilp3", ["ilp2", "srs"])).toBe(false);
+  });
+
+  it("does not collide on an empty existing list", () => {
+    expect(entityNameCollides("ilp2", [])).toBe(false);
+  });
+
+  it("preserves interior whitespace (not collapsed)", () => {
+    // btrim only strips ends; 'a  b' and 'a b' stay distinct.
+    expect(entityNameCollides("a  b", ["a b"])).toBe(false);
+  });
+
+  it("uniquenessError returns a friendly message with the trimmed name", () => {
+    const msg = entityNameUniquenessError("  ILP2 ", ["ilp2"], "an investment");
+    expect(msg).toContain("an investment");
+    expect(msg).toContain("ILP2");
+    expect(msg).not.toMatch(/^\s/);
+  });
+
+  it("uniquenessError returns null when the name is free", () => {
+    expect(entityNameUniquenessError("ilp3", ["ilp2"], "an investment")).toBe(
+      null
+    );
   });
 });

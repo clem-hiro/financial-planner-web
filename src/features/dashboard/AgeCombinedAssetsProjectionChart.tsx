@@ -31,7 +31,7 @@ const fills = {
 } as const;
 
 function formatMoney(n: number, currency: string) {
-  return new Intl.NumberFormat(undefined, {
+  return new Intl.NumberFormat("en-SG", {
     style: "currency",
     currency,
     maximumFractionDigits: 0,
@@ -98,7 +98,7 @@ function AssetTooltip({
     annualBonusPayoutMonth != null &&
     annualBonusPayoutMonth >= 1 &&
     annualBonusPayoutMonth <= 12
-      ? new Date(2020, annualBonusPayoutMonth - 1, 15).toLocaleString(undefined, {
+      ? new Date(2020, annualBonusPayoutMonth - 1, 15).toLocaleString("en-SG", {
           month: "long",
         })
       : null;
@@ -437,7 +437,7 @@ export function AgeCombinedAssetsProjectionChart({
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) =>
-                new Intl.NumberFormat(undefined, {
+                new Intl.NumberFormat("en-SG", {
                   notation: "compact",
                   maximumFractionDigits: 1,
                 }).format(v as number)

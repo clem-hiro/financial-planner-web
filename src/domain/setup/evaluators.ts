@@ -318,9 +318,12 @@ function evaluateDocuments(): SetupModuleEvaluation {
   };
 }
 
-const EVALUATORS: Record<
-  SetupModuleId,
-  (ctx: SetupEvaluationContext) => SetupModuleEvaluation
+// Partial: navigation-only modules (e.g. `advisor_proposal`) have no
+// completion semantics — they are intentionally absent here so they never
+// enter the snapshot / progress % / recommendations. FinancialSetupHub
+// renders them unconditionally instead.
+const EVALUATORS: Partial<
+  Record<SetupModuleId, (ctx: SetupEvaluationContext) => SetupModuleEvaluation>
 > = {
   profile: evaluateProfile,
   income_expenses: evaluateIncomeExpenses,
@@ -341,13 +344,19 @@ export function evaluateSetupModule(
   moduleId: SetupModuleId,
   ctx: SetupEvaluationContext
 ): SetupModuleEvaluation {
-  return EVALUATORS[moduleId](ctx);
+  const evaluate = EVALUATORS[moduleId];
+  if (!evaluate) {
+    throw new Error(`No setup evaluator for module: ${moduleId}`);
+  }
+  return evaluate(ctx);
 }
 
 export function evaluateAllSetupModules(
   ctx: SetupEvaluationContext
 ): SetupModuleEvaluation[] {
-  return SETUP_MODULES.map((m) => evaluateSetupModule(m.id, ctx));
+  return SETUP_MODULES.flatMap((m) =>
+    EVALUATORS[m.id] ? [evaluateSetupModule(m.id, ctx)] : []
+  );
 }
 
 export function summarizeSetupProgress(

@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition } from "react";
 import { markInboxItemReadByDedupeKeyAction } from "@/server/inbox-actions";
 import { ageCompletedOnDate } from "@/domain/finance/age-projection";
+import { yearFromYearMonth } from "@/lib/dates";
 import type { SgCpfAgeBand } from "@/domain/finance/sg-cpf";
 import {
   annualEmployeeCpfTakeHomeWithBonusSg,
@@ -37,7 +38,7 @@ const MONTH_OPTIONS: { value: string; label: string }[] = Array.from(
   { length: 12 },
   (_, i) => ({
     value: String(i + 1),
-    label: new Date(2000, i, 1).toLocaleString(undefined, { month: "long" }),
+    label: new Date(2000, i, 1).toLocaleString("en-SG", { month: "long" }),
   })
 );
 
@@ -94,7 +95,11 @@ export function ProfileIncomeForm({
   const router = useRouter();
   const searchParams = useSearchParams();
   const isSalaryReviewMode = searchParams?.get("from") === "salary-review";
-  const currentYear = new Date().getFullYear();
+  // Server-derived (cpfYearMonth is `formatYearMonth(new Date())` from the
+  // RSC parent at both call sites — current server period, never the
+  // user-selectable ?month=). Deterministic SSR↔client; also keeps the
+  // `salary_review_due:${currentYear}` dedupe key correct.
+  const currentYear = yearFromYearMonth(cpfYearMonth);
   const [salaryIncrementMonth, setSalaryIncrementMonth] = useState<string>(
     initialSalaryIncrementMonth != null
       ? String(initialSalaryIncrementMonth)
@@ -413,7 +418,7 @@ export function ProfileIncomeForm({
                   <span className="text-slate-500">Salary (monthly): </span>
                   <span className="font-mono tabular-nums font-semibold text-slate-900">
                     {currencyCode}{" "}
-                    {breakdown.takeHomeFromSalaryMonthly.toLocaleString(undefined, {
+                    {breakdown.takeHomeFromSalaryMonthly.toLocaleString("en-SG", {
                       maximumFractionDigits: 2,
                     })}
                   </span>
@@ -423,7 +428,7 @@ export function ProfileIncomeForm({
                   <span className="text-slate-500">Bonus (once per year, after employee CPF on AW): </span>
                   <span className="font-mono tabular-nums font-semibold text-slate-900">
                     {currencyCode}{" "}
-                    {breakdown.takeHomeFromBonusNetAnnual.toLocaleString(undefined, {
+                    {breakdown.takeHomeFromBonusNetAnnual.toLocaleString("en-SG", {
                       maximumFractionDigits: 2,
                     })}
                   </span>
@@ -435,7 +440,7 @@ export function ProfileIncomeForm({
                 {breakdown.employeeCpfOnAwAnnual > 0 && (
                   <p className="mt-1 text-slate-500">
                     Employee CPF on bonus (annual): {currencyCode}{" "}
-                    {breakdown.employeeCpfOnAwAnnual.toLocaleString(undefined, {
+                    {breakdown.employeeCpfOnAwAnnual.toLocaleString("en-SG", {
                       maximumFractionDigits: 2,
                     })}{" "}
                     — also reflected in the CPF projection with your monthly contributions.

@@ -3,7 +3,11 @@ import {
   getRequestAuth,
   getSupabaseServerClient,
 } from "@/data/supabase/request-context";
-import { getMyConsentStatusForAdvisor } from "@/data/repositories/advisor-clients";
+import {
+  getMyAdvisorCategoryVisibility,
+  getMyConsentStatusForAdvisor,
+} from "@/data/repositories/advisor-clients";
+import type { AdvisorCategoryVisibility } from "@/lib/advisor-visibility";
 import { getMyAdvisorContact } from "@/data/repositories/coupons";
 import { ClientConsentControl } from "@/features/consent/ClientConsentControl";
 import { ClientConsentMorePrompt } from "@/features/more/ClientConsentMorePrompt";
@@ -19,21 +23,21 @@ export default async function MorePage() {
   const showConsent = isClient(profile) && !!advisorUserId;
   let consentStatus: "active" | "withdrawn" | "none" = "none";
   let consentText = "";
+  let categoryVisibility: AdvisorCategoryVisibility | undefined;
   if (showConsent && profile && advisorUserId) {
     const supabase = await getSupabaseServerClient();
-    consentStatus = await getMyConsentStatusForAdvisor(
-      supabase,
-      profile.id,
-      advisorUserId
-    );
-    let adviserName: string | null = null;
-    try {
-      adviserName = (await getMyAdvisorContact(supabase)).advisor_name;
-    } catch {
-      adviserName = null;
-    }
+    // Three independent reads — one round-trip instead of three. The contact
+    // read is error-tolerant (a failure must not reject the batch); the other
+    // two are required.
+    const [status, visibility, contact] = await Promise.all([
+      getMyConsentStatusForAdvisor(supabase, profile.id, advisorUserId),
+      getMyAdvisorCategoryVisibility(supabase, profile.id, advisorUserId),
+      getMyAdvisorContact(supabase).catch(() => null),
+    ]);
+    consentStatus = status;
+    categoryVisibility = visibility;
     consentText = renderConsentText(
-      adviserName ?? "your linked financial adviser"
+      contact?.advisor_name ?? "your linked financial adviser"
     );
   }
 
@@ -142,6 +146,7 @@ export default async function MorePage() {
           <ClientConsentControl
             status={consentStatus}
             consentText={consentText}
+            categoryVisibility={categoryVisibility}
           />
         </section>
       ) : null}

@@ -134,6 +134,7 @@ export async function WealthPlanningSection() {
                     currencyCode={currency}
                     planningContext={investmentPlanningContext}
                     showReviewPrompt={showInvestmentReviewPrompt}
+                    showAssumptionBanner={false}
                   />
                 </div>
               ) : null}

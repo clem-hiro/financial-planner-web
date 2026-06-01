@@ -52,7 +52,7 @@ export function AdvisorGoalContributionForm({
         disabled={pending || disabled}
         className="text-xs font-semibold text-slate-600 underline-offset-2 hover:text-slate-900 hover:underline disabled:opacity-50"
       >
-        {pending ? "…" : "Suggest"}
+        {pending ? "Saving…" : "Save"}
       </button>
     </form>
   );

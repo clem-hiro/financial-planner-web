@@ -115,6 +115,9 @@ vi.mock("@/data/repositories/liabilities", () => ({
 vi.mock("@/data/repositories/cpf-balances", () => ({
   getCpfBalanceByUserId: async () => null,
 }));
+vi.mock("@/data/repositories/cpf-investments", () => ({
+  listCpfInvestments: async () => [],
+}));
 vi.mock("@/data/repositories/housing-loans", () => ({
   listHousingLoans: async () => [],
 }));

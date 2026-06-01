@@ -121,6 +121,8 @@ const h = vi.hoisted(() => {
     advisorReadGoals: vi.fn(async () => goals),
     getCpfBalanceByUserId: vi.fn(async () => null),
     advisorReadCpfBalances: vi.fn(async () => null),
+    listCpfInvestments: vi.fn(async () => []),
+    advisorReadCpfInvestments: vi.fn(async () => []),
     listHousingLoans: vi.fn(async () => []),
     advisorReadHousingLoans: vi.fn(async () => []),
     listVehicles: vi.fn(async () => []),
@@ -166,6 +168,10 @@ vi.mock("@/data/repositories/cpf-balances", () => ({
   getCpfBalanceByUserId: h.getCpfBalanceByUserId,
   advisorReadCpfBalances: h.advisorReadCpfBalances,
 }));
+vi.mock("@/data/repositories/cpf-investments", () => ({
+  listCpfInvestments: h.listCpfInvestments,
+  advisorReadCpfInvestments: h.advisorReadCpfInvestments,
+}));
 vi.mock("@/data/repositories/housing-loans", () => ({
   listHousingLoans: h.listHousingLoans,
   advisorReadHousingLoans: h.advisorReadHousingLoans,
@@ -202,6 +208,7 @@ const ROUTED: Array<[keyof typeof h, keyof typeof h]> = [
   ["listBudgetLines", "advisorReadBudgetLines"],
   ["listFinancialGoals", "advisorReadGoals"],
   ["getCpfBalanceByUserId", "advisorReadCpfBalances"],
+  ["listCpfInvestments", "advisorReadCpfInvestments"],
   ["listHousingLoans", "advisorReadHousingLoans"],
   ["listVehicles", "advisorReadVehicles"],
 ];

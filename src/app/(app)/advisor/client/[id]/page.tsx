@@ -1,15 +1,24 @@
+import type { ReactNode } from "react";
 import { getDashboardPayload } from "@/data/dashboard";
 import {
   getDraftProposalForClient,
   getPendingProposalForClient,
+  getProposalById,
   listChangesForProposal,
+  listProposalsForAdvisorClient,
 } from "@/data/repositories/advisor-proposals";
 import {
   advisorCanReadClient,
+  advisorReadCategoryVisibility,
   getClientProfileForAdvisor,
 } from "@/data/repositories/advisor-clients";
 import type { AdvisorClientListRow } from "@/data/repositories/advisor-clients";
 import { advisorReadBudgetLines } from "@/data/repositories/budget-lines";
+import { advisorReadCashAccounts } from "@/data/repositories/cash-accounts";
+import { advisorReadHousingLoans } from "@/data/repositories/housing-loans";
+import { advisorReadLiabilities } from "@/data/repositories/liabilities";
+import { advisorReadProperties } from "@/data/repositories/properties";
+import { advisorReadVehicles } from "@/data/repositories/vehicles";
 import { advisorReadGoals } from "@/data/repositories/goals";
 import { advisorReadInvestments } from "@/data/repositories/investments";
 import { getProfileById, advisorReadProfile } from "@/data/repositories/profiles";
@@ -17,13 +26,21 @@ import type { ProfileRow } from "@/data/supabase/types";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { resolveOverlayForViewer } from "@/domain/advisor-proposals/overlay-gate";
-import { AdvisorClientWorkspace } from "@/features/advisor/AdvisorClientWorkspace";
+import { AdvisorClientCompose } from "@/features/advisor/AdvisorClientCompose";
+import { AdvisorClientDetailShell } from "@/features/advisor/AdvisorClientDetailShell";
+import { AdvisorClientOverview } from "@/features/advisor/AdvisorClientOverview";
+import { AdvisorProposalDetailView } from "@/features/advisor/AdvisorProposalDetailView";
+import { AdvisorProposalsTable } from "@/features/advisor/AdvisorProposalsTable";
+import { DashboardRetirementSection } from "@/features/dashboard/DashboardRetirementSection";
 import { formatYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
 import { isAdvisor } from "@/lib/profile-role";
 import { redirect, notFound } from "next/navigation";
 
-type PageProps = { params: Promise<{ id: string }> };
+type PageProps = {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ view?: string; p?: string }>;
+};
 
 /**
  * Identity-only ProfileRow for the linked-but-NOT-consented gated workspace.
@@ -75,7 +92,10 @@ function identityOnlyProfile(link: AdvisorClientListRow): ProfileRow {
   };
 }
 
-export default async function AdvisorClientDetailPage({ params }: PageProps) {
+export default async function AdvisorClientDetailPage({
+  params,
+  searchParams,
+}: PageProps) {
   if (!isSupabaseConfigured()) {
     return (
       <p className="text-sm text-zinc-600">Configure Supabase to open client records.</p>
@@ -83,6 +103,15 @@ export default async function AdvisorClientDetailPage({ params }: PageProps) {
   }
 
   const { id: clientId } = await params;
+  const sp = await searchParams;
+  const view =
+    sp.view === "proposals"
+      ? "proposals"
+      : sp.view === "compose"
+        ? "compose"
+        : "overview";
+  const focusedProposalId =
+    typeof sp.p === "string" && sp.p.trim() ? sp.p.trim() : null;
 
   const supabase = await createSupabaseServerClient();
   const {
@@ -103,6 +132,99 @@ export default async function AdvisorClientDetailPage({ params }: PageProps) {
     notFound();
   }
 
+  // ── Proposals tab: history table (skips the 7-call overview load) ─────
+  if (view === "proposals" && !focusedProposalId) {
+    const proposals = await listProposalsForAdvisorClient(
+      supabase,
+      user.id,
+      clientId,
+      25
+    );
+    return (
+      <AdvisorClientDetailShell
+        clientId={clientId}
+        activeView="proposals"
+        proposals={
+          <AdvisorProposalsTable clientId={clientId} proposals={proposals} />
+        }
+      />
+    );
+  }
+
+  // ── Proposals tab: single-proposal read-only detail ──────────────────
+  if (view === "proposals" && focusedProposalId) {
+    const proposal = await getProposalById(supabase, focusedProposalId);
+    if (
+      !proposal ||
+      proposal.advisor_user_id !== user.id ||
+      proposal.client_user_id !== clientId
+    ) {
+      notFound();
+    }
+    const detailMonth = formatYearMonth(new Date());
+    const proposalChanges = await listChangesForProposal(
+      supabase,
+      focusedProposalId
+    );
+    // Consent-gated read; null (no consent) → currency fallback, no leak.
+    const clientProfileForDetail = await advisorReadProfile(supabase, clientId);
+    const currencyForDetail =
+      clientProfileForDetail?.base_currency ?? DEFAULT_BASE_CURRENCY;
+
+    // Second enforcement layer: only draft|pending feed the projection
+    // overlay — resolved/withdrawn show the read-only change list only.
+    const overlayOpen =
+      resolveOverlayForViewer({
+        viewerRole: "advisor",
+        viewerId: user.id,
+        surface: "advisor_workspace",
+        proposal,
+      }) && proposalChanges.length > 0;
+
+    let actualProjection: ReactNode = null;
+    let proposedProjection: ReactNode = null;
+    if (overlayOpen && clientProfileForDetail) {
+      const [detailPayload, detailPayloadProposed] = await Promise.all([
+        getDashboardPayload(supabase, clientId, detailMonth, {
+          viewer: "advisor",
+        }),
+        getDashboardPayload(supabase, clientId, detailMonth, {
+          proposalOverlay: proposalChanges,
+          viewer: "advisor",
+        }),
+      ]);
+      actualProjection = (
+        <DashboardRetirementSection
+          payload={detailPayload}
+          profile={clientProfileForDetail}
+        />
+      );
+      proposedProjection = (
+        <DashboardRetirementSection
+          payload={detailPayloadProposed}
+          profile={clientProfileForDetail}
+        />
+      );
+    }
+
+    return (
+      <AdvisorClientDetailShell
+        clientId={clientId}
+        activeView="proposalDetail"
+        proposalDetail={
+          <AdvisorProposalDetailView
+            proposal={proposal}
+            changes={proposalChanges}
+            currencyCode={currencyForDetail}
+            hasProjection={actualProjection !== null}
+            actualProjection={actualProjection}
+            proposedProjection={proposedProjection}
+          />
+        }
+      />
+    );
+  }
+
   const month = formatYearMonth(new Date());
 
   const [
@@ -113,6 +235,7 @@ export default async function AdvisorClientDetailPage({ params }: PageProps) {
     investments,
     draftProposal,
     consentGranted,
+    categoryVisibility,
   ] = await Promise.all([
     advisorReadProfile(supabase, clientId),
     getDashboardPayload(supabase, clientId, month, { viewer: "advisor" }),
@@ -121,6 +244,11 @@ export default async function AdvisorClientDetailPage({ params }: PageProps) {
     advisorReadInvestments(supabase, clientId),
     getDraftProposalForClient(supabase, user.id, clientId),
     advisorCanReadClient(supabase, clientId),
+    // Compose-only: visibility flags drive the locked-card vs editable section.
+    // Dependency-free, so it joins this fan-out rather than a serial read.
+    view === "compose"
+      ? advisorReadCategoryVisibility(supabase, clientId)
+      : Promise.resolve(null),
   ]);
 
   const pendingProposal = await getPendingProposalForClient(
@@ -164,21 +292,81 @@ export default async function AdvisorClientDetailPage({ params }: PageProps) {
       })
     : payload;
 
+  if (view === "compose") {
+    // Visibility was fetched in the fan-out above. Cash DATA is fetched ONLY
+    // when the category is shared (the RPC is also fail-closed — belt-and-
+    // suspenders against any leak).
+    const cashVisible = categoryVisibility?.cash_accounts ?? false;
+    const liabilitiesVisible = categoryVisibility?.liabilities ?? false;
+    const vehiclesVisible = categoryVisibility?.vehicles ?? false;
+    const propertiesVisible = categoryVisibility?.properties ?? false;
+    const housingLoansVisible = categoryVisibility?.housing_loans ?? false;
+    const [cashAccounts, liabilities, vehicles, properties, housingLoans] =
+      await Promise.all([
+        cashVisible ? advisorReadCashAccounts(supabase, clientId) : Promise.resolve([]),
+        liabilitiesVisible
+          ? advisorReadLiabilities(supabase, clientId)
+          : Promise.resolve([]),
+        vehiclesVisible ? advisorReadVehicles(supabase, clientId) : Promise.resolve([]),
+        propertiesVisible
+          ? advisorReadProperties(supabase, clientId)
+          : Promise.resolve([]),
+        housingLoansVisible
+          ? advisorReadHousingLoans(supabase, clientId)
+          : Promise.resolve([]),
+      ]);
+    return (
+      <AdvisorClientDetailShell
+        clientId={clientId}
+        activeView="compose"
+        compose={
+          <AdvisorClientCompose
+            clientId={clientId}
+            consentGranted={consentGranted}
+            profile={workspaceProfile}
+            payload={payload}
+            goals={goals}
+            budgetLines={budgetLines}
+            investments={investments}
+            cashAccounts={cashAccounts}
+            cashVisible={cashVisible}
+            liabilities={liabilities}
+            liabilitiesVisible={liabilitiesVisible}
+            vehicles={vehicles}
+            vehiclesVisible={vehiclesVisible}
+            properties={properties}
+            propertiesVisible={propertiesVisible}
+            housingLoans={housingLoans}
+            housingLoansVisible={housingLoansVisible}
+            month={month}
+            draftProposalId={draftId}
+            draftChanges={draftChanges}
+            hasPendingProposal={!!pendingProposal}
+          />
+        }
+      />
+    );
+  }
+
   return (
-    <AdvisorClientWorkspace
+    <AdvisorClientDetailShell
       clientId={clientId}
-      consentGranted={consentGranted}
-      profile={workspaceProfile}
-      payload={payload}
-      payloadProposed={payloadProposed}
-      hasOverlay={hasOverlay}
-      goals={goals}
-      budgetLines={budgetLines}
-      investments={investments}
-      month={month}
-      draftProposalId={draftId}
-      draftChanges={draftChanges}
-      hasPendingProposal={!!pendingProposal}
+      activeView="overview"
+      overview={
+        <AdvisorClientOverview
+          clientId={clientId}
+          consentGranted={consentGranted}
+          profile={workspaceProfile}
+          payload={payload}
+          payloadProposed={payloadProposed}
+          hasOverlay={hasOverlay}
+          goals={goals}
+          budgetLines={budgetLines}
+          investments={investments}
+          month={month}
+          draftChangeCount={draftChanges.length}
+        />
+      }
     />
   );
 }

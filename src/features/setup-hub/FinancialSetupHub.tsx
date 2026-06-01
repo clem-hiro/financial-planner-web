@@ -3,7 +3,11 @@ import {
   SETUP_MODULE_GROUP_LABELS,
   SETUP_MODULES,
 } from "@/domain/setup/modules";
-import type { SetupHubSnapshot, SetupModuleGroupId } from "@/domain/setup/types";
+import type {
+  SetupHubSnapshot,
+  SetupModuleEvaluation,
+  SetupModuleGroupId,
+} from "@/domain/setup/types";
 import { SetupModuleCard } from "@/features/setup-hub/SetupModuleCard";
 import { SetupProgressCard } from "@/features/setup-hub/SetupProgressCard";
 import { SetupRecommendedNextStep } from "@/features/setup-hub/SetupRecommendedNextStep";
@@ -26,11 +30,32 @@ const GROUP_DESCRIPTIONS: Record<SetupModuleGroupId, string> = {
   advisor_system: "Records and readiness items that support reviews later.",
 };
 
-export function FinancialSetupHub({ snapshot }: { snapshot: SetupHubSnapshot }) {
+export function FinancialSetupHub({
+  snapshot,
+  advisorProposalPending = false,
+}: {
+  snapshot: SetupHubSnapshot;
+  /** When true, the nav-only Advisor Proposals card shows a "Pending" pill. */
+  advisorProposalPending?: boolean;
+}) {
   const evaluationsById = Object.fromEntries(
     snapshot.modules.map((m) => [m.moduleId, m])
   );
   const setupTabs = buildSetupTabs();
+
+  // Synthetic, nav-only evaluation so the advisor_proposal card can show a
+  // "Pending" pill. Deliberately NOT added to snapshot.modules/progress — it
+  // must not affect completion math.
+  const advisorProposalEvaluation: SetupModuleEvaluation | null =
+    advisorProposalPending
+      ? {
+          moduleId: "advisor_proposal",
+          status: "pending",
+          completionPercentage: 0,
+          lastUpdatedAt: null,
+          missingFields: [],
+        }
+      : null;
 
   return (
     <div className="space-y-6 sm:space-y-8">
@@ -90,13 +115,20 @@ export function FinancialSetupHub({ snapshot }: { snapshot: SetupHubSnapshot }) 
             </div>
             <div className={gridClass}>
               {modules.map((def) => {
-                const evaluation = evaluationsById[def.id];
-                if (!evaluation) return null;
+                const alwaysOn = def.id === "advisor_proposal";
+                const evaluation =
+                  evaluationsById[def.id] ??
+                  (def.id === "advisor_proposal"
+                    ? advisorProposalEvaluation
+                    : undefined);
+                // Navigation-only modules (no completion state) render
+                // unconditionally; everything else needs an evaluation.
+                if (!evaluation && !alwaysOn) return null;
                 return (
                   <div key={def.id} className="min-w-0">
                     <SetupModuleCard
                       definition={SETUP_MODULE_BY_ID[def.id]}
-                      evaluation={evaluation}
+                      evaluation={evaluation ?? null}
                     />
                   </div>
                 );

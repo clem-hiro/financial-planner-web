@@ -15,13 +15,17 @@ export {
   INVESTMENT_REVIEW_STALE_MONTHS,
   INVESTMENT_REVIEW_ACK_VALID_MONTHS,
   countStaleInvestments,
+  investmentReviewReason,
   investmentRowIsStale,
   investmentRowLastTouchedAt,
   investmentReviewDedupeKeyForYear,
   monthsSinceTimestamp,
   shouldPromptInvestmentReview,
 } from "./investment-review";
-export type { InvestmentReviewTimestampRow } from "./investment-review";
+export type {
+  InvestmentReviewReason,
+  InvestmentReviewTimestampRow,
+} from "./investment-review";
 export {
   CPF_RULES_REVIEW_MONTH,
   CPF_RULES_VERSION,

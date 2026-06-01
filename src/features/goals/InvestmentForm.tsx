@@ -22,12 +22,14 @@ export function InvestmentForm(
   props: {
     advisorClientId?: string;
     advisorSuggestionDisabled?: boolean;
+    showAssumptionBanner?: boolean;
     planningContext?: InvestmentPlanningContext | null;
   } = {}
 ) {
   const {
     advisorClientId,
     advisorSuggestionDisabled = false,
+    showAssumptionBanner = true,
     planningContext = null,
   } = props;
   const router = useRouter();
@@ -79,7 +81,7 @@ export function InvestmentForm(
       {advisorClientId ? (
         <input type="hidden" name="client_id" value={advisorClientId} />
       ) : null}
-      <InvestmentAssumptionBanner className="mb-1" />
+      {showAssumptionBanner ? <InvestmentAssumptionBanner className="mb-1" /> : null}
       <div>
         <h2 className="text-sm font-semibold text-slate-900">Add an account</h2>
         <p className="mt-1 text-xs leading-relaxed text-slate-500">
@@ -257,7 +259,7 @@ export function InvestmentForm(
           disabled={pending || advisorSuggestionDisabled}
           className="rounded-full bg-slate-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {pending ? "Saving…" : advisorClientId ? "Suggest account" : "Save account"}
+          {pending ? "Saving…" : "Save"}
         </button>
       </div>
     </form>

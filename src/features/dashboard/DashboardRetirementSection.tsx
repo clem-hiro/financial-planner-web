@@ -4,7 +4,6 @@ import type { ProfileRow } from "@/data/supabase/types";
 import { AgeCombinedAssetsProjectionChart } from "@/features/dashboard/AgeCombinedAssetsProjectionChart";
 import { CpfProjectionByAgeChart } from "@/features/dashboard/CpfProjectionByAgeChart";
 import { CpfRetirementProjectionPanel } from "@/features/dashboard/CpfRetirementProjectionPanel";
-import { ageCompletedOnDate } from "@/domain/finance/age-projection";
 import { CPF_RA_FORMATION_AGE } from "@/domain/finance/cpf-retirement-projection";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { formatCurrency, formatPercent } from "@/ui/lib/format";
@@ -95,8 +94,7 @@ export function DashboardRetirementSection({
   const birthRaw = profile?.birth_date;
   const currentAge =
     birthRaw && typeof birthRaw === "string"
-      ? payload.ageProjection?.currentAge ??
-        ageCompletedOnDate(birthRaw, new Date())
+      ? payload.ageProjection?.currentAge ?? null
       : null;
   const cpfAt55Row = payload.cpfProjectionByAge?.find(
     (r) => r.age === CPF_RA_FORMATION_AGE
