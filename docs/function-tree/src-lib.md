@@ -150,7 +150,7 @@ Classification: `regular`
 
 #### `addCalendarMonths` — function, L2
 
-- called by: `src/domain/finance/age-asset-projection.ts#buildAgeAssetProjection`
+- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/domain/finance/age-asset-projection.ts#buildAgeAssetProjection`, `src/domain/finance/investment-contribution.ts#investmentMaturityMonthFromInvestmentRow`
 
 #### `formatYearMonth` — function, L9
 
@@ -167,7 +167,7 @@ Classification: `regular`
 #### `addMonthsToYearMonth` — function, L25
 
 - calls: `src/lib/dates.ts#formatYearMonth`
-- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/domain/finance/debt-repayment.ts#debtRepaymentEndYearMonth`, `src/domain/finance/housing-loan-quick.ts#deriveQuickHousingLoanRow`, `src/domain/finance/investable-surplus.ts#sumInvestableSurplusOverHorizon`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`, `src/domain/finance/sg-cpf.ts#countAnnualBonusPayoutsInHorizon`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
+- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/data/dashboard.ts#annualGrowthMultiplierAtYear`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/dashboard.ts#retirementSpendLedgerEntries`, `src/data/dashboard.ts#sampleYearPhaseFlowRows`, `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/domain/finance/debt-repayment.ts#debtRepaymentEndYearMonth`, `src/domain/finance/housing-loan-quick.ts#deriveQuickHousingLoanRow`, `src/domain/finance/investable-surplus.ts#sumInvestableSurplusOverHorizon`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`, `src/domain/finance/retirement-cashflow-projection.ts#annualGrowthMultiplier`, `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`, `src/domain/finance/sg-cpf.ts#countAnnualBonusPayoutsInHorizon`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
 
 #### `todayISODateLocal` — function, L32
 

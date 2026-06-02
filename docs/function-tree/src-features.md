@@ -2,7 +2,7 @@
 
 # Function tree — `src/features`
 
-149 module(s).
+152 module(s).
 
 ## Modules
 
@@ -73,7 +73,6 @@
 | [`src/features/budget/BudgetUpdateAmountForm.tsx`](#src-features-budget-budgetupdateamountform-tsx) | `client-component` | 1 | 2 |
 | [`src/features/consent/CategoryVisibilityToggle.tsx`](#src-features-consent-categoryvisibilitytoggle-tsx) | `client-component` | 1 | 5 |
 | [`src/features/consent/ClientConsentControl.tsx`](#src-features-consent-clientconsentcontrol-tsx) | `client-component` | 2 | 5 |
-| [`src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx`](#src-features-dashboard-agecombinedassetsprojectionchart-tsx) | `client-component` | 4 | 17 |
 | [`src/features/dashboard/CpfProjectionByAgeChart.tsx`](#src-features-dashboard-cpfprojectionbyagechart-tsx) | `client-component` | 1 | 16 |
 | [`src/features/dashboard/CpfRetirementProjectionPanel.tsx`](#src-features-dashboard-cpfretirementprojectionpanel-tsx) | `client-component` | 5 | 21 |
 | [`src/features/dashboard/DashboardMonthSection.tsx`](#src-features-dashboard-dashboardmonthsection-tsx) | `regular` | 1 | 9 |
@@ -82,6 +81,10 @@
 | [`src/features/dashboard/DashboardSubnav.tsx`](#src-features-dashboard-dashboardsubnav-tsx) | `client-component` | 1 | 6 |
 | [`src/features/dashboard/ProfileIncomeForm.tsx`](#src-features-dashboard-profileincomeform-tsx) | `client-component` | 3 | 29 |
 | [`src/features/dashboard/ProjectionMiniChart.tsx`](#src-features-dashboard-projectionminichart-tsx) | `client-component` | 1 | 8 |
+| [`src/features/dashboard/retirement-runway-rows.test.ts`](#src-features-dashboard-retirement-runway-rows-test-ts) | `regular` | 2 | 0 |
+| [`src/features/dashboard/retirement-runway-rows.ts`](#src-features-dashboard-retirement-runway-rows-ts) | `regular` | 10 | 11 |
+| [`src/features/dashboard/RetirementRunwayLedgerChart.test.tsx`](#src-features-dashboard-retirementrunwayledgerchart-test-tsx) | `regular` | 1 | 0 |
+| [`src/features/dashboard/RetirementRunwayLedgerChart.tsx`](#src-features-dashboard-retirementrunwayledgerchart-tsx) | `client-component` | 22 | 57 |
 | [`src/features/debts/debt-constants.ts`](#src-features-debts-debt-constants-ts) | `regular` | 4 | 0 |
 | [`src/features/debts/DebtEducationalExamples.tsx`](#src-features-debts-debteducationalexamples-tsx) | `client-component` | 2 | 4 |
 | [`src/features/debts/DebtFormFields.tsx`](#src-features-debts-debtformfields-tsx) | `client-component` | 2 | 5 |
@@ -106,9 +109,9 @@
 | [`src/features/goals/investment-balance-row.ts`](#src-features-goals-investment-balance-row-ts) | `regular` | 1 | 1 |
 | [`src/features/goals/investment-balance-types.ts`](#src-features-goals-investment-balance-types-ts) | `regular` | 0 | 0 |
 | [`src/features/goals/InvestmentAssumptionBanner.tsx`](#src-features-goals-investmentassumptionbanner-tsx) | `regular` | 1 | 1 |
-| [`src/features/goals/InvestmentBalancesList.tsx`](#src-features-goals-investmentbalanceslist-tsx) | `client-component` | 8 | 56 |
+| [`src/features/goals/InvestmentBalancesList.tsx`](#src-features-goals-investmentbalanceslist-tsx) | `client-component` | 12 | 64 |
 | [`src/features/goals/InvestmentContributionScheduleFields.tsx`](#src-features-goals-investmentcontributionschedulefields-tsx) | `client-component` | 1 | 0 |
-| [`src/features/goals/InvestmentForm.tsx`](#src-features-goals-investmentform-tsx) | `client-component` | 1 | 15 |
+| [`src/features/goals/InvestmentForm.tsx`](#src-features-goals-investmentform-tsx) | `client-component` | 5 | 29 |
 | [`src/features/goals/InvestmentPlanGuidancePanel.tsx`](#src-features-goals-investmentplanguidancepanel-tsx) | `client-component` | 1 | 2 |
 | [`src/features/goals/profile-retirement-props.ts`](#src-features-goals-profile-retirement-props-ts) | `regular` | 1 | 1 |
 | [`src/features/goals/RetirementTargetsForm.tsx`](#src-features-goals-retirementtargetsform-tsx) | `client-component` | 1 | 14 |
@@ -1047,30 +1050,6 @@ Classification: `client-component`
 - renders: `src/features/consent/CategoryVisibilityToggle.tsx#CategoryVisibilityToggle`, `src/ui/InfoTooltip.tsx#InfoTooltip`
 - rendered by: `src/features/consent/ClientConsentControl.tsx#ClientConsentControl`
 
-### `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx` <a id="src-features-dashboard-agecombinedassetsprojectionchart-tsx"></a>
-
-Classification: `client-component`
-
-#### `formatMoney` — function, L33
-
-- called by: `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AssetTooltip`
-
-#### `TooltipDetail` — component, L41 _(client-component)_
-
-- rendered by: `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AssetTooltip`
-
-#### `AssetTooltip` — component, L67 _(client-component)_
-
-- calls: `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#formatMoney`
-- renders: `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#TooltipDetail`
-- rendered by: `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart`
-
-#### `AgeCombinedAssetsProjectionChart` — component, L384 _(client-component)_
-
-- calls: `src/ui/use-narrow-screen.ts#useNarrowScreen`
-- renders: `[external] recharts`, `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AssetTooltip`, `src/ui/ChartFrame.tsx#ChartFrame`
-- rendered by: `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`
-
 ### `src/features/dashboard/CpfProjectionByAgeChart.tsx` <a id="src-features-dashboard-cpfprojectionbyagechart-tsx"></a>
 
 Classification: `client-component`
@@ -1145,7 +1124,7 @@ Classification: `regular`
 #### `DashboardRetirementSection` — component, L87
 
 - calls: `src/ui/lib/format.ts#formatCurrency`, `src/ui/lib/format.ts#formatPercent`
-- renders: `[external] next`, `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart`, `src/features/dashboard/CpfProjectionByAgeChart.tsx#CpfProjectionByAgeChart`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`, `src/features/dashboard/DashboardRetirementSection.tsx#CpfProjectionStatusPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/ui/InfoTooltip.tsx#InfoTooltip`
+- renders: `[external] next`, `src/features/dashboard/CpfProjectionByAgeChart.tsx#CpfProjectionByAgeChart`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`, `src/features/dashboard/DashboardRetirementSection.tsx#CpfProjectionStatusPanel`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/ui/InfoTooltip.tsx#InfoTooltip`
 - rendered by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`, `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`
 
 ### `src/features/dashboard/DashboardSubnav.tsx` <a id="src-features-dashboard-dashboardsubnav-tsx"></a>
@@ -1186,6 +1165,189 @@ Classification: `client-component`
 
 - renders: `[external] recharts`, `src/ui/ChartFrame.tsx#ChartFrame`
 - rendered by: `src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection`
+
+### `src/features/dashboard/retirement-runway-rows.test.ts` <a id="src-features-dashboard-retirement-runway-rows-test-ts"></a>
+
+Classification: `regular`
+
+#### `point` — arrow, L5
+
+_No tracked edges._
+
+#### `stackSum` — arrow, L22
+
+_No tracked edges._
+
+### `src/features/dashboard/retirement-runway-rows.ts` <a id="src-features-dashboard-retirement-runway-rows-ts"></a>
+
+Classification: `regular`
+
+#### `num` — arrow, L107
+
+- called by: `src/features/dashboard/retirement-runway-rows.ts#deriveMilestones`, `src/features/dashboard/retirement-runway-rows.ts#findSpikeAge`, `src/features/dashboard/retirement-runway-rows.ts#investmentPrincipalForPoint`, `src/features/dashboard/retirement-runway-rows.ts#toRunwayRows`
+
+#### `safeSegmentKey` — function, L109
+
+- called by: `src/features/dashboard/retirement-runway-rows.ts#outflowBreakdownItem`
+
+#### `addAmount` — function, L119
+
+- called by: `src/features/dashboard/retirement-runway-rows.ts#outflowSegmentsForPoint`
+
+#### `outflowBreakdownItem` — function, L134
+
+- calls: `src/features/dashboard/retirement-runway-rows.ts#safeSegmentKey`
+- called by: `src/features/dashboard/retirement-runway-rows.ts#outflowSegmentsForPoint`
+
+#### `outflowSegmentsForPoint` — function, L158
+
+- calls: `src/features/dashboard/retirement-runway-rows.ts#addAmount`, `src/features/dashboard/retirement-runway-rows.ts#outflowBreakdownItem`
+- called by: `src/features/dashboard/retirement-runway-rows.ts#toRunwayRows`
+
+#### `investmentPrincipalForPoint` — function, L169
+
+- calls: `src/features/dashboard/retirement-runway-rows.ts#num`
+- called by: `src/features/dashboard/retirement-runway-rows.ts#toRunwayRows`
+
+#### `toRunwayRows` — function, L175
+
+- calls: `src/features/dashboard/retirement-runway-rows.ts#investmentPrincipalForPoint`, `src/features/dashboard/retirement-runway-rows.ts#num`, `src/features/dashboard/retirement-runway-rows.ts#outflowSegmentsForPoint`
+- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
+- unresolved: 6
+
+#### `firstAge` — arrow, L278
+
+- called by: `src/features/dashboard/retirement-runway-rows.ts#deriveMilestones`
+
+#### `deriveMilestones` — function, L287
+
+- calls: `src/features/dashboard/retirement-runway-rows.ts#findSpikeAge`, `src/features/dashboard/retirement-runway-rows.ts#firstAge`, `src/features/dashboard/retirement-runway-rows.ts#num`
+- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
+
+#### `findSpikeAge` — function, L342
+
+- calls: `src/features/dashboard/retirement-runway-rows.ts#num`
+- called by: `src/features/dashboard/retirement-runway-rows.ts#deriveMilestones`
+
+### `src/features/dashboard/RetirementRunwayLedgerChart.test.tsx` <a id="src-features-dashboard-retirementrunwayledgerchart-test-tsx"></a>
+
+Classification: `regular`
+
+#### `point` — arrow, L10
+
+_No tracked edges._
+
+### `src/features/dashboard/RetirementRunwayLedgerChart.tsx` <a id="src-features-dashboard-retirementrunwayledgerchart-tsx"></a>
+
+Classification: `client-component`
+
+#### `formatMoney` — function, L47
+
+- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow`
+
+#### `rowValue` — function, L56
+
+- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`
+
+#### `colorForSegment` — function, L61
+
+- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
+
+#### `hasAmount` — function, L74
+
+- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails`
+
+#### `addDetail` — function, L78
+
+- calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount`
+- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#cpfDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails`
+
+#### `compactDetails` — function, L89
+
+- calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount`
+- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails`
+
+#### `fundingDetails` — function, L105
+
+- calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount`
+- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`
+
+#### `netWorthDetails` — function, L140
+
+- calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail`
+- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`
+
+#### `cpfDetails` — function, L151
+
+- calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail`
+- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
+
+#### `outflowTooltipDetails` — function, L161
+
+- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`
+
+#### `useContainerWidth` — function, L172
+
+- calls: `[external] react`
+- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
+- unresolved: 1
+
+#### `TooltipAmountRow` — component, L187 _(client-component)_
+
+- calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney`
+- rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails`
+
+#### `TooltipDetails` — component, L224 _(client-component)_
+
+- calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails`
+- renders: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow`
+- rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`
+
+#### `RunwayTooltip` — component, L252 _(client-component)_
+
+- calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#outflowTooltipDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#rowValue`
+- renders: `[external] react`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails`
+- rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
+
+#### `Panel` — component, L302 _(client-component)_
+
+- rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
+
+#### `InspectorRow` — component, L346 _(client-component)_
+
+- rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
+
+#### `InspectorDetailRow` — component, L379 _(client-component)_
+
+- rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails`
+
+#### `InspectorDetails` — component, L404 _(client-component)_
+
+- calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney`
+- renders: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetailRow`
+- rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
+
+#### `Toggle` — component, L429 _(client-component)_
+
+- rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
+- unresolved: 1
+
+#### `RetirementRunwayLedgerChart` — component, L470 _(client-component)_
+
+- calls: `[external] react`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#colorForSegment`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#cpfDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#rowValue`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#useContainerWidth`, `src/features/dashboard/retirement-runway-rows.ts#deriveMilestones`, `src/features/dashboard/retirement-runway-rows.ts#toRunwayRows`
+- renders: `[external] react`, `[external] recharts`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorRow`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneLegend`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#Panel`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#Toggle`
+- rendered by: `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`
+- unresolved: 5
+
+#### `MilestoneLegend` — component, L873 _(client-component)_
+
+- renders: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneCard`
+- rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
+- unresolved: 1
+
+#### `MilestoneCard` — component, L906 _(client-component)_
+
+- rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneLegend`
 
 ### `src/features/debts/debt-constants.ts` <a id="src-features-debts-debt-constants-ts"></a>
 
@@ -1548,46 +1710,63 @@ Classification: `regular`
 
 Classification: `client-component`
 
-#### `withdrawalStartDisplayValue` — function, L47
+#### `nonNegative` — function, L47
+
+- called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`, `src/features/goals/InvestmentBalancesList.tsx#ilpMaturityAge`
+
+#### `percentDecimal` — function, L52
 
 - called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`
 
-#### `contributionSummaryLine` — function, L74
+#### `yearsUntilDate` — function, L58
+
+- called by: `src/features/goals/InvestmentBalancesList.tsx#ilpMaturityAge`
+
+#### `ilpMaturityAge` — function, L70
+
+- calls: `src/features/goals/InvestmentBalancesList.tsx#nonNegative`, `src/features/goals/InvestmentBalancesList.tsx#yearsUntilDate`
+- called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`
+
+#### `withdrawalStartDisplayValue` — function, L82
+
+- called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`
+
+#### `contributionSummaryLine` — function, L109
 
 - calls: `src/ui/lib/format.ts#formatCurrency`
 - called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary`
 
-#### `ContributionTimelineHint` — component, L111 _(client-component)_
+#### `ContributionTimelineHint` — component, L146 _(client-component)_
 
 - calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary`
 
-#### `InvestmentSummary` — component, L182 _(client-component)_
+#### `InvestmentSummary` — component, L217 _(client-component)_
 
 - calls: `src/domain/finance/investment-review.ts#investmentReviewReason`, `src/features/goals/InvestmentBalancesList.tsx#contributionSummaryLine`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/goals/InvestmentBalancesList.tsx#ContributionTimelineHint`, `src/ui/InfoTooltip.tsx#InfoTooltip`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
 
-#### `InvestmentEditForm` — component, L271 _(client-component)_
+#### `InvestmentEditForm` — component, L310 _(client-component)_
 
-- calls: `[external] next`, `[external] react`, `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/features/goals/InvestmentBalancesList.tsx#withdrawalStartDisplayValue`, `src/server/actions.ts#updateInvestmentAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`
+- calls: `[external] next`, `[external] react`, `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/features/goals/InvestmentBalancesList.tsx#ilpMaturityAge`, `src/features/goals/InvestmentBalancesList.tsx#nonNegative`, `src/features/goals/InvestmentBalancesList.tsx#percentDecimal`, `src/features/goals/InvestmentBalancesList.tsx#withdrawalStartDisplayValue`, `src/server/actions.ts#updateInvestmentAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`
 - renders: `src/features/goals/InvestmentContributionScheduleFields.tsx#InvestmentContributionScheduleFields`, `src/features/goals/InvestmentPlanGuidancePanel.tsx#InvestmentPlanGuidancePanel`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`, `src/ui/InfoTooltip.tsx#InfoTooltip`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
-- unresolved: 8
+- unresolved: 12
 
-#### `InvestmentRow` — component, L608 _(client-component)_
+#### `InvestmentRow` — component, L707 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#deleteInvestmentAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction`
 - renders: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`, `src/ui/ConfirmDialog.tsx#ConfirmDialog`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`
 - unresolved: 10
 
-#### `InvestmentReviewPrompt` — component, L698 _(client-component)_
+#### `InvestmentReviewPrompt` — component, L797 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#confirmInvestmentReviewAction`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`
 
-#### `InvestmentBalancesList` — component, L749 _(client-component)_
+#### `InvestmentBalancesList` — component, L848 _(client-component)_
 
 - calls: `src/domain/finance/investment-review.ts#investmentRowIsStale`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentReviewPrompt`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
@@ -1597,21 +1776,38 @@ Classification: `client-component`
 
 Classification: `client-component`
 
-#### `InvestmentContributionScheduleFields` — component, L6 _(client-component)_
+#### `InvestmentContributionScheduleFields` — component, L8 _(client-component)_
 
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`
-- unresolved: 7
+- unresolved: 9
 
 ### `src/features/goals/InvestmentForm.tsx` <a id="src-features-goals-investmentform-tsx"></a>
 
 Classification: `client-component`
 
-#### `InvestmentForm` — component, L21 _(client-component)_
+#### `nonNegative` — function, L26
 
-- calls: `[external] next`, `[external] react`, `src/domain/finance/age-projection.ts#ageCompletedOnDate`
+- called by: `src/features/goals/InvestmentForm.tsx#InvestmentForm`, `src/features/goals/InvestmentForm.tsx#ilpMaturityAge`
+
+#### `percentDecimal` — function, L31
+
+- called by: `src/features/goals/InvestmentForm.tsx#InvestmentForm`
+
+#### `yearsUntilDate` — function, L37
+
+- called by: `src/features/goals/InvestmentForm.tsx#ilpMaturityAge`
+
+#### `ilpMaturityAge` — function, L49
+
+- calls: `src/features/goals/InvestmentForm.tsx#nonNegative`, `src/features/goals/InvestmentForm.tsx#yearsUntilDate`
+- called by: `src/features/goals/InvestmentForm.tsx#InvestmentForm`
+
+#### `InvestmentForm` — component, L61 _(client-component)_
+
+- calls: `[external] next`, `[external] react`, `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/features/goals/InvestmentForm.tsx#ilpMaturityAge`, `src/features/goals/InvestmentForm.tsx#nonNegative`, `src/features/goals/InvestmentForm.tsx#percentDecimal`
 - renders: `src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner`, `src/features/goals/InvestmentContributionScheduleFields.tsx#InvestmentContributionScheduleFields`, `src/features/goals/InvestmentPlanGuidancePanel.tsx#InvestmentPlanGuidancePanel`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
-- unresolved: 1
+- unresolved: 12
 
 ### `src/features/goals/InvestmentPlanGuidancePanel.tsx` <a id="src-features-goals-investmentplanguidancepanel-tsx"></a>
 
