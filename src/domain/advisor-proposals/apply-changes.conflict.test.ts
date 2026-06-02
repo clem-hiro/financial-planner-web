@@ -22,7 +22,11 @@ const NUMERIC_STRING_COLS: Record<string, string[]> = {
     "current_value",
     "monthly_contribution",
     "expected_annual_return",
+    "investment_income_rate_annual",
     "contribution_duration_years",
+    "withdrawal_annual",
+    "withdrawal_monthly",
+    "withdrawal_start_years",
   ],
 };
 
@@ -936,7 +940,9 @@ function invRow(id: string, name: string): Row {
     current_value: "1000",
     monthly_contribution: "0",
     expected_annual_return: "0.05",
+    investment_income_rate_annual: "0",
     contribution_growth_annual: "0",
+    withdrawal_annual: "0",
     withdrawal_monthly: "0",
     withdrawal_start_years: null,
     created_at: V,

@@ -127,6 +127,8 @@ const h = vi.hoisted(() => {
     advisorReadHousingLoans: vi.fn(async () => []),
     listVehicles: vi.fn(async () => []),
     advisorReadVehicles: vi.fn(async () => []),
+    listProperties: vi.fn(async () => []),
+    advisorReadProperties: vi.fn(async () => []),
   };
 });
 
@@ -180,6 +182,10 @@ vi.mock("@/data/repositories/vehicles", () => ({
   listVehicles: h.listVehicles,
   advisorReadVehicles: h.advisorReadVehicles,
 }));
+vi.mock("@/data/repositories/properties", () => ({
+  listProperties: h.listProperties,
+  advisorReadProperties: h.advisorReadProperties,
+}));
 vi.mock("@/data/repositories/budget-line-overrides", async (orig) => {
   const actual = await orig<
     typeof import("@/data/repositories/budget-line-overrides")
@@ -211,6 +217,7 @@ const ROUTED: Array<[keyof typeof h, keyof typeof h]> = [
   ["listCpfInvestments", "advisorReadCpfInvestments"],
   ["listHousingLoans", "advisorReadHousingLoans"],
   ["listVehicles", "advisorReadVehicles"],
+  ["listProperties", "advisorReadProperties"],
 ];
 
 // Profile + the 2 windowed reads are also routed but with non-uniform call

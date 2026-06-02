@@ -172,6 +172,8 @@ function applyInvestmentInsert(
     current_value: numStr(m.get("current_value")) ?? "0",
     monthly_contribution: numStr(m.get("monthly_contribution")) ?? "0",
     expected_annual_return: numStr(m.get("expected_annual_return")) ?? "0",
+    investment_income_rate_annual:
+      numStr(m.get("investment_income_rate_annual")) ?? "0",
     contribution_growth_annual:
       numStr(m.get("contribution_growth_annual")) ?? "0",
     contribution_type: m.get("contribution_type") || null,
@@ -181,6 +183,7 @@ function applyInvestmentInsert(
     contribution_start_date: m.get("contribution_start_date") || null,
     contribution_end_date: m.get("contribution_end_date") || null,
     plan_nature: m.get("plan_nature") || null,
+    withdrawal_annual: numStr(m.get("withdrawal_annual")) ?? "0",
     withdrawal_monthly: numStr(m.get("withdrawal_monthly")) ?? "0",
     withdrawal_start_years: m.get("withdrawal_start_years")
       ? String(Number(m.get("withdrawal_start_years")))
@@ -203,6 +206,10 @@ function mergeInvestment(
   if (m.has("expected_annual_return")) {
     next.expected_annual_return = numStr(m.get("expected_annual_return")) ?? "0";
   }
+  if (m.has("investment_income_rate_annual")) {
+    next.investment_income_rate_annual =
+      numStr(m.get("investment_income_rate_annual")) ?? "0";
+  }
   if (m.has("contribution_growth_annual")) {
     next.contribution_growth_annual =
       numStr(m.get("contribution_growth_annual")) ?? "0";
@@ -219,6 +226,9 @@ function mergeInvestment(
     next.contribution_end_date = m.get("contribution_end_date") || null;
   }
   if (m.has("plan_nature")) next.plan_nature = m.get("plan_nature") || null;
+  if (m.has("withdrawal_annual")) {
+    next.withdrawal_annual = numStr(m.get("withdrawal_annual")) ?? "0";
+  }
   if (m.has("withdrawal_monthly")) {
     next.withdrawal_monthly = numStr(m.get("withdrawal_monthly")) ?? "0";
   }

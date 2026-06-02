@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { DashboardPayload } from "@/data/dashboard";
 import type { ProfileRow } from "@/data/supabase/types";
-import { AgeCombinedAssetsProjectionChart } from "@/features/dashboard/AgeCombinedAssetsProjectionChart";
+import { RetirementRunwayLedgerChart } from "@/features/dashboard/RetirementRunwayLedgerChart";
 import { CpfProjectionByAgeChart } from "@/features/dashboard/CpfProjectionByAgeChart";
 import { CpfRetirementProjectionPanel } from "@/features/dashboard/CpfRetirementProjectionPanel";
 import { CPF_RA_FORMATION_AGE } from "@/domain/finance/cpf-retirement-projection";
@@ -132,24 +132,11 @@ export function DashboardRetirementSection({
               (surplus) minus debts until you add accounts with value and assumptions.
             </p>
           )}
-          <div className="mt-3 space-y-2">
-            <h3 className="text-sm font-semibold text-emerald-900">
-              Combined assets by age
-            </h3>
-            <p className="rounded-lg border border-emerald-200/60 bg-white/85 px-3 py-2 text-xs leading-snug text-emerald-900/95 shadow-sm">
-              Stacked investments, cash, CPF (same as blue chart), and vehicles; net
-              line subtracts <strong>Cash &amp; liabilities</strong> debts only (not
-              housing loans).
-            </p>
-          </div>
           <div className="mt-3">
-            <AgeCombinedAssetsProjectionChart
+            <RetirementRunwayLedgerChart
               data={payload.ageProjection.points}
+              cashReserveData={payload.ageProjection.cashReservePoints}
               currency={payload.baseCurrency}
-              budgetMonth={payload.month}
-              surplusSpendUsesLogged={payload.monthlyExpensesLoggedTotal > 0}
-              annualBonusTakeHomeNet={payload.ageProjection.annualBonusTakeHomeNet}
-              annualBonusPayoutMonth={payload.ageProjection.annualBonusPayoutMonth}
             />
           </div>
           <CpfProjectionStatusPanel payload={payload} />
