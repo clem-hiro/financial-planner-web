@@ -1,5 +1,7 @@
 "use client";
 
+import type { InvestmentPlanNature } from "@/lib/investment-plan-nature";
+
 export type ContributionMode = "until_retirement" | "fixed_duration";
 export type FixedScheduleMode = "duration_years" | "calendar_dates";
 
@@ -15,6 +17,7 @@ export function InvestmentContributionScheduleFields({
   endDateRaw,
   onEndDateChange,
   inputClassName,
+  planNature,
 }: {
   contributionMode: ContributionMode;
   onContributionModeChange: (mode: ContributionMode) => void;
@@ -27,7 +30,55 @@ export function InvestmentContributionScheduleFields({
   endDateRaw: string;
   onEndDateChange: (value: string) => void;
   inputClassName: string;
+  planNature?: InvestmentPlanNature | "";
 }) {
+  if (planNature === "includes_insurance_coverage") {
+    return (
+      <fieldset className="rounded-xl border border-slate-200 bg-white p-4">
+        <legend className="text-sm font-medium text-slate-800">
+          ILP premium period
+        </legend>
+        <p className="mt-1 text-xs text-slate-500">
+          ILPs use a fixed premium period here. The plan start date and duration
+          determine the maturity month used by withdrawals and cashflow projections.
+        </p>
+        <input type="hidden" name="contribution_type" value="fixed_duration" />
+        <input type="hidden" name="contribution_schedule_mode" value="duration_years" />
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium text-slate-800">
+              Plan start date
+            </span>
+            <input
+              name="contribution_start_date"
+              type="date"
+              required
+              value={startDateRaw}
+              onChange={(e) => onStartDateChange(e.target.value)}
+              className={inputClassName}
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="mb-1 block font-medium text-slate-800">
+              Fixed period (years)
+            </span>
+            <input
+              name="contribution_duration_years"
+              type="number"
+              min={0.25}
+              max={80}
+              step={0.25}
+              required
+              value={durationYearsRaw}
+              onChange={(e) => onDurationYearsChange(e.target.value)}
+              className={inputClassName}
+            />
+          </label>
+        </div>
+      </fieldset>
+    );
+  }
+
   return (
     <fieldset className="rounded-xl border border-slate-200 bg-white p-4">
       <legend className="text-sm font-medium text-slate-800">

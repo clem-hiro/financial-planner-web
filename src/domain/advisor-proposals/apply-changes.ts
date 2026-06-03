@@ -110,6 +110,8 @@ function investmentDiffers(a: InvestmentRow, b: InvestmentRow): boolean {
     a.current_value !== b.current_value ||
     a.monthly_contribution !== b.monthly_contribution ||
     a.expected_annual_return !== b.expected_annual_return ||
+    (a.investment_income_rate_annual ?? "0") !==
+      (b.investment_income_rate_annual ?? "0") ||
     a.contribution_growth_annual !== b.contribution_growth_annual ||
     (a.contribution_type ?? null) !== (b.contribution_type ?? null) ||
     (a.contribution_duration_years ?? null) !==
@@ -117,6 +119,7 @@ function investmentDiffers(a: InvestmentRow, b: InvestmentRow): boolean {
     (a.contribution_start_date ?? null) !== (b.contribution_start_date ?? null) ||
     (a.contribution_end_date ?? null) !== (b.contribution_end_date ?? null) ||
     (a.plan_nature ?? null) !== (b.plan_nature ?? null) ||
+    (a.withdrawal_annual ?? "0") !== (b.withdrawal_annual ?? "0") ||
     a.withdrawal_monthly !== b.withdrawal_monthly ||
     (a.withdrawal_start_years ?? null) !== (b.withdrawal_start_years ?? null)
   );
@@ -128,6 +131,8 @@ function investmentWritePayload(row: InvestmentRow) {
     current_value: toNumOrNull(row.current_value) ?? 0,
     monthly_contribution: toNumOrNull(row.monthly_contribution) ?? 0,
     expected_annual_return: toNumOrNull(row.expected_annual_return) ?? 0,
+    investment_income_rate_annual:
+      toNumOrNull(row.investment_income_rate_annual ?? null) ?? 0,
     contribution_growth_annual:
       toNumOrNull(row.contribution_growth_annual) ?? 0,
     contribution_type: row.contribution_type || null,
@@ -136,6 +141,7 @@ function investmentWritePayload(row: InvestmentRow) {
     contribution_start_date: row.contribution_start_date ?? null,
     contribution_end_date: row.contribution_end_date ?? null,
     plan_nature: row.plan_nature ?? null,
+    withdrawal_annual: toNumOrNull(row.withdrawal_annual ?? null) ?? 0,
     withdrawal_monthly: toNumOrNull(row.withdrawal_monthly) ?? 0,
     withdrawal_start_years: toNumOrNull(row.withdrawal_start_years ?? null),
   };

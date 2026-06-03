@@ -2,7 +2,7 @@
 
 # Function tree — `src/ui`
 
-18 module(s).
+19 module(s).
 
 ## Modules
 
@@ -23,6 +23,7 @@
 | [`src/ui/lib/format.ts`](#src-ui-lib-format-ts) | `regular` | 2 | 0 |
 | [`src/ui/MainSectionLoading.tsx`](#src-ui-mainsectionloading-tsx) | `regular` | 1 | 0 |
 | [`src/ui/PageSection.tsx`](#src-ui-pagesection-tsx) | `regular` | 1 | 0 |
+| [`src/ui/runway-chart-styles.ts`](#src-ui-runway-chart-styles-ts) | `regular` | 0 | 0 |
 | [`src/ui/ScrollToTopButton.tsx`](#src-ui-scrolltotopbutton-tsx) | `client-component` | 1 | 2 |
 | [`src/ui/surface-classes.ts`](#src-ui-surface-classes-ts) | `regular` | 0 | 0 |
 | [`src/ui/use-narrow-screen.ts`](#src-ui-use-narrow-screen-ts) | `client-component` | 4 | 1 |
@@ -66,7 +67,7 @@ Classification: `regular`
 
 #### `ChartFrame` — component, L3
 
-- rendered by: `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart`, `src/features/dashboard/CpfProjectionByAgeChart.tsx#CpfProjectionByAgeChart`, `src/features/dashboard/ProjectionMiniChart.tsx#ProjectionMiniChart`, `src/features/expenses/CategoryBarChart.tsx#CategoryBarChart`
+- rendered by: `src/features/dashboard/CpfProjectionByAgeChart.tsx#CpfProjectionByAgeChart`, `src/features/dashboard/ProjectionMiniChart.tsx#ProjectionMiniChart`, `src/features/expenses/CategoryBarChart.tsx#CategoryBarChart`
 
 ### `src/ui/collapsible-pane-styles.ts` <a id="src-ui-collapsible-pane-styles-ts"></a>
 
@@ -154,6 +155,12 @@ Classification: `regular`
 
 - rendered by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/advisor/AdvisorAccessKeysSection.tsx#AdvisorAccessKeysSection`, `src/features/advisor/AdvisorBuyKeysSection.tsx#AdvisorBuyKeysSection`, `src/features/advisor/AdvisorPhoneVerificationForm.tsx#AdvisorPhoneVerificationForm`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/income-tax/IncomeTaxSection.tsx#IncomeTaxSection`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
+### `src/ui/runway-chart-styles.ts` <a id="src-ui-runway-chart-styles-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
 ### `src/ui/ScrollToTopButton.tsx` <a id="src-ui-scrolltotopbutton-tsx"></a>
 
 Classification: `client-component`
@@ -189,4 +196,4 @@ _No tracked edges._
 #### `useNarrowScreen` — function, L24
 
 - calls: `[external] react`
-- called by: `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart`, `src/features/dashboard/CpfProjectionByAgeChart.tsx#CpfProjectionByAgeChart`
+- called by: `src/features/dashboard/CpfProjectionByAgeChart.tsx#CpfProjectionByAgeChart`

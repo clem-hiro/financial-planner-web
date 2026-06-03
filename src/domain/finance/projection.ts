@@ -30,7 +30,10 @@ function hasVariableCashflows(params: ProjectFutureValueParams): boolean {
       params.contributionGrowthAnnual !== 0) ||
     (params.monthlyWithdrawal != null &&
       Number.isFinite(params.monthlyWithdrawal) &&
-      params.monthlyWithdrawal > 0)
+      params.monthlyWithdrawal > 0) ||
+    (params.annualWithdrawal != null &&
+      Number.isFinite(params.annualWithdrawal) &&
+      params.annualWithdrawal > 0)
   );
 }
 
@@ -62,7 +65,10 @@ function projectFutureValueIterative(params: ProjectFutureValueParams): Money {
     Number.isFinite(params.contributionStartMonth)
       ? Math.max(0, Math.floor(params.contributionStartMonth))
       : 0;
-  const monthlyWithdrawal = Math.max(0, params.monthlyWithdrawal ?? 0);
+  const annualWithdrawal = Math.max(
+    0,
+    params.annualWithdrawal ?? (params.monthlyWithdrawal ?? 0) * 12
+  );
   const withdrawalStartMonth =
     params.withdrawalStartMonth != null &&
     Number.isFinite(params.withdrawalStartMonth)
@@ -82,8 +88,9 @@ function projectFutureValueIterative(params: ProjectFutureValueParams): Money {
         monthIndex
       );
     }
-    if (monthIndex >= withdrawalStartMonth) {
-      value -= monthlyWithdrawal;
+    const isDecember = (monthIndex + 1) % 12 === 0;
+    if (monthIndex >= withdrawalStartMonth && isDecember) {
+      value -= annualWithdrawal;
     }
     value = Math.max(0, value);
   }

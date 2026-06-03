@@ -194,6 +194,8 @@ export type InvestmentRow = {
   current_value: string;
   monthly_contribution: string;
   expected_annual_return: string;
+  /** Annual cash-income rate (dividend yield or ILP post-maturity income). */
+  investment_income_rate_annual?: string | null;
   /** Annual step-up on monthly contribution (0.03 = 3%). */
   contribution_growth_annual: string;
   /** until_retirement | fixed_duration; null = legacy / same as until retirement. */
@@ -202,6 +204,8 @@ export type InvestmentRow = {
   contribution_duration_years?: string | null;
   /** Planned monthly withdrawal after the withdrawal phase starts. */
   withdrawal_monthly: string;
+  /** Planned yearly withdrawal after the withdrawal phase starts. */
+  withdrawal_annual?: string | null;
   /** Years from today before withdrawals start; null = use retirement age when available. */
   withdrawal_start_years: string | null;
   /** Reserved for future age-based contribution end. */

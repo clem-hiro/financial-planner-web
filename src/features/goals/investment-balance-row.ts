@@ -9,6 +9,7 @@ export function investmentRowToBalanceRow(row: InvestmentRow): InvestmentBalance
     current_value: num(row.current_value),
     monthly_contribution: num(row.monthly_contribution),
     expected_annual_return: num(row.expected_annual_return),
+    investment_income_rate_annual: num(row.investment_income_rate_annual ?? "0"),
     contribution_growth_annual: num(row.contribution_growth_annual),
     contribution_type: row.contribution_type ?? null,
     contribution_duration_years:
@@ -19,6 +20,10 @@ export function investmentRowToBalanceRow(row: InvestmentRow): InvestmentBalance
     contribution_start_date: row.contribution_start_date ?? null,
     contribution_end_date: row.contribution_end_date ?? null,
     plan_nature: row.plan_nature ?? null,
+    withdrawal_annual:
+      row.withdrawal_annual != null
+        ? num(row.withdrawal_annual)
+        : num(row.withdrawal_monthly) * 12,
     withdrawal_monthly: num(row.withdrawal_monthly),
     withdrawal_start_years:
       row.withdrawal_start_years != null &&

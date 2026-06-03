@@ -361,6 +361,10 @@ export async function createAdvisorClientInvestmentAction(
     { fieldKey: "current_value", newValue: currentValue },
     { fieldKey: "monthly_contribution", newValue: monthlyContribution },
     { fieldKey: "expected_annual_return", newValue: expectedAnnualReturn },
+    {
+      fieldKey: "investment_income_rate_annual",
+      newValue: planning.investment_income_rate_annual,
+    },
     { fieldKey: "contribution_type", newValue: planning.contribution_type },
     {
       fieldKey: "contribution_duration_years",
@@ -379,6 +383,7 @@ export async function createAdvisorClientInvestmentAction(
       fieldKey: "contribution_growth_annual",
       newValue: planning.contribution_growth_annual,
     },
+    { fieldKey: "withdrawal_annual", newValue: planning.withdrawal_annual },
     { fieldKey: "withdrawal_monthly", newValue: planning.withdrawal_monthly },
     {
       fieldKey: "withdrawal_start_years",
@@ -470,6 +475,11 @@ export async function updateAdvisorClientInvestmentAction(
       newValue: expectedAnnualReturn,
     },
     {
+      fieldKey: "investment_income_rate_annual",
+      oldValue: existing.investment_income_rate_annual ?? "0",
+      newValue: planning.investment_income_rate_annual,
+    },
+    {
       fieldKey: "contribution_type",
       oldValue: existing.contribution_type,
       newValue: planning.contribution_type,
@@ -498,6 +508,11 @@ export async function updateAdvisorClientInvestmentAction(
       fieldKey: "contribution_growth_annual",
       oldValue: existing.contribution_growth_annual,
       newValue: planning.contribution_growth_annual,
+    },
+    {
+      fieldKey: "withdrawal_annual",
+      oldValue: existing.withdrawal_annual ?? "0",
+      newValue: planning.withdrawal_annual,
     },
     {
       fieldKey: "withdrawal_monthly",

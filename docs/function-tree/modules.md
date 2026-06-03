@@ -60,8 +60,11 @@
 | `src/data/budget-summary.ts` | `src/data` | `regular` | 1 | 14 |
 | `src/data/cash-account-history-build.ts` | `src/data` | `regular` | 1 | 1 |
 | `src/data/dashboard-advisor-viewer.test.ts` | `src/data` | `regular` | 0 | 0 |
+| `src/data/dashboard-cpf-retirement-stop.test.ts` | `src/data` | `regular` | 0 | 0 |
 | `src/data/dashboard-overlay.test.ts` | `src/data` | `regular` | 0 | 0 |
-| `src/data/dashboard.ts` | `src/data` | `regular` | 8 | 74 |
+| `src/data/dashboard-property-equity.test.ts` | `src/data` | `regular` | 0 | 0 |
+| `src/data/dashboard-runway-annual.test.ts` | `src/data` | `regular` | 0 | 0 |
+| `src/data/dashboard.ts` | `src/data` | `regular` | 15 | 96 |
 | `src/data/expense-budget-guard.ts` | `src/data` | `regular` | 1 | 6 |
 | `src/data/financial-profile.ts` | `src/data` | `regular` | 2 | 1 |
 | `src/data/goal-tradeoff-context.ts` | `src/data` | `regular` | 1 | 17 |
@@ -168,8 +171,8 @@
 | `src/domain/finance/investable-surplus.ts` | `src/domain` | `regular` | 1 | 3 |
 | `src/domain/finance/investment-contribution-dates.test.ts` | `src/domain` | `regular` | 0 | 0 |
 | `src/domain/finance/investment-contribution-dates.ts` | `src/domain` | `regular` | 3 | 2 |
-| `src/domain/finance/investment-contribution.ts` | `src/domain` | `regular` | 3 | 5 |
-| `src/domain/finance/investment-portfolio-fv.ts` | `src/domain` | `regular` | 2 | 6 |
+| `src/domain/finance/investment-contribution.ts` | `src/domain` | `regular` | 5 | 12 |
+| `src/domain/finance/investment-portfolio-fv.ts` | `src/domain` | `regular` | 2 | 7 |
 | `src/domain/finance/investment-review.test.ts` | `src/domain` | `regular` | 0 | 0 |
 | `src/domain/finance/investment-review.ts` | `src/domain` | `regular` | 7 | 6 |
 | `src/domain/finance/irregular-expenses.test.ts` | `src/domain` | `regular` | 0 | 0 |
@@ -183,6 +186,8 @@
 | `src/domain/finance/projection.ts` | `src/domain` | `regular` | 6 | 6 |
 | `src/domain/finance/property-financing-plan.test.ts` | `src/domain` | `regular` | 0 | 0 |
 | `src/domain/finance/property-financing-plan.ts` | `src/domain` | `regular` | 2 | 0 |
+| `src/domain/finance/retirement-cashflow-projection.test.ts` | `src/domain` | `regular` | 2 | 0 |
+| `src/domain/finance/retirement-cashflow-projection.ts` | `src/domain` | `regular` | 23 | 27 |
 | `src/domain/finance/retirement-spend-vs-portfolio.test.ts` | `src/domain` | `regular` | 0 | 0 |
 | `src/domain/finance/retirement-spend-vs-portfolio.ts` | `src/domain` | `regular` | 2 | 0 |
 | `src/domain/finance/savings-rate.ts` | `src/domain` | `regular` | 1 | 0 |
@@ -200,6 +205,8 @@
 | `src/domain/housing/compose.test.ts` | `src/domain` | `regular` | 2 | 0 |
 | `src/domain/housing/compose.ts` | `src/domain` | `regular` | 5 | 7 |
 | `src/domain/housing/index.ts` | `src/domain` | `regular` | 0 | 0 |
+| `src/domain/housing/property-equity.test.ts` | `src/domain` | `regular` | 2 | 0 |
+| `src/domain/housing/property-equity.ts` | `src/domain` | `regular` | 8 | 9 |
 | `src/domain/housing/types.ts` | `src/domain` | `regular` | 0 | 0 |
 | `src/domain/setup/context.ts` | `src/domain` | `regular` | 0 | 0 |
 | `src/domain/setup/evaluators.test.ts` | `src/domain` | `regular` | 1 | 0 |
@@ -273,7 +280,6 @@
 | `src/features/budget/BudgetUpdateAmountForm.tsx` | `src/features` | `client-component` | 1 | 2 |
 | `src/features/consent/CategoryVisibilityToggle.tsx` | `src/features` | `client-component` | 1 | 5 |
 | `src/features/consent/ClientConsentControl.tsx` | `src/features` | `client-component` | 2 | 5 |
-| `src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx` | `src/features` | `client-component` | 4 | 17 |
 | `src/features/dashboard/CpfProjectionByAgeChart.tsx` | `src/features` | `client-component` | 1 | 16 |
 | `src/features/dashboard/CpfRetirementProjectionPanel.tsx` | `src/features` | `client-component` | 5 | 21 |
 | `src/features/dashboard/DashboardMonthSection.tsx` | `src/features` | `regular` | 1 | 9 |
@@ -282,6 +288,10 @@
 | `src/features/dashboard/DashboardSubnav.tsx` | `src/features` | `client-component` | 1 | 6 |
 | `src/features/dashboard/ProfileIncomeForm.tsx` | `src/features` | `client-component` | 3 | 29 |
 | `src/features/dashboard/ProjectionMiniChart.tsx` | `src/features` | `client-component` | 1 | 8 |
+| `src/features/dashboard/retirement-runway-rows.test.ts` | `src/features` | `regular` | 2 | 0 |
+| `src/features/dashboard/retirement-runway-rows.ts` | `src/features` | `regular` | 10 | 11 |
+| `src/features/dashboard/RetirementRunwayLedgerChart.test.tsx` | `src/features` | `regular` | 1 | 0 |
+| `src/features/dashboard/RetirementRunwayLedgerChart.tsx` | `src/features` | `client-component` | 22 | 57 |
 | `src/features/debts/debt-constants.ts` | `src/features` | `regular` | 4 | 0 |
 | `src/features/debts/DebtEducationalExamples.tsx` | `src/features` | `client-component` | 2 | 4 |
 | `src/features/debts/DebtFormFields.tsx` | `src/features` | `client-component` | 2 | 5 |
@@ -306,9 +316,9 @@
 | `src/features/goals/investment-balance-row.ts` | `src/features` | `regular` | 1 | 1 |
 | `src/features/goals/investment-balance-types.ts` | `src/features` | `regular` | 0 | 0 |
 | `src/features/goals/InvestmentAssumptionBanner.tsx` | `src/features` | `regular` | 1 | 1 |
-| `src/features/goals/InvestmentBalancesList.tsx` | `src/features` | `client-component` | 8 | 56 |
+| `src/features/goals/InvestmentBalancesList.tsx` | `src/features` | `client-component` | 12 | 64 |
 | `src/features/goals/InvestmentContributionScheduleFields.tsx` | `src/features` | `client-component` | 1 | 0 |
-| `src/features/goals/InvestmentForm.tsx` | `src/features` | `client-component` | 1 | 15 |
+| `src/features/goals/InvestmentForm.tsx` | `src/features` | `client-component` | 5 | 29 |
 | `src/features/goals/InvestmentPlanGuidancePanel.tsx` | `src/features` | `client-component` | 1 | 2 |
 | `src/features/goals/profile-retirement-props.ts` | `src/features` | `regular` | 1 | 1 |
 | `src/features/goals/RetirementTargetsForm.tsx` | `src/features` | `client-component` | 1 | 14 |
@@ -418,7 +428,7 @@
 | `src/server/inbox/ensure-salary-review-notification.test.ts` | `src/server` | `regular` | 0 | 0 |
 | `src/server/inbox/ensure-salary-review-notification.ts` | `src/server` | `regular` | 1 | 1 |
 | `src/server/investment-planning-parse.test.ts` | `src/server` | `regular` | 1 | 0 |
-| `src/server/investment-planning-parse.ts` | `src/server` | `regular` | 2 | 1 |
+| `src/server/investment-planning-parse.ts` | `src/server` | `regular` | 3 | 2 |
 | `src/server/liability-form.test.ts` | `src/server` | `regular` | 1 | 0 |
 | `src/server/liability-form.ts` | `src/server` | `regular` | 2 | 3 |
 | `src/ui/app-link-styles.ts` | `src/ui` | `regular` | 0 | 0 |
@@ -436,6 +446,7 @@
 | `src/ui/lib/format.ts` | `src/ui` | `regular` | 2 | 0 |
 | `src/ui/MainSectionLoading.tsx` | `src/ui` | `regular` | 1 | 0 |
 | `src/ui/PageSection.tsx` | `src/ui` | `regular` | 1 | 0 |
+| `src/ui/runway-chart-styles.ts` | `src/ui` | `regular` | 0 | 0 |
 | `src/ui/ScrollToTopButton.tsx` | `src/ui` | `client-component` | 1 | 2 |
 | `src/ui/surface-classes.ts` | `src/ui` | `regular` | 0 | 0 |
 | `src/ui/use-narrow-screen.ts` | `src/ui` | `client-component` | 4 | 1 |

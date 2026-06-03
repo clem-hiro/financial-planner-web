@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-06-01T08:57:13.047Z",
+  "generated_at": "2026-06-03T07:40:35.881Z",
   "roots": [
     "src/app",
     "src/components",
@@ -2947,7 +2947,31 @@
       "functions": []
     },
     {
+      "path": "src/data/dashboard-cpf-retirement-stop.test.ts",
+      "root": "src/data",
+      "classification": [
+        "regular"
+      ],
+      "functions": []
+    },
+    {
       "path": "src/data/dashboard-overlay.test.ts",
+      "root": "src/data",
+      "classification": [
+        "regular"
+      ],
+      "functions": []
+    },
+    {
+      "path": "src/data/dashboard-property-equity.test.ts",
+      "root": "src/data",
+      "classification": [
+        "regular"
+      ],
+      "functions": []
+    },
+    {
+      "path": "src/data/dashboard-runway-annual.test.ts",
       "root": "src/data",
       "classification": [
         "regular"
@@ -2965,7 +2989,7 @@
           "id": "src/data/dashboard.ts#housingLoanToProjection",
           "name": "housingLoanToProjection",
           "kind": "function",
-          "line": 313,
+          "line": 348,
           "exported": false,
           "classification": [],
           "edges": [
@@ -2984,7 +3008,7 @@
           "id": "src/data/dashboard.ts#cpfInvestmentToProjection",
           "name": "cpfInvestmentToProjection",
           "kind": "function",
-          "line": 363,
+          "line": 398,
           "exported": false,
           "classification": [],
           "edges": [
@@ -2999,7 +3023,7 @@
           "id": "src/data/dashboard.ts#ageAtEndOfYearMonth",
           "name": "ageAtEndOfYearMonth",
           "kind": "function",
-          "line": 376,
+          "line": 411,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3014,7 +3038,7 @@
           "id": "src/data/dashboard.ts#isYearMonth",
           "name": "isYearMonth",
           "kind": "function",
-          "line": 382,
+          "line": 417,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -3024,17 +3048,110 @@
           "id": "src/data/dashboard.ts#monthDistance",
           "name": "monthDistance",
           "kind": "function",
-          "line": 386,
+          "line": 421,
           "exported": false,
           "classification": [],
           "edges": [],
           "unresolved": 0
         },
         {
+          "id": "src/data/dashboard.ts#annualGrowthMultiplierAtYear",
+          "name": "annualGrowthMultiplierAtYear",
+          "kind": "function",
+          "line": 427,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/dates.ts#addMonthsToYearMonth"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/data/dashboard.ts#sumProjectionFlows",
+          "name": "sumProjectionFlows",
+          "kind": "function",
+          "line": 483,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/data/dashboard.ts#annualizationFactorForRows",
+          "name": "annualizationFactorForRows",
+          "kind": "function",
+          "line": 493,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/data/dashboard.ts#sumProjectionOutflows",
+          "name": "sumProjectionOutflows",
+          "kind": "function",
+          "line": 498,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/data/dashboard.ts#annualizeProjectionFlows",
+          "name": "annualizeProjectionFlows",
+          "kind": "function",
+          "line": 520,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/data/dashboard.ts#sampleYearPhaseFlowRows",
+          "name": "sampleYearPhaseFlowRows",
+          "kind": "function",
+          "line": 574,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/dates.ts#addMonthsToYearMonth"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/data/dashboard.ts#retirementSpendLedgerEntries",
+          "name": "retirementSpendLedgerEntries",
+          "kind": "function",
+          "line": 602,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/dates.ts#addMonthsToYearMonth"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/dashboard.ts#monthDistance"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/dashboard.ts#annualGrowthMultiplierAtYear"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/data/dashboard.ts#cpfInitialSnapshot",
           "name": "cpfInitialSnapshot",
           "kind": "function",
-          "line": 392,
+          "line": 650,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3049,7 +3166,7 @@
           "id": "src/data/dashboard.ts#buildCpfHousingMarkers",
           "name": "buildCpfHousingMarkers",
           "kind": "function",
-          "line": 422,
+          "line": 680,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3064,7 +3181,7 @@
           "id": "src/data/dashboard.ts#getDashboardPayload",
           "name": "getDashboardPayload",
           "kind": "function",
-          "line": 448,
+          "line": 706,
           "exported": true,
           "classification": [],
           "edges": [
@@ -3162,6 +3279,14 @@
             },
             {
               "kind": "calls",
+              "target": "src/data/repositories/properties.ts#advisorReadProperties"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/properties.ts#listProperties"
+            },
+            {
+              "kind": "calls",
               "target": "src/data/repositories/income-tax-configs.ts#advisorReadIncomeTaxConfig"
             },
             {
@@ -3222,6 +3347,10 @@
             },
             {
               "kind": "calls",
+              "target": "src/domain/finance/age-projection.ts#ageCompletedOnDate"
+            },
+            {
+              "kind": "calls",
               "target": "src/data/mappers.ts#profileMonthlyGross"
             },
             {
@@ -3258,10 +3387,6 @@
             },
             {
               "kind": "calls",
-              "target": "src/domain/finance/age-projection.ts#ageCompletedOnDate"
-            },
-            {
-              "kind": "calls",
               "target": "src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash"
             },
             {
@@ -3279,6 +3404,14 @@
             {
               "kind": "calls",
               "target": "src/domain/finance/net-worth.ts#calculateNetWorth"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/dates.ts#formatYearMonth"
             },
             {
               "kind": "calls",
@@ -3302,7 +3435,15 @@
             },
             {
               "kind": "calls",
-              "target": "src/domain/finance/age-asset-projection.ts#buildAgeAssetProjection"
+              "target": "src/lib/dates.ts#addCalendarMonths"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/dashboard.ts#buildCpfHousingMarkers"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/vehicle-sg.ts#vehicleNetProceedsAtCoeMonthEnd"
             },
             {
               "kind": "calls",
@@ -3310,7 +3451,31 @@
             },
             {
               "kind": "calls",
-              "target": "src/data/dashboard.ts#buildCpfHousingMarkers"
+              "target": "src/data/dashboard.ts#retirementSpendLedgerEntries"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-contribution.ts#contributionStartMonthFromInvestmentRow"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-contribution.ts#annualWithdrawalFromInvestmentRow"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-contribution.ts#investmentMaturityMonthFromInvestmentRow"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
             },
             {
               "kind": "calls",
@@ -3323,6 +3488,26 @@
             {
               "kind": "calls",
               "target": "src/data/mappers.ts#profileRetirementWithdrawalRateAnnual"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/dashboard.ts#sampleYearPhaseFlowRows"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/dashboard.ts#annualizationFactorForRows"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/dashboard.ts#sumProjectionOutflows"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/dashboard.ts#annualizeProjectionFlows"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/dashboard.ts#sumProjectionFlows"
             },
             {
               "kind": "calls",
@@ -3341,7 +3526,7 @@
               "target": "src/domain/finance/housing-loan-payments.ts#buildHousingPaymentInsights"
             }
           ],
-          "unresolved": 1
+          "unresolved": 3
         }
       ]
     },
@@ -7089,7 +7274,7 @@
           "id": "src/data/repositories/investments.ts#listInvestments",
           "name": "listInvestments",
           "kind": "function",
-          "line": 31,
+          "line": 33,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7116,7 +7301,7 @@
           "id": "src/data/repositories/investments.ts#advisorReadInvestments",
           "name": "advisorReadInvestments",
           "kind": "function",
-          "line": 50,
+          "line": 52,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7131,7 +7316,7 @@
           "id": "src/data/repositories/investments.ts#getInvestmentById",
           "name": "getInvestmentById",
           "kind": "function",
-          "line": 61,
+          "line": 63,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7162,7 +7347,7 @@
           "id": "src/data/repositories/investments.ts#insertInvestment",
           "name": "insertInvestment",
           "kind": "function",
-          "line": 91,
+          "line": 95,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7209,7 +7394,7 @@
           "id": "src/data/repositories/investments.ts#updateInvestment",
           "name": "updateInvestment",
           "kind": "function",
-          "line": 172,
+          "line": 187,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7256,7 +7441,7 @@
           "id": "src/data/repositories/investments.ts#deleteInvestment",
           "name": "deleteInvestment",
           "kind": "function",
-          "line": 263,
+          "line": 295,
           "exported": true,
           "classification": [],
           "edges": [
@@ -8066,7 +8251,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.conflict.test.ts#coerceRead",
           "name": "coerceRead",
           "kind": "function",
-          "line": 29,
+          "line": 33,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -8076,7 +8261,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.conflict.test.ts#makeFakeSupabase",
           "name": "makeFakeSupabase",
           "kind": "function",
-          "line": 38,
+          "line": 42,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8091,7 +8276,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.conflict.test.ts#ch",
           "name": "ch",
           "kind": "function",
-          "line": 141,
+          "line": 145,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -8101,7 +8286,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.conflict.test.ts#seed",
           "name": "seed",
           "kind": "function",
-          "line": 162,
+          "line": 166,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -8111,7 +8296,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.conflict.test.ts#invRow",
           "name": "invRow",
           "kind": "function",
-          "line": 931,
+          "line": 935,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -8130,7 +8315,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.parity.test.ts#coerceRead",
           "name": "coerceRead",
           "kind": "function",
-          "line": 50,
+          "line": 52,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -8140,7 +8325,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.parity.test.ts#makeFakeSupabase",
           "name": "makeFakeSupabase",
           "kind": "function",
-          "line": 59,
+          "line": 61,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8155,7 +8340,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.parity.test.ts#canonical",
           "name": "canonical",
           "kind": "function",
-          "line": 164,
+          "line": 166,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -8165,7 +8350,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.parity.test.ts#ch",
           "name": "ch",
           "kind": "function",
-          "line": 249,
+          "line": 251,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -8175,7 +8360,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.parity.test.ts#investmentValueShape",
           "name": "investmentValueShape",
           "kind": "arrow",
-          "line": 268,
+          "line": 270,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -8229,7 +8414,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#investmentWritePayload",
           "name": "investmentWritePayload",
           "kind": "function",
-          "line": 125,
+          "line": 128,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8244,7 +8429,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#budgetLineWritePayload",
           "name": "budgetLineWritePayload",
           "kind": "function",
-          "line": 144,
+          "line": 150,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8259,7 +8444,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#budgetLineDiffers",
           "name": "budgetLineDiffers",
           "kind": "function",
-          "line": 155,
+          "line": 161,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8274,7 +8459,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#budgetLinePatch",
           "name": "budgetLinePatch",
           "kind": "function",
-          "line": 168,
+          "line": 174,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8289,7 +8474,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#goalWritePayload",
           "name": "goalWritePayload",
           "kind": "function",
-          "line": 187,
+          "line": 193,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8304,7 +8489,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#goalPatch",
           "name": "goalPatch",
           "kind": "function",
-          "line": 199,
+          "line": 205,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8319,7 +8504,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#cashAccountWritePayload",
           "name": "cashAccountWritePayload",
           "kind": "function",
-          "line": 226,
+          "line": 232,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8334,7 +8519,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#cashAccountDiffers",
           "name": "cashAccountDiffers",
           "kind": "function",
-          "line": 234,
+          "line": 240,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8349,7 +8534,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#applyEntityDiff",
           "name": "applyEntityDiff",
           "kind": "function",
-          "line": 250,
+          "line": 256,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -8359,7 +8544,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#liabilityWritePayload",
           "name": "liabilityWritePayload",
           "kind": "function",
-          "line": 279,
+          "line": 285,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8374,7 +8559,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#liabilityDiffers",
           "name": "liabilityDiffers",
           "kind": "function",
-          "line": 294,
+          "line": 300,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8389,7 +8574,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#vehicleWritePayload",
           "name": "vehicleWritePayload",
           "kind": "function",
-          "line": 312,
+          "line": 318,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8404,7 +8589,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#vehicleDiffers",
           "name": "vehicleDiffers",
           "kind": "function",
-          "line": 348,
+          "line": 354,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8419,7 +8604,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#propertyWritePayload",
           "name": "propertyWritePayload",
           "kind": "function",
-          "line": 364,
+          "line": 370,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8434,7 +8619,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#propertyDiffers",
           "name": "propertyDiffers",
           "kind": "function",
-          "line": 378,
+          "line": 384,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8449,7 +8634,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#housingLoanWritePayload",
           "name": "housingLoanWritePayload",
           "kind": "function",
-          "line": 394,
+          "line": 400,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8464,7 +8649,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#housingLoanDiffers",
           "name": "housingLoanDiffers",
           "kind": "function",
-          "line": 413,
+          "line": 419,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8479,7 +8664,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#assertHandledEntityTypes",
           "name": "assertHandledEntityTypes",
           "kind": "function",
-          "line": 441,
+          "line": 447,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -8489,7 +8674,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#detectConflicts",
           "name": "detectConflicts",
           "kind": "function",
-          "line": 483,
+          "line": 489,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -8499,7 +8684,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#detectNameConflicts",
           "name": "detectNameConflicts",
           "kind": "function",
-          "line": 540,
+          "line": 546,
           "exported": false,
           "classification": [],
           "edges": [
@@ -8518,7 +8703,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#nameConflictFromWriteError",
           "name": "nameConflictFromWriteError",
           "kind": "function",
-          "line": 609,
+          "line": 615,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -8528,7 +8713,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts",
           "name": "detectAcceptConflicts",
           "kind": "function",
-          "line": 669,
+          "line": 675,
           "exported": true,
           "classification": [],
           "edges": [
@@ -8587,7 +8772,7 @@
           "id": "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
           "name": "applyAcceptedProposalChanges",
           "kind": "function",
-          "line": 725,
+          "line": 731,
           "exported": true,
           "classification": [],
           "edges": [
@@ -9078,7 +9263,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#mergeInvestment",
           "name": "mergeInvestment",
           "kind": "function",
-          "line": 193,
+          "line": 196,
           "exported": false,
           "classification": [],
           "edges": [
@@ -9093,7 +9278,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#applyBudgetLineInsert",
           "name": "applyBudgetLineInsert",
           "kind": "function",
-          "line": 232,
+          "line": 242,
           "exported": false,
           "classification": [],
           "edges": [
@@ -9112,7 +9297,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#mergeBudgetLine",
           "name": "mergeBudgetLine",
           "kind": "function",
-          "line": 250,
+          "line": 260,
           "exported": false,
           "classification": [],
           "edges": [
@@ -9127,7 +9312,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#applyGoalInsert",
           "name": "applyGoalInsert",
           "kind": "function",
-          "line": 273,
+          "line": 283,
           "exported": false,
           "classification": [],
           "edges": [
@@ -9146,7 +9331,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#mergeGoal",
           "name": "mergeGoal",
           "kind": "function",
-          "line": 292,
+          "line": 302,
           "exported": false,
           "classification": [],
           "edges": [
@@ -9161,7 +9346,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#applyCashAccountInsert",
           "name": "applyCashAccountInsert",
           "kind": "function",
-          "line": 321,
+          "line": 331,
           "exported": false,
           "classification": [],
           "edges": [
@@ -9180,7 +9365,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#mergeCashAccount",
           "name": "mergeCashAccount",
           "kind": "function",
-          "line": 336,
+          "line": 346,
           "exported": false,
           "classification": [],
           "edges": [
@@ -9195,7 +9380,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#applyLiabilityInsert",
           "name": "applyLiabilityInsert",
           "kind": "function",
-          "line": 349,
+          "line": 359,
           "exported": false,
           "classification": [],
           "edges": [
@@ -9214,7 +9399,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#mergeLiability",
           "name": "mergeLiability",
           "kind": "function",
-          "line": 372,
+          "line": 382,
           "exported": false,
           "classification": [],
           "edges": [
@@ -9229,7 +9414,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#applyVehicleInsert",
           "name": "applyVehicleInsert",
           "kind": "function",
-          "line": 405,
+          "line": 415,
           "exported": false,
           "classification": [],
           "edges": [
@@ -9248,7 +9433,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#applyPropertyInsert",
           "name": "applyPropertyInsert",
           "kind": "function",
-          "line": 438,
+          "line": 448,
           "exported": false,
           "classification": [],
           "edges": [
@@ -9267,7 +9452,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#mergeProperty",
           "name": "mergeProperty",
           "kind": "function",
-          "line": 461,
+          "line": 471,
           "exported": false,
           "classification": [],
           "edges": [
@@ -9282,7 +9467,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#applyHousingLoanInsert",
           "name": "applyHousingLoanInsert",
           "kind": "function",
-          "line": 494,
+          "line": 504,
           "exported": false,
           "classification": [],
           "edges": [
@@ -9301,7 +9486,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#mergeHousingLoan",
           "name": "mergeHousingLoan",
           "kind": "function",
-          "line": 522,
+          "line": 532,
           "exported": false,
           "classification": [],
           "edges": [
@@ -9316,7 +9501,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#mergeVehicle",
           "name": "mergeVehicle",
           "kind": "function",
-          "line": 547,
+          "line": 557,
           "exported": false,
           "classification": [],
           "edges": [
@@ -9331,7 +9516,7 @@
           "id": "src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges",
           "name": "applyProposalChanges",
           "kind": "function",
-          "line": 585,
+          "line": 595,
           "exported": true,
           "classification": [],
           "edges": [
@@ -9431,7 +9616,7 @@
           "id": "src/domain/advisor-proposals/field-registry.ts#fieldMeta",
           "name": "fieldMeta",
           "kind": "function",
-          "line": 123,
+          "line": 125,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -9441,7 +9626,7 @@
           "id": "src/domain/advisor-proposals/field-registry.ts#serializeProposalValue",
           "name": "serializeProposalValue",
           "kind": "function",
-          "line": 166,
+          "line": 168,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -9451,7 +9636,7 @@
           "id": "src/domain/advisor-proposals/field-registry.ts#valuesEqual",
           "name": "valuesEqual",
           "kind": "function",
-          "line": 173,
+          "line": 175,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -10718,7 +10903,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#downsampleCpfSeries",
           "name": "downsampleCpfSeries",
           "kind": "function",
-          "line": 476,
+          "line": 493,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -12276,7 +12461,7 @@
           "id": "src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow",
           "name": "contributionMonthsLimitFromInvestmentRow",
           "kind": "function",
-          "line": 17,
+          "line": 22,
           "exported": true,
           "classification": [],
           "edges": [
@@ -12295,7 +12480,7 @@
           "id": "src/domain/finance/investment-contribution.ts#contributionStartMonthFromInvestmentRow",
           "name": "contributionStartMonthFromInvestmentRow",
           "kind": "function",
-          "line": 56,
+          "line": 61,
           "exported": true,
           "classification": [],
           "edges": [
@@ -12310,10 +12495,14 @@
           "id": "src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow",
           "name": "withdrawalStartMonthFromInvestmentRow",
           "kind": "function",
-          "line": 69,
+          "line": 74,
           "exported": true,
           "classification": [],
           "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-contribution.ts#annualWithdrawalFromInvestmentRow"
+            },
             {
               "kind": "calls",
               "target": "src/data/mappers.ts#num"
@@ -12321,6 +12510,52 @@
             {
               "kind": "calls",
               "target": "src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/investment-contribution.ts#annualWithdrawalFromInvestmentRow",
+          "name": "annualWithdrawalFromInvestmentRow",
+          "kind": "function",
+          "line": 111,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/data/mappers.ts#num"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/investment-contribution.ts#investmentMaturityMonthFromInvestmentRow",
+          "name": "investmentMaturityMonthFromInvestmentRow",
+          "kind": "function",
+          "line": 120,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-contribution-dates.ts#parseIsoDateOnly"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/mappers.ts#num"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/dates.ts#addCalendarMonths"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-contribution-dates.ts#calendarMonthsBetween"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-contribution-dates.ts#contributionScheduleFromDates"
             }
           ],
           "unresolved": 0
@@ -12338,7 +12573,7 @@
           "id": "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth",
           "name": "futureValueInvestmentPortfolioAtMonth",
           "kind": "function",
-          "line": 13,
+          "line": 14,
           "exported": true,
           "classification": [],
           "edges": [
@@ -12361,6 +12596,10 @@
             {
               "kind": "calls",
               "target": "src/data/mappers.ts#num"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/investment-contribution.ts#annualWithdrawalFromInvestmentRow"
             }
           ],
           "unresolved": 0
@@ -12369,7 +12608,7 @@
           "id": "src/domain/finance/investment-portfolio-fv.ts#calculateTimeToGoalInvestmentPortfolio",
           "name": "calculateTimeToGoalInvestmentPortfolio",
           "kind": "function",
-          "line": 50,
+          "line": 51,
           "exported": true,
           "classification": [],
           "edges": [
@@ -12720,7 +12959,7 @@
           "id": "src/domain/finance/projection.ts#monthlyContributionForMonth",
           "name": "monthlyContributionForMonth",
           "kind": "function",
-          "line": 37,
+          "line": 40,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -12730,7 +12969,7 @@
           "id": "src/domain/finance/projection.ts#projectFutureValueIterative",
           "name": "projectFutureValueIterative",
           "kind": "function",
-          "line": 46,
+          "line": 49,
           "exported": false,
           "classification": [],
           "edges": [
@@ -12745,7 +12984,7 @@
           "id": "src/domain/finance/projection.ts#projectFutureValue",
           "name": "projectFutureValue",
           "kind": "function",
-          "line": 98,
+          "line": 105,
           "exported": true,
           "classification": [],
           "edges": [
@@ -12768,7 +13007,7 @@
           "id": "src/domain/finance/projection.ts#calculateTimeToGoal",
           "name": "calculateTimeToGoal",
           "kind": "function",
-          "line": 171,
+          "line": 178,
           "exported": true,
           "classification": [],
           "edges": [
@@ -12819,6 +13058,390 @@
           "classification": [],
           "edges": [],
           "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/domain/finance/retirement-cashflow-projection.test.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.test.ts#component",
+          "name": "component",
+          "kind": "function",
+          "line": 31,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.test.ts#monthlyEntry",
+          "name": "monthlyEntry",
+          "kind": "function",
+          "line": 47,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/domain/finance/retirement-cashflow-projection.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#clampMonth",
+          "name": "clampMonth",
+          "kind": "function",
+          "line": 198,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#isEntryActive",
+          "name": "isEntryActive",
+          "kind": "function",
+          "line": 203,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#annualGrowthMultiplier",
+          "name": "annualGrowthMultiplier",
+          "kind": "function",
+          "line": 221,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/dates.ts#addMonthsToYearMonth"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#amountForEntry",
+          "name": "amountForEntry",
+          "kind": "function",
+          "line": 239,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#annualGrowthMultiplier"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#snapshotForMonth",
+          "name": "snapshotForMonth",
+          "kind": "function",
+          "line": 250,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#nonNegativeFinite",
+          "name": "nonNegativeFinite",
+          "kind": "function",
+          "line": 262,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#safeRate",
+          "name": "safeRate",
+          "kind": "function",
+          "line": 266,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#incomeRate",
+          "name": "incomeRate",
+          "kind": "function",
+          "line": 271,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#createInitialBreakdown",
+          "name": "createInitialBreakdown",
+          "kind": "function",
+          "line": 276,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#createInitialDrawBreakdown",
+          "name": "createInitialDrawBreakdown",
+          "kind": "function",
+          "line": 287,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#buildInvestmentStates",
+          "name": "buildInvestmentStates",
+          "kind": "function",
+          "line": 294,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#nonNegativeFinite"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#investmentPrincipalTotal",
+          "name": "investmentPrincipalTotal",
+          "kind": "function",
+          "line": 323,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#addSourceBreakdown",
+          "name": "addSourceBreakdown",
+          "kind": "function",
+          "line": 327,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#outflowBreakdownKey",
+          "name": "outflowBreakdownKey",
+          "kind": "function",
+          "line": 344,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#addOutflowBreakdown",
+          "name": "addOutflowBreakdown",
+          "kind": "function",
+          "line": 348,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#outflowBreakdownKey"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#componentCanUsePrincipal",
+          "name": "componentCanUsePrincipal",
+          "kind": "function",
+          "line": 367,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#componentCanProduceIncome",
+          "name": "componentCanProduceIncome",
+          "kind": "function",
+          "line": 375,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#componentCanWithdraw",
+          "name": "componentCanWithdraw",
+          "kind": "function",
+          "line": 383,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#drawPrincipalProRata",
+          "name": "drawPrincipalProRata",
+          "kind": "function",
+          "line": 394,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#investmentPrincipalTotal"
+            }
+          ],
+          "unresolved": 1
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#fundTransfersProRata",
+          "name": "fundTransfersProRata",
+          "kind": "function",
+          "line": 419,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#applyComponentGrowth",
+          "name": "applyComponentGrowth",
+          "kind": "function",
+          "line": 436,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#safeRate"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#addDecemberComponentInflows",
+          "name": "addDecemberComponentInflows",
+          "kind": "function",
+          "line": 446,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#componentCanProduceIncome"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#incomeRate"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#componentCanWithdraw"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#nonNegativeFinite"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection",
+          "name": "buildRetirementCashflowProjection",
+          "kind": "function",
+          "line": 481,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#clampMonth"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#buildInvestmentStates"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#nonNegativeFinite"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/dates.ts#addMonthsToYearMonth"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#snapshotForMonth"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#investmentPrincipalTotal"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#createInitialDrawBreakdown"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#createInitialBreakdown"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#isEntryActive"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#amountForEntry"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#addSourceBreakdown"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#addOutflowBreakdown"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#fundTransfersProRata"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#drawPrincipalProRata"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#componentCanUsePrincipal"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#applyComponentGrowth"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/retirement-cashflow-projection.ts#addDecemberComponentInflows"
+            }
+          ],
+          "unresolved": 2
         }
       ]
     },
@@ -13907,6 +14530,164 @@
         "regular"
       ],
       "functions": []
+    },
+    {
+      "path": "src/domain/housing/property-equity.test.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/domain/housing/property-equity.test.ts#property",
+          "name": "property",
+          "kind": "function",
+          "line": 8,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.test.ts#housingLoan",
+          "name": "housingLoan",
+          "kind": "function",
+          "line": 28,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/domain/housing/property-equity.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown",
+          "name": "buildPropertyEquityBreakdown",
+          "kind": "function",
+          "line": 17,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#groupLoansByPropertyId"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#ownedPropertyGrossValue"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#housingLoanBalanceAt"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.ts#normalizePropertyOwnership",
+          "name": "normalizePropertyOwnership",
+          "kind": "function",
+          "line": 45,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.ts#ownedPropertyGrossValue",
+          "name": "ownedPropertyGrossValue",
+          "kind": "function",
+          "line": 60,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#moneyValue"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#normalizePropertyOwnership"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.ts#groupLoansByPropertyId",
+          "name": "groupLoansByPropertyId",
+          "kind": "function",
+          "line": 71,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.ts#housingLoanBalanceAt",
+          "name": "housingLoanBalanceAt",
+          "kind": "function",
+          "line": 84,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#moneyValue"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#compareYearMonth"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.ts#moneyValue",
+          "name": "moneyValue",
+          "kind": "function",
+          "line": 107,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.ts#compareYearMonth",
+          "name": "compareYearMonth",
+          "kind": "function",
+          "line": 113,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#yearMonthIndex"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.ts#yearMonthIndex",
+          "name": "yearMonthIndex",
+          "kind": "function",
+          "line": 117,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
     },
     {
       "path": "src/domain/housing/types.ts",
@@ -18354,131 +19135,6 @@
       ]
     },
     {
-      "path": "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx",
-      "root": "src/features",
-      "classification": [
-        "client-component"
-      ],
-      "functions": [
-        {
-          "id": "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#formatMoney",
-          "name": "formatMoney",
-          "kind": "function",
-          "line": 33,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#TooltipDetail",
-          "name": "TooltipDetail",
-          "kind": "component",
-          "line": 41,
-          "exported": false,
-          "classification": [
-            "client-component"
-          ],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
-          "id": "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AssetTooltip",
-          "name": "AssetTooltip",
-          "kind": "component",
-          "line": 67,
-          "exported": false,
-          "classification": [
-            "client-component"
-          ],
-          "edges": [
-            {
-              "kind": "calls",
-              "target": "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#formatMoney"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#TooltipDetail"
-            }
-          ],
-          "unresolved": 0
-        },
-        {
-          "id": "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart",
-          "name": "AgeCombinedAssetsProjectionChart",
-          "kind": "component",
-          "line": 384,
-          "exported": true,
-          "classification": [
-            "client-component"
-          ],
-          "edges": [
-            {
-              "kind": "renders",
-              "external": "recharts"
-            },
-            {
-              "kind": "renders",
-              "external": "recharts"
-            },
-            {
-              "kind": "renders",
-              "external": "recharts"
-            },
-            {
-              "kind": "renders",
-              "external": "recharts"
-            },
-            {
-              "kind": "renders",
-              "external": "recharts"
-            },
-            {
-              "kind": "renders",
-              "external": "recharts"
-            },
-            {
-              "kind": "renders",
-              "external": "recharts"
-            },
-            {
-              "kind": "renders",
-              "external": "recharts"
-            },
-            {
-              "kind": "renders",
-              "external": "recharts"
-            },
-            {
-              "kind": "renders",
-              "external": "recharts"
-            },
-            {
-              "kind": "renders",
-              "external": "recharts"
-            },
-            {
-              "kind": "renders",
-              "external": "recharts"
-            },
-            {
-              "kind": "calls",
-              "target": "src/ui/use-narrow-screen.ts#useNarrowScreen"
-            },
-            {
-              "kind": "renders",
-              "target": "src/ui/ChartFrame.tsx#ChartFrame"
-            },
-            {
-              "kind": "renders",
-              "target": "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AssetTooltip"
-            }
-          ],
-          "unresolved": 0
-        }
-      ]
-    },
-    {
       "path": "src/features/dashboard/CpfProjectionByAgeChart.tsx",
       "root": "src/features",
       "classification": [
@@ -18896,7 +19552,7 @@
             },
             {
               "kind": "renders",
-              "target": "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart"
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart"
             },
             {
               "kind": "renders",
@@ -19182,6 +19838,704 @@
               "target": "src/ui/ChartFrame.tsx#ChartFrame"
             }
           ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/features/dashboard/retirement-runway-rows.test.ts",
+      "root": "src/features",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/features/dashboard/retirement-runway-rows.test.ts#point",
+          "name": "point",
+          "kind": "arrow",
+          "line": 5,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/retirement-runway-rows.test.ts#stackSum",
+          "name": "stackSum",
+          "kind": "arrow",
+          "line": 22,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/features/dashboard/retirement-runway-rows.ts",
+      "root": "src/features",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/features/dashboard/retirement-runway-rows.ts#num",
+          "name": "num",
+          "kind": "arrow",
+          "line": 107,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/retirement-runway-rows.ts#safeSegmentKey",
+          "name": "safeSegmentKey",
+          "kind": "function",
+          "line": 109,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/retirement-runway-rows.ts#addAmount",
+          "name": "addAmount",
+          "kind": "function",
+          "line": 119,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/retirement-runway-rows.ts#outflowBreakdownItem",
+          "name": "outflowBreakdownItem",
+          "kind": "function",
+          "line": 134,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/retirement-runway-rows.ts#safeSegmentKey"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/retirement-runway-rows.ts#outflowSegmentsForPoint",
+          "name": "outflowSegmentsForPoint",
+          "kind": "function",
+          "line": 158,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/retirement-runway-rows.ts#outflowBreakdownItem"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/retirement-runway-rows.ts#addAmount"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/retirement-runway-rows.ts#investmentPrincipalForPoint",
+          "name": "investmentPrincipalForPoint",
+          "kind": "function",
+          "line": 169,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/retirement-runway-rows.ts#num"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/retirement-runway-rows.ts#toRunwayRows",
+          "name": "toRunwayRows",
+          "kind": "function",
+          "line": 175,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/retirement-runway-rows.ts#num"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/retirement-runway-rows.ts#investmentPrincipalForPoint"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/retirement-runway-rows.ts#outflowSegmentsForPoint"
+            }
+          ],
+          "unresolved": 6
+        },
+        {
+          "id": "src/features/dashboard/retirement-runway-rows.ts#firstAge",
+          "name": "firstAge",
+          "kind": "arrow",
+          "line": 278,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/retirement-runway-rows.ts#deriveMilestones",
+          "name": "deriveMilestones",
+          "kind": "function",
+          "line": 287,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/retirement-runway-rows.ts#firstAge"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/retirement-runway-rows.ts#num"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/retirement-runway-rows.ts#findSpikeAge"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/retirement-runway-rows.ts#findSpikeAge",
+          "name": "findSpikeAge",
+          "kind": "function",
+          "line": 342,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/retirement-runway-rows.ts#num"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/features/dashboard/RetirementRunwayLedgerChart.test.tsx",
+      "root": "src/features",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.test.tsx#point",
+          "name": "point",
+          "kind": "arrow",
+          "line": 10,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/features/dashboard/RetirementRunwayLedgerChart.tsx",
+      "root": "src/features",
+      "classification": [
+        "client-component"
+      ],
+      "functions": [
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney",
+          "name": "formatMoney",
+          "kind": "function",
+          "line": 47,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#rowValue",
+          "name": "rowValue",
+          "kind": "function",
+          "line": 56,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#colorForSegment",
+          "name": "colorForSegment",
+          "kind": "function",
+          "line": 61,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount",
+          "name": "hasAmount",
+          "kind": "function",
+          "line": 74,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail",
+          "name": "addDetail",
+          "kind": "function",
+          "line": 78,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails",
+          "name": "compactDetails",
+          "kind": "function",
+          "line": 89,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails",
+          "name": "fundingDetails",
+          "kind": "function",
+          "line": 105,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails",
+          "name": "netWorthDetails",
+          "kind": "function",
+          "line": 140,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#cpfDetails",
+          "name": "cpfDetails",
+          "kind": "function",
+          "line": 151,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#outflowTooltipDetails",
+          "name": "outflowTooltipDetails",
+          "kind": "function",
+          "line": 161,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#useContainerWidth",
+          "name": "useContainerWidth",
+          "kind": "function",
+          "line": 172,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            }
+          ],
+          "unresolved": 1
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow",
+          "name": "TooltipAmountRow",
+          "kind": "component",
+          "line": 187,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails",
+          "name": "TooltipDetails",
+          "kind": "component",
+          "line": 224,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip",
+          "name": "RunwayTooltip",
+          "kind": "component",
+          "line": 252,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [
+            {
+              "kind": "renders",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#outflowTooltipDetails"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#rowValue"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#Panel",
+          "name": "Panel",
+          "kind": "component",
+          "line": 302,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorRow",
+          "name": "InspectorRow",
+          "kind": "component",
+          "line": 346,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetailRow",
+          "name": "InspectorDetailRow",
+          "kind": "component",
+          "line": 379,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails",
+          "name": "InspectorDetails",
+          "kind": "component",
+          "line": 404,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetailRow"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#Toggle",
+          "name": "Toggle",
+          "kind": "component",
+          "line": 429,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [],
+          "unresolved": 1
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart",
+          "name": "RetirementRunwayLedgerChart",
+          "kind": "component",
+          "line": 470,
+          "exported": true,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "renders",
+              "external": "recharts"
+            },
+            {
+              "kind": "renders",
+              "external": "recharts"
+            },
+            {
+              "kind": "renders",
+              "external": "recharts"
+            },
+            {
+              "kind": "renders",
+              "external": "recharts"
+            },
+            {
+              "kind": "renders",
+              "external": "recharts"
+            },
+            {
+              "kind": "renders",
+              "external": "recharts"
+            },
+            {
+              "kind": "renders",
+              "external": "recharts"
+            },
+            {
+              "kind": "renders",
+              "external": "recharts"
+            },
+            {
+              "kind": "renders",
+              "external": "recharts"
+            },
+            {
+              "kind": "renders",
+              "external": "recharts"
+            },
+            {
+              "kind": "renders",
+              "external": "recharts"
+            },
+            {
+              "kind": "renders",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/retirement-runway-rows.ts#toRunwayRows"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#colorForSegment"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/retirement-runway-rows.ts#deriveMilestones"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#useContainerWidth"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#Toggle"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneLegend"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#Panel"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorRow"
+            },
+            {
+              "kind": "renders",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#rowValue"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#cpfDetails"
+            }
+          ],
+          "unresolved": 5
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneLegend",
+          "name": "MilestoneLegend",
+          "kind": "component",
+          "line": 873,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [
+            {
+              "kind": "renders",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneCard"
+            }
+          ],
+          "unresolved": 1
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneCard",
+          "name": "MilestoneCard",
+          "kind": "component",
+          "line": 906,
+          "exported": false,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [],
           "unresolved": 0
         }
       ]
@@ -20956,10 +22310,59 @@
       ],
       "functions": [
         {
+          "id": "src/features/goals/InvestmentBalancesList.tsx#nonNegative",
+          "name": "nonNegative",
+          "kind": "function",
+          "line": 47,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/goals/InvestmentBalancesList.tsx#percentDecimal",
+          "name": "percentDecimal",
+          "kind": "function",
+          "line": 52,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/goals/InvestmentBalancesList.tsx#yearsUntilDate",
+          "name": "yearsUntilDate",
+          "kind": "function",
+          "line": 58,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/goals/InvestmentBalancesList.tsx#ilpMaturityAge",
+          "name": "ilpMaturityAge",
+          "kind": "function",
+          "line": 70,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/goals/InvestmentBalancesList.tsx#nonNegative"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/goals/InvestmentBalancesList.tsx#yearsUntilDate"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/features/goals/InvestmentBalancesList.tsx#withdrawalStartDisplayValue",
           "name": "withdrawalStartDisplayValue",
           "kind": "function",
-          "line": 47,
+          "line": 82,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -20969,7 +22372,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#contributionSummaryLine",
           "name": "contributionSummaryLine",
           "kind": "function",
-          "line": 74,
+          "line": 109,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20984,7 +22387,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#ContributionTimelineHint",
           "name": "ContributionTimelineHint",
           "kind": "component",
-          "line": 111,
+          "line": 146,
           "exported": false,
           "classification": [
             "client-component"
@@ -21001,7 +22404,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary",
           "name": "InvestmentSummary",
           "kind": "component",
-          "line": 182,
+          "line": 217,
           "exported": false,
           "classification": [
             "client-component"
@@ -21034,7 +22437,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm",
           "name": "InvestmentEditForm",
           "kind": "component",
-          "line": 271,
+          "line": 310,
           "exported": false,
           "classification": [
             "client-component"
@@ -21102,7 +22505,19 @@
             },
             {
               "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
               "external": "next"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
             },
             {
               "kind": "calls",
@@ -21129,6 +22544,18 @@
               "target": "src/server/actions.ts#updateInvestmentAction"
             },
             {
+              "kind": "calls",
+              "target": "src/features/goals/InvestmentBalancesList.tsx#percentDecimal"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/goals/InvestmentBalancesList.tsx#ilpMaturityAge"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/goals/InvestmentBalancesList.tsx#nonNegative"
+            },
+            {
               "kind": "renders",
               "target": "src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay"
             },
@@ -21145,13 +22572,13 @@
               "target": "src/ui/InfoTooltip.tsx#InfoTooltip"
             }
           ],
-          "unresolved": 8
+          "unresolved": 12
         },
         {
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentRow",
           "name": "InvestmentRow",
           "kind": "component",
-          "line": 608,
+          "line": 707,
           "exported": false,
           "classification": [
             "client-component"
@@ -21216,7 +22643,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentReviewPrompt",
           "name": "InvestmentReviewPrompt",
           "kind": "component",
-          "line": 698,
+          "line": 797,
           "exported": false,
           "classification": [
             "client-component"
@@ -21249,7 +22676,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList",
           "name": "InvestmentBalancesList",
           "kind": "component",
-          "line": 749,
+          "line": 848,
           "exported": true,
           "classification": [
             "client-component"
@@ -21291,13 +22718,13 @@
           "id": "src/features/goals/InvestmentContributionScheduleFields.tsx#InvestmentContributionScheduleFields",
           "name": "InvestmentContributionScheduleFields",
           "kind": "component",
-          "line": 6,
+          "line": 8,
           "exported": true,
           "classification": [
             "client-component"
           ],
           "edges": [],
-          "unresolved": 7
+          "unresolved": 9
         }
       ]
     },
@@ -21309,10 +22736,59 @@
       ],
       "functions": [
         {
+          "id": "src/features/goals/InvestmentForm.tsx#nonNegative",
+          "name": "nonNegative",
+          "kind": "function",
+          "line": 26,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/goals/InvestmentForm.tsx#percentDecimal",
+          "name": "percentDecimal",
+          "kind": "function",
+          "line": 31,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/goals/InvestmentForm.tsx#yearsUntilDate",
+          "name": "yearsUntilDate",
+          "kind": "function",
+          "line": 37,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/goals/InvestmentForm.tsx#ilpMaturityAge",
+          "name": "ilpMaturityAge",
+          "kind": "function",
+          "line": 49,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/goals/InvestmentForm.tsx#nonNegative"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/goals/InvestmentForm.tsx#yearsUntilDate"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/features/goals/InvestmentForm.tsx#InvestmentForm",
           "name": "InvestmentForm",
           "kind": "component",
-          "line": 21,
+          "line": 61,
           "exported": true,
           "classification": [
             "client-component"
@@ -21360,7 +22836,55 @@
             },
             {
               "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
               "target": "src/domain/finance/age-projection.ts#ageCompletedOnDate"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/goals/InvestmentForm.tsx#ilpMaturityAge"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/goals/InvestmentForm.tsx#nonNegative"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/goals/InvestmentForm.tsx#percentDecimal"
             },
             {
               "kind": "renders",
@@ -21379,7 +22903,7 @@
               "target": "src/features/goals/InvestmentContributionScheduleFields.tsx#InvestmentContributionScheduleFields"
             }
           ],
-          "unresolved": 1
+          "unresolved": 12
         }
       ]
     },
@@ -25681,7 +27205,7 @@
           "id": "src/server/actions.ts#updateInvestmentAction",
           "name": "updateInvestmentAction",
           "kind": "function",
-          "line": 213,
+          "line": 215,
           "exported": true,
           "classification": [
             "server-action"
@@ -25754,7 +27278,7 @@
           "id": "src/server/actions.ts#deleteInvestmentAction",
           "name": "deleteInvestmentAction",
           "kind": "function",
-          "line": 290,
+          "line": 294,
           "exported": true,
           "classification": [
             "server-action"
@@ -25815,7 +27339,7 @@
           "id": "src/server/actions.ts#confirmInvestmentReviewAction",
           "name": "confirmInvestmentReviewAction",
           "kind": "function",
-          "line": 322,
+          "line": 326,
           "exported": true,
           "classification": [
             "server-action"
@@ -25860,7 +27384,7 @@
           "id": "src/server/actions.ts#confirmCpfRulesReviewAction",
           "name": "confirmCpfRulesReviewAction",
           "kind": "function",
-          "line": 346,
+          "line": 350,
           "exported": true,
           "classification": [
             "server-action"
@@ -25897,7 +27421,7 @@
           "id": "src/server/actions.ts#parseCashAccountForm",
           "name": "parseCashAccountForm",
           "kind": "function",
-          "line": 368,
+          "line": 372,
           "exported": false,
           "classification": [
             "server-action"
@@ -25914,7 +27438,7 @@
           "id": "src/server/actions.ts#createCashAccountAction",
           "name": "createCashAccountAction",
           "kind": "function",
-          "line": 381,
+          "line": 385,
           "exported": true,
           "classification": [
             "server-action"
@@ -25963,7 +27487,7 @@
           "id": "src/server/actions.ts#updateCashAccountAction",
           "name": "updateCashAccountAction",
           "kind": "function",
-          "line": 409,
+          "line": 413,
           "exported": true,
           "classification": [
             "server-action"
@@ -26024,7 +27548,7 @@
           "id": "src/server/actions.ts#deleteCashAccountAction",
           "name": "deleteCashAccountAction",
           "kind": "function",
-          "line": 441,
+          "line": 445,
           "exported": true,
           "classification": [
             "server-action"
@@ -26073,7 +27597,7 @@
           "id": "src/server/actions.ts#createLiabilityAction",
           "name": "createLiabilityAction",
           "kind": "function",
-          "line": 463,
+          "line": 467,
           "exported": true,
           "classification": [
             "server-action"
@@ -26130,7 +27654,7 @@
           "id": "src/server/actions.ts#updateLiabilityAction",
           "name": "updateLiabilityAction",
           "kind": "function",
-          "line": 499,
+          "line": 503,
           "exported": true,
           "classification": [
             "server-action"
@@ -26199,7 +27723,7 @@
           "id": "src/server/actions.ts#deleteLiabilityAction",
           "name": "deleteLiabilityAction",
           "kind": "function",
-          "line": 544,
+          "line": 548,
           "exported": true,
           "classification": [
             "server-action"
@@ -26256,7 +27780,7 @@
           "id": "src/server/actions.ts#optionalYearMonth",
           "name": "optionalYearMonth",
           "kind": "function",
-          "line": 568,
+          "line": 572,
           "exported": false,
           "classification": [
             "server-action"
@@ -26273,7 +27797,7 @@
           "id": "src/server/actions.ts#createVehicleAction",
           "name": "createVehicleAction",
           "kind": "function",
-          "line": 577,
+          "line": 581,
           "exported": true,
           "classification": [
             "server-action"
@@ -26318,7 +27842,7 @@
           "id": "src/server/actions.ts#updateVehicleAction",
           "name": "updateVehicleAction",
           "kind": "function",
-          "line": 775,
+          "line": 779,
           "exported": true,
           "classification": [
             "server-action"
@@ -26375,7 +27899,7 @@
           "id": "src/server/actions.ts#deleteVehicleAction",
           "name": "deleteVehicleAction",
           "kind": "function",
-          "line": 975,
+          "line": 979,
           "exported": true,
           "classification": [
             "server-action"
@@ -26420,7 +27944,7 @@
           "id": "src/server/actions.ts#createGoalAction",
           "name": "createGoalAction",
           "kind": "function",
-          "line": 994,
+          "line": 998,
           "exported": true,
           "classification": [
             "server-action"
@@ -26465,7 +27989,7 @@
           "id": "src/server/actions.ts#reorderFinancialGoalAction",
           "name": "reorderFinancialGoalAction",
           "kind": "function",
-          "line": 1058,
+          "line": 1062,
           "exported": true,
           "classification": [
             "server-action"
@@ -26502,7 +28026,7 @@
           "id": "src/server/actions.ts#updateGoalAction",
           "name": "updateGoalAction",
           "kind": "function",
-          "line": 1090,
+          "line": 1094,
           "exported": true,
           "classification": [
             "server-action"
@@ -26547,7 +28071,7 @@
           "id": "src/server/actions.ts#createBudgetLineAction",
           "name": "createBudgetLineAction",
           "kind": "function",
-          "line": 1162,
+          "line": 1166,
           "exported": true,
           "classification": [
             "server-action"
@@ -26588,7 +28112,7 @@
           "id": "src/server/actions.ts#coerceLifestyle",
           "name": "coerceLifestyle",
           "kind": "function",
-          "line": 1258,
+          "line": 1262,
           "exported": false,
           "classification": [
             "server-action"
@@ -26600,7 +28124,7 @@
           "id": "src/server/actions.ts#coerceStrategy",
           "name": "coerceStrategy",
           "kind": "function",
-          "line": 1266,
+          "line": 1270,
           "exported": false,
           "classification": [
             "server-action"
@@ -26612,7 +28136,7 @@
           "id": "src/server/actions.ts#coerceFoodBand",
           "name": "coerceFoodBand",
           "kind": "function",
-          "line": 1274,
+          "line": 1278,
           "exported": false,
           "classification": [
             "server-action"
@@ -26624,7 +28148,7 @@
           "id": "src/server/actions.ts#applyGuidedBudgetLinesAction",
           "name": "applyGuidedBudgetLinesAction",
           "kind": "function",
-          "line": 1295,
+          "line": 1299,
           "exported": true,
           "classification": [
             "server-action"
@@ -26713,7 +28237,7 @@
           "id": "src/server/actions.ts#updateBudgetLineAmountAction",
           "name": "updateBudgetLineAmountAction",
           "kind": "function",
-          "line": 1382,
+          "line": 1386,
           "exported": true,
           "classification": [
             "server-action"
@@ -26750,7 +28274,7 @@
           "id": "src/server/actions.ts#deleteBudgetLineAction",
           "name": "deleteBudgetLineAction",
           "kind": "function",
-          "line": 1412,
+          "line": 1416,
           "exported": true,
           "classification": [
             "server-action"
@@ -26787,7 +28311,7 @@
           "id": "src/server/actions.ts#setBudgetMonthOverrideAction",
           "name": "setBudgetMonthOverrideAction",
           "kind": "function",
-          "line": 1433,
+          "line": 1437,
           "exported": true,
           "classification": [
             "server-action"
@@ -26828,7 +28352,7 @@
           "id": "src/server/actions.ts#clearBudgetMonthOverrideAction",
           "name": "clearBudgetMonthOverrideAction",
           "kind": "function",
-          "line": 1470,
+          "line": 1474,
           "exported": true,
           "classification": [
             "server-action"
@@ -26869,7 +28393,7 @@
           "id": "src/server/actions.ts#updateBudgetLineScheduleAction",
           "name": "updateBudgetLineScheduleAction",
           "kind": "function",
-          "line": 1497,
+          "line": 1501,
           "exported": true,
           "classification": [
             "server-action"
@@ -26930,7 +28454,7 @@
           "id": "src/server/actions.ts#upsertCpfBalanceAction",
           "name": "upsertCpfBalanceAction",
           "kind": "function",
-          "line": 1555,
+          "line": 1559,
           "exported": true,
           "classification": [
             "server-action"
@@ -26975,7 +28499,7 @@
           "id": "src/server/actions.ts#clearCpfBalanceAction",
           "name": "clearCpfBalanceAction",
           "kind": "function",
-          "line": 1611,
+          "line": 1615,
           "exported": true,
           "classification": [
             "server-action"
@@ -27012,7 +28536,7 @@
           "id": "src/server/actions.ts#createCpfInvestmentAction",
           "name": "createCpfInvestmentAction",
           "kind": "function",
-          "line": 1627,
+          "line": 1631,
           "exported": true,
           "classification": [
             "server-action"
@@ -27053,7 +28577,7 @@
           "id": "src/server/actions.ts#deleteCpfInvestmentAction",
           "name": "deleteCpfInvestmentAction",
           "kind": "function",
-          "line": 1669,
+          "line": 1673,
           "exported": true,
           "classification": [
             "server-action"
@@ -27098,7 +28622,7 @@
           "id": "src/server/actions.ts#parseHousingPaymentForm",
           "name": "parseHousingPaymentForm",
           "kind": "function",
-          "line": 1688,
+          "line": 1692,
           "exported": false,
           "classification": [
             "server-action"
@@ -27123,7 +28647,7 @@
           "id": "src/server/actions.ts#revalidateHousingPaths",
           "name": "revalidateHousingPaths",
           "kind": "function",
-          "line": 1754,
+          "line": 1758,
           "exported": false,
           "classification": [
             "server-action"
@@ -27156,7 +28680,7 @@
           "id": "src/server/actions.ts#parseOptionalMoneyField",
           "name": "parseOptionalMoneyField",
           "kind": "function",
-          "line": 1762,
+          "line": 1766,
           "exported": false,
           "classification": [
             "server-action"
@@ -27168,7 +28692,7 @@
           "id": "src/server/actions.ts#parseOptionalPurchaseYear",
           "name": "parseOptionalPurchaseYear",
           "kind": "function",
-          "line": 1771,
+          "line": 1775,
           "exported": false,
           "classification": [
             "server-action"
@@ -27180,7 +28704,7 @@
           "id": "src/server/actions.ts#normalizeOptionalMmyy",
           "name": "normalizeOptionalMmyy",
           "kind": "function",
-          "line": 1778,
+          "line": 1782,
           "exported": false,
           "classification": [
             "server-action"
@@ -27192,7 +28716,7 @@
           "id": "src/server/actions.ts#optionalYearMonthOrMmyy",
           "name": "optionalYearMonthOrMmyy",
           "kind": "function",
-          "line": 1796,
+          "line": 1800,
           "exported": false,
           "classification": [
             "server-action"
@@ -27213,7 +28737,7 @@
           "id": "src/server/actions.ts#insertPropertyForLoan",
           "name": "insertPropertyForLoan",
           "kind": "function",
-          "line": 1807,
+          "line": 1811,
           "exported": false,
           "classification": [
             "server-action"
@@ -27230,7 +28754,7 @@
           "id": "src/server/actions.ts#createHousingPropertyAction",
           "name": "createHousingPropertyAction",
           "kind": "function",
-          "line": 1831,
+          "line": 1835,
           "exported": true,
           "classification": [
             "server-action"
@@ -27307,7 +28831,7 @@
           "id": "src/server/actions.ts#updateHousingPropertyAction",
           "name": "updateHousingPropertyAction",
           "kind": "function",
-          "line": 2115,
+          "line": 2119,
           "exported": true,
           "classification": [
             "server-action"
@@ -27364,7 +28888,7 @@
           "id": "src/server/actions.ts#deleteHousingPropertyAction",
           "name": "deleteHousingPropertyAction",
           "kind": "function",
-          "line": 2175,
+          "line": 2179,
           "exported": true,
           "classification": [
             "server-action"
@@ -27405,7 +28929,7 @@
           "id": "src/server/actions.ts#createHousingLoanAction",
           "name": "createHousingLoanAction",
           "kind": "function",
-          "line": 2191,
+          "line": 2195,
           "exported": true,
           "classification": [
             "server-action"
@@ -27462,7 +28986,7 @@
           "id": "src/server/actions.ts#createHousingLoanQuickAction",
           "name": "createHousingLoanQuickAction",
           "kind": "function",
-          "line": 2321,
+          "line": 2325,
           "exported": true,
           "classification": [
             "server-action"
@@ -27547,7 +29071,7 @@
           "id": "src/server/actions.ts#updateHousingLoanAction",
           "name": "updateHousingLoanAction",
           "kind": "function",
-          "line": 2586,
+          "line": 2590,
           "exported": true,
           "classification": [
             "server-action"
@@ -27612,7 +29136,7 @@
           "id": "src/server/actions.ts#deleteHousingLoanAction",
           "name": "deleteHousingLoanAction",
           "kind": "function",
-          "line": 2714,
+          "line": 2718,
           "exported": true,
           "classification": [
             "server-action"
@@ -27979,7 +29503,7 @@
           "id": "src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction",
           "name": "updateAdvisorClientInvestmentAction",
           "kind": "function",
-          "line": 413,
+          "line": 418,
           "exported": true,
           "classification": [
             "server-action"
@@ -28028,7 +29552,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction",
           "name": "deleteAdvisorClientInvestmentAction",
           "kind": "function",
-          "line": 537,
+          "line": 552,
           "exported": true,
           "classification": [
             "server-action"
@@ -28073,7 +29597,7 @@
           "id": "src/server/advisor-client-actions.ts#assertCategoryVisible",
           "name": "assertCategoryVisible",
           "kind": "function",
-          "line": 584,
+          "line": 599,
           "exported": false,
           "classification": [
             "server-action"
@@ -28090,7 +29614,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientCashAccountAction",
           "name": "createAdvisorClientCashAccountAction",
           "kind": "function",
-          "line": 593,
+          "line": 608,
           "exported": true,
           "classification": [
             "server-action"
@@ -28139,7 +29663,7 @@
           "id": "src/server/advisor-client-actions.ts#updateAdvisorClientCashAccountAction",
           "name": "updateAdvisorClientCashAccountAction",
           "kind": "function",
-          "line": 665,
+          "line": 680,
           "exported": true,
           "classification": [
             "server-action"
@@ -28192,7 +29716,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientCashAccountAction",
           "name": "deleteAdvisorClientCashAccountAction",
           "kind": "function",
-          "line": 730,
+          "line": 745,
           "exported": true,
           "classification": [
             "server-action"
@@ -28241,7 +29765,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientLiabilityAction",
           "name": "createAdvisorClientLiabilityAction",
           "kind": "function",
-          "line": 777,
+          "line": 792,
           "exported": true,
           "classification": [
             "server-action"
@@ -28290,7 +29814,7 @@
           "id": "src/server/advisor-client-actions.ts#updateAdvisorClientLiabilityAction",
           "name": "updateAdvisorClientLiabilityAction",
           "kind": "function",
-          "line": 853,
+          "line": 868,
           "exported": true,
           "classification": [
             "server-action"
@@ -28343,7 +29867,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientLiabilityAction",
           "name": "deleteAdvisorClientLiabilityAction",
           "kind": "function",
-          "line": 936,
+          "line": 951,
           "exported": true,
           "classification": [
             "server-action"
@@ -28392,7 +29916,7 @@
           "id": "src/server/advisor-client-actions.ts#optionalFormNumber",
           "name": "optionalFormNumber",
           "kind": "function",
-          "line": 982,
+          "line": 997,
           "exported": false,
           "classification": [
             "server-action"
@@ -28404,7 +29928,7 @@
           "id": "src/server/advisor-client-actions.ts#parsePropertyForm",
           "name": "parsePropertyForm",
           "kind": "function",
-          "line": 989,
+          "line": 1004,
           "exported": false,
           "classification": [
             "server-action"
@@ -28425,7 +29949,7 @@
           "id": "src/server/advisor-client-actions.ts#parseHousingLoanForm",
           "name": "parseHousingLoanForm",
           "kind": "function",
-          "line": 1004,
+          "line": 1019,
           "exported": false,
           "classification": [
             "server-action"
@@ -28446,7 +29970,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientHousingLoanAction",
           "name": "createAdvisorClientHousingLoanAction",
           "kind": "function",
-          "line": 1018,
+          "line": 1033,
           "exported": true,
           "classification": [
             "server-action"
@@ -28495,7 +30019,7 @@
           "id": "src/server/advisor-client-actions.ts#updateAdvisorClientHousingLoanAction",
           "name": "updateAdvisorClientHousingLoanAction",
           "kind": "function",
-          "line": 1092,
+          "line": 1107,
           "exported": true,
           "classification": [
             "server-action"
@@ -28548,7 +30072,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientHousingLoanAction",
           "name": "deleteAdvisorClientHousingLoanAction",
           "kind": "function",
-          "line": 1173,
+          "line": 1188,
           "exported": true,
           "classification": [
             "server-action"
@@ -28597,7 +30121,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction",
           "name": "createAdvisorClientPropertyAction",
           "kind": "function",
-          "line": 1219,
+          "line": 1234,
           "exported": true,
           "classification": [
             "server-action"
@@ -28646,7 +30170,7 @@
           "id": "src/server/advisor-client-actions.ts#updateAdvisorClientPropertyAction",
           "name": "updateAdvisorClientPropertyAction",
           "kind": "function",
-          "line": 1294,
+          "line": 1309,
           "exported": true,
           "classification": [
             "server-action"
@@ -28699,7 +30223,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientPropertyAction",
           "name": "deleteAdvisorClientPropertyAction",
           "kind": "function",
-          "line": 1380,
+          "line": 1395,
           "exported": true,
           "classification": [
             "server-action"
@@ -28748,7 +30272,7 @@
           "id": "src/server/advisor-client-actions.ts#parseVehicleForm",
           "name": "parseVehicleForm",
           "kind": "function",
-          "line": 1427,
+          "line": 1442,
           "exported": false,
           "classification": [
             "server-action"
@@ -28769,7 +30293,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientVehicleAction",
           "name": "createAdvisorClientVehicleAction",
           "kind": "function",
-          "line": 1442,
+          "line": 1457,
           "exported": true,
           "classification": [
             "server-action"
@@ -28818,7 +30342,7 @@
           "id": "src/server/advisor-client-actions.ts#updateAdvisorClientVehicleAction",
           "name": "updateAdvisorClientVehicleAction",
           "kind": "function",
-          "line": 1520,
+          "line": 1535,
           "exported": true,
           "classification": [
             "server-action"
@@ -28871,7 +30395,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientVehicleAction",
           "name": "deleteAdvisorClientVehicleAction",
           "kind": "function",
-          "line": 1605,
+          "line": 1620,
           "exported": true,
           "classification": [
             "server-action"
@@ -28920,7 +30444,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientBudgetLineAction",
           "name": "createAdvisorClientBudgetLineAction",
           "kind": "function",
-          "line": 1657,
+          "line": 1672,
           "exported": true,
           "classification": [
             "server-action"
@@ -28949,7 +30473,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientGoalAction",
           "name": "createAdvisorClientGoalAction",
           "kind": "function",
-          "line": 1711,
+          "line": 1726,
           "exported": true,
           "classification": [
             "server-action"
@@ -28990,7 +30514,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientGoalAction",
           "name": "deleteAdvisorClientGoalAction",
           "kind": "function",
-          "line": 1787,
+          "line": 1802,
           "exported": true,
           "classification": [
             "server-action"
@@ -29035,7 +30559,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientBudgetLineAction",
           "name": "deleteAdvisorClientBudgetLineAction",
           "kind": "function",
-          "line": 1836,
+          "line": 1851,
           "exported": true,
           "classification": [
             "server-action"
@@ -29719,7 +31243,7 @@
           "id": "src/server/advisor-proposal-lifecycle-smoke.test.ts#makeFake",
           "name": "makeFake",
           "kind": "function",
-          "line": 30,
+          "line": 34,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -29729,7 +31253,7 @@
           "id": "src/server/advisor-proposal-lifecycle-smoke.test.ts#fd",
           "name": "fd",
           "kind": "function",
-          "line": 329,
+          "line": 338,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -30547,7 +32071,7 @@
           "id": "src/server/investment-planning-parse.ts#parseIsoDateField",
           "name": "parseIsoDateField",
           "kind": "function",
-          "line": 16,
+          "line": 18,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -30557,15 +32081,29 @@
           "id": "src/server/investment-planning-parse.ts#parseInvestmentPlanningFields",
           "name": "parseInvestmentPlanningFields",
           "kind": "function",
-          "line": 31,
+          "line": 33,
           "exported": true,
           "classification": [],
           "edges": [
             {
               "kind": "calls",
               "target": "src/server/investment-planning-parse.ts#parseIsoDateField"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/investment-planning-parse.ts#yearsFromTodayToIlpMaturity"
             }
           ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/server/investment-planning-parse.ts#yearsFromTodayToIlpMaturity",
+          "name": "yearsFromTodayToIlpMaturity",
+          "kind": "function",
+          "line": 221,
+          "exported": false,
+          "classification": [],
+          "edges": [],
           "unresolved": 0
         }
       ]
@@ -30954,6 +32492,14 @@
       ]
     },
     {
+      "path": "src/ui/runway-chart-styles.ts",
+      "root": "src/ui",
+      "classification": [
+        "regular"
+      ],
+      "functions": []
+    },
+    {
       "path": "src/ui/ScrollToTopButton.tsx",
       "root": "src/ui",
       "classification": [
@@ -31245,7 +32791,9 @@
         "src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap",
         "src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth",
         "src/domain/finance/budget-cash-flow-allocation.ts#sumPlannedMonthlyInvestmentContributions",
+        "src/domain/finance/investment-contribution.ts#annualWithdrawalFromInvestmentRow",
         "src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow",
+        "src/domain/finance/investment-contribution.ts#investmentMaturityMonthFromInvestmentRow",
         "src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow",
         "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth",
         "src/domain/housing/compose.ts#loanToMortgage",
@@ -31293,6 +32841,29 @@
         "src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm",
         "src/features/goals/InvestmentForm.tsx#InvestmentForm",
         "src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs"
+      ],
+      "src/lib/dates.ts#addMonthsToYearMonth": [
+        "src/app/(app)/expenses/page.tsx#ExpensesPage",
+        "src/data/dashboard.ts#annualGrowthMultiplierAtYear",
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/data/dashboard.ts#retirementSpendLedgerEntries",
+        "src/data/dashboard.ts#sampleYearPhaseFlowRows",
+        "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries",
+        "src/domain/finance/debt-repayment.ts#debtRepaymentEndYearMonth",
+        "src/domain/finance/housing-loan-quick.ts#deriveQuickHousingLoanRow",
+        "src/domain/finance/investable-surplus.ts#sumInvestableSurplusOverHorizon",
+        "src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule",
+        "src/domain/finance/retirement-cashflow-projection.ts#annualGrowthMultiplier",
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection",
+        "src/domain/finance/sg-cpf.ts#countAnnualBonusPayoutsInHorizon",
+        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
+      ],
+      "src/data/dashboard.ts#monthDistance": [
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/data/dashboard.ts#retirementSpendLedgerEntries"
+      ],
+      "src/data/dashboard.ts#annualGrowthMultiplierAtYear": [
+        "src/data/dashboard.ts#retirementSpendLedgerEntries"
       ],
       "src/data/dashboard.ts#ageAtEndOfYearMonth": [
         "src/data/dashboard.ts#buildCpfHousingMarkers"
@@ -31418,6 +32989,21 @@
         "src/server/actions.ts#createVehicleAction",
         "src/server/actions.ts#updateVehicleAction"
       ],
+      "src/data/repositories/properties.ts#advisorReadProperties": [
+        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle",
+        "src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction",
+        "src/server/advisor-client-actions.ts#deleteAdvisorClientPropertyAction",
+        "src/server/advisor-client-actions.ts#updateAdvisorClientPropertyAction"
+      ],
+      "src/data/repositories/properties.ts#listProperties": [
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
+        "src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts",
+        "src/server/actions.ts#createHousingPropertyAction",
+        "src/server/actions.ts#updateHousingPropertyAction"
+      ],
       "src/data/repositories/income-tax-configs.ts#advisorReadIncomeTaxConfig": [
         "src/data/dashboard.ts#getDashboardPayload"
       ],
@@ -31482,20 +33068,6 @@
       "src/data/dashboard.ts#isYearMonth": [
         "src/data/dashboard.ts#getDashboardPayload"
       ],
-      "src/lib/dates.ts#addMonthsToYearMonth": [
-        "src/app/(app)/expenses/page.tsx#ExpensesPage",
-        "src/data/dashboard.ts#getDashboardPayload",
-        "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries",
-        "src/domain/finance/debt-repayment.ts#debtRepaymentEndYearMonth",
-        "src/domain/finance/housing-loan-quick.ts#deriveQuickHousingLoanRow",
-        "src/domain/finance/investable-surplus.ts#sumInvestableSurplusOverHorizon",
-        "src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule",
-        "src/domain/finance/sg-cpf.ts#countAnnualBonusPayoutsInHorizon",
-        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
-      ],
-      "src/data/dashboard.ts#monthDistance": [
-        "src/data/dashboard.ts#getDashboardPayload"
-      ],
       "src/data/dashboard.ts#cpfInitialSnapshot": [
         "src/data/dashboard.ts#getDashboardPayload"
       ],
@@ -31532,6 +33104,46 @@
       "src/domain/finance/net-worth.ts#calculateNetWorth": [
         "src/data/dashboard.ts#getDashboardPayload"
       ],
+      "src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown": [
+        "src/data/dashboard.ts#getDashboardPayload"
+      ],
+      "src/lib/dates.ts#formatYearMonth": [
+        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
+        "src/app/(app)/budget/page.tsx#BudgetPage",
+        "src/app/(app)/dashboard/page.tsx#DashboardPage",
+        "src/app/(app)/expenses/page.tsx#ExpensesPage",
+        "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
+        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage",
+        "src/app/(app)/setup/page.tsx#SetupPage",
+        "src/app/api/budget/route.ts#GET",
+        "src/app/api/dashboard/route.ts#GET",
+        "src/app/api/profile/route.ts#PATCH",
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
+        "src/data/liability-budget-sync.ts#syncLiabilityBudgetLine",
+        "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals",
+        "src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth",
+        "src/domain/finance/vehicle-sg.ts#completedMonthsSinceReg",
+        "src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash",
+        "src/domain/finance/vehicle-sg.ts#loanMonthsRemainingResolved",
+        "src/domain/finance/vehicle-sg.ts#vehicleGrossAssetEstimate",
+        "src/domain/finance/vehicle-sg.ts#vehicleGrossFromPurchaseToTerminalLinear",
+        "src/domain/finance/vehicle-sg.ts#vehicleGrossFromRebatesRemainingToTerminal",
+        "src/domain/finance/vehicle-sg.ts#vehicleNetListedBeforeLiquidation",
+        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
+        "src/features/debts/DebtPlanningPanels.tsx#DebtCard",
+        "src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm",
+        "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
+        "src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard",
+        "src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection",
+        "src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection",
+        "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection",
+        "src/lib/dates.ts#addMonthsToYearMonth",
+        "src/lib/dates.ts#defaultExpenseDateForBudgetMonth",
+        "src/lib/setup-urls.ts#setupTabPath",
+        "src/server/actions.ts#applyGuidedBudgetLinesAction",
+        "src/server/actions.ts#upsertCpfBalanceAction"
+      ],
       "src/domain/finance/insights.ts#buildDashboardInsights": [
         "src/data/dashboard.ts#getDashboardPayload"
       ],
@@ -31552,13 +33164,46 @@
         "src/domain/finance/age-projection.ts#buildNetWorthByAgeProjection",
         "src/domain/finance/investment-portfolio-fv.ts#calculateTimeToGoalInvestmentPortfolio"
       ],
-      "src/domain/finance/age-asset-projection.ts#buildAgeAssetProjection": [
+      "src/lib/dates.ts#addCalendarMonths": [
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/domain/finance/age-asset-projection.ts#buildAgeAssetProjection",
+        "src/domain/finance/investment-contribution.ts#investmentMaturityMonthFromInvestmentRow"
+      ],
+      "src/data/dashboard.ts#buildCpfHousingMarkers": [
         "src/data/dashboard.ts#getDashboardPayload"
+      ],
+      "src/domain/finance/vehicle-sg.ts#vehicleNetProceedsAtCoeMonthEnd": [
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash"
       ],
       "src/data/mappers.ts#profileExpenseGrowthNominal": [
         "src/data/dashboard.ts#getDashboardPayload"
       ],
-      "src/data/dashboard.ts#buildCpfHousingMarkers": [
+      "src/data/dashboard.ts#retirementSpendLedgerEntries": [
+        "src/data/dashboard.ts#getDashboardPayload"
+      ],
+      "src/domain/finance/investment-contribution.ts#contributionStartMonthFromInvestmentRow": [
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth"
+      ],
+      "src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow": [
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow",
+        "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth"
+      ],
+      "src/domain/finance/investment-contribution.ts#annualWithdrawalFromInvestmentRow": [
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow",
+        "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth"
+      ],
+      "src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow": [
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth"
+      ],
+      "src/domain/finance/investment-contribution.ts#investmentMaturityMonthFromInvestmentRow": [
+        "src/data/dashboard.ts#getDashboardPayload"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection": [
         "src/data/dashboard.ts#getDashboardPayload"
       ],
       "src/domain/finance/retirement-spend-vs-portfolio.ts#analyzeRetirementDividendVsSpend": [
@@ -31568,6 +33213,21 @@
         "src/data/dashboard.ts#getDashboardPayload"
       ],
       "src/data/mappers.ts#profileRetirementWithdrawalRateAnnual": [
+        "src/data/dashboard.ts#getDashboardPayload"
+      ],
+      "src/data/dashboard.ts#sampleYearPhaseFlowRows": [
+        "src/data/dashboard.ts#getDashboardPayload"
+      ],
+      "src/data/dashboard.ts#annualizationFactorForRows": [
+        "src/data/dashboard.ts#getDashboardPayload"
+      ],
+      "src/data/dashboard.ts#sumProjectionOutflows": [
+        "src/data/dashboard.ts#getDashboardPayload"
+      ],
+      "src/data/dashboard.ts#annualizeProjectionFlows": [
+        "src/data/dashboard.ts#getDashboardPayload"
+      ],
+      "src/data/dashboard.ts#sumProjectionFlows": [
         "src/data/dashboard.ts#getDashboardPayload"
       ],
       "src/domain/finance/budget.ts#topOverBudgetCategories": [
@@ -31603,42 +33263,6 @@
       "src/lib/profile-role.ts#isClientProfile": [
         "src/app/(app)/account-issue/page.tsx#AccountIssuePage",
         "src/data/financial-profile.ts#needsOnboarding"
-      ],
-      "src/lib/dates.ts#formatYearMonth": [
-        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
-        "src/app/(app)/budget/page.tsx#BudgetPage",
-        "src/app/(app)/dashboard/page.tsx#DashboardPage",
-        "src/app/(app)/expenses/page.tsx#ExpensesPage",
-        "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
-        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage",
-        "src/app/(app)/setup/page.tsx#SetupPage",
-        "src/app/api/budget/route.ts#GET",
-        "src/app/api/dashboard/route.ts#GET",
-        "src/app/api/profile/route.ts#PATCH",
-        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
-        "src/data/liability-budget-sync.ts#syncLiabilityBudgetLine",
-        "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals",
-        "src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth",
-        "src/domain/finance/vehicle-sg.ts#completedMonthsSinceReg",
-        "src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash",
-        "src/domain/finance/vehicle-sg.ts#loanMonthsRemainingResolved",
-        "src/domain/finance/vehicle-sg.ts#vehicleGrossAssetEstimate",
-        "src/domain/finance/vehicle-sg.ts#vehicleGrossFromPurchaseToTerminalLinear",
-        "src/domain/finance/vehicle-sg.ts#vehicleGrossFromRebatesRemainingToTerminal",
-        "src/domain/finance/vehicle-sg.ts#vehicleNetListedBeforeLiquidation",
-        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
-        "src/features/debts/DebtPlanningPanels.tsx#DebtCard",
-        "src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm",
-        "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
-        "src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard",
-        "src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection",
-        "src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection",
-        "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection",
-        "src/lib/dates.ts#addMonthsToYearMonth",
-        "src/lib/dates.ts#defaultExpenseDateForBudgetMonth",
-        "src/lib/setup-urls.ts#setupTabPath",
-        "src/server/actions.ts#applyGuidedBudgetLinesAction",
-        "src/server/actions.ts#upsertCpfBalanceAction"
       ],
       "src/domain/finance/goal-priority-tradeoff.ts#sortGoalsByPriority": [
         "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
@@ -32185,12 +33809,6 @@
       "src/server/actions.ts#parseOptionalPurchaseYear": [
         "src/server/actions.ts#createHousingPropertyAction"
       ],
-      "src/data/repositories/properties.ts#listProperties": [
-        "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
-        "src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts",
-        "src/server/actions.ts#createHousingPropertyAction",
-        "src/server/actions.ts#updateHousingPropertyAction"
-      ],
       "src/server/actions.ts#revalidateHousingPaths": [
         "src/server/actions.ts#createHousingLoanAction",
         "src/server/actions.ts#createHousingLoanQuickAction",
@@ -32433,13 +34051,6 @@
         "src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction",
         "src/server/advisor-client-actions.ts#updateAdvisorClientPropertyAction"
       ],
-      "src/data/repositories/properties.ts#advisorReadProperties": [
-        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
-        "src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle",
-        "src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientPropertyAction",
-        "src/server/advisor-client-actions.ts#updateAdvisorClientPropertyAction"
-      ],
       "src/server/advisor-client-actions.ts#parseVehicleForm": [
         "src/server/advisor-client-actions.ts#createAdvisorClientVehicleAction",
         "src/server/advisor-client-actions.ts#updateAdvisorClientVehicleAction"
@@ -32613,6 +34224,9 @@
         "src/server/inbox-actions.ts#markAllInboxReadAction"
       ],
       "src/server/investment-planning-parse.ts#parseIsoDateField": [
+        "src/server/investment-planning-parse.ts#parseInvestmentPlanningFields"
+      ],
+      "src/server/investment-planning-parse.ts#yearsFromTodayToIlpMaturity": [
         "src/server/investment-planning-parse.ts#parseInvestmentPlanningFields"
       ],
       "src/domain/finance/debt-repayment.ts#defaultLoanTypeForCategory": [
@@ -32944,15 +34558,13 @@
       "src/domain/finance/investable-surplus.ts#sumInvestableSurplusOverHorizon": [
         "src/domain/finance/age-asset-projection.ts#buildAgeAssetProjection"
       ],
-      "src/lib/dates.ts#addCalendarMonths": [
-        "src/domain/finance/age-asset-projection.ts#buildAgeAssetProjection"
-      ],
       "src/domain/finance/age-projection.ts#parseYmd": [
         "src/domain/finance/age-projection.ts#ageCompletedOnDate"
       ],
       "src/domain/finance/investment-contribution-dates.ts#parseIsoDateOnly": [
         "src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth",
-        "src/domain/finance/investment-contribution-dates.ts#contributionScheduleFromDates"
+        "src/domain/finance/investment-contribution-dates.ts#contributionScheduleFromDates",
+        "src/domain/finance/investment-contribution.ts#investmentMaturityMonthFromInvestmentRow"
       ],
       "src/domain/finance/budget-cash-flow-allocation.ts#yearMonthCompare": [
         "src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth"
@@ -33029,6 +34641,7 @@
         "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries",
         "src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount",
         "src/domain/finance/housing-loan-payments.ts#housingInstalmentForMonth",
+        "src/domain/housing/property-equity.ts#housingLoanBalanceAt",
         "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
         "src/features/housing/PropertyAddForm.tsx#monthlyInstalment"
       ],
@@ -33250,21 +34863,13 @@
         "src/domain/finance/investable-surplus.ts#sumInvestableSurplusOverHorizon"
       ],
       "src/domain/finance/investment-contribution-dates.ts#calendarMonthsBetween": [
-        "src/domain/finance/investment-contribution-dates.ts#contributionScheduleFromDates"
+        "src/domain/finance/investment-contribution-dates.ts#contributionScheduleFromDates",
+        "src/domain/finance/investment-contribution.ts#investmentMaturityMonthFromInvestmentRow"
       ],
       "src/domain/finance/investment-contribution-dates.ts#contributionScheduleFromDates": [
         "src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow",
-        "src/domain/finance/investment-contribution.ts#contributionStartMonthFromInvestmentRow"
-      ],
-      "src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow": [
-        "src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow",
-        "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth"
-      ],
-      "src/domain/finance/investment-contribution.ts#contributionStartMonthFromInvestmentRow": [
-        "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth"
-      ],
-      "src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow": [
-        "src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth"
+        "src/domain/finance/investment-contribution.ts#contributionStartMonthFromInvestmentRow",
+        "src/domain/finance/investment-contribution.ts#investmentMaturityMonthFromInvestmentRow"
       ],
       "src/domain/finance/investment-review.ts#investmentRowLastTouchedAt": [
         "src/domain/finance/investment-review.ts#investmentReviewReason"
@@ -33306,6 +34911,75 @@
       ],
       "src/domain/finance/projection.ts#futureValueEndOfMonthWindow": [
         "src/domain/finance/projection.ts#projectFutureValue"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#annualGrowthMultiplier": [
+        "src/domain/finance/retirement-cashflow-projection.ts#amountForEntry"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#nonNegativeFinite": [
+        "src/domain/finance/retirement-cashflow-projection.ts#addDecemberComponentInflows",
+        "src/domain/finance/retirement-cashflow-projection.ts#buildInvestmentStates",
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#outflowBreakdownKey": [
+        "src/domain/finance/retirement-cashflow-projection.ts#addOutflowBreakdown"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#investmentPrincipalTotal": [
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection",
+        "src/domain/finance/retirement-cashflow-projection.ts#drawPrincipalProRata"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#safeRate": [
+        "src/domain/finance/retirement-cashflow-projection.ts#applyComponentGrowth"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#componentCanProduceIncome": [
+        "src/domain/finance/retirement-cashflow-projection.ts#addDecemberComponentInflows"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#incomeRate": [
+        "src/domain/finance/retirement-cashflow-projection.ts#addDecemberComponentInflows"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#componentCanWithdraw": [
+        "src/domain/finance/retirement-cashflow-projection.ts#addDecemberComponentInflows"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#clampMonth": [
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#buildInvestmentStates": [
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#snapshotForMonth": [
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#createInitialDrawBreakdown": [
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#createInitialBreakdown": [
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#isEntryActive": [
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#amountForEntry": [
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#addSourceBreakdown": [
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#addOutflowBreakdown": [
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#fundTransfersProRata": [
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#drawPrincipalProRata": [
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#componentCanUsePrincipal": [
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#applyComponentGrowth": [
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
+      ],
+      "src/domain/finance/retirement-cashflow-projection.ts#addDecemberComponentInflows": [
+        "src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection"
       ],
       "src/domain/finance/sg-cpf.ts#employeeCpfRateSg": [
         "src/domain/finance/sg-cpf-contribution-buckets.ts#totalCpfContributionRateSg",
@@ -33444,9 +35118,6 @@
       "src/domain/finance/vehicle-sg.ts#endOfYearMonthDate": [
         "src/domain/finance/vehicle-sg.ts#vehicleNetProceedsAtCoeMonthEnd"
       ],
-      "src/domain/finance/vehicle-sg.ts#vehicleNetProceedsAtCoeMonthEnd": [
-        "src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash"
-      ],
       "src/domain/housing/compose.ts#loanToMortgage": [
         "src/domain/housing/compose.ts#composeHousingPropertyViews",
         "src/domain/housing/compose.ts#syntheticPropertyFromLoan"
@@ -33456,6 +35127,28 @@
       ],
       "src/domain/housing/compose.ts#syntheticPropertyFromLoan": [
         "src/domain/housing/compose.ts#composeHousingPropertyViews"
+      ],
+      "src/domain/housing/property-equity.ts#groupLoansByPropertyId": [
+        "src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown"
+      ],
+      "src/domain/housing/property-equity.ts#ownedPropertyGrossValue": [
+        "src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown"
+      ],
+      "src/domain/housing/property-equity.ts#housingLoanBalanceAt": [
+        "src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown"
+      ],
+      "src/domain/housing/property-equity.ts#moneyValue": [
+        "src/domain/housing/property-equity.ts#housingLoanBalanceAt",
+        "src/domain/housing/property-equity.ts#ownedPropertyGrossValue"
+      ],
+      "src/domain/housing/property-equity.ts#normalizePropertyOwnership": [
+        "src/domain/housing/property-equity.ts#ownedPropertyGrossValue"
+      ],
+      "src/domain/housing/property-equity.ts#compareYearMonth": [
+        "src/domain/housing/property-equity.ts#housingLoanBalanceAt"
+      ],
+      "src/domain/housing/property-equity.ts#yearMonthIndex": [
+        "src/domain/housing/property-equity.ts#compareYearMonth"
       ],
       "src/domain/setup/evaluators.ts#nonEmptyString": [
         "src/domain/setup/evaluators.ts#evaluateProfile",
@@ -33754,11 +35447,7 @@
       "src/features/budget/BudgetStrategyInsightPanel.tsx#coerceStrategy": [
         "src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel"
       ],
-      "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#formatMoney": [
-        "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AssetTooltip"
-      ],
       "src/ui/use-narrow-screen.ts#useNarrowScreen": [
-        "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart",
         "src/features/dashboard/CpfProjectionByAgeChart.tsx#CpfProjectionByAgeChart"
       ],
       "src/domain/finance/cpf-retirement-projection.ts#buildCpfRetirementProjection": [
@@ -33786,6 +35475,82 @@
       ],
       "src/server/inbox-actions.ts#markInboxItemReadByDedupeKeyAction": [
         "src/features/dashboard/ProfileIncomeForm.tsx#ProfileIncomeForm"
+      ],
+      "src/features/dashboard/retirement-runway-rows.ts#safeSegmentKey": [
+        "src/features/dashboard/retirement-runway-rows.ts#outflowBreakdownItem"
+      ],
+      "src/features/dashboard/retirement-runway-rows.ts#outflowBreakdownItem": [
+        "src/features/dashboard/retirement-runway-rows.ts#outflowSegmentsForPoint"
+      ],
+      "src/features/dashboard/retirement-runway-rows.ts#addAmount": [
+        "src/features/dashboard/retirement-runway-rows.ts#outflowSegmentsForPoint"
+      ],
+      "src/features/dashboard/retirement-runway-rows.ts#num": [
+        "src/features/dashboard/retirement-runway-rows.ts#deriveMilestones",
+        "src/features/dashboard/retirement-runway-rows.ts#findSpikeAge",
+        "src/features/dashboard/retirement-runway-rows.ts#investmentPrincipalForPoint",
+        "src/features/dashboard/retirement-runway-rows.ts#toRunwayRows"
+      ],
+      "src/features/dashboard/retirement-runway-rows.ts#investmentPrincipalForPoint": [
+        "src/features/dashboard/retirement-runway-rows.ts#toRunwayRows"
+      ],
+      "src/features/dashboard/retirement-runway-rows.ts#outflowSegmentsForPoint": [
+        "src/features/dashboard/retirement-runway-rows.ts#toRunwayRows"
+      ],
+      "src/features/dashboard/retirement-runway-rows.ts#firstAge": [
+        "src/features/dashboard/retirement-runway-rows.ts#deriveMilestones"
+      ],
+      "src/features/dashboard/retirement-runway-rows.ts#findSpikeAge": [
+        "src/features/dashboard/retirement-runway-rows.ts#deriveMilestones"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail",
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails",
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#cpfDetails",
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails",
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails",
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart",
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails",
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#outflowTooltipDetails": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart",
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#rowValue": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart",
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart",
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip"
+      ],
+      "src/features/dashboard/retirement-runway-rows.ts#toRunwayRows": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#colorForSegment": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart"
+      ],
+      "src/features/dashboard/retirement-runway-rows.ts#deriveMilestones": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#useContainerWidth": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#cpfDetails": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart"
       ],
       "src/features/debts/DebtFormFields.tsx#normalizeTenureMonthInput": [
         "src/features/debts/DebtFormFields.tsx#DebtFormFields"
@@ -33877,6 +35642,13 @@
       "src/features/goals/HousingLoansPanel.tsx#lenderLabel": [
         "src/features/goals/HousingLoansPanel.tsx#HousingPanel"
       ],
+      "src/features/goals/InvestmentBalancesList.tsx#nonNegative": [
+        "src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm",
+        "src/features/goals/InvestmentBalancesList.tsx#ilpMaturityAge"
+      ],
+      "src/features/goals/InvestmentBalancesList.tsx#yearsUntilDate": [
+        "src/features/goals/InvestmentBalancesList.tsx#ilpMaturityAge"
+      ],
       "src/features/goals/InvestmentBalancesList.tsx#contributionSummaryLine": [
         "src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary"
       ],
@@ -33889,6 +35661,12 @@
       "src/server/actions.ts#updateInvestmentAction": [
         "src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm"
       ],
+      "src/features/goals/InvestmentBalancesList.tsx#percentDecimal": [
+        "src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm"
+      ],
+      "src/features/goals/InvestmentBalancesList.tsx#ilpMaturityAge": [
+        "src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm"
+      ],
       "src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction": [
         "src/features/goals/InvestmentBalancesList.tsx#InvestmentRow"
       ],
@@ -33897,6 +35675,19 @@
       ],
       "src/server/actions.ts#confirmInvestmentReviewAction": [
         "src/features/goals/InvestmentBalancesList.tsx#InvestmentReviewPrompt"
+      ],
+      "src/features/goals/InvestmentForm.tsx#nonNegative": [
+        "src/features/goals/InvestmentForm.tsx#InvestmentForm",
+        "src/features/goals/InvestmentForm.tsx#ilpMaturityAge"
+      ],
+      "src/features/goals/InvestmentForm.tsx#yearsUntilDate": [
+        "src/features/goals/InvestmentForm.tsx#ilpMaturityAge"
+      ],
+      "src/features/goals/InvestmentForm.tsx#ilpMaturityAge": [
+        "src/features/goals/InvestmentForm.tsx#InvestmentForm"
+      ],
+      "src/features/goals/InvestmentForm.tsx#percentDecimal": [
+        "src/features/goals/InvestmentForm.tsx#InvestmentForm"
       ],
       "src/data/mappers.ts#vehicleRowToValuationInput": [
         "src/features/goals/VehiclesPanel.tsx#VehicleSummary"
@@ -34577,17 +36368,10 @@
         "src/features/goals/HousingLoansPanel.tsx#HousingPanel",
         "src/features/goals/VehiclesPanel.tsx#VehiclesPanel"
       ],
-      "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#TooltipDetail": [
-        "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AssetTooltip"
-      ],
       "src/ui/ChartFrame.tsx#ChartFrame": [
-        "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart",
         "src/features/dashboard/CpfProjectionByAgeChart.tsx#CpfProjectionByAgeChart",
         "src/features/dashboard/ProjectionMiniChart.tsx#ProjectionMiniChart",
         "src/features/expenses/CategoryBarChart.tsx#CategoryBarChart"
-      ],
-      "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AssetTooltip": [
-        "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart"
       ],
       "src/features/dashboard/CpfRetirementProjectionPanel.tsx#BalancePill": [
         "src/features/dashboard/CpfRetirementProjectionPanel.tsx#RaFlowVisual"
@@ -34604,7 +36388,7 @@
       "src/features/dashboard/ProjectionMiniChart.tsx#ProjectionMiniChart": [
         "src/features/dashboard/DashboardMonthSection.tsx#DashboardMonthSection"
       ],
-      "src/features/dashboard/AgeCombinedAssetsProjectionChart.tsx#AgeCombinedAssetsProjectionChart": [
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart": [
         "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection"
       ],
       "src/features/dashboard/DashboardRetirementSection.tsx#CpfProjectionStatusPanel": [
@@ -34615,6 +36399,37 @@
       ],
       "src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel": [
         "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip",
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetailRow": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#Toggle": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneLegend": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#Panel": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorRow": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneCard": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneLegend"
       ],
       "src/features/debts/DebtEducationalExamples.tsx#ExampleToggle": [
         "src/features/debts/DebtEducationalExamples.tsx#DebtEducationalExamples"
