@@ -2,7 +2,7 @@
 
 # Function tree — `src/domain`
 
-106 module(s).
+108 module(s).
 
 ## Modules
 
@@ -106,6 +106,8 @@
 | [`src/domain/housing/compose.test.ts`](#src-domain-housing-compose-test-ts) | `regular` | 2 | 0 |
 | [`src/domain/housing/compose.ts`](#src-domain-housing-compose-ts) | `regular` | 5 | 7 |
 | [`src/domain/housing/index.ts`](#src-domain-housing-index-ts) | `regular` | 0 | 0 |
+| [`src/domain/housing/property-equity.test.ts`](#src-domain-housing-property-equity-test-ts) | `regular` | 2 | 0 |
+| [`src/domain/housing/property-equity.ts`](#src-domain-housing-property-equity-ts) | `regular` | 8 | 9 |
 | [`src/domain/housing/types.ts`](#src-domain-housing-types-ts) | `regular` | 0 | 0 |
 | [`src/domain/setup/context.ts`](#src-domain-setup-context-ts) | `regular` | 0 | 0 |
 | [`src/domain/setup/evaluators.test.ts`](#src-domain-setup-evaluators-test-ts) | `regular` | 1 | 0 |
@@ -924,7 +926,7 @@ Classification: `regular`
 - calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/cpf-monthly-projection.ts#applicableBasicHealthcareSumForMonthSg`, `src/domain/finance/cpf-monthly-projection.ts#endOfPreviousYearMonthDate`, `src/domain/finance/cpf-monthly-projection.ts#endOfYearMonthDate`, `src/domain/finance/cpf-monthly-projection.ts#fixedBandAgeProxy`, `src/domain/finance/cpf-monthly-projection.ts#monthDiff`, `src/domain/finance/cpf-monthly-projection.ts#overflowMediSaveAboveBhsToSpecialAccount`, `src/domain/finance/cpf-monthly-projection.ts#round2`, `src/domain/finance/cpf-monthly-projection.ts#validYearMonth`, `src/domain/finance/cpf-retirement-projection.ts#routeCpfSaInvestmentMaturityProceeds`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`, `src/domain/finance/sg-cpf-contribution-buckets.ts#monthlyCpfInflowsFromOwSubject`, `src/domain/finance/sg-cpf-contribution-buckets.ts#ordinaryWagesSubjectWithYtd`, `src/domain/finance/sg-cpf-contribution-buckets.ts#sgCpfAgeBandForCompletedAge`, `src/domain/finance/sg-cpf.ts#additionalWageCeilingRemaining`, `src/lib/dates.ts#addMonthsToYearMonth`
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `downsampleCpfSeries` — function, L476
+#### `downsampleCpfSeries` — function, L493
 
 _No tracked edges._
 
@@ -1563,7 +1565,7 @@ Classification: `regular`
 #### `buildAmortizationSchedule` — function, L31
 
 - calls: `src/domain/finance/mortgage-amortization.ts#roundMoney`, `src/lib/dates.ts#addMonthsToYearMonth`
-- called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount`, `src/domain/finance/housing-loan-payments.ts#housingInstalmentForMonth`, `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`, `src/features/housing/PropertyAddForm.tsx#monthlyInstalment`
+- called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount`, `src/domain/finance/housing-loan-payments.ts#housingInstalmentForMonth`, `src/domain/housing/property-equity.ts#housingLoanBalanceAt`, `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`, `src/features/housing/PropertyAddForm.tsx#monthlyInstalment`
 
 #### `roundMoney` — function, L75
 
@@ -2131,6 +2133,58 @@ _No tracked edges._
 Classification: `regular`
 
 _No top-level functions detected._
+
+### `src/domain/housing/property-equity.test.ts` <a id="src-domain-housing-property-equity-test-ts"></a>
+
+Classification: `regular`
+
+#### `property` — function, L8
+
+_No tracked edges._
+
+#### `housingLoan` — function, L28
+
+_No tracked edges._
+
+### `src/domain/housing/property-equity.ts` <a id="src-domain-housing-property-equity-ts"></a>
+
+Classification: `regular`
+
+#### `buildPropertyEquityBreakdown` — function, L17
+
+- calls: `src/domain/housing/property-equity.ts#groupLoansByPropertyId`, `src/domain/housing/property-equity.ts#housingLoanBalanceAt`, `src/domain/housing/property-equity.ts#ownedPropertyGrossValue`
+- called by: `src/data/dashboard.ts#getDashboardPayload`
+
+#### `normalizePropertyOwnership` — function, L45
+
+- called by: `src/domain/housing/property-equity.ts#ownedPropertyGrossValue`
+
+#### `ownedPropertyGrossValue` — function, L60
+
+- calls: `src/domain/housing/property-equity.ts#moneyValue`, `src/domain/housing/property-equity.ts#normalizePropertyOwnership`
+- called by: `src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown`
+
+#### `groupLoansByPropertyId` — function, L71
+
+- called by: `src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown`
+
+#### `housingLoanBalanceAt` — function, L84
+
+- calls: `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`, `src/domain/housing/property-equity.ts#compareYearMonth`, `src/domain/housing/property-equity.ts#moneyValue`
+- called by: `src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown`
+
+#### `moneyValue` — function, L107
+
+- called by: `src/domain/housing/property-equity.ts#housingLoanBalanceAt`, `src/domain/housing/property-equity.ts#ownedPropertyGrossValue`
+
+#### `compareYearMonth` — function, L113
+
+- calls: `src/domain/housing/property-equity.ts#yearMonthIndex`
+- called by: `src/domain/housing/property-equity.ts#housingLoanBalanceAt`
+
+#### `yearMonthIndex` — function, L117
+
+- called by: `src/domain/housing/property-equity.ts#compareYearMonth`
 
 ### `src/domain/housing/types.ts` <a id="src-domain-housing-types-ts"></a>
 

@@ -30,6 +30,7 @@ import {
   vehicleNetListedBeforeLiquidation,
   vehicleNetProceedsAtCoeMonthEnd,
 } from "@/domain/finance";
+import { buildPropertyEquityBreakdown } from "@/domain/housing";
 import type {
   CpfInvestmentProjectionInput,
   HousingLoanProjectionInput,
@@ -134,7 +135,11 @@ import { birthDateIsValidPast } from "@/lib/validation";
 import type { AgeAssetBreakdownPoint } from "@/data/age-asset-breakdown";
 import { applyProposalChanges } from "@/domain/advisor-proposals/apply-overlay";
 import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
-import { addCalendarMonths, addMonthsToYearMonth } from "@/lib/dates";
+import {
+  addCalendarMonths,
+  addMonthsToYearMonth,
+  formatYearMonth,
+} from "@/lib/dates";
 
 /**
  * Server-only, role-gated. When `proposalOverlay` is present the four
@@ -175,6 +180,13 @@ export type DashboardPayload = {
     /** vehiclesGrossAsset − vehiclesLoan; already included in `net`. */
     vehiclesNet: number;
     vehicleCount: number;
+    /** Current owned property valuation basis after ownership share. */
+    propertiesGrossAsset: number;
+    /** Scheduled mortgage balance linked to current owned properties. */
+    propertiesLoan: number;
+    /** propertiesGrossAsset − propertiesLoan; already included in `net`. */
+    propertiesNet: number;
+    propertyCount: number;
     net: number;
   };
   /**
@@ -903,6 +915,14 @@ export async function getDashboardPayload(
     birthRaw &&
     typeof birthRaw === "string" &&
     birthDateIsValidPast(birthRaw);
+  const monthsToRetirementHorizon: number | null = birthValidForAge
+    ? Math.max(
+        0,
+        (targetRetirementAgeResolved -
+          ageCompletedOnDate(birthRaw as string, dashboardAsOf)) *
+          12
+      )
+    : null;
   const grossMonthlyForCpf = profileMonthlyGross(profile);
   const bandStrForCpf = profileCpfAgeBand(profile);
   const fixedCpfBand: SgCpfAgeBand | undefined =
@@ -943,6 +963,16 @@ export async function getDashboardPayload(
   const cpfProjectionStartYearMonth = isYearMonth(cpfBalanceAsOfMonth)
     ? addMonthsToYearMonth(cpfBalanceAsOfMonth, 1)
     : null;
+  const cpfEmploymentContributionEndMonth =
+    cpfProjectionStartYearMonth != null && monthsToRetirementHorizon != null
+      ? Math.max(
+          0,
+          monthDistance(
+            cpfProjectionStartYearMonth,
+            addMonthsToYearMonth(yearMonth, monthsToRetirementHorizon)
+          )
+        )
+      : null;
   const cpfYearEndTargetYearMonth = `${yearMonth.slice(0, 4)}-12`;
   let cpfYearEndProjection: DashboardPayload["cpfYearEndProjection"] = null;
   let cpfMonthlySeriesForProjection:
@@ -984,6 +1014,7 @@ export async function getDashboardPayload(
         grossMonthly: grossMonthlyForCpf,
         annualBonus: profileAnnualBonus(profile),
         annualSalaryGrowthNominal: profileAnnualSalaryGrowthNominal(profile),
+        employmentContributionEndMonth: cpfEmploymentContributionEndMonth,
         initial: cpfInitialSnapshot(cpfRow),
         housingLoans: housingLoanRows.map(housingLoanToProjection),
         cpfInvestments: cpfInvestmentRows.map(cpfInvestmentToProjection),
@@ -1006,14 +1037,6 @@ export async function getDashboardPayload(
       }
     }
   }
-  const monthsToRetirementHorizon: number | null = birthValidForAge
-    ? Math.max(
-        0,
-        (targetRetirementAgeResolved -
-          ageCompletedOnDate(birthRaw as string, dashboardAsOf)) *
-          12
-      )
-    : null;
   const vehicleValuationInputs = vehicleRows.map(vehicleRowToValuationInput);
   const vehicleProceedsCashNow = cumulativeVehicleProceedsToCash(
     vehicleValuationInputs,
@@ -1043,8 +1066,16 @@ export async function getDashboardPayload(
     liabilities,
     cpfTotal: cpfRow ? cpfTotalTracked : undefined,
   });
+  const propertyEquityNow = buildPropertyEquityBreakdown({
+    properties,
+    housingLoans: housingLoanRows,
+    asOfYearMonth: formatYearMonth(dashboardAsOf),
+  });
   const netWorth =
-    baseNetWorth + vehiclesNetEquityTotal + vehicleProceedsCashNow;
+    baseNetWorth +
+    vehiclesNetEquityTotal +
+    vehicleProceedsCashNow +
+    propertyEquityNow.propertiesNet;
   const investmentsTotal = values.reduce((a, b) => a + b, 0);
   const cashTotal = cashBalances.reduce((a, b) => a + b, 0);
   const liabilitiesTotal = liabilities.reduce((a, b) => a + b, 0);
@@ -1057,6 +1088,10 @@ export async function getDashboardPayload(
     vehiclesLoan: vehiclesLoanForNw,
     vehiclesNet: vehiclesNetEquityTotal,
     vehicleCount: activeVehicleCount,
+    propertiesGrossAsset: propertyEquityNow.propertiesGrossAsset,
+    propertiesLoan: propertyEquityNow.propertiesLoan,
+    propertiesNet: propertyEquityNow.propertiesNet,
+    propertyCount: propertyEquityNow.propertyCount,
     net: netWorth,
   };
   const netWorthExcludingCpf = netWorth - netWorthBreakdown.cpf;
@@ -1129,6 +1164,17 @@ export async function getDashboardPayload(
           0
         );
     });
+    const propertyNetByAge = nwAgePoints.map((p) => {
+      const asOfHorizon = addCalendarMonths(
+        dashboardAsOf,
+        p.monthsFromToday
+      );
+      return buildPropertyEquityBreakdown({
+        properties,
+        housingLoans: housingLoanRows,
+        asOfYearMonth: formatYearMonth(asOfHorizon),
+      }).propertiesNet;
+    });
     if (
       cpfMonthlySeriesForProjection != null &&
       cpfRow &&
@@ -1148,17 +1194,18 @@ export async function getDashboardPayload(
         cpfMonthlySeriesForProjection.length >= horizonMonths
           ? cpfMonthlySeriesForProjection
           : buildCpfMonthlyProjectionSeries({
-        startYearMonth: cpfProjectionStartYearMonth,
-        horizonMonths,
-        birthDate: birthRaw,
-        fixedCpfAgeBand: fixedCpfBand,
-        grossMonthly: grossMonthlyForCpf,
-        annualBonus: profileAnnualBonus(profile),
-        annualSalaryGrowthNominal: profileAnnualSalaryGrowthNominal(profile),
-        initial: cpfInitialSnapshot(cpfRow),
-        housingLoans: housingLoanRows.map(housingLoanToProjection),
-        cpfInvestments: cpfInvestmentRows.map(cpfInvestmentToProjection),
-          });
+              startYearMonth: cpfProjectionStartYearMonth,
+              horizonMonths,
+              birthDate: birthRaw,
+              fixedCpfAgeBand: fixedCpfBand,
+              grossMonthly: grossMonthlyForCpf,
+              annualBonus: profileAnnualBonus(profile),
+              annualSalaryGrowthNominal: profileAnnualSalaryGrowthNominal(profile),
+              employmentContributionEndMonth: cpfEmploymentContributionEndMonth,
+              initial: cpfInitialSnapshot(cpfRow),
+              housingLoans: housingLoanRows.map(housingLoanToProjection),
+              cpfInvestments: cpfInvestmentRows.map(cpfInvestmentToProjection),
+            });
       cpfProjectionByAge = nwAgePoints.map((p) => {
         const targetYearMonth = addMonthsToYearMonth(
           yearMonth,
@@ -1469,7 +1516,7 @@ export async function getDashboardPayload(
           cpfRa: cpfRowAge?.ra ?? 0,
           cpfCpfis: cpfRowAge?.cpfis ?? 0,
           vehiclesNet: vehicleNetByAge[i] ?? 0,
-          propertyNet: 0,
+          propertyNet: propertyNetByAge[i] ?? 0,
         };
       }
     );

@@ -30,7 +30,8 @@ export function DashboardOverviewSection({
         <div className="relative flex flex-wrap items-center gap-1">
           <p className={labelClass}>Net worth</p>
           <InfoTooltip ariaLabel="How net worth is calculated">
-            Investments + cash + optional CPF and vehicle equity, minus debts.
+            Investments + cash + property and vehicle equity + optional CPF,
+            minus debts.
           </InfoTooltip>
         </div>
         <p className={figureClass} style={appBrandNavyTextStyle}>
@@ -41,7 +42,8 @@ export function DashboardOverviewSection({
             <div className="flex flex-wrap items-center gap-1">
               <p className={labelClass}>Net excluding CPF</p>
               <InfoTooltip ariaLabel="How net excluding CPF relates to full net worth">
-                Investments + cash + vehicles minus debts; CPF balances omitted.
+                Investments + cash + property and vehicles minus debts; CPF
+                balances omitted.
               </InfoTooltip>
             </div>
             <p className="mt-2 font-mono text-xl font-semibold tracking-tight text-slate-800 tabular-nums sm:text-2xl">
@@ -51,8 +53,8 @@ export function DashboardOverviewSection({
               )}
             </p>
             <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
-              Investments + cash + vehicles − debts; CPF balances omitted for a
-              more liquid picture.
+              Investments + cash + property and vehicles − debts; CPF balances
+              omitted for a more liquid picture.
             </p>
           </div>
         )}
@@ -82,6 +84,20 @@ export function DashboardOverviewSection({
                   payload.netWorthBreakdown.cpf,
                   payload.baseCurrency
                 )}
+              </li>
+            )}
+            {payload.netWorthBreakdown.propertyCount > 0 && (
+              <li className="flex flex-wrap items-baseline gap-x-1.5 text-zinc-600">
+                <span>
+                  Property equity{" "}
+                  {formatCurrency(
+                    payload.netWorthBreakdown.propertiesNet,
+                    payload.baseCurrency
+                  )}
+                </span>
+                <InfoTooltip ariaLabel="How property equity is estimated">
+                  Current owned valuation less linked mortgage balances.
+                </InfoTooltip>
               </li>
             )}
             <li>

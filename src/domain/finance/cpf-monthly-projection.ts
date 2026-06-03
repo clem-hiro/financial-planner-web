@@ -210,6 +210,11 @@ export function buildCpfMonthlyProjectionSeries(params: {
   annualBonus?: number;
   /** Month number (1-12) bonus is assumed to be paid. */
   annualBonusPayoutMonth?: number;
+  /**
+   * Zero-based month offset where employment CPF contributions stop. Month 0
+   * means no projected salary / bonus CPF inflows; null means no stop.
+   */
+  employmentContributionEndMonth?: number | null;
   initial: CpfBalanceSnapshot;
   housingLoans: HousingLoanProjectionInput[];
   cpfInvestments?: CpfInvestmentProjectionInput[];
@@ -224,6 +229,7 @@ export function buildCpfMonthlyProjectionSeries(params: {
     annualSalaryGrowthNominal = 0,
     annualBonus = 0,
     annualBonusPayoutMonth = DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
+    employmentContributionEndMonth = null,
     initial,
     housingLoans,
     cpfInvestments = [],
@@ -295,9 +301,16 @@ export function buildCpfMonthlyProjectionSeries(params: {
     Math.max(0, Number(annualSalaryGrowthNominal) || 0)
   );
   let effectiveGross = grossMonthly;
+  const employmentEndMonth =
+    employmentContributionEndMonth != null &&
+    Number.isFinite(employmentContributionEndMonth)
+      ? Math.max(0, Math.trunc(employmentContributionEndMonth))
+      : null;
 
   for (let i = 0; i < horizonMonths; i++) {
     const ym = addMonthsToYearMonth(startYearMonth, i);
+    const employmentContributionsActive =
+      employmentEndMonth == null || i < employmentEndMonth;
     if (ym.endsWith("-01") && ym > startYearMonth && growth > 0) {
       effectiveGross *= 1 + growth;
     }
@@ -323,7 +336,7 @@ export function buildCpfMonthlyProjectionSeries(params: {
       completedAgeForCpfMonth
     );
 
-    if (effectiveGross > 750) {
+    if (employmentContributionsActive && effectiveGross > 750) {
       const { subject, ytdOwSubjectAfter } = ordinaryWagesSubjectWithYtd(
         effectiveGross,
         ym,
@@ -341,7 +354,11 @@ export function buildCpfMonthlyProjectionSeries(params: {
       ra += flows.ra;
     }
 
-    if (annualBonusSafe > 0 && Number(ym.slice(5, 7)) === payoutMonth) {
+    if (
+      employmentContributionsActive &&
+      annualBonusSafe > 0 &&
+      Number(ym.slice(5, 7)) === payoutMonth
+    ) {
       const awSubject = Math.min(
         annualBonusSafe,
         additionalWageCeilingRemaining(ytdOw)

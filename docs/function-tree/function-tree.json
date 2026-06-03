@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-06-02T14:39:02.963Z",
+  "generated_at": "2026-06-03T07:40:35.881Z",
   "roots": [
     "src/app",
     "src/components",
@@ -2947,7 +2947,23 @@
       "functions": []
     },
     {
+      "path": "src/data/dashboard-cpf-retirement-stop.test.ts",
+      "root": "src/data",
+      "classification": [
+        "regular"
+      ],
+      "functions": []
+    },
+    {
       "path": "src/data/dashboard-overlay.test.ts",
+      "root": "src/data",
+      "classification": [
+        "regular"
+      ],
+      "functions": []
+    },
+    {
+      "path": "src/data/dashboard-property-equity.test.ts",
       "root": "src/data",
       "classification": [
         "regular"
@@ -2973,7 +2989,7 @@
           "id": "src/data/dashboard.ts#housingLoanToProjection",
           "name": "housingLoanToProjection",
           "kind": "function",
-          "line": 336,
+          "line": 348,
           "exported": false,
           "classification": [],
           "edges": [
@@ -2992,7 +3008,7 @@
           "id": "src/data/dashboard.ts#cpfInvestmentToProjection",
           "name": "cpfInvestmentToProjection",
           "kind": "function",
-          "line": 386,
+          "line": 398,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3007,7 +3023,7 @@
           "id": "src/data/dashboard.ts#ageAtEndOfYearMonth",
           "name": "ageAtEndOfYearMonth",
           "kind": "function",
-          "line": 399,
+          "line": 411,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3022,7 +3038,7 @@
           "id": "src/data/dashboard.ts#isYearMonth",
           "name": "isYearMonth",
           "kind": "function",
-          "line": 405,
+          "line": 417,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -3032,7 +3048,7 @@
           "id": "src/data/dashboard.ts#monthDistance",
           "name": "monthDistance",
           "kind": "function",
-          "line": 409,
+          "line": 421,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -3042,7 +3058,7 @@
           "id": "src/data/dashboard.ts#annualGrowthMultiplierAtYear",
           "name": "annualGrowthMultiplierAtYear",
           "kind": "function",
-          "line": 415,
+          "line": 427,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3057,7 +3073,7 @@
           "id": "src/data/dashboard.ts#sumProjectionFlows",
           "name": "sumProjectionFlows",
           "kind": "function",
-          "line": 471,
+          "line": 483,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -3067,7 +3083,7 @@
           "id": "src/data/dashboard.ts#annualizationFactorForRows",
           "name": "annualizationFactorForRows",
           "kind": "function",
-          "line": 481,
+          "line": 493,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -3077,7 +3093,7 @@
           "id": "src/data/dashboard.ts#sumProjectionOutflows",
           "name": "sumProjectionOutflows",
           "kind": "function",
-          "line": 486,
+          "line": 498,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -3087,7 +3103,7 @@
           "id": "src/data/dashboard.ts#annualizeProjectionFlows",
           "name": "annualizeProjectionFlows",
           "kind": "function",
-          "line": 508,
+          "line": 520,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -3097,7 +3113,7 @@
           "id": "src/data/dashboard.ts#sampleYearPhaseFlowRows",
           "name": "sampleYearPhaseFlowRows",
           "kind": "function",
-          "line": 562,
+          "line": 574,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3112,7 +3128,7 @@
           "id": "src/data/dashboard.ts#retirementSpendLedgerEntries",
           "name": "retirementSpendLedgerEntries",
           "kind": "function",
-          "line": 590,
+          "line": 602,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3135,7 +3151,7 @@
           "id": "src/data/dashboard.ts#cpfInitialSnapshot",
           "name": "cpfInitialSnapshot",
           "kind": "function",
-          "line": 638,
+          "line": 650,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3150,7 +3166,7 @@
           "id": "src/data/dashboard.ts#buildCpfHousingMarkers",
           "name": "buildCpfHousingMarkers",
           "kind": "function",
-          "line": 668,
+          "line": 680,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3165,7 +3181,7 @@
           "id": "src/data/dashboard.ts#getDashboardPayload",
           "name": "getDashboardPayload",
           "kind": "function",
-          "line": 694,
+          "line": 706,
           "exported": true,
           "classification": [],
           "edges": [
@@ -3331,6 +3347,10 @@
             },
             {
               "kind": "calls",
+              "target": "src/domain/finance/age-projection.ts#ageCompletedOnDate"
+            },
+            {
+              "kind": "calls",
               "target": "src/data/mappers.ts#profileMonthlyGross"
             },
             {
@@ -3367,10 +3387,6 @@
             },
             {
               "kind": "calls",
-              "target": "src/domain/finance/age-projection.ts#ageCompletedOnDate"
-            },
-            {
-              "kind": "calls",
               "target": "src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash"
             },
             {
@@ -3388,6 +3404,14 @@
             {
               "kind": "calls",
               "target": "src/domain/finance/net-worth.ts#calculateNetWorth"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/dates.ts#formatYearMonth"
             },
             {
               "kind": "calls",
@@ -10879,7 +10903,7 @@
           "id": "src/domain/finance/cpf-monthly-projection.ts#downsampleCpfSeries",
           "name": "downsampleCpfSeries",
           "kind": "function",
-          "line": 476,
+          "line": 493,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -14506,6 +14530,164 @@
         "regular"
       ],
       "functions": []
+    },
+    {
+      "path": "src/domain/housing/property-equity.test.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/domain/housing/property-equity.test.ts#property",
+          "name": "property",
+          "kind": "function",
+          "line": 8,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.test.ts#housingLoan",
+          "name": "housingLoan",
+          "kind": "function",
+          "line": 28,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
+      "path": "src/domain/housing/property-equity.ts",
+      "root": "src/domain",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown",
+          "name": "buildPropertyEquityBreakdown",
+          "kind": "function",
+          "line": 17,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#groupLoansByPropertyId"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#ownedPropertyGrossValue"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#housingLoanBalanceAt"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.ts#normalizePropertyOwnership",
+          "name": "normalizePropertyOwnership",
+          "kind": "function",
+          "line": 45,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.ts#ownedPropertyGrossValue",
+          "name": "ownedPropertyGrossValue",
+          "kind": "function",
+          "line": 60,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#moneyValue"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#normalizePropertyOwnership"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.ts#groupLoansByPropertyId",
+          "name": "groupLoansByPropertyId",
+          "kind": "function",
+          "line": 71,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.ts#housingLoanBalanceAt",
+          "name": "housingLoanBalanceAt",
+          "kind": "function",
+          "line": 84,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#moneyValue"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#compareYearMonth"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.ts#moneyValue",
+          "name": "moneyValue",
+          "kind": "function",
+          "line": 107,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.ts#compareYearMonth",
+          "name": "compareYearMonth",
+          "kind": "function",
+          "line": 113,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/housing/property-equity.ts#yearMonthIndex"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/housing/property-equity.ts#yearMonthIndex",
+          "name": "yearMonthIndex",
+          "kind": "function",
+          "line": 117,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        }
+      ]
     },
     {
       "path": "src/domain/housing/types.ts",
@@ -32922,6 +33104,46 @@
       "src/domain/finance/net-worth.ts#calculateNetWorth": [
         "src/data/dashboard.ts#getDashboardPayload"
       ],
+      "src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown": [
+        "src/data/dashboard.ts#getDashboardPayload"
+      ],
+      "src/lib/dates.ts#formatYearMonth": [
+        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
+        "src/app/(app)/budget/page.tsx#BudgetPage",
+        "src/app/(app)/dashboard/page.tsx#DashboardPage",
+        "src/app/(app)/expenses/page.tsx#ExpensesPage",
+        "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
+        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage",
+        "src/app/(app)/setup/page.tsx#SetupPage",
+        "src/app/api/budget/route.ts#GET",
+        "src/app/api/dashboard/route.ts#GET",
+        "src/app/api/profile/route.ts#PATCH",
+        "src/data/dashboard.ts#getDashboardPayload",
+        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
+        "src/data/liability-budget-sync.ts#syncLiabilityBudgetLine",
+        "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals",
+        "src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth",
+        "src/domain/finance/vehicle-sg.ts#completedMonthsSinceReg",
+        "src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash",
+        "src/domain/finance/vehicle-sg.ts#loanMonthsRemainingResolved",
+        "src/domain/finance/vehicle-sg.ts#vehicleGrossAssetEstimate",
+        "src/domain/finance/vehicle-sg.ts#vehicleGrossFromPurchaseToTerminalLinear",
+        "src/domain/finance/vehicle-sg.ts#vehicleGrossFromRebatesRemainingToTerminal",
+        "src/domain/finance/vehicle-sg.ts#vehicleNetListedBeforeLiquidation",
+        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
+        "src/features/debts/DebtPlanningPanels.tsx#DebtCard",
+        "src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm",
+        "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
+        "src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard",
+        "src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection",
+        "src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection",
+        "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection",
+        "src/lib/dates.ts#addMonthsToYearMonth",
+        "src/lib/dates.ts#defaultExpenseDateForBudgetMonth",
+        "src/lib/setup-urls.ts#setupTabPath",
+        "src/server/actions.ts#applyGuidedBudgetLinesAction",
+        "src/server/actions.ts#upsertCpfBalanceAction"
+      ],
       "src/domain/finance/insights.ts#buildDashboardInsights": [
         "src/data/dashboard.ts#getDashboardPayload"
       ],
@@ -33041,42 +33263,6 @@
       "src/lib/profile-role.ts#isClientProfile": [
         "src/app/(app)/account-issue/page.tsx#AccountIssuePage",
         "src/data/financial-profile.ts#needsOnboarding"
-      ],
-      "src/lib/dates.ts#formatYearMonth": [
-        "src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage",
-        "src/app/(app)/budget/page.tsx#BudgetPage",
-        "src/app/(app)/dashboard/page.tsx#DashboardPage",
-        "src/app/(app)/expenses/page.tsx#ExpensesPage",
-        "src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage",
-        "src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage",
-        "src/app/(app)/setup/page.tsx#SetupPage",
-        "src/app/api/budget/route.ts#GET",
-        "src/app/api/dashboard/route.ts#GET",
-        "src/app/api/profile/route.ts#PATCH",
-        "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
-        "src/data/liability-budget-sync.ts#syncLiabilityBudgetLine",
-        "src/domain/finance/advisor-client-health.ts#advisorClientWorkspaceSignals",
-        "src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth",
-        "src/domain/finance/vehicle-sg.ts#completedMonthsSinceReg",
-        "src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash",
-        "src/domain/finance/vehicle-sg.ts#loanMonthsRemainingResolved",
-        "src/domain/finance/vehicle-sg.ts#vehicleGrossAssetEstimate",
-        "src/domain/finance/vehicle-sg.ts#vehicleGrossFromPurchaseToTerminalLinear",
-        "src/domain/finance/vehicle-sg.ts#vehicleGrossFromRebatesRemainingToTerminal",
-        "src/domain/finance/vehicle-sg.ts#vehicleNetListedBeforeLiquidation",
-        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
-        "src/features/debts/DebtPlanningPanels.tsx#DebtCard",
-        "src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm",
-        "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
-        "src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard",
-        "src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection",
-        "src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection",
-        "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection",
-        "src/lib/dates.ts#addMonthsToYearMonth",
-        "src/lib/dates.ts#defaultExpenseDateForBudgetMonth",
-        "src/lib/setup-urls.ts#setupTabPath",
-        "src/server/actions.ts#applyGuidedBudgetLinesAction",
-        "src/server/actions.ts#upsertCpfBalanceAction"
       ],
       "src/domain/finance/goal-priority-tradeoff.ts#sortGoalsByPriority": [
         "src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext",
@@ -34455,6 +34641,7 @@
         "src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries",
         "src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount",
         "src/domain/finance/housing-loan-payments.ts#housingInstalmentForMonth",
+        "src/domain/housing/property-equity.ts#housingLoanBalanceAt",
         "src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm",
         "src/features/housing/PropertyAddForm.tsx#monthlyInstalment"
       ],
@@ -34940,6 +35127,28 @@
       ],
       "src/domain/housing/compose.ts#syntheticPropertyFromLoan": [
         "src/domain/housing/compose.ts#composeHousingPropertyViews"
+      ],
+      "src/domain/housing/property-equity.ts#groupLoansByPropertyId": [
+        "src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown"
+      ],
+      "src/domain/housing/property-equity.ts#ownedPropertyGrossValue": [
+        "src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown"
+      ],
+      "src/domain/housing/property-equity.ts#housingLoanBalanceAt": [
+        "src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown"
+      ],
+      "src/domain/housing/property-equity.ts#moneyValue": [
+        "src/domain/housing/property-equity.ts#housingLoanBalanceAt",
+        "src/domain/housing/property-equity.ts#ownedPropertyGrossValue"
+      ],
+      "src/domain/housing/property-equity.ts#normalizePropertyOwnership": [
+        "src/domain/housing/property-equity.ts#ownedPropertyGrossValue"
+      ],
+      "src/domain/housing/property-equity.ts#compareYearMonth": [
+        "src/domain/housing/property-equity.ts#housingLoanBalanceAt"
+      ],
+      "src/domain/housing/property-equity.ts#yearMonthIndex": [
+        "src/domain/housing/property-equity.ts#compareYearMonth"
       ],
       "src/domain/setup/evaluators.ts#nonEmptyString": [
         "src/domain/setup/evaluators.ts#evaluateProfile",

@@ -60,9 +60,11 @@
 | `src/data/budget-summary.ts` | `src/data` | `regular` | 1 | 14 |
 | `src/data/cash-account-history-build.ts` | `src/data` | `regular` | 1 | 1 |
 | `src/data/dashboard-advisor-viewer.test.ts` | `src/data` | `regular` | 0 | 0 |
+| `src/data/dashboard-cpf-retirement-stop.test.ts` | `src/data` | `regular` | 0 | 0 |
 | `src/data/dashboard-overlay.test.ts` | `src/data` | `regular` | 0 | 0 |
+| `src/data/dashboard-property-equity.test.ts` | `src/data` | `regular` | 0 | 0 |
 | `src/data/dashboard-runway-annual.test.ts` | `src/data` | `regular` | 0 | 0 |
-| `src/data/dashboard.ts` | `src/data` | `regular` | 15 | 94 |
+| `src/data/dashboard.ts` | `src/data` | `regular` | 15 | 96 |
 | `src/data/expense-budget-guard.ts` | `src/data` | `regular` | 1 | 6 |
 | `src/data/financial-profile.ts` | `src/data` | `regular` | 2 | 1 |
 | `src/data/goal-tradeoff-context.ts` | `src/data` | `regular` | 1 | 17 |
@@ -203,6 +205,8 @@
 | `src/domain/housing/compose.test.ts` | `src/domain` | `regular` | 2 | 0 |
 | `src/domain/housing/compose.ts` | `src/domain` | `regular` | 5 | 7 |
 | `src/domain/housing/index.ts` | `src/domain` | `regular` | 0 | 0 |
+| `src/domain/housing/property-equity.test.ts` | `src/domain` | `regular` | 2 | 0 |
+| `src/domain/housing/property-equity.ts` | `src/domain` | `regular` | 8 | 9 |
 | `src/domain/housing/types.ts` | `src/domain` | `regular` | 0 | 0 |
 | `src/domain/setup/context.ts` | `src/domain` | `regular` | 0 | 0 |
 | `src/domain/setup/evaluators.test.ts` | `src/domain` | `regular` | 1 | 0 |
