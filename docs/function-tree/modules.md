@@ -291,7 +291,7 @@
 | `src/features/dashboard/retirement-runway-rows.test.ts` | `src/features` | `regular` | 2 | 0 |
 | `src/features/dashboard/retirement-runway-rows.ts` | `src/features` | `regular` | 10 | 11 |
 | `src/features/dashboard/RetirementRunwayLedgerChart.test.tsx` | `src/features` | `regular` | 1 | 0 |
-| `src/features/dashboard/RetirementRunwayLedgerChart.tsx` | `src/features` | `client-component` | 22 | 57 |
+| `src/features/dashboard/RetirementRunwayLedgerChart.tsx` | `src/features` | `client-component` | 23 | 60 |
 | `src/features/debts/debt-constants.ts` | `src/features` | `regular` | 4 | 0 |
 | `src/features/debts/DebtEducationalExamples.tsx` | `src/features` | `client-component` | 2 | 4 |
 | `src/features/debts/DebtFormFields.tsx` | `src/features` | `client-component` | 2 | 5 |

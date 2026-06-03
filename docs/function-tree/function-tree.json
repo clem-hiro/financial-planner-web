@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-06-03T07:40:35.881Z",
+  "generated_at": "2026-06-03T15:44:26.827Z",
   "roots": [
     "src/app",
     "src/components",
@@ -19984,7 +19984,7 @@
           "id": "src/features/dashboard/retirement-runway-rows.ts#firstAge",
           "name": "firstAge",
           "kind": "arrow",
-          "line": 278,
+          "line": 285,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -19994,7 +19994,7 @@
           "id": "src/features/dashboard/retirement-runway-rows.ts#deriveMilestones",
           "name": "deriveMilestones",
           "kind": "function",
-          "line": 287,
+          "line": 294,
           "exported": true,
           "classification": [],
           "edges": [
@@ -20017,7 +20017,7 @@
           "id": "src/features/dashboard/retirement-runway-rows.ts#findSpikeAge",
           "name": "findSpikeAge",
           "kind": "function",
-          "line": 342,
+          "line": 349,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20060,7 +20060,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney",
           "name": "formatMoney",
           "kind": "function",
-          "line": 47,
+          "line": 49,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -20070,7 +20070,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#rowValue",
           "name": "rowValue",
           "kind": "function",
-          "line": 56,
+          "line": 58,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -20080,7 +20080,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#colorForSegment",
           "name": "colorForSegment",
           "kind": "function",
-          "line": 61,
+          "line": 63,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -20090,7 +20090,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount",
           "name": "hasAmount",
           "kind": "function",
-          "line": 74,
+          "line": 76,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -20100,7 +20100,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail",
           "name": "addDetail",
           "kind": "function",
-          "line": 78,
+          "line": 80,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20115,7 +20115,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails",
           "name": "compactDetails",
           "kind": "function",
-          "line": 89,
+          "line": 91,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20130,7 +20130,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails",
           "name": "fundingDetails",
           "kind": "function",
-          "line": 105,
+          "line": 107,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20146,13 +20146,32 @@
           "unresolved": 0
         },
         {
-          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails",
-          "name": "netWorthDetails",
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#requiredOutflowDetails",
+          "name": "requiredOutflowDetails",
           "kind": "function",
-          "line": 140,
+          "line": 142,
           "exported": false,
           "classification": [],
           "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails",
+          "name": "netWorthDetails",
+          "kind": "function",
+          "line": 154,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount"
+            },
             {
               "kind": "calls",
               "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail"
@@ -20164,7 +20183,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#cpfDetails",
           "name": "cpfDetails",
           "kind": "function",
-          "line": 151,
+          "line": 184,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20179,7 +20198,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#outflowTooltipDetails",
           "name": "outflowTooltipDetails",
           "kind": "function",
-          "line": 161,
+          "line": 194,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -20189,7 +20208,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#useContainerWidth",
           "name": "useContainerWidth",
           "kind": "function",
-          "line": 172,
+          "line": 205,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20212,7 +20231,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow",
           "name": "TooltipAmountRow",
           "kind": "component",
-          "line": 187,
+          "line": 220,
           "exported": false,
           "classification": [
             "client-component"
@@ -20229,7 +20248,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails",
           "name": "TooltipDetails",
           "kind": "component",
-          "line": 224,
+          "line": 257,
           "exported": false,
           "classification": [
             "client-component"
@@ -20250,7 +20269,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip",
           "name": "RunwayTooltip",
           "kind": "component",
-          "line": 252,
+          "line": 285,
           "exported": false,
           "classification": [
             "client-component"
@@ -20291,7 +20310,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#Panel",
           "name": "Panel",
           "kind": "component",
-          "line": 302,
+          "line": 335,
           "exported": false,
           "classification": [
             "client-component"
@@ -20303,7 +20322,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorRow",
           "name": "InspectorRow",
           "kind": "component",
-          "line": 346,
+          "line": 386,
           "exported": false,
           "classification": [
             "client-component"
@@ -20315,7 +20334,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetailRow",
           "name": "InspectorDetailRow",
           "kind": "component",
-          "line": 379,
+          "line": 419,
           "exported": false,
           "classification": [
             "client-component"
@@ -20327,7 +20346,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails",
           "name": "InspectorDetails",
           "kind": "component",
-          "line": 404,
+          "line": 444,
           "exported": false,
           "classification": [
             "client-component"
@@ -20352,7 +20371,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#Toggle",
           "name": "Toggle",
           "kind": "component",
-          "line": 429,
+          "line": 469,
           "exported": false,
           "classification": [
             "client-component"
@@ -20364,7 +20383,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart",
           "name": "RetirementRunwayLedgerChart",
           "kind": "component",
-          "line": 470,
+          "line": 510,
           "exported": true,
           "classification": [
             "client-component"
@@ -20492,6 +20511,10 @@
             },
             {
               "kind": "calls",
+              "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#requiredOutflowDetails"
+            },
+            {
+              "kind": "calls",
               "target": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#rowValue"
             },
             {
@@ -20513,7 +20536,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneLegend",
           "name": "MilestoneLegend",
           "kind": "component",
-          "line": 873,
+          "line": 899,
           "exported": false,
           "classification": [
             "client-component"
@@ -20530,7 +20553,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneCard",
           "name": "MilestoneCard",
           "kind": "component",
-          "line": 906,
+          "line": 932,
           "exported": false,
           "classification": [
             "client-component"
@@ -35506,7 +35529,9 @@
       "src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount": [
         "src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail",
         "src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails",
-        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails"
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails",
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails",
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#requiredOutflowDetails"
       ],
       "src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail": [
         "src/features/dashboard/RetirementRunwayLedgerChart.tsx#cpfDetails",
@@ -35547,6 +35572,9 @@
         "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart"
       ],
       "src/features/dashboard/RetirementRunwayLedgerChart.tsx#useContainerWidth": [
+        "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart"
+      ],
+      "src/features/dashboard/RetirementRunwayLedgerChart.tsx#requiredOutflowDetails": [
         "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart"
       ],
       "src/features/dashboard/RetirementRunwayLedgerChart.tsx#cpfDetails": [

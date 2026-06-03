@@ -35,6 +35,8 @@ import {
 } from "./retirement-runway-rows";
 
 const NARROW_PX = 780;
+const CHART_PANEL_HEIGHT_CLASS =
+  "h-[calc(16rem_+_1rem_+_2px)] sm:h-[calc(20rem_+_1.5rem_+_2px)]";
 
 type ColoredRunwaySegment = RunwaySegment & {
   color: string;
@@ -137,14 +139,45 @@ function fundingDetails(row: RunwayRow, key: string): AmountDetail[] {
   return out;
 }
 
+function requiredOutflowDetails(row: RunwayRow): AmountDetail[] {
+  if (row.outflowSegments.length > 0) return row.outflowSegments;
+  if (!hasAmount(row.expenses)) return [];
+  return [
+    {
+      key: "outflow:modeled-total",
+      label: "Modeled annual outflow",
+      amount: row.expenses,
+    },
+  ];
+}
+
 function netWorthDetails(row: RunwayRow): AmountDetail[] {
   const out: AmountDetail[] = [];
+  const cpfBucketTotal =
+    row.cpfOa + row.cpfSa + row.cpfMa + row.cpfRa + row.cpfCpfis;
+  const cpfTotal = hasAmount(row.cpfBalance) ? row.cpfBalance : cpfBucketTotal;
   addDetail(out, "networth:cash", "Cash", row.cashBalance);
   addDetail(out, "networth:investments", "Investments", row.investmentPrincipal);
-  addDetail(out, "networth:cpf", "CPF", row.cpfBalance);
+  addDetail(out, "networth:cpf", "CPF", cpfTotal);
   addDetail(out, "networth:property", "Property", row.propertyNet);
   addDetail(out, "networth:vehicles", "Vehicles", row.vehiclesNet);
   addDetail(out, "networth:liabilities", "Liabilities", -row.liabilities, "bad");
+
+  const explainedNetWorth =
+    row.cashBalance +
+    row.investmentPrincipal +
+    cpfTotal +
+    row.propertyNet +
+    row.vehiclesNet -
+    row.liabilities;
+  const residual = row.networth - explainedNetWorth;
+  addDetail(
+    out,
+    "networth:residual",
+    residual > 0 ? "Other model value" : "Unallocated offset",
+    residual,
+    residual < 0 ? "bad" : undefined
+  );
   return out;
 }
 
@@ -273,7 +306,7 @@ function RunwayTooltip({
         Age {row.age} · {row.phase}
       </p>
       <TooltipAmountRow
-        label="Required outflow"
+        label="Planned expenses"
         value={row.expenses}
         border={false}
         currency={currency}
@@ -311,12 +344,13 @@ function Panel({
   children: ReactNode;
 }) {
   return (
-    <section
-      className="overflow-hidden rounded-2xl border bg-white"
+    <details
+      open
+      className="group shrink-0 overflow-hidden rounded-2xl border bg-white"
       style={{ borderColor: fpRunwaySurface.line }}
     >
-      <div
-        className="flex min-h-11 w-full items-center justify-between gap-2 px-3.5 py-3 text-[11px] font-extrabold uppercase tracking-wider"
+      <summary
+        className="flex min-h-11 w-full cursor-pointer list-none items-center justify-between gap-2 px-3.5 py-3 text-[11px] font-extrabold uppercase tracking-wider [&::-webkit-details-marker]:hidden"
         style={{ color: fpRunwaySurface.muted }}
       >
         <span className="inline-flex items-center gap-2">{title}</span>
@@ -336,10 +370,16 @@ function Panel({
               {badge}
             </span>
           ) : null}
+          <span
+            aria-hidden
+            className="inline-block text-[13px] leading-none transition-transform group-open:rotate-90"
+          >
+            &gt;
+          </span>
         </span>
-      </div>
+      </summary>
       <div className="px-3 pb-3">{children}</div>
-    </section>
+    </details>
   );
 }
 
@@ -626,17 +666,20 @@ export function RetirementRunwayLedgerChart({
 
       <div
         className="grid gap-4 px-5 pb-5 pt-3"
-        style={{ gridTemplateColumns: paneOpen ? "minmax(0,1fr) 304px" : "1fr" }}
+        style={{
+          gridTemplateColumns:
+            paneOpen && !narrow ? "minmax(0,1fr) 304px" : "minmax(0,1fr)",
+        }}
       >
         <div className="min-w-0">
           <div
-            className="rounded-2xl border p-2 sm:p-3"
+            className={`${CHART_PANEL_HEIGHT_CLASS} rounded-2xl border p-2 sm:p-3`}
             style={{
               borderColor: fpRunwaySurface.line,
               background: "linear-gradient(180deg, #fffefb, #fdfbf6)",
             }}
           >
-            <div className="h-64 w-full min-w-0 sm:h-80">
+            <div className="h-full w-full min-w-0">
               <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                 <ComposedChart
                   data={rows}
@@ -774,28 +817,32 @@ export function RetirementRunwayLedgerChart({
         </div>
 
         {paneOpen ? (
-          <aside className="grid content-start gap-3">
+          <aside
+            className={`${CHART_PANEL_HEIGHT_CLASS} flex min-h-0 flex-col gap-3 overflow-y-auto pr-1`}
+            style={{ scrollbarGutter: "stable" }}
+          >
             {selectedRow ? (
               <Panel
-                title={
-                  <>
-                    Selected age ·{" "}
-                    <b style={{ color: fpRunwaySurface.ink }}>{selectedRow.age}</b>
-                  </>
-                }
+                title="Planned expenses"
                 badge={selectedRow.phase}
                 badgeRisk={selectedRow.shortfall > 0.5}
               >
                 <dl>
                   <InspectorRow
-                    label="Required outflow"
+                    label="Total planned expenses"
                     value={formatMoney(selectedRow.expenses, currency)}
                   />
                   <InspectorDetails
-                    details={selectedRow.outflowSegments}
+                    details={requiredOutflowDetails(selectedRow)}
                     currency={currency}
                     maxRows={6}
                   />
+                </dl>
+              </Panel>
+            ) : null}
+            {selectedRow ? (
+              <Panel title="Source">
+                <dl>
                   {coloredSegments
                     .filter((s) => rowValue(selectedRow, s.key) > 0.5)
                     .map((s) => (
@@ -828,10 +875,6 @@ export function RetirementRunwayLedgerChart({
                     currency={currency}
                     maxRows={6}
                   />
-                  <InspectorRow
-                    label="Fundable assets"
-                    value={formatMoney(selectedRow.fundableAssets, currency)}
-                  />
                 </dl>
               </Panel>
             ) : null}
@@ -842,23 +885,6 @@ export function RetirementRunwayLedgerChart({
                     details={cpfDetails(selectedRow)}
                     currency={currency}
                     maxRows={6}
-                  />
-                </dl>
-              </Panel>
-            ) : null}
-            {selectedRow && selectedRow.outflowSegments.length > 0 ? (
-              <Panel title="Expense detail">
-                <dl>
-                  {selectedRow.outflowSegments.map((segment) => (
-                    <InspectorRow
-                      key={segment.key}
-                      label={segment.label}
-                      value={formatMoney(segment.amount, currency)}
-                    />
-                  ))}
-                  <InspectorRow
-                    label="Total"
-                    value={formatMoney(selectedRow.expenses, currency)}
                   />
                 </dl>
               </Panel>
