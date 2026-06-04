@@ -190,6 +190,13 @@ export function toRunwayRows(points: AgeAssetBreakdownPoint[]): RunwayRowsResult
       rawInvestmentWithdrawal + rawPrincipalWithdrawn;
     const rawCashReserve = num(p.cashReserveDrawdown);
     const rawGoalsGap = num(p.goalsGap);
+    const cpfOa = num(p.cpfOa);
+    const cpfSa = num(p.cpfSa);
+    const cpfMa = num(p.cpfMa);
+    const cpfRa = num(p.cpfRa);
+    const cpfCpfis = num(p.cpfCpfis);
+    const cpfBucketTotal = cpfOa + cpfSa + cpfMa + cpfRa + cpfCpfis;
+    const cpfBalance = num(p.cpf) || cpfBucketTotal;
     const namedCashInflow =
       rawTakehome +
       rawCpfLife +
@@ -234,12 +241,12 @@ export function toRunwayRows(points: AgeAssetBreakdownPoint[]): RunwayRowsResult
       fundableAssets,
       cashBalance,
       investmentPrincipal,
-      cpfBalance: num(p.cpf),
-      cpfOa: num(p.cpfOa),
-      cpfSa: num(p.cpfSa),
-      cpfMa: num(p.cpfMa),
-      cpfRa: num(p.cpfRa),
-      cpfCpfis: num(p.cpfCpfis),
+      cpfBalance,
+      cpfOa,
+      cpfSa,
+      cpfMa,
+      cpfRa,
+      cpfCpfis,
       propertyNet: num(p.propertyNet),
       vehiclesNet: num(p.vehiclesNet),
       liabilities: num(p.liabilities),

@@ -84,7 +84,7 @@
 | [`src/features/dashboard/retirement-runway-rows.test.ts`](#src-features-dashboard-retirement-runway-rows-test-ts) | `regular` | 2 | 0 |
 | [`src/features/dashboard/retirement-runway-rows.ts`](#src-features-dashboard-retirement-runway-rows-ts) | `regular` | 10 | 11 |
 | [`src/features/dashboard/RetirementRunwayLedgerChart.test.tsx`](#src-features-dashboard-retirementrunwayledgerchart-test-tsx) | `regular` | 1 | 0 |
-| [`src/features/dashboard/RetirementRunwayLedgerChart.tsx`](#src-features-dashboard-retirementrunwayledgerchart-tsx) | `client-component` | 22 | 57 |
+| [`src/features/dashboard/RetirementRunwayLedgerChart.tsx`](#src-features-dashboard-retirementrunwayledgerchart-tsx) | `client-component` | 23 | 60 |
 | [`src/features/debts/debt-constants.ts`](#src-features-debts-debt-constants-ts) | `regular` | 4 | 0 |
 | [`src/features/debts/DebtEducationalExamples.tsx`](#src-features-debts-debteducationalexamples-tsx) | `client-component` | 2 | 4 |
 | [`src/features/debts/DebtFormFields.tsx`](#src-features-debts-debtformfields-tsx) | `client-component` | 2 | 5 |
@@ -1215,16 +1215,16 @@ Classification: `regular`
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 - unresolved: 6
 
-#### `firstAge` — arrow, L278
+#### `firstAge` — arrow, L285
 
 - called by: `src/features/dashboard/retirement-runway-rows.ts#deriveMilestones`
 
-#### `deriveMilestones` — function, L287
+#### `deriveMilestones` — function, L294
 
 - calls: `src/features/dashboard/retirement-runway-rows.ts#findSpikeAge`, `src/features/dashboard/retirement-runway-rows.ts#firstAge`, `src/features/dashboard/retirement-runway-rows.ts#num`
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 
-#### `findSpikeAge` — function, L342
+#### `findSpikeAge` — function, L349
 
 - calls: `src/features/dashboard/retirement-runway-rows.ts#num`
 - called by: `src/features/dashboard/retirement-runway-rows.ts#deriveMilestones`
@@ -1241,111 +1241,116 @@ _No tracked edges._
 
 Classification: `client-component`
 
-#### `formatMoney` — function, L47
+#### `formatMoney` — function, L49
 
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow`
 
-#### `rowValue` — function, L56
+#### `rowValue` — function, L58
 
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`
 
-#### `colorForSegment` — function, L61
+#### `colorForSegment` — function, L63
 
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 
-#### `hasAmount` — function, L74
+#### `hasAmount` — function, L76
 
-- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails`
+- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#requiredOutflowDetails`
 
-#### `addDetail` — function, L78
+#### `addDetail` — function, L80
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount`
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#cpfDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails`
 
-#### `compactDetails` — function, L89
+#### `compactDetails` — function, L91
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount`
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails`
 
-#### `fundingDetails` — function, L105
+#### `fundingDetails` — function, L107
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount`
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`
 
-#### `netWorthDetails` — function, L140
+#### `requiredOutflowDetails` — function, L142
 
-- calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail`
+- calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount`
+- called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
+
+#### `netWorthDetails` — function, L154
+
+- calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount`
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`
 
-#### `cpfDetails` — function, L151
+#### `cpfDetails` — function, L184
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail`
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 
-#### `outflowTooltipDetails` — function, L161
+#### `outflowTooltipDetails` — function, L194
 
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`
 
-#### `useContainerWidth` — function, L172
+#### `useContainerWidth` — function, L205
 
 - calls: `[external] react`
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 - unresolved: 1
 
-#### `TooltipAmountRow` — component, L187 _(client-component)_
+#### `TooltipAmountRow` — component, L220 _(client-component)_
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney`
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails`
 
-#### `TooltipDetails` — component, L224 _(client-component)_
+#### `TooltipDetails` — component, L257 _(client-component)_
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails`
 - renders: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow`
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`
 
-#### `RunwayTooltip` — component, L252 _(client-component)_
+#### `RunwayTooltip` — component, L285 _(client-component)_
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#outflowTooltipDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#rowValue`
 - renders: `[external] react`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails`
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 
-#### `Panel` — component, L302 _(client-component)_
+#### `Panel` — component, L335 _(client-component)_
 
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 
-#### `InspectorRow` — component, L346 _(client-component)_
+#### `InspectorRow` — component, L386 _(client-component)_
 
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 
-#### `InspectorDetailRow` — component, L379 _(client-component)_
+#### `InspectorDetailRow` — component, L419 _(client-component)_
 
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails`
 
-#### `InspectorDetails` — component, L404 _(client-component)_
+#### `InspectorDetails` — component, L444 _(client-component)_
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney`
 - renders: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetailRow`
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 
-#### `Toggle` — component, L429 _(client-component)_
+#### `Toggle` — component, L469 _(client-component)_
 
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 - unresolved: 1
 
-#### `RetirementRunwayLedgerChart` — component, L470 _(client-component)_
+#### `RetirementRunwayLedgerChart` — component, L510 _(client-component)_
 
-- calls: `[external] react`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#colorForSegment`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#cpfDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#rowValue`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#useContainerWidth`, `src/features/dashboard/retirement-runway-rows.ts#deriveMilestones`, `src/features/dashboard/retirement-runway-rows.ts#toRunwayRows`
+- calls: `[external] react`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#colorForSegment`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#cpfDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#requiredOutflowDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#rowValue`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#useContainerWidth`, `src/features/dashboard/retirement-runway-rows.ts#deriveMilestones`, `src/features/dashboard/retirement-runway-rows.ts#toRunwayRows`
 - renders: `[external] react`, `[external] recharts`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorRow`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneLegend`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#Panel`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#Toggle`
 - rendered by: `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`
 - unresolved: 5
 
-#### `MilestoneLegend` — component, L873 _(client-component)_
+#### `MilestoneLegend` — component, L899 _(client-component)_
 
 - renders: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneCard`
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 - unresolved: 1
 
-#### `MilestoneCard` — component, L906 _(client-component)_
+#### `MilestoneCard` — component, L932 _(client-component)_
 
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneLegend`
 

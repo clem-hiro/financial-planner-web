@@ -212,6 +212,23 @@ describe("toRunwayRows - financing stack", () => {
     expect(result.rows[0].fundableAssets).toBe(300);
   });
 
+  it("derives CPF total from CPF buckets when the aggregate is absent", () => {
+    const result = toRunwayRows([
+      point({
+        age: 50,
+        value: 1_000,
+        cash: 100,
+        investments: 200,
+        cpf: 0,
+        cpfOa: 300,
+        cpfSa: 150,
+        cpfMa: 50,
+      }),
+    ]);
+
+    expect(result.rows[0].cpfBalance).toBe(500);
+  });
+
   it("returns empty rows and segments for empty input", () => {
     expect(toRunwayRows([])).toEqual({ rows: [], segments: [] });
   });
