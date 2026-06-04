@@ -38,6 +38,13 @@ function CpfProjectionStatusPanel({ payload }: { payload: DashboardPayload }) {
   if (!payload.cpfYearEndProjection) return null;
 
   const p = payload.cpfYearEndProjection;
+  const balanceBasisText = payload.hasCpfBalanceRecord
+    ? `Balances are treated as updated through ${p.balanceAsOfMonth}.`
+    : `No CPF balance is saved yet, so this projection treats OA, SA, MA, and CPFIS as $0 through ${p.balanceAsOfMonth}.`;
+  const projectionRangeText =
+    p.projectedMonths > 0 && p.startYearMonth != null
+      ? `Projection starts from ${p.startYearMonth} and runs to ${p.targetYearMonth}.`
+      : `No future month is added before ${p.targetYearMonth}.`;
   return (
     <div className="mt-5 rounded-lg border border-indigo-200/70 bg-indigo-50/60 p-3 text-xs text-indigo-950">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
@@ -46,10 +53,7 @@ function CpfProjectionStatusPanel({ payload }: { payload: DashboardPayload }) {
             CPF year-end projection
           </h3>
           <p className="mt-1 leading-relaxed text-indigo-900/90">
-            Balances are treated as updated through {p.balanceAsOfMonth}.{" "}
-            {p.projectedMonths > 0 && p.startYearMonth != null
-              ? `Projection starts from ${p.startYearMonth} and runs to ${p.targetYearMonth}.`
-              : `No future month is added before ${p.targetYearMonth}.`}
+            {balanceBasisText} {projectionRangeText}
           </p>
         </div>
         <p className="text-right text-lg font-bold tabular-nums text-indigo-950">

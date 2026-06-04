@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-06-03T15:44:26.827Z",
+  "generated_at": "2026-06-04T07:37:49.082Z",
   "roots": [
     "src/app",
     "src/components",
@@ -2955,6 +2955,146 @@
       "functions": []
     },
     {
+      "path": "src/data/dashboard-cpf-zero-balance.test.ts",
+      "root": "src/data",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/data/dashboard-cpf-zero-balance.test.ts#expectSalaryCpfProjection",
+          "name": "expectSalaryCpfProjection",
+          "kind": "function",
+          "line": 109,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "@vitest/expect"
+            },
+            {
+              "kind": "calls",
+              "external": "vitest"
+            },
+            {
+              "kind": "calls",
+              "external": "@vitest/expect"
+            },
+            {
+              "kind": "calls",
+              "external": "vitest"
+            },
+            {
+              "kind": "calls",
+              "external": "@vitest/expect"
+            },
+            {
+              "kind": "calls",
+              "external": "vitest"
+            },
+            {
+              "kind": "calls",
+              "external": "@vitest/expect"
+            },
+            {
+              "kind": "calls",
+              "external": "vitest"
+            },
+            {
+              "kind": "calls",
+              "external": "@vitest/expect"
+            },
+            {
+              "kind": "calls",
+              "external": "vitest"
+            },
+            {
+              "kind": "calls",
+              "external": "@vitest/expect"
+            },
+            {
+              "kind": "calls",
+              "external": "vitest"
+            },
+            {
+              "kind": "calls",
+              "external": "@vitest/expect"
+            },
+            {
+              "kind": "calls",
+              "external": "vitest"
+            },
+            {
+              "kind": "calls",
+              "external": "@vitest/expect"
+            },
+            {
+              "kind": "calls",
+              "external": "vitest"
+            },
+            {
+              "kind": "calls",
+              "external": "@vitest/expect"
+            },
+            {
+              "kind": "calls",
+              "external": "vitest"
+            },
+            {
+              "kind": "calls",
+              "external": "@vitest/expect"
+            },
+            {
+              "kind": "calls",
+              "external": "vitest"
+            },
+            {
+              "kind": "calls",
+              "external": "@vitest/expect"
+            },
+            {
+              "kind": "calls",
+              "external": "vitest"
+            },
+            {
+              "kind": "calls",
+              "external": "@vitest/expect"
+            },
+            {
+              "kind": "calls",
+              "external": "vitest"
+            },
+            {
+              "kind": "calls",
+              "external": "@vitest/expect"
+            },
+            {
+              "kind": "calls",
+              "external": "vitest"
+            },
+            {
+              "kind": "calls",
+              "external": "@vitest/expect"
+            },
+            {
+              "kind": "calls",
+              "external": "vitest"
+            },
+            {
+              "kind": "calls",
+              "external": "@vitest/expect"
+            },
+            {
+              "kind": "calls",
+              "external": "vitest"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/data/dashboard-overlay.test.ts",
       "root": "src/data",
       "classification": [
@@ -2989,7 +3129,7 @@
           "id": "src/data/dashboard.ts#housingLoanToProjection",
           "name": "housingLoanToProjection",
           "kind": "function",
-          "line": 348,
+          "line": 349,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3008,7 +3148,7 @@
           "id": "src/data/dashboard.ts#cpfInvestmentToProjection",
           "name": "cpfInvestmentToProjection",
           "kind": "function",
-          "line": 398,
+          "line": 399,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3023,7 +3163,7 @@
           "id": "src/data/dashboard.ts#ageAtEndOfYearMonth",
           "name": "ageAtEndOfYearMonth",
           "kind": "function",
-          "line": 411,
+          "line": 412,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3038,7 +3178,7 @@
           "id": "src/data/dashboard.ts#isYearMonth",
           "name": "isYearMonth",
           "kind": "function",
-          "line": 417,
+          "line": 418,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -3048,7 +3188,7 @@
           "id": "src/data/dashboard.ts#monthDistance",
           "name": "monthDistance",
           "kind": "function",
-          "line": 421,
+          "line": 422,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -3058,7 +3198,7 @@
           "id": "src/data/dashboard.ts#annualGrowthMultiplierAtYear",
           "name": "annualGrowthMultiplierAtYear",
           "kind": "function",
-          "line": 427,
+          "line": 428,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3073,7 +3213,7 @@
           "id": "src/data/dashboard.ts#sumProjectionFlows",
           "name": "sumProjectionFlows",
           "kind": "function",
-          "line": 483,
+          "line": 484,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -3083,7 +3223,7 @@
           "id": "src/data/dashboard.ts#annualizationFactorForRows",
           "name": "annualizationFactorForRows",
           "kind": "function",
-          "line": 493,
+          "line": 494,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -3093,7 +3233,7 @@
           "id": "src/data/dashboard.ts#sumProjectionOutflows",
           "name": "sumProjectionOutflows",
           "kind": "function",
-          "line": 498,
+          "line": 499,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -3103,7 +3243,7 @@
           "id": "src/data/dashboard.ts#annualizeProjectionFlows",
           "name": "annualizeProjectionFlows",
           "kind": "function",
-          "line": 520,
+          "line": 521,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -3113,7 +3253,7 @@
           "id": "src/data/dashboard.ts#sampleYearPhaseFlowRows",
           "name": "sampleYearPhaseFlowRows",
           "kind": "function",
-          "line": 574,
+          "line": 575,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3128,7 +3268,7 @@
           "id": "src/data/dashboard.ts#retirementSpendLedgerEntries",
           "name": "retirementSpendLedgerEntries",
           "kind": "function",
-          "line": 602,
+          "line": 603,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3151,7 +3291,7 @@
           "id": "src/data/dashboard.ts#cpfInitialSnapshot",
           "name": "cpfInitialSnapshot",
           "kind": "function",
-          "line": 650,
+          "line": 651,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3166,7 +3306,7 @@
           "id": "src/data/dashboard.ts#buildCpfHousingMarkers",
           "name": "buildCpfHousingMarkers",
           "kind": "function",
-          "line": 680,
+          "line": 681,
           "exported": false,
           "classification": [],
           "edges": [
@@ -3181,7 +3321,7 @@
           "id": "src/data/dashboard.ts#getDashboardPayload",
           "name": "getDashboardPayload",
           "kind": "function",
-          "line": 706,
+          "line": 707,
           "exported": true,
           "classification": [],
           "edges": [
@@ -19514,7 +19654,7 @@
           "id": "src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection",
           "name": "DashboardRetirementSection",
           "kind": "component",
-          "line": 87,
+          "line": 91,
           "exported": true,
           "classification": [],
           "edges": [

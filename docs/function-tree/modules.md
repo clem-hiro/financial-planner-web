@@ -61,6 +61,7 @@
 | `src/data/cash-account-history-build.ts` | `src/data` | `regular` | 1 | 1 |
 | `src/data/dashboard-advisor-viewer.test.ts` | `src/data` | `regular` | 0 | 0 |
 | `src/data/dashboard-cpf-retirement-stop.test.ts` | `src/data` | `regular` | 0 | 0 |
+| `src/data/dashboard-cpf-zero-balance.test.ts` | `src/data` | `regular` | 1 | 30 |
 | `src/data/dashboard-overlay.test.ts` | `src/data` | `regular` | 0 | 0 |
 | `src/data/dashboard-property-equity.test.ts` | `src/data` | `regular` | 0 | 0 |
 | `src/data/dashboard-runway-annual.test.ts` | `src/data` | `regular` | 0 | 0 |
