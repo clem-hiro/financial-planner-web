@@ -191,7 +191,8 @@ export type DashboardPayload = {
   };
   /**
    * CPF buckets at each projected age, aligned to `ageProjection.points`.
-   * Null when birth date is missing/invalid or CPF balances are not saved.
+   * Null when birth date is missing/invalid or gross salary inputs are missing.
+   * If CPF balances are not saved, projections start from a virtual $0 snapshot.
    */
   cpfProjectionByAge: Array<{
     age: number;
@@ -271,7 +272,7 @@ export type DashboardPayload = {
     annualBonusPayoutMonth: number;
     /**
      * CPF notionals at the age used for the headline retirement path (target
-     * age, or today’s age when you are already at/past target). Null without CPF data.
+     * age, or today’s age when you are already at/past target). Null without projected CPF data.
      */
     cpfBucketsAtTargetRetirement: {
       age: number;
@@ -935,12 +936,6 @@ export async function getDashboardPayload(
       : undefined;
   const cpfProjectionMissingInputs: DashboardPayload["cpfProjectionMissingInputs"] =
     [];
-  if (!cpfRow) {
-    cpfProjectionMissingInputs.push({
-      label: "CPF OA / SA / MA balances",
-      href: "/setup?tab=cpf#cpf-balances",
-    });
-  }
   if (cpfRow && !isYearMonth(cpfRow.balance_as_of_month)) {
     cpfProjectionMissingInputs.push({
       label: "CPF balance as-of month",
@@ -959,9 +954,12 @@ export async function getDashboardPayload(
       href: "/setup?tab=profile#profile-assumptions",
     });
   }
-  const cpfBalanceAsOfMonth = cpfRow?.balance_as_of_month ?? null;
-  const cpfProjectionStartYearMonth = isYearMonth(cpfBalanceAsOfMonth)
-    ? addMonthsToYearMonth(cpfBalanceAsOfMonth, 1)
+  const cpfBalanceAsOfMonth = cpfRow ? cpfRow.balance_as_of_month : yearMonth;
+  const cpfProjectionBalanceAsOfMonth = isYearMonth(cpfBalanceAsOfMonth)
+    ? cpfBalanceAsOfMonth
+    : null;
+  const cpfProjectionStartYearMonth = cpfProjectionBalanceAsOfMonth
+    ? addMonthsToYearMonth(cpfProjectionBalanceAsOfMonth, 1)
     : null;
   const cpfEmploymentContributionEndMonth =
     cpfProjectionStartYearMonth != null && monthsToRetirementHorizon != null
@@ -980,7 +978,7 @@ export async function getDashboardPayload(
     | null = null;
   if (
     cpfProjectionMissingInputs.length === 0 &&
-    cpfRow &&
+    cpfProjectionBalanceAsOfMonth != null &&
     cpfProjectionStartYearMonth != null &&
     grossMonthlyForCpf != null
   ) {
@@ -992,7 +990,7 @@ export async function getDashboardPayload(
       const initialCpf = cpfInitialSnapshot(cpfRow);
       const cpfis = initialCpf.cpfisNotionalBalance;
       cpfYearEndProjection = {
-        balanceAsOfMonth: cpfRow.balance_as_of_month!,
+        balanceAsOfMonth: cpfProjectionBalanceAsOfMonth,
         startYearMonth: null,
         targetYearMonth: cpfYearEndTargetYearMonth,
         projectedMonths: 0,
@@ -1023,7 +1021,7 @@ export async function getDashboardPayload(
         cpfMonthlySeriesForProjection[cpfMonthlySeriesForProjection.length - 1];
       if (yearEndRow) {
         cpfYearEndProjection = {
-          balanceAsOfMonth: cpfRow.balance_as_of_month!,
+          balanceAsOfMonth: cpfProjectionBalanceAsOfMonth,
           startYearMonth: cpfProjectionStartYearMonth,
           targetYearMonth: cpfYearEndTargetYearMonth,
           projectedMonths: yearEndHorizonMonths,
@@ -1177,7 +1175,6 @@ export async function getDashboardPayload(
     });
     if (
       cpfMonthlySeriesForProjection != null &&
-      cpfRow &&
       cpfProjectionStartYearMonth != null &&
       grossMonthlyForCpf != null
     ) {

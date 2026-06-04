@@ -1121,7 +1121,7 @@ Classification: `regular`
 - renders: `[external] next`
 - rendered by: `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`
 
-#### `DashboardRetirementSection` — component, L87
+#### `DashboardRetirementSection` — component, L91
 
 - calls: `src/ui/lib/format.ts#formatCurrency`, `src/ui/lib/format.ts#formatPercent`
 - renders: `[external] next`, `src/features/dashboard/CpfProjectionByAgeChart.tsx#CpfProjectionByAgeChart`, `src/features/dashboard/CpfRetirementProjectionPanel.tsx#CpfRetirementProjectionPanel`, `src/features/dashboard/DashboardRetirementSection.tsx#CpfProjectionStatusPanel`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/ui/InfoTooltip.tsx#InfoTooltip`
