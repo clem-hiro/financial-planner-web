@@ -2,7 +2,7 @@
 
 # Function tree — `src/server`
 
-34 module(s).
+35 module(s).
 
 ## Modules
 
@@ -12,7 +12,8 @@
 | [`src/server/actions.ts`](#src-server-actions-ts) | `server-action` | 50 | 361 |
 | [`src/server/advisor-accept-hardening.test.ts`](#src-server-advisor-accept-hardening-test-ts) | `regular` | 1 | 0 |
 | [`src/server/advisor-access-key-actions.ts`](#src-server-advisor-access-key-actions-ts) | `server-action` | 2 | 10 |
-| [`src/server/advisor-client-actions.ts`](#src-server-advisor-client-actions-ts) | `server-action` | 34 | 221 |
+| [`src/server/advisor-client-actions.ts`](#src-server-advisor-client-actions-ts) | `server-action` | 35 | 224 |
+| [`src/server/advisor-compose-field-editability.test.ts`](#src-server-advisor-compose-field-editability-test-ts) | `regular` | 1 | 0 |
 | [`src/server/advisor-compose-name-uniqueness.test.ts`](#src-server-advisor-compose-name-uniqueness-test-ts) | `regular` | 3 | 1 |
 | [`src/server/advisor-consent-gate.test.ts`](#src-server-advisor-consent-gate-test-ts) | `regular` | 1 | 0 |
 | [`src/server/advisor-consent.ts`](#src-server-advisor-consent-ts) | `regular` | 2 | 1 |
@@ -308,150 +309,163 @@ Classification: `server-action`
 
 Classification: `server-action`
 
-#### `pendingCreateNames` — function, L47 _(server-action)_
+#### `pendingCreateNames` — function, L50 _(server-action)_
 
 - calls: `src/data/repositories/advisor-proposals.ts#getDraftProposalForClient`, `src/data/repositories/advisor-proposals.ts#listChangesForProposal`
 - called by: `src/server/advisor-client-actions.ts#createAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#createAdvisorClientGoalAction`, `src/server/advisor-client-actions.ts#createAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#createAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#createAdvisorClientVehicleAction`
 
-#### `clientErrorFromUnknown` — function, L68 _(server-action)_
+#### `clientErrorFromUnknown` — function, L71 _(server-action)_
 
 - called by: `src/server/advisor-client-actions.ts#createAdvisorClientBudgetLineAction`, `src/server/advisor-client-actions.ts#createAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#createAdvisorClientGoalAction`, `src/server/advisor-client-actions.ts#createAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#createAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#createAdvisorClientVehicleAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientBudgetLineAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientGoalAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientVehicleAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientVehicleAction`
 
-#### `revalidateAdvisorClientViews` — function, L77 _(server-action)_
+#### `revalidateAdvisorClientViews` — function, L80 _(server-action)_
 
 - calls: `[external] next`
 - called by: `src/server/advisor-client-actions.ts#createAdvisorClientBudgetLineAction`, `src/server/advisor-client-actions.ts#createAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#createAdvisorClientGoalAction`, `src/server/advisor-client-actions.ts#createAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#createAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#createAdvisorClientVehicleAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientBudgetLineAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientGoalAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientVehicleAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientBudgetLineAmountAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientProfileAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientVehicleAction`
 
-#### `requireAdvisorLinkedClient` — function, L82 _(server-action)_
+#### `optionalNumberFromForm` — function, L85 _(server-action)_
+
+- called by: `src/server/advisor-client-actions.ts#patchAdvisorClientBudgetLineAmountAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientProfileAction`
+
+#### `requireAdvisorLinkedClient` — function, L109 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `src/data/repositories/advisor-clients.ts#getClientProfileForAdvisor`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/profile-role.ts#isAdvisor`, `src/server/advisor-consent.ts#assertConsent`
 - called by: `src/server/advisor-client-actions.ts#createAdvisorClientBudgetLineAction`, `src/server/advisor-client-actions.ts#createAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#createAdvisorClientGoalAction`, `src/server/advisor-client-actions.ts#createAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#createAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#createAdvisorClientVehicleAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientBudgetLineAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientGoalAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientVehicleAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientBudgetLineAmountAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientProfileAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientVehicleAction`
 
-#### `patchAdvisorClientProfileAction` — function, L118 _(server-action)_
+#### `patchAdvisorClientProfileAction` — function, L145 _(server-action)_
 
-- calls: `src/data/repositories/profiles.ts#advisorReadProfile`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
+- calls: `src/data/repositories/profiles.ts#advisorReadProfile`, `src/server/advisor-client-actions.ts#optionalNumberFromForm`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
+- unresolved: 9
 
-#### `patchAdvisorClientBudgetLineAmountAction` — function, L218 _(server-action)_
+#### `patchAdvisorClientBudgetLineAmountAction` — function, L326 _(server-action)_
 
-- calls: `src/data/repositories/budget-lines.ts#advisorReadBudgetLines`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
+- calls: `src/data/repositories/budget-lines.ts#advisorReadBudgetLines`, `src/server/advisor-client-actions.ts#optionalNumberFromForm`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `patchAdvisorClientGoalMonthlyContributionAction` — function, L259 _(server-action)_
+#### `patchAdvisorClientGoalMonthlyContributionAction` — function, L391 _(server-action)_
 
-- calls: `src/data/repositories/goals.ts#advisorReadGoals`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
+- calls: `src/data/repositories/goals.ts#advisorReadGoals`, `src/server/advisor-client-actions.ts#optionalNumberFromForm`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `createAdvisorClientInvestmentAction` — function, L303 _(server-action)_
+#### `createAdvisorClientInvestmentAction` — function, L486 _(server-action)_
 
 - calls: `src/data/repositories/investments.ts#advisorReadInvestments`, `src/lib/validation.ts#entityNameUniquenessError`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#pendingCreateNames`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`, `src/server/investment-planning-parse.ts#parseInvestmentPlanningFields`
 
-#### `updateAdvisorClientInvestmentAction` — function, L418 _(server-action)_
+#### `updateAdvisorClientInvestmentAction` — function, L601 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/investments.ts#advisorReadInvestments`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`, `src/server/investment-planning-parse.ts#parseInvestmentPlanningFields`
 - called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`
 
-#### `deleteAdvisorClientInvestmentAction` — function, L552 _(server-action)_
+#### `deleteAdvisorClientInvestmentAction` — function, L735 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/investments.ts#advisorReadInvestments`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 - called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
 
-#### `assertCategoryVisible` — function, L599 _(server-action)_
+#### `assertCategoryVisible` — function, L782 _(server-action)_
 
 - calls: `src/data/repositories/advisor-clients.ts#advisorCanReadCategory`
 - called by: `src/server/advisor-client-actions.ts#createAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#createAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#createAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#createAdvisorClientVehicleAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientVehicleAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientVehicleAction`
 
-#### `createAdvisorClientCashAccountAction` — function, L608 _(server-action)_
+#### `createAdvisorClientCashAccountAction` — function, L791 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/cash-accounts.ts#advisorReadCashAccounts`, `src/lib/validation.ts#entityNameUniquenessError`, `src/server/advisor-client-actions.ts#assertCategoryVisible`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#pendingCreateNames`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `updateAdvisorClientCashAccountAction` — function, L680 _(server-action)_
+#### `updateAdvisorClientCashAccountAction` — function, L863 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/cash-accounts.ts#advisorReadCashAccounts`, `src/server/advisor-client-actions.ts#assertCategoryVisible`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `deleteAdvisorClientCashAccountAction` — function, L745 _(server-action)_
+#### `deleteAdvisorClientCashAccountAction` — function, L928 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/cash-accounts.ts#advisorReadCashAccounts`, `src/server/advisor-client-actions.ts#assertCategoryVisible`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `createAdvisorClientLiabilityAction` — function, L792 _(server-action)_
+#### `createAdvisorClientLiabilityAction` — function, L975 _(server-action)_
 
 - calls: `src/data/repositories/liabilities.ts#advisorReadLiabilities`, `src/lib/validation.ts#entityNameUniquenessError`, `src/server/advisor-client-actions.ts#assertCategoryVisible`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#pendingCreateNames`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`, `src/server/liability-form.ts#parseLiabilityFormData`
 
-#### `updateAdvisorClientLiabilityAction` — function, L868 _(server-action)_
+#### `updateAdvisorClientLiabilityAction` — function, L1051 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/liabilities.ts#advisorReadLiabilities`, `src/server/advisor-client-actions.ts#assertCategoryVisible`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`, `src/server/liability-form.ts#parseLiabilityFormData`
 
-#### `deleteAdvisorClientLiabilityAction` — function, L951 _(server-action)_
+#### `deleteAdvisorClientLiabilityAction` — function, L1134 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/liabilities.ts#advisorReadLiabilities`, `src/server/advisor-client-actions.ts#assertCategoryVisible`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `optionalFormNumber` — function, L997 _(server-action)_
+#### `optionalFormNumber` — function, L1180 _(server-action)_
 
 - called by: `src/server/advisor-client-actions.ts#parseHousingLoanForm`, `src/server/advisor-client-actions.ts#parsePropertyForm`, `src/server/advisor-client-actions.ts#parseVehicleForm`
 
-#### `parsePropertyForm` — function, L1004 _(server-action)_
+#### `parsePropertyForm` — function, L1187 _(server-action)_
 
 - calls: `[external] zod`, `src/server/advisor-client-actions.ts#optionalFormNumber`
 - called by: `src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientPropertyAction`
 
-#### `parseHousingLoanForm` — function, L1019 _(server-action)_
+#### `parseHousingLoanForm` — function, L1202 _(server-action)_
 
 - calls: `[external] zod`, `src/server/advisor-client-actions.ts#optionalFormNumber`
 - called by: `src/server/advisor-client-actions.ts#createAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientHousingLoanAction`
 
-#### `createAdvisorClientHousingLoanAction` — function, L1033 _(server-action)_
+#### `createAdvisorClientHousingLoanAction` — function, L1216 _(server-action)_
 
 - calls: `src/data/repositories/housing-loans.ts#advisorReadHousingLoans`, `src/lib/validation.ts#entityNameUniquenessError`, `src/server/advisor-client-actions.ts#assertCategoryVisible`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#parseHousingLoanForm`, `src/server/advisor-client-actions.ts#pendingCreateNames`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `updateAdvisorClientHousingLoanAction` — function, L1107 _(server-action)_
+#### `updateAdvisorClientHousingLoanAction` — function, L1290 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/housing-loans.ts#advisorReadHousingLoans`, `src/server/advisor-client-actions.ts#assertCategoryVisible`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#parseHousingLoanForm`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `deleteAdvisorClientHousingLoanAction` — function, L1188 _(server-action)_
+#### `deleteAdvisorClientHousingLoanAction` — function, L1371 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/housing-loans.ts#advisorReadHousingLoans`, `src/server/advisor-client-actions.ts#assertCategoryVisible`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `createAdvisorClientPropertyAction` — function, L1234 _(server-action)_
+#### `createAdvisorClientPropertyAction` — function, L1417 _(server-action)_
 
 - calls: `src/data/repositories/properties.ts#advisorReadProperties`, `src/lib/validation.ts#entityNameUniquenessError`, `src/server/advisor-client-actions.ts#assertCategoryVisible`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#parsePropertyForm`, `src/server/advisor-client-actions.ts#pendingCreateNames`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `updateAdvisorClientPropertyAction` — function, L1309 _(server-action)_
+#### `updateAdvisorClientPropertyAction` — function, L1492 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/properties.ts#advisorReadProperties`, `src/server/advisor-client-actions.ts#assertCategoryVisible`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#parsePropertyForm`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `deleteAdvisorClientPropertyAction` — function, L1395 _(server-action)_
+#### `deleteAdvisorClientPropertyAction` — function, L1578 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/properties.ts#advisorReadProperties`, `src/server/advisor-client-actions.ts#assertCategoryVisible`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `parseVehicleForm` — function, L1442 _(server-action)_
+#### `parseVehicleForm` — function, L1625 _(server-action)_
 
 - calls: `[external] zod`, `src/server/advisor-client-actions.ts#optionalFormNumber`
 - called by: `src/server/advisor-client-actions.ts#createAdvisorClientVehicleAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientVehicleAction`
 
-#### `createAdvisorClientVehicleAction` — function, L1457 _(server-action)_
+#### `createAdvisorClientVehicleAction` — function, L1640 _(server-action)_
 
 - calls: `src/data/repositories/vehicles.ts#advisorReadVehicles`, `src/lib/validation.ts#entityNameUniquenessError`, `src/server/advisor-client-actions.ts#assertCategoryVisible`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#parseVehicleForm`, `src/server/advisor-client-actions.ts#pendingCreateNames`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `updateAdvisorClientVehicleAction` — function, L1535 _(server-action)_
+#### `updateAdvisorClientVehicleAction` — function, L1718 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/vehicles.ts#advisorReadVehicles`, `src/server/advisor-client-actions.ts#assertCategoryVisible`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#parseVehicleForm`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `deleteAdvisorClientVehicleAction` — function, L1620 _(server-action)_
+#### `deleteAdvisorClientVehicleAction` — function, L1803 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/vehicles.ts#advisorReadVehicles`, `src/server/advisor-client-actions.ts#assertCategoryVisible`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `createAdvisorClientBudgetLineAction` — function, L1672 _(server-action)_
+#### `createAdvisorClientBudgetLineAction` — function, L1855 _(server-action)_
 
 - calls: `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `createAdvisorClientGoalAction` — function, L1726 _(server-action)_
+#### `createAdvisorClientGoalAction` — function, L1909 _(server-action)_
 
 - calls: `src/data/repositories/goals.ts#advisorReadGoals`, `src/lib/validation.ts#entityNameUniquenessError`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#pendingCreateNames`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `deleteAdvisorClientGoalAction` — function, L1802 _(server-action)_
+#### `deleteAdvisorClientGoalAction` — function, L1985 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/goals.ts#advisorReadGoals`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `deleteAdvisorClientBudgetLineAction` — function, L1851 _(server-action)_
+#### `deleteAdvisorClientBudgetLineAction` — function, L2034 _(server-action)_
 
 - calls: `[external] zod`, `src/data/repositories/budget-lines.ts#advisorReadBudgetLines`, `src/server/advisor-client-actions.ts#clientErrorFromUnknown`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-client-actions.ts#revalidateAdvisorClientViews`, `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
+
+### `src/server/advisor-compose-field-editability.test.ts` <a id="src-server-advisor-compose-field-editability-test-ts"></a>
+
+Classification: `regular`
+
+#### `fd` — function, L46
+
+_No tracked edges._
 
 ### `src/server/advisor-compose-name-uniqueness.test.ts` <a id="src-server-advisor-compose-name-uniqueness-test-ts"></a>
 

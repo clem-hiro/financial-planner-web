@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import type { DashboardPayload } from "@/data/dashboard";
 import type {
@@ -7,10 +7,15 @@ import type {
   InvestmentRow,
   ProfileRow,
 } from "@/data/supabase/types";
+import { AdvisorClientCompose } from "@/features/advisor/AdvisorClientCompose";
 import { AdvisorClientOverview } from "@/features/advisor/AdvisorClientOverview";
 import { AdvisorClientDetailShell } from "@/features/advisor/AdvisorClientDetailShell";
 import { MethodologyProvider } from "@/features/help/methodology-context";
 import { ProposalProjectionCompare } from "@/features/proposals/ProposalProjectionCompare";
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ refresh: () => {} }),
+}));
 
 function profile(): ProfileRow {
   return {
@@ -120,6 +125,48 @@ function renderOverview(extra?: { hasOverlay?: boolean; draftChangeCount?: numbe
   );
 }
 
+function renderCompose(extra?: { hasPendingProposal?: boolean }) {
+  return renderToStaticMarkup(
+    <MethodologyProvider>
+      <AdvisorClientCompose
+        clientId="client-1"
+        consentGranted
+        profile={{
+          ...profile(),
+          annual_salary_growth_nominal: "0.02",
+          expense_growth_nominal: "0.025",
+          target_retirement_age: 65,
+          retirement_monthly_spend_goal: "4500",
+          retirement_dividend_yield_annual: "0.03",
+          retirement_withdrawal_rate_annual: "0.04",
+        }}
+        payload={payload()}
+        goals={goals}
+        budgetLines={budgetLines}
+        investments={investments}
+        cashAccounts={[]}
+        cashVisible={false}
+        liabilities={[]}
+        liabilitiesVisible={false}
+        vehicles={[]}
+        vehiclesVisible={false}
+        properties={[]}
+        propertiesVisible={false}
+        housingLoans={[]}
+        housingLoansVisible={false}
+        month="2026-05"
+        draftProposalId={null}
+        draftChanges={[]}
+        hasPendingProposal={extra?.hasPendingProposal ?? false}
+      />
+    </MethodologyProvider>
+  );
+}
+
+function inputTag(html: string, name: string): string {
+  return html.match(new RegExp(`<input[^>]*name="${name}"[^>]*>`))?.[0] ?? "";
+}
+
 describe("Advisor overview/compose split", () => {
   it("overview renders no authoring forms or per-row controls", () => {
     const html = renderOverview();
@@ -192,6 +239,51 @@ describe("Advisor overview/compose split", () => {
     expect(html).toContain("COMPOSE_BODY");
     // No tab is highlighted in the compose view — that's acceptable.
     expect(html).not.toContain('aria-current="page"');
+  });
+
+  it("compose exposes editable controls for all default-visible proposal fields", () => {
+    const html = renderCompose();
+    const editableNames = [
+      "display_name",
+      "monthly_income",
+      "monthly_gross_salary",
+      "annual_salary_growth_percent",
+      "savings_target_monthly",
+      "fixed_expenses_monthly",
+      "expense_growth_percent",
+      "target_retirement_age",
+      "retirement_monthly_spend_goal",
+      "retirement_dividend_yield_percent",
+      "retirement_withdrawal_rate_percent",
+      "title",
+      "target_amount",
+      "monthly_contribution",
+      "category",
+      "amount",
+      "expected_annual_return",
+    ];
+
+    for (const name of editableNames) {
+      const tag = inputTag(html, name);
+      expect(tag, `missing input ${name}`).not.toBe("");
+      expect(tag, `input ${name} should be editable`).not.toContain("disabled");
+    }
+    expect(inputTag(html, "annual_salary_growth_percent")).toContain('value="2"');
+    expect(inputTag(html, "expense_growth_percent")).toContain('value="2.5"');
+    expect(inputTag(html, "retirement_dividend_yield_percent")).toContain(
+      'value="3"'
+    );
+    expect(inputTag(html, "retirement_withdrawal_rate_percent")).toContain(
+      'value="4"'
+    );
+  });
+
+  it("compose keeps authoring controls editable while another proposal is pending", () => {
+    const html = renderCompose({ hasPendingProposal: true });
+    expect(html).toContain("Client review in progress");
+    expect(inputTag(html, "display_name")).not.toContain("disabled");
+    expect(inputTag(html, "target_amount")).not.toContain("disabled");
+    expect(inputTag(html, "category")).not.toContain("disabled");
   });
 
   it("breadcrumb hierarchy: overview/proposals → Clients, compose → Overview, detail → Proposals", () => {

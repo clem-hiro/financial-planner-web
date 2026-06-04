@@ -36,12 +36,12 @@ export function DraftSummaryPanel({
   proposalId,
   changes,
   currencyCode,
-  disabled,
+  disabled = false,
 }: {
   proposalId: string | null;
   changes: AdvisorProposalChangeRow[];
   currencyCode: string;
-  disabled: boolean;
+  disabled?: boolean;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -187,12 +187,12 @@ const XL_BREAKPOINT = 1280;
 export function SubmitProposalBar({
   proposalId,
   changeCount,
-  disabled,
+  disabled = false,
   alignToId,
 }: {
   proposalId: string | null;
   changeCount: number;
-  disabled: boolean;
+  disabled?: boolean;
   alignToId?: string;
 }) {
   const [submitState, submitAction, submitPending] = useActionState(

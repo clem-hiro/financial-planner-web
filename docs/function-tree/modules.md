@@ -221,8 +221,8 @@
 | `src/features/advisor/AdvisorAccessKeysSection.tsx` | `src/features` | `regular` | 2 | 7 |
 | `src/features/advisor/AdvisorBuyKeysSection.tsx` | `src/features` | `client-component` | 4 | 17 |
 | `src/features/advisor/AdvisorClientCashSection.tsx` | `src/features` | `client-component` | 4 | 14 |
-| `src/features/advisor/AdvisorClientCompose-split.test.tsx` | `src/features` | `regular` | 3 | 5 |
-| `src/features/advisor/AdvisorClientCompose.tsx` | `src/features` | `regular` | 2 | 27 |
+| `src/features/advisor/AdvisorClientCompose-split.test.tsx` | `src/features` | `regular` | 5 | 10 |
+| `src/features/advisor/AdvisorClientCompose.tsx` | `src/features` | `regular` | 4 | 29 |
 | `src/features/advisor/AdvisorClientDetailNav.tsx` | `src/features` | `regular` | 1 | 0 |
 | `src/features/advisor/AdvisorClientDetailShell.tsx` | `src/features` | `regular` | 1 | 1 |
 | `src/features/advisor/AdvisorClientHeader.tsx` | `src/features` | `regular` | 2 | 4 |
@@ -402,7 +402,8 @@
 | `src/server/actions.ts` | `src/server` | `server-action` | 50 | 361 |
 | `src/server/advisor-accept-hardening.test.ts` | `src/server` | `regular` | 1 | 0 |
 | `src/server/advisor-access-key-actions.ts` | `src/server` | `server-action` | 2 | 10 |
-| `src/server/advisor-client-actions.ts` | `src/server` | `server-action` | 34 | 221 |
+| `src/server/advisor-client-actions.ts` | `src/server` | `server-action` | 35 | 224 |
+| `src/server/advisor-compose-field-editability.test.ts` | `src/server` | `regular` | 1 | 0 |
 | `src/server/advisor-compose-name-uniqueness.test.ts` | `src/server` | `regular` | 3 | 1 |
 | `src/server/advisor-consent-gate.test.ts` | `src/server` | `regular` | 1 | 0 |
 | `src/server/advisor-consent.ts` | `src/server` | `regular` | 2 | 1 |

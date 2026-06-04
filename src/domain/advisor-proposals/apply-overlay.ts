@@ -133,6 +133,7 @@ const PROFILE_NUM_STR_FIELDS = [
   "retirement_dividend_yield_annual",
   "retirement_withdrawal_rate_annual",
   "annual_salary_growth_nominal",
+  "expense_growth_nominal",
 ] as const;
 
 function applyProfile(

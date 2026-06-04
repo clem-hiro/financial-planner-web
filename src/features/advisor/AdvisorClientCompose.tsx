@@ -57,7 +57,18 @@ import {
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { birthDateIsValidPast } from "@/lib/validation";
 import { CollapsiblePane, CollapsiblePaneRail } from "@/ui/CollapsiblePaneRail";
-import { formatCurrency } from "@/ui/lib/format";
+
+function profileStringValue(value: string | number | null | undefined): string {
+  return value == null ? "" : String(value);
+}
+
+function profilePercentValue(value: string | null | undefined): string {
+  if (value == null || String(value).trim() === "") return "";
+  const percent = num(value) * 100;
+  return Number.isFinite(percent)
+    ? String(Math.round(percent * 1000) / 1000)
+    : "";
+}
 
 /** Dedicated proposal-authoring surface. Mirrors the consent gate and pending-
  * proposal lockout of the read-only Overview; all forms/actions are reused
@@ -211,8 +222,8 @@ export function AdvisorClientCompose({
   const propertyOptions = propertyRows.map((p) => ({ id: p.id, name: p.name }));
 
   // Frozen submit bar is fixed to the viewport bottom; pad the page so the last
-  // section isn't occluded. Only shows while a draft exists and not locked.
-  const showSubmitBar = !hasPendingProposal && !!draftProposalId;
+  // section isn't occluded. Pending submitted proposals do not block a separate draft.
+  const showSubmitBar = !!draftProposalId;
 
   return (
     <div className={`space-y-8 lg:space-y-10 ${showSubmitBar ? "pb-44" : ""}`}>
@@ -234,13 +245,29 @@ export function AdvisorClientCompose({
           >
             <AdvisorProfilePatchForm
               clientId={clientId}
-              disabled={hasPendingProposal}
               defaults={{
                 display_name: profile.display_name ?? "",
                 monthly_income: profile.monthly_income ?? "",
                 monthly_gross_salary: profile.monthly_gross_salary ?? "",
+                annual_salary_growth_percent: profilePercentValue(
+                  profile.annual_salary_growth_nominal
+                ),
                 savings_target_monthly: profile.savings_target_monthly ?? "",
                 fixed_expenses_monthly: profile.fixed_expenses_monthly ?? "",
+                expense_growth_percent: profilePercentValue(
+                  profile.expense_growth_nominal
+                ),
+                target_retirement_age: profileStringValue(
+                  profile.target_retirement_age
+                ),
+                retirement_monthly_spend_goal:
+                  profile.retirement_monthly_spend_goal ?? "",
+                retirement_dividend_yield_percent: profilePercentValue(
+                  profile.retirement_dividend_yield_annual
+                ),
+                retirement_withdrawal_rate_percent: profilePercentValue(
+                  profile.retirement_withdrawal_rate_annual
+                ),
               }}
             />
           </AdvisorSection>
@@ -248,54 +275,43 @@ export function AdvisorClientCompose({
           <AdvisorSection
             id="goals"
             title="Goals & priorities"
-            description="Adjust planned monthly contributions. Full goal editor remains on the client Planning flow."
+            description="Adjust existing goals or suggest new ones. Changes stay as proposal suggestions until the client accepts."
           >
             <div className="space-y-4">
               {goals.length === 0 ? (
                 <p className="text-sm text-slate-600">No goals yet.</p>
               ) : (
-                <div className="overflow-x-auto rounded-xl border border-slate-100">
-                  <table className="min-w-full text-left text-sm">
-                    <thead className="border-b border-slate-100 bg-slate-50/90 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                      <tr>
-                        <th className="px-4 py-3">Goal</th>
-                        <th className="px-4 py-3">Target</th>
-                        <th className="px-4 py-3 text-right">Monthly plan</th>
-                        <th className="px-4 py-3 text-right">Remove</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {goals.map((g) => (
-                        <tr key={g.id} className="text-slate-800">
-                          <td className="px-4 py-3 font-medium text-slate-900">{g.title}</td>
-                          <td className="px-4 py-3 tabular-nums text-slate-600">
-                            {formatCurrency(num(g.target_amount), currency)}
-                          </td>
-                          <td className="px-4 py-3 text-right">
-                            <AdvisorGoalContributionForm
-                              clientId={clientId}
-                              goalId={g.id}
-                              defaultMonthly={num(g.monthly_contribution)}
-                              disabled={hasPendingProposal}
-                            />
-                          </td>
-                          <td className="px-4 py-3 text-right">
-                            <AdvisorProposeRemovalButton
-                              action={deleteAdvisorClientGoalAction}
-                              clientId={clientId}
-                              entityId={g.id}
-                              entityName={g.title}
-                              disabled={hasPendingProposal}
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="space-y-3">
+                  {goals.map((g) => (
+                    <div
+                      key={g.id}
+                      className="rounded-xl border border-slate-100 bg-white p-4 sm:p-5"
+                    >
+                      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                        <div className="min-w-0 flex-1">
+                          <AdvisorGoalContributionForm
+                            clientId={clientId}
+                            goalId={g.id}
+                            defaultTitle={g.title}
+                            defaultTargetAmount={num(g.target_amount)}
+                            defaultMonthly={num(g.monthly_contribution)}
+                          />
+                        </div>
+                        <div className="flex shrink-0 justify-end">
+                          <AdvisorProposeRemovalButton
+                            action={deleteAdvisorClientGoalAction}
+                            clientId={clientId}
+                            entityId={g.id}
+                            entityName={g.title}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
               <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-4 sm:p-5">
-                <AdvisorNewGoalForm clientId={clientId} disabled={hasPendingProposal} />
+                <AdvisorNewGoalForm clientId={clientId} />
               </div>
             </div>
           </AdvisorSection>
@@ -309,46 +325,36 @@ export function AdvisorClientCompose({
               {monthlyBudgetLines.length === 0 ? (
                 <p className="text-sm text-slate-600">No monthly budget lines.</p>
               ) : (
-                <div className="overflow-x-auto rounded-xl border border-slate-100">
-                  <table className="min-w-full text-left text-sm">
-                    <thead className="border-b border-slate-100 bg-slate-50/90 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                      <tr>
-                        <th className="px-4 py-3">Category</th>
-                        <th className="px-4 py-3 text-right">Planned / mo</th>
-                        <th className="px-4 py-3 text-right">Remove</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {monthlyBudgetLines.map((line) => (
-                        <tr key={line.id}>
-                          <td className="px-4 py-3 font-medium capitalize text-slate-900">
-                            {line.category}
-                          </td>
-                          <td className="px-4 py-3 text-right">
-                            <AdvisorBudgetLineAmountForm
-                              clientId={clientId}
-                              lineId={line.id}
-                              defaultAmount={num(line.amount)}
-                              disabled={hasPendingProposal}
-                            />
-                          </td>
-                          <td className="px-4 py-3 text-right">
-                            <AdvisorProposeRemovalButton
-                              action={deleteAdvisorClientBudgetLineAction}
-                              clientId={clientId}
-                              entityId={line.id}
-                              entityName={line.category}
-                              disabled={hasPendingProposal}
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="space-y-3">
+                  {monthlyBudgetLines.map((line) => (
+                    <div
+                      key={line.id}
+                      className="rounded-xl border border-slate-100 bg-white p-4 sm:p-5"
+                    >
+                      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                        <div className="min-w-0 flex-1">
+                          <AdvisorBudgetLineAmountForm
+                            clientId={clientId}
+                            lineId={line.id}
+                            defaultCategory={line.category}
+                            defaultAmount={num(line.amount)}
+                          />
+                        </div>
+                        <div className="flex shrink-0 justify-end">
+                          <AdvisorProposeRemovalButton
+                            action={deleteAdvisorClientBudgetLineAction}
+                            clientId={clientId}
+                            entityId={line.id}
+                            entityName={line.category}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
               <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-4 sm:p-5">
-                <AdvisorNewBudgetLineForm clientId={clientId} disabled={hasPendingProposal} />
+                <AdvisorNewBudgetLineForm clientId={clientId} />
               </div>
             </div>
           </AdvisorSection>
@@ -367,7 +373,6 @@ export function AdvisorClientCompose({
                     currencyCode={currency}
                     planningContext={investmentPlanningContext}
                     advisorClientId={clientId}
-                    advisorSuggestionDisabled={hasPendingProposal}
                     accountsHeading="Client accounts"
                     showAssumptionBanner={false}
                   />
@@ -376,7 +381,6 @@ export function AdvisorClientCompose({
               <div className="p-4 sm:p-5">
                 <InvestmentForm
                   advisorClientId={clientId}
-                  advisorSuggestionDisabled={hasPendingProposal}
                   showAssumptionBanner={false}
                   planningContext={investmentPlanningContext}
                 />
@@ -394,7 +398,6 @@ export function AdvisorClientCompose({
                 clientId={clientId}
                 accounts={cashRows}
                 currencyCode={currency}
-                disabled={hasPendingProposal}
               />
             ) : (
               <LockedCategoryCard label="Cash accounts" />
@@ -411,7 +414,6 @@ export function AdvisorClientCompose({
                 clientId={clientId}
                 liabilities={liabilityRows}
                 currencyCode={currency}
-                disabled={hasPendingProposal}
               />
             ) : (
               <LockedCategoryCard label="Liabilities" />
@@ -428,7 +430,6 @@ export function AdvisorClientCompose({
                 clientId={clientId}
                 vehicles={vehicleRows}
                 currencyCode={currency}
-                disabled={hasPendingProposal}
               />
             ) : (
               <LockedCategoryCard label="Vehicles" />
@@ -445,7 +446,6 @@ export function AdvisorClientCompose({
                 clientId={clientId}
                 properties={propertyRows}
                 currencyCode={currency}
-                disabled={hasPendingProposal}
               />
             ) : (
               <LockedCategoryCard label="Property" />
@@ -463,7 +463,6 @@ export function AdvisorClientCompose({
                 loans={housingLoanRows}
                 propertyOptions={propertyOptions}
                 currencyCode={currency}
-                disabled={hasPendingProposal}
               />
             ) : (
               <LockedCategoryCard label="Housing loans" />
@@ -478,7 +477,6 @@ export function AdvisorClientCompose({
                 proposalId={draftProposalId}
                 changes={draftChanges}
                 currencyCode={currency}
-                disabled={hasPendingProposal}
               />
               <div className="rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-3 text-xs leading-relaxed text-slate-600">
                 <p className="font-semibold text-slate-700">Session assist</p>
@@ -507,7 +505,6 @@ export function AdvisorClientCompose({
       <SubmitProposalBar
         proposalId={draftProposalId}
         changeCount={draftChangeCount}
-        disabled={hasPendingProposal}
         alignToId="advisor-compose-left"
       />
     </div>
