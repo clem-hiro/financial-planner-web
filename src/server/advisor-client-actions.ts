@@ -35,7 +35,10 @@ import {
 import { parseLiabilityFormData } from "@/server/liability-form";
 import type { AdvisorVisibilityCategory } from "@/lib/advisor-visibility";
 import { isAdvisor } from "@/lib/profile-role";
-import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
+import type {
+  AdvisorProposalChangeRow,
+  ProfileRow,
+} from "@/data/supabase/types";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { randomUUID } from "crypto";
@@ -77,6 +80,30 @@ function clientErrorFromUnknown(e: unknown): string {
 function revalidateAdvisorClientViews(clientId: string) {
   revalidatePath("/advisor/clients");
   revalidatePath(`/advisor/client/${clientId}`);
+}
+
+function optionalNumberFromForm(
+  formData: FormData,
+  key: string,
+  label: string,
+  options: { min?: number; max?: number; integer?: boolean } = {}
+): { ok: true; value: number | null } | { ok: false; error: string } {
+  const raw = formData.get(key);
+  if (raw == null) return { ok: true, value: null };
+  const s = String(raw).trim();
+  if (s === "") return { ok: true, value: null };
+  const n = Number(s);
+  if (!Number.isFinite(n)) return { ok: false, error: `Invalid ${label}` };
+  if (options.integer && !Number.isInteger(n)) {
+    return { ok: false, error: `${label} must be a whole number` };
+  }
+  if (options.min != null && n < options.min) {
+    return { ok: false, error: `${label} must be at least ${options.min}` };
+  }
+  if (options.max != null && n > options.max) {
+    return { ok: false, error: `${label} must be at most ${options.max}` };
+  }
+  return { ok: true, value: n };
 }
 
 async function requireAdvisorLinkedClient(
@@ -130,10 +157,65 @@ export async function patchAdvisorClientProfileAction(
   if (!profile) return { error: "Client profile not found" };
 
   const changes: Parameters<typeof recordAdvisorProposalChanges>[3] = [];
+  const pushNumberField = (
+    key: string,
+    fieldKey: keyof Pick<
+      ProfileRow,
+      | "monthly_income"
+      | "monthly_gross_salary"
+      | "savings_target_monthly"
+      | "fixed_expenses_monthly"
+      | "retirement_monthly_spend_goal"
+    >,
+    label: string,
+    options?: { min?: number; max?: number; integer?: boolean }
+  ): string | null => {
+    if (!formData.has(key)) return null;
+    const parsed = optionalNumberFromForm(formData, key, label, options);
+    if (!parsed.ok) return parsed.error;
+    changes.push({
+      entityType: "profile",
+      entityId: null,
+      fieldKey,
+      oldValue: profile[fieldKey],
+      newValue: parsed.value,
+    });
+    return null;
+  };
+  const pushPercentField = (
+    key: string,
+    fieldKey: keyof Pick<
+      ProfileRow,
+      | "annual_salary_growth_nominal"
+      | "expense_growth_nominal"
+      | "retirement_dividend_yield_annual"
+      | "retirement_withdrawal_rate_annual"
+    >,
+    label: string,
+    options: { max: number }
+  ): string | null => {
+    if (!formData.has(key)) return null;
+    const parsed = optionalNumberFromForm(formData, key, label, {
+      min: 0,
+      max: options.max,
+    });
+    if (!parsed.ok) return parsed.error;
+    changes.push({
+      entityType: "profile",
+      entityId: null,
+      fieldKey,
+      oldValue: profile[fieldKey],
+      newValue: parsed.value == null ? null : parsed.value / 100,
+    });
+    return null;
+  };
 
   const display_name = formData.get("display_name");
   if (display_name !== null) {
     const v = String(display_name).trim();
+    if (v.length > 200) {
+      return { error: "Display name must be at most 200 characters" };
+    }
     changes.push({
       entityType: "profile",
       entityId: null,
@@ -142,54 +224,80 @@ export async function patchAdvisorClientProfileAction(
       newValue: v || null,
     });
   }
-  const monthly_income = formData.get("monthly_income");
-  if (monthly_income !== null && monthly_income !== "") {
-    const n = Number(monthly_income);
-    if (!Number.isFinite(n) || n < 0) return { error: "Invalid monthly income" };
+  const profileNumberErrors = [
+    pushNumberField("monthly_income", "monthly_income", "monthly income", {
+      min: 0,
+    }),
+    pushNumberField(
+      "monthly_gross_salary",
+      "monthly_gross_salary",
+      "monthly gross salary",
+      { min: 0 }
+    ),
+    pushNumberField(
+      "savings_target_monthly",
+      "savings_target_monthly",
+      "monthly savings target",
+      { min: 0, max: 10_000_000 }
+    ),
+    pushNumberField(
+      "fixed_expenses_monthly",
+      "fixed_expenses_monthly",
+      "fixed monthly expenses",
+      { min: 0, max: 10_000_000 }
+    ),
+    pushNumberField(
+      "retirement_monthly_spend_goal",
+      "retirement_monthly_spend_goal",
+      "retirement monthly spend goal",
+      { min: 0, max: 1_000_000 }
+    ),
+  ].find((e) => e != null);
+  if (profileNumberErrors) return { error: profileNumberErrors };
+
+  if (formData.has("target_retirement_age")) {
+    const parsed = optionalNumberFromForm(
+      formData,
+      "target_retirement_age",
+      "target retirement age",
+      { min: 50, max: 80, integer: true }
+    );
+    if (!parsed.ok) return { error: parsed.error };
     changes.push({
       entityType: "profile",
       entityId: null,
-      fieldKey: "monthly_income",
-      oldValue: profile.monthly_income,
-      newValue: n,
+      fieldKey: "target_retirement_age",
+      oldValue: profile.target_retirement_age,
+      newValue: parsed.value,
     });
   }
-  const savings_target_monthly = formData.get("savings_target_monthly");
-  if (savings_target_monthly !== null && savings_target_monthly !== "") {
-    const n = Number(savings_target_monthly);
-    if (!Number.isFinite(n) || n < 0) return { error: "Invalid savings target" };
-    changes.push({
-      entityType: "profile",
-      entityId: null,
-      fieldKey: "savings_target_monthly",
-      oldValue: profile.savings_target_monthly,
-      newValue: n,
-    });
-  }
-  const fixed_expenses_monthly = formData.get("fixed_expenses_monthly");
-  if (fixed_expenses_monthly !== null && fixed_expenses_monthly !== "") {
-    const n = Number(fixed_expenses_monthly);
-    if (!Number.isFinite(n) || n < 0) return { error: "Invalid fixed expenses" };
-    changes.push({
-      entityType: "profile",
-      entityId: null,
-      fieldKey: "fixed_expenses_monthly",
-      oldValue: profile.fixed_expenses_monthly,
-      newValue: n,
-    });
-  }
-  const monthly_gross_salary = formData.get("monthly_gross_salary");
-  if (monthly_gross_salary !== null && monthly_gross_salary !== "") {
-    const n = Number(monthly_gross_salary);
-    if (!Number.isFinite(n) || n < 0) return { error: "Invalid gross salary" };
-    changes.push({
-      entityType: "profile",
-      entityId: null,
-      fieldKey: "monthly_gross_salary",
-      oldValue: profile.monthly_gross_salary,
-      newValue: n,
-    });
-  }
+  const profilePercentErrors = [
+    pushPercentField(
+      "annual_salary_growth_percent",
+      "annual_salary_growth_nominal",
+      "annual salary growth",
+      { max: 25 }
+    ),
+    pushPercentField(
+      "expense_growth_percent",
+      "expense_growth_nominal",
+      "expense growth",
+      { max: 25 }
+    ),
+    pushPercentField(
+      "retirement_dividend_yield_percent",
+      "retirement_dividend_yield_annual",
+      "retirement dividend yield",
+      { max: 25 }
+    ),
+    pushPercentField(
+      "retirement_withdrawal_rate_percent",
+      "retirement_withdrawal_rate_annual",
+      "retirement withdrawal rate",
+      { max: 20 }
+    ),
+  ].find((e) => e != null);
+  if (profilePercentErrors) return { error: profilePercentErrors };
 
   if (changes.length === 0) {
     return { error: "Nothing to update" };
@@ -221,9 +329,7 @@ export async function patchAdvisorClientBudgetLineAmountAction(
 ): Promise<{ error: string | null; proposalRecorded?: boolean }> {
   const clientId = String(formData.get("client_id") ?? "").trim();
   const lineId = String(formData.get("id") ?? "").trim();
-  const amount = Number(formData.get("amount"));
   if (!clientId || !lineId) return { error: "Missing fields" };
-  if (!Number.isFinite(amount) || amount < 0) return { error: "Invalid amount" };
 
   const ctx = await requireAdvisorLinkedClient(clientId);
   if (!ctx.ok) return { error: ctx.error };
@@ -235,18 +341,44 @@ export async function patchAdvisorClientBudgetLineAmountAction(
     ) ?? null;
   if (!line) return { error: "Budget line not found" };
 
+  const category = formData.has("category")
+    ? String(formData.get("category") ?? "").trim()
+    : line.category;
+  if (!category) return { error: "Category is required" };
+  const amountParsed = optionalNumberFromForm(formData, "amount", "amount", {
+    min: 0,
+  });
+  if (!amountParsed.ok) return { error: amountParsed.error };
+  const amount =
+    amountParsed.value ?? (line.amount != null ? Number(line.amount) : 0);
+  if (!Number.isFinite(amount) || amount < 0) return { error: "Invalid amount" };
+
   try {
-    await recordAdvisorProposalChanges(supabase, advisorUserId, clientId, [
-      {
-        entityType: "budget_line",
-        entityId: lineId,
-        fieldKey: "amount",
-        oldValue: line.amount,
-        newValue: amount,
-        baseVersion: line.updated_at ?? null,
-        contextLabel: line.category,
-      },
-    ]);
+    await recordAdvisorProposalChanges(
+      supabase,
+      advisorUserId,
+      clientId,
+      [
+        {
+          entityType: "budget_line",
+          entityId: lineId,
+          fieldKey: "category",
+          oldValue: line.category,
+          newValue: category,
+          baseVersion: line.updated_at ?? null,
+          contextLabel: category,
+        },
+        {
+          entityType: "budget_line",
+          entityId: lineId,
+          fieldKey: "amount",
+          oldValue: line.amount,
+          newValue: amount,
+          baseVersion: line.updated_at ?? null,
+          contextLabel: category,
+        },
+      ]
+    );
   } catch (e) {
     console.error(e);
     return { error: "Could not save suggestion" };
@@ -262,12 +394,7 @@ export async function patchAdvisorClientGoalMonthlyContributionAction(
 ): Promise<{ error: string | null; proposalRecorded?: boolean }> {
   const clientId = String(formData.get("client_id") ?? "").trim();
   const goalId = String(formData.get("goal_id") ?? "").trim();
-  const raw = formData.get("monthly_contribution");
   if (!clientId || !goalId) return { error: "Missing fields" };
-  const monthly_contribution = Number(raw);
-  if (!Number.isFinite(monthly_contribution) || monthly_contribution < 0) {
-    return { error: "Invalid contribution" };
-  }
 
   const ctx = await requireAdvisorLinkedClient(clientId);
   if (!ctx.ok) return { error: ctx.error };
@@ -279,18 +406,74 @@ export async function patchAdvisorClientGoalMonthlyContributionAction(
     ) ?? null;
   if (!goal) return { error: "Goal not found" };
 
+  const title = formData.has("title")
+    ? String(formData.get("title") ?? "").trim()
+    : goal.title;
+  if (!title) return { error: "Goal name is required" };
+  const targetAmountParsed = optionalNumberFromForm(
+    formData,
+    "target_amount",
+    "target amount",
+    { min: 0 }
+  );
+  if (!targetAmountParsed.ok) return { error: targetAmountParsed.error };
+  const targetAmount =
+    targetAmountParsed.value ??
+    (goal.target_amount != null ? Number(goal.target_amount) : 0);
+  if (!Number.isFinite(targetAmount) || targetAmount < 0) {
+    return { error: "Invalid target amount" };
+  }
+  const monthlyContributionParsed = optionalNumberFromForm(
+    formData,
+    "monthly_contribution",
+    "monthly contribution",
+    { min: 0 }
+  );
+  if (!monthlyContributionParsed.ok) {
+    return { error: monthlyContributionParsed.error };
+  }
+  const monthlyContribution =
+    monthlyContributionParsed.value ??
+    (goal.monthly_contribution != null ? Number(goal.monthly_contribution) : 0);
+  if (!Number.isFinite(monthlyContribution) || monthlyContribution < 0) {
+    return { error: "Invalid contribution" };
+  }
+
   try {
-    await recordAdvisorProposalChanges(supabase, advisorUserId, clientId, [
-      {
-        entityType: "goal",
-        entityId: goalId,
-        fieldKey: "monthly_contribution",
-        oldValue: goal.monthly_contribution,
-        newValue: monthly_contribution,
-        baseVersion: goal.updated_at ?? null,
-        contextLabel: goal.title,
-      },
-    ]);
+    await recordAdvisorProposalChanges(
+      supabase,
+      advisorUserId,
+      clientId,
+      [
+        {
+          entityType: "goal",
+          entityId: goalId,
+          fieldKey: "title",
+          oldValue: goal.title,
+          newValue: title,
+          baseVersion: goal.updated_at ?? null,
+          contextLabel: title,
+        },
+        {
+          entityType: "goal",
+          entityId: goalId,
+          fieldKey: "target_amount",
+          oldValue: goal.target_amount,
+          newValue: targetAmount,
+          baseVersion: goal.updated_at ?? null,
+          contextLabel: title,
+        },
+        {
+          entityType: "goal",
+          entityId: goalId,
+          fieldKey: "monthly_contribution",
+          oldValue: goal.monthly_contribution,
+          newValue: monthlyContribution,
+          baseVersion: goal.updated_at ?? null,
+          contextLabel: title,
+        },
+      ]
+    );
   } catch (e) {
     console.error(e);
     return { error: "Could not save suggestion" };

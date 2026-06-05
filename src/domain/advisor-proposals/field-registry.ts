@@ -36,6 +36,11 @@ const PROFILE_FIELDS: Record<string, ProposalFieldMeta> = {
     section: "profile_assumptions",
     percent: true,
   },
+  expense_growth_nominal: {
+    label: "Expense growth",
+    section: "retirement_planning",
+    percent: true,
+  },
 };
 
 const BUDGET_LINE_FIELDS: Record<string, ProposalFieldMeta> = {

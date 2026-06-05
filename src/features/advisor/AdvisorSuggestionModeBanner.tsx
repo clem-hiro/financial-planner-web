@@ -13,10 +13,14 @@ export function AdvisorSuggestionModeBanner({
         className="rounded-2xl border border-amber-200/90 bg-gradient-to-br from-amber-50/95 via-white to-slate-50/40 px-5 py-4 shadow-sm ring-1 ring-amber-100/60"
         role="status"
       >
-        <p className="font-semibold text-amber-950">Awaiting client review</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="font-semibold text-amber-950">Client review in progress</p>
+          <AdvisorBadge tone="neutral">Suggestion mode</AdvisorBadge>
+        </div>
         <p className="mt-1 text-sm leading-relaxed text-amber-900/90">
-          You have a submitted proposal waiting for your client to accept or reject. New edits
-          will start a fresh draft after they respond.
+          {changeCount > 0
+            ? `A submitted proposal is waiting for your client, and this separate draft has ${changeCount} queued ${changeCount === 1 ? "change" : "changes"}. Nothing is applied until the client accepts.`
+            : "A submitted proposal is waiting for your client. You can still draft a separate proposal here; nothing is applied until the client accepts."}
         </p>
       </div>
     );

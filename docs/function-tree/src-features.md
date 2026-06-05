@@ -13,8 +13,8 @@
 | [`src/features/advisor/AdvisorAccessKeysSection.tsx`](#src-features-advisor-advisoraccesskeyssection-tsx) | `regular` | 2 | 7 |
 | [`src/features/advisor/AdvisorBuyKeysSection.tsx`](#src-features-advisor-advisorbuykeyssection-tsx) | `client-component` | 4 | 17 |
 | [`src/features/advisor/AdvisorClientCashSection.tsx`](#src-features-advisor-advisorclientcashsection-tsx) | `client-component` | 4 | 14 |
-| [`src/features/advisor/AdvisorClientCompose-split.test.tsx`](#src-features-advisor-advisorclientcompose-split-test-tsx) | `regular` | 3 | 5 |
-| [`src/features/advisor/AdvisorClientCompose.tsx`](#src-features-advisor-advisorclientcompose-tsx) | `regular` | 2 | 27 |
+| [`src/features/advisor/AdvisorClientCompose-split.test.tsx`](#src-features-advisor-advisorclientcompose-split-test-tsx) | `regular` | 5 | 10 |
+| [`src/features/advisor/AdvisorClientCompose.tsx`](#src-features-advisor-advisorclientcompose-tsx) | `regular` | 4 | 29 |
 | [`src/features/advisor/AdvisorClientDetailNav.tsx`](#src-features-advisor-advisorclientdetailnav-tsx) | `regular` | 1 | 0 |
 | [`src/features/advisor/AdvisorClientDetailShell.tsx`](#src-features-advisor-advisorclientdetailshell-tsx) | `regular` | 1 | 1 |
 | [`src/features/advisor/AdvisorClientHeader.tsx`](#src-features-advisor-advisorclientheader-tsx) | `regular` | 2 | 4 |
@@ -254,30 +254,48 @@ Classification: `client-component`
 
 Classification: `regular`
 
-#### `profile` — function, L15
+#### `profile` — function, L20
 
-- called by: `src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview`
+- called by: `src/features/advisor/AdvisorClientCompose-split.test.tsx#renderCompose`, `src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview`
 
-#### `payload` — function, L55
+#### `payload` — function, L60
 
-- called by: `src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview`
+- called by: `src/features/advisor/AdvisorClientCompose-split.test.tsx#renderCompose`, `src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview`
 
-#### `renderOverview` — function, L101
+#### `renderOverview` — function, L106
 
 - calls: `[external] react-dom`, `src/features/advisor/AdvisorClientCompose-split.test.tsx#payload`, `src/features/advisor/AdvisorClientCompose-split.test.tsx#profile`
 - renders: `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`, `src/features/help/methodology-context.tsx#MethodologyProvider`
+
+#### `renderCompose` — function, L128
+
+- calls: `[external] react-dom`, `src/features/advisor/AdvisorClientCompose-split.test.tsx#payload`, `src/features/advisor/AdvisorClientCompose-split.test.tsx#profile`
+- renders: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`, `src/features/help/methodology-context.tsx#MethodologyProvider`
+
+#### `inputTag` — function, L166
+
+_No tracked edges._
 
 ### `src/features/advisor/AdvisorClientCompose.tsx` <a id="src-features-advisor-advisorclientcompose-tsx"></a>
 
 Classification: `regular`
 
-#### `AdvisorClientCompose` — component, L65
+#### `profileStringValue` — function, L61
 
-- calls: `src/data/mappers.ts#num`, `src/lib/validation.ts#birthDateIsValidPast`, `src/ui/lib/format.ts#formatCurrency`
+- called by: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`
+
+#### `profilePercentValue` — function, L65
+
+- calls: `src/data/mappers.ts#num`
+- called by: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`
+
+#### `AdvisorClientCompose` — component, L76
+
+- calls: `src/data/mappers.ts#num`, `src/features/advisor/AdvisorClientCompose.tsx#profilePercentValue`, `src/features/advisor/AdvisorClientCompose.tsx#profileStringValue`, `src/lib/validation.ts#birthDateIsValidPast`
 - renders: `src/features/advisor/AdvisorClientCashSection.tsx#AdvisorClientCashSection`, `src/features/advisor/AdvisorClientCompose.tsx#LockedCategoryCard`, `src/features/advisor/AdvisorClientHeader.tsx#AdvisorClientHeader`, `src/features/advisor/AdvisorClientHousingLoanSection.tsx#AdvisorClientHousingLoanSection`, `src/features/advisor/AdvisorClientLiabilitySection.tsx#AdvisorClientLiabilitySection`, `src/features/advisor/AdvisorClientPropertySection.tsx#AdvisorClientPropertySection`, `src/features/advisor/AdvisorClientVehicleSection.tsx#AdvisorClientVehicleSection`, `src/features/advisor/AdvisorConsentRequired.tsx#AdvisorConsentRequired`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#DraftSummaryPanel`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#SubmitProposalBar`, `src/features/advisor/AdvisorProposeRemovalButton.tsx#AdvisorProposeRemovalButton`, `src/features/advisor/AdvisorSuggestionModeBanner.tsx#AdvisorSuggestionModeBanner`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorBadge`, `src/features/advisor/advisor-workspace-primitives.tsx#AdvisorSection`, `src/features/advisor/forms/AdvisorBudgetLineAmountForm.tsx#AdvisorBudgetLineAmountForm`, `src/features/advisor/forms/AdvisorGoalContributionForm.tsx#AdvisorGoalContributionForm`, `src/features/advisor/forms/AdvisorNewBudgetLineForm.tsx#AdvisorNewBudgetLineForm`, `src/features/advisor/forms/AdvisorNewGoalForm.tsx#AdvisorNewGoalForm`, `src/features/advisor/forms/AdvisorProfilePatchForm.tsx#AdvisorProfilePatchForm`, `src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`, `src/features/goals/InvestmentForm.tsx#InvestmentForm`, `src/ui/CollapsiblePaneRail.tsx#CollapsiblePaneRail`, `src/ui/CollapsiblePaneRail.tsx#CollapsiblePane`
-- rendered by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`
+- rendered by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/features/advisor/AdvisorClientCompose-split.test.tsx#renderCompose`
 
-#### `LockedCategoryCard` — component, L521
+#### `LockedCategoryCard` — component, L518
 
 - rendered by: `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`
 
@@ -1909,7 +1927,7 @@ Classification: `client-component`
 
 - calls: `[external] react`
 - renders: `[external] react`
-- rendered by: `src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview`, `src/features/app-shell/AppShell.tsx#AppShell`
+- rendered by: `src/features/advisor/AdvisorClientCompose-split.test.tsx#renderCompose`, `src/features/advisor/AdvisorClientCompose-split.test.tsx#renderOverview`, `src/features/app-shell/AppShell.tsx#AppShell`
 - unresolved: 3
 
 #### `useMethodology` — function, L59

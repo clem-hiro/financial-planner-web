@@ -177,119 +177,119 @@ Classification: `regular`
 
 - called by: `src/domain/advisor-proposals/apply-changes.ts#budgetLineDiffers`, `src/domain/advisor-proposals/apply-changes.ts#budgetLinePatch`, `src/domain/advisor-proposals/apply-changes.ts#budgetLineWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#cashAccountDiffers`, `src/domain/advisor-proposals/apply-changes.ts#cashAccountWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#goalPatch`, `src/domain/advisor-proposals/apply-changes.ts#goalWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#housingLoanDiffers`, `src/domain/advisor-proposals/apply-changes.ts#housingLoanWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#investmentWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#liabilityDiffers`, `src/domain/advisor-proposals/apply-changes.ts#liabilityWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#profilePatch`, `src/domain/advisor-proposals/apply-changes.ts#propertyDiffers`, `src/domain/advisor-proposals/apply-changes.ts#propertyWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#vehicleDiffers`, `src/domain/advisor-proposals/apply-changes.ts#vehicleWritePayload`
 
-#### `profilePatch` — function, L90
+#### `profilePatch` — function, L91
 
 - calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 
-#### `investmentDiffers` — function, L107
+#### `investmentDiffers` — function, L108
 
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 
-#### `investmentWritePayload` — function, L128
-
-- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
-- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
-
-#### `budgetLineWritePayload` — function, L150
-
-- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
-
-#### `budgetLineDiffers` — function, L161
-
-- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
-
-#### `budgetLinePatch` — function, L174
-
-- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
-
-#### `goalWritePayload` — function, L193
+#### `investmentWritePayload` — function, L129
 
 - calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 
-#### `goalPatch` — function, L205
+#### `budgetLineWritePayload` — function, L151
+
+- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
+
+#### `budgetLineDiffers` — function, L162
+
+- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
+
+#### `budgetLinePatch` — function, L175
+
+- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
+
+#### `goalWritePayload` — function, L194
 
 - calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 
-#### `cashAccountWritePayload` — function, L232
+#### `goalPatch` — function, L206
 
 - calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 
-#### `cashAccountDiffers` — function, L240
+#### `cashAccountWritePayload` — function, L233
+
+- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
+
+#### `cashAccountDiffers` — function, L241
 
 - calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
 
-#### `applyEntityDiff` — function, L256
+#### `applyEntityDiff` — function, L257
 
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 - unresolved: 6
 
-#### `liabilityWritePayload` — function, L285
+#### `liabilityWritePayload` — function, L286
 
 - calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 
-#### `liabilityDiffers` — function, L300
+#### `liabilityDiffers` — function, L301
 
 - calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
 
-#### `vehicleWritePayload` — function, L318
-
-- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
-- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
-
-#### `vehicleDiffers` — function, L354
-
-- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
-
-#### `propertyWritePayload` — function, L370
+#### `vehicleWritePayload` — function, L319
 
 - calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 
-#### `propertyDiffers` — function, L384
+#### `vehicleDiffers` — function, L355
+
+- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
+
+#### `propertyWritePayload` — function, L371
 
 - calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 
-#### `housingLoanWritePayload` — function, L400
+#### `propertyDiffers` — function, L385
 
 - calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 
-#### `housingLoanDiffers` — function, L419
+#### `housingLoanWritePayload` — function, L401
 
 - calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
 
-#### `assertHandledEntityTypes` — function, L447
+#### `housingLoanDiffers` — function, L420
+
+- calls: `src/domain/advisor-proposals/apply-changes.ts#toNumOrNull`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
+
+#### `assertHandledEntityTypes` — function, L448
 
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts`
 
-#### `detectConflicts` — function, L489
+#### `detectConflicts` — function, L490
 
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts`
 - unresolved: 1
 
-#### `detectNameConflicts` — function, L546
+#### `detectNameConflicts` — function, L547
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`, `src/lib/validation.ts#normalizeEntityName`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts`
 - unresolved: 7
 
-#### `nameConflictFromWriteError` — function, L615
+#### `nameConflictFromWriteError` — function, L616
 
 - called by: `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`
 
-#### `detectAcceptConflicts` — function, L675
+#### `detectAcceptConflicts` — function, L676
 
 - calls: `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/cash-accounts.ts#listCashAccounts`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/liabilities.ts#listLiabilities`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/repositories/properties.ts#listProperties`, `src/data/repositories/vehicles.ts#listVehicles`, `src/domain/advisor-proposals/apply-changes.ts#assertHandledEntityTypes`, `src/domain/advisor-proposals/apply-changes.ts#detectConflicts`, `src/domain/advisor-proposals/apply-changes.ts#detectNameConflicts`
 - called by: `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`
 
-#### `applyAcceptedProposalChanges` — function, L731
+#### `applyAcceptedProposalChanges` — function, L732
 
 - calls: `src/data/repositories/budget-lines.ts#deleteBudgetLine`, `src/data/repositories/budget-lines.ts#insertBudgetLine`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/budget-lines.ts#updateBudgetLine`, `src/data/repositories/cash-accounts.ts#deleteCashAccount`, `src/data/repositories/cash-accounts.ts#insertCashAccount`, `src/data/repositories/cash-accounts.ts#listCashAccounts`, `src/data/repositories/cash-accounts.ts#updateCashAccount`, `src/data/repositories/goals.ts#deleteFinancialGoal`, `src/data/repositories/goals.ts#insertFinancialGoal`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/goals.ts#updateFinancialGoal`, `src/data/repositories/housing-loans.ts#deleteHousingLoan`, `src/data/repositories/housing-loans.ts#insertHousingLoan`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/housing-loans.ts#updateHousingLoan`, `src/data/repositories/investments.ts#deleteInvestment`, `src/data/repositories/investments.ts#insertInvestment`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/investments.ts#updateInvestment`, `src/data/repositories/liabilities.ts#deleteLiability`, `src/data/repositories/liabilities.ts#insertLiability`, `src/data/repositories/liabilities.ts#listLiabilities`, `src/data/repositories/liabilities.ts#updateLiability`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/repositories/profiles.ts#updateProfile`, `src/data/repositories/properties.ts#deleteProperty`, `src/data/repositories/properties.ts#insertProperty`, `src/data/repositories/properties.ts#listProperties`, `src/data/repositories/properties.ts#updateProperty`, `src/data/repositories/vehicles.ts#deleteVehicle`, `src/data/repositories/vehicles.ts#insertVehicle`, `src/data/repositories/vehicles.ts#listVehicles`, `src/data/repositories/vehicles.ts#updateVehicle`, `src/domain/advisor-proposals/apply-changes.ts#applyEntityDiff`, `src/domain/advisor-proposals/apply-changes.ts#assertHandledEntityTypes`, `src/domain/advisor-proposals/apply-changes.ts#cashAccountWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#detectConflicts`, `src/domain/advisor-proposals/apply-changes.ts#goalPatch`, `src/domain/advisor-proposals/apply-changes.ts#goalWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#housingLoanDiffers`, `src/domain/advisor-proposals/apply-changes.ts#housingLoanWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#investmentDiffers`, `src/domain/advisor-proposals/apply-changes.ts#investmentWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#liabilityWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#profilePatch`, `src/domain/advisor-proposals/apply-changes.ts#propertyDiffers`, `src/domain/advisor-proposals/apply-changes.ts#propertyWritePayload`, `src/domain/advisor-proposals/apply-changes.ts#vehicleWritePayload`, `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 - called by: `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`
@@ -376,96 +376,96 @@ Classification: `regular`
 
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `applyProfile` — function, L138
+#### `applyProfile` — function, L139
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `newEntityId` — function, L159
+#### `newEntityId` — function, L160
 
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyBudgetLineInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyCashAccountInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyGoalInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyHousingLoanInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyInvestmentInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyLiabilityInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyPropertyInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyVehicleInsert`
 
-#### `applyInvestmentInsert` — function, L163
+#### `applyInvestmentInsert` — function, L164
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#newEntityId`, `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `mergeInvestment` — function, L196
+#### `mergeInvestment` — function, L197
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `applyBudgetLineInsert` — function, L242
+#### `applyBudgetLineInsert` — function, L243
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#newEntityId`, `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `mergeBudgetLine` — function, L260
+#### `mergeBudgetLine` — function, L261
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#numOrNull`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `applyGoalInsert` — function, L283
+#### `applyGoalInsert` — function, L284
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#newEntityId`, `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `mergeGoal` — function, L302
+#### `mergeGoal` — function, L303
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#numOrNull`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `applyCashAccountInsert` — function, L331
+#### `applyCashAccountInsert` — function, L332
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#newEntityId`, `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `mergeCashAccount` — function, L346
+#### `mergeCashAccount` — function, L347
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `applyLiabilityInsert` — function, L359
+#### `applyLiabilityInsert` — function, L360
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#newEntityId`, `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `mergeLiability` — function, L382
+#### `mergeLiability` — function, L383
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `applyVehicleInsert` — function, L415
+#### `applyVehicleInsert` — function, L416
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#newEntityId`, `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `applyPropertyInsert` — function, L448
+#### `applyPropertyInsert` — function, L449
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#newEntityId`, `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `mergeProperty` — function, L471
+#### `mergeProperty` — function, L472
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `applyHousingLoanInsert` — function, L504
+#### `applyHousingLoanInsert` — function, L505
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#newEntityId`, `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `mergeHousingLoan` — function, L532
+#### `mergeHousingLoan` — function, L533
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `mergeVehicle` — function, L557
+#### `mergeVehicle` — function, L558
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#numStr`
 - called by: `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`
 
-#### `applyProposalChanges` — function, L595
+#### `applyProposalChanges` — function, L596
 
 - calls: `src/domain/advisor-proposals/apply-overlay.ts#applyBudgetLineInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyCashAccountInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyGoalInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyHousingLoanInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyInvestmentInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyLiabilityInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyProfile`, `src/domain/advisor-proposals/apply-overlay.ts#applyPropertyInsert`, `src/domain/advisor-proposals/apply-overlay.ts#applyVehicleInsert`, `src/domain/advisor-proposals/apply-overlay.ts#fieldMap`, `src/domain/advisor-proposals/apply-overlay.ts#groupByEntity`, `src/domain/advisor-proposals/apply-overlay.ts#mergeBudgetLine`, `src/domain/advisor-proposals/apply-overlay.ts#mergeCashAccount`, `src/domain/advisor-proposals/apply-overlay.ts#mergeGoal`, `src/domain/advisor-proposals/apply-overlay.ts#mergeHousingLoan`, `src/domain/advisor-proposals/apply-overlay.ts#mergeInvestment`, `src/domain/advisor-proposals/apply-overlay.ts#mergeLiability`, `src/domain/advisor-proposals/apply-overlay.ts#mergeProperty`, `src/domain/advisor-proposals/apply-overlay.ts#mergeVehicle`, `src/domain/advisor-proposals/apply-overlay.ts#resolveOp`
 - called by: `src/data/dashboard.ts#getDashboardPayload`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/domain/advisor-proposals/apply-changes.ts#detectNameConflicts`
@@ -474,15 +474,15 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `fieldMeta` — function, L125
+#### `fieldMeta` — function, L130
 
 - called by: `src/data/repositories/advisor-proposals.ts#upsertProposalChange`, `src/features/advisor/AdvisorProposalDetailView.tsx#AdvisorProposalDetailView`, `src/features/advisor/AdvisorProposalDraftPanel.tsx#DraftSummaryPanel`, `src/features/proposals/ProposalReviewView.tsx#ProposalReviewView`
 
-#### `serializeProposalValue` — function, L168
+#### `serializeProposalValue` — function, L173
 
 - called by: `src/data/repositories/advisor-proposals.ts#upsertProposalChange`
 
-#### `valuesEqual` — function, L175
+#### `valuesEqual` — function, L180
 
 - called by: `src/data/repositories/advisor-proposals.ts#upsertProposalChange`
 

@@ -159,6 +159,7 @@ describe("applyProposalChanges — scenario matrix", () => {
     ["retirement_dividend_yield_annual", "0.05"],
     ["retirement_withdrawal_rate_annual", "0.035"],
     ["annual_salary_growth_nominal", "0.04"],
+    ["expense_growth_nominal", "0.025"],
   ])("profile field %s applies as canonical string", (field, value) => {
     const out = applyProposalChanges(baseInputs(), [
       change({ entity_type: "profile", field_key: field, new_value: value }),
