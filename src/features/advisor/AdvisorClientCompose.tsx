@@ -1,12 +1,44 @@
 import type { DashboardPayload } from "@/data/dashboard";
 import { num } from "@/data/mappers";
-import type { BudgetLineRow, FinancialGoalRow, InvestmentRow } from "@/data/supabase/types";
+import type {
+  BudgetLineRow,
+  CashAccountRow,
+  FinancialGoalRow,
+  HousingLoanRow,
+  InvestmentRow,
+  LiabilityRow,
+  PropertyRow,
+  VehicleRow,
+} from "@/data/supabase/types";
 import type { ProfileRow } from "@/data/supabase/types";
 import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
+import {
+  AdvisorClientCashSection,
+  type AdvisorCashRow,
+} from "@/features/advisor/AdvisorClientCashSection";
+import {
+  AdvisorClientLiabilitySection,
+  type AdvisorLiabilityRow,
+} from "@/features/advisor/AdvisorClientLiabilitySection";
+import {
+  AdvisorClientVehicleSection,
+  type AdvisorVehicleRow,
+} from "@/features/advisor/AdvisorClientVehicleSection";
+import {
+  AdvisorClientPropertySection,
+  type AdvisorPropertyRow,
+} from "@/features/advisor/AdvisorClientPropertySection";
+import {
+  AdvisorClientHousingLoanSection,
+  type AdvisorHousingLoanRow,
+} from "@/features/advisor/AdvisorClientHousingLoanSection";
 import { AdvisorBadge, AdvisorSection } from "@/features/advisor/advisor-workspace-primitives";
 import { AdvisorClientHeader } from "@/features/advisor/AdvisorClientHeader";
 import { AdvisorConsentRequired } from "@/features/advisor/AdvisorConsentRequired";
-import { AdvisorProposalDraftPanel } from "@/features/advisor/AdvisorProposalDraftPanel";
+import {
+  DraftSummaryPanel,
+  SubmitProposalBar,
+} from "@/features/advisor/AdvisorProposalDraftPanel";
 import { AdvisorProposeRemovalButton } from "@/features/advisor/AdvisorProposeRemovalButton";
 import { AdvisorSuggestionModeBanner } from "@/features/advisor/AdvisorSuggestionModeBanner";
 import { AdvisorBudgetLineAmountForm } from "@/features/advisor/forms/AdvisorBudgetLineAmountForm";
@@ -14,10 +46,9 @@ import { AdvisorGoalContributionForm } from "@/features/advisor/forms/AdvisorGoa
 import { AdvisorNewBudgetLineForm } from "@/features/advisor/forms/AdvisorNewBudgetLineForm";
 import { AdvisorNewGoalForm } from "@/features/advisor/forms/AdvisorNewGoalForm";
 import { AdvisorProfilePatchForm } from "@/features/advisor/forms/AdvisorProfilePatchForm";
-import {
-  InvestmentBalancesList,
-  type InvestmentBalanceRow,
-} from "@/features/goals/InvestmentBalancesList";
+import { InvestmentAssumptionBanner } from "@/features/goals/InvestmentAssumptionBanner";
+import { InvestmentBalancesList } from "@/features/goals/InvestmentBalancesList";
+import { investmentRowToBalanceRow } from "@/features/goals/investment-balance-row";
 import { InvestmentForm } from "@/features/goals/InvestmentForm";
 import {
   deleteAdvisorClientBudgetLineAction,
@@ -26,7 +57,18 @@ import {
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { birthDateIsValidPast } from "@/lib/validation";
 import { CollapsiblePane, CollapsiblePaneRail } from "@/ui/CollapsiblePaneRail";
-import { formatCurrency } from "@/ui/lib/format";
+
+function profileStringValue(value: string | number | null | undefined): string {
+  return value == null ? "" : String(value);
+}
+
+function profilePercentValue(value: string | null | undefined): string {
+  if (value == null || String(value).trim() === "") return "";
+  const percent = num(value) * 100;
+  return Number.isFinite(percent)
+    ? String(Math.round(percent * 1000) / 1000)
+    : "";
+}
 
 /** Dedicated proposal-authoring surface. Mirrors the consent gate and pending-
  * proposal lockout of the read-only Overview; all forms/actions are reused
@@ -39,6 +81,16 @@ export function AdvisorClientCompose({
   goals,
   budgetLines,
   investments,
+  cashAccounts,
+  cashVisible,
+  liabilities,
+  liabilitiesVisible,
+  vehicles,
+  vehiclesVisible,
+  properties,
+  propertiesVisible,
+  housingLoans,
+  housingLoansVisible,
   month,
   draftProposalId,
   draftChanges,
@@ -51,6 +103,21 @@ export function AdvisorClientCompose({
   goals: FinancialGoalRow[];
   budgetLines: BudgetLineRow[];
   investments: InvestmentRow[];
+  cashAccounts: CashAccountRow[];
+  /** Whether the client has shared the cash_accounts category (Phase 1 toggle). */
+  cashVisible: boolean;
+  liabilities: LiabilityRow[];
+  /** Whether the client has shared the liabilities category (Phase 1 toggle). */
+  liabilitiesVisible: boolean;
+  vehicles: VehicleRow[];
+  /** Whether the client has shared the vehicles category (Phase 1 toggle). */
+  vehiclesVisible: boolean;
+  properties: PropertyRow[];
+  /** Whether the client has shared the properties category (Phase 1 toggle). */
+  propertiesVisible: boolean;
+  housingLoans: HousingLoanRow[];
+  /** Whether the client has shared the housing_loans category (Phase 1 toggle). */
+  housingLoansVisible: boolean;
   month: string;
   draftProposalId: string | null;
   draftChanges: AdvisorProposalChangeRow[];
@@ -62,26 +129,7 @@ export function AdvisorClientCompose({
 
   const draftChangeCount = draftChanges.length;
   const currency = profile.base_currency ?? DEFAULT_BASE_CURRENCY;
-  const investmentBalanceRows: InvestmentBalanceRow[] = investments.map((i) => ({
-    id: i.id,
-    name: i.name,
-    current_value: num(i.current_value),
-    monthly_contribution: num(i.monthly_contribution),
-    expected_annual_return: num(i.expected_annual_return),
-    contribution_growth_annual: num(i.contribution_growth_annual),
-    contribution_type: i.contribution_type ?? null,
-    contribution_duration_years:
-      i.contribution_duration_years != null &&
-      String(i.contribution_duration_years).trim() !== ""
-        ? num(i.contribution_duration_years as string)
-        : null,
-    withdrawal_monthly: num(i.withdrawal_monthly),
-    withdrawal_start_years:
-      i.withdrawal_start_years != null &&
-      String(i.withdrawal_start_years).trim() !== ""
-        ? num(i.withdrawal_start_years)
-        : null,
-  }));
+  const investmentBalanceRows = investments.map(investmentRowToBalanceRow);
   const investmentPlanningContext =
     profile.birth_date &&
     typeof profile.birth_date === "string" &&
@@ -93,9 +141,92 @@ export function AdvisorClientCompose({
         }
       : null;
   const monthlyBudgetLines = budgetLines.filter((b) => b.cadence === "monthly");
+  const cashRows: AdvisorCashRow[] = cashAccounts.map((c) => ({
+    id: c.id,
+    name: c.name,
+    balance: num(c.balance),
+    purpose: c.purpose,
+  }));
+  const liabilityRows: AdvisorLiabilityRow[] = liabilities.map((l) => ({
+    id: l.id,
+    name: l.name,
+    balance: num(l.balance),
+    category: l.category ?? null,
+    interestRatePercent:
+      l.interest_rate_annual != null && String(l.interest_rate_annual).trim() !== ""
+        ? num(l.interest_rate_annual) * 100
+        : null,
+    remainingTenureYears:
+      l.remaining_tenure_months != null
+        ? Math.round((l.remaining_tenure_months / 12) * 10) / 10
+        : null,
+    monthlyRepayment:
+      l.monthly_repayment != null && String(l.monthly_repayment).trim() !== ""
+        ? num(l.monthly_repayment)
+        : null,
+  }));
+  const vehicleRows: AdvisorVehicleRow[] = vehicles.map((v) => ({
+    id: v.id,
+    label: v.label,
+    status: v.vehicle_status,
+    marketValue:
+      v.current_market_value != null &&
+      String(v.current_market_value).trim() !== ""
+        ? num(v.current_market_value)
+        : null,
+    onTheRoadPaid:
+      v.on_the_road_paid != null && String(v.on_the_road_paid).trim() !== ""
+        ? num(v.on_the_road_paid)
+        : null,
+    loanBalance:
+      v.loan_balance != null && String(v.loan_balance).trim() !== ""
+        ? num(v.loan_balance)
+        : null,
+    loanMonthlyPayment:
+      v.loan_monthly_payment != null &&
+      String(v.loan_monthly_payment).trim() !== ""
+        ? num(v.loan_monthly_payment)
+        : null,
+    loanMonthsRemaining: v.loan_months_remaining ?? null,
+  }));
+  const propertyRows: AdvisorPropertyRow[] = properties.map((p) => ({
+    id: p.id,
+    name: p.name,
+    propertyType: p.property_type,
+    status: p.status,
+    purchasePrice:
+      p.purchase_price != null && String(p.purchase_price).trim() !== ""
+        ? num(p.purchase_price)
+        : null,
+    currentValuation:
+      p.current_valuation != null && String(p.current_valuation).trim() !== ""
+        ? num(p.current_valuation)
+        : null,
+    ownershipPercent: num(p.ownership_percent),
+    rentalIncomeMonthly: num(p.rental_income_monthly),
+  }));
+  const housingLoanRows: AdvisorHousingLoanRow[] = housingLoans.map((h) => ({
+    id: h.id,
+    label: h.label,
+    propertyId: h.property_id ?? null,
+    principal: num(h.principal),
+    ratePercent:
+      h.annual_nominal_rate != null && String(h.annual_nominal_rate).trim() !== ""
+        ? num(h.annual_nominal_rate) * 100
+        : 0,
+    termMonths: h.term_months ?? 0,
+    firstPaymentMonth: h.first_payment_month ?? "",
+    lenderType: h.lender_type,
+  }));
+  // Loans link to shared properties; empty when properties aren't shared.
+  const propertyOptions = propertyRows.map((p) => ({ id: p.id, name: p.name }));
+
+  // Frozen submit bar is fixed to the viewport bottom; pad the page so the last
+  // section isn't occluded. Pending submitted proposals do not block a separate draft.
+  const showSubmitBar = !!draftProposalId;
 
   return (
-    <div className="space-y-8 lg:space-y-10">
+    <div className={`space-y-8 lg:space-y-10 ${showSubmitBar ? "pb-44" : ""}`}>
       <AdvisorClientHeader profile={profile} payload={payload} month={month} />
 
       <AdvisorSuggestionModeBanner
@@ -104,7 +235,7 @@ export function AdvisorClientCompose({
       />
 
       <div className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start xl:gap-10">
-        <div className="space-y-8">
+        <div id="advisor-compose-left" className="space-y-8">
           <AdvisorSection
             id="profile"
             eyebrow="Operational"
@@ -114,13 +245,29 @@ export function AdvisorClientCompose({
           >
             <AdvisorProfilePatchForm
               clientId={clientId}
-              disabled={hasPendingProposal}
               defaults={{
                 display_name: profile.display_name ?? "",
                 monthly_income: profile.monthly_income ?? "",
                 monthly_gross_salary: profile.monthly_gross_salary ?? "",
+                annual_salary_growth_percent: profilePercentValue(
+                  profile.annual_salary_growth_nominal
+                ),
                 savings_target_monthly: profile.savings_target_monthly ?? "",
                 fixed_expenses_monthly: profile.fixed_expenses_monthly ?? "",
+                expense_growth_percent: profilePercentValue(
+                  profile.expense_growth_nominal
+                ),
+                target_retirement_age: profileStringValue(
+                  profile.target_retirement_age
+                ),
+                retirement_monthly_spend_goal:
+                  profile.retirement_monthly_spend_goal ?? "",
+                retirement_dividend_yield_percent: profilePercentValue(
+                  profile.retirement_dividend_yield_annual
+                ),
+                retirement_withdrawal_rate_percent: profilePercentValue(
+                  profile.retirement_withdrawal_rate_annual
+                ),
               }}
             />
           </AdvisorSection>
@@ -128,54 +275,43 @@ export function AdvisorClientCompose({
           <AdvisorSection
             id="goals"
             title="Goals & priorities"
-            description="Adjust planned monthly contributions. Full goal editor remains on the client Planning flow."
+            description="Adjust existing goals or suggest new ones. Changes stay as proposal suggestions until the client accepts."
           >
             <div className="space-y-4">
               {goals.length === 0 ? (
                 <p className="text-sm text-slate-600">No goals yet.</p>
               ) : (
-                <div className="overflow-x-auto rounded-xl border border-slate-100">
-                  <table className="min-w-full text-left text-sm">
-                    <thead className="border-b border-slate-100 bg-slate-50/90 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                      <tr>
-                        <th className="px-4 py-3">Goal</th>
-                        <th className="px-4 py-3">Target</th>
-                        <th className="px-4 py-3 text-right">Monthly plan</th>
-                        <th className="px-4 py-3 text-right">Remove</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {goals.map((g) => (
-                        <tr key={g.id} className="text-slate-800">
-                          <td className="px-4 py-3 font-medium text-slate-900">{g.title}</td>
-                          <td className="px-4 py-3 tabular-nums text-slate-600">
-                            {formatCurrency(num(g.target_amount), currency)}
-                          </td>
-                          <td className="px-4 py-3 text-right">
-                            <AdvisorGoalContributionForm
-                              clientId={clientId}
-                              goalId={g.id}
-                              defaultMonthly={num(g.monthly_contribution)}
-                              disabled={hasPendingProposal}
-                            />
-                          </td>
-                          <td className="px-4 py-3 text-right">
-                            <AdvisorProposeRemovalButton
-                              action={deleteAdvisorClientGoalAction}
-                              clientId={clientId}
-                              entityId={g.id}
-                              entityName={g.title}
-                              disabled={hasPendingProposal}
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="space-y-3">
+                  {goals.map((g) => (
+                    <div
+                      key={g.id}
+                      className="rounded-xl border border-slate-100 bg-white p-4 sm:p-5"
+                    >
+                      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                        <div className="min-w-0 flex-1">
+                          <AdvisorGoalContributionForm
+                            clientId={clientId}
+                            goalId={g.id}
+                            defaultTitle={g.title}
+                            defaultTargetAmount={num(g.target_amount)}
+                            defaultMonthly={num(g.monthly_contribution)}
+                          />
+                        </div>
+                        <div className="flex shrink-0 justify-end">
+                          <AdvisorProposeRemovalButton
+                            action={deleteAdvisorClientGoalAction}
+                            clientId={clientId}
+                            entityId={g.id}
+                            entityName={g.title}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
               <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-4 sm:p-5">
-                <AdvisorNewGoalForm clientId={clientId} disabled={hasPendingProposal} />
+                <AdvisorNewGoalForm clientId={clientId} />
               </div>
             </div>
           </AdvisorSection>
@@ -189,46 +325,36 @@ export function AdvisorClientCompose({
               {monthlyBudgetLines.length === 0 ? (
                 <p className="text-sm text-slate-600">No monthly budget lines.</p>
               ) : (
-                <div className="overflow-x-auto rounded-xl border border-slate-100">
-                  <table className="min-w-full text-left text-sm">
-                    <thead className="border-b border-slate-100 bg-slate-50/90 text-xs font-semibold uppercase tracking-wide text-slate-500">
-                      <tr>
-                        <th className="px-4 py-3">Category</th>
-                        <th className="px-4 py-3 text-right">Planned / mo</th>
-                        <th className="px-4 py-3 text-right">Remove</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-100">
-                      {monthlyBudgetLines.map((line) => (
-                        <tr key={line.id}>
-                          <td className="px-4 py-3 font-medium capitalize text-slate-900">
-                            {line.category}
-                          </td>
-                          <td className="px-4 py-3 text-right">
-                            <AdvisorBudgetLineAmountForm
-                              clientId={clientId}
-                              lineId={line.id}
-                              defaultAmount={num(line.amount)}
-                              disabled={hasPendingProposal}
-                            />
-                          </td>
-                          <td className="px-4 py-3 text-right">
-                            <AdvisorProposeRemovalButton
-                              action={deleteAdvisorClientBudgetLineAction}
-                              clientId={clientId}
-                              entityId={line.id}
-                              entityName={line.category}
-                              disabled={hasPendingProposal}
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="space-y-3">
+                  {monthlyBudgetLines.map((line) => (
+                    <div
+                      key={line.id}
+                      className="rounded-xl border border-slate-100 bg-white p-4 sm:p-5"
+                    >
+                      <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                        <div className="min-w-0 flex-1">
+                          <AdvisorBudgetLineAmountForm
+                            clientId={clientId}
+                            lineId={line.id}
+                            defaultCategory={line.category}
+                            defaultAmount={num(line.amount)}
+                          />
+                        </div>
+                        <div className="flex shrink-0 justify-end">
+                          <AdvisorProposeRemovalButton
+                            action={deleteAdvisorClientBudgetLineAction}
+                            clientId={clientId}
+                            entityId={line.id}
+                            entityName={line.category}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
               <div className="rounded-xl border border-slate-100 bg-slate-50/50 p-4 sm:p-5">
-                <AdvisorNewBudgetLineForm clientId={clientId} disabled={hasPendingProposal} />
+                <AdvisorNewBudgetLineForm clientId={clientId} />
               </div>
             </div>
           </AdvisorSection>
@@ -238,13 +364,8 @@ export function AdvisorClientCompose({
             title="Investments & savings"
             description="Add, edit, or remove investment accounts — saved as suggestions until the client accepts."
           >
+            <InvestmentAssumptionBanner className="mb-4" />
             <div className="overflow-hidden rounded-xl border border-slate-100 bg-white divide-y divide-slate-100">
-              <div className="p-4 sm:p-5">
-                <InvestmentForm
-                  advisorClientId={clientId}
-                  advisorSuggestionDisabled={hasPendingProposal}
-                />
-              </div>
               {investmentBalanceRows.length > 0 ? (
                 <div className="p-4 sm:p-5">
                   <InvestmentBalancesList
@@ -252,23 +373,110 @@ export function AdvisorClientCompose({
                     currencyCode={currency}
                     planningContext={investmentPlanningContext}
                     advisorClientId={clientId}
-                    advisorSuggestionDisabled={hasPendingProposal}
                     accountsHeading="Client accounts"
+                    showAssumptionBanner={false}
                   />
                 </div>
               ) : null}
+              <div className="p-4 sm:p-5">
+                <InvestmentForm
+                  advisorClientId={clientId}
+                  showAssumptionBanner={false}
+                  planningContext={investmentPlanningContext}
+                />
+              </div>
             </div>
+          </AdvisorSection>
+
+          <AdvisorSection
+            id="cash-accounts"
+            title="Cash accounts"
+            description="Bank and savings balances — saved as suggestions until the client accepts."
+          >
+            {cashVisible ? (
+              <AdvisorClientCashSection
+                clientId={clientId}
+                accounts={cashRows}
+                currencyCode={currency}
+              />
+            ) : (
+              <LockedCategoryCard label="Cash accounts" />
+            )}
+          </AdvisorSection>
+
+          <AdvisorSection
+            id="liabilities"
+            title="Liabilities"
+            description="Loans and debts — saved as suggestions until the client accepts."
+          >
+            {liabilitiesVisible ? (
+              <AdvisorClientLiabilitySection
+                clientId={clientId}
+                liabilities={liabilityRows}
+                currencyCode={currency}
+              />
+            ) : (
+              <LockedCategoryCard label="Liabilities" />
+            )}
+          </AdvisorSection>
+
+          <AdvisorSection
+            id="vehicles"
+            title="Vehicles"
+            description="Cars and other vehicles — saved as suggestions until the client accepts."
+          >
+            {vehiclesVisible ? (
+              <AdvisorClientVehicleSection
+                clientId={clientId}
+                vehicles={vehicleRows}
+                currencyCode={currency}
+              />
+            ) : (
+              <LockedCategoryCard label="Vehicles" />
+            )}
+          </AdvisorSection>
+
+          <AdvisorSection
+            id="properties"
+            title="Property"
+            description="Properties owned — saved as suggestions until the client accepts."
+          >
+            {propertiesVisible ? (
+              <AdvisorClientPropertySection
+                clientId={clientId}
+                properties={propertyRows}
+                currencyCode={currency}
+              />
+            ) : (
+              <LockedCategoryCard label="Property" />
+            )}
+          </AdvisorSection>
+
+          <AdvisorSection
+            id="housing-loans"
+            title="Housing loans"
+            description="Mortgages — saved as suggestions until the client accepts. Optionally link to a property."
+          >
+            {housingLoansVisible ? (
+              <AdvisorClientHousingLoanSection
+                clientId={clientId}
+                loans={housingLoanRows}
+                propertyOptions={propertyOptions}
+                currencyCode={currency}
+              />
+            ) : (
+              <LockedCategoryCard label="Housing loans" />
+            )}
           </AdvisorSection>
         </div>
 
         <CollapsiblePaneRail>
           <CollapsiblePane title="Suggested Plans Consolidation" defaultOpen>
             <div className="space-y-4">
-              <AdvisorProposalDraftPanel
+              <DraftSummaryPanel
                 proposalId={draftProposalId}
                 changes={draftChanges}
                 currencyCode={currency}
-                disabled={hasPendingProposal}
               />
               <div className="rounded-xl border border-slate-100 bg-slate-50/70 px-4 py-3 text-xs leading-relaxed text-slate-600">
                 <p className="font-semibold text-slate-700">Session assist</p>
@@ -292,6 +500,38 @@ export function AdvisorClientCompose({
             </p>
           </CollapsiblePane>
         </CollapsiblePaneRail>
+      </div>
+
+      <SubmitProposalBar
+        proposalId={draftProposalId}
+        changeCount={draftChangeCount}
+        alignToId="advisor-compose-left"
+      />
+    </div>
+  );
+}
+
+/** Shown when a sensitive category is private (client hasn't opted in): a
+ * neutral locked card, no data fetched/displayed. The category name is omitted
+ * here — the parent AdvisorSection header already shows it; `label` only feeds
+ * the aria-label for screen readers. */
+function LockedCategoryCard({ label }: { label: string }) {
+  return (
+    <div
+      aria-label={`${label} — private`}
+      className="flex items-start gap-3 rounded-xl border border-slate-200 bg-slate-50/70 p-4 sm:p-5"
+    >
+      <span aria-hidden className="mt-0.5 text-slate-400">
+        🔒
+      </span>
+      <div className="space-y-1">
+        <span className="inline-flex rounded-full bg-slate-200 px-2 py-0.5 text-[11px] font-medium text-slate-600">
+          Private
+        </span>
+        <p className="text-xs text-slate-500">
+          Client chose not to share this category. Ask them to enable it under
+          Privacy &amp; Advisor Access to view or propose changes.
+        </p>
       </div>
     </div>
   );

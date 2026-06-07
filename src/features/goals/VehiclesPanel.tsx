@@ -24,7 +24,9 @@ import {
   vehicleGrossFromPurchaseToTerminalLinear,
   vehicleNetEquity,
 } from "@/domain/finance/vehicle-sg";
+import { CategoryVisibilityToggle } from "@/features/consent/CategoryVisibilityToggle";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
+import type { AdvisorCategoryVisibility } from "@/lib/advisor-visibility";
 import { formatCurrency } from "@/ui/lib/format";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
@@ -626,12 +628,25 @@ function VehicleDeleteForm({ id }: { id: string }) {
 export function VehiclesPanel({
   vehicles,
   currencyCode,
+  advisorVisibility = null,
 }: {
   vehicles: VehicleRow[];
   currencyCode: string;
+  /** When set (client self-view with linked+consented advisor), show the
+   * per-category visibility toggle. Null hides it (advisor view / no consent). */
+  advisorVisibility?: AdvisorCategoryVisibility | null;
 }) {
   return (
     <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
+      {advisorVisibility ? (
+        <div className="p-4 sm:p-5">
+          <CategoryVisibilityToggle
+            category="vehicles"
+            visible={advisorVisibility.vehicles}
+            showTooltip
+          />
+        </div>
+      ) : null}
       <div className="space-y-3 p-4 sm:p-5">
         <div className="rounded-lg border border-amber-200/80 bg-amber-50/50 p-3 text-xs text-amber-950">
         <strong className="font-semibold">Tip:</strong> keep each vehicle loan in one place only

@@ -2,7 +2,7 @@
 
 # Function tree — `src/data`
 
-45 module(s).
+52 module(s).
 
 ## Modules
 
@@ -10,9 +10,14 @@
 | --- | --- | ---: | ---: |
 | [`src/data/age-asset-breakdown.ts`](#src-data-age-asset-breakdown-ts) | `regular` | 0 | 0 |
 | [`src/data/budget-summary.ts`](#src-data-budget-summary-ts) | `regular` | 1 | 14 |
+| [`src/data/cash-account-history-build.ts`](#src-data-cash-account-history-build-ts) | `regular` | 1 | 1 |
 | [`src/data/dashboard-advisor-viewer.test.ts`](#src-data-dashboard-advisor-viewer-test-ts) | `regular` | 0 | 0 |
+| [`src/data/dashboard-cpf-retirement-stop.test.ts`](#src-data-dashboard-cpf-retirement-stop-test-ts) | `regular` | 0 | 0 |
+| [`src/data/dashboard-cpf-zero-balance.test.ts`](#src-data-dashboard-cpf-zero-balance-test-ts) | `regular` | 1 | 30 |
 | [`src/data/dashboard-overlay.test.ts`](#src-data-dashboard-overlay-test-ts) | `regular` | 0 | 0 |
-| [`src/data/dashboard.ts`](#src-data-dashboard-ts) | `regular` | 4 | 66 |
+| [`src/data/dashboard-property-equity.test.ts`](#src-data-dashboard-property-equity-test-ts) | `regular` | 0 | 0 |
+| [`src/data/dashboard-runway-annual.test.ts`](#src-data-dashboard-runway-annual-test-ts) | `regular` | 0 | 0 |
+| [`src/data/dashboard.ts`](#src-data-dashboard-ts) | `regular` | 15 | 96 |
 | [`src/data/expense-budget-guard.ts`](#src-data-expense-budget-guard-ts) | `regular` | 1 | 6 |
 | [`src/data/financial-profile.ts`](#src-data-financial-profile-ts) | `regular` | 2 | 1 |
 | [`src/data/goal-tradeoff-context.ts`](#src-data-goal-tradeoff-context-ts) | `regular` | 1 | 17 |
@@ -24,18 +29,20 @@
 | [`src/data/repositories/advisor-access-keys.test.ts`](#src-data-repositories-advisor-access-keys-test-ts) | `regular` | 1 | 0 |
 | [`src/data/repositories/advisor-access-keys.ts`](#src-data-repositories-advisor-access-keys-ts) | `regular` | 4 | 9 |
 | [`src/data/repositories/advisor-clients.test.ts`](#src-data-repositories-advisor-clients-test-ts) | `regular` | 6 | 0 |
-| [`src/data/repositories/advisor-clients.ts`](#src-data-repositories-advisor-clients-ts) | `regular` | 7 | 21 |
+| [`src/data/repositories/advisor-clients.ts`](#src-data-repositories-advisor-clients-ts) | `regular` | 11 | 35 |
 | [`src/data/repositories/advisor-dashboard.test.ts`](#src-data-repositories-advisor-dashboard-test-ts) | `regular` | 2 | 0 |
 | [`src/data/repositories/advisor-dashboard.ts`](#src-data-repositories-advisor-dashboard-ts) | `regular` | 2 | 2 |
-| [`src/data/repositories/advisor-proposals.ts`](#src-data-repositories-advisor-proposals-ts) | `regular` | 14 | 75 |
+| [`src/data/repositories/advisor-proposals.count.test.ts`](#src-data-repositories-advisor-proposals-count-test-ts) | `regular` | 1 | 0 |
+| [`src/data/repositories/advisor-proposals.ts`](#src-data-repositories-advisor-proposals-ts) | `regular` | 21 | 94 |
 | [`src/data/repositories/budget-line-overrides.ts`](#src-data-repositories-budget-line-overrides-ts) | `regular` | 5 | 18 |
 | [`src/data/repositories/budget-lines.ts`](#src-data-repositories-budget-lines-ts) | `regular` | 7 | 30 |
 | [`src/data/repositories/cash-account-snapshots.ts`](#src-data-repositories-cash-account-snapshots-ts) | `regular` | 3 | 8 |
 | [`src/data/repositories/cash-accounts.ts`](#src-data-repositories-cash-accounts-ts) | `regular` | 5 | 19 |
 | [`src/data/repositories/coupons.ts`](#src-data-repositories-coupons-ts) | `regular` | 9 | 13 |
 | [`src/data/repositories/cpf-balances.ts`](#src-data-repositories-cpf-balances-ts) | `regular` | 4 | 12 |
+| [`src/data/repositories/cpf-investments.ts`](#src-data-repositories-cpf-investments-ts) | `regular` | 4 | 14 |
 | [`src/data/repositories/expenses.ts`](#src-data-repositories-expenses-ts) | `regular` | 8 | 33 |
-| [`src/data/repositories/goals.ts`](#src-data-repositories-goals-ts) | `regular` | 8 | 41 |
+| [`src/data/repositories/goals.ts`](#src-data-repositories-goals-ts) | `regular` | 9 | 45 |
 | [`src/data/repositories/housing-loans.ts`](#src-data-repositories-housing-loans-ts) | `regular` | 5 | 17 |
 | [`src/data/repositories/inbox-notifications.ts`](#src-data-repositories-inbox-notifications-ts) | `regular` | 7 | 32 |
 | [`src/data/repositories/income-tax-configs.ts`](#src-data-repositories-income-tax-configs-ts) | `regular` | 3 | 9 |
@@ -71,13 +78,48 @@ Classification: `regular`
 - calls: `src/data/housing-cash-synthetic-expense.ts#buildSyntheticHousingCashExpense`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/data/repositories/budget-line-overrides.ts#listBudgetLineOverridesForMonth`, `src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/expenses.ts#listExpensesForMonth`, `src/data/repositories/expenses.ts#listExpensesForYear`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/income-tax-configs.ts#getIncomeTaxConfig`, `src/data/repositories/profiles.ts#getProfileById`, `src/domain/finance/budget.ts#annualBudgetVsActual`, `src/domain/finance/budget.ts#isMonthlyBudgetLineApplicable`, `src/domain/finance/budget.ts#monthlyBudgetVsActual`, `src/domain/finance/budget.ts#normalizeCategory`
 - called by: `src/app/api/budget/route.ts#GET`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
 
+### `src/data/cash-account-history-build.ts` <a id="src-data-cash-account-history-build-ts"></a>
+
+Classification: `regular`
+
+#### `buildCashHistoryByAccountId` — function, L7
+
+- calls: `src/data/mappers.ts#num`
+- called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
+
 ### `src/data/dashboard-advisor-viewer.test.ts` <a id="src-data-dashboard-advisor-viewer-test-ts"></a>
 
 Classification: `regular`
 
 _No top-level functions detected._
 
+### `src/data/dashboard-cpf-retirement-stop.test.ts` <a id="src-data-dashboard-cpf-retirement-stop-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/data/dashboard-cpf-zero-balance.test.ts` <a id="src-data-dashboard-cpf-zero-balance-test-ts"></a>
+
+Classification: `regular`
+
+#### `expectSalaryCpfProjection` — function, L109
+
+- calls: `[external] @vitest/expect`, `[external] vitest`
+
 ### `src/data/dashboard-overlay.test.ts` <a id="src-data-dashboard-overlay-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/data/dashboard-property-equity.test.ts` <a id="src-data-dashboard-property-equity-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/data/dashboard-runway-annual.test.ts` <a id="src-data-dashboard-runway-annual-test-ts"></a>
 
 Classification: `regular`
 
@@ -87,25 +129,73 @@ _No top-level functions detected._
 
 Classification: `regular`
 
-#### `housingLoanToProjection` — function, L283
+#### `housingLoanToProjection` — function, L349
 
 - calls: `src/data/mappers.ts#num`, `src/domain/finance/housing-loan-payments.ts#oaShareForCpfProjection`
 
-#### `ageAtEndOfYearMonth` — function, L333
+#### `cpfInvestmentToProjection` — function, L399
+
+- calls: `src/data/mappers.ts#num`
+
+#### `ageAtEndOfYearMonth` — function, L412
 
 - calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`
 - called by: `src/data/dashboard.ts#buildCpfHousingMarkers`
 
-#### `buildCpfHousingMarkers` — function, L339
+#### `isYearMonth` — function, L418
+
+- called by: `src/data/dashboard.ts#getDashboardPayload`
+
+#### `monthDistance` — function, L422
+
+- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/data/dashboard.ts#retirementSpendLedgerEntries`
+
+#### `annualGrowthMultiplierAtYear` — function, L428
+
+- calls: `src/lib/dates.ts#addMonthsToYearMonth`
+- called by: `src/data/dashboard.ts#retirementSpendLedgerEntries`
+
+#### `sumProjectionFlows` — function, L484
+
+- called by: `src/data/dashboard.ts#getDashboardPayload`
+
+#### `annualizationFactorForRows` — function, L494
+
+- called by: `src/data/dashboard.ts#getDashboardPayload`
+
+#### `sumProjectionOutflows` — function, L499
+
+- called by: `src/data/dashboard.ts#getDashboardPayload`
+
+#### `annualizeProjectionFlows` — function, L521
+
+- called by: `src/data/dashboard.ts#getDashboardPayload`
+
+#### `sampleYearPhaseFlowRows` — function, L575
+
+- calls: `src/lib/dates.ts#addMonthsToYearMonth`
+- called by: `src/data/dashboard.ts#getDashboardPayload`
+
+#### `retirementSpendLedgerEntries` — function, L603
+
+- calls: `src/data/dashboard.ts#annualGrowthMultiplierAtYear`, `src/data/dashboard.ts#monthDistance`, `src/lib/dates.ts#addMonthsToYearMonth`
+- called by: `src/data/dashboard.ts#getDashboardPayload`
+
+#### `cpfInitialSnapshot` — function, L651
+
+- calls: `src/data/mappers.ts#num`
+- called by: `src/data/dashboard.ts#getDashboardPayload`
+
+#### `buildCpfHousingMarkers` — function, L681
 
 - calls: `src/data/dashboard.ts#ageAtEndOfYearMonth`
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `getDashboardPayload` — function, L365
+#### `getDashboardPayload` — function, L707
 
-- calls: `src/data/dashboard.ts#buildCpfHousingMarkers`, `src/data/housing-cash-synthetic-expense.ts#buildSyntheticHousingCashExpense`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/data/mappers.ts#investmentValues`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileAnnualBonusTakeHomeCash`, `src/data/mappers.ts#profileAnnualBonus`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileCpfAgeBand`, `src/data/mappers.ts#profileExpenseGrowthNominal`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileRetirementWithdrawalRateAnnual`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/mappers.ts#sumExpenseAmounts`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/projection.ts#buildInvestmentProjectionSeries`, `src/data/projection.ts#projectionSnapshotFromInvestmentRows`, `src/data/repositories/budget-line-overrides.ts#advisorReadBudgetLineOverridesForMonth`, `src/data/repositories/budget-line-overrides.ts#listBudgetLineOverridesForMonth`, `src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap`, `src/data/repositories/budget-lines.ts#advisorReadBudgetLines`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/cash-accounts.ts#advisorReadCashAccounts`, `src/data/repositories/cash-accounts.ts#listCashAccounts`, `src/data/repositories/cpf-balances.ts#advisorReadCpfBalances`, `src/data/repositories/cpf-balances.ts#getCpfBalanceByUserId`, `src/data/repositories/expenses.ts#advisorReadExpensesForMonth`, `src/data/repositories/expenses.ts#listExpensesForMonth`, `src/data/repositories/goals.ts#advisorReadGoals`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/housing-loans.ts#advisorReadHousingLoans`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/income-tax-configs.ts#advisorReadIncomeTaxConfig`, `src/data/repositories/income-tax-configs.ts#getIncomeTaxConfig`, `src/data/repositories/investments.ts#advisorReadInvestments`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/liabilities.ts#advisorReadLiabilities`, `src/data/repositories/liabilities.ts#listLiabilities`, `src/data/repositories/profiles.ts#advisorReadProfile`, `src/data/repositories/vehicles.ts#advisorReadVehicles`, `src/data/repositories/vehicles.ts#listVehicles`, `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`, `src/domain/finance/age-asset-projection.ts#buildAgeAssetProjection`, `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/age-projection.ts#buildNetWorthByAgeProjection`, `src/domain/finance/budget.ts#monthlyBudgetAggregateOverspend`, `src/domain/finance/budget.ts#monthlyBudgetVsActual`, `src/domain/finance/budget.ts#topOverBudgetCategories`, `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/domain/finance/housing-loan-payments.ts#buildHousingPaymentInsights`, `src/domain/finance/insights.ts#buildDashboardInsights`, `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`, `src/domain/finance/net-worth.ts#calculateNetWorth`, `src/domain/finance/retirement-spend-vs-portfolio.ts#analyzeRetirementDividendVsSpend`, `src/domain/finance/retirement-spend-vs-portfolio.ts#analyzeRetirementSpendVsPortfolio`, `src/domain/finance/savings-rate.ts#calculateSavingsRate`, `src/domain/finance/spend-recommendations.ts#buildSpendRecommendationsForMonth`, `src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash`, `src/domain/finance/vehicle-sg.ts#effectiveLoanBalance`, `src/domain/finance/vehicle-sg.ts#vehicleGrossAssetEstimate`, `src/domain/finance/vehicle-sg.ts#vehicleNetListedBeforeLiquidation`, `src/lib/validation.ts#birthDateIsValidPast`
-- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/api/dashboard/route.ts#GET`, `src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection`
-- unresolved: 1
+- calls: `src/data/dashboard.ts#annualizationFactorForRows`, `src/data/dashboard.ts#annualizeProjectionFlows`, `src/data/dashboard.ts#buildCpfHousingMarkers`, `src/data/dashboard.ts#cpfInitialSnapshot`, `src/data/dashboard.ts#isYearMonth`, `src/data/dashboard.ts#monthDistance`, `src/data/dashboard.ts#retirementSpendLedgerEntries`, `src/data/dashboard.ts#sampleYearPhaseFlowRows`, `src/data/dashboard.ts#sumProjectionFlows`, `src/data/dashboard.ts#sumProjectionOutflows`, `src/data/housing-cash-synthetic-expense.ts#buildSyntheticHousingCashExpense`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/data/mappers.ts#investmentValues`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileAnnualBonusTakeHomeCash`, `src/data/mappers.ts#profileAnnualBonus`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileCpfAgeBand`, `src/data/mappers.ts#profileExpenseGrowthNominal`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileRetirementWithdrawalRateAnnual`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/mappers.ts#sumExpenseAmounts`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/projection.ts#buildInvestmentProjectionSeries`, `src/data/projection.ts#projectionSnapshotFromInvestmentRows`, `src/data/repositories/budget-line-overrides.ts#advisorReadBudgetLineOverridesForMonth`, `src/data/repositories/budget-line-overrides.ts#listBudgetLineOverridesForMonth`, `src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap`, `src/data/repositories/budget-lines.ts#advisorReadBudgetLines`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/cash-accounts.ts#advisorReadCashAccounts`, `src/data/repositories/cash-accounts.ts#listCashAccounts`, `src/data/repositories/cpf-balances.ts#advisorReadCpfBalances`, `src/data/repositories/cpf-balances.ts#getCpfBalanceByUserId`, `src/data/repositories/cpf-investments.ts#advisorReadCpfInvestments`, `src/data/repositories/cpf-investments.ts#listCpfInvestments`, `src/data/repositories/expenses.ts#advisorReadExpensesForMonth`, `src/data/repositories/expenses.ts#listExpensesForMonth`, `src/data/repositories/goals.ts#advisorReadGoals`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/housing-loans.ts#advisorReadHousingLoans`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/income-tax-configs.ts#advisorReadIncomeTaxConfig`, `src/data/repositories/income-tax-configs.ts#getIncomeTaxConfig`, `src/data/repositories/investments.ts#advisorReadInvestments`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/liabilities.ts#advisorReadLiabilities`, `src/data/repositories/liabilities.ts#listLiabilities`, `src/data/repositories/profiles.ts#advisorReadProfile`, `src/data/repositories/properties.ts#advisorReadProperties`, `src/data/repositories/properties.ts#listProperties`, `src/data/repositories/vehicles.ts#advisorReadVehicles`, `src/data/repositories/vehicles.ts#listVehicles`, `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`, `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/age-projection.ts#buildNetWorthByAgeProjection`, `src/domain/finance/budget.ts#monthlyBudgetAggregateOverspend`, `src/domain/finance/budget.ts#monthlyBudgetVsActual`, `src/domain/finance/budget.ts#topOverBudgetCategories`, `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/domain/finance/housing-loan-payments.ts#buildHousingPaymentInsights`, `src/domain/finance/insights.ts#buildDashboardInsights`, `src/domain/finance/investment-contribution.ts#annualWithdrawalFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#contributionStartMonthFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#investmentMaturityMonthFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow`, `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`, `src/domain/finance/net-worth.ts#calculateNetWorth`, `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`, `src/domain/finance/retirement-spend-vs-portfolio.ts#analyzeRetirementDividendVsSpend`, `src/domain/finance/retirement-spend-vs-portfolio.ts#analyzeRetirementSpendVsPortfolio`, `src/domain/finance/savings-rate.ts#calculateSavingsRate`, `src/domain/finance/spend-recommendations.ts#buildSpendRecommendationsForMonth`, `src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash`, `src/domain/finance/vehicle-sg.ts#effectiveLoanBalance`, `src/domain/finance/vehicle-sg.ts#vehicleGrossAssetEstimate`, `src/domain/finance/vehicle-sg.ts#vehicleNetListedBeforeLiquidation`, `src/domain/finance/vehicle-sg.ts#vehicleNetProceedsAtCoeMonthEnd`, `src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown`, `src/lib/dates.ts#addCalendarMonths`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#formatYearMonth`, `src/lib/validation.ts#birthDateIsValidPast`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`, `src/app/api/dashboard/route.ts#GET`, `src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection`
+- unresolved: 3
 
 ### `src/data/expense-budget-guard.ts` <a id="src-data-expense-budget-guard-ts"></a>
 
@@ -136,7 +226,7 @@ Classification: `regular`
 #### `loadGoalTradeoffContext` — function, L37
 
 - calls: `src/data/housing-cash-synthetic-expense.ts#buildSyntheticHousingCashExpense`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/mappers.ts#sumExpenseAmounts`, `src/data/repositories/budget-line-overrides.ts#listBudgetLineOverridesForMonth`, `src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/expenses.ts#listExpensesForMonth`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/income-tax-configs.ts#getIncomeTaxConfig`, `src/data/repositories/profiles.ts#getProfileById`, `src/domain/finance/budget.ts#monthlyBudgetVsActual`, `src/domain/finance/goal-priority-tradeoff.ts#analyzeGoalPriorityTradeoff`, `src/domain/finance/goal-priority-tradeoff.ts#sortGoalsByPriority`, `src/lib/dates.ts#formatYearMonth`
-- called by: `src/features/goals/GoalPriorityTradeoffPanel.tsx#GoalPriorityTradeoffPanel`
+- called by: `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/GoalPriorityTradeoffPanel.tsx#GoalPriorityTradeoffPanel`
 
 ### `src/data/housing-cash-synthetic-expense.ts` <a id="src-data-housing-cash-synthetic-expense-ts"></a>
 
@@ -176,7 +266,7 @@ Classification: `regular`
 
 #### `num` — function, L22
 
-- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/onboarding/page.tsx#OnboardingPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/profile/route.ts#PATCH`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/dashboard.ts#housingLoanToProjection`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/data/mappers.ts#budgetLineRowToDomain`, `src/data/mappers.ts#expenseRowToBudgetExpense`, `src/data/mappers.ts#incomeTaxConfigRowToDomain`, `src/data/mappers.ts#investmentValues`, `src/data/mappers.ts#profileAnnualBonus`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileExpenseGrowthNominal`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileMonthlyIncome`, `src/data/mappers.ts#profileRetirementWithdrawalRateAnnual`, `src/data/mappers.ts#sumExpenseAmounts`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/mappers.ts#vehicleRowToValuationInput`, `src/data/projection.ts#aggregateInvestments`, `src/data/projection.ts#resolveProjectionSnapshot`, `src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap`, `src/domain/finance/cash-account-history.ts#buildCashHistoryByAccountId`, `src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow`, `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`, `src/domain/housing/compose.ts#loanToMortgage`, `src/domain/housing/compose.ts#propertyRowToView`, `src/domain/housing/compose.ts#syntheticPropertyFromLoan`, `src/domain/setup/evaluators.ts#evaluateCpf`, `src/domain/setup/evaluators.ts#evaluateEmergencyFunds`, `src/domain/setup/evaluators.ts#evaluateIncomeExpenses`, `src/domain/setup/evaluators.ts#evaluateRetirement`, `src/domain/setup/evaluators.ts#housingLoanIsComplete`, `src/domain/setup/evaluators.ts#liabilityIsComplete`, `src/features/advisor/AdvisorClientWorkspace.tsx#AdvisorClientWorkspace`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`, `src/features/expenses/ExpenseEditRow.tsx#ExpenseEditRow`, `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm`, `src/features/goals/HousingLoansPanel.tsx#HousingPanel`, `src/features/income-tax/IncomeTaxForm.tsx#IncomeTaxForm`, `src/features/income-tax/IncomeTaxForm.tsx#initialValues`, `src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
+- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/onboarding/page.tsx#OnboardingPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/profile/route.ts#PATCH`, `src/data/cash-account-history-build.ts#buildCashHistoryByAccountId`, `src/data/dashboard.ts#cpfInitialSnapshot`, `src/data/dashboard.ts#cpfInvestmentToProjection`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/dashboard.ts#housingLoanToProjection`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/data/mappers.ts#budgetLineRowToDomain`, `src/data/mappers.ts#expenseRowToBudgetExpense`, `src/data/mappers.ts#incomeTaxConfigRowToDomain`, `src/data/mappers.ts#investmentValues`, `src/data/mappers.ts#profileAnnualBonus`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileExpenseGrowthNominal`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileMonthlyIncome`, `src/data/mappers.ts#profileRetirementWithdrawalRateAnnual`, `src/data/mappers.ts#sumExpenseAmounts`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/mappers.ts#vehicleRowToValuationInput`, `src/data/projection.ts#aggregateInvestments`, `src/data/projection.ts#resolveProjectionSnapshot`, `src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap`, `src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth`, `src/domain/finance/budget-cash-flow-allocation.ts#sumPlannedMonthlyInvestmentContributions`, `src/domain/finance/investment-contribution.ts#annualWithdrawalFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#investmentMaturityMonthFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow`, `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`, `src/domain/housing/compose.ts#loanToMortgage`, `src/domain/housing/compose.ts#propertyRowToView`, `src/domain/housing/compose.ts#syntheticPropertyFromLoan`, `src/domain/setup/evaluators.ts#evaluateCpf`, `src/domain/setup/evaluators.ts#evaluateEmergencyFunds`, `src/domain/setup/evaluators.ts#evaluateIncomeExpenses`, `src/domain/setup/evaluators.ts#evaluateRetirement`, `src/domain/setup/evaluators.ts#housingLoanIsComplete`, `src/domain/setup/evaluators.ts#liabilityIsComplete`, `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`, `src/features/advisor/AdvisorClientCompose.tsx#profilePercentValue`, `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`, `src/features/expenses/ExpenseEditRow.tsx#ExpenseEditRow`, `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm`, `src/features/goals/HousingLoansPanel.tsx#HousingPanel`, `src/features/goals/cash-history.ts#buildCashHistoryByAccountId`, `src/features/goals/investment-balance-row.ts#investmentRowToBalanceRow`, `src/features/goals/profile-retirement-props.ts#profileRetirementTargetsProps`, `src/features/income-tax/IncomeTaxForm.tsx#IncomeTaxForm`, `src/features/income-tax/IncomeTaxForm.tsx#initialValues`, `src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
 #### `sumPlannedMonthlyGoalContributions` — function, L29
 
@@ -220,7 +310,7 @@ Classification: `regular`
 #### `profileExpenseGrowthNominal` — function, L134
 
 - calls: `src/data/mappers.ts#num`
-- called by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`
+- called by: `src/data/dashboard.ts#getDashboardPayload`
 
 #### `profileRetirementWithdrawalRateAnnual` — function, L144
 
@@ -350,39 +440,59 @@ _No tracked edges._
 
 Classification: `regular`
 
-#### `computeConsentStatuses` — function, L50
+#### `computeConsentStatuses` — function, L67
 
 - called by: `src/data/repositories/advisor-clients.ts#getMyConsentStatusForAdvisor`, `src/data/repositories/advisor-clients.ts#withConsentStatus`
 
-#### `withConsentStatus` — function, L84
+#### `withConsentStatus` — function, L101
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `src/data/repositories/advisor-clients.ts#computeConsentStatuses`
 - called by: `src/data/repositories/advisor-clients.ts#listAdvisorClientsWorkspace`
 
-#### `listClientsForAdvisor` — function, L110
+#### `listClientsForAdvisor` — function, L127
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
 - called by: `src/data/repositories/advisor-clients.ts#listAdvisorClientsWorkspace`
 
-#### `listAdvisorClientsWorkspace` — function, L130
+#### `listAdvisorClientsWorkspace` — function, L147
 
-- calls: `[external] @supabase/supabase-js`, `src/data/repositories/advisor-clients.ts#listClientsForAdvisor`, `src/data/repositories/advisor-clients.ts#withConsentStatus`
+- calls: `[external] @supabase/supabase-js`, `src/data/repositories/advisor-clients.ts#listClientsForAdvisor`, `src/data/repositories/advisor-clients.ts#withConsentStatus`, `src/lib/advisor-client-list-filters.ts#parseAdvisorClientListFilterPreset`, `src/lib/advisor-client-list-filters.ts#rowMatchesAdvisorClientListFilter`
 - called by: `src/app/(app)/advisor/clients/page.tsx#AdvisorClientsPage`, `src/data/repositories/advisor-dashboard.ts#getAdvisorDashboardData`
 
-#### `getClientProfileForAdvisor` — function, L232
+#### `getClientProfileForAdvisor` — function, L265
 
 - calls: `[external] @supabase/supabase-js`
-- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-proposal-actions.ts#requireAdvisorDraftProposal`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-proposal-actions.ts#requireAdvisorProposalInStatus`
 
-#### `advisorCanReadClient` — function, L260
+#### `advisorCanReadClient` — function, L293
 
 - calls: `[external] @supabase/supabase-js`
 - called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/server/advisor-consent.ts#assertConsent`
 
-#### `getMyConsentStatusForAdvisor` — function, L279
+#### `advisorCanReadCategory` — function, L309
+
+- calls: `[external] @supabase/supabase-js`
+- called by: `src/server/advisor-client-actions.ts#assertCategoryVisible`
+
+#### `advisorReadCategoryVisibility` — function, L327
+
+- calls: `[external] @supabase/supabase-js`, `src/lib/advisor-visibility.ts#defaultCategoryVisibility`, `src/lib/advisor-visibility.ts#isAdvisorVisibilityCategory`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`
+
+#### `getMyConsentStatusForAdvisor` — function, L352
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `src/data/repositories/advisor-clients.ts#computeConsentStatuses`
-- called by: `src/app/(app)/more/page.tsx#MorePage`, `src/server/client-consent-actions.ts#getAdvisorConsentGateAction`, `src/server/inbox/ensure-advisor-consent-notification.ts#ensureAndCheckClientConsentPrompt`
+- called by: `src/app/(app)/more/page.tsx#MorePage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/server/client-consent-actions.ts#getAdvisorConsentGateAction`, `src/server/inbox/ensure-advisor-consent-notification.ts#ensureAndCheckClientConsentPrompt`
+
+#### `getMyAdvisorCategoryVisibility` — function, L374
+
+- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `src/lib/advisor-visibility.ts#defaultCategoryVisibility`, `src/lib/advisor-visibility.ts#isAdvisorVisibilityCategory`
+- called by: `src/app/(app)/more/page.tsx#MorePage`, `src/app/(app)/setup/page.tsx#SetupPage`
+
+#### `upsertAdvisorCategoryVisibility` — function, L399
+
+- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
+- called by: `src/server/client-consent-actions.ts#updateCategoryVisibilityAction`
 
 ### `src/data/repositories/advisor-dashboard.test.ts` <a id="src-data-repositories-advisor-dashboard-test-ts"></a>
 
@@ -409,77 +519,120 @@ _No tracked edges._
 - calls: `src/data/repositories/advisor-access-keys.ts#countAdvisorAccessKeyStatuses`, `src/data/repositories/advisor-clients.ts#listAdvisorClientsWorkspace`
 - called by: `src/app/(app)/advisor/page.tsx#AdvisorDashboardPage`
 
+### `src/data/repositories/advisor-proposals.count.test.ts` <a id="src-data-repositories-advisor-proposals-count-test-ts"></a>
+
+Classification: `regular`
+
+#### `fakeSupabase` — function, L9
+
+- unresolved: 1
+
 ### `src/data/repositories/advisor-proposals.ts` <a id="src-data-repositories-advisor-proposals-ts"></a>
 
 Classification: `regular`
 
-#### `getProposalById` — function, L26
+#### `changeKeyColumns` — function, L41
+
+- called by: `src/data/repositories/advisor-proposals.ts#upsertProposalChange`
+
+#### `getProposalById` — function, L59
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#requireAdvisorDraftProposal`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`, `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#requireAdvisorProposalInStatus`
 
-#### `getPendingProposalForClient` — function, L39
+#### `getPendingProposalForClient` — function, L72
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
 - called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`
 
-#### `getDraftProposalForClient` — function, L55
+#### `getDraftProposalForClient` — function, L88
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/data/repositories/advisor-proposals.ts#getOrCreateDraftProposal`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/server/advisor-client-actions.ts#pendingCreateNames`
 
-#### `getOrCreateDraftProposal` — function, L71
+#### `getOrCreateDraftProposal` — function, L104
 
-- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `src/data/repositories/advisor-proposals.ts#getDraftProposalForClient`
+- calls: `[external] @supabase/supabase-js`
 - called by: `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `listChangesForProposal` — function, L92
+#### `listChangesForProposal` — function, L118
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`, `src/server/advisor-client-actions.ts#pendingCreateNames`, `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`
 
-#### `listSectionNotesForProposal` — function, L106
-
-- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`
-
-#### `countChangesForProposal` — function, L118
+#### `listSectionNotesForProposal` — function, L132
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
+- called by: `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`
 
-#### `upsertProposalChange` — function, L134
+#### `countChangesForProposal` — function, L144
 
-- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `src/domain/advisor-proposals/field-registry.ts#fieldMeta`, `src/domain/advisor-proposals/field-registry.ts#serializeProposalValue`, `src/domain/advisor-proposals/field-registry.ts#valuesEqual`
+- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
+
+#### `countPendingProposalsForClient` — function, L161
+
+- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
+- called by: `src/app/(app)/setup/overview/page.tsx#SetupOverviewPage`, `src/app/(app)/setup/page.tsx#SetupPage`
+
+#### `upsertProposalChange` — function, L178
+
+- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `src/data/repositories/advisor-proposals.ts#changeKeyColumns`, `src/domain/advisor-proposals/field-registry.ts#fieldMeta`, `src/domain/advisor-proposals/field-registry.ts#serializeProposalValue`, `src/domain/advisor-proposals/field-registry.ts#valuesEqual`
 - called by: `src/server/advisor-proposal-recording.ts#recordAdvisorProposalChanges`
 
-#### `upsertSectionNote` — function, L183
+#### `upsertSectionNote` — function, L249
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
 - called by: `src/server/advisor-proposal-actions.ts#submitAdvisorProposalAction`
 
-#### `submitProposal` — function, L206
+#### `submitProposal` — function, L272
 
 - calls: `[external] @supabase/supabase-js`
 - called by: `src/server/advisor-proposal-actions.ts#submitAdvisorProposalAction`
 
-#### `resolveProposal` — function, L218
+#### `withdrawProposal` — function, L284
+
+- calls: `[external] @supabase/supabase-js`
+- called by: `src/server/advisor-proposal-actions.ts#withdrawAdvisorProposalAction`
+
+#### `notifyAdvisorProposalConflict` — function, L294
+
+- calls: `[external] @supabase/supabase-js`
+- called by: `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`
+
+#### `claimAdvisorProposalForAccept` — function, L309
+
+- calls: `[external] @supabase/supabase-js`
+- called by: `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`
+
+#### `finalizeAdvisorProposalAccept` — function, L325
+
+- calls: `[external] @supabase/supabase-js`
+- called by: `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`
+
+#### `resolveProposal` — function, L340
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction`
+- called by: `src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction`
 
-#### `deleteProposalChangesBySection` — function, L235
+#### `deleteProposalChangesBySection` — function, L361
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
 - called by: `src/server/advisor-proposal-actions.ts#removeAdvisorProposalSectionAction`
 
-#### `deleteProposalChangesByEntity` — function, L255
+#### `deleteProposalChangesByEntity` — function, L381
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
 - called by: `src/server/advisor-proposal-actions.ts#removeAdvisorProposalEntityAction`
 
-#### `listProposalsForAdvisorClient` — function, L275
+#### `listProposalsForAdvisorClient` — function, L401
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`
+
+#### `listProposalsForClient` — function, L423
+
+- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
+- called by: `src/app/(app)/setup/page.tsx#SetupPage`
 
 ### `src/data/repositories/budget-line-overrides.ts` <a id="src-data-repositories-budget-line-overrides-ts"></a>
 
@@ -517,12 +670,12 @@ Classification: `regular`
 #### `listBudgetLines` — function, L5
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/expense-budget-guard.ts#hasBudgetCategoryMonthlyConflict`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/setup-status.ts#loadSetupEvaluationContext`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/server/actions.ts#applyGuidedBudgetLinesAction`
+- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/expense-budget-guard.ts#hasBudgetCategoryMonthlyConflict`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/setup-status.ts#loadSetupEvaluationContext`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/server/actions.ts#applyGuidedBudgetLinesAction`
 
 #### `advisorReadBudgetLines` — function, L24
 
 - calls: `[external] @supabase/supabase-js`
-- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/data/dashboard.ts#getDashboardPayload`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/server/advisor-client-actions.ts#deleteAdvisorClientBudgetLineAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientBudgetLineAmountAction`
 
 #### `getBudgetLineBySourceLiabilityId` — function, L35
 
@@ -532,12 +685,11 @@ Classification: `regular`
 #### `getBudgetLineById` — function, L50
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/server/advisor-client-actions.ts#patchAdvisorClientBudgetLineAmountAction`
 
 #### `insertBudgetLine` — function, L75
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `src/domain/finance/budget.ts#normalizeCategory`
-- called by: `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/server/actions.ts#applyGuidedBudgetLinesAction`, `src/server/actions.ts#createBudgetLineAction`
+- called by: `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#applyGuidedBudgetLinesAction`, `src/server/actions.ts#createBudgetLineAction`
 
 #### `updateBudgetLine` — function, L109
 
@@ -547,7 +699,7 @@ Classification: `regular`
 #### `deleteBudgetLine` — function, L151
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/data/liability-budget-sync.ts#removeLiabilityBudgetLines`, `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/server/actions.ts#applyGuidedBudgetLinesAction`, `src/server/actions.ts#deleteBudgetLineAction`
+- called by: `src/data/liability-budget-sync.ts#removeLiabilityBudgetLines`, `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#applyGuidedBudgetLinesAction`, `src/server/actions.ts#deleteBudgetLineAction`
 
 ### `src/data/repositories/cash-account-snapshots.ts` <a id="src-data-repositories-cash-account-snapshots-ts"></a>
 
@@ -574,27 +726,27 @@ Classification: `regular`
 #### `listCashAccounts` — function, L5
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/data/dashboard.ts#getDashboardPayload`
+- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts`, `src/server/actions.ts#createCashAccountAction`, `src/server/actions.ts#updateCashAccountAction`
 
 #### `advisorReadCashAccounts` — function, L23
 
 - calls: `[external] @supabase/supabase-js`
-- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/server/advisor-client-actions.ts#createAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientCashAccountAction`
 
 #### `insertCashAccount` — function, L34
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `src/data/repositories/cash-account-snapshots.ts#insertCashAccountSnapshot`
-- called by: `src/server/actions.ts#createCashAccountAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#createCashAccountAction`
 
 #### `updateCashAccount` — function, L55
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `src/data/repositories/cash-account-snapshots.ts#insertCashAccountSnapshot`
-- called by: `src/server/actions.ts#updateCashAccountAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#updateCashAccountAction`
 
 #### `deleteCashAccount` — function, L70
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/server/actions.ts#deleteCashAccountAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#deleteCashAccountAction`
 
 ### `src/data/repositories/coupons.ts` <a id="src-data-repositories-coupons-ts"></a>
 
@@ -661,10 +813,34 @@ Classification: `regular`
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
 - called by: `src/server/actions.ts#upsertCpfBalanceAction`
 
-#### `deleteCpfBalance` — function, L73
+#### `deleteCpfBalance` — function, L75
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
 - called by: `src/server/actions.ts#clearCpfBalanceAction`
+
+### `src/data/repositories/cpf-investments.ts` <a id="src-data-repositories-cpf-investments-ts"></a>
+
+Classification: `regular`
+
+#### `listCpfInvestments` — function, L14
+
+- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
+- called by: `src/data/dashboard.ts#getDashboardPayload`
+
+#### `advisorReadCpfInvestments` — function, L28
+
+- calls: `[external] @supabase/supabase-js`
+- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`
+
+#### `insertCpfInvestment` — function, L39
+
+- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
+- called by: `src/server/actions.ts#createCpfInvestmentAction`
+
+#### `deleteCpfInvestment` — function, L62
+
+- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
+- called by: `src/server/actions.ts#deleteCpfInvestmentAction`
 
 ### `src/data/repositories/expenses.ts` <a id="src-data-repositories-expenses-ts"></a>
 
@@ -716,17 +892,16 @@ Classification: `regular`
 #### `listFinancialGoals` — function, L4
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/repositories/goals.ts#reorderFinancialGoal`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
+- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/repositories/goals.ts#reorderFinancialGoal`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/server/actions.ts#createGoalAction`, `src/server/actions.ts#updateGoalAction`
 
 #### `advisorReadGoals` — function, L23
 
 - calls: `[external] @supabase/supabase-js`
-- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/server/advisor-client-actions.ts#createAdvisorClientGoalAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientGoalAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction`
 
 #### `getFinancialGoalById` — function, L34
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction`
 
 #### `nextGoalDisplayOrder` — function, L69
 
@@ -741,7 +916,7 @@ Classification: `regular`
 #### `insertFinancialGoal` — function, L112
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `src/data/repositories/goals.ts#nextGoalDisplayOrder`
-- called by: `src/server/actions.ts#createGoalAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#createGoalAction`
 
 #### `insertFinancialGoalsBulk` — function, L137
 
@@ -752,6 +927,11 @@ Classification: `regular`
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#updateGoalAction`
 
+#### `deleteFinancialGoal` — function, L202
+
+- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`
+
 ### `src/data/repositories/housing-loans.ts` <a id="src-data-repositories-housing-loans-ts"></a>
 
 Classification: `regular`
@@ -759,27 +939,27 @@ Classification: `regular`
 #### `listHousingLoans` — function, L4
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`
+- called by: `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingLoanQuickAction`, `src/server/actions.ts#updateHousingLoanAction`
 
 #### `advisorReadHousingLoans` — function, L22
 
 - calls: `[external] @supabase/supabase-js`
-- called by: `src/data/dashboard.ts#getDashboardPayload`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/server/advisor-client-actions.ts#createAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientHousingLoanAction`
 
 #### `insertHousingLoan` — function, L33
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingLoanQuickAction`, `src/server/actions.ts#createHousingPropertyAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingLoanQuickAction`, `src/server/actions.ts#createHousingPropertyAction`
 
 #### `updateHousingLoan` — function, L129
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/server/actions.ts#updateHousingLoanAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#updateHousingLoanAction`
 
 #### `deleteHousingLoan` — function, L182
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/server/actions.ts#deleteHousingLoanAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#deleteHousingLoanAction`
 
 ### `src/data/repositories/inbox-notifications.ts` <a id="src-data-repositories-inbox-notifications-ts"></a>
 
@@ -845,32 +1025,32 @@ Classification: `regular`
 
 - called by: `src/data/repositories/investments.ts#insertInvestment`, `src/data/repositories/investments.ts#updateInvestment`
 
-#### `listInvestments` — function, L28
+#### `listInvestments` — function, L33
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/app/api/projection/route.ts#GET`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/projection.ts#resolveProjectionSnapshot`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/features/app-shell/AppShellInbox.tsx#AppShellInbox`
+- called by: `src/app/api/projection/route.ts#GET`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/projection.ts#resolveProjectionSnapshot`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts`, `src/features/app-shell/AppShellInbox.tsx#AppShellInbox`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/server/actions.ts#createInvestmentAction`, `src/server/actions.ts#updateInvestmentAction`
 
-#### `advisorReadInvestments` — function, L47
+#### `advisorReadInvestments` — function, L52
 
 - calls: `[external] @supabase/supabase-js`
-- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`
 
-#### `getInvestmentById` — function, L58
+#### `getInvestmentById` — function, L63
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/app/api/projection/route.ts#GET`, `src/data/projection.ts#resolveProjectionSnapshot`, `src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`
+- called by: `src/app/api/projection/route.ts#GET`, `src/data/projection.ts#resolveProjectionSnapshot`
 
-#### `insertInvestment` — function, L85
+#### `insertInvestment` — function, L95
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `src/data/repositories/investments.ts#isUnknownInvestmentContributionColumnError`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#createInvestmentAction`
 
-#### `updateInvestment` — function, L157
+#### `updateInvestment` — function, L187
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `src/data/repositories/investments.ts#isUnknownInvestmentContributionColumnError`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#updateInvestmentAction`
 
-#### `deleteInvestment` — function, L229
+#### `deleteInvestment` — function, L295
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#deleteInvestmentAction`
@@ -886,27 +1066,27 @@ Classification: `regular`
 #### `listLiabilities` — function, L33
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/data/dashboard.ts#getDashboardPayload`
+- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts`, `src/server/actions.ts#createLiabilityAction`, `src/server/actions.ts#updateLiabilityAction`
 
 #### `advisorReadLiabilities` — function, L51
 
 - calls: `[external] @supabase/supabase-js`
-- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/server/advisor-client-actions.ts#createAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientLiabilityAction`
 
 #### `insertLiability` — function, L62
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `src/data/repositories/liabilities.ts#rowToDbPayload`
-- called by: `src/server/actions.ts#createLiabilityAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#createLiabilityAction`
 
 #### `updateLiability` — function, L79
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `src/data/repositories/liabilities.ts#rowToDbPayload`
-- called by: `src/server/actions.ts#updateLiabilityAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#updateLiabilityAction`
 
 #### `deleteLiability` — function, L96
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/server/actions.ts#deleteLiabilityAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#deleteLiabilityAction`
 
 ### `src/data/repositories/pricing.ts` <a id="src-data-repositories-pricing-ts"></a>
 
@@ -932,12 +1112,12 @@ Classification: `regular`
 #### `getProfileById` — function, L4
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/app/(app)/account-issue/page.tsx#AccountIssuePage`, `src/app/(app)/advisor/access-keys/page.tsx#AdvisorAccessKeysPage`, `src/app/(app)/advisor/buy-keys/page.tsx#AdvisorBuyKeysPage`, `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/advisor/clients/page.tsx#AdvisorClientsPage`, `src/app/(app)/advisor/page.tsx#AdvisorDashboardPage`, `src/app/(app)/advisor/profile/page.tsx#AdvisorProfilePage`, `src/app/(app)/onboarding/page.tsx#OnboardingPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/api/profile/route.ts#PATCH`, `src/app/api/projection/route.ts#GET`, `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/FuturePlanningSection.tsx#FuturePlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`, `src/server/actions.ts#applyGuidedBudgetLinesAction`, `src/server/advisor-access-key-actions.ts#generateAdvisorAccessKeysPocAction`, `src/server/advisor-client-actions.ts#patchAdvisorClientProfileAction`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-key-purchase-actions.ts#requireAdvisorSession`, `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#requireAdvisorDraftProposal`, `src/server/advisor-qr-share-actions.ts#refreshAdvisorQrShareAction`, `src/server/client-consent-actions.ts#getAdvisorConsentGateAction`, `src/server/client-consent-actions.ts#recordAdvisorConsentAction`
+- called by: `src/app/(app)/account-issue/page.tsx#AccountIssuePage`, `src/app/(app)/advisor/access-keys/page.tsx#AdvisorAccessKeysPage`, `src/app/(app)/advisor/buy-keys/page.tsx#AdvisorBuyKeysPage`, `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/advisor/clients/page.tsx#AdvisorClientsPage`, `src/app/(app)/advisor/page.tsx#AdvisorDashboardPage`, `src/app/(app)/advisor/profile/page.tsx#AdvisorProfilePage`, `src/app/(app)/onboarding/page.tsx#OnboardingPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`, `src/app/api/profile/route.ts#PATCH`, `src/app/api/projection/route.ts#GET`, `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/FuturePlanningSection.tsx#FuturePlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`, `src/server/actions.ts#applyGuidedBudgetLinesAction`, `src/server/advisor-access-key-actions.ts#generateAdvisorAccessKeysPocAction`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-key-purchase-actions.ts#requireAdvisorSession`, `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#requireAdvisorProposalInStatus`, `src/server/advisor-qr-share-actions.ts#refreshAdvisorQrShareAction`, `src/server/client-consent-actions.ts#getAdvisorConsentGateAction`, `src/server/client-consent-actions.ts#recordAdvisorConsentAction`, `src/server/client-consent-actions.ts#updateCategoryVisibilityAction`
 
 #### `advisorReadProfile` — function, L29
 
 - calls: `[external] @supabase/supabase-js`
-- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/data/dashboard.ts#getDashboardPayload`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/server/advisor-client-actions.ts#patchAdvisorClientProfileAction`
 
 #### `updateProfile` — function, L46
 
@@ -951,26 +1131,27 @@ Classification: `regular`
 #### `listProperties` — function, L4
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
+- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts`, `src/server/actions.ts#createHousingPropertyAction`, `src/server/actions.ts#updateHousingPropertyAction`
 
 #### `advisorReadProperties` — function, L18
 
 - calls: `[external] @supabase/supabase-js`
-- called by: `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientPropertyAction`
 
 #### `insertProperty` — function, L42
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/server/actions.ts#createHousingPropertyAction`, `src/server/actions.ts#insertPropertyForLoan`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#createHousingPropertyAction`, `src/server/actions.ts#insertPropertyForLoan`
 
 #### `updateProperty` — function, L68
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/server/actions.ts#updateHousingPropertyAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#updateHousingPropertyAction`
 
 #### `deleteProperty` — function, L82
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/server/actions.ts#deleteHousingPropertyAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#deleteHousingPropertyAction`
 
 ### `src/data/repositories/purchases.ts` <a id="src-data-repositories-purchases-ts"></a>
 
@@ -988,27 +1169,27 @@ Classification: `regular`
 #### `listVehicles` — function, L4
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/data/dashboard.ts#getDashboardPayload`
+- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts`, `src/server/actions.ts#createVehicleAction`, `src/server/actions.ts#updateVehicleAction`
 
 #### `advisorReadVehicles` — function, L23
 
 - calls: `[external] @supabase/supabase-js`
-- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`
+- called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/server/advisor-client-actions.ts#createAdvisorClientVehicleAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientVehicleAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientVehicleAction`
 
 #### `insertVehicle` — function, L58
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/server/actions.ts#createVehicleAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#createVehicleAction`
 
 #### `updateVehicle` — function, L95
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/server/actions.ts#updateVehicleAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#updateVehicleAction`
 
 #### `deleteVehicle` — function, L109
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/server/actions.ts#deleteVehicleAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#deleteVehicleAction`
 
 ### `src/data/setup-status.ts` <a id="src-data-setup-status-ts"></a>
 
@@ -1055,7 +1236,7 @@ Classification: `regular`
 #### `createSupabaseServerClient` — function, L5
 
 - calls: `[external] @supabase/ssr`, `[external] next`, `src/lib/env.ts#requireSupabaseEnv`
-- called by: `src/app/(app)/account-issue/page.tsx#AccountIssuePage`, `src/app/(app)/advisor/access-keys/page.tsx#AdvisorAccessKeysPage`, `src/app/(app)/advisor/buy-keys/page.tsx#AdvisorBuyKeysPage`, `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/advisor/clients/page.tsx#AdvisorClientsPage`, `src/app/(app)/advisor/page.tsx#AdvisorDashboardPage`, `src/app/(app)/advisor/profile/page.tsx#AdvisorProfilePage`, `src/app/(app)/budget/page.tsx#BudgetPage`, `src/app/(app)/onboarding/page.tsx#OnboardingPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/api/budget/route.ts#GET`, `src/app/api/dashboard/route.ts#GET`, `src/app/api/expenses/[id]/route.ts#DELETE`, `src/app/api/expenses/[id]/route.ts#PATCH`, `src/app/api/expenses/route.ts#POST`, `src/app/api/income-tax/route.ts#PATCH`, `src/app/api/profile/route.ts#PATCH`, `src/app/api/projection/route.ts#GET`, `src/app/auth/callback/route.ts#GET`, `src/app/login/page.tsx#peekQrTokenIfPresent`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/goals/GoalPriorityTradeoffPanel.tsx#GoalPriorityTradeoffPanel`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/FuturePlanningSection.tsx#FuturePlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`, `src/server/actions.ts#applyGuidedBudgetLinesAction`, `src/server/actions.ts#clearBudgetMonthOverrideAction`, `src/server/actions.ts#clearCpfBalanceAction`, `src/server/actions.ts#confirmCpfRulesReviewAction`, `src/server/actions.ts#confirmInvestmentReviewAction`, `src/server/actions.ts#createBudgetLineAction`, `src/server/actions.ts#createCashAccountAction`, `src/server/actions.ts#createGoalAction`, `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingLoanQuickAction`, `src/server/actions.ts#createHousingPropertyAction`, `src/server/actions.ts#createInvestmentAction`, `src/server/actions.ts#createLiabilityAction`, `src/server/actions.ts#createVehicleAction`, `src/server/actions.ts#deleteBudgetLineAction`, `src/server/actions.ts#deleteCashAccountAction`, `src/server/actions.ts#deleteHousingLoanAction`, `src/server/actions.ts#deleteHousingPropertyAction`, `src/server/actions.ts#deleteInvestmentAction`, `src/server/actions.ts#deleteLiabilityAction`, `src/server/actions.ts#deleteVehicleAction`, `src/server/actions.ts#reorderFinancialGoalAction`, `src/server/actions.ts#setBudgetMonthOverrideAction`, `src/server/actions.ts#signOutAction`, `src/server/actions.ts#updateBudgetLineAmountAction`, `src/server/actions.ts#updateBudgetLineScheduleAction`, `src/server/actions.ts#updateCashAccountAction`, `src/server/actions.ts#updateGoalAction`, `src/server/actions.ts#updateHousingLoanAction`, `src/server/actions.ts#updateHousingPropertyAction`, `src/server/actions.ts#updateInvestmentAction`, `src/server/actions.ts#updateLiabilityAction`, `src/server/actions.ts#updateVehicleAction`, `src/server/actions.ts#upsertCpfBalanceAction`, `src/server/advisor-access-key-actions.ts#generateAdvisorAccessKeysPocAction`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-key-purchase-actions.ts#getMyAdvisorContactAction`, `src/server/advisor-key-purchase-actions.ts#requireAdvisorSession`, `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#requireAdvisorDraftProposal`, `src/server/advisor-qr-share-actions.ts#refreshAdvisorQrShareAction`, `src/server/client-consent-actions.ts#getAdvisorConsentGateAction`, `src/server/client-consent-actions.ts#recordAdvisorConsentAction`, `src/server/inbox-actions.ts#requireUser`
+- called by: `src/app/(app)/account-issue/page.tsx#AccountIssuePage`, `src/app/(app)/advisor/access-keys/page.tsx#AdvisorAccessKeysPage`, `src/app/(app)/advisor/buy-keys/page.tsx#AdvisorBuyKeysPage`, `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/advisor/clients/page.tsx#AdvisorClientsPage`, `src/app/(app)/advisor/page.tsx#AdvisorDashboardPage`, `src/app/(app)/advisor/profile/page.tsx#AdvisorProfilePage`, `src/app/(app)/budget/page.tsx#BudgetPage`, `src/app/(app)/onboarding/page.tsx#OnboardingPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`, `src/app/api/budget/route.ts#GET`, `src/app/api/dashboard/route.ts#GET`, `src/app/api/expenses/[id]/route.ts#DELETE`, `src/app/api/expenses/[id]/route.ts#PATCH`, `src/app/api/expenses/route.ts#POST`, `src/app/api/income-tax/route.ts#PATCH`, `src/app/api/profile/route.ts#PATCH`, `src/app/api/projection/route.ts#GET`, `src/app/auth/callback/route.ts#GET`, `src/app/login/page.tsx#peekQrTokenIfPresent`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/GoalPriorityTradeoffPanel.tsx#GoalPriorityTradeoffPanel`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/FuturePlanningSection.tsx#FuturePlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`, `src/server/actions.ts#applyGuidedBudgetLinesAction`, `src/server/actions.ts#clearBudgetMonthOverrideAction`, `src/server/actions.ts#clearCpfBalanceAction`, `src/server/actions.ts#confirmCpfRulesReviewAction`, `src/server/actions.ts#confirmInvestmentReviewAction`, `src/server/actions.ts#createBudgetLineAction`, `src/server/actions.ts#createCashAccountAction`, `src/server/actions.ts#createCpfInvestmentAction`, `src/server/actions.ts#createGoalAction`, `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingLoanQuickAction`, `src/server/actions.ts#createHousingPropertyAction`, `src/server/actions.ts#createInvestmentAction`, `src/server/actions.ts#createLiabilityAction`, `src/server/actions.ts#createVehicleAction`, `src/server/actions.ts#deleteBudgetLineAction`, `src/server/actions.ts#deleteCashAccountAction`, `src/server/actions.ts#deleteCpfInvestmentAction`, `src/server/actions.ts#deleteHousingLoanAction`, `src/server/actions.ts#deleteHousingPropertyAction`, `src/server/actions.ts#deleteInvestmentAction`, `src/server/actions.ts#deleteLiabilityAction`, `src/server/actions.ts#deleteVehicleAction`, `src/server/actions.ts#reorderFinancialGoalAction`, `src/server/actions.ts#setBudgetMonthOverrideAction`, `src/server/actions.ts#signOutAction`, `src/server/actions.ts#updateBudgetLineAmountAction`, `src/server/actions.ts#updateBudgetLineScheduleAction`, `src/server/actions.ts#updateCashAccountAction`, `src/server/actions.ts#updateGoalAction`, `src/server/actions.ts#updateHousingLoanAction`, `src/server/actions.ts#updateHousingPropertyAction`, `src/server/actions.ts#updateInvestmentAction`, `src/server/actions.ts#updateLiabilityAction`, `src/server/actions.ts#updateVehicleAction`, `src/server/actions.ts#upsertCpfBalanceAction`, `src/server/advisor-access-key-actions.ts#generateAdvisorAccessKeysPocAction`, `src/server/advisor-client-actions.ts#requireAdvisorLinkedClient`, `src/server/advisor-key-purchase-actions.ts#getMyAdvisorContactAction`, `src/server/advisor-key-purchase-actions.ts#requireAdvisorSession`, `src/server/advisor-proposal-actions.ts#acceptAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#rejectAdvisorProposalAction`, `src/server/advisor-proposal-actions.ts#requireAdvisorProposalInStatus`, `src/server/advisor-qr-share-actions.ts#refreshAdvisorQrShareAction`, `src/server/client-consent-actions.ts#getAdvisorConsentGateAction`, `src/server/client-consent-actions.ts#recordAdvisorConsentAction`, `src/server/client-consent-actions.ts#updateCategoryVisibilityAction`, `src/server/inbox-actions.ts#requireUser`
 
 ### `src/data/supabase/types.ts` <a id="src-data-supabase-types-ts"></a>
 

@@ -11,21 +11,40 @@ export function AdvisorProposalsTable({
   clientId: string;
   proposals: AdvisorProposalRow[];
 }) {
+  // plain <a>: Next App Router soft-nav (<Link>/router.push) is unreliable in
+  // WebKit/Safari for same-pathname search-param changes — verified flaky across
+  // runs (see AdvisorClientDetailNav). Styling mirrors the Overview compose button.
+  const composeHeader = (
+    <div className="flex justify-end">
+      <a
+        href={`/advisor/client/${clientId}?view=compose`}
+        className="inline-flex shrink-0 items-center rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800"
+      >
+        Compose proposal
+      </a>
+    </div>
+  );
+
   if (proposals.length === 0) {
     return (
-      <div className="rounded-2xl border border-slate-200 bg-slate-50/60 px-5 py-6 text-sm leading-relaxed text-slate-700">
-        <p className="font-semibold text-slate-900">No proposals yet.</p>
-        <p className="mt-3">
-          Proposals you submit for this client will appear here — pending,
-          accepted, rejected, and withdrawn — so you can revisit any of them at
-          any time, even after the client dismisses the inbox notification.
-        </p>
+      <div className="space-y-4">
+        {composeHeader}
+        <div className="rounded-2xl border border-slate-200 bg-slate-50/60 px-5 py-6 text-sm leading-relaxed text-slate-700">
+          <p className="font-semibold text-slate-900">No proposals yet.</p>
+          <p className="mt-3">
+            Proposals you submit for this client will appear here — pending,
+            accepted, rejected, and withdrawn — so you can revisit any of them at
+            any time, even after the client dismisses the inbox notification.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="space-y-4">
+      {composeHeader}
+      <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
       <table className="min-w-full divide-y divide-slate-200 text-sm">
         <thead className="bg-slate-50/80">
           <tr className="text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -77,6 +96,7 @@ export function AdvisorProposalsTable({
           })}
         </tbody>
       </table>
+      </div>
     </div>
   );
 }

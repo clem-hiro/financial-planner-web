@@ -5,6 +5,7 @@ export type MethodologyTopicId =
   | "net-worth"
   | "savings-rate"
   | "monthly-budget-check"
+  | "budget-cash-flow-allocation"
   | "spend-guidance"
   | "investment-projection-36m"
   | "goal-surplus"
@@ -108,6 +109,24 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     ],
   },
   {
+    id: "budget-cash-flow-allocation",
+    title: "Unallocated cash (budget hero)",
+    summary:
+      "How much take-home is left after your monthly budget lines—and how goals and investments relate.",
+    bullets: [
+      "Take-home uses salary-only employee CPF when gross and age band are set on your profile; otherwise stored monthly income.",
+      "Monthly planned is the sum of active monthly budget lines for the month you are viewing (including one-off overrides).",
+      "Unallocated = take-home − monthly planned. This is cash not assigned to any budget category yet.",
+      "Goals and investment accounts keep their own monthly contribution fields. They are shown separately so you do not double-count—if you budget “investments” as a line and also set account contributions, align the numbers.",
+      "After goals & investments = take-home − monthly planned − goal monthly amounts − investment monthly amounts active that month (respecting contribution start/end dates when set).",
+      "Left in plan is different: planned minus logged spend within budgeted categories only.",
+    ],
+    formulas: [
+      "unallocated = take-home − Σ(monthly budget lines)",
+      "after commitments = take-home − Σ(budget lines) − Σ(goals) − Σ(investments active this month)",
+    ],
+  },
+  {
     id: "budget-lines",
     title: "Budget lines and overrides",
     summary:
@@ -157,7 +176,9 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     summary: "Standalone goal math on the Setup → Goals tab.",
     bullets: [
       "Progress uses current saved amount vs target where applicable.",
-      "Time estimates use your entered contributions and return assumptions on that goal or linked investment—simplified and not guaranteed.",
+      "Time estimates use your entered contributions and return assumptions on that goal—simplified and not guaranteed.",
+      "With income in Profile, each goal compares your plan to what monthly surplus can fund after higher-priority goals (same basis as Home).",
+      "If a target date needs more per month than surplus allows, you'll see either a later achievable date at your funded amount or how much monthly spend to free up to keep the date.",
     ],
   },
   {
@@ -165,7 +186,11 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     title: "CPF projection (OA / SA / MA)",
     summary:
       "This is a simplified CPF forecast using your entered balances, salary assumptions, and contribution settings to project OA/SA/MA over time.",
-    bullets: [],
+    bullets: [
+      "MA is capped at the applicable Basic Healthcare Sum (BHS). If MA reaches the cap, MA inflows above the cap are routed into SA in this MVP model.",
+      "The app stores official BHS values through 2026 ($79,000 for the 2026 prevailing / age-65 cohort amount). Future BHS values use a 4% p.a. estimate until CPF releases official figures.",
+      "For members who have turned 65, the BHS uses the cohort year they turned 65; otherwise it uses the prevailing projection year.",
+    ],
     footnote: "Educational illustration only—not tax, legal, or financial advice.",
   },
   {

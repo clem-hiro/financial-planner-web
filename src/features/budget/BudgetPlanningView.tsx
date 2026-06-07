@@ -3,7 +3,12 @@ import { getBudgetPageModel } from "@/data/budget-summary";
 import { spendRecommendationsForUserMonth } from "@/data/spend-recommendations-from-month";
 import { num, sumPlannedMonthlyGoalContributions, profileSalaryTakeHomeMonthly } from "@/data/mappers";
 import { listFinancialGoals } from "@/data/repositories/goals";
+import { listInvestments } from "@/data/repositories/investments";
 import { getProfileById } from "@/data/repositories/profiles";
+import {
+  computeBudgetCashFlowAllocation,
+  sumPlannedMonthlyInvestmentContributions,
+} from "@/domain/finance/budget-cash-flow-allocation";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import type { BudgetLineRow } from "@/data/supabase/types";
 import { BudgetAddForm } from "@/features/budget/BudgetAddForm";
@@ -100,14 +105,23 @@ export async function BudgetPlanningView({
       ? calendarYearParam
       : yearFromYearMonth(month);
 
-  const [model, profile, goals] = await Promise.all([
+  const [model, profile, goals, investments] = await Promise.all([
     getBudgetPageModel(supabase, user.id, month, calendarYear),
     getProfileById(supabase, user.id),
     listFinancialGoals(supabase, user.id),
+    listInvestments(supabase, user.id),
   ]);
   const plannedGoalMonthlyTotal = sumPlannedMonthlyGoalContributions(goals);
+  const plannedInvestmentMonthlyTotal =
+    sumPlannedMonthlyInvestmentContributions(investments, month);
   const currency = profile?.base_currency ?? DEFAULT_BASE_CURRENCY;
   const monthlyIncome = profileSalaryTakeHomeMonthly(profile, month);
+  const cashFlowAllocation = computeBudgetCashFlowAllocation({
+    takeHome: monthlyIncome,
+    plannedBudgetTotal: model.monthly.totals.budget,
+    plannedGoalContributions: plannedGoalMonthlyTotal,
+    plannedInvestmentContributions: plannedInvestmentMonthlyTotal,
+  });
 
   const monthlyAll = model.lineRows.filter((l) => l.cadence === "monthly");
   const { active: activeMonthly, inactive: inactiveMonthly } =
@@ -169,6 +183,7 @@ export async function BudgetPlanningView({
         month={month}
         currency={currency}
         totals={model.monthly.totals}
+        cashFlow={cashFlowAllocation}
         activeMonthlyLines={activeMonthly}
         prevMonth={prevMonth}
         nextMonth={nextMonth}
@@ -364,6 +379,27 @@ export async function BudgetPlanningView({
                 Snapshot
               </p>
               <ul className="mt-2 space-y-1.5 text-xs text-zinc-700">
+                {monthlyIncome != null && (
+                  <>
+                    <li>
+                      Take-home:{" "}
+                      <span className="font-medium text-zinc-900">
+                        {formatCurrency(monthlyIncome, currency)}
+                      </span>
+                    </li>
+                    {cashFlowAllocation.unallocatedAfterBudget != null && (
+                      <li className="text-teal-900">
+                        Unallocated:{" "}
+                        <span className="font-medium">
+                          {formatCurrency(
+                            cashFlowAllocation.unallocatedAfterBudget,
+                            currency
+                          )}
+                        </span>
+                      </li>
+                    )}
+                  </>
+                )}
                 <li>
                   Planned:{" "}
                   <span className="font-medium text-zinc-900">

@@ -30,7 +30,10 @@ function hasVariableCashflows(params: ProjectFutureValueParams): boolean {
       params.contributionGrowthAnnual !== 0) ||
     (params.monthlyWithdrawal != null &&
       Number.isFinite(params.monthlyWithdrawal) &&
-      params.monthlyWithdrawal > 0)
+      params.monthlyWithdrawal > 0) ||
+    (params.annualWithdrawal != null &&
+      Number.isFinite(params.annualWithdrawal) &&
+      params.annualWithdrawal > 0)
   );
 }
 
@@ -57,7 +60,15 @@ function projectFutureValueIterative(params: ProjectFutureValueParams): Money {
     Number.isFinite(params.contributionMonthsLimit)
       ? Math.max(0, Math.floor(params.contributionMonthsLimit))
       : n;
-  const monthlyWithdrawal = Math.max(0, params.monthlyWithdrawal ?? 0);
+  const contributionStartMonth =
+    params.contributionStartMonth != null &&
+    Number.isFinite(params.contributionStartMonth)
+      ? Math.max(0, Math.floor(params.contributionStartMonth))
+      : 0;
+  const annualWithdrawal = Math.max(
+    0,
+    params.annualWithdrawal ?? (params.monthlyWithdrawal ?? 0) * 12
+  );
   const withdrawalStartMonth =
     params.withdrawalStartMonth != null &&
     Number.isFinite(params.withdrawalStartMonth)
@@ -67,15 +78,19 @@ function projectFutureValueIterative(params: ProjectFutureValueParams): Money {
   let value = params.currentValue;
   for (let monthIndex = 0; monthIndex < n; monthIndex++) {
     value *= 1 + r;
-    if (monthIndex < contributionMonthsLimit) {
+    if (
+      monthIndex >= contributionStartMonth &&
+      monthIndex < contributionMonthsLimit
+    ) {
       value += monthlyContributionForMonth(
         params.monthlyContribution,
         contributionGrowthAnnual,
         monthIndex
       );
     }
-    if (monthIndex >= withdrawalStartMonth) {
-      value -= monthlyWithdrawal;
+    const isDecember = (monthIndex + 1) % 12 === 0;
+    if (monthIndex >= withdrawalStartMonth && isDecember) {
+      value -= annualWithdrawal;
     }
     value = Math.max(0, value);
   }
@@ -96,18 +111,29 @@ export function projectFutureValue(params: ProjectFutureValueParams): Money {
     return projectFutureValueIterative(params);
   }
 
-  let contributionWindow = n;
+  const contributionStartMonth =
+    params.contributionStartMonth != null &&
+    Number.isFinite(params.contributionStartMonth)
+      ? Math.max(0, Math.floor(params.contributionStartMonth))
+      : 0;
+
+  let contributionEndMonth = n;
   if (
     params.contributionMonthsLimit != null &&
     Number.isFinite(params.contributionMonthsLimit)
   ) {
-    contributionWindow = Math.max(
+    contributionEndMonth = Math.max(
       0,
       Math.min(n, Math.floor(params.contributionMonthsLimit))
     );
   }
 
-  if (contributionWindow >= n) {
+  const contributionMonths = Math.max(
+    0,
+    contributionEndMonth - contributionStartMonth
+  );
+
+  if (contributionStartMonth === 0 && contributionEndMonth >= n) {
     return futureValueEndOfMonthWindow(
       currentValue,
       monthlyContribution,
@@ -116,13 +142,32 @@ export function projectFutureValue(params: ProjectFutureValueParams): Money {
     );
   }
 
-  const mid = futureValueEndOfMonthWindow(
-    currentValue,
-    monthlyContribution,
-    annualReturn,
-    contributionWindow
-  );
-  return futureValueEndOfMonthWindow(mid, 0, annualReturn, n - contributionWindow);
+  let value = currentValue;
+  if (contributionStartMonth > 0) {
+    value = futureValueEndOfMonthWindow(
+      value,
+      0,
+      annualReturn,
+      Math.min(contributionStartMonth, n)
+    );
+  }
+  const afterStart = Math.max(0, n - contributionStartMonth);
+  if (contributionMonths > 0 && afterStart > 0) {
+    const contribSpan = Math.min(contributionMonths, afterStart);
+    value = futureValueEndOfMonthWindow(
+      value,
+      monthlyContribution,
+      annualReturn,
+      contribSpan
+    );
+    const tail = afterStart - contribSpan;
+    if (tail > 0) {
+      value = futureValueEndOfMonthWindow(value, 0, annualReturn, tail);
+    }
+  } else if (afterStart > 0) {
+    value = futureValueEndOfMonthWindow(value, 0, annualReturn, afterStart);
+  }
+  return value;
 }
 
 /**

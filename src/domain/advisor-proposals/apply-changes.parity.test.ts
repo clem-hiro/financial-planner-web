@@ -33,8 +33,10 @@ const NUMERIC_STRING_COLS: Record<string, string[]> = {
     "current_value",
     "monthly_contribution",
     "expected_annual_return",
+    "investment_income_rate_annual",
     "contribution_growth_annual",
     "contribution_duration_years",
+    "withdrawal_annual",
     "withdrawal_monthly",
     "withdrawal_start_years",
   ],
@@ -272,9 +274,11 @@ const investmentValueShape = (rows: Array<Record<string, unknown>>) =>
       current_value: i.current_value,
       monthly_contribution: i.monthly_contribution,
       expected_annual_return: i.expected_annual_return,
+      investment_income_rate_annual: i.investment_income_rate_annual ?? "0",
       contribution_growth_annual: i.contribution_growth_annual,
       contribution_type: i.contribution_type ?? null,
       contribution_duration_years: i.contribution_duration_years ?? null,
+      withdrawal_annual: i.withdrawal_annual ?? "0",
       withdrawal_monthly: i.withdrawal_monthly,
       withdrawal_start_years: i.withdrawal_start_years ?? null,
     }))
@@ -290,6 +294,7 @@ describe("C6 anti-drift: overlay == canonical state after the accept path runs",
       ch({ entity_type: "profile", field_key: "retirement_dividend_yield_annual", new_value: "0.05", old_value: "0.03", section: "retirement_planning" }),
       ch({ entity_type: "profile", field_key: "retirement_withdrawal_rate_annual", new_value: "0.035", old_value: "0.04", section: "retirement_planning" }),
       ch({ entity_type: "profile", field_key: "annual_salary_growth_nominal", new_value: "0.04", old_value: "0.02" }),
+      ch({ entity_type: "profile", field_key: "expense_growth_nominal", new_value: "0.025", old_value: "0.02", section: "retirement_planning" }),
       ch({ entity_type: "profile", field_key: "target_retirement_age", new_value: "60", old_value: "65", section: "retirement_planning" }),
       ch({ entity_type: "budget_line", entity_id: "bl1", field_key: "amount", new_value: "950", old_value: "800", section: "cash_flow" }),
       ch({ entity_type: "goal", entity_id: "g1", field_key: "monthly_contribution", new_value: "750", old_value: "300", section: "goals" }),
@@ -341,6 +346,7 @@ describe("C6 anti-drift: overlay == canonical state after the accept path runs",
     expect((prof.data as Row).retirement_dividend_yield_annual).toBe("0.05");
     expect((prof.data as Row).retirement_withdrawal_rate_annual).toBe("0.035");
     expect((prof.data as Row).annual_salary_growth_nominal).toBe("0.04");
+    expect((prof.data as Row).expense_growth_nominal).toBe("0.025");
 
     expect((bls.data as Row[])).toEqual(overlay.budgetLines);
     expect((gls.data as Row[])).toEqual(overlay.goals);

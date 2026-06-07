@@ -154,6 +154,24 @@ export async function countChangesForProposal(
 }
 
 /**
+ * Count of proposals awaiting this client's action (advisor-submitted, not yet
+ * accepted/rejected). Drives the "you have something to review" badge. Read-side
+ * RLS already scopes the client to their own rows.
+ */
+export async function countPendingProposalsForClient(
+  supabase: SupabaseClient,
+  clientId: string
+): Promise<number> {
+  const { count, error } = await supabase
+    .from("advisor_proposals")
+    .select("id", { count: "exact", head: true })
+    .eq("client_user_id", clientId)
+    .eq("status", "pending");
+  if (error) throw error;
+  return count ?? 0;
+}
+
+/**
  * Upserts a field-level change on a draft proposal. Reverts to canonical when
  * new value equals old (removes the change row).
  */

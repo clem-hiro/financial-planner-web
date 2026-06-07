@@ -59,6 +59,13 @@ export type CpfRaSimulation = {
   shortfall: number;
 };
 
+export type CpfSaInvestmentMaturityRouting = {
+  toSa: number;
+  toRa: number;
+  toOa: number;
+  raShortfallAfterRouting: number;
+};
+
 export type CpfScenarioExample = {
   id: "high_sa" | "mostly_oa" | "below_frs";
   label: string;
@@ -216,6 +223,42 @@ export function simulateRaFormationAt55(params: {
     afterRaCreation: { ra, remainingOa },
     fullyFunded: shortfall === 0,
     shortfall,
+  };
+}
+
+/**
+ * CPFIS-SA proceeds return to SA before age 55. Once SA is closed, proceeds
+ * top up RA to the selected retirement-sum target first; any excess goes to OA.
+ */
+export function routeCpfSaInvestmentMaturityProceeds(params: {
+  proceeds: number;
+  memberAgeAtMaturity: number;
+  currentRaBalance: number;
+  targetRetirementSum: number;
+}): CpfSaInvestmentMaturityRouting {
+  const proceeds = round2(Math.max(0, params.proceeds));
+  const age = Math.max(0, params.memberAgeAtMaturity);
+  const currentRa = round2(Math.max(0, params.currentRaBalance));
+  const target = round2(Math.max(0, params.targetRetirementSum));
+
+  if (age < CPF_RA_FORMATION_AGE) {
+    return {
+      toSa: proceeds,
+      toRa: 0,
+      toOa: 0,
+      raShortfallAfterRouting: round2(Math.max(0, target - currentRa)),
+    };
+  }
+
+  const raTopUpRoom = round2(Math.max(0, target - currentRa));
+  const toRa = round2(Math.min(proceeds, raTopUpRoom));
+  const toOa = round2(proceeds - toRa);
+
+  return {
+    toSa: 0,
+    toRa,
+    toOa,
+    raShortfallAfterRouting: round2(Math.max(0, target - currentRa - toRa)),
   };
 }
 

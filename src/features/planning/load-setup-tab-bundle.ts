@@ -6,6 +6,10 @@ import {
   advisorReadCpfBalances,
 } from "@/data/repositories/cpf-balances";
 import {
+  advisorReadCpfInvestments,
+  listCpfInvestments,
+} from "@/data/repositories/cpf-investments";
+import {
   listCashAccounts,
   advisorReadCashAccounts,
 } from "@/data/repositories/cash-accounts";
@@ -41,6 +45,7 @@ import type {
   CashAccountRow,
   CashAccountSnapshotRow,
   CpfBalanceRow,
+  CpfInvestmentRow,
   FinancialGoalRow,
   HousingLoanRow,
   PropertyRow,
@@ -56,6 +61,7 @@ export type SetupTabBundle = {
   liabilityRows: LiabilityRow[];
   vehicleRows: VehicleRow[];
   cpfRow: CpfBalanceRow | null;
+  cpfInvestments: CpfInvestmentRow[];
   properties: PropertyRow[];
   housingLoans: HousingLoanRow[];
   goals: FinancialGoalRow[];
@@ -95,6 +101,7 @@ export async function loadSetupTabBundle(
     liabilityRows,
     vehicleRows,
     cpfRow,
+    cpfInvestments,
     properties,
     housingLoans,
     goals,
@@ -134,6 +141,12 @@ export async function loadSetupTabBundle(
           userId
         )
       : Promise.resolve(null),
+    needCpf
+      ? (isAdvisorViewer ? advisorReadCpfInvestments : listCpfInvestments)(
+          supabase,
+          userId
+        )
+      : Promise.resolve([] as CpfInvestmentRow[]),
     needHousing
       ? (isAdvisorViewer ? advisorReadProperties : listProperties)(
           supabase,
@@ -161,6 +174,7 @@ export async function loadSetupTabBundle(
     liabilityRows,
     vehicleRows,
     cpfRow,
+    cpfInvestments,
     properties,
     housingLoans,
     goals,

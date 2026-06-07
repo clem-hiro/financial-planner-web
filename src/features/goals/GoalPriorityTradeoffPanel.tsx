@@ -1,5 +1,8 @@
 import Link from "next/link";
-import { loadGoalTradeoffContext } from "@/data/goal-tradeoff-context";
+import {
+  loadGoalTradeoffContext,
+  type GoalTradeoffContext,
+} from "@/data/goal-tradeoff-context";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { formatCurrency } from "@/ui/lib/format";
@@ -7,11 +10,22 @@ import { formatCurrency } from "@/ui/lib/format";
 type Props = {
   userId: string;
   currency: string;
+  /** When provided, skips a second load (parent already fetched). */
+  tradeoffCtx?: GoalTradeoffContext | null;
 };
 
-export async function GoalPriorityTradeoffPanel({ userId, currency }: Props) {
-  const supabase = await createSupabaseServerClient();
-  const ctx = await loadGoalTradeoffContext(supabase, userId);
+export async function GoalPriorityTradeoffPanel({
+  userId,
+  currency,
+  tradeoffCtx: tradeoffCtxProp,
+}: Props) {
+  const ctx =
+    tradeoffCtxProp !== undefined
+      ? tradeoffCtxProp
+      : await loadGoalTradeoffContext(
+          await createSupabaseServerClient(),
+          userId
+        );
   if (!ctx) return null;
 
   const { yearMonth, analysis } = ctx;

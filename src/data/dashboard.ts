@@ -3,16 +3,23 @@ import {
   ageCompletedOnDate,
   analyzeRetirementDividendVsSpend,
   analyzeRetirementSpendVsPortfolio,
-  buildAgeAssetProjection,
   buildCpfMonthlyProjectionSeries,
   buildDashboardInsights,
   buildNetWorthByAgeProjection,
   buildHousingPaymentInsights,
+  buildRetirementCashflowProjection,
   buildSpendRecommendationsForMonth,
   calculateNetWorth,
   calculateSavingsRate,
+  annualWithdrawalFromInvestmentRow,
+  contributionMonthsLimitFromInvestmentRow,
+  contributionStartMonthFromInvestmentRow,
+  investmentMaturityMonthFromInvestmentRow,
   oaShareForCpfProjection,
+  withdrawalStartMonthFromInvestmentRow,
   DEFAULT_RETIREMENT_DIVIDEND_YIELD_ANNUAL,
+  DEFAULT_CPF_LIFE_PAYOUT_RATE_ANNUAL,
+  DEFAULT_CPF_LIFE_START_AGE,
   cumulativeVehicleProceedsToCash,
   effectiveLoanBalance,
   futureValueInvestmentPortfolioAtMonth,
@@ -21,8 +28,19 @@ import {
   topOverBudgetCategories,
   vehicleGrossAssetEstimate,
   vehicleNetListedBeforeLiquidation,
+  vehicleNetProceedsAtCoeMonthEnd,
 } from "@/domain/finance";
-import type { HousingLoanProjectionInput } from "@/domain/finance";
+import { buildPropertyEquityBreakdown } from "@/domain/housing";
+import type {
+  CpfInvestmentProjectionInput,
+  HousingLoanProjectionInput,
+  ProjectionAssetSnapshot,
+  ProjectionInvestmentComponent,
+  ProjectionLedgerEntry,
+  ProjectionOutflowBreakdownItem,
+  ProjectionPeriodRow,
+  RetirementCashflowProjectionResult,
+} from "@/domain/finance";
 import type { RetirementDividendVsSpendResult } from "@/domain/finance";
 import {
   type SgCpfAgeBand,
@@ -64,6 +82,10 @@ import {
   advisorReadCpfBalances,
 } from "@/data/repositories/cpf-balances";
 import {
+  advisorReadCpfInvestments,
+  listCpfInvestments,
+} from "@/data/repositories/cpf-investments";
+import {
   listFinancialGoals,
   advisorReadGoals,
 } from "@/data/repositories/goals";
@@ -75,6 +97,10 @@ import {
   listLiabilities,
   advisorReadLiabilities,
 } from "@/data/repositories/liabilities";
+import {
+  listProperties,
+  advisorReadProperties,
+} from "@/data/repositories/properties";
 import {
   listVehicles,
   advisorReadVehicles,
@@ -95,7 +121,11 @@ import {
 } from "@/data/repositories/investments";
 import { buildSyntheticTaxExpense } from "@/data/income-tax-synthetic-expense";
 import { buildSyntheticHousingCashExpense } from "@/data/housing-cash-synthetic-expense";
-import type { HousingLoanRow } from "@/data/supabase/types";
+import type {
+  CpfBalanceRow,
+  CpfInvestmentRow,
+  HousingLoanRow,
+} from "@/data/supabase/types";
 import {
   buildInvestmentProjectionSeries,
   projectionSnapshotFromInvestmentRows,
@@ -105,6 +135,11 @@ import { birthDateIsValidPast } from "@/lib/validation";
 import type { AgeAssetBreakdownPoint } from "@/data/age-asset-breakdown";
 import { applyProposalChanges } from "@/domain/advisor-proposals/apply-overlay";
 import type { AdvisorProposalChangeRow } from "@/data/supabase/types";
+import {
+  addCalendarMonths,
+  addMonthsToYearMonth,
+  formatYearMonth,
+} from "@/lib/dates";
 
 /**
  * Server-only, role-gated. When `proposalOverlay` is present the four
@@ -145,11 +180,19 @@ export type DashboardPayload = {
     /** vehiclesGrossAsset − vehiclesLoan; already included in `net`. */
     vehiclesNet: number;
     vehicleCount: number;
+    /** Current owned property valuation basis after ownership share. */
+    propertiesGrossAsset: number;
+    /** Scheduled mortgage balance linked to current owned properties. */
+    propertiesLoan: number;
+    /** propertiesGrossAsset − propertiesLoan; already included in `net`. */
+    propertiesNet: number;
+    propertyCount: number;
     net: number;
   };
   /**
    * CPF buckets at each projected age, aligned to `ageProjection.points`.
-   * Null when birth date is missing/invalid or CPF balances are not saved.
+   * Null when birth date is missing/invalid or gross salary inputs are missing.
+   * If CPF balances are not saved, projections start from a virtual $0 snapshot.
    */
   cpfProjectionByAge: Array<{
     age: number;
@@ -157,8 +200,25 @@ export type DashboardPayload = {
     sa: number;
     ma: number;
     cpfis: number;
+    ra: number;
     totalCpf: number;
   }> | null;
+  cpfYearEndProjection: {
+    balanceAsOfMonth: string;
+    startYearMonth: string | null;
+    targetYearMonth: string;
+    projectedMonths: number;
+    oa: number;
+    sa: number;
+    ma: number;
+    ra: number;
+    cpfis: number;
+    totalCpf: number;
+  } | null;
+  cpfProjectionMissingInputs: Array<{
+    label: string;
+    href: string;
+  }>;
   /** Vertical markers on the CPF chart (e.g. keys / repayment start). */
   cpfHousingMarkers: Array<{ age: number; label: string }>;
   /**
@@ -175,7 +235,7 @@ export type DashboardPayload = {
   /** Planned monthly budget: active monthly lines in that month, with overrides. */
   monthlyPlannedMonthlyBudgetTotal: number;
   /**
-   * Spend used for savings rate, discretionary math, and by-age cash accrual:
+   * Spend used for savings rate and dashboard-month discretionary math:
    * logged total when any expense exists in the month, otherwise planned monthly budget.
    */
   monthlyExpensesTotal: number;
@@ -190,12 +250,16 @@ export type DashboardPayload = {
   };
   projectionPreview: ProjectionSeriesPoint[];
   /**
-   * Simplified net worth by age (investments compound; cash grows by monthly surplus;
-   * debt held flat).
+   * Net worth by age from the time-aware cash-flow ledger: cash-accessible
+   * inflows cover active outflows first; portfolio yield and then principal cover
+   * any remaining deficit.
    * Null when birth date is not set or invalid.
    */
   ageProjection: {
+    /** Default cash-off retirement runway scenario. */
     points: AgeAssetBreakdownPoint[];
+    /** Alternate chart scenario: retirement deficits may spend cash after investments/ILP. */
+    cashReservePoints: AgeAssetBreakdownPoint[];
     currentAge: number;
     targetRetirementAge: number;
     projectedAtRetirement: number;
@@ -208,22 +272,24 @@ export type DashboardPayload = {
     annualBonusPayoutMonth: number;
     /**
      * CPF notionals at the age used for the headline retirement path (target
-     * age, or today’s age when you are already at/past target). Null without CPF data.
+     * age, or today’s age when you are already at/past target). Null without projected CPF data.
      */
     cpfBucketsAtTargetRetirement: {
       age: number;
       oa: number;
       sa: number;
       ma: number;
+      ra: number;
       cpfis: number;
       totalCpf: number;
     } | null;
-    /** Monthly flows for transparency; only account contributions compound in FV. */
+    /** Dashboard-month context for legacy cards and method notes. */
     netWorthByAgeModel: {
       fromInvestmentAccountContributions: number;
       /**
        * Take-home minus expenses minus sum of planned monthly goal contributions
-       * (dashboard month); floored at 0. Accrues into projected cash, not investment FV.
+       * (dashboard month); floored at 0. Dated goal events, not monthly
+       * contributions, drive the long-horizon cash-flow ledger.
        */
       fromTakeHomeSurplus: number;
       takeHomePerMonth: number | null;
@@ -330,10 +396,286 @@ function housingLoanToProjection(
   };
 }
 
+function cpfInvestmentToProjection(
+  row: CpfInvestmentRow
+): CpfInvestmentProjectionInput {
+  return {
+    account: row.account,
+    purchaseMonth: row.purchase_month,
+    premiumType: row.premium_type,
+    amount: num(row.amount),
+    projectedGrowthAnnual: num(row.projected_growth_annual),
+    maturityMonth: row.maturity_month,
+  };
+}
+
 function ageAtEndOfYearMonth(birthYmd: string, yearMonth: string): number {
   const [y, m] = yearMonth.split("-").map(Number);
   const asOf = new Date(y, m, 0, 12, 0, 0, 0);
   return ageCompletedOnDate(birthYmd, asOf);
+}
+
+function isYearMonth(value: string | null | undefined): value is string {
+  return value != null && /^\d{4}-\d{2}$/.test(value);
+}
+
+function monthDistance(startYm: string, endYm: string): number {
+  const [sy, sm] = startYm.split("-").map(Number);
+  const [ey, em] = endYm.split("-").map(Number);
+  return (ey - sy) * 12 + (em - sm);
+}
+
+function annualGrowthMultiplierAtYear(
+  startYearMonth: string,
+  year: number,
+  growthAnnual: number
+): number {
+  if (growthAnnual === 0) return 1;
+  let cursor = startYearMonth;
+  const targetJanuary = `${year}-01`;
+  let multiplier = 1;
+  while (cursor <= targetJanuary) {
+    if (cursor.endsWith("-01") && cursor > startYearMonth) {
+      multiplier *= 1 + growthAnnual;
+    }
+    cursor = addMonthsToYearMonth(cursor, 1);
+  }
+  return multiplier;
+}
+
+/**
+ * Per-age points are sampled one month per age, but retirement spend, dividends, and
+ * bonuses are annual lump events. Summing flow fields over the sample's calendar year
+ * makes the chart show the full year's spending/shortfall regardless of which month the
+ * birthday-aligned sample lands on. Transition years are split by lifecycle phase so a
+ * retired sample does not inherit pre-retirement salary from the same calendar year.
+ * Stock fields stay point-sampled.
+ */
+const PROJECTION_FLOW_FIELDS = [
+  "cashAccessibleInflow",
+  "requiredOutflow",
+  "prePortfolioGap",
+  "investmentYieldAvailable",
+  "investmentYieldUsed",
+  "principalWithdrawn",
+  "investmentPrincipalWithdrawn",
+  "ilpPrincipalWithdrawn",
+  "employmentInflow",
+  "investmentDividendInflow",
+  "ilpIncomeInflow",
+  "cpfLifeInflow",
+  "rentalInflow",
+  "investmentWithdrawalInflow",
+  "cashReserveDrawdown",
+  "goalsGap",
+  "scheduledInvestmentTransfer",
+  "fundedInvestmentTransfer",
+] as const;
+
+type ProjectionFlowSums = Record<(typeof PROJECTION_FLOW_FIELDS)[number], number>;
+
+const ANNUALIZED_OUTFLOW_SOURCE_TYPES = new Set([
+  "planned_expense",
+  "tax",
+  "housing_cash",
+  "retirement_spend",
+]);
+
+function sumProjectionFlows(rows: ProjectionPeriodRow[]): ProjectionFlowSums {
+  const sums = Object.fromEntries(
+    PROJECTION_FLOW_FIELDS.map((field) => [field, 0])
+  ) as ProjectionFlowSums;
+  for (const row of rows) {
+    for (const field of PROJECTION_FLOW_FIELDS) sums[field] += row[field];
+  }
+  return sums;
+}
+
+function annualizationFactorForRows(rows: ProjectionPeriodRow[]): number {
+  if (rows.length <= 0 || rows.length >= 12) return 1;
+  return 12 / rows.length;
+}
+
+function sumProjectionOutflows(
+  rows: ProjectionPeriodRow[],
+  annualizationFactor: number
+): ProjectionOutflowBreakdownItem[] {
+  const sums = new Map<string, ProjectionOutflowBreakdownItem>();
+  for (const row of rows) {
+    for (const item of row.outflowBreakdown) {
+      const itemFactor = ANNUALIZED_OUTFLOW_SOURCE_TYPES.has(item.sourceType)
+        ? annualizationFactor
+        : 1;
+      const amount = item.amount * itemFactor;
+      const existing = sums.get(item.key);
+      if (existing) {
+        existing.amount += amount;
+      } else {
+        sums.set(item.key, { ...item, amount });
+      }
+    }
+  }
+  return Array.from(sums.values()).sort((a, b) => b.amount - a.amount);
+}
+
+function annualizeProjectionFlows(
+  flows: ProjectionFlowSums,
+  outflows: ProjectionOutflowBreakdownItem[],
+  annualizationFactor: number
+): ProjectionFlowSums {
+  if (annualizationFactor === 1) {
+    return {
+      ...flows,
+      requiredOutflow:
+        outflows.reduce((sum, item) => sum + item.amount, 0) ||
+        flows.requiredOutflow,
+    };
+  }
+
+  const rawNamedCashInflow =
+    flows.employmentInflow +
+    flows.investmentDividendInflow +
+    flows.ilpIncomeInflow +
+    flows.cpfLifeInflow +
+    flows.rentalInflow +
+    flows.investmentWithdrawalInflow;
+  const rawOtherCashInflow = Math.max(
+    0,
+    flows.cashAccessibleInflow - rawNamedCashInflow
+  );
+
+  const annualized: ProjectionFlowSums = { ...flows };
+  annualized.employmentInflow *= annualizationFactor;
+  annualized.cpfLifeInflow *= annualizationFactor;
+  annualized.rentalInflow *= annualizationFactor;
+  annualized.principalWithdrawn *= annualizationFactor;
+  annualized.investmentPrincipalWithdrawn *= annualizationFactor;
+  annualized.ilpPrincipalWithdrawn *= annualizationFactor;
+  annualized.cashReserveDrawdown *= annualizationFactor;
+  annualized.goalsGap *= annualizationFactor;
+  annualized.scheduledInvestmentTransfer *= annualizationFactor;
+  annualized.fundedInvestmentTransfer *= annualizationFactor;
+
+  annualized.cashAccessibleInflow =
+    rawOtherCashInflow +
+    annualized.employmentInflow +
+    annualized.investmentDividendInflow +
+    annualized.ilpIncomeInflow +
+    annualized.cpfLifeInflow +
+    annualized.rentalInflow +
+    annualized.investmentWithdrawalInflow;
+  annualized.requiredOutflow =
+    outflows.reduce((sum, item) => sum + item.amount, 0) ||
+    flows.requiredOutflow * annualizationFactor;
+  annualized.prePortfolioGap =
+    annualized.cashAccessibleInflow - annualized.requiredOutflow;
+  return annualized;
+}
+
+function sampleYearPhaseFlowRows({
+  rows,
+  sample,
+  startYearMonth,
+  retirementStartMonth,
+}: {
+  rows: ProjectionPeriodRow[];
+  sample: ProjectionPeriodRow;
+  startYearMonth: string;
+  retirementStartMonth: number;
+}): ProjectionPeriodRow[] {
+  const sampleYear = sample.yearMonth.slice(0, 4);
+  const sampleIsPostRetirement = sample.phase === "post_retirement";
+  return rows.filter((row) => {
+    if (row.month <= 0) return false;
+
+    // Period rows store the state after a month has been applied. Flow fields
+    // therefore belong to the prior month, not the row's state month.
+    const flowMonth = row.month - 1;
+    const flowYearMonth = addMonthsToYearMonth(startYearMonth, flowMonth);
+    if (flowYearMonth.slice(0, 4) !== sampleYear) return false;
+
+    return sampleIsPostRetirement
+      ? flowMonth >= retirementStartMonth
+      : flowMonth < retirementStartMonth;
+  });
+}
+
+function retirementSpendLedgerEntries({
+  startYearMonth,
+  horizonMonths,
+  retirementStartMonth,
+  monthlySpend,
+  growthAnnual,
+}: {
+  startYearMonth: string;
+  horizonMonths: number;
+  retirementStartMonth: number;
+  monthlySpend: number;
+  growthAnnual: number;
+}): ProjectionLedgerEntry[] {
+  const entries: ProjectionLedgerEntry[] = [];
+  const startYear = Number(startYearMonth.slice(0, 4));
+  const endYear = Number(
+    addMonthsToYearMonth(startYearMonth, horizonMonths).slice(0, 4)
+  );
+  for (let year = startYear; year <= endYear; year++) {
+    const yearStartMonth = monthDistance(startYearMonth, `${year}-01`);
+    const nextYearStartMonth = monthDistance(startYearMonth, `${year + 1}-01`);
+    const activeStart = Math.max(0, retirementStartMonth, yearStartMonth);
+    const activeEnd = Math.min(horizonMonths, nextYearStartMonth);
+    if (activeEnd <= activeStart) continue;
+
+    const activeMonths = activeEnd - activeStart;
+    const paymentMonth =
+      yearStartMonth >= retirementStartMonth && yearStartMonth >= 0
+        ? yearStartMonth
+        : activeStart;
+    entries.push({
+      id: `retirement-spend-need-${year}`,
+      sourceType: "retirement_spend",
+      label: `Retirement spend need ${year}`,
+      direction: "outflow",
+      cashAccess: "cash",
+      phase: "post_retirement",
+      cadence: "one_off",
+      startMonth: paymentMonth,
+      amount:
+        monthlySpend *
+        activeMonths *
+        annualGrowthMultiplierAtYear(startYearMonth, year, growthAnnual),
+    });
+  }
+  return entries;
+}
+
+function cpfInitialSnapshot(cpfRow: CpfBalanceRow | null) {
+  return {
+    oa: cpfRow ? num(cpfRow.oa) : 0,
+    sa: cpfRow ? num(cpfRow.sa) : 0,
+    ma: cpfRow ? num(cpfRow.ma) : 0,
+    ra: 0,
+    oaAnnualRate:
+      cpfRow &&
+      cpfRow.oa_annual_rate != null &&
+      String(cpfRow.oa_annual_rate).trim() !== ""
+        ? num(cpfRow.oa_annual_rate)
+        : undefined,
+    saAnnualRate:
+      cpfRow &&
+      cpfRow.sa_annual_rate != null &&
+      String(cpfRow.sa_annual_rate).trim() !== ""
+        ? num(cpfRow.sa_annual_rate)
+        : undefined,
+    maAnnualRate:
+      cpfRow &&
+      cpfRow.ma_annual_rate != null &&
+      String(cpfRow.ma_annual_rate).trim() !== ""
+        ? num(cpfRow.ma_annual_rate)
+        : undefined,
+    cpfisMonthlyFromOa: cpfRow ? num(cpfRow.cpfis_monthly_from_oa) : 0,
+    cpfisNotionalBalance: cpfRow ? num(cpfRow.cpfis_notional_balance) : 0,
+    cpfisAnnualReturn: cpfRow ? num(cpfRow.cpfis_annual_return) : 0,
+  };
 }
 
 function buildCpfHousingMarkers(
@@ -373,14 +715,16 @@ export async function getDashboardPayload(
     baseProfile,
     expenses,
     baseInvestments,
-    cashAccounts,
-    liabilityRows,
+    baseCashAccounts,
+    baseLiabilityRows,
     baseBudgetLineRows,
     overrideRows,
     baseGoals,
     cpfRow,
-    housingLoanRows,
-    vehicleRows,
+    cpfInvestmentRows,
+    baseHousingLoanRows,
+    baseVehicleRows,
+    baseProperties,
     incomeTaxConfig,
   ] = await Promise.all([
     // Consent chokepoint: advisor viewer ⇒ consent-gated RPC (fail-closed
@@ -422,11 +766,17 @@ export async function getDashboardPayload(
       ? advisorReadCpfBalances(supabase, userId)
       : getCpfBalanceByUserId(supabase, userId),
     isAdvisorViewer
+      ? advisorReadCpfInvestments(supabase, userId)
+      : listCpfInvestments(supabase, userId),
+    isAdvisorViewer
       ? advisorReadHousingLoans(supabase, userId)
       : listHousingLoans(supabase, userId),
     isAdvisorViewer
       ? advisorReadVehicles(supabase, userId)
       : listVehicles(supabase, userId),
+    isAdvisorViewer
+      ? advisorReadProperties(supabase, userId)
+      : listProperties(supabase, userId),
     isAdvisorViewer
       ? advisorReadIncomeTaxConfig(supabase, userId)
       : getIncomeTaxConfig(supabase, userId),
@@ -444,7 +794,17 @@ export async function getDashboardPayload(
   // design — reject any persisted overlay snapshot or duplicate mapper. See
   // HANDOFF §7.
   const overlay = opts?.proposalOverlay;
-  const { profile, investments, budgetLines: budgetLineRows, goals } =
+  const {
+    profile,
+    investments,
+    budgetLines: budgetLineRows,
+    goals,
+    cashAccounts = baseCashAccounts,
+    liabilities: liabilityRows = baseLiabilityRows,
+    vehicles: vehicleRows = baseVehicleRows,
+    properties = baseProperties,
+    housingLoans: housingLoanRows = baseHousingLoanRows,
+  } =
     overlay && overlay.length > 0
       ? applyProposalChanges(
           {
@@ -452,6 +812,11 @@ export async function getDashboardPayload(
             investments: baseInvestments,
             budgetLines: baseBudgetLineRows,
             goals: baseGoals,
+            cashAccounts: baseCashAccounts,
+            liabilities: baseLiabilityRows,
+            vehicles: baseVehicleRows,
+            properties: baseProperties,
+            housingLoans: baseHousingLoanRows,
           },
           overlay
         )
@@ -460,6 +825,11 @@ export async function getDashboardPayload(
           investments: baseInvestments,
           budgetLines: baseBudgetLineRows,
           goals: baseGoals,
+          cashAccounts: baseCashAccounts,
+          liabilities: baseLiabilityRows,
+          vehicles: baseVehicleRows,
+          properties: baseProperties,
+          housingLoans: baseHousingLoanRows,
         };
 
   const amountOverrideByLineId = overridesToLineIdMap(overrideRows);
@@ -502,7 +872,8 @@ export async function getDashboardPayload(
   /**
    * Cash left after spend basis (logged when any expense in the month, else planned
    * monthly budget) and planned goal contributions (floored at 0).
-   * Accrues into projected cash on the by-age chart, not into investment FV.
+   * Kept for dashboard-month cards; the by-age projection now uses dated ledger
+   * events instead of repeating this scalar.
    */
   const monthlyInvestableSurplus =
     income != null
@@ -553,6 +924,117 @@ export async function getDashboardPayload(
           12
       )
     : null;
+  const grossMonthlyForCpf = profileMonthlyGross(profile);
+  const bandStrForCpf = profileCpfAgeBand(profile);
+  const fixedCpfBand: SgCpfAgeBand | undefined =
+    bandStrForCpf === "below_55" ||
+    bandStrForCpf === "above_55_to_60" ||
+    bandStrForCpf === "above_60_to_65" ||
+    bandStrForCpf === "above_65_to_70" ||
+    bandStrForCpf === "above_70"
+      ? bandStrForCpf
+      : undefined;
+  const cpfProjectionMissingInputs: DashboardPayload["cpfProjectionMissingInputs"] =
+    [];
+  if (cpfRow && !isYearMonth(cpfRow.balance_as_of_month)) {
+    cpfProjectionMissingInputs.push({
+      label: "CPF balance as-of month",
+      href: "/setup?tab=cpf#cpf-balances",
+    });
+  }
+  if (grossMonthlyForCpf == null || grossMonthlyForCpf <= 0) {
+    cpfProjectionMissingInputs.push({
+      label: "Monthly gross salary",
+      href: "/setup?tab=profile#profile-assumptions",
+    });
+  }
+  if (!birthValidForAge && fixedCpfBand == null) {
+    cpfProjectionMissingInputs.push({
+      label: "Birth date or CPF age band",
+      href: "/setup?tab=profile#profile-assumptions",
+    });
+  }
+  const cpfBalanceAsOfMonth = cpfRow ? cpfRow.balance_as_of_month : yearMonth;
+  const cpfProjectionBalanceAsOfMonth = isYearMonth(cpfBalanceAsOfMonth)
+    ? cpfBalanceAsOfMonth
+    : null;
+  const cpfProjectionStartYearMonth = cpfProjectionBalanceAsOfMonth
+    ? addMonthsToYearMonth(cpfProjectionBalanceAsOfMonth, 1)
+    : null;
+  const cpfEmploymentContributionEndMonth =
+    cpfProjectionStartYearMonth != null && monthsToRetirementHorizon != null
+      ? Math.max(
+          0,
+          monthDistance(
+            cpfProjectionStartYearMonth,
+            addMonthsToYearMonth(yearMonth, monthsToRetirementHorizon)
+          )
+        )
+      : null;
+  const cpfYearEndTargetYearMonth = `${yearMonth.slice(0, 4)}-12`;
+  let cpfYearEndProjection: DashboardPayload["cpfYearEndProjection"] = null;
+  let cpfMonthlySeriesForProjection:
+    | ReturnType<typeof buildCpfMonthlyProjectionSeries>
+    | null = null;
+  if (
+    cpfProjectionMissingInputs.length === 0 &&
+    cpfProjectionBalanceAsOfMonth != null &&
+    cpfProjectionStartYearMonth != null &&
+    grossMonthlyForCpf != null
+  ) {
+    const monthsToYearEnd = monthDistance(
+      cpfProjectionStartYearMonth,
+      cpfYearEndTargetYearMonth
+    );
+    if (monthsToYearEnd < 0) {
+      const initialCpf = cpfInitialSnapshot(cpfRow);
+      const cpfis = initialCpf.cpfisNotionalBalance;
+      cpfYearEndProjection = {
+        balanceAsOfMonth: cpfProjectionBalanceAsOfMonth,
+        startYearMonth: null,
+        targetYearMonth: cpfYearEndTargetYearMonth,
+        projectedMonths: 0,
+        oa: initialCpf.oa,
+        sa: initialCpf.sa,
+        ma: initialCpf.ma,
+        ra: initialCpf.ra ?? 0,
+        cpfis,
+        totalCpf: initialCpf.oa + initialCpf.sa + initialCpf.ma + cpfis,
+      };
+    } else {
+      const yearEndHorizonMonths = monthsToYearEnd + 1;
+      cpfMonthlySeriesForProjection = buildCpfMonthlyProjectionSeries({
+        startYearMonth: cpfProjectionStartYearMonth,
+        horizonMonths: yearEndHorizonMonths,
+        birthDate:
+          birthValidForAge && typeof birthRaw === "string" ? birthRaw : null,
+        fixedCpfAgeBand: fixedCpfBand,
+        grossMonthly: grossMonthlyForCpf,
+        annualBonus: profileAnnualBonus(profile),
+        annualSalaryGrowthNominal: profileAnnualSalaryGrowthNominal(profile),
+        employmentContributionEndMonth: cpfEmploymentContributionEndMonth,
+        initial: cpfInitialSnapshot(cpfRow),
+        housingLoans: housingLoanRows.map(housingLoanToProjection),
+        cpfInvestments: cpfInvestmentRows.map(cpfInvestmentToProjection),
+      });
+      const yearEndRow =
+        cpfMonthlySeriesForProjection[cpfMonthlySeriesForProjection.length - 1];
+      if (yearEndRow) {
+        cpfYearEndProjection = {
+          balanceAsOfMonth: cpfProjectionBalanceAsOfMonth,
+          startYearMonth: cpfProjectionStartYearMonth,
+          targetYearMonth: cpfYearEndTargetYearMonth,
+          projectedMonths: yearEndHorizonMonths,
+          oa: yearEndRow.oa,
+          sa: yearEndRow.sa,
+          ma: yearEndRow.ma,
+          ra: yearEndRow.ra,
+          cpfis: yearEndRow.cpfis,
+          totalCpf: yearEndRow.totalCpf,
+        };
+      }
+    }
+  }
   const vehicleValuationInputs = vehicleRows.map(vehicleRowToValuationInput);
   const vehicleProceedsCashNow = cumulativeVehicleProceedsToCash(
     vehicleValuationInputs,
@@ -582,8 +1064,16 @@ export async function getDashboardPayload(
     liabilities,
     cpfTotal: cpfRow ? cpfTotalTracked : undefined,
   });
+  const propertyEquityNow = buildPropertyEquityBreakdown({
+    properties,
+    housingLoans: housingLoanRows,
+    asOfYearMonth: formatYearMonth(dashboardAsOf),
+  });
   const netWorth =
-    baseNetWorth + vehiclesNetEquityTotal + vehicleProceedsCashNow;
+    baseNetWorth +
+    vehiclesNetEquityTotal +
+    vehicleProceedsCashNow +
+    propertyEquityNow.propertiesNet;
   const investmentsTotal = values.reduce((a, b) => a + b, 0);
   const cashTotal = cashBalances.reduce((a, b) => a + b, 0);
   const liabilitiesTotal = liabilities.reduce((a, b) => a + b, 0);
@@ -596,6 +1086,10 @@ export async function getDashboardPayload(
     vehiclesLoan: vehiclesLoanForNw,
     vehiclesNet: vehiclesNetEquityTotal,
     vehicleCount: activeVehicleCount,
+    propertiesGrossAsset: propertyEquityNow.propertiesGrossAsset,
+    propertiesLoan: propertyEquityNow.propertiesLoan,
+    propertiesNet: propertyEquityNow.propertiesNet,
+    propertyCount: propertyEquityNow.propertyCount,
     net: netWorth,
   };
   const netWorthExcludingCpf = netWorth - netWorthBreakdown.cpf;
@@ -633,7 +1127,6 @@ export async function getDashboardPayload(
       monthlyContribution: 0,
       annualReturn: 0,
     };
-    const cashMinusLiab = cashTotal - liabilitiesTotal;
     const monthsToRet = monthsToRetirementHorizon ?? 0;
     const nwAgePoints = buildNetWorthByAgeProjection({
       birthDate: birthRaw,
@@ -646,7 +1139,7 @@ export async function getDashboardPayload(
       ageStep: 1,
       emphasizeAge: targetRetirementAge,
     });
-    const invAtRet = futureValueInvestmentPortfolioAtMonth(
+    let invAtRet = futureValueInvestmentPortfolioAtMonth(
       investments,
       monthsToRet,
       monthsToRetirementHorizon
@@ -656,84 +1149,67 @@ export async function getDashboardPayload(
         ? syntheticTax.expense.amount
         : 0;
     const extraHousingCashMonthly = syntheticHousingCash?.expense.amount ?? 0;
-    const ageAssets = buildAgeAssetProjection({
-      agePoints: nwAgePoints,
-      asOf: dashboardAsOf,
-      monthsToRet,
-      cashTotal,
-      vehicleValuationInputs,
-      startYearMonth: yearMonth,
-      monthlyIncome: income,
-      domainBudgetLines,
-      amountOverrideByLineId,
-      monthlyGoalContributions: totalPlannedGoalContributionsMonthly,
-      annualBonusTakeHomeNet:
-        annualBonusTakeHomeNet > 0 ? annualBonusTakeHomeNet : 0,
-      annualBonusPayoutMonth: DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
-      extraMonthlyPlannedSpend: extraTaxMonthly + extraHousingCashMonthly,
-      incomeGrowthAnnual: profileAnnualSalaryGrowthNominal(profile),
-      expenseGrowthAnnual: profileExpenseGrowthNominal(profile),
-    });
-    const vehiclesNetAtRet = ageAssets.vehiclesNetAtRet;
-    const cashAtRetirementHorizon = ageAssets.cashAtRetirementHorizon;
-    let projectedAtRetirement =
-      invAtRet +
-      cashAtRetirementHorizon -
-      liabilitiesTotal +
-      vehiclesNetAtRet;
-
-    if (cpfRow) {
-      const maxAgeOnAxis = Math.max(...nwAgePoints.map((p) => p.age));
-      const horizonMonths = Math.max(
-        1,
-        (maxAgeOnAxis - currentAge) * 12 + 1
+    const vehicleNetByAge = nwAgePoints.map((p) => {
+      const asOfHorizon = addCalendarMonths(
+        dashboardAsOf,
+        p.monthsFromToday
       );
-      const grossMonthly = profileMonthlyGross(profile) ?? 0;
-      const bandStr = profileCpfAgeBand(profile);
-      const fixedBand: SgCpfAgeBand | undefined =
-        bandStr === "below_55" ||
-        bandStr === "above_55_to_60" ||
-        bandStr === "above_60_to_65" ||
-        bandStr === "above_65_to_70" ||
-        bandStr === "above_70"
-          ? bandStr
-          : undefined;
-      const monthlySeries = buildCpfMonthlyProjectionSeries({
-        startYearMonth: yearMonth,
-        horizonMonths,
-        birthDate: birthRaw,
-        fixedCpfAgeBand: fixedBand,
-        grossMonthly,
-        annualBonus: profileAnnualBonus(profile),
-        annualSalaryGrowthNominal: profileAnnualSalaryGrowthNominal(profile),
-        initial: {
-          oa: num(cpfRow.oa),
-          sa: num(cpfRow.sa),
-          ma: num(cpfRow.ma),
-          oaAnnualRate:
-            cpfRow.oa_annual_rate != null &&
-            String(cpfRow.oa_annual_rate).trim() !== ""
-              ? num(cpfRow.oa_annual_rate)
-              : undefined,
-          saAnnualRate:
-            cpfRow.sa_annual_rate != null &&
-            String(cpfRow.sa_annual_rate).trim() !== ""
-              ? num(cpfRow.sa_annual_rate)
-              : undefined,
-          maAnnualRate:
-            cpfRow.ma_annual_rate != null &&
-            String(cpfRow.ma_annual_rate).trim() !== ""
-              ? num(cpfRow.ma_annual_rate)
-              : undefined,
-          cpfisMonthlyFromOa: num(cpfRow.cpfis_monthly_from_oa),
-          cpfisNotionalBalance: num(cpfRow.cpfis_notional_balance),
-          cpfisAnnualReturn: num(cpfRow.cpfis_annual_return),
-        },
-        housingLoans: housingLoanRows.map(housingLoanToProjection),
-      });
+      return vehicleValuationInputs
+        .filter((v) => v.vehicleStatus === "active")
+        .reduce(
+          (sum, vehicle) =>
+            sum + vehicleNetListedBeforeLiquidation(vehicle, asOfHorizon),
+          0
+        );
+    });
+    const propertyNetByAge = nwAgePoints.map((p) => {
+      const asOfHorizon = addCalendarMonths(
+        dashboardAsOf,
+        p.monthsFromToday
+      );
+      return buildPropertyEquityBreakdown({
+        properties,
+        housingLoans: housingLoanRows,
+        asOfYearMonth: formatYearMonth(asOfHorizon),
+      }).propertiesNet;
+    });
+    if (
+      cpfMonthlySeriesForProjection != null &&
+      cpfProjectionStartYearMonth != null &&
+      grossMonthlyForCpf != null
+    ) {
+      const maxAgeOnAxis = Math.max(...nwAgePoints.map((p) => p.age));
+      const lastAgePointYearMonth = addMonthsToYearMonth(
+        yearMonth,
+        (maxAgeOnAxis - currentAge) * 12
+      );
+      const horizonMonths = Math.max(
+        cpfMonthlySeriesForProjection.length,
+        monthDistance(cpfProjectionStartYearMonth, lastAgePointYearMonth) + 1
+      );
+      const monthlySeries =
+        cpfMonthlySeriesForProjection.length >= horizonMonths
+          ? cpfMonthlySeriesForProjection
+          : buildCpfMonthlyProjectionSeries({
+              startYearMonth: cpfProjectionStartYearMonth,
+              horizonMonths,
+              birthDate: birthRaw,
+              fixedCpfAgeBand: fixedCpfBand,
+              grossMonthly: grossMonthlyForCpf,
+              annualBonus: profileAnnualBonus(profile),
+              annualSalaryGrowthNominal: profileAnnualSalaryGrowthNominal(profile),
+              employmentContributionEndMonth: cpfEmploymentContributionEndMonth,
+              initial: cpfInitialSnapshot(cpfRow),
+              housingLoans: housingLoanRows.map(housingLoanToProjection),
+              cpfInvestments: cpfInvestmentRows.map(cpfInvestmentToProjection),
+            });
       cpfProjectionByAge = nwAgePoints.map((p) => {
+        const targetYearMonth = addMonthsToYearMonth(
+          yearMonth,
+          (p.age - currentAge) * 12
+        );
         const idx = Math.min(
-          Math.max(0, (p.age - currentAge) * 12),
+          Math.max(0, monthDistance(cpfProjectionStartYearMonth, targetYearMonth)),
           monthlySeries.length - 1
         );
         const row = monthlySeries[idx];
@@ -742,19 +1218,12 @@ export async function getDashboardPayload(
           oa: row?.oa ?? 0,
           sa: row?.sa ?? 0,
           ma: row?.ma ?? 0,
+          ra: row?.ra ?? 0,
           cpfis: row?.cpfis ?? 0,
           totalCpf: row?.totalCpf ?? 0,
         };
       });
       cpfHousingMarkers = buildCpfHousingMarkers(birthRaw, housingLoanRows);
-      const retIdx = Math.min(monthsToRet, monthlySeries.length - 1);
-      const cpfAtRetirement = monthlySeries[retIdx]?.totalCpf ?? 0;
-      projectedAtRetirement =
-        invAtRet +
-        cashAtRetirementHorizon -
-        liabilitiesTotal +
-        cpfAtRetirement +
-        vehiclesNetAtRet;
     }
 
     let cpfBucketsAtTargetRetirement: NonNullable<
@@ -771,6 +1240,7 @@ export async function getDashboardPayload(
           oa: rowAtTarget.oa,
           sa: rowAtTarget.sa,
           ma: rowAtTarget.ma,
+          ra: rowAtTarget.ra,
           cpfis: rowAtTarget.cpfis,
           totalCpf: rowAtTarget.totalCpf,
         };
@@ -787,6 +1257,327 @@ export async function getDashboardPayload(
       rawDivYield != null && String(rawDivYield).trim() !== ""
         ? Math.min(0.25, Math.max(0, num(rawDivYield as string)))
         : DEFAULT_RETIREMENT_DIVIDEND_YIELD_ANNUAL;
+    const ledger: ProjectionLedgerEntry[] = [];
+    const retirementStartMonth = Math.max(0, monthsToRet);
+    const horizonMonths = Math.max(...nwAgePoints.map((p) => p.monthsFromToday));
+    if (income != null && income > 0 && retirementStartMonth > 0) {
+      ledger.push({
+        id: "employment-income",
+        sourceType: "employment_income",
+        label: "Employment income",
+        direction: "inflow",
+        cashAccess: "cash",
+        phase: "pre_retirement",
+        cadence: "monthly",
+        startMonth: 0,
+        endMonth: retirementStartMonth,
+        amount: income,
+        growthAnnual: profileAnnualSalaryGrowthNominal(profile),
+      });
+    }
+    if (annualBonusTakeHomeNet > 0 && retirementStartMonth > 0) {
+      ledger.push({
+        id: "annual-bonus",
+        sourceType: "bonus_income",
+        label: "Annual bonus",
+        direction: "inflow",
+        cashAccess: "cash",
+        phase: "pre_retirement",
+        cadence: "annual",
+        startMonth: 0,
+        endMonth: retirementStartMonth,
+        amount: annualBonusTakeHomeNet,
+        growthAnnual: profileAnnualSalaryGrowthNominal(profile),
+        monthOfYear: DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
+      });
+    }
+    vehicleRows.forEach((vehicleRow, index) => {
+      const vehicle = vehicleValuationInputs[index];
+      if (!vehicle) return;
+      if (vehicle.vehicleStatus !== "active" || vehicle.coeExpiryYm == null) {
+        return;
+      }
+      const proceeds = vehicleNetProceedsAtCoeMonthEnd(vehicle);
+      if (proceeds <= 0) return;
+      const cashInMonth = monthDistance(
+        yearMonth,
+        addMonthsToYearMonth(vehicle.coeExpiryYm, 1)
+      );
+      if (cashInMonth < 0 || cashInMonth > horizonMonths) return;
+      ledger.push({
+        id: `vehicle-proceeds-${vehicleRow.id}`,
+        sourceType: "vehicle_proceeds",
+        sourceId: vehicleRow.id,
+        label: `${vehicleRow.label} COE proceeds`,
+        direction: "inflow",
+        cashAccess: "cash",
+        phase: "both",
+        cadence: "one_off",
+        startMonth: cashInMonth,
+        amount: proceeds,
+      });
+    });
+    for (const property of properties) {
+      const rental = num(property.rental_income_monthly);
+      if (property.planning_scope === "current" && rental > 0) {
+        ledger.push({
+          id: `property-rental-${property.id}`,
+          sourceType: "rental_income",
+          sourceId: property.id,
+          label: `${property.name} rental income`,
+          direction: "inflow",
+          cashAccess: "cash",
+          phase: "both",
+          cadence: "monthly",
+          startMonth: 0,
+          amount: rental,
+        });
+      }
+    }
+    for (const line of domainBudgetLines) {
+      if (line.cadence !== "monthly" || line.amount <= 0) continue;
+      const startMonth =
+        line.startYearMonth != null && line.startYearMonth !== ""
+          ? Math.max(0, monthDistance(yearMonth, line.startYearMonth))
+          : 0;
+      const endMonth =
+        line.endYearMonth != null && line.endYearMonth !== ""
+          ? Math.min(
+              retirementStartMonth,
+              Math.max(0, monthDistance(yearMonth, line.endYearMonth) + 1)
+            )
+          : retirementStartMonth;
+      if (startMonth >= retirementStartMonth || endMonth <= startMonth) continue;
+      ledger.push({
+        id: `budget-line-${line.id ?? line.category}`,
+        sourceType: "planned_expense",
+        sourceId: line.id ?? null,
+        label: line.category,
+        direction: "outflow",
+        cashAccess: "cash",
+        phase: "pre_retirement",
+        cadence: "monthly",
+        startMonth,
+        endMonth,
+        amount:
+          line.id != null && amountOverrideByLineId[line.id] != null
+            ? amountOverrideByLineId[line.id]
+            : line.amount,
+        growthAnnual: profileExpenseGrowthNominal(profile),
+      });
+    }
+    if (extraTaxMonthly > 0 && retirementStartMonth > 0) {
+      ledger.push({
+        id: "synthetic-tax",
+        sourceType: "tax",
+        label: "Estimated income tax",
+        direction: "outflow",
+        cashAccess: "cash",
+        phase: "pre_retirement",
+        cadence: "monthly",
+        startMonth: 0,
+        endMonth: retirementStartMonth,
+        amount: extraTaxMonthly,
+        growthAnnual: profileExpenseGrowthNominal(profile),
+      });
+    }
+    if (extraHousingCashMonthly > 0 && retirementStartMonth > 0) {
+      ledger.push({
+        id: "synthetic-housing-cash",
+        sourceType: "housing_cash",
+        label: "Housing cash payment",
+        direction: "outflow",
+        cashAccess: "cash",
+        phase: "pre_retirement",
+        cadence: "monthly",
+        startMonth: 0,
+        endMonth: retirementStartMonth,
+        amount: extraHousingCashMonthly,
+        growthAnnual: profileExpenseGrowthNominal(profile),
+      });
+    }
+    for (const goal of goals) {
+      const targetMonth = goal.target_date?.slice(0, 7);
+      if (!targetMonth || !isYearMonth(targetMonth)) continue;
+      const startMonth = monthDistance(yearMonth, targetMonth);
+      if (startMonth < 0 || startMonth >= retirementStartMonth) continue;
+      const remainingNeed = Math.max(
+        0,
+        num(goal.target_amount) - num(goal.current_amount)
+      );
+      if (remainingNeed <= 0) continue;
+      ledger.push({
+        id: `goal-event-${goal.id}`,
+        sourceType: "goal_event",
+        sourceId: goal.id,
+        label: goal.title,
+        direction: "outflow",
+        cashAccess: "cash",
+        phase: "pre_retirement",
+        cadence: "one_off",
+        startMonth,
+        amount: remainingNeed,
+      });
+    }
+    if (goalMonthlySpend != null && goalMonthlySpend > 0) {
+      ledger.push(
+        ...retirementSpendLedgerEntries({
+          startYearMonth: yearMonth,
+          horizonMonths,
+          retirementStartMonth,
+          monthlySpend: goalMonthlySpend,
+          growthAnnual: profileExpenseGrowthNominal(profile),
+        })
+      );
+    }
+    if (retirementStartMonth > 0) {
+      for (const investment of investments) {
+        const contribution = num(investment.monthly_contribution);
+        if (contribution <= 0) continue;
+        const startMonth =
+          contributionStartMonthFromInvestmentRow(investment) ?? 0;
+        const contributionLimit = contributionMonthsLimitFromInvestmentRow(
+          investment,
+          monthsToRetirementHorizon
+        );
+        const endMonth = Math.min(
+          retirementStartMonth,
+          contributionLimit ?? retirementStartMonth
+        );
+        if (startMonth >= endMonth) continue;
+        ledger.push({
+          id: `investment-transfer-${investment.id}`,
+          sourceType: "investment_contribution",
+          sourceId: investment.id,
+          label: `${investment.name} contribution`,
+          direction: "transfer",
+          cashAccess: "cash",
+          phase: "pre_retirement",
+          cadence: "monthly",
+          startMonth,
+          endMonth,
+          amount: contribution,
+          growthAnnual: num(investment.contribution_growth_annual),
+          assetTarget: "investment",
+        });
+      }
+    }
+    const cpfLifeStartMonth = Math.max(
+      0,
+      (DEFAULT_CPF_LIFE_START_AGE - currentAge) * 12
+    );
+    const cpfLifeRow =
+      cpfProjectionByAge?.find((r) => r.age === DEFAULT_CPF_LIFE_START_AGE) ??
+      (currentAge >= DEFAULT_CPF_LIFE_START_AGE
+        ? cpfProjectionByAge?.[0]
+        : null);
+    const cpfLifePremium = cpfLifeRow?.ra ?? 0;
+    const cpfLifeMonthlyPayout =
+      cpfLifePremium > 0
+        ? (cpfLifePremium * DEFAULT_CPF_LIFE_PAYOUT_RATE_ANNUAL) / 12
+        : 0;
+    if (cpfLifeMonthlyPayout > 0) {
+      ledger.push({
+        id: "cpf-life-payout",
+        sourceType: "cpf_life",
+        label: "CPF LIFE payout",
+        direction: "inflow",
+        cashAccess: "cash",
+        phase: "both",
+        cadence: "monthly",
+        startMonth: cpfLifeStartMonth,
+        amount: cpfLifeMonthlyPayout,
+      });
+      ledger.push({
+        id: "cpf-life-premium-conversion",
+        sourceType: "cpf_life_premium",
+        label: "CPF LIFE premium conversion",
+        direction: "asset_change",
+        cashAccess: "locked",
+        phase: "both",
+        cadence: "one_off",
+        startMonth: cpfLifeStartMonth,
+        amount: -cpfLifePremium,
+        assetTarget: "cpf",
+      });
+    }
+    const externalAssetSnapshots: ProjectionAssetSnapshot[] = nwAgePoints.map(
+      (p, i) => {
+        const cpfRowAge = cpfProjectionByAge?.[i];
+        return {
+          month: p.monthsFromToday,
+          cpf: cpfRowAge?.totalCpf ?? 0,
+          cpfOa: cpfRowAge?.oa ?? 0,
+          cpfSa: cpfRowAge?.sa ?? 0,
+          cpfMa: cpfRowAge?.ma ?? 0,
+          cpfRa: cpfRowAge?.ra ?? 0,
+          cpfCpfis: cpfRowAge?.cpfis ?? 0,
+          vehiclesNet: vehicleNetByAge[i] ?? 0,
+          propertyNet: propertyNetByAge[i] ?? 0,
+        };
+      }
+    );
+    const investmentComponents: ProjectionInvestmentComponent[] = investments.map(
+      (investment) => {
+        const kind =
+          investment.plan_nature === "includes_insurance_coverage"
+            ? "ilp"
+            : "pure_investment";
+        return {
+          id: investment.id,
+          label: investment.name,
+          kind,
+          initialPrincipal: num(investment.current_value),
+          annualGrowthRate: num(investment.expected_annual_return),
+          investmentIncomeRateAnnual: num(
+            investment.investment_income_rate_annual ?? "0"
+          ),
+          annualWithdrawal: annualWithdrawalFromInvestmentRow(investment),
+          withdrawalStartMonth: withdrawalStartMonthFromInvestmentRow(
+            investment,
+            monthsToRetirementHorizon
+          ),
+          maturityMonth:
+            kind === "ilp"
+              ? investmentMaturityMonthFromInvestmentRow(
+                  investment,
+                  dashboardAsOf
+                )
+              : null,
+        };
+      }
+    );
+    const cashflowProjectionInput = {
+      startYearMonth: yearMonth,
+      horizonMonths,
+      targetRetirementMonth: retirementStartMonth,
+      initialCash: cashTotal + vehicleProceedsCashNow,
+      initialInvestmentPrincipal: investmentsTotal,
+      liabilities: liabilitiesTotal,
+      investmentTotalReturnAnnual: snapForAgeBase.annualReturn,
+      investmentComponents,
+      ledger,
+      samplePoints: nwAgePoints,
+      externalAssetSnapshots,
+    };
+    const cashflowProjection = buildRetirementCashflowProjection(
+      cashflowProjectionInput
+    );
+    const cashReserveCashflowProjection = buildRetirementCashflowProjection({
+      ...cashflowProjectionInput,
+      useCashReserveForDeficits: true,
+    });
+    const rowAtRetirement =
+      currentAge >= targetRetirementAge
+        ? cashflowProjection.samples[0]
+        : cashflowProjection.samples.find((r) => r.age === targetRetirementAge);
+    if (rowAtRetirement) {
+      invAtRet = rowAtRetirement.investmentPrincipal;
+    }
+    const projectedAtRetirement =
+      rowAtRetirement?.netWorth ??
+      cashflowProjection.samples[0]?.netWorth ??
+      investmentsTotal + cashTotal - liabilitiesTotal;
     const dividendPlan = analyzeRetirementDividendVsSpend({
       projectedInvestmentsAtRetirement: invAtRet,
       goalMonthlySpend:
@@ -812,36 +1603,56 @@ export async function getDashboardPayload(
         yearsToRetirement: monthsToRet / 12,
       }),
     };
-    const assetPoints: AgeAssetBreakdownPoint[] = nwAgePoints.map((p, i) => {
-      const cashByAge = ageAssets.perAge[i];
-      const cashRow = cashByAge.cash;
-      const vehiclesNetHorizon = cashByAge.vehiclesNet;
-      const investments = p.value - cashMinusLiab;
-      const cpfRowAge = cpfProjectionByAge?.[i];
-      const cpfAmt = cpfRowAge?.totalCpf ?? 0;
-      const net =
-        investments +
-        cashRow +
-        cpfAmt +
-        vehiclesNetHorizon -
-        liabilitiesTotal;
-      return {
-        age: p.age,
-        value: net,
-        investments,
-        cash: cashRow,
-        cpf: cpfAmt,
-        cpfOa: cpfRowAge?.oa ?? 0,
-        cpfSa: cpfRowAge?.sa ?? 0,
-        cpfMa: cpfRowAge?.ma ?? 0,
-        cpfCpfis: cpfRowAge?.cpfis ?? 0,
-        liabilities: liabilitiesTotal,
-        vehiclesNet: vehiclesNetHorizon,
-      };
-    });
+    const toAssetPoints = (
+      projection: RetirementCashflowProjectionResult
+    ): AgeAssetBreakdownPoint[] =>
+      projection.samples.map((p) => {
+        const flowRows = sampleYearPhaseFlowRows({
+          rows: projection.periods,
+          sample: p,
+          startYearMonth: yearMonth,
+          retirementStartMonth,
+        });
+        const annualizationFactor = annualizationFactorForRows(flowRows);
+        const outflowBreakdown = sumProjectionOutflows(
+          flowRows,
+          annualizationFactor
+        );
+        const flows = annualizeProjectionFlows(
+          sumProjectionFlows(flowRows),
+          outflowBreakdown,
+          annualizationFactor
+        );
+        return {
+          age: p.age,
+          value: p.netWorth,
+          phase: p.phase,
+          ...flows,
+          cumulativeGoalsGap: p.cumulativeGoalsGap,
+          outflowBreakdown,
+          flowMonthsRepresented: flowRows.length,
+          flowAnnualizationFactor: annualizationFactor,
+          investmentPrincipal: p.investmentPrincipal,
+          propertyNet: p.propertyNet,
+          investments: p.investmentPrincipal,
+          cash: p.cash,
+          cpf: p.cpf,
+          cpfOa: p.cpfOa,
+          cpfSa: p.cpfSa,
+          cpfMa: p.cpfMa,
+          cpfRa: p.cpfRa,
+          cpfCpfis: p.cpfCpfis,
+          liabilities: liabilitiesTotal,
+          vehiclesNet: p.vehiclesNet,
+        };
+      });
+
+    const assetPoints = toAssetPoints(cashflowProjection);
+    const cashReserveAssetPoints = toAssetPoints(cashReserveCashflowProjection);
 
     ageProjection = {
       points: assetPoints,
+      cashReservePoints: cashReserveAssetPoints,
       currentAge,
       targetRetirementAge,
       projectedAtRetirement,
@@ -928,6 +1739,8 @@ export async function getDashboardPayload(
     projectionPreview,
     ageProjection,
     cpfProjectionByAge,
+    cpfYearEndProjection,
+    cpfProjectionMissingInputs,
     cpfHousingMarkers,
     cpfHousingLoanCountInProjection: housingLoanRows.length,
     hasCpfBalanceRecord: !!cpfRow,

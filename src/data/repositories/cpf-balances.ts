@@ -38,6 +38,7 @@ export async function upsertCpfBalance(
     oa: number;
     sa: number;
     ma: number;
+    balance_as_of_month: string;
     oa_annual_rate: number | null;
     sa_annual_rate: number | null;
     ma_annual_rate: number | null;
@@ -54,6 +55,7 @@ export async function upsertCpfBalance(
         oa: row.oa,
         sa: row.sa,
         ma: row.ma,
+        balance_as_of_month: row.balance_as_of_month,
         oa_annual_rate: row.oa_annual_rate,
         sa_annual_rate: row.sa_annual_rate,
         ma_annual_rate: row.ma_annual_rate,

@@ -2,15 +2,21 @@ import Link from "next/link";
 import type { AdvisorClientListSort, AdvisorClientWorkspaceListRow } from "@/data/repositories/advisor-clients";
 import { advisorClientRosterSignals } from "@/domain/finance/advisor-client-health";
 import { AdvisorBadge, AdvisorComingSoonPanel } from "@/features/advisor/advisor-workspace-primitives";
+import {
+  ADVISOR_CLIENT_LIST_FILTER_PRESETS,
+  type AdvisorClientListFilterPreset,
+} from "@/lib/advisor-client-list-filters";
 
 function buildListHref(opts: {
   page: number;
   q: string;
   sort: AdvisorClientListSort;
+  filter: AdvisorClientListFilterPreset;
 }): string {
   const p = new URLSearchParams();
   if (opts.q) p.set("q", opts.q);
   if (opts.sort !== "created_desc") p.set("sort", opts.sort);
+  if (opts.filter !== "all") p.set("filter", opts.filter);
   if (opts.page > 1) p.set("page", String(opts.page));
   const s = p.toString();
   return s ? `/advisor/clients?${s}` : "/advisor/clients";
@@ -43,6 +49,7 @@ export function AdvisorClientsBoard({
   pageSize,
   q,
   sort,
+  filter,
 }: {
   rows: AdvisorClientWorkspaceListRow[];
   totalCount: number;
@@ -50,62 +57,98 @@ export function AdvisorClientsBoard({
   pageSize: number;
   q: string;
   sort: AdvisorClientListSort;
+  filter: AdvisorClientListFilterPreset;
 }) {
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+  const filterActive = filter !== "all";
 
   return (
     <div className="space-y-6">
       <form
         method="get"
-        className="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4 sm:p-5"
+        className="space-y-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5"
       >
-        <div className="min-w-0 flex-1">
-          <label htmlFor="advisor-client-q" className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Search
-          </label>
-          <input
-            id="advisor-client-q"
-            name="q"
-            defaultValue={q}
-            placeholder="Name contains…"
-            className="mt-1.5 w-full max-w-md rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-sm text-slate-900 outline-none ring-slate-300/40 focus:ring-2"
-          />
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
+          <div className="min-w-0 flex-1">
+            <label htmlFor="advisor-client-q" className="block text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Search
+            </label>
+            <input
+              id="advisor-client-q"
+              name="q"
+              defaultValue={q}
+              placeholder="Name contains…"
+              className="mt-1.5 w-full max-w-md rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-2 text-sm text-slate-900 outline-none ring-slate-300/40 focus:ring-2"
+            />
+          </div>
+          <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-2">
+            <label htmlFor="advisor-client-filter" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Quick filter
+            </label>
+            <select
+              id="advisor-client-filter"
+              name="filter"
+              defaultValue={filter}
+              className="w-full min-w-[220px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-800 shadow-sm outline-none ring-slate-300/40 focus:ring-2 sm:w-auto"
+            >
+              {ADVISOR_CLIENT_LIST_FILTER_PRESETS.map((preset) => (
+                <option key={preset.id} value={preset.id}>
+                  {preset.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-2">
+            <label htmlFor="advisor-client-sort" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Sort
+            </label>
+            <select
+              id="advisor-client-sort"
+              name="sort"
+              defaultValue={sort}
+              className="w-full min-w-[200px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-800 shadow-sm outline-none ring-slate-300/40 focus:ring-2 sm:w-auto"
+            >
+              <option value="created_desc">Newest first</option>
+              <option value="name_asc">Name A–Z</option>
+              <option value="last_active_desc">Last activity</option>
+            </select>
+          </div>
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"
+            >
+              Apply
+            </button>
+            <Link
+              href="/advisor/clients"
+              className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+            >
+              Reset
+            </Link>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <label htmlFor="advisor-client-sort" className="text-xs font-semibold uppercase tracking-wide text-slate-500">
-            Sort
-          </label>
-          <select
-            id="advisor-client-sort"
-            name="sort"
-            defaultValue={sort}
-            className="w-full min-w-[200px] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-800 shadow-sm outline-none ring-slate-300/40 focus:ring-2 sm:w-auto"
-          >
-            <option value="created_desc">Newest first</option>
-            <option value="name_asc">Name A–Z</option>
-            <option value="last_active_desc">Last activity</option>
-          </select>
-        </div>
-        <div className="flex gap-2">
-          <button
-            type="submit"
-            className="rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-800"
-          >
-            Apply
-          </button>
-          <Link
-            href="/advisor/clients"
-            className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-          >
-            Reset
-          </Link>
-        </div>
+        {filterActive ? (
+          <p className="text-xs text-slate-600">
+            Showing clients matching{" "}
+            <span className="font-semibold text-slate-800">
+              {ADVISOR_CLIENT_LIST_FILTER_PRESETS.find((p) => p.id === filter)?.label}
+            </span>
+            . Filters apply across your linked book (up to 200 clients) before pagination.
+          </p>
+        ) : null}
       </form>
 
       {rows.length === 0 ? (
         <div className="rounded-2xl border border-slate-200 bg-slate-50/60 px-5 py-6 text-sm leading-relaxed text-slate-700">
-          {q.trim() ? (
-            <p className="font-medium text-slate-900">No clients match this search.</p>
+          {q.trim() || filterActive ? (
+            <p className="font-medium text-slate-900">
+              {filterActive && q.trim()
+                ? "No clients match this search and filter."
+                : filterActive
+                  ? "No clients match this filter."
+                  : "No clients match this search."}
+            </p>
           ) : totalCount === 0 ? (
             <>
               <p className="font-semibold text-slate-900">
@@ -225,7 +268,7 @@ export function AdvisorClientsBoard({
             <div className="flex gap-2">
               {page > 1 ? (
                 <Link
-                  href={buildListHref({ page: page - 1, q, sort })}
+                  href={buildListHref({ page: page - 1, q, sort, filter })}
                   className="rounded-lg border border-slate-200 px-3 py-1.5 font-semibold text-slate-800 hover:bg-slate-50"
                 >
                   Previous
@@ -233,7 +276,7 @@ export function AdvisorClientsBoard({
               ) : null}
               {page < totalPages ? (
                 <Link
-                  href={buildListHref({ page: page + 1, q, sort })}
+                  href={buildListHref({ page: page + 1, q, sort, filter })}
                   className="rounded-lg border border-slate-200 px-3 py-1.5 font-semibold text-slate-800 hover:bg-slate-50"
                 >
                   Next
@@ -246,7 +289,7 @@ export function AdvisorClientsBoard({
 
       <AdvisorComingSoonPanel
         title="Work in Progress"
-        body="Bulk actions, saved views, and CSV export are planned for large books. Server-side pagination is enabled now for scale."
+        body="Bulk actions, named saved views, and CSV export are planned for large books. Quick filters and server-side pagination are live now."
       />
     </div>
   );

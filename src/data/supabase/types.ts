@@ -194,6 +194,8 @@ export type InvestmentRow = {
   current_value: string;
   monthly_contribution: string;
   expected_annual_return: string;
+  /** Annual cash-income rate (dividend yield or ILP post-maturity income). */
+  investment_income_rate_annual?: string | null;
   /** Annual step-up on monthly contribution (0.03 = 3%). */
   contribution_growth_annual: string;
   /** until_retirement | fixed_duration; null = legacy / same as until retirement. */
@@ -202,12 +204,18 @@ export type InvestmentRow = {
   contribution_duration_years?: string | null;
   /** Planned monthly withdrawal after the withdrawal phase starts. */
   withdrawal_monthly: string;
+  /** Planned yearly withdrawal after the withdrawal phase starts. */
+  withdrawal_annual?: string | null;
   /** Years from today before withdrawals start; null = use retirement age when available. */
   withdrawal_start_years: string | null;
   /** Reserved for future age-based contribution end. */
   contribution_end_age?: number | null;
-  /** Reserved for calendar-based contribution end. */
+  /** Optional calendar end for premiums (pairs with contribution_start_date). */
   contribution_end_date?: string | null;
+  /** Optional calendar start for premiums (future start defers modeled contributions). */
+  contribution_start_date?: string | null;
+  /** pure_investment | includes_insurance_coverage — ILP / bundled plan guidance. */
+  plan_nature?: string | null;
   created_at: string;
   updated_at: string;
 };
@@ -318,12 +326,27 @@ export type CpfBalanceRow = {
   oa: string;
   sa: string;
   ma: string;
+  balance_as_of_month: string | null;
   oa_annual_rate: string | null;
   sa_annual_rate: string | null;
   ma_annual_rate: string | null;
   cpfis_monthly_from_oa: string;
   cpfis_notional_balance: string;
   cpfis_annual_return: string;
+  updated_at: string;
+};
+
+export type CpfInvestmentRow = {
+  id: string;
+  user_id: string;
+  account: "oa" | "sa";
+  purchase_month: string;
+  premium_type: "single" | "regular";
+  amount: string;
+  projected_growth_annual: string;
+  maturity_month: string;
+  note: string | null;
+  created_at: string;
   updated_at: string;
 };
 
@@ -357,7 +380,16 @@ export type AdvisorProposalChangeRow = {
   id: string;
   proposal_id: string;
   section: string;
-  entity_type: "profile" | "budget_line" | "goal" | "investment";
+  entity_type:
+    | "profile"
+    | "budget_line"
+    | "goal"
+    | "investment"
+    | "cash_account"
+    | "liability"
+    | "property"
+    | "housing_loan"
+    | "vehicle";
   entity_id: string | null;
   field_key: string;
   field_label: string;
@@ -379,6 +411,23 @@ export type AdvisorProposalSectionNoteRow = {
   proposal_id: string;
   section: string;
   note: string;
+};
+
+export type AdvisorConsentVisibilityCategory =
+  | "cash_accounts"
+  | "liabilities"
+  | "properties"
+  | "housing_loans"
+  | "vehicles";
+
+export type AdvisorConsentCategoryVisibilityRow = {
+  id: string;
+  client_user_id: string;
+  advisor_user_id: string;
+  visibility_category: AdvisorConsentVisibilityCategory;
+  is_visible: boolean;
+  created_at: string;
+  updated_at: string;
 };
 
 /** Generic inbox row (migration `20260519000000`). Dedupe-keyed per user. */

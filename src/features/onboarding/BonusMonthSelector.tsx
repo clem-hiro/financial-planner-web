@@ -4,6 +4,7 @@ import {
   BONUS_MONTH_PRESETS,
   type BonusMonthPresetId,
 } from "@/domain/finance/onboarding-income";
+import { onboardingChoiceChipClass } from "@/features/onboarding/onboarding-ui";
 import { fpInputClass } from "@/ui/input-classes";
 
 type Props = {
@@ -34,11 +35,7 @@ export function BonusMonthSelector({
             type="button"
             disabled={disabled}
             onClick={() => onPresetChange(opt.id)}
-            className={
-              preset === opt.id
-                ? "rounded-full border border-emerald-500 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-950"
-                : "rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs text-slate-700 hover:bg-white disabled:opacity-50"
-            }
+            className={`${onboardingChoiceChipClass(preset === opt.id)} disabled:cursor-not-allowed disabled:opacity-50`}
           >
             {opt.label}
           </button>

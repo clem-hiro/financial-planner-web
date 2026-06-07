@@ -70,25 +70,64 @@ describe("projectFutureValue (contribution phase)", () => {
     expect(stepped).toBeCloseTo(12 * 100 + 12 * 110, 8);
   });
 
-  it("applies planned withdrawals after the withdrawal start month", () => {
+  it("applies planned annual withdrawals in December after the withdrawal start month", () => {
     const drawdown = projectFutureValue({
       currentValue: 10_000,
       monthlyContribution: 0,
       annualReturn: 0,
       months: 12,
-      monthlyWithdrawal: 500,
+      annualWithdrawal: 6_000,
       withdrawalStartMonth: 6,
     });
-    expect(drawdown).toBeCloseTo(7_000, 8);
+    expect(drawdown).toBeCloseTo(4_000, 8);
+  });
+});
+
+describe("projectFutureValue with contributionStartMonth", () => {
+  it("defers contributions until the start month", () => {
+    const immediate = projectFutureValue({
+      currentValue: 10_000,
+      monthlyContribution: 500,
+      annualReturn: 0,
+      months: 12,
+      contributionMonthsLimit: 12,
+    });
+    const deferred = projectFutureValue({
+      currentValue: 10_000,
+      monthlyContribution: 500,
+      annualReturn: 0,
+      months: 12,
+      contributionMonthsLimit: 12,
+      contributionStartMonth: 6,
+    });
+    expect(deferred).toBeLessThan(immediate);
+    expect(immediate - deferred).toBe(6 * 500);
   });
 });
 
 describe("contributionMonthsLimitFromInvestmentRow", () => {
+  it("uses calendar end date when set", () => {
+    const lim = contributionMonthsLimitFromInvestmentRow(
+      {
+        contribution_type: "fixed_duration",
+        contribution_duration_years: "99",
+        contribution_start_date: null,
+        contribution_end_date: "2028-06-01",
+      },
+      null
+    );
+    expect(lim).toBeDefined();
+    expect(lim!).toBeGreaterThan(0);
+    expect(lim!).toBeLessThan(99 * 12);
+  });
+
   it("uses fixed years when type is fixed_duration", () => {
     const lim = contributionMonthsLimitFromInvestmentRow(
       {
         contribution_type: "fixed_duration",
         contribution_duration_years: "15",
+        contribution_start_date: null,
+        contribution_end_date: null,
       },
       400
     );
@@ -97,7 +136,12 @@ describe("contributionMonthsLimitFromInvestmentRow", () => {
 
   it("uses months to retirement for until_retirement", () => {
     const lim = contributionMonthsLimitFromInvestmentRow(
-      { contribution_type: null, contribution_duration_years: null },
+      {
+        contribution_type: null,
+        contribution_duration_years: null,
+        contribution_start_date: null,
+        contribution_end_date: null,
+      },
       180
     );
     expect(lim).toBe(180);
@@ -105,7 +149,12 @@ describe("contributionMonthsLimitFromInvestmentRow", () => {
 
   it("returns undefined when retirement horizon unknown (legacy-friendly)", () => {
     const lim = contributionMonthsLimitFromInvestmentRow(
-      { contribution_type: null, contribution_duration_years: null },
+      {
+        contribution_type: null,
+        contribution_duration_years: null,
+        contribution_start_date: null,
+        contribution_end_date: null,
+      },
       null
     );
     expect(lim).toBeUndefined();
@@ -187,7 +236,11 @@ describe("futureValueInvestmentPortfolioAtMonth", () => {
       8
     );
     expect(futureValueInvestmentPortfolioAtMonth(rows, 25, 360)).toBeCloseTo(
-      12_141,
+      12_641,
+      8
+    );
+    expect(futureValueInvestmentPortfolioAtMonth(rows, 36, 360)).toBeCloseTo(
+      7_972,
       8
     );
   });

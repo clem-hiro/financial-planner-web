@@ -43,7 +43,7 @@ export function ClientProposalReviewView({
   const isPending = proposal.status === "pending";
 
   return (
-    <div className="space-y-8">
+    <div className={`space-y-8 ${isPending ? "pb-28" : ""}`}>
       {/* Back link sits above the grid so both columns start at the same top —
           inside the left column it would push the header card below the rail. */}
       <p className="text-sm">
@@ -116,13 +116,14 @@ export function ClientProposalReviewView({
         </CollapsiblePaneRail>
       </div>
 
-      {isPending ? (
-        <div className="sticky bottom-0 z-10 -mx-4 border-t border-slate-200 bg-white/95 px-4 py-3 backdrop-blur sm:mx-0 sm:rounded-t-xl sm:px-6">
-          <div className="mx-auto max-w-3xl">
-            <ProposalReviewActions proposalId={proposal.id} />
-          </div>
-        </div>
-      ) : null}
+      {/* Mounted regardless of status so the approval dialog survives the
+          accept→accepted re-render. The frozen bottom-bar chrome (and its
+          buttons) shows only while pending, inside the component. */}
+      <ProposalReviewActions
+        proposalId={proposal.id}
+        status={proposal.status}
+        surface="fixedBar"
+      />
     </div>
   );
 }

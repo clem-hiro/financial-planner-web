@@ -9,7 +9,11 @@ export {
   calculateTimeToGoalInvestmentPortfolio,
 } from "./investment-portfolio-fv";
 export {
+  annualWithdrawalFromInvestmentRow,
   contributionMonthsLimitFromInvestmentRow,
+  contributionStartMonthFromInvestmentRow,
+  investmentMaturityMonthFromInvestmentRow,
+  withdrawalStartMonthFromInvestmentRow,
 } from "./investment-contribution";
 export {
   INVESTMENT_REVIEW_STALE_MONTHS,
@@ -42,7 +46,14 @@ export {
   analyzeGoalDeadlineGap,
   countEndOfMonthContributionPeriods,
   requiredMonthlyForMonths,
+  targetDateYmdForContributionPeriods,
 } from "./goal-deadline";
+export { analyzeGoalFeasibility } from "./goal-feasibility";
+export type {
+  GoalFeasibilityAnalysis,
+  GoalFeasibilityParams,
+  GoalFeasibilityStatus,
+} from "./goal-feasibility";
 export {
   analyzeGoalPriorityTradeoff,
   sortGoalsByPriority,
@@ -79,6 +90,18 @@ export type {
   RetirementDividendVsSpendResult,
   RetirementSpendVsPortfolioResult,
 } from "./retirement-spend-vs-portfolio";
+export { buildRetirementCashflowProjection } from "./retirement-cashflow-projection";
+export type {
+  ProjectionAgeRow,
+  ProjectionAssetSnapshot,
+  ProjectionInvestmentComponent,
+  ProjectionLedgerEntry,
+  ProjectionOutflowBreakdownItem,
+  ProjectionPeriodRow,
+  ProjectionSamplePoint,
+  RetirementCashflowProjectionInput,
+  RetirementCashflowProjectionResult,
+} from "./retirement-cashflow-projection";
 export { buildDashboardInsights } from "./insights";
 export { buildSpendRecommendationsForMonth } from "./spend-recommendations";
 export type { SpendRecommendationsInput } from "./spend-recommendations";
@@ -164,8 +187,12 @@ export type {
   HousingPaymentSource,
 } from "./housing-loan-payments";
 export {
+  basicHealthcareSumForYearSg,
   buildCpfMonthlyProjectionSeries,
   downsampleCpfSeries,
+  CPF_BHS_ESTIMATED_ANNUAL_GROWTH_SG,
+  CPF_BHS_LATEST_OFFICIAL_YEAR_SG,
+  CPF_BHS_OFFICIAL_BY_YEAR_SG,
   DEFAULT_CPF_OA_CREDITING_ANNUAL,
   DEFAULT_CPF_SA_CREDITING_ANNUAL,
   DEFAULT_CPF_MA_CREDITING_ANNUAL,
@@ -173,9 +200,12 @@ export {
 export {
   buildCpfRetirementProjection,
   simulateRaFormationAt55,
+  routeCpfSaInvestmentMaturityProceeds,
   estimateFutureFrs,
   CURRENT_FRS_SG,
   CPF_RA_FORMATION_AGE,
+  DEFAULT_CPF_LIFE_PAYOUT_RATE_ANNUAL,
+  DEFAULT_CPF_LIFE_START_AGE,
   DEFAULT_CPF_ASSUMPTIONS,
   CPF_SCENARIO_EXAMPLES,
 } from "./cpf-retirement-projection";
@@ -183,12 +213,15 @@ export type {
   CpfAssumptions,
   CpfRetirementProjection,
   CpfRaSimulation,
+  CpfSaInvestmentMaturityRouting,
   CpfRetirementTarget,
   CpfScenarioExample,
 } from "./cpf-retirement-projection";
 export type {
   CpfBalanceSnapshot,
+  CpfInvestmentProjectionInput,
   CpfMonthPoint,
+  BasicHealthcareSumProjection,
   HousingLoanProjectionInput,
 } from "./cpf-monthly-projection";
 export {
@@ -224,6 +257,8 @@ export {
   BUDGET_STRATEGY_PRESETS,
   FOOD_SPEND_BAND_PRESETS,
   LIFESTYLE_PRESETS,
+  ONBOARDING_LIFESTYLE_PRESETS,
+  listOnboardingLifestylePresets,
   budgetBucketForCategoryLabel,
   countReplaceableMonthlyBudgetLines,
   generateGuidedMonthlyBudgetLines,

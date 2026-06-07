@@ -3,7 +3,7 @@ import { num } from "@/data/mappers";
 import { getProfileById } from "@/data/repositories/profiles";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { loadSetupTabBundle } from "@/features/planning/load-setup-tab-bundle";
-import { buildCashHistoryByAccountId } from "@/domain/finance/cash-account-history";
+import { buildCashHistoryByAccountId } from "@/data/cash-account-history-build";
 import {
   CashAndLiabilitiesPanels,
   type CashAccountBalanceRow,
@@ -12,13 +12,14 @@ import { CpfBalancesForm } from "@/features/goals/CpfBalancesForm";
 import { HousingPanel } from "@/features/goals/HousingLoansPanel";
 import {
   InvestmentBalancesList,
-  type InvestmentBalanceRow,
 } from "@/features/goals/InvestmentBalancesList";
+import { investmentRowToBalanceRow } from "@/features/goals/investment-balance-row";
 import { InvestmentForm } from "@/features/goals/InvestmentForm";
 import { VehiclesPanel } from "@/features/goals/VehiclesPanel";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { AccountSyncingRoadmapCard } from "@/features/planning/roadmap-modules";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
+import { formatYearMonth } from "@/lib/dates";
 import { shouldPromptCpfRulesReview } from "@/domain/finance/cpf-rules-review";
 import { shouldPromptInvestmentReview } from "@/domain/finance/investment-review";
 import { birthDateIsValidPast } from "@/lib/validation";
@@ -56,30 +57,7 @@ export async function WealthPlanningSection() {
   ]);
 
   const currency = financialProfile?.base_currency ?? DEFAULT_BASE_CURRENCY;
-  const investmentBalanceRows: InvestmentBalanceRow[] = bundle.investments.map(
-    (i) => ({
-      id: i.id,
-      name: i.name,
-      current_value: num(i.current_value),
-      monthly_contribution: num(i.monthly_contribution),
-      expected_annual_return: num(i.expected_annual_return),
-      contribution_growth_annual: num(i.contribution_growth_annual),
-      contribution_type: i.contribution_type ?? null,
-      contribution_duration_years:
-        i.contribution_duration_years != null &&
-        String(i.contribution_duration_years).trim() !== ""
-          ? num(i.contribution_duration_years as string)
-          : null,
-      withdrawal_monthly: num(i.withdrawal_monthly),
-      withdrawal_start_years:
-        i.withdrawal_start_years != null &&
-        String(i.withdrawal_start_years).trim() !== ""
-          ? num(i.withdrawal_start_years)
-          : null,
-      updated_at: i.updated_at ?? null,
-      created_at: i.created_at ?? null,
-    })
-  );
+  const investmentBalanceRows = bundle.investments.map(investmentRowToBalanceRow);
   const showInvestmentReviewPrompt = shouldPromptInvestmentReview({
     investments: bundle.investments,
     lastInvestmentReviewAt: financialProfile?.last_investment_review_at ?? null,
@@ -89,6 +67,18 @@ export async function WealthPlanningSection() {
     lastCpfRulesReviewVersion:
       financialProfile?.last_cpf_rules_review_version ?? null,
   });
+  const defaultSaMaturityMonth =
+    financialProfile?.birth_date &&
+    typeof financialProfile.birth_date === "string" &&
+    birthDateIsValidPast(financialProfile.birth_date)
+      ? formatYearMonth(
+          new Date(
+            Number(financialProfile.birth_date.slice(0, 4)) + 55,
+            Number(financialProfile.birth_date.slice(5, 7)) - 1,
+            1
+          )
+        )
+      : null;
   const investmentPlanningContext =
     financialProfile?.birth_date &&
     typeof financialProfile.birth_date === "string" &&
@@ -135,7 +125,7 @@ export async function WealthPlanningSection() {
           >
             <div className="overflow-hidden rounded-2xl bg-white/90 ring-1 ring-slate-200/70 divide-y divide-slate-200/80">
               <div className="p-4 sm:p-5">
-                <InvestmentForm />
+                <InvestmentForm planningContext={investmentPlanningContext} />
               </div>
               {investmentBalanceRows.length > 0 ? (
                 <div className="p-4 sm:p-5">
@@ -144,6 +134,7 @@ export async function WealthPlanningSection() {
                     currencyCode={currency}
                     planningContext={investmentPlanningContext}
                     showReviewPrompt={showInvestmentReviewPrompt}
+                    showAssumptionBanner={false}
                   />
                 </div>
               ) : null}
@@ -152,10 +143,10 @@ export async function WealthPlanningSection() {
 
           <PageSection
             id="wealth-cpf"
-            title="CPF & CPFIS"
+            title="CPF & CPF Investments"
             description={
               <span className="text-xs text-zinc-600">
-                OA / SA / MA and optional CPFIS assumptions.{" "}
+                OA / SA / MA and CPF investment entries.{" "}
                 <MethodologyOpenLink
                   topicId="cpf-projection"
                   className={appInlineLinkClass}
@@ -167,6 +158,8 @@ export async function WealthPlanningSection() {
           >
             <CpfBalancesForm
               row={bundle.cpfRow}
+              cpfInvestments={bundle.cpfInvestments}
+              defaultSaMaturityMonth={defaultSaMaturityMonth}
               showRulesReviewPrompt={showCpfRulesReviewPrompt}
             />
           </PageSection>

@@ -31,7 +31,7 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     href: "/setup?tab=profile",
     priority: 10,
     recommendReason:
-      "Your age and display name unlock accurate retirement and CPF projections.",
+      "Your age and display name unlock accurate CPF age banding and projections.",
     ctaLabel: "Open profile",
   },
   {
@@ -124,7 +124,7 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     title: "Retirement",
     description: "Target age, spend goals, and withdrawal assumptions.",
     icon: "⏳",
-    href: "/setup?tab=profile",
+    href: "/setup?tab=goals",
     priority: 70,
     recommendReason:
       "Retirement targets unlock long-horizon charts on Home and Future planning.",

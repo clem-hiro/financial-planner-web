@@ -1,7 +1,9 @@
 import { num } from "@/data/mappers";
 import type { InvestmentRow } from "@/data/supabase/types";
 import {
+  annualWithdrawalFromInvestmentRow,
   contributionMonthsLimitFromInvestmentRow,
+  contributionStartMonthFromInvestmentRow,
   withdrawalStartMonthFromInvestmentRow,
 } from "./investment-contribution";
 import { projectFutureValue } from "./projection";
@@ -20,6 +22,7 @@ export function futureValueInvestmentPortfolioAtMonth(
       row,
       monthsToRetirementFromNow
     );
+    const contributionStartMonth = contributionStartMonthFromInvestmentRow(row);
     const withdrawalStartMonth = withdrawalStartMonthFromInvestmentRow(
       row,
       monthsToRetirementFromNow
@@ -32,8 +35,9 @@ export function futureValueInvestmentPortfolioAtMonth(
         annualReturn: num(row.expected_annual_return),
         months,
         contributionMonthsLimit: lim,
+        contributionStartMonth,
         contributionGrowthAnnual: num(row.contribution_growth_annual),
-        monthlyWithdrawal: num(row.withdrawal_monthly),
+        annualWithdrawal: annualWithdrawalFromInvestmentRow(row),
         withdrawalStartMonth,
       })
     );
