@@ -478,7 +478,7 @@ function InvestmentEditForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block text-sm">
           <span className="mb-1 block font-medium text-slate-700">
-            Current invested amount{" "}
+            Current balance{" "}
             <span className="font-normal text-slate-500">({currencyCode})</span>
           </span>
           <input
