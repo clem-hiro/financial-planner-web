@@ -9,7 +9,7 @@
 | Module | Classification | Fns | Edges out |
 | --- | --- | ---: | ---: |
 | [`src/middleware.ts`](#src-middleware-ts) | `middleware` | 1 | 22 |
-| [`src/server/actions.ts`](#src-server-actions-ts) | `server-action` | 50 | 361 |
+| [`src/server/actions.ts`](#src-server-actions-ts) | `server-action` | 50 | 364 |
 | [`src/server/advisor-accept-hardening.test.ts`](#src-server-advisor-accept-hardening-test-ts) | `regular` | 1 | 0 |
 | [`src/server/advisor-access-key-actions.ts`](#src-server-advisor-access-key-actions-ts) | `server-action` | 2 | 10 |
 | [`src/server/advisor-client-actions.ts`](#src-server-advisor-client-actions-ts) | `server-action` | 35 | 224 |
@@ -65,7 +65,7 @@ Classification: `server-action`
 
 #### `toClientErrorMessage` — function, L128 _(server-action)_
 
-- called by: `src/server/actions.ts#confirmCpfRulesReviewAction`, `src/server/actions.ts#confirmInvestmentReviewAction`, `src/server/actions.ts#createCpfInvestmentAction`, `src/server/actions.ts#createInvestmentAction`, `src/server/actions.ts#deleteInvestmentAction`, `src/server/actions.ts#updateInvestmentAction`
+- called by: `src/server/actions.ts#confirmCpfRulesReviewAction`, `src/server/actions.ts#confirmInvestmentReviewAction`, `src/server/actions.ts#createCpfInvestmentAction`, `src/server/actions.ts#createHousingPropertyAction`, `src/server/actions.ts#createInvestmentAction`, `src/server/actions.ts#deleteInvestmentAction`, `src/server/actions.ts#updateInvestmentAction`
 
 #### `signOutAction` — function, L137 _(server-action)_
 
@@ -257,29 +257,29 @@ Classification: `server-action`
 
 #### `createHousingPropertyAction` — function, L1835 _(server-action)_
 
-- calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#insertHousingLoan`, `src/data/repositories/properties.ts#insertProperty`, `src/data/repositories/properties.ts#listProperties`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#optionalYearMonthOrMmyy`, `src/server/actions.ts#parseHousingPaymentForm`, `src/server/actions.ts#parseOptionalMoneyField`, `src/server/actions.ts#parseOptionalPurchaseYear`, `src/server/actions.ts#revalidateHousingPaths`
+- calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#insertHousingLoan`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/properties.ts#deleteProperty`, `src/data/repositories/properties.ts#insertProperty`, `src/data/repositories/properties.ts#listProperties`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#optionalYearMonthOrMmyy`, `src/server/actions.ts#parseHousingPaymentForm`, `src/server/actions.ts#parseOptionalMoneyField`, `src/server/actions.ts#parseOptionalPurchaseYear`, `src/server/actions.ts#revalidateHousingPaths`, `src/server/actions.ts#toClientErrorMessage`
 
-#### `updateHousingPropertyAction` — function, L2119 _(server-action)_
+#### `updateHousingPropertyAction` — function, L2159 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/properties.ts#listProperties`, `src/data/repositories/properties.ts#updateProperty`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#revalidateHousingPaths`
 
-#### `deleteHousingPropertyAction` — function, L2179 _(server-action)_
+#### `deleteHousingPropertyAction` — function, L2219 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/properties.ts#deleteProperty`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#revalidateHousingPaths`
 
-#### `createHousingLoanAction` — function, L2195 _(server-action)_
+#### `createHousingLoanAction` — function, L2235 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#insertHousingLoan`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#insertPropertyForLoan`, `src/server/actions.ts#parseHousingPaymentForm`, `src/server/actions.ts#revalidateHousingPaths`
 
-#### `createHousingLoanQuickAction` — function, L2325 _(server-action)_
+#### `createHousingLoanQuickAction` — function, L2365 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#insertHousingLoan`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/housing-loan-payments.ts#normalizeHousingPaymentForPersist`, `src/domain/finance/housing-loan-payments.ts#paymentSourceFromLegacyPreset`, `src/domain/finance/housing-loan-quick.ts#deriveQuickHousingLoanRow`, `src/domain/finance/housing-loan-quick.ts#oaInstalmentShareFromPreset`, `src/domain/finance/property-financing-plan.ts#resolveGuidedCashDownpayment`, `src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#insertPropertyForLoan`, `src/server/actions.ts#revalidateHousingPaths`
 
-#### `updateHousingLoanAction` — function, L2590 _(server-action)_
+#### `updateHousingLoanAction` — function, L2630 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/housing-loans.ts#updateHousingLoan`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#parseHousingPaymentForm`, `src/server/actions.ts#revalidateHousingPaths`
 
-#### `deleteHousingLoanAction` — function, L2718 _(server-action)_
+#### `deleteHousingLoanAction` — function, L2758 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#deleteHousingLoan`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#revalidateHousingPaths`
 - called by: `src/features/goals/HousingLoansPanel.tsx#HousingLoanDeleteForm`

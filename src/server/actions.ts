@@ -1897,32 +1897,62 @@ export async function createHousingPropertyAction(
     return { error: "Rental income must be ≥ 0" };
   }
 
+  let existingProperties: Awaited<ReturnType<typeof listProperties>>;
+  try {
+    existingProperties = await listProperties(supabase, user.id);
+  } catch (e) {
+    console.error(e);
+    return { error: toClientErrorMessage(e) };
+  }
   const dup = findNameCollision(
-    await listProperties(supabase, user.id),
+    existingProperties,
     (p) => p.name,
     name,
     "a property"
   );
   if (dup) return { error: dup };
 
-  const property = await insertProperty(supabase, user.id, {
-    name,
-    property_type: propertyTypeParsed.data,
-    purchase_price,
-    purchase_year,
-    current_valuation,
-    ownership_percent,
-    status: statusParsed.data,
-    rental_income_monthly,
-    planning_scope: "current",
-  });
+  const label = String(formData.get("loan_label") ?? "").trim() || name;
+  if (hasLoan) {
+    let existingLoans: Awaited<ReturnType<typeof listHousingLoans>>;
+    try {
+      existingLoans = await listHousingLoans(supabase, user.id);
+    } catch (e) {
+      console.error(e);
+      return { error: toClientErrorMessage(e) };
+    }
+    const loanDup = findNameCollision(
+      existingLoans,
+      (loan) => loan.label,
+      label,
+      "a housing loan"
+    );
+    if (loanDup) return { error: loanDup };
+  }
+
+  let property: Awaited<ReturnType<typeof insertProperty>>;
+  try {
+    property = await insertProperty(supabase, user.id, {
+      name,
+      property_type: propertyTypeParsed.data,
+      purchase_price,
+      purchase_year,
+      current_valuation,
+      ownership_percent,
+      status: statusParsed.data,
+      rental_income_monthly,
+      planning_scope: "current",
+    });
+  } catch (e) {
+    console.error(e);
+    return { error: toClientErrorMessage(e) };
+  }
 
   if (!hasLoan) {
     revalidateHousingPaths();
     return { error: null };
   }
 
-  const label = String(formData.get("loan_label") ?? "").trim() || name;
   const principal = Number(formData.get("principal"));
   const annual_nominal_rate = Number(formData.get("annual_nominal_rate"));
   const term_months = Math.round(Number(formData.get("term_months")));
@@ -2060,57 +2090,67 @@ export async function createHousingPropertyAction(
   });
   if ("error" in paymentParsed) return paymentParsed;
 
-  await insertHousingLoan(supabase, user.id, {
-    property_id: property.id,
-    label,
-    principal,
-    annual_nominal_rate: annual_nominal_rate_effective,
-    term_months,
-    completion_month,
-    first_payment_month,
-    downpayment_from_oa,
-    fees_from_oa,
-    oa_share_of_payment: paymentParsed.oa_share_of_payment,
-    max_oa_per_month,
-    lender_type,
-    original_loan_principal,
-    principal_repaid_before_schedule,
-    property_purchase_price: purchase_price,
-    property_purchase_year: purchase_year,
-    property_kind:
-      propertyTypeParsed.data === "bto" ||
-      propertyTypeParsed.data === "resale_hdb" ||
-      propertyTypeParsed.data === "hdb"
-        ? "hdb"
-        : propertyTypeParsed.data === "condo" ||
-            propertyTypeParsed.data === "ec" ||
-            propertyTypeParsed.data === "landed"
-          ? propertyTypeParsed.data
-          : null,
-    downpayment_guidance_preset:
-      propertyTypeParsed.data === "bto"
-        ? "custom"
-        : propertyTypeParsed.data === "resale_hdb"
-          ? "pct_25"
-          : null,
-    buyers_stamp_duty: bsd_legal_total > 0 ? bsd_legal_total : null,
-    buyers_stamp_duty_paid_from_cpf_oa: bsd_legal_cpf_oa > 0,
-    first_downpayment_total,
-    first_downpayment_paid_month: firstDownpaymentMonth.value,
-    first_downpayment_cpf_oa,
-    first_downpayment_cash,
-    bsd_legal_total,
-    bsd_legal_paid_month: bsdLegalMonth.value,
-    bsd_legal_cpf_oa,
-    bsd_legal_cash,
-    second_downpayment_total,
-    second_downpayment_paid_month: secondDownpaymentMonth.value,
-    second_downpayment_cpf_oa,
-    second_downpayment_cash,
-    payment_source: paymentParsed.payment_source,
-    cpf_oa_payment: paymentParsed.cpf_oa_payment,
-    cash_payment: paymentParsed.cash_payment,
-  });
+  try {
+    await insertHousingLoan(supabase, user.id, {
+      property_id: property.id,
+      label,
+      principal,
+      annual_nominal_rate: annual_nominal_rate_effective,
+      term_months,
+      completion_month,
+      first_payment_month,
+      downpayment_from_oa,
+      fees_from_oa,
+      oa_share_of_payment: paymentParsed.oa_share_of_payment,
+      max_oa_per_month,
+      lender_type,
+      original_loan_principal,
+      principal_repaid_before_schedule,
+      property_purchase_price: purchase_price,
+      property_purchase_year: purchase_year,
+      property_kind:
+        propertyTypeParsed.data === "bto" ||
+        propertyTypeParsed.data === "resale_hdb" ||
+        propertyTypeParsed.data === "hdb"
+          ? "hdb"
+          : propertyTypeParsed.data === "condo" ||
+              propertyTypeParsed.data === "ec" ||
+              propertyTypeParsed.data === "landed"
+            ? propertyTypeParsed.data
+            : null,
+      downpayment_guidance_preset:
+        propertyTypeParsed.data === "bto"
+          ? "custom"
+          : propertyTypeParsed.data === "resale_hdb"
+            ? "pct_25"
+            : null,
+      buyers_stamp_duty: bsd_legal_total > 0 ? bsd_legal_total : null,
+      buyers_stamp_duty_paid_from_cpf_oa: bsd_legal_cpf_oa > 0,
+      first_downpayment_total,
+      first_downpayment_paid_month: firstDownpaymentMonth.value,
+      first_downpayment_cpf_oa,
+      first_downpayment_cash,
+      bsd_legal_total,
+      bsd_legal_paid_month: bsdLegalMonth.value,
+      bsd_legal_cpf_oa,
+      bsd_legal_cash,
+      second_downpayment_total,
+      second_downpayment_paid_month: secondDownpaymentMonth.value,
+      second_downpayment_cpf_oa,
+      second_downpayment_cash,
+      payment_source: paymentParsed.payment_source,
+      cpf_oa_payment: paymentParsed.cpf_oa_payment,
+      cash_payment: paymentParsed.cash_payment,
+    });
+  } catch (e) {
+    console.error(e);
+    try {
+      await deleteProperty(supabase, user.id, property.id);
+    } catch (rollbackError) {
+      console.error(rollbackError);
+    }
+    return { error: toClientErrorMessage(e) };
+  }
 
   revalidateHousingPaths();
   return { error: null };

@@ -43,7 +43,7 @@
 | [`src/data/repositories/cpf-investments.ts`](#src-data-repositories-cpf-investments-ts) | `regular` | 4 | 14 |
 | [`src/data/repositories/expenses.ts`](#src-data-repositories-expenses-ts) | `regular` | 8 | 33 |
 | [`src/data/repositories/goals.ts`](#src-data-repositories-goals-ts) | `regular` | 9 | 45 |
-| [`src/data/repositories/housing-loans.ts`](#src-data-repositories-housing-loans-ts) | `regular` | 5 | 17 |
+| [`src/data/repositories/housing-loans.ts`](#src-data-repositories-housing-loans-ts) | `regular` | 9 | 22 |
 | [`src/data/repositories/inbox-notifications.ts`](#src-data-repositories-inbox-notifications-ts) | `regular` | 7 | 32 |
 | [`src/data/repositories/income-tax-configs.ts`](#src-data-repositories-income-tax-configs-ts) | `regular` | 3 | 9 |
 | [`src/data/repositories/investments.ts`](#src-data-repositories-investments-ts) | `regular` | 7 | 32 |
@@ -936,27 +936,45 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `listHousingLoans` — function, L4
+#### `isSchemaCacheMissingColumnError` — function, L47
+
+- called by: `src/data/repositories/housing-loans.ts#insertHousingLoan`
+
+#### `housingLoanBasePayload` — function, L59
+
+- called by: `src/data/repositories/housing-loans.ts#housingLoanFullPayload`, `src/data/repositories/housing-loans.ts#insertHousingLoan`
+
+#### `housingLoanFullPayload` — function, L82
+
+- calls: `src/data/repositories/housing-loans.ts#housingLoanBasePayload`
+- called by: `src/data/repositories/housing-loans.ts#insertHousingLoan`
+
+#### `insertHousingLoanPayload` — function, L118
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingLoanQuickAction`, `src/server/actions.ts#updateHousingLoanAction`
+- called by: `src/data/repositories/housing-loans.ts#insertHousingLoan`
 
-#### `advisorReadHousingLoans` — function, L22
+#### `listHousingLoans` — function, L131
+
+- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
+- called by: `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/domain/advisor-proposals/apply-changes.ts#detectAcceptConflicts`, `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`, `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingLoanQuickAction`, `src/server/actions.ts#createHousingPropertyAction`, `src/server/actions.ts#updateHousingLoanAction`
+
+#### `advisorReadHousingLoans` — function, L149
 
 - calls: `[external] @supabase/supabase-js`
 - called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/data/dashboard.ts#getDashboardPayload`, `src/server/advisor-client-actions.ts#createAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientHousingLoanAction`
 
-#### `insertHousingLoan` — function, L33
+#### `insertHousingLoan` — function, L160
 
-- calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
+- calls: `src/data/repositories/housing-loans.ts#housingLoanBasePayload`, `src/data/repositories/housing-loans.ts#housingLoanFullPayload`, `src/data/repositories/housing-loans.ts#insertHousingLoanPayload`, `src/data/repositories/housing-loans.ts#isSchemaCacheMissingColumnError`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingLoanQuickAction`, `src/server/actions.ts#createHousingPropertyAction`
 
-#### `updateHousingLoan` — function, L129
+#### `updateHousingLoan` — function, L183
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#updateHousingLoanAction`
 
-#### `deleteHousingLoan` — function, L182
+#### `deleteHousingLoan` — function, L236
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
 - called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#deleteHousingLoanAction`
@@ -1151,7 +1169,7 @@ Classification: `regular`
 #### `deleteProperty` — function, L82
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#deleteHousingPropertyAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#createHousingPropertyAction`, `src/server/actions.ts#deleteHousingPropertyAction`
 
 ### `src/data/repositories/purchases.ts` <a id="src-data-repositories-purchases-ts"></a>
 

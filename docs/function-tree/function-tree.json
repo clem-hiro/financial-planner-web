@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-06-04T16:22:25.221Z",
+  "generated_at": "2026-06-07T17:22:55.879Z",
   "roots": [
     "src/app",
     "src/components",
@@ -6977,10 +6977,72 @@
       ],
       "functions": [
         {
+          "id": "src/data/repositories/housing-loans.ts#isSchemaCacheMissingColumnError",
+          "name": "isSchemaCacheMissingColumnError",
+          "kind": "function",
+          "line": 47,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/data/repositories/housing-loans.ts#housingLoanBasePayload",
+          "name": "housingLoanBasePayload",
+          "kind": "function",
+          "line": 59,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/data/repositories/housing-loans.ts#housingLoanFullPayload",
+          "name": "housingLoanFullPayload",
+          "kind": "function",
+          "line": 82,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/housing-loans.ts#housingLoanBasePayload"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/data/repositories/housing-loans.ts#insertHousingLoanPayload",
+          "name": "insertHousingLoanPayload",
+          "kind": "function",
+          "line": 118,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/postgrest-js"
+            },
+            {
+              "kind": "calls",
+              "external": "@supabase/supabase-js"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/data/repositories/housing-loans.ts#listHousingLoans",
           "name": "listHousingLoans",
           "kind": "function",
-          "line": 4,
+          "line": 131,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7007,7 +7069,7 @@
           "id": "src/data/repositories/housing-loans.ts#advisorReadHousingLoans",
           "name": "advisorReadHousingLoans",
           "kind": "function",
-          "line": 22,
+          "line": 149,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7022,25 +7084,25 @@
           "id": "src/data/repositories/housing-loans.ts#insertHousingLoan",
           "name": "insertHousingLoan",
           "kind": "function",
-          "line": 33,
+          "line": 160,
           "exported": true,
           "classification": [],
           "edges": [
             {
               "kind": "calls",
-              "external": "@supabase/postgrest-js"
+              "target": "src/data/repositories/housing-loans.ts#insertHousingLoanPayload"
             },
             {
               "kind": "calls",
-              "external": "@supabase/postgrest-js"
+              "target": "src/data/repositories/housing-loans.ts#housingLoanFullPayload"
             },
             {
               "kind": "calls",
-              "external": "@supabase/postgrest-js"
+              "target": "src/data/repositories/housing-loans.ts#isSchemaCacheMissingColumnError"
             },
             {
               "kind": "calls",
-              "external": "@supabase/supabase-js"
+              "target": "src/data/repositories/housing-loans.ts#housingLoanBasePayload"
             }
           ],
           "unresolved": 0
@@ -7049,7 +7111,7 @@
           "id": "src/data/repositories/housing-loans.ts#updateHousingLoan",
           "name": "updateHousingLoan",
           "kind": "function",
-          "line": 129,
+          "line": 183,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7076,7 +7138,7 @@
           "id": "src/data/repositories/housing-loans.ts#deleteHousingLoan",
           "name": "deleteHousingLoan",
           "kind": "function",
-          "line": 182,
+          "line": 236,
           "exported": true,
           "classification": [],
           "edges": [
@@ -29027,11 +29089,19 @@
             },
             {
               "kind": "calls",
+              "target": "src/data/repositories/properties.ts#listProperties"
+            },
+            {
+              "kind": "calls",
+              "target": "src/server/actions.ts#toClientErrorMessage"
+            },
+            {
+              "kind": "calls",
               "target": "src/server/actions.ts#findNameCollision"
             },
             {
               "kind": "calls",
-              "target": "src/data/repositories/properties.ts#listProperties"
+              "target": "src/data/repositories/housing-loans.ts#listHousingLoans"
             },
             {
               "kind": "calls",
@@ -29056,6 +29126,10 @@
             {
               "kind": "calls",
               "target": "src/data/repositories/housing-loans.ts#insertHousingLoan"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/repositories/properties.ts#deleteProperty"
             }
           ],
           "unresolved": 0
@@ -29064,7 +29138,7 @@
           "id": "src/server/actions.ts#updateHousingPropertyAction",
           "name": "updateHousingPropertyAction",
           "kind": "function",
-          "line": 2119,
+          "line": 2159,
           "exported": true,
           "classification": [
             "server-action"
@@ -29121,7 +29195,7 @@
           "id": "src/server/actions.ts#deleteHousingPropertyAction",
           "name": "deleteHousingPropertyAction",
           "kind": "function",
-          "line": 2179,
+          "line": 2219,
           "exported": true,
           "classification": [
             "server-action"
@@ -29162,7 +29236,7 @@
           "id": "src/server/actions.ts#createHousingLoanAction",
           "name": "createHousingLoanAction",
           "kind": "function",
-          "line": 2195,
+          "line": 2235,
           "exported": true,
           "classification": [
             "server-action"
@@ -29219,7 +29293,7 @@
           "id": "src/server/actions.ts#createHousingLoanQuickAction",
           "name": "createHousingLoanQuickAction",
           "kind": "function",
-          "line": 2325,
+          "line": 2365,
           "exported": true,
           "classification": [
             "server-action"
@@ -29304,7 +29378,7 @@
           "id": "src/server/actions.ts#updateHousingLoanAction",
           "name": "updateHousingLoanAction",
           "kind": "function",
-          "line": 2590,
+          "line": 2630,
           "exported": true,
           "classification": [
             "server-action"
@@ -29369,7 +29443,7 @@
           "id": "src/server/actions.ts#deleteHousingLoanAction",
           "name": "deleteHousingLoanAction",
           "kind": "function",
-          "line": 2718,
+          "line": 2758,
           "exported": true,
           "classification": [
             "server-action"
@@ -32980,6 +33054,7 @@
         "src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle",
         "src/server/actions.ts#createHousingLoanAction",
         "src/server/actions.ts#createHousingLoanQuickAction",
+        "src/server/actions.ts#createHousingPropertyAction",
         "src/server/actions.ts#updateHousingLoanAction"
       ],
       "src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap": [
@@ -33900,6 +33975,7 @@
         "src/server/actions.ts#confirmCpfRulesReviewAction",
         "src/server/actions.ts#confirmInvestmentReviewAction",
         "src/server/actions.ts#createCpfInvestmentAction",
+        "src/server/actions.ts#createHousingPropertyAction",
         "src/server/actions.ts#createInvestmentAction",
         "src/server/actions.ts#deleteInvestmentAction",
         "src/server/actions.ts#updateInvestmentAction"
@@ -34112,13 +34188,14 @@
         "src/server/actions.ts#createHousingLoanQuickAction",
         "src/server/actions.ts#createHousingPropertyAction"
       ],
+      "src/data/repositories/properties.ts#deleteProperty": [
+        "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
+        "src/server/actions.ts#createHousingPropertyAction",
+        "src/server/actions.ts#deleteHousingPropertyAction"
+      ],
       "src/data/repositories/properties.ts#updateProperty": [
         "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
         "src/server/actions.ts#updateHousingPropertyAction"
-      ],
-      "src/data/repositories/properties.ts#deleteProperty": [
-        "src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges",
-        "src/server/actions.ts#deleteHousingPropertyAction"
       ],
       "src/server/actions.ts#insertPropertyForLoan": [
         "src/server/actions.ts#createHousingLoanAction",
@@ -34615,6 +34692,19 @@
       "src/data/repositories/goals.ts#nextGoalDisplayOrder": [
         "src/data/repositories/goals.ts#insertFinancialGoal",
         "src/data/repositories/goals.ts#insertFinancialGoalsBulk"
+      ],
+      "src/data/repositories/housing-loans.ts#housingLoanBasePayload": [
+        "src/data/repositories/housing-loans.ts#housingLoanFullPayload",
+        "src/data/repositories/housing-loans.ts#insertHousingLoan"
+      ],
+      "src/data/repositories/housing-loans.ts#insertHousingLoanPayload": [
+        "src/data/repositories/housing-loans.ts#insertHousingLoan"
+      ],
+      "src/data/repositories/housing-loans.ts#housingLoanFullPayload": [
+        "src/data/repositories/housing-loans.ts#insertHousingLoan"
+      ],
+      "src/data/repositories/housing-loans.ts#isSchemaCacheMissingColumnError": [
+        "src/data/repositories/housing-loans.ts#insertHousingLoan"
       ],
       "src/data/repositories/investments.ts#isUnknownInvestmentContributionColumnError": [
         "src/data/repositories/investments.ts#insertInvestment",

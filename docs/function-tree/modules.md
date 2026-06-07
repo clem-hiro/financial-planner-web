@@ -91,7 +91,7 @@
 | `src/data/repositories/cpf-investments.ts` | `src/data` | `regular` | 4 | 14 |
 | `src/data/repositories/expenses.ts` | `src/data` | `regular` | 8 | 33 |
 | `src/data/repositories/goals.ts` | `src/data` | `regular` | 9 | 45 |
-| `src/data/repositories/housing-loans.ts` | `src/data` | `regular` | 5 | 17 |
+| `src/data/repositories/housing-loans.ts` | `src/data` | `regular` | 9 | 22 |
 | `src/data/repositories/inbox-notifications.ts` | `src/data` | `regular` | 7 | 32 |
 | `src/data/repositories/income-tax-configs.ts` | `src/data` | `regular` | 3 | 9 |
 | `src/data/repositories/investments.ts` | `src/data` | `regular` | 7 | 32 |
@@ -399,7 +399,7 @@
 | `src/lib/validation.test.ts` | `src/lib` | `regular` | 0 | 0 |
 | `src/lib/validation.ts` | `src/lib` | `regular` | 5 | 8 |
 | `src/middleware.ts` | `src/server` | `middleware` | 1 | 22 |
-| `src/server/actions.ts` | `src/server` | `server-action` | 50 | 361 |
+| `src/server/actions.ts` | `src/server` | `server-action` | 50 | 364 |
 | `src/server/advisor-accept-hardening.test.ts` | `src/server` | `regular` | 1 | 0 |
 | `src/server/advisor-access-key-actions.ts` | `src/server` | `server-action` | 2 | 10 |
 | `src/server/advisor-client-actions.ts` | `src/server` | `server-action` | 35 | 224 |

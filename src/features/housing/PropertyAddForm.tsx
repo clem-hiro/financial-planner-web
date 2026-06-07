@@ -136,7 +136,6 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
       />
       <input type="hidden" name="oa_share_of_payment" value={String(oaShare)} />
       <input type="hidden" name="payment_source" value={paymentSource} />
-      <input type="hidden" name="principal" value={String(effectiveLoanAmount)} />
       <input
         type="hidden"
         name="original_loan_principal"
@@ -333,6 +332,7 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
               Total original loan ({currencyCode})
             </span>
             <input
+              name="principal"
               type="number"
               min={1}
               step="0.01"
