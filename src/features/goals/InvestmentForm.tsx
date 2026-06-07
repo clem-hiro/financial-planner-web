@@ -225,7 +225,7 @@ export function InvestmentForm(
             </label>
             <label className="block text-sm">
               <span className="mb-1 block font-medium text-slate-800">
-                Current invested amount
+              Current balance
               </span>
               <input
                 name="current_value"
