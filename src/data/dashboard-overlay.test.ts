@@ -115,11 +115,17 @@ vi.mock("@/data/repositories/liabilities", () => ({
 vi.mock("@/data/repositories/cpf-balances", () => ({
   getCpfBalanceByUserId: async () => null,
 }));
+vi.mock("@/data/repositories/cpf-investments", () => ({
+  listCpfInvestments: async () => [],
+}));
 vi.mock("@/data/repositories/housing-loans", () => ({
   listHousingLoans: async () => [],
 }));
 vi.mock("@/data/repositories/vehicles", () => ({
   listVehicles: async () => [],
+}));
+vi.mock("@/data/repositories/properties", () => ({
+  listProperties: async () => [],
 }));
 vi.mock("@/data/repositories/income-tax-configs", () => ({
   getIncomeTaxConfig: async () => null,
@@ -282,10 +288,9 @@ describe("getDashboardPayload — functional projection under overlay", () => {
       withInvestment.ageProjection?.projectedAtRetirement as number
     ).toBeGreaterThan(base);
 
-    // Lever B — raise a goal contribution: cash is diverted into the goal,
-    // which this headline model accrues as projected cash rather than re-adding
-    // as an asset, so the projected balance strictly decreases. Pinning this
-    // documents the real model semantics as a regression guard.
+    // Lever B — raise a goal contribution: this still changes monthly budget
+    // room, but the projection no longer treats contributions as net-worth
+    // reducing spend by themselves. The dated goal event is the actual outflow.
     const raiseGoal: AdvisorProposalChangeRow[] = [
       {
         id: "b1",
@@ -306,8 +311,35 @@ describe("getDashboardPayload — functional projection under overlay", () => {
     const withGoal = await getDashboardPayload(supabase, "c1", MONTH, {
       proposalOverlay: raiseGoal,
     });
+    expect(withGoal.totalPlannedGoalContributionsMonthly).toBe(800);
     expect(
       withGoal.ageProjection?.projectedAtRetirement as number
+    ).toBe(base);
+
+    // Lever C — make the goal a dated pre-retirement event: now the remaining
+    // target amount becomes a real one-off cash outflow in that year.
+    const dateGoal: AdvisorProposalChangeRow[] = [
+      {
+        id: "c1",
+        proposal_id: "p1",
+        section: "goals",
+        entity_type: "goal",
+        entity_id: "g1",
+        field_key: "target_date",
+        field_label: "Target date",
+        old_value: null,
+        new_value: "2050-05-01",
+        explanation: null,
+        sort_order: 0,
+        created_at: "2025-01-01T00:00:00Z",
+        updated_at: "2025-01-01T00:00:00Z",
+      },
+    ];
+    const withGoalEvent = await getDashboardPayload(supabase, "c1", MONTH, {
+      proposalOverlay: dateGoal,
+    });
+    expect(
+      withGoalEvent.ageProjection?.projectedAtRetirement as number
     ).toBeLessThan(base);
   });
 });

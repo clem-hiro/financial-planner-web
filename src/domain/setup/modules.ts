@@ -167,6 +167,19 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     ctaLabel: "Complete profile",
   },
   {
+    id: "advisor_proposal",
+    group: "advisor_system",
+    title: "Advisor Proposals",
+    description:
+      "Plan suggestions from your advisor — pending, accepted, rejected, and withdrawn — always available here, even after you dismiss the inbox notification.",
+    icon: "🤝",
+    href: "/setup?tab=advisor-proposals",
+    priority: 95,
+    recommendReason:
+      "Review and respond to plan changes your advisor has suggested for you.",
+    ctaLabel: "View proposals",
+  },
+  {
     id: "documents",
     group: "advisor_system",
     title: "Documents",

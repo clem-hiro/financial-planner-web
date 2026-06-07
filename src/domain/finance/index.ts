@@ -9,19 +9,27 @@ export {
   calculateTimeToGoalInvestmentPortfolio,
 } from "./investment-portfolio-fv";
 export {
+  annualWithdrawalFromInvestmentRow,
   contributionMonthsLimitFromInvestmentRow,
+  contributionStartMonthFromInvestmentRow,
+  investmentMaturityMonthFromInvestmentRow,
+  withdrawalStartMonthFromInvestmentRow,
 } from "./investment-contribution";
 export {
   INVESTMENT_REVIEW_STALE_MONTHS,
   INVESTMENT_REVIEW_ACK_VALID_MONTHS,
   countStaleInvestments,
+  investmentReviewReason,
   investmentRowIsStale,
   investmentRowLastTouchedAt,
   investmentReviewDedupeKeyForYear,
   monthsSinceTimestamp,
   shouldPromptInvestmentReview,
 } from "./investment-review";
-export type { InvestmentReviewTimestampRow } from "./investment-review";
+export type {
+  InvestmentReviewReason,
+  InvestmentReviewTimestampRow,
+} from "./investment-review";
 export {
   CPF_RULES_REVIEW_MONTH,
   CPF_RULES_VERSION,
@@ -82,6 +90,18 @@ export type {
   RetirementDividendVsSpendResult,
   RetirementSpendVsPortfolioResult,
 } from "./retirement-spend-vs-portfolio";
+export { buildRetirementCashflowProjection } from "./retirement-cashflow-projection";
+export type {
+  ProjectionAgeRow,
+  ProjectionAssetSnapshot,
+  ProjectionInvestmentComponent,
+  ProjectionLedgerEntry,
+  ProjectionOutflowBreakdownItem,
+  ProjectionPeriodRow,
+  ProjectionSamplePoint,
+  RetirementCashflowProjectionInput,
+  RetirementCashflowProjectionResult,
+} from "./retirement-cashflow-projection";
 export { buildDashboardInsights } from "./insights";
 export { buildSpendRecommendationsForMonth } from "./spend-recommendations";
 export type { SpendRecommendationsInput } from "./spend-recommendations";
@@ -184,6 +204,8 @@ export {
   estimateFutureFrs,
   CURRENT_FRS_SG,
   CPF_RA_FORMATION_AGE,
+  DEFAULT_CPF_LIFE_PAYOUT_RATE_ANNUAL,
+  DEFAULT_CPF_LIFE_START_AGE,
   DEFAULT_CPF_ASSUMPTIONS,
   CPF_SCENARIO_EXAMPLES,
 } from "./cpf-retirement-projection";

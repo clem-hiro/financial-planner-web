@@ -1,0 +1,469 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Retirement Runway — Proposal B · Income by Source</title>
+  <style>
+    /*
+      PROPOSAL B — "income by source" reading.
+      Each bar = that year's TOTAL inflows (cashAccessibleInflow), stacked by source.
+      A dark stepped "spending" line (requiredOutflow) runs across the tops.
+      Where income < spending, a hatched terracotta SHORTFALL (goalsGap) fills the
+      gap from the income top up to the spending line — so the red shows exactly
+      how far short the year falls. Surplus (income above spending) reads as the
+      rising net-worth line on the right axis.
+      Aesthetic: deep-navy + emerald premium (aligned to the app's design system).
+    */
+    :root {
+      color-scheme: light;
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --ink: #0d1b2e;
+      --ink-soft: #46556b;
+      --muted: #6b7892;
+      --line: #e4e9f0;
+      --grid: #eef2f7;
+      --band: rgba(13, 27, 46, 0.035);
+
+      --takehome: #3f6fb0;       /* employment / take-home */
+      --passive:  #0f9d77;       /* CPF LIFE + rental (emerald) */
+      --yield:    #d3a04a;       /* dividends + ILP income */
+      --drawdown: #7c83b8;       /* withdrawals + principal */
+      --shortfall:#c65b48;       /* GoalsGap */
+      --networth: #0c192f;       /* navy savings line */
+      --emerald:  #0f9d77;
+
+      --good: #0b7a5b; --bad: #b14130;
+      --shadow: 0 1px 2px rgba(12,25,47,0.05), 0 24px 56px -30px rgba(12,25,47,0.34);
+      --radius: 20px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; color: var(--ink);
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(12,25,47,0.06), transparent 55%),
+        radial-gradient(ellipse 50% 40% at 100% 0%, rgba(15,157,119,0.06), transparent 50%),
+        var(--bg);
+      font-family: "Inter", "SF Pro Text", ui-sans-serif, system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button { border: 0; font: inherit; cursor: pointer; }
+    .page { width: min(1240px, calc(100% - 32px)); margin: 0 auto; padding: 28px 0 64px; }
+
+    .preview-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; color: var(--muted); font-size: 0.78rem; font-weight: 600; }
+    .preview-bar .seg { display: inline-flex; background: #fff; border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
+    .preview-bar .seg button { min-height: 30px; padding: 0 14px; border-radius: 999px; background: transparent; color: var(--ink-soft); font-weight: 700; font-size: 0.76rem; }
+    .preview-bar .seg button[aria-pressed="true"] { background: var(--ink); color: #fff; }
+    .preview-note b { color: var(--ink); }
+
+    .frame { margin: 0 auto; transition: max-width 0.32s ease; }
+    .frame[data-mode="mobile"] { max-width: 412px; }
+    .frame[data-mode="mobile"] .card { border-radius: 30px; box-shadow: var(--shadow), 0 0 0 10px #0b1422, 0 0 0 12px #1d2740; }
+
+    .card { container-type: inline-size; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
+
+    .head { padding: clamp(20px,3.2cqw,30px) clamp(20px,3.2cqw,30px) clamp(12px,2cqw,16px); background: linear-gradient(180deg, #fff, #fbfcfe); }
+    .eyebrow { color: var(--emerald); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+    .hero-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+    .hero { font-size: clamp(2.4rem,6cqw,3.4rem); font-weight: 800; letter-spacing: -0.045em; line-height: 0.95; color: var(--networth); }
+    .hero small { font-size: 0.32em; font-weight: 600; letter-spacing: 0; color: var(--muted); margin-left: 8px; }
+    .status { display: inline-flex; align-items: center; gap: 8px; min-height: 34px; padding: 0 14px; border-radius: 999px; background: rgba(15,157,119,0.12); color: var(--good); font-size: 0.74rem; font-weight: 800; letter-spacing: 0.04em; }
+    .status::before { content: ""; width: 8px; height: 8px; border-radius: 999px; background: currentColor; }
+    .lede { margin: 14px 0 0; max-width: 60ch; color: var(--ink-soft); font-size: 0.95rem; line-height: 1.5; }
+    .lede b { color: var(--ink); font-weight: 700; }
+
+    .legend-row { display: flex; align-items: center; gap: 12px; padding: 4px clamp(20px,3.2cqw,30px) 0; }
+    .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; flex: 1; min-width: 0; }
+    .pane-toggle { margin-left: auto; flex: none; display: inline-flex; align-items: center; gap: 7px; min-height: 32px; padding: 0 13px; border-radius: 999px; background: #fff; border: 1px solid var(--line); color: var(--ink-soft); font-size: 0.78rem; font-weight: 700; }
+    .pane-toggle:hover { border-color: rgba(15,157,119,0.5); }
+    .pane-toggle[aria-pressed="false"] { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .pane-toggle .ti { font-size: 0.95rem; line-height: 1; }
+    .legend button { display: inline-flex; align-items: center; gap: 7px; color: var(--ink-soft); font-size: 0.8rem; font-weight: 600; background: none; }
+    .legend button[aria-pressed="false"] { opacity: 0.38; text-decoration: line-through; }
+    .sw { width: 11px; height: 11px; border-radius: 3px; }
+    .sw.line { height: 0; width: 18px; border-top: 3px solid var(--networth); border-radius: 0; }
+    .sw.dash { height: 0; width: 18px; border-top: 2px dashed var(--ink); border-radius: 0; }
+
+    .body { display: grid; grid-template-columns: minmax(0,1fr) 304px; gap: 18px; padding: 14px clamp(20px,3.2cqw,30px) clamp(20px,3.2cqw,30px); transition: grid-template-columns .28s ease; }
+    .body.pane-collapsed { grid-template-columns: 1fr; }
+    .body.pane-collapsed .pane { display: none; }
+    .plot-card { position: relative; min-width: 0; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(180deg,#fff,#fbfcfe); padding: 12px 10px 6px; }
+    .plot-axis-label { position: absolute; top: 12px; font-size: 0.68rem; font-weight: 700; }
+    .plot-axis-label.l { left: 14px; color: var(--takehome); }
+    .plot-axis-label.r { right: 14px; color: var(--networth); }
+    svg.chart { display: block; width: 100%; height: auto; overflow: visible; }
+    svg.chart text { font-family: "Inter", ui-sans-serif, system-ui; fill: var(--muted); font-size: 11px; font-weight: 600; }
+    .bar-hit, .mstone { cursor: pointer; }
+
+    .scrubber { display: none; margin-top: 10px; padding: 4px 6px 2px; }
+    .scrubber .srow { display: flex; align-items: center; justify-content: space-between; font-size: 0.72rem; color: var(--muted); font-weight: 700; }
+    .scrubber input[type="range"] { width: 100%; margin: 8px 0 2px; accent-color: var(--emerald); height: 28px; }
+
+    .pane { display: grid; gap: 12px; align-content: start; }
+    /* collapsible group cards — obvious chevron header affordance */
+    .group { border: 1px solid var(--line); border-radius: 16px; background: #fff; overflow: hidden; }
+    .group-head { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; background: #fff; color: var(--muted); font-size: 0.74rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+    .group-head:hover { background: var(--bg); }
+    .group-head .gh-title { display: inline-flex; align-items: center; gap: 6px; }
+    .group-head .gh-title b { color: var(--ink); }
+    .gh-right { display: inline-flex; align-items: center; gap: 10px; }
+    .ip-mini { font-size: 0.64rem; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; color: var(--good); background: rgba(15,157,119,0.12); padding: 3px 8px; border-radius: 999px; }
+    .ip-mini[data-state="risk"] { color: var(--bad); background: rgba(198,91,72,0.14); }
+    .group-head .chev { font-size: 1rem; line-height: 1; transition: transform .18s ease; color: var(--ink-soft); }
+    .group[data-open="false"] .chev { transform: rotate(-90deg); }
+    .group-body { padding: 0 12px 12px; }
+    .group.group-flush .group-body { padding: 0; }
+    .group[data-open="false"] .group-body { display: none; }
+    .group-body .inspector { border: 0; border-radius: 0; }
+    .milestones { display: grid; gap: 10px; }
+    .ms { display: grid; grid-template-columns: 40px 1fr; gap: 12px; align-items: center; border: 1px solid var(--line); border-radius: 14px; background: #fff; padding: 12px 13px; text-align: left; transition: border-color .15s, background .15s; }
+    .ms:hover { border-color: rgba(15,157,119,0.45); }
+    .ms[aria-current="true"] { border-color: var(--emerald); background: linear-gradient(180deg,#fff,rgba(15,157,119,0.06)); box-shadow: 0 0 0 3px rgba(15,157,119,0.12); }
+    .ms .ico { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 1.1rem; background: rgba(15,157,119,0.12); }
+    .ms .ico.risk { background: rgba(198,91,72,0.14); }
+    .ms .ico.gold { background: rgba(211,160,74,0.18); }
+    .ms .age { font-size: 0.7rem; font-weight: 800; color: var(--muted); }
+    .ms h3 { margin: 2px 0 0; font-size: 0.92rem; font-weight: 700; color: var(--ink); }
+
+    .inspector { border: 1px solid rgba(12,25,47,0.1); border-radius: 16px; background: var(--networth); color: #eef2f8; overflow: hidden; }
+    .inspector header { padding: 13px 15px 10px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .inspector .ip { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: #6ee7b7; }
+    .inspector .ip[data-state="risk"] { color: #fca5a5; }
+    .inspector .ia { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.03em; }
+    .inspector dl { margin: 0; }
+    .inspector .r { display: flex; align-items: center; justify-content: space-between; padding: 9px 15px; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 0.85rem; }
+    .inspector .r:last-child { border-bottom: 0; }
+    .inspector dt { color: #c3cdda; display: inline-flex; align-items: center; gap: 8px; }
+    .inspector dt .dot { width: 9px; height: 9px; border-radius: 3px; }
+    .inspector dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 700; }
+    .inspector dd.bad { color: #fca5a5; } .inspector dd.good { color: #6ee7b7; }
+
+    .tip { position: fixed; z-index: 40; display: none; min-width: 210px; max-width: 264px; border-radius: 14px; background: rgba(13,27,46,0.97); color: #eef2f8; padding: 12px 13px; box-shadow: 0 20px 50px rgba(12,25,47,0.4); pointer-events: none; backdrop-filter: blur(8px); }
+    .tip h4 { margin: 0 0 8px; font-size: 0.86rem; font-weight: 700; }
+    .tip .tr { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 4px 0; font-size: 0.78rem; color: #c3cdda; border-top: 1px solid rgba(255,255,255,0.08); }
+    .tip .tr:first-of-type { border-top: 0; }
+    .tip .tr b { color: #fff; font-variant-numeric: tabular-nums; }
+    .tip .lbl { display: inline-flex; align-items: center; gap: 7px; }
+    .tip .dot { width: 9px; height: 9px; border-radius: 3px; }
+
+    @container (max-width: 780px) {
+      .body, .body.pane-collapsed { grid-template-columns: 1fr; }   /* single column; revealed pane stacks below */
+      .scrubber { display: block; }
+      /* pane-toggle stays visible so the auto-collapsed pane can be revealed */
+      .milestones { grid-auto-flow: column; grid-auto-columns: 78%; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 4px; }
+      .ms { scroll-snap-align: start; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div class="preview-bar">
+      <span class="preview-note">Proposal B · <b>“income by source”</b> — bars are total income; the dashed line is spending; red fills any gap. Preview:</span>
+      <span class="seg" role="group" aria-label="Preview width">
+        <button type="button" data-mode="desktop" aria-pressed="true">Desktop / web</button>
+        <button type="button" data-mode="mobile" aria-pressed="false">Mobile</button>
+      </span>
+    </div>
+
+    <div class="frame" data-mode="desktop">
+      <section class="card" aria-labelledby="title">
+        <header class="head">
+          <div class="eyebrow">Retirement runway</div>
+          <div class="hero-row">
+            <div class="hero" id="title">$2.56m<small>net worth at 65</small></div>
+            <span class="status" id="status">On track to 84</span>
+          </div>
+          <p class="lede">
+            Each bar is one year's <b>income</b>, stacked by source. The <b>dashed line is your spending</b>.
+            While bars clear the line, savings climb; once <b>income falls short</b>, terracotta fills the gap.
+          </p>
+        </header>
+
+        <div class="legend-row">
+          <div class="legend" id="legend" role="group" aria-label="Toggle income series"></div>
+          <button class="pane-toggle" id="paneToggle" aria-pressed="true" aria-controls="pane" title="Show / hide the insights panel">
+            <span class="ti">⊟</span><span id="paneToggleLabel">Insights</span>
+          </button>
+        </div>
+
+        <div class="body" id="body">
+          <div>
+            <div class="plot-card">
+              <span class="plot-axis-label l">Annual income</span>
+              <span class="plot-axis-label r">Net worth</span>
+              <svg class="chart" id="chart" viewBox="0 0 1000 460" role="img"
+                   aria-label="Stacked annual income by source from age 58 to 90, spending reference line, and net worth line"></svg>
+            </div>
+            <div class="scrubber">
+              <div class="srow"><span>Drag to explore any age</span><span id="scrubLabel">Age 65</span></div>
+              <input type="range" id="scrub" min="58" max="90" value="65" step="1" aria-label="Selected age" />
+            </div>
+          </div>
+
+          <aside class="pane" id="pane" aria-label="Milestones and selected age">
+            <section class="group" data-open="true">
+              <button class="group-head" type="button" aria-expanded="true">
+                <span class="gh-title">Milestones</span>
+                <span class="chev" aria-hidden="true">⌄</span>
+              </button>
+              <div class="group-body">
+                <div class="milestones" id="milestones"></div>
+              </div>
+            </section>
+            <section class="group group-flush" data-open="true">
+              <button class="group-head" type="button" aria-expanded="true">
+                <span class="gh-title">Selected age · <b id="ghAge">65</b></span>
+                <span class="gh-right">
+                  <span class="ip-mini" id="iPhase">Retired</span>
+                  <span class="chev" aria-hidden="true">⌄</span>
+                </span>
+              </button>
+              <div class="group-body">
+                <dl class="inspector" id="iRows"></dl>
+              </div>
+            </section>
+          </aside>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <div class="tip" id="tip" role="status" aria-live="polite"></div>
+
+  <script>
+    const SERIES = [
+      { key: "takehome", label: "Take-home income", color: "var(--takehome)" },
+      { key: "passive",  label: "Passive income",   color: "var(--passive)"  },
+      { key: "yield",    label: "Investment yield",  color: "var(--yield)"    },
+      { key: "drawdown", label: "Withdrawals",       color: "var(--drawdown)" },
+    ];
+    const RETIRE = 65, FIRST = 58, LAST = 90;
+    const infl = (b, f, a, r) => b * Math.pow(1 + r, a - f);
+
+    function buildScenario() {
+      const rows = []; let netWorth = 1820;
+      for (let age = FIRST; age <= LAST; age++) {
+        let expenses = infl(78, FIRST, age, 0.024);
+        if (age === 64) expenses += 100;
+        const working = age < RETIRE;
+        const takehome = working ? infl(168, FIRST, age, 0.02) : 0;
+        const passive = (age >= 62 ? infl(22, 62, age, 0.01) : 0) + (age >= RETIRE ? 28 : 0);
+        const yld = age >= RETIRE ? infl(31, RETIRE, age, 0.005) : 0;
+        const drawdown = age >= 70 ? 14 : 0;
+        const income = takehome + passive + yld + drawdown;
+        const shortfall = Math.max(0, expenses - income);  // gap up to spending line
+        const surplus = income - expenses;
+        netWorth = netWorth * 1.035 + surplus;
+        rows.push({ age, expenses, income, takehome, passive, yield: yld, drawdown, shortfall,
+          netWorth: Math.round(netWorth), phase: working ? "Working" : "Retired" });
+      }
+      return rows;
+    }
+    const DATA = buildScenario();
+    const MILESTONES = [
+      { age: 62, icon: "🏠", title: "Rental income starts", cls: "" },
+      { age: 64, icon: "🎯", title: "One-off goal outflow", cls: "gold" },
+      { age: 65, icon: "🌿", title: "Retirement · CPF LIFE", cls: "" },
+      { age: DATA.find(r => r.shortfall > 0.5)?.age ?? 99, icon: "⚠", title: "Income falls short", cls: "risk" },
+    ].filter(m => m.age <= LAST);
+
+    let selectedAge = RETIRE; const hidden = new Set();
+    const fmt = (v) => { const s = v < 0 ? "−" : ""; const a = Math.abs(v); return a >= 1000 ? `${s}$${(a/1000).toFixed(2)}m` : `${s}$${Math.round(a)}k`; };
+    const cssVar = (v) => v.startsWith("var(") ? getComputedStyle(document.documentElement).getPropertyValue(v.slice(4,-1)).trim() : v;
+    const rowFor = (age) => DATA.find(r => r.age === age) || DATA[RETIRE - FIRST];
+    const $ = (id) => document.getElementById(id);
+    const chart = $("chart"), tip = $("tip");
+
+    function renderLegend() {
+      $("legend").innerHTML = SERIES.map(s => `
+        <button type="button" data-key="${s.key}" aria-pressed="${!hidden.has(s.key)}">
+          <span class="sw" style="background:${cssVar(s.color)}"></span>${s.label}</button>`).join("") + `
+        <button type="button" disabled aria-pressed="true" style="cursor:default"><span class="sw" style="background:repeating-linear-gradient(45deg,var(--shortfall),var(--shortfall) 3px,#fff0 3px,#fff0 5px),var(--shortfall)"></span>Shortfall</button>
+        <button type="button" disabled aria-pressed="true" style="cursor:default"><span class="sw dash"></span>Spending</button>
+        <button type="button" disabled aria-pressed="true" style="cursor:default"><span class="sw line"></span>Net worth</button>`;
+      $("legend").querySelectorAll("button[data-key]").forEach(b =>
+        b.addEventListener("click", () => { const k = b.dataset.key; hidden.has(k) ? hidden.delete(k) : hidden.add(k); renderLegend(); renderChart(); }));
+    }
+
+    function renderChart() {
+      const W = 1000, H = 460, pad = { t: 40, r: 64, b: 42, l: 64 };
+      const pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+      const active = SERIES.filter(s => !hidden.has(s.key));
+      const incomeStack = (r) => active.reduce((a, s) => a + (r[s.key]||0), 0);
+      const maxLeft = Math.max(...DATA.map(r => Math.max(incomeStack(r), r.expenses)), 1);
+      const maxNet = Math.max(...DATA.map(r => r.netWorth)), minNet = Math.min(...DATA.map(r => r.netWorth));
+      const n = DATA.length;
+      const x = (i) => pad.l + (i + 0.5) / n * pw;
+      const yL = (v) => pad.t + (1 - v / (maxLeft * 1.08)) * ph;
+      const base = pad.t + ph;
+      const yNet = (v) => pad.t + (1 - (v - minNet*0.92) / (maxNet*1.05 - minNet*0.92)) * ph;
+      const bw = Math.max(6, pw / n * 0.62);
+      const retX = x(RETIRE - FIRST) - bw/2 - (pw/n - bw)/2;
+
+      const ticks = 4, grid = [];
+      for (let i = 0; i <= ticks; i++) {
+        const v = maxLeft * 1.08 * i / ticks, y = yL(v);
+        grid.push(`<line x1="${pad.l}" y1="${y}" x2="${W-pad.r}" y2="${y}" stroke="var(--grid)"/>
+          <text x="${pad.l-10}" y="${y+4}" text-anchor="end" style="fill:var(--takehome);opacity:.85">${fmt(v)}</text>`);
+        const yr = pad.t + (1 - i/ticks)*ph; const nv = minNet*0.92 + (maxNet*1.05 - minNet*0.92)*(i/ticks);
+        grid.push(`<text x="${W-pad.r+10}" y="${yr+4}" text-anchor="start" style="fill:var(--networth);opacity:.85">${fmt(nv)}</text>`);
+      }
+
+      let bars = "";
+      DATA.forEach((r, i) => {
+        let yTop = base; const cx = x(i);
+        active.forEach((s, si) => {
+          const v = r[s.key] || 0; if (v <= 0) return;
+          const h = (v / (maxLeft*1.08)) * ph; yTop -= h;
+          const isTop = r.shortfall <= 0.5 && (si === active.length - 1 || active.slice(si+1).every(o => (r[o.key]||0) <= 0));
+          bars += `<rect x="${cx-bw/2}" y="${yTop}" width="${bw}" height="${h}" fill="${s.color}" opacity="${r.age===selectedAge?1:0.84}" rx="${isTop?4:0}"/>`;
+        });
+        // shortfall fills the gap from income-top up to spending line
+        if (r.shortfall > 0.5) {
+          const top = yL(r.expenses), h = yTop - top;
+          if (h > 0) bars += `<rect x="${cx-bw/2}" y="${top}" width="${bw}" height="${h}" fill="url(#hatch)" rx="4"/>`;
+        }
+        bars += `<rect class="bar-hit" data-age="${r.age}" x="${cx-(pw/n)/2}" y="${pad.t}" width="${pw/n}" height="${ph}" fill="transparent"/>`;
+        if (r.age === selectedAge) { const t = yL(Math.max(incomeStack(r), r.expenses)); bars += `<rect x="${cx-bw/2-2}" y="${t-2}" width="${bw+4}" height="${base-t+2}" fill="none" stroke="var(--ink)" stroke-opacity="0.22" rx="6"/>`; }
+      });
+
+      // stepped spending reference line (dashed)
+      let spend = "";
+      DATA.forEach((r, i) => { const y = yL(r.expenses), x0 = x(i)-bw/2-3, x1 = x(i)+bw/2+3; spend += `${i===0?'M':'M'}${x0} ${y} L${x1} ${y} `; });
+      const spendPath = `<path d="${spend}" fill="none" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4" stroke-opacity="0.62"/>`;
+
+      const linePts = DATA.map((r,i) => `${x(i)},${yNet(r.netWorth)}`);
+      const linePath = "M" + linePts.join(" L");
+      const areaPath = `${linePath} L${x(n-1)},${base} L${x(0)},${base} Z`;
+
+      let xt = ""; [58,62,65,70,76,82,88].forEach(age => { if(age<=LAST){ xt += `<text x="${x(age-FIRST)}" y="${H-pad.b+22}" text-anchor="middle">${age}</text>`; }});
+
+      const marks = MILESTONES.map(m => {
+        const cx = x(m.age-FIRST), r = rowFor(m.age);
+        const top = yL(Math.max(incomeStack(r), r.expenses)) - 16, risk = m.cls === "risk";
+        return `<g class="mstone" data-age="${m.age}">
+          <line x1="${cx}" y1="${top+8}" x2="${cx}" y2="${base}" stroke="${risk?'var(--shortfall)':'var(--muted)'}" stroke-opacity="0.28" stroke-dasharray="3 4"/>
+          <circle cx="${cx}" cy="${top-4}" r="13" fill="#fff" stroke="${risk?'var(--shortfall)':'var(--emerald)'}" stroke-width="1.6"/>
+          <text x="${cx}" y="${top}" text-anchor="middle" style="font-size:13px;fill:var(--ink)">${m.icon}</text></g>`;
+      }).join("");
+
+      chart.innerHTML = `
+        <defs>
+          <pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+            <rect width="6" height="6" fill="var(--shortfall)"/>
+            <line x1="0" y1="0" x2="0" y2="6" stroke="#fff" stroke-opacity="0.55" stroke-width="2"/>
+          </pattern>
+          <linearGradient id="netArea" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="var(--networth)" stop-opacity="0.1"/>
+            <stop offset="1" stop-color="var(--networth)" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <rect x="${retX}" y="${pad.t-8}" width="${W-pad.r-retX}" height="${ph+8}" fill="var(--band)"/>
+        <text x="${retX+10}" y="${pad.t+6}" style="fill:var(--ink-soft);opacity:.55;font-weight:700">Retirement</text>
+        ${grid.join("")}
+        ${bars}
+        ${spendPath}
+        <path d="${areaPath}" fill="url(#netArea)"/>
+        <path d="${linePath}" fill="none" stroke="var(--networth)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+        <circle cx="${x(selectedAge-FIRST)}" cy="${yNet(rowFor(selectedAge).netWorth)}" r="6" fill="var(--networth)" stroke="#fff" stroke-width="3"/>
+        ${marks}
+        ${xt}`;
+
+      chart.querySelectorAll(".bar-hit").forEach(node => {
+        const r = rowFor(+node.dataset.age);
+        node.addEventListener("mouseenter", e => showTip(e, r));
+        node.addEventListener("mousemove", e => showTip(e, r));
+        node.addEventListener("mouseleave", hideTip);
+        node.addEventListener("click", () => select(r.age));
+      });
+      chart.querySelectorAll(".mstone").forEach(node => node.addEventListener("click", () => select(+node.dataset.age)));
+    }
+
+    function showTip(e, r) {
+      const rows = SERIES.filter(s => (r[s.key]||0) > 0.5 && !hidden.has(s.key)).map(s =>
+        `<div class="tr"><span class="lbl"><span class="dot" style="background:${cssVar(s.color)}"></span>${s.label}</span><b>${fmt(r[s.key])}</b></div>`).join("");
+      tip.innerHTML = `<h4>Age ${r.age} · ${r.phase}</h4>
+        <div class="tr"><span class="lbl">Income</span><b>${fmt(r.income)}</b></div>
+        ${rows}
+        <div class="tr"><span class="lbl">Spending</span><b>${fmt(r.expenses)}</b></div>
+        ${r.shortfall>0.5?`<div class="tr"><span class="lbl"><span class="dot" style="background:${cssVar('var(--shortfall)')}"></span>Shortfall</span><b>${fmt(r.shortfall)}</b></div>`:""}
+        <div class="tr"><span class="lbl">Net worth</span><b>${fmt(r.netWorth)}</b></div>`;
+      tip.style.display = "block";
+      tip.style.left = Math.min(e.clientX + 16, innerWidth - 284) + "px";
+      tip.style.top = Math.min(e.clientY + 16, innerHeight - 250) + "px";
+    }
+    const hideTip = () => tip.style.display = "none";
+
+    function renderMilestones() {
+      $("milestones").innerHTML = MILESTONES.map(m => `
+        <button class="ms" data-age="${m.age}" aria-current="${m.age===selectedAge}">
+          <span class="ico ${m.cls}">${m.icon}</span>
+          <span><span class="age">Age ${m.age}</span><h3>${m.title}</h3></span></button>`).join("");
+      $("milestones").querySelectorAll(".ms").forEach(b => b.addEventListener("click", () => select(+b.dataset.age)));
+    }
+
+    function renderInspector() {
+      const r = rowFor(selectedAge);
+      $("ghAge").textContent = r.age;
+      const ph = $("iPhase"); ph.textContent = r.phase; ph.dataset.state = r.shortfall > 0.5 ? "risk" : "ok";
+      const line = (label, val, color, cls="") =>
+        `<div class="r"><dt>${color?`<span class="dot" style="background:${cssVar(color)}"></span>`:""}${label}</dt><dd class="${cls}">${val}</dd></div>`;
+      $("iRows").innerHTML =
+        line("Income", fmt(r.income), "", "good") +
+        line("Take-home", r.takehome>0?fmt(r.takehome):"—", "var(--takehome)") +
+        line("Passive income", r.passive>0?fmt(r.passive):"—", "var(--passive)") +
+        line("Investment yield", r.yield>0?fmt(r.yield):"—", "var(--yield)") +
+        line("Withdrawals", r.drawdown>0?fmt(r.drawdown):"—", "var(--drawdown)") +
+        line("Spending", fmt(r.expenses)) +
+        line("Shortfall", r.shortfall>0.5?fmt(r.shortfall):"None", r.shortfall>0.5?"var(--shortfall)":"", r.shortfall>0.5?"bad":"good") +
+        line("Net worth", fmt(r.netWorth));
+      $("milestones").querySelectorAll(".ms").forEach(b => b.setAttribute("aria-current", +b.dataset.age===selectedAge));
+    }
+
+    function select(age) {
+      selectedAge = Math.max(FIRST, Math.min(LAST, age));
+      $("scrub").value = selectedAge; $("scrubLabel").textContent = "Age " + selectedAge;
+      renderChart(); renderInspector();
+    }
+
+    $("scrub").addEventListener("input", e => select(+e.target.value));
+
+    // pane open/close, shared by the master toggle and the width-aware auto-collapse
+    const paneBody = $("body");
+    function setPaneCollapsed(collapsed) {
+      paneBody.classList.toggle("pane-collapsed", collapsed);
+      $("paneToggle").setAttribute("aria-pressed", String(!collapsed));
+      $("paneToggleLabel").textContent = collapsed ? "Show insights" : "Insights";
+    }
+    // master toggle — manual override within the current width regime
+    $("paneToggle").addEventListener("click", () => {
+      setPaneCollapsed(!paneBody.classList.contains("pane-collapsed"));
+      requestAnimationFrame(renderChart);
+    });
+    // width-aware auto-collapse: when the card gets narrow, fold the pane so the
+    // chart keeps full width. Container queries can't drive JS, and the mobile
+    // preview changes the CARD width (not the viewport) — so observe the card.
+    const NARROW = 780; let isNarrow = null;
+    new ResizeObserver(([entry]) => {
+      const narrow = entry.contentRect.width < NARROW;
+      if (narrow !== isNarrow) { isNarrow = narrow; setPaneCollapsed(narrow); } // regime change → auto default
+      requestAnimationFrame(renderChart);
+    }).observe(document.querySelector(".card"));
+
+    // per-group collapse — each card folds independently via its chevron header
+    document.querySelectorAll(".group-head").forEach(h => h.addEventListener("click", () => {
+      const g = h.closest(".group"), open = g.dataset.open !== "true";
+      g.dataset.open = String(open); h.setAttribute("aria-expanded", String(open));
+    }));
+    document.querySelectorAll(".preview-bar [data-mode]").forEach(b => b.addEventListener("click", () => {
+      document.querySelectorAll(".preview-bar [data-mode]").forEach(x => x.setAttribute("aria-pressed", x === b));
+      document.querySelector(".frame").dataset.mode = b.dataset.mode;
+      requestAnimationFrame(renderChart);
+    }));
+    addEventListener("resize", () => renderChart());
+
+    renderLegend(); renderMilestones(); renderChart(); renderInspector();
+  </script>
+</body>
+</html>

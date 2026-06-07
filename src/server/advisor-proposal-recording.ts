@@ -10,14 +10,12 @@ export async function recordAdvisorProposalChanges(
   advisorUserId: string,
   clientUserId: string,
   changes: ProposalChangeInput[]
-): Promise<{ proposalId: string; changeCount: number }> {
+): Promise<{ proposalId: string }> {
   const proposal = await getOrCreateDraftProposal(supabase, advisorUserId, clientUserId);
-  for (const c of changes) {
-    await upsertProposalChange(supabase, proposal.id, c);
-  }
-  const { count } = await supabase
-    .from("advisor_proposal_changes")
-    .select("id", { count: "exact", head: true })
-    .eq("proposal_id", proposal.id);
-  return { proposalId: proposal.id, changeCount: count ?? 0 };
+  // Each change targets a distinct identity key (entity + field) within the
+  // proposal, so the upserts are independent — run them concurrently.
+  await Promise.all(
+    changes.map((c) => upsertProposalChange(supabase, proposal.id, c))
+  );
+  return { proposalId: proposal.id };
 }

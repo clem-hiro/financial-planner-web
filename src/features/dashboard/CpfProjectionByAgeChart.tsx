@@ -50,7 +50,7 @@ export function CpfProjectionByAgeChart({
   if (!data.length) return null;
 
   const fmt = (v: number | string | undefined) =>
-    new Intl.NumberFormat(undefined, {
+    new Intl.NumberFormat("en-SG", {
       style: "currency",
       currency,
       maximumFractionDigits: 0,
@@ -94,7 +94,7 @@ export function CpfProjectionByAgeChart({
             axisLine={false}
             tickLine={false}
             tickFormatter={(v) =>
-              new Intl.NumberFormat(undefined, {
+              new Intl.NumberFormat("en-SG", {
                 notation: "compact",
                 maximumFractionDigits: 1,
               }).format(v as number)

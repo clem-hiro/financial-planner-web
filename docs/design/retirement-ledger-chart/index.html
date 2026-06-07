@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Retirement Runway Chart — Proposals</title>
+  <style>
+    :root { --ink:#1a1f29; --soft:#5b6373; --line:#e7e3da; --paper:#faf8f4; --sage:#7aa07e; --navy:#0c192f; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Inter", ui-sans-serif, system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+    .wrap { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 40px 0 80px; }
+    h1 { font-size: clamp(1.8rem,4vw,2.6rem); letter-spacing: -0.03em; margin: 0; }
+    .eyebrow { color: var(--sage); font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.74rem; }
+    .lede { color: var(--soft); max-width: 70ch; line-height: 1.6; margin: 14px 0 0; }
+    .callout { margin: 26px 0; border: 1px solid var(--line); border-left: 4px solid var(--sage); border-radius: 12px; background: #fffdfa; padding: 16px 18px; }
+    .callout h3 { margin: 0 0 6px; font-size: 0.95rem; }
+    .callout p { margin: 0; color: var(--soft); line-height: 1.55; font-size: 0.92rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.88rem; }
+    th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th { color: var(--soft); font-weight: 700; font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.04em; }
+    code { background: #f1ede6; border-radius: 6px; padding: 1px 6px; font-size: 0.85em; font-family: "Geist Mono", ui-monospace, monospace; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-top: 26px; }
+    @media (max-width: 880px) { .grid { grid-template-columns: 1fr; } }
+    .prop { border: 1px solid var(--line); border-radius: 18px; background: #fff; overflow: hidden; box-shadow: 0 18px 44px -30px rgba(40,36,30,0.3); }
+    .prop header { padding: 16px 18px; border-bottom: 1px solid var(--line); }
+    .prop h2 { margin: 0; font-size: 1.05rem; }
+    .prop .tag { display: inline-block; margin-top: 4px; font-size: 0.78rem; color: var(--soft); }
+    .prop iframe { width: 100%; height: 720px; border: 0; background: var(--paper); }
+    .prop .open { display: inline-block; margin: 12px 18px 16px; font-size: 0.85rem; font-weight: 700; color: var(--navy); text-decoration: none; border: 1px solid var(--line); border-radius: 10px; padding: 8px 14px; }
+    .prop .open:hover { background: var(--paper); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="eyebrow">Design proposals</div>
+    <h1>Retirement runway — ledger chart</h1>
+    <p class="lede">
+      Two concrete directions for the chart that visualizes the new retirement cash-flow ledger
+      (<code>retirement-cashflow-projection.ts</code>). Both are calm, premium, minimal and fully
+      responsive (web + mobile). Each file has a <b>Desktop / Mobile</b> preview toggle at the top.
+    </p>
+
+    <div class="callout">
+      <h3>The one decision to make first: what does a bar mean?</h3>
+      <p>
+        Both proposals draw the same milestones, dual axis, net-worth line and collapsible pane.
+        They differ only in the <b>bar semantics</b>, which is a real modeling choice:
+      </p>
+      <table>
+        <tr><th>Reading</th><th>Bar height</th><th>Where shortfall shows</th><th>Best when you want users to feel…</th></tr>
+        <tr>
+          <td><b>A · funded spending</b></td>
+          <td>That year's <b>spending</b> (<code>requiredOutflow</code>), segmented by funder</td>
+          <td>Terracotta cap on top of the bar (uncovered spending)</td>
+          <td>“Every year of my life is paid for — here's by what.”</td>
+        </tr>
+        <tr>
+          <td><b>B · income by source</b></td>
+          <td>That year's <b>total income</b> (<code>cashAccessibleInflow</code>), stacked by source; spending is a dashed line</td>
+          <td>Terracotta fills the gap from the income top up to the spending line</td>
+          <td>“My income vs my spending — and exactly when one crosses the other.”</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="callout">
+      <h3>How chart segments map to ledger fields (already exposed per age)</h3>
+      <table>
+        <tr><th>Segment</th><th>Source field(s) on <code>AgeAssetBreakdownPoint</code></th></tr>
+        <tr><td>Take-home income</td><td><code>cashAccessibleInflow</code> − (broken-out inflows below) = employment/bonus residual</td></tr>
+        <tr><td>Passive income</td><td><code>cpfLifeInflow</code> + <code>rentalInflow</code></td></tr>
+        <tr><td>Investment yield</td><td><code>investmentDividendInflow</code> + <code>ilpIncomeInflow</code></td></tr>
+        <tr><td>Withdrawals / drawdown</td><td><code>investmentWithdrawalInflow</code> + <code>principalWithdrawn</code></td></tr>
+        <tr><td>Shortfall</td><td><code>goalsGap</code> · <code>cumulativeGoalsGap</code></td></tr>
+        <tr><td>Net-worth line</td><td><code>value</code> / <code>netWorth</code></td></tr>
+        <tr><td>Spending reference</td><td><code>requiredOutflow</code></td></tr>
+        <tr><td>Retirement band</td><td><code>phase === "post_retirement"</code></td></tr>
+      </table>
+    </div>
+
+    <div class="grid">
+      <article class="prop">
+        <header><h2>Proposal A · Funded spending</h2><span class="tag">Warm-light · soft-rounded · Notion-style</span></header>
+        <iframe src="./proposal-a-funded-spending.html" title="Proposal A" loading="lazy"></iframe>
+        <a class="open" href="./proposal-a-funded-spending.html" target="_blank" rel="noopener">Open full ↗</a>
+      </article>
+      <article class="prop">
+        <header><h2>Proposal B · Income by source</h2><span class="tag">Deep-navy + emerald · aligned to app design system</span></header>
+        <iframe src="./proposal-b-income-by-source.html" title="Proposal B" loading="lazy"></iframe>
+        <a class="open" href="./proposal-b-income-by-source.html" target="_blank" rel="noopener">Open full ↗</a>
+      </article>
+    </div>
+  </div>
+</body>
+</html>

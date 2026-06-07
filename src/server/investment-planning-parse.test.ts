@@ -4,8 +4,9 @@ import { parseInvestmentPlanningFields } from "./investment-planning-parse";
 function baseFormData() {
   const fd = new FormData();
   fd.set("contribution_type", "until_retirement");
+  fd.set("investment_income_rate_annual", "0.03");
   fd.set("contribution_growth_annual", "0");
-  fd.set("withdrawal_monthly", "2000");
+  fd.set("withdrawal_annual", "24000");
   return fd;
 }
 
@@ -20,6 +21,9 @@ describe("parseInvestmentPlanningFields", () => {
     expect(parsed.ok).toBe(true);
     if (parsed.ok) {
       expect(parsed.withdrawal_start_years).toBe(30);
+      expect(parsed.withdrawal_annual).toBe(24000);
+      expect(parsed.withdrawal_monthly).toBe(2000);
+      expect(parsed.investment_income_rate_annual).toBe(0.03);
     }
   });
 
@@ -33,5 +37,34 @@ describe("parseInvestmentPlanningFields", () => {
     if (parsed.ok) {
       expect(parsed.withdrawal_start_years).toBe(30);
     }
+  });
+
+  it("falls back from legacy monthly withdrawal when annual is absent", () => {
+    const fd = new FormData();
+    fd.set("contribution_type", "until_retirement");
+    fd.set("contribution_growth_annual", "0");
+    fd.set("withdrawal_monthly", "500");
+
+    const parsed = parseInvestmentPlanningFields(fd);
+
+    expect(parsed.ok).toBe(true);
+    if (parsed.ok) {
+      expect(parsed.withdrawal_annual).toBe(6000);
+      expect(parsed.withdrawal_monthly).toBe(500);
+    }
+  });
+
+  it("rejects ILP withdrawals before plan maturity", () => {
+    const fd = baseFormData();
+    const nextYear = new Date().getFullYear() + 1;
+    fd.set("plan_nature", "includes_insurance_coverage");
+    fd.set("contribution_type", "fixed_duration");
+    fd.set("contribution_start_date", `${nextYear}-01-01`);
+    fd.set("contribution_duration_years", "10");
+    fd.set("withdrawal_start_years", "2");
+
+    const parsed = parseInvestmentPlanningFields(fd);
+
+    expect(parsed.ok).toBe(false);
   });
 });

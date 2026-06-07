@@ -1,10 +1,9 @@
 import Link from "next/link";
 import type { DashboardPayload } from "@/data/dashboard";
 import type { ProfileRow } from "@/data/supabase/types";
-import { AgeCombinedAssetsProjectionChart } from "@/features/dashboard/AgeCombinedAssetsProjectionChart";
+import { RetirementRunwayLedgerChart } from "@/features/dashboard/RetirementRunwayLedgerChart";
 import { CpfProjectionByAgeChart } from "@/features/dashboard/CpfProjectionByAgeChart";
 import { CpfRetirementProjectionPanel } from "@/features/dashboard/CpfRetirementProjectionPanel";
-import { ageCompletedOnDate } from "@/domain/finance/age-projection";
 import { CPF_RA_FORMATION_AGE } from "@/domain/finance/cpf-retirement-projection";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { formatCurrency, formatPercent } from "@/ui/lib/format";
@@ -39,6 +38,13 @@ function CpfProjectionStatusPanel({ payload }: { payload: DashboardPayload }) {
   if (!payload.cpfYearEndProjection) return null;
 
   const p = payload.cpfYearEndProjection;
+  const balanceBasisText = payload.hasCpfBalanceRecord
+    ? `Balances are treated as updated through ${p.balanceAsOfMonth}.`
+    : `No CPF balance is saved yet, so this projection treats OA, SA, MA, and CPFIS as $0 through ${p.balanceAsOfMonth}.`;
+  const projectionRangeText =
+    p.projectedMonths > 0 && p.startYearMonth != null
+      ? `Projection starts from ${p.startYearMonth} and runs to ${p.targetYearMonth}.`
+      : `No future month is added before ${p.targetYearMonth}.`;
   return (
     <div className="mt-5 rounded-lg border border-indigo-200/70 bg-indigo-50/60 p-3 text-xs text-indigo-950">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
@@ -47,10 +53,7 @@ function CpfProjectionStatusPanel({ payload }: { payload: DashboardPayload }) {
             CPF year-end projection
           </h3>
           <p className="mt-1 leading-relaxed text-indigo-900/90">
-            Balances are treated as updated through {p.balanceAsOfMonth}.{" "}
-            {p.projectedMonths > 0 && p.startYearMonth != null
-              ? `Projection starts from ${p.startYearMonth} and runs to ${p.targetYearMonth}.`
-              : `No future month is added before ${p.targetYearMonth}.`}
+            {balanceBasisText} {projectionRangeText}
           </p>
         </div>
         <p className="text-right text-lg font-bold tabular-nums text-indigo-950">
@@ -95,8 +98,7 @@ export function DashboardRetirementSection({
   const birthRaw = profile?.birth_date;
   const currentAge =
     birthRaw && typeof birthRaw === "string"
-      ? payload.ageProjection?.currentAge ??
-        ageCompletedOnDate(birthRaw, new Date())
+      ? payload.ageProjection?.currentAge ?? null
       : null;
   const cpfAt55Row = payload.cpfProjectionByAge?.find(
     (r) => r.age === CPF_RA_FORMATION_AGE
@@ -134,24 +136,11 @@ export function DashboardRetirementSection({
               (surplus) minus debts until you add accounts with value and assumptions.
             </p>
           )}
-          <div className="mt-3 space-y-2">
-            <h3 className="text-sm font-semibold text-emerald-900">
-              Combined assets by age
-            </h3>
-            <p className="rounded-lg border border-emerald-200/60 bg-white/85 px-3 py-2 text-xs leading-snug text-emerald-900/95 shadow-sm">
-              Stacked investments, cash, CPF (same as blue chart), and vehicles; net
-              line subtracts <strong>Cash &amp; liabilities</strong> debts only (not
-              housing loans).
-            </p>
-          </div>
           <div className="mt-3">
-            <AgeCombinedAssetsProjectionChart
+            <RetirementRunwayLedgerChart
               data={payload.ageProjection.points}
+              cashReserveData={payload.ageProjection.cashReservePoints}
               currency={payload.baseCurrency}
-              budgetMonth={payload.month}
-              surplusSpendUsesLogged={payload.monthlyExpensesLoggedTotal > 0}
-              annualBonusTakeHomeNet={payload.ageProjection.annualBonusTakeHomeNet}
-              annualBonusPayoutMonth={payload.ageProjection.annualBonusPayoutMonth}
             />
           </div>
           <CpfProjectionStatusPanel payload={payload} />

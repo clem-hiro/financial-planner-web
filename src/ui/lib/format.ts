@@ -4,7 +4,7 @@ export function formatCurrency(
   value: number,
   currency: string = DEFAULT_BASE_CURRENCY
 ): string {
-  return new Intl.NumberFormat(undefined, {
+  return new Intl.NumberFormat("en-SG", {
     style: "currency",
     currency,
     maximumFractionDigits: 0,

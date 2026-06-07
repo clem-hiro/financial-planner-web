@@ -13,6 +13,7 @@ import {
 } from "@/server/actions";
 import {
   ageCompletedOnDate,
+  investmentReviewReason,
   investmentRowIsStale,
   INVESTMENT_REVIEW_STALE_MONTHS,
 } from "@/domain/finance";
@@ -26,6 +27,7 @@ import { InvestmentPlanGuidancePanel } from "@/features/goals/InvestmentPlanGuid
 import type { InvestmentPlanNature } from "@/lib/investment-plan-nature";
 import { InfoTooltip } from "@/ui/InfoTooltip";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
+import { ConfirmDialog } from "@/ui/ConfirmDialog";
 import { fpInputClass, fpPrimaryButtonClass } from "@/ui/input-classes";
 import { formatCurrency } from "@/ui/lib/format";
 
@@ -41,6 +43,41 @@ export type InvestmentPlanningContext = {
 const initial = { error: null as string | null };
 
 const fieldClass = `${fpInputClass} max-w-none`;
+
+function nonNegative(raw: string): number | null {
+  const n = Number(raw);
+  return Number.isFinite(n) && n >= 0 ? n : null;
+}
+
+function percentDecimal(raw: string): number {
+  const n = Number(raw);
+  if (!Number.isFinite(n)) return 0;
+  return Math.max(0, Math.min(100, n)) / 100;
+}
+
+function yearsUntilDate(isoDate: string): number | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return null;
+  const target = new Date(`${isoDate}T12:00:00.000Z`);
+  if (Number.isNaN(target.getTime())) return null;
+  const today = new Date();
+  const months =
+    (target.getFullYear() - today.getFullYear()) * 12 +
+    (target.getMonth() - today.getMonth()) -
+    (target.getDate() < today.getDate() ? 1 : 0);
+  return Math.max(0, months) / 12;
+}
+
+function ilpMaturityAge(
+  currentAge: number | null,
+  startDateRaw: string,
+  durationYearsRaw: string
+): number | null {
+  if (currentAge == null) return null;
+  const duration = nonNegative(durationYearsRaw);
+  const startOffset = yearsUntilDate(startDateRaw);
+  if (duration == null || duration <= 0 || startOffset == null) return null;
+  return currentAge + startOffset + duration;
+}
 
 function withdrawalStartDisplayValue(
   investment: InvestmentBalanceRow,
@@ -79,8 +116,8 @@ function contributionSummaryLine(
       ? `, stepping up ${Math.round(investment.contribution_growth_annual * 1000) / 10}%/yr`
       : "";
   const withdrawal =
-    investment.withdrawal_monthly > 0
-      ? `; withdraw ${formatCurrency(investment.withdrawal_monthly, currencyCode)}/mo later`
+    investment.withdrawal_annual > 0
+      ? `; withdraw ${formatCurrency(investment.withdrawal_annual, currencyCode)}/yr later`
       : "";
   const pmtLabel = `${formatCurrency(pmt, currencyCode)}/mo${stepUp}`;
   if (
@@ -197,22 +234,37 @@ function InvestmentSummary({
   actionsDisabled?: boolean;
 }) {
   const returnPct = (investment.expected_annual_return * 100).toFixed(1);
+  const incomePct = (investment.investment_income_rate_annual * 100).toFixed(1);
   const flowSummary = contributionSummaryLine(investment, currencyCode);
-  const stale = investmentRowIsStale(investment);
+  const reviewReason = investmentReviewReason(investment);
+  const reviewCopy =
+    reviewReason?.kind === "stale_months"
+      ? `Not updated in ${reviewReason.months} months. Confirm the balance and expected return still match reality.`
+      : reviewReason?.kind === "no_timestamp"
+        ? "This account has no recorded update date. Confirm its details are current."
+        : null;
   return (
     <div className="flex items-start justify-between gap-3 py-3.5">
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
           <p className="truncate text-sm font-medium text-slate-900">{investment.name}</p>
-          {stale ? (
-            <span className="shrink-0 rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-900">
-              Review due
+          {reviewCopy ? (
+            <span className="inline-flex shrink-0 items-center gap-0.5">
+              <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-900">
+                Review due
+              </span>
+              <InfoTooltip ariaLabel="Why this account is due for review">
+                <p>{reviewCopy}</p>
+              </InfoTooltip>
             </span>
           ) : null}
         </div>
         <p className="mt-1 text-xs text-slate-600">{flowSummary}</p>
         <p className="mt-0.5 text-xs text-slate-500">
           <span>{returnPct}% yearly growth (nominal)</span>
+          {investment.investment_income_rate_annual > 0 ? (
+            <span>; {incomePct}% yearly cash income</span>
+          ) : null}
         </p>
         {planningContext ? (
           <ContributionTimelineHint investment={investment} ctx={planningContext} />
@@ -283,7 +335,7 @@ function InvestmentEditForm({
     String(investment.contribution_growth_annual)
   );
   const [withdrawalMonthlyRaw, setWithdrawalMonthlyRaw] = useState(
-    String(investment.withdrawal_monthly)
+    String(investment.withdrawal_annual)
   );
   const currentAge =
     planningContext != null
@@ -294,6 +346,9 @@ function InvestmentEditForm({
   );
   const [returnPctRaw, setReturnPctRaw] = useState(
     String(Math.round(investment.expected_annual_return * 1000) / 10)
+  );
+  const [incomeRatePctRaw, setIncomeRatePctRaw] = useState(
+    String(Math.round(investment.investment_income_rate_annual * 1000) / 10)
   );
   const [planNature, setPlanNature] = useState<InvestmentPlanNature | "">(
     investment.plan_nature === "pure_investment" ||
@@ -350,11 +405,32 @@ function InvestmentEditForm({
   };
   const [state, formAction, pending] = useActionState(wrapped, initial);
 
-  const decimal = useMemo(() => {
-    const n = Number(returnPctRaw);
-    if (!Number.isFinite(n)) return 0;
-    return Math.max(0, Math.min(100, n)) / 100;
-  }, [returnPctRaw]);
+  const decimal = useMemo(() => percentDecimal(returnPctRaw), [returnPctRaw]);
+  const incomeRateDecimal = useMemo(
+    () => percentDecimal(incomeRatePctRaw),
+    [incomeRatePctRaw]
+  );
+  const maturityAge = useMemo(
+    () => ilpMaturityAge(currentAge, startDateRaw, durationYearsRaw),
+    [currentAge, startDateRaw, durationYearsRaw]
+  );
+  const withdrawalAnnual = nonNegative(withdrawalMonthlyRaw) ?? 0;
+  const withdrawalStart = nonNegative(withdrawalStartYearsRaw);
+  const withdrawalStartBeforeMaturity =
+    planNature === "includes_insurance_coverage" &&
+    withdrawalAnnual > 0 &&
+    maturityAge != null &&
+    withdrawalStart != null &&
+    currentAge != null &&
+    withdrawalStart < maturityAge;
+
+  const handlePlanNatureChange = (value: InvestmentPlanNature | "") => {
+    setPlanNature(value);
+    if (value === "includes_insurance_coverage") {
+      setContributionMode("fixed_duration");
+      setFixedScheduleMode("duration_years");
+    }
+  };
 
   return (
     <>
@@ -379,7 +455,7 @@ function InvestmentEditForm({
 
       <InvestmentPlanGuidancePanel
         planNature={planNature}
-        onPlanNatureChange={setPlanNature}
+        onPlanNatureChange={handlePlanNatureChange}
       />
 
       <div className="rounded-lg border border-slate-100 bg-slate-50/60 p-3">
@@ -437,6 +513,7 @@ function InvestmentEditForm({
       </div>
 
       <InvestmentContributionScheduleFields
+        planNature={planNature}
         contributionMode={contributionMode}
         onContributionModeChange={setContributionMode}
         fixedScheduleMode={fixedScheduleMode}
@@ -450,53 +527,80 @@ function InvestmentEditForm({
         inputClassName={fieldClass}
       />
 
-      <label className="block text-sm">
-        <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
-          Expected yearly growth
-          <InfoTooltip ariaLabel="What to enter for expected return">
-            <p>
-              Long-run nominal yield for this account. Rough ranges:{" "}
-              <strong>1–3%</strong> savings, <strong>4–6%</strong> bonds,{" "}
-              <strong>6–9%</strong> diversified equities.
-            </p>
-            <p className="mt-2 text-slate-300">
-              Type a percent — e.g. <strong>7</strong> for 7%. Used in projections
-              only; not financial advice.
-            </p>
-          </InfoTooltip>
-        </span>
-        <div className="relative w-full max-w-40">
-          <input
-            type="number"
-            inputMode="decimal"
-            min={0}
-            max={100}
-            step={0.1}
-            required
-            value={returnPctRaw}
-            onChange={(e) => setReturnPctRaw(e.target.value)}
-            className={`${fieldClass} pr-10`}
-          />
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium text-slate-400"
-          >
-            %
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="block text-sm">
+          <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+            Expected yearly growth
+            <InfoTooltip ariaLabel="What to enter for expected return">
+              <p>
+                Long-run nominal growth for this account. Type a percent, e.g.{" "}
+                <strong>7</strong> for 7%.
+              </p>
+            </InfoTooltip>
           </span>
-        </div>
-        <input
-          type="hidden"
-          name="expected_annual_return"
-          value={decimal.toString()}
-        />
-      </label>
+          <div className="relative w-full max-w-40">
+            <input
+              type="number"
+              inputMode="decimal"
+              min={0}
+              max={100}
+              step={0.1}
+              required
+              value={returnPctRaw}
+              onChange={(e) => setReturnPctRaw(e.target.value)}
+              className={`${fieldClass} pr-10`}
+            />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium text-slate-400"
+            >
+              %
+            </span>
+          </div>
+          <input
+            type="hidden"
+            name="expected_annual_return"
+            value={decimal.toString()}
+          />
+        </label>
+        <label className="block text-sm">
+          <span className="mb-1 block font-medium text-slate-700">
+            {planNature === "includes_insurance_coverage"
+              ? "Post-maturity income rate"
+              : "Expected dividend yield"}
+          </span>
+          <div className="relative w-full max-w-40">
+            <input
+              type="number"
+              inputMode="decimal"
+              min={0}
+              max={100}
+              step={0.1}
+              value={incomeRatePctRaw}
+              onChange={(e) => setIncomeRatePctRaw(e.target.value)}
+              className={`${fieldClass} pr-10`}
+            />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium text-slate-400"
+            >
+              %
+            </span>
+          </div>
+          <input
+            type="hidden"
+            name="investment_income_rate_annual"
+            value={incomeRateDecimal.toString()}
+          />
+        </label>
+      </div>
 
       <details className="rounded-lg border border-dashed border-slate-200 bg-slate-50/60 px-3 py-2 text-xs text-slate-600">
         <summary className="cursor-pointer select-none font-medium text-slate-700">
           Advanced planning
         </summary>
         <p className="mt-2 leading-relaxed">
-          Step up monthly contributions over time or model a future monthly withdrawal
+          Step up monthly contributions over time or model a future yearly withdrawal
           from this account. Leave zero or blank for a flat accumulation plan.
         </p>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
@@ -521,10 +625,10 @@ function InvestmentEditForm({
           </label>
           <label className="block text-sm">
             <span className="mb-1 block font-medium text-slate-700">
-              Monthly withdrawal
+              Yearly withdrawal
             </span>
             <input
-              name="withdrawal_monthly"
+              name="withdrawal_annual"
               type="number"
               inputMode="decimal"
               min={0}
@@ -553,19 +657,27 @@ function InvestmentEditForm({
               max={currentAge != null ? 120 : 100}
               step={0.25}
               placeholder={
-                currentAge != null
-                  ? String(planningContext?.targetRetirementAge ?? 65)
-                  : "Years from today"
+                maturityAge != null
+                  ? maturityAge.toFixed(1)
+                  : currentAge != null
+                    ? String(planningContext?.targetRetirementAge ?? 65)
+                    : "Years from today"
               }
               value={withdrawalStartYearsRaw}
               onChange={(e) => setWithdrawalStartYearsRaw(e.target.value)}
               className={fieldClass}
             />
-            <span className="mt-1 block text-[11px] text-slate-500">
-              {currentAge != null
-                ? "Age. Blank uses profile retirement age when available."
-                : "Years from today. Blank uses profile retirement age when available."}
-            </span>
+            {withdrawalStartBeforeMaturity ? (
+              <span className="mt-1 block text-[11px] font-medium text-red-600">
+                ILP yearly withdrawal cannot start before plan maturity.
+              </span>
+            ) : (
+              <span className="mt-1 block text-[11px] text-slate-500">
+                {currentAge != null
+                  ? "Age. Blank uses maturity for ILP withdrawals."
+                  : "Years from today. Blank uses maturity for ILP withdrawals."}
+              </span>
+            )}
           </label>
         </div>
       </details>
@@ -581,10 +693,10 @@ function InvestmentEditForm({
         </button>
         <button
           type="submit"
-          disabled={pending || disabled}
+          disabled={pending || disabled || withdrawalStartBeforeMaturity}
           className={`${fpPrimaryButtonClass} disabled:cursor-not-allowed disabled:opacity-60`}
         >
-          {pending ? "Saving…" : advisorClientId ? "Suggest changes" : "Save changes"}
+          {pending ? "Saving…" : "Save"}
         </button>
       </div>
     </form>
@@ -609,17 +721,17 @@ function InvestmentRow({
   const [editing, setEditing] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deletePending, setDeletePending] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const deleteLockRef = useRef(false);
 
-  const runDelete = async () => {
+  // Advisor compose only STAGES a removal proposal (withdrawable/rejectable),
+  // so it must not say "cannot be undone" — match AdvisorProposeRemovalButton.
+  const confirmMessage = advisorClientId
+    ? `Suggest removing “${investment.name}”? Your client reviews this before their plan changes.`
+    : `Remove “${investment.name}” from the plan? This cannot be undone.`;
+
+  const performDelete = async () => {
     if (deleteLockRef.current) return;
-    if (
-      !window.confirm(
-        `Remove “${investment.name}” from the plan? This cannot be undone.`
-      )
-    ) {
-      return;
-    }
     deleteLockRef.current = true;
     setDeleteError(null);
     setDeletePending(true);
@@ -650,10 +762,22 @@ function InvestmentRow({
           currencyCode={currencyCode}
           planningContext={planningContext}
           onEdit={() => setEditing(true)}
-          onDelete={runDelete}
+          onDelete={() => setConfirmOpen(true)}
           deleteError={deleteError}
           deletePending={deletePending}
           actionsDisabled={advisorSuggestionDisabled}
+        />
+        <ConfirmDialog
+          open={confirmOpen}
+          title={advisorClientId ? "Suggest removal" : "Remove account"}
+          body={confirmMessage}
+          confirmLabel="Remove"
+          cancelLabel="Cancel"
+          onConfirm={() => {
+            setConfirmOpen(false);
+            void performDelete();
+          }}
+          onCancel={() => setConfirmOpen(false)}
         />
       </>
     );
@@ -729,6 +853,7 @@ export function InvestmentBalancesList({
   advisorSuggestionDisabled = false,
   accountsHeading = "Your accounts",
   showReviewPrompt = false,
+  showAssumptionBanner = true,
 }: {
   items: InvestmentBalanceRow[];
   currencyCode: string;
@@ -740,6 +865,8 @@ export function InvestmentBalancesList({
   accountsHeading?: string;
   /** Show annual review prompt when balances/returns may be outdated. */
   showReviewPrompt?: boolean;
+  /** Suppress when a sibling pane already renders the banner (avoid stacked duplicates). */
+  showAssumptionBanner?: boolean;
 }) {
   const total = items.reduce((acc, i) => acc + i.current_value, 0);
   const staleCount = items.filter((i) => investmentRowIsStale(i)).length;
@@ -750,7 +877,7 @@ export function InvestmentBalancesList({
 
   return (
     <section className="space-y-3">
-      <InvestmentAssumptionBanner />
+      {showAssumptionBanner ? <InvestmentAssumptionBanner /> : null}
       {showReviewPrompt && staleCount > 0 && !advisorClientId ? (
         <InvestmentReviewPrompt
           staleCount={staleCount}

@@ -1,18 +1,28 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { applyAcceptedProposalChanges } from "@/domain/advisor-proposals/apply-changes";
+import {
+  applyAcceptedProposalChanges,
+  detectAcceptConflicts,
+  nameConflictFromWriteError,
+  type ProposalConflict,
+} from "@/domain/advisor-proposals/apply-changes";
 import { getClientProfileForAdvisor } from "@/data/repositories/advisor-clients";
 import { assertConsent } from "@/server/advisor-consent";
 import {
+  claimAdvisorProposalForAccept,
   deleteProposalChangesByEntity,
   deleteProposalChangesBySection,
+  finalizeAdvisorProposalAccept,
   getProposalById,
   listChangesForProposal,
+  notifyAdvisorProposalConflict,
   resolveProposal,
   submitProposal,
   upsertSectionNote,
+  withdrawProposal,
 } from "@/data/repositories/advisor-proposals";
+import type { AdvisorProposalStatus } from "@/data/supabase/types";
 import type { ProposalEntityType } from "@/domain/advisor-proposals/sections";
 import { markAsReadByDedupeKey } from "@/data/repositories/inbox-notifications";
 import { getProfileById } from "@/data/repositories/profiles";
@@ -24,44 +34,66 @@ function revalidateProposalViews(clientId: string, proposalId: string) {
   revalidatePath("/advisor/clients");
   revalidatePath(`/advisor/client/${clientId}`);
   revalidatePath(`/review/proposal/${proposalId}`);
+  revalidatePath(`/setup/advisor-proposals/${proposalId}`);
   revalidatePath("/dashboard");
   revalidatePath("/budget");
   revalidatePath("/planning/future");
   revalidateSetupAndPlanning();
 }
 
-async function requireAdvisorDraftProposal(proposalId: string) {
+async function requireAdvisorProposalInStatus(
+  proposalId: string,
+  allowed: AdvisorProposalStatus[],
+  notAllowedError: string
+) {
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { ok: false as const, error: "Sign in required" };
 
-  const me = await getProfileById(supabase, user.id);
+  // me + proposal are independent reads (only need user.id / proposalId).
+  const [me, proposal] = await Promise.all([
+    getProfileById(supabase, user.id),
+    getProposalById(supabase, proposalId),
+  ]);
   if (!isAdvisor(me)) return { ok: false as const, error: "Not allowed" };
 
-  const proposal = await getProposalById(supabase, proposalId);
   if (!proposal || proposal.advisor_user_id !== user.id) {
     return { ok: false as const, error: "Proposal not found" };
   }
-  if (proposal.status !== "draft") {
-    return { ok: false as const, error: "This proposal can no longer be edited" };
+  if (!allowed.includes(proposal.status)) {
+    return { ok: false as const, error: notAllowedError };
   }
 
-  const link = await getClientProfileForAdvisor(
-    supabase,
-    user.id,
-    proposal.client_user_id
-  );
+  // link + consent are independent (both keyed on proposal.client_user_id).
+  const [link, consent] = await Promise.all([
+    getClientProfileForAdvisor(supabase, user.id, proposal.client_user_id),
+    // Consent-first trust boundary: acting on a proposal is "proposing a
+    // plan" — blocked until the client (resolved via the proposal row, not
+    // client input) has granted active consent.
+    assertConsent(supabase, proposal.client_user_id),
+  ]);
   if (!link) return { ok: false as const, error: "Client not found" };
-
-  // Consent-first trust boundary: editing/submitting a draft is "proposing a
-  // plan" — blocked until the client (resolved via the proposal row, not
-  // client input) has granted active consent.
-  const consent = await assertConsent(supabase, proposal.client_user_id);
   if (!consent.ok) return { ok: false as const, error: consent.error };
 
   return { ok: true as const, supabase, proposal, advisorUserId: user.id };
+}
+
+function requireAdvisorDraftProposal(proposalId: string) {
+  return requireAdvisorProposalInStatus(
+    proposalId,
+    ["draft"],
+    "This proposal can no longer be edited"
+  );
+}
+
+function requireAdvisorOpenProposal(proposalId: string) {
+  return requireAdvisorProposalInStatus(
+    proposalId,
+    ["draft", "pending"],
+    "This proposal can no longer be withdrawn"
+  );
 }
 
 export async function removeAdvisorProposalSectionAction(
@@ -149,10 +181,38 @@ export async function submitAdvisorProposalAction(
   return { error: null, success: true };
 }
 
-export async function acceptAdvisorProposalAction(
+export type AcceptProposalState = {
+  error: string | null;
+  conflicts?: ProposalConflict[];
+  /** True only on a fully-applied accept — drives the client approval dialog. */
+  ok?: boolean;
+};
+
+export async function withdrawAdvisorProposalAction(
   _prev: { error: string | null },
   formData: FormData
 ): Promise<{ error: string | null }> {
+  const proposalId = String(formData.get("proposal_id") ?? "").trim();
+  if (!proposalId) return { error: "Missing proposal" };
+
+  const ctx = await requireAdvisorOpenProposal(proposalId);
+  if (!ctx.ok) return { error: ctx.error };
+
+  try {
+    await withdrawProposal(ctx.supabase, proposalId);
+  } catch (e) {
+    console.error(e);
+    return { error: "Could not withdraw proposal" };
+  }
+
+  revalidateProposalViews(ctx.proposal.client_user_id, proposalId);
+  return { error: null };
+}
+
+export async function acceptAdvisorProposalAction(
+  _prev: AcceptProposalState,
+  formData: FormData
+): Promise<AcceptProposalState> {
   const proposalId = String(formData.get("proposal_id") ?? "").trim();
   if (!proposalId) return { error: "Missing proposal" };
 
@@ -162,10 +222,14 @@ export async function acceptAdvisorProposalAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Sign in required" };
 
-  const me = await getProfileById(supabase, user.id);
+  // me + proposal + changes are independent reads — batch them.
+  const [me, proposal, changes] = await Promise.all([
+    getProfileById(supabase, user.id),
+    getProposalById(supabase, proposalId),
+    listChangesForProposal(supabase, proposalId),
+  ]);
   if (!isClient(me)) return { error: "Not allowed" };
 
-  const proposal = await getProposalById(supabase, proposalId);
   if (!proposal || proposal.client_user_id !== user.id) {
     return { error: "Proposal not found" };
   }
@@ -173,20 +237,84 @@ export async function acceptAdvisorProposalAction(
     return { error: "This proposal is no longer open for review" };
   }
 
-  const changes = await listChangesForProposal(supabase, proposalId);
   if (changes.length === 0) return { error: "No changes to apply" };
 
+  // Pre-claim, while still 'pending': optimistic-concurrency pre-flight. A
+  // benign baseline-moved conflict must leave the proposal pending (advisor
+  // re-baselines) — never park it. Zero writes here.
+  const { conflicts, base } = await detectAcceptConflicts(
+    supabase,
+    user.id,
+    changes
+  );
+  if (conflicts.length > 0) {
+    // Best-effort advisor re-baseline alert (B8) — a notify failure must not
+    // mask the conflict response.
+    try {
+      await notifyAdvisorProposalConflict(supabase, proposalId);
+    } catch (e) {
+      console.error(e);
+    }
+    return {
+      error:
+        "Your plan changed since this proposal was prepared. Ask your advisor to refresh it before accepting.",
+      conflicts,
+    };
+  }
+
+  // C1 claim — atomically GATE the writes: pending->'accepting' under a row
+  // lock. If a withdraw won the race this RAISEs and ZERO writes occur.
   try {
-    await applyAcceptedProposalChanges(supabase, user.id, changes);
-    await resolveProposal(supabase, proposalId, "accepted");
-    await markAsReadByDedupeKey(supabase, user.id, `advisor_proposal:${proposalId}`);
+    await claimAdvisorProposalForAccept(supabase, proposalId);
   } catch (e) {
     console.error(e);
-    return { error: "Could not apply changes. Please try again or contact support." };
+    return {
+      error:
+        "This proposal changed while you were reviewing it (it may have been withdrawn). Reopen it to see the latest.",
+    };
+  }
+
+  // Claimed: status='accepting', withdraw can no longer race. Past here a
+  // failure leaves the proposal parked in 'accepting' — the C2 terminal
+  // non-acceptable state (not re-acceptable; no create-op duplication).
+  try {
+    await applyAcceptedProposalChanges(supabase, user.id, changes, base);
+    // Fail-loud accepting->accepted; never a false success.
+    await finalizeAdvisorProposalAccept(supabase, proposalId);
+  } catch (e) {
+    console.error(e);
+    // TOCTOU: a colliding name slipped past the pre-claim check and the unique
+    // index threw mid-write. Surface the same friendly name_in_use conflict
+    // instead of the generic park message. The proposal still parks in
+    // 'accepting' (C2) — we only improve the message, not the state machine.
+    const nameConflicts = nameConflictFromWriteError(e, changes);
+    if (nameConflicts) {
+      return {
+        error:
+          "A name in this proposal is already in use in your plan. Ask your advisor to rename it before accepting.",
+        conflicts: nameConflicts,
+      };
+    }
+    return {
+      error:
+        "We couldn’t finish applying this proposal. It’s been flagged for your advisor to rebuild.",
+    };
+  }
+
+  // Accepted. Inbox cleanup is best-effort — its failure must not flip the
+  // (already committed) accept into the failure path.
+  try {
+    await markAsReadByDedupeKey(
+      supabase,
+      user.id,
+      `advisor_proposal:${proposalId}`
+    );
+  } catch (e) {
+    console.error(e);
   }
 
   revalidateProposalViews(user.id, proposalId);
-  return { error: null };
+  return { error: null, ok: true };
 }
 
 export async function rejectAdvisorProposalAction(
@@ -202,10 +330,12 @@ export async function rejectAdvisorProposalAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Sign in required" };
 
-  const me = await getProfileById(supabase, user.id);
+  const [me, proposal] = await Promise.all([
+    getProfileById(supabase, user.id),
+    getProposalById(supabase, proposalId),
+  ]);
   if (!isClient(me)) return { error: "Not allowed" };
 
-  const proposal = await getProposalById(supabase, proposalId);
   if (!proposal || proposal.client_user_id !== user.id) {
     return { error: "Proposal not found" };
   }

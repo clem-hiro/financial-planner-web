@@ -17,7 +17,9 @@ function isUnknownInvestmentContributionColumnError(error: unknown): boolean {
       msg.includes("contribution_end_date") ||
       msg.includes("plan_nature") ||
       msg.includes("contribution_growth_annual") ||
+      msg.includes("investment_income_rate_annual") ||
       msg.includes("withdrawal_monthly") ||
+      msg.includes("withdrawal_annual") ||
       msg.includes("withdrawal_start_years")) &&
     (msg.includes("schema cache") ||
       msg.includes("Could not find") ||
@@ -26,7 +28,7 @@ function isUnknownInvestmentContributionColumnError(error: unknown): boolean {
 }
 
 const MIGRATION_HINT =
-  "Run Supabase investment planning migrations (or `supabase db push`) so contribution phases, step-ups, and withdrawals can be stored.";
+  "Run Supabase investment planning migrations (or `supabase db push`) so contribution phases, step-ups, investment income, and withdrawals can be stored.";
 
 export async function listInvestments(
   supabase: SupabaseClient,
@@ -78,6 +80,7 @@ export type NewInvestment = {
   current_value: number;
   monthly_contribution: number;
   expected_annual_return: number;
+  investment_income_rate_annual?: number | null;
   contribution_growth_annual?: number | null;
   contribution_type?: string | null;
   contribution_duration_years?: number | null;
@@ -85,6 +88,7 @@ export type NewInvestment = {
   contribution_end_date?: string | null;
   plan_nature?: string | null;
   withdrawal_monthly?: number | null;
+  withdrawal_annual?: number | null;
   withdrawal_start_years?: number | null;
 };
 
@@ -99,13 +103,16 @@ export async function insertInvestment(
     current_value: row.current_value,
     monthly_contribution: row.monthly_contribution,
     expected_annual_return: row.expected_annual_return,
+    investment_income_rate_annual: row.investment_income_rate_annual ?? 0,
     contribution_growth_annual: row.contribution_growth_annual ?? 0,
     contribution_type: row.contribution_type ?? null,
     contribution_duration_years: row.contribution_duration_years ?? null,
     contribution_start_date: row.contribution_start_date ?? null,
     contribution_end_date: row.contribution_end_date ?? null,
     plan_nature: row.plan_nature ?? null,
-    withdrawal_monthly: row.withdrawal_monthly ?? 0,
+    withdrawal_annual: row.withdrawal_annual ?? 0,
+    withdrawal_monthly:
+      row.withdrawal_monthly ?? (row.withdrawal_annual ?? 0) / 12,
     withdrawal_start_years: row.withdrawal_start_years ?? null,
   };
 
@@ -126,6 +133,12 @@ export async function insertInvestment(
       (row.contribution_growth_annual != null &&
         Number.isFinite(row.contribution_growth_annual) &&
         row.contribution_growth_annual !== 0) ||
+      (row.investment_income_rate_annual != null &&
+        Number.isFinite(row.investment_income_rate_annual) &&
+        row.investment_income_rate_annual !== 0) ||
+      (row.withdrawal_annual != null &&
+        Number.isFinite(row.withdrawal_annual) &&
+        row.withdrawal_annual !== 0) ||
       (row.withdrawal_monthly != null &&
         Number.isFinite(row.withdrawal_monthly) &&
         row.withdrawal_monthly !== 0) ||
@@ -159,6 +172,7 @@ export type InvestmentPatch = {
   current_value?: number;
   monthly_contribution?: number;
   expected_annual_return?: number;
+  investment_income_rate_annual?: number | null;
   contribution_growth_annual?: number | null;
   contribution_type?: string | null;
   contribution_duration_years?: number | null;
@@ -166,6 +180,7 @@ export type InvestmentPatch = {
   contribution_end_date?: string | null;
   plan_nature?: string | null;
   withdrawal_monthly?: number | null;
+  withdrawal_annual?: number | null;
   withdrawal_start_years?: number | null;
 };
 
@@ -182,7 +197,9 @@ export async function updateInvestment(
     contribution_end_date: ced,
     plan_nature: pn,
     contribution_growth_annual: cga,
+    investment_income_rate_annual: iira,
     withdrawal_monthly: wm,
+    withdrawal_annual: wa,
     withdrawal_start_years: wsy,
     ...rest
   } = patch;
@@ -201,6 +218,13 @@ export async function updateInvestment(
   if ("plan_nature" in patch) fullPatch.plan_nature = pn ?? null;
   if ("contribution_growth_annual" in patch) {
     fullPatch.contribution_growth_annual = cga ?? 0;
+  }
+  if ("investment_income_rate_annual" in patch) {
+    fullPatch.investment_income_rate_annual = iira ?? 0;
+  }
+  if ("withdrawal_annual" in patch) {
+    fullPatch.withdrawal_annual = wa ?? 0;
+    fullPatch.withdrawal_monthly = wm ?? (wa ?? 0) / 12;
   }
   if ("withdrawal_monthly" in patch) {
     fullPatch.withdrawal_monthly = wm ?? 0;
@@ -234,6 +258,14 @@ export async function updateInvestment(
         patch.contribution_growth_annual != null &&
         Number.isFinite(patch.contribution_growth_annual) &&
         patch.contribution_growth_annual !== 0) ||
+      ("investment_income_rate_annual" in patch &&
+        patch.investment_income_rate_annual != null &&
+        Number.isFinite(patch.investment_income_rate_annual) &&
+        patch.investment_income_rate_annual !== 0) ||
+      ("withdrawal_annual" in patch &&
+        patch.withdrawal_annual != null &&
+        Number.isFinite(patch.withdrawal_annual) &&
+        patch.withdrawal_annual !== 0) ||
       ("withdrawal_monthly" in patch &&
         patch.withdrawal_monthly != null &&
         Number.isFinite(patch.withdrawal_monthly) &&

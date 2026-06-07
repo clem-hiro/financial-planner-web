@@ -70,16 +70,16 @@ describe("projectFutureValue (contribution phase)", () => {
     expect(stepped).toBeCloseTo(12 * 100 + 12 * 110, 8);
   });
 
-  it("applies planned withdrawals after the withdrawal start month", () => {
+  it("applies planned annual withdrawals in December after the withdrawal start month", () => {
     const drawdown = projectFutureValue({
       currentValue: 10_000,
       monthlyContribution: 0,
       annualReturn: 0,
       months: 12,
-      monthlyWithdrawal: 500,
+      annualWithdrawal: 6_000,
       withdrawalStartMonth: 6,
     });
-    expect(drawdown).toBeCloseTo(7_000, 8);
+    expect(drawdown).toBeCloseTo(4_000, 8);
   });
 });
 
@@ -236,7 +236,11 @@ describe("futureValueInvestmentPortfolioAtMonth", () => {
       8
     );
     expect(futureValueInvestmentPortfolioAtMonth(rows, 25, 360)).toBeCloseTo(
-      12_141,
+      12_641,
+      8
+    );
+    expect(futureValueInvestmentPortfolioAtMonth(rows, 36, 360)).toBeCloseTo(
+      7_972,
       8
     );
   });

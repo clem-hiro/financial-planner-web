@@ -198,3 +198,16 @@ export async function updateFinancialGoal(
   if (error) throw error;
   return data as FinancialGoalRow;
 }
+
+export async function deleteFinancialGoal(
+  supabase: SupabaseClient,
+  userId: string,
+  goalId: string
+): Promise<void> {
+  const { error } = await supabase
+    .from("financial_goals")
+    .delete()
+    .eq("user_id", userId)
+    .eq("id", goalId);
+  if (error) throw error;
+}

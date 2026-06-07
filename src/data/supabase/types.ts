@@ -57,6 +57,9 @@ export type ProfileRow = {
   /** App CPF rules baseline version most recently acknowledged. */
   last_cpf_rules_review_version: string | null;
   created_at: string;
+  // DB column exists; trigger added by migration 20260603000000. Optional in
+  // TS for code-before-migration order-skew safety (proposal concurrency token).
+  updated_at?: string;
 };
 
 export type AdvisorAccessKeyRow = {
@@ -169,6 +172,9 @@ export type BudgetLineRow = {
   start_year_month?: string | null;
   end_year_month?: string | null;
   created_at: string;
+  // Added by migration 20260603000000 (optimistic-concurrency token).
+  // Optional in TS for code-before-migration order-skew safety.
+  updated_at?: string;
   source_liability_id?: string | null;
 };
 
@@ -188,6 +194,8 @@ export type InvestmentRow = {
   current_value: string;
   monthly_contribution: string;
   expected_annual_return: string;
+  /** Annual cash-income rate (dividend yield or ILP post-maturity income). */
+  investment_income_rate_annual?: string | null;
   /** Annual step-up on monthly contribution (0.03 = 3%). */
   contribution_growth_annual: string;
   /** until_retirement | fixed_duration; null = legacy / same as until retirement. */
@@ -196,6 +204,8 @@ export type InvestmentRow = {
   contribution_duration_years?: string | null;
   /** Planned monthly withdrawal after the withdrawal phase starts. */
   withdrawal_monthly: string;
+  /** Planned yearly withdrawal after the withdrawal phase starts. */
+  withdrawal_annual?: string | null;
   /** Years from today before withdrawals start; null = use retirement age when available. */
   withdrawal_start_years: string | null;
   /** Reserved for future age-based contribution end. */
@@ -306,6 +316,9 @@ export type FinancialGoalRow = {
   /** Lower = fund first in priority trade-off views. */
   display_order: number;
   created_at: string;
+  // Added by migration 20260603000000 (optimistic-concurrency token).
+  // Optional in TS for code-before-migration order-skew safety.
+  updated_at?: string;
 };
 
 export type CpfBalanceRow = {
@@ -342,7 +355,11 @@ export type AdvisorProposalStatus =
   | "pending"
   | "accepted"
   | "rejected"
-  | "withdrawn";
+  | "withdrawn"
+  // Claim/parked state (migration 20260605000000): set under a row lock
+  // BEFORE entity writes (gates them); on partial write failure the proposal
+  // stays here — terminal & non-acceptable (cannot be re-accepted).
+  | "accepting";
 
 /** Advisor proposal header (migration `20260524000000`). */
 export type AdvisorProposalRow = {
@@ -357,11 +374,22 @@ export type AdvisorProposalRow = {
   updated_at: string;
 };
 
+export type ProposalChangeOp = "create" | "update" | "delete";
+
 export type AdvisorProposalChangeRow = {
   id: string;
   proposal_id: string;
   section: string;
-  entity_type: "profile" | "budget_line" | "goal" | "investment";
+  entity_type:
+    | "profile"
+    | "budget_line"
+    | "goal"
+    | "investment"
+    | "cash_account"
+    | "liability"
+    | "property"
+    | "housing_loan"
+    | "vehicle";
   entity_id: string | null;
   field_key: string;
   field_label: string;
@@ -371,12 +399,35 @@ export type AdvisorProposalChangeRow = {
   sort_order: number;
   created_at: string;
   updated_at: string;
+  // Added by migration 20260602000000. Optional in TS so a brief
+  // code-before-migration order-skew reads as the documented defaults
+  // (change_op 'update', null tokens) rather than throwing.
+  change_op?: ProposalChangeOp;
+  draft_entity_key?: string | null;
+  base_version?: string | null;
 };
 
 export type AdvisorProposalSectionNoteRow = {
   proposal_id: string;
   section: string;
   note: string;
+};
+
+export type AdvisorConsentVisibilityCategory =
+  | "cash_accounts"
+  | "liabilities"
+  | "properties"
+  | "housing_loans"
+  | "vehicles";
+
+export type AdvisorConsentCategoryVisibilityRow = {
+  id: string;
+  client_user_id: string;
+  advisor_user_id: string;
+  visibility_category: AdvisorConsentVisibilityCategory;
+  is_visible: boolean;
+  created_at: string;
+  updated_at: string;
 };
 
 /** Generic inbox row (migration `20260519000000`). Dedupe-keyed per user. */

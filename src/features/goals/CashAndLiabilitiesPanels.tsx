@@ -14,6 +14,8 @@ import {
   type DebtPlanningRow,
 } from "@/features/debts/DebtPlanningPanels";
 import type { CashAccountPurpose, LiabilityRow } from "@/data/supabase/types";
+import { CategoryVisibilityToggle } from "@/features/consent/CategoryVisibilityToggle";
+import type { AdvisorCategoryVisibility } from "@/lib/advisor-visibility";
 import {
   CASH_ACCOUNT_PURPOSE_LABELS,
   CASH_ACCOUNT_PURPOSES,
@@ -296,11 +298,15 @@ export function CashAndLiabilitiesPanels({
   cashHistoryByAccountId = {},
   liabilityRows,
   currencyCode,
+  advisorVisibility = null,
 }: {
   cashRows: CashAccountBalanceRow[];
   cashHistoryByAccountId?: Record<string, CashAccountHistoryPoint[]>;
   liabilityRows: LiabilityRow[] | LiabilityBalanceRow[];
   currencyCode: string;
+  /** When set (client self-view with linked+consented advisor), show the
+   * per-category visibility toggles. Null hides them (advisor view / no consent). */
+  advisorVisibility?: AdvisorCategoryVisibility | null;
 }) {
   const cashTotal = cashRows.reduce((a, r) => a + r.balance, 0);
   const groupedCash = useMemo(() => groupCashByPurpose(cashRows), [cashRows]);
@@ -324,6 +330,13 @@ export function CashAndLiabilitiesPanels({
             </span>
           </p>
         </div>
+        {advisorVisibility ? (
+          <CategoryVisibilityToggle
+            category="cash_accounts"
+            visible={advisorVisibility.cash_accounts}
+            showTooltip
+          />
+        ) : null}
         <AddCashForm currencyCode={currencyCode} />
         {groupedCash.length === 0 ? (
           <p className="text-xs text-zinc-500">No cash accounts yet.</p>
@@ -360,6 +373,15 @@ export function CashAndLiabilitiesPanels({
       </section>
 
       <div className="rounded-2xl border border-zinc-200 bg-zinc-50/30 p-4">
+        {advisorVisibility ? (
+          <div className="mb-3">
+            <CategoryVisibilityToggle
+              category="liabilities"
+              visible={advisorVisibility.liabilities}
+              showTooltip
+            />
+          </div>
+        ) : null}
         <p className="mb-3 text-xs text-zinc-600">
           Housing mortgages are managed under{" "}
           <Link href="/setup?tab=housing" className={appInlineLinkClass}>
@@ -372,4 +394,3 @@ export function CashAndLiabilitiesPanels({
     </div>
   );
 }
-

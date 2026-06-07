@@ -14,6 +14,7 @@ const STATUSES: AdvisorProposalStatus[] = [
   "accepted",
   "rejected",
   "withdrawn",
+  "accepting",
 ];
 
 describe("resolveOverlayForViewer — role + status gate", () => {
@@ -35,6 +36,7 @@ describe("resolveOverlayForViewer — role + status gate", () => {
       accepted: false,
       rejected: false,
       withdrawn: false,
+      accepting: false,
     };
     for (const s of STATUSES) {
       expect(
@@ -66,6 +68,7 @@ describe("resolveOverlayForViewer — role + status gate", () => {
       accepted: true,
       rejected: false,
       withdrawn: false,
+      accepting: false,
     };
     for (const s of STATUSES) {
       expect(

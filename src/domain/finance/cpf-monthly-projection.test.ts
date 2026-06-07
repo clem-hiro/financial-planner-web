@@ -259,6 +259,53 @@ describe("buildCpfMonthlyProjectionSeries", () => {
     expect(dec?.totalCpf ?? 0).toBeGreaterThan(nov?.totalCpf ?? 0);
   });
 
+  it("stops salary and bonus CPF inflows after employment ends while keeping non-employment flows", () => {
+    const series = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-01",
+      horizonMonths: 3,
+      birthDate: "1990-01-15",
+      grossMonthly: 5_000,
+      annualBonus: 20_000,
+      annualBonusPayoutMonth: 2,
+      employmentContributionEndMonth: 1,
+      annualSalaryGrowthNominal: 0,
+      initial: {
+        oa: 10_000,
+        sa: 0,
+        ma: 0,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [
+        {
+          completionMonth: "2026-01",
+          firstPaymentMonth: "2026-02",
+          downpaymentFromOa: 0,
+          feesFromOa: 0,
+          principal: 2_000,
+          annualNominalRate: 0,
+          termMonths: 2,
+          oaShareOfPayment: 1,
+          maxOaPerMonth: null,
+        },
+      ],
+    });
+
+    const jan = series.find((p) => p.yearMonth === "2026-01");
+    const feb = series.find((p) => p.yearMonth === "2026-02");
+    const mar = series.find((p) => p.yearMonth === "2026-03");
+
+    expect(jan?.totalCpf ?? 0).toBeGreaterThan(10_000);
+    expect(feb?.sa).toBe(jan?.sa);
+    expect(feb?.ma).toBe(jan?.ma);
+    expect(feb?.oa).toBeCloseTo((jan?.oa ?? 0) - 1_000, 2);
+    expect(mar?.totalCpf).toBeCloseTo((feb?.totalCpf ?? 0) - 1_000, 2);
+  });
+
   it("caps MA at the 2026 Basic Healthcare Sum and overflows excess to SA", () => {
     const series = buildCpfMonthlyProjectionSeries({
       startYearMonth: "2026-06",

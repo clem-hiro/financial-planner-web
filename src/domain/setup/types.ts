@@ -1,5 +1,11 @@
-/** Lifecycle state for a single setup module (MVP rules; extend per module). */
-export type SetupModuleStatus = "complete" | "partial" | "not_started";
+/** Lifecycle state for a single setup module (MVP rules; extend per module).
+ * `pending` is a nav-only signal (advisor proposal awaiting client action); it
+ * never participates in progress math. */
+export type SetupModuleStatus =
+  | "complete"
+  | "partial"
+  | "not_started"
+  | "pending";
 
 export type SetupModuleGroupId =
   | "core"
@@ -20,7 +26,8 @@ export type SetupModuleId =
   | "cpf"
   | "goals"
   | "risk_profile"
-  | "documents";
+  | "documents"
+  | "advisor_proposal";
 
 export type SetupModuleEvaluation = {
   moduleId: SetupModuleId;
