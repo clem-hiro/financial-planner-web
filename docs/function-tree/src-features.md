@@ -62,10 +62,10 @@
 | [`src/features/budget/BudgetLineExpenseQuickAdd.tsx`](#src-features-budget-budgetlineexpensequickadd-tsx) | `client-component` | 1 | 7 |
 | [`src/features/budget/BudgetLineScheduleForm.tsx`](#src-features-budget-budgetlinescheduleform-tsx) | `client-component` | 1 | 2 |
 | [`src/features/budget/BudgetMonthJump.tsx`](#src-features-budget-budgetmonthjump-tsx) | `client-component` | 1 | 6 |
-| [`src/features/budget/BudgetMonthlyCategoriesSection.tsx`](#src-features-budget-budgetmonthlycategoriessection-tsx) | `regular` | 5 | 21 |
+| [`src/features/budget/BudgetMonthlyCategoriesSection.tsx`](#src-features-budget-budgetmonthlycategoriessection-tsx) | `regular` | 5 | 25 |
 | [`src/features/budget/BudgetMonthOverrideForm.tsx`](#src-features-budget-budgetmonthoverrideform-tsx) | `client-component` | 1 | 5 |
 | [`src/features/budget/BudgetPageHero.tsx`](#src-features-budget-budgetpagehero-tsx) | `regular` | 3 | 15 |
-| [`src/features/budget/BudgetPlanningView.tsx`](#src-features-budget-budgetplanningview-tsx) | `regular` | 2 | 46 |
+| [`src/features/budget/BudgetPlanningView.tsx`](#src-features-budget-budgetplanningview-tsx) | `regular` | 2 | 51 |
 | [`src/features/budget/BudgetQuickAddPresets.tsx`](#src-features-budget-budgetquickaddpresets-tsx) | `client-component` | 1 | 6 |
 | [`src/features/budget/BudgetRecommendationHints.tsx`](#src-features-budget-budgetrecommendationhints-tsx) | `regular` | 1 | 0 |
 | [`src/features/budget/BudgetReviewWorkflowPanel.tsx`](#src-features-budget-budgetreviewworkflowpanel-tsx) | `regular` | 2 | 2 |
@@ -908,31 +908,31 @@ Classification: `client-component`
 
 Classification: `regular`
 
-#### `varianceForLine` — function, L27
+#### `varianceForLine` — function, L28
 
 - calls: `src/domain/finance/budget.ts#normalizeCategory`
 - called by: `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop`
 
-#### `MonthlyLineRowDesktop` — component, L42
+#### `MonthlyLineRowDesktop` — component, L43
 
-- calls: `src/data/mappers.ts#num`, `src/domain/finance/budget.ts#normalizeCategory`, `src/domain/finance/expense-budget-lock.ts#monthlyExpensesForBudgetCategory`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#varianceForLine`, `src/features/budget/budget-category-icons.ts#budgetCategoryEmoji`, `src/ui/lib/format.ts#formatCurrency`
-- renders: `src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible`
+- calls: `src/data/mappers.ts#num`, `src/domain/finance/budget-cash-flow-allocation.ts#isSetupInvestmentsBudgetLine`, `src/domain/finance/budget.ts#normalizeCategory`, `src/domain/finance/expense-budget-lock.ts#monthlyExpensesForBudgetCategory`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#varianceForLine`, `src/features/budget/budget-category-icons.ts#budgetCategoryEmoji`, `src/ui/lib/format.ts#formatCurrency`
+- renders: `[external] next`, `src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible`
 - rendered by: `src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection`
 
-#### `MonthlyLineCardMobile` — component, L128
+#### `MonthlyLineCardMobile` — component, L141
 
-- calls: `src/data/mappers.ts#num`, `src/domain/finance/budget.ts#normalizeCategory`, `src/domain/finance/expense-budget-lock.ts#monthlyExpensesForBudgetCategory`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#varianceForLine`, `src/features/budget/budget-category-icons.ts#budgetCategoryEmoji`, `src/ui/lib/format.ts#formatCurrency`
-- renders: `src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible`
+- calls: `src/data/mappers.ts#num`, `src/domain/finance/budget-cash-flow-allocation.ts#isSetupInvestmentsBudgetLine`, `src/domain/finance/budget.ts#normalizeCategory`, `src/domain/finance/expense-budget-lock.ts#monthlyExpensesForBudgetCategory`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#varianceForLine`, `src/features/budget/budget-category-icons.ts#budgetCategoryEmoji`, `src/ui/lib/format.ts#formatCurrency`
+- renders: `[external] next`, `src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible`
 - rendered by: `src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection`
 
-#### `BudgetMonthlyCategoriesSection` — component, L237
+#### `BudgetMonthlyCategoriesSection` — component, L265
 
 - calls: `src/domain/finance/budget-guided-setup.ts#budgetBucketForCategoryLabel`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `[external] next`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop`
 - rendered by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
 - unresolved: 4
 
-#### `partitionMonthlyLines` — function, L367
+#### `partitionMonthlyLines` — function, L395
 
 - calls: `src/domain/finance/budget.ts#isMonthlyBudgetLineApplicable`
 - called by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
@@ -971,14 +971,14 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `varianceForLine` — function, L67
+#### `varianceForLine` — function, L71
 
 - calls: `src/domain/finance/budget.ts#normalizeCategory`
 - called by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
 
-#### `BudgetPlanningView` — component, L75
+#### `BudgetPlanningView` — component, L79
 
-- calls: `[external] @supabase/auth-js`, `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget-cash-flow-allocation.ts#computeBudgetCashFlowAllocation`, `src/domain/finance/budget-cash-flow-allocation.ts#sumPlannedMonthlyInvestmentContributions`, `src/domain/finance/budget-review.ts#buildBudgetReviewWorkflow`, `src/domain/finance/budget.ts#isMonthlyBudgetLineApplicable`, `src/domain/finance/budget.ts#monthlyBudgetAggregateOverspend`, `src/domain/finance/cash-flow-setup-guidance.ts#cashFlowSetupGaps`, `src/domain/finance/cash-flow-setup-guidance.ts#shouldShowCashFlowSetupGuidance`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines`, `src/features/budget/BudgetPlanningView.tsx#varianceForLine`, `src/features/budget/budget-category-icons.ts#budgetCategoryEmoji`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#defaultExpenseDateForBudgetMonth`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/setup-urls.ts#budgetMonthHref`, `src/ui/lib/format.ts#formatCurrency`
+- calls: `[external] @supabase/auth-js`, `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/spend-recommendations-from-month.ts#spendRecommendationsForUserMonth`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget-cash-flow-allocation.ts#applySetupInvestmentsToMonthlyBudgetResult`, `src/domain/finance/budget-cash-flow-allocation.ts#buildSetupInvestmentsBudgetLine`, `src/domain/finance/budget-cash-flow-allocation.ts#computeBudgetCashFlowAllocation`, `src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentBudgetCategory`, `src/domain/finance/budget-cash-flow-allocation.ts#sumPlannedMonthlyInvestmentContributions`, `src/domain/finance/budget-guided-setup.ts#sumBucketAmounts`, `src/domain/finance/budget-review.ts#buildBudgetReviewWorkflow`, `src/domain/finance/budget.ts#isMonthlyBudgetLineApplicable`, `src/domain/finance/budget.ts#monthlyBudgetAggregateOverspend`, `src/domain/finance/budget.ts#normalizeCategory`, `src/domain/finance/cash-flow-setup-guidance.ts#cashFlowSetupGaps`, `src/domain/finance/cash-flow-setup-guidance.ts#shouldShowCashFlowSetupGuidance`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines`, `src/features/budget/BudgetPlanningView.tsx#varianceForLine`, `src/features/budget/budget-category-icons.ts#budgetCategoryEmoji`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#defaultExpenseDateForBudgetMonth`, `src/lib/dates.ts#formatYearMonth`, `src/lib/dates.ts#parseYearMonth`, `src/lib/dates.ts#yearFromYearMonth`, `src/lib/setup-urls.ts#budgetMonthHref`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `[external] next`, `src/features/budget/BudgetAddForm.tsx#BudgetAddForm`, `src/features/budget/BudgetIrregularExpenseReservePanel.tsx#BudgetIrregularExpenseReservePanel`, `src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible`, `src/features/budget/BudgetLineScheduleForm.tsx#BudgetLineScheduleForm`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetQuickAddPresets.tsx#BudgetQuickAddPresets`, `src/features/budget/BudgetRecommendationHints.tsx#BudgetRecommendationHints`, `src/features/budget/BudgetReviewWorkflowPanel.tsx#BudgetReviewWorkflowPanel`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`, `src/features/planning/CashFlowSetupGuidanceBanner.tsx#CashFlowSetupGuidanceBanner`, `src/features/spend/SpendGuidancePanel.tsx#SpendGuidancePanel`, `src/ui/PageSection.tsx#PageSection`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`
 

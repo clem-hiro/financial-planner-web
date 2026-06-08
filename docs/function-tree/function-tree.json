@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-06-07T18:20:42.691Z",
+  "generated_at": "2026-06-08T19:06:12.932Z",
   "roots": [
     "src/app",
     "src/components",
@@ -10279,7 +10279,7 @@
           "id": "src/domain/finance/budget-cash-flow-allocation.test.ts#inv",
           "name": "inv",
           "kind": "function",
-          "line": 9,
+          "line": 11,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -10295,10 +10295,64 @@
       ],
       "functions": [
         {
+          "id": "src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentBudgetCategory",
+          "name": "isInvestmentBudgetCategory",
+          "kind": "function",
+          "line": 15,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/budget.ts#normalizeCategory"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/budget-cash-flow-allocation.ts#isSetupInvestmentsBudgetLine",
+          "name": "isSetupInvestmentsBudgetLine",
+          "kind": "function",
+          "line": 20,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/budget-cash-flow-allocation.ts#buildSetupInvestmentsBudgetLine",
+          "name": "buildSetupInvestmentsBudgetLine",
+          "kind": "function",
+          "line": 24,
+          "exported": true,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/domain/finance/budget-cash-flow-allocation.ts#applySetupInvestmentsToMonthlyBudgetResult",
+          "name": "applySetupInvestmentsToMonthlyBudgetResult",
+          "kind": "function",
+          "line": 45,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentBudgetCategory"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/budget.ts#normalizeCategory"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
           "id": "src/domain/finance/budget-cash-flow-allocation.ts#yearMonthCompare",
           "name": "yearMonthCompare",
           "kind": "function",
-          "line": 7,
+          "line": 82,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -10308,7 +10362,7 @@
           "id": "src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth",
           "name": "isInvestmentContributionActiveInYearMonth",
           "kind": "function",
-          "line": 14,
+          "line": 89,
           "exported": true,
           "classification": [],
           "edges": [
@@ -10335,7 +10389,7 @@
           "id": "src/domain/finance/budget-cash-flow-allocation.ts#sumPlannedMonthlyInvestmentContributions",
           "name": "sumPlannedMonthlyInvestmentContributions",
           "kind": "function",
-          "line": 43,
+          "line": 118,
           "exported": true,
           "classification": [],
           "edges": [
@@ -10354,7 +10408,7 @@
           "id": "src/domain/finance/budget-cash-flow-allocation.ts#computeBudgetCashFlowAllocation",
           "name": "computeBudgetCashFlowAllocation",
           "kind": "function",
-          "line": 69,
+          "line": 151,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -18596,7 +18650,7 @@
           "id": "src/features/budget/BudgetMonthlyCategoriesSection.tsx#varianceForLine",
           "name": "varianceForLine",
           "kind": "function",
-          "line": 27,
+          "line": 28,
           "exported": false,
           "classification": [],
           "edges": [
@@ -18611,10 +18665,14 @@
           "id": "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop",
           "name": "MonthlyLineRowDesktop",
           "kind": "component",
-          "line": 42,
+          "line": 43,
           "exported": false,
           "classification": [],
           "edges": [
+            {
+              "kind": "renders",
+              "external": "next"
+            },
             {
               "kind": "calls",
               "target": "src/features/budget/BudgetMonthlyCategoriesSection.tsx#varianceForLine"
@@ -18634,6 +18692,10 @@
             {
               "kind": "calls",
               "target": "src/features/budget/budget-category-icons.ts#budgetCategoryEmoji"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/budget-cash-flow-allocation.ts#isSetupInvestmentsBudgetLine"
             },
             {
               "kind": "calls",
@@ -18650,10 +18712,14 @@
           "id": "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile",
           "name": "MonthlyLineCardMobile",
           "kind": "component",
-          "line": 128,
+          "line": 141,
           "exported": false,
           "classification": [],
           "edges": [
+            {
+              "kind": "renders",
+              "external": "next"
+            },
             {
               "kind": "calls",
               "target": "src/features/budget/BudgetMonthlyCategoriesSection.tsx#varianceForLine"
@@ -18676,6 +18742,10 @@
             },
             {
               "kind": "calls",
+              "target": "src/domain/finance/budget-cash-flow-allocation.ts#isSetupInvestmentsBudgetLine"
+            },
+            {
+              "kind": "calls",
               "target": "src/ui/lib/format.ts#formatCurrency"
             },
             {
@@ -18689,7 +18759,7 @@
           "id": "src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection",
           "name": "BudgetMonthlyCategoriesSection",
           "kind": "component",
-          "line": 237,
+          "line": 265,
           "exported": true,
           "classification": [],
           "edges": [
@@ -18720,7 +18790,7 @@
           "id": "src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines",
           "name": "partitionMonthlyLines",
           "kind": "function",
-          "line": 367,
+          "line": 395,
           "exported": true,
           "classification": [],
           "edges": [
@@ -18886,7 +18956,7 @@
           "id": "src/features/budget/BudgetPlanningView.tsx#varianceForLine",
           "name": "varianceForLine",
           "kind": "function",
-          "line": 67,
+          "line": 71,
           "exported": false,
           "classification": [],
           "edges": [
@@ -18901,7 +18971,7 @@
           "id": "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
           "name": "BudgetPlanningView",
           "kind": "component",
-          "line": 75,
+          "line": 79,
           "exported": true,
           "classification": [],
           "edges": [
@@ -18967,15 +19037,39 @@
             },
             {
               "kind": "calls",
+              "target": "src/domain/finance/budget-cash-flow-allocation.ts#buildSetupInvestmentsBudgetLine"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentBudgetCategory"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/budget-cash-flow-allocation.ts#applySetupInvestmentsToMonthlyBudgetResult"
+            },
+            {
+              "kind": "calls",
+              "target": "src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/budget.ts#normalizeCategory"
+            },
+            {
+              "kind": "calls",
+              "target": "src/domain/finance/budget-guided-setup.ts#sumBucketAmounts"
+            },
+            {
+              "kind": "calls",
+              "target": "src/data/mappers.ts#num"
+            },
+            {
+              "kind": "calls",
               "target": "src/data/mappers.ts#profileSalaryTakeHomeMonthly"
             },
             {
               "kind": "calls",
               "target": "src/domain/finance/budget-cash-flow-allocation.ts#computeBudgetCashFlowAllocation"
-            },
-            {
-              "kind": "calls",
-              "target": "src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines"
             },
             {
               "kind": "calls",
@@ -18996,10 +19090,6 @@
             {
               "kind": "calls",
               "target": "src/lib/dates.ts#defaultExpenseDateForBudgetMonth"
-            },
-            {
-              "kind": "calls",
-              "target": "src/data/mappers.ts#num"
             },
             {
               "kind": "calls",
@@ -33242,6 +33332,8 @@
         "src/data/expense-budget-guard.ts#hasBudgetCategoryMonthlyConflict",
         "src/data/repositories/budget-lines.ts#insertBudgetLine",
         "src/data/repositories/budget-lines.ts#updateBudgetLine",
+        "src/domain/finance/budget-cash-flow-allocation.ts#applySetupInvestmentsToMonthlyBudgetResult",
+        "src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentBudgetCategory",
         "src/domain/finance/budget-guided-setup.ts#budgetBucketForCategoryLabel",
         "src/domain/finance/budget.ts#annualBudgetVsActual",
         "src/domain/finance/budget.ts#monthlyBudgetVsActual",
@@ -33251,6 +33343,7 @@
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile",
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop",
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#varianceForLine",
+        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
         "src/features/budget/BudgetPlanningView.tsx#varianceForLine",
         "src/features/budget/budget-category-icons.ts#budgetCategoryEmoji",
         "src/features/expenses/ExpenseForm.tsx#ExpenseForm"
@@ -35114,6 +35207,10 @@
       "src/domain/finance/age-projection.ts#parseYmd": [
         "src/domain/finance/age-projection.ts#ageCompletedOnDate"
       ],
+      "src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentBudgetCategory": [
+        "src/domain/finance/budget-cash-flow-allocation.ts#applySetupInvestmentsToMonthlyBudgetResult",
+        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
+      ],
       "src/domain/finance/investment-contribution-dates.ts#parseIsoDateOnly": [
         "src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth",
         "src/domain/finance/investment-contribution-dates.ts#contributionScheduleFromDates",
@@ -35958,6 +36055,10 @@
         "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop",
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
       ],
+      "src/domain/finance/budget-cash-flow-allocation.ts#isSetupInvestmentsBudgetLine": [
+        "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile",
+        "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop"
+      ],
       "src/server/actions.ts#clearBudgetMonthOverrideAction": [
         "src/features/budget/BudgetMonthOverrideForm.tsx#BudgetMonthOverrideForm"
       ],
@@ -35966,6 +36067,7 @@
       ],
       "src/domain/finance/budget-guided-setup.ts#sumBucketAmounts": [
         "src/features/budget/BudgetPageHero.tsx#BudgetPageHero",
+        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView",
         "src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel"
       ],
       "src/data/budget-summary.ts#getBudgetPageModel": [
@@ -35975,10 +36077,16 @@
       "src/domain/finance/budget-cash-flow-allocation.ts#sumPlannedMonthlyInvestmentContributions": [
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
       ],
-      "src/domain/finance/budget-cash-flow-allocation.ts#computeBudgetCashFlowAllocation": [
+      "src/domain/finance/budget-cash-flow-allocation.ts#buildSetupInvestmentsBudgetLine": [
+        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
+      ],
+      "src/domain/finance/budget-cash-flow-allocation.ts#applySetupInvestmentsToMonthlyBudgetResult": [
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
       ],
       "src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines": [
+        "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
+      ],
+      "src/domain/finance/budget-cash-flow-allocation.ts#computeBudgetCashFlowAllocation": [
         "src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView"
       ],
       "src/domain/finance/cash-flow-setup-guidance.ts#shouldShowCashFlowSetupGuidance": [

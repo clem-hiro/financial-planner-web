@@ -121,14 +121,12 @@ export function BudgetPageHero({
         ? "text-amber-800"
         : "text-zinc-700";
 
-  const { unallocatedAfterBudget, unallocatedAfterCommitments } = cashFlow;
-  const hasOtherCommitments =
-    cashFlow.plannedGoalContributions > 0 ||
-    cashFlow.plannedInvestmentContributions > 0;
+  const { freeCashFlow, unallocatedAfterCommitments } = cashFlow;
+  const hasOtherCommitments = cashFlow.plannedGoalContributions > 0;
   const showCommitmentsFootnote =
     hasOtherCommitments && unallocatedAfterCommitments != null;
 
-  function unallocatedClass(value: number): string {
+  function freeCashFlowClass(value: number): string {
     if (value < 0) return "mt-0.5 font-semibold tabular-nums text-amber-900";
     return "mt-0.5 font-semibold tabular-nums text-teal-900";
   }
@@ -209,7 +207,7 @@ export function BudgetPageHero({
                 <Link href="/setup?tab=profile" className={appInlineLinkClass}>
                   Set take-home
                 </Link>{" "}
-                on your profile to see unallocated cash after your plan.
+                on your profile to see free cash flow after your plan.
               </div>
             )}
             <div className="rounded-2xl bg-white/80 px-3 py-2 shadow-sm ring-1 ring-zinc-100">
@@ -220,10 +218,10 @@ export function BudgetPageHero({
                 {formatCurrency(planned, currency)}
               </dd>
             </div>
-            {unallocatedAfterBudget != null && (
+            {freeCashFlow != null && (
               <div className="col-span-2 rounded-2xl border border-teal-200/90 bg-teal-50/60 px-3 py-2 shadow-sm">
                 <dt className="flex flex-wrap items-center gap-x-2 text-[11px] font-medium uppercase tracking-wide text-teal-900">
-                  <span>Unallocated (not in budget lines)</span>
+                  <span>Free cash flow</span>
                   <MethodologyOpenLink
                     topicId="budget-cash-flow-allocation"
                     className="normal-case tracking-normal"
@@ -231,17 +229,25 @@ export function BudgetPageHero({
                     How calculated
                   </MethodologyOpenLink>
                 </dt>
-                <dd className={unallocatedClass(unallocatedAfterBudget)}>
-                  {formatCurrency(unallocatedAfterBudget, currency)}
+                <dd className={freeCashFlowClass(freeCashFlow)}>
+                  {formatCurrency(freeCashFlow, currency)}
                 </dd>
-                {unallocatedAfterBudget < 0 ? (
+                {freeCashFlow < 0 ? (
                   <p className="mt-1 text-xs text-amber-900/90">
-                    Your planned lines exceed take-home — trim categories or
-                    check income.
+                    Your planned spending leaves no free cash flow — trim
+                    categories or check income.
                   </p>
                 ) : (
                   <p className="mt-1 text-xs text-teal-900/80">
-                    Take-home minus the monthly planned total above.
+                    You have {formatCurrency(freeCashFlow, currency)} in free
+                    cash flow.{" "}
+                    <Link
+                      href="/setup?tab=investments#add-investment"
+                      className={appInlineLinkClass}
+                    >
+                      Add or adjust an investment
+                    </Link>{" "}
+                    to see how projections change.
                   </p>
                 )}
               </div>
@@ -266,25 +272,8 @@ export function BudgetPageHero({
                     </Link>
                   </p>
                 )}
-                {cashFlow.plannedInvestmentContributions > 0 && (
-                  <p>
-                    Investments:{" "}
-                    <span className="font-medium tabular-nums text-zinc-900">
-                      {formatCurrency(
-                        cashFlow.plannedInvestmentContributions,
-                        currency
-                      )}
-                    </span>
-                    /mo —{" "}
-                    <Link href="/setup?tab=investments" className={appInlineLinkClass}>
-                      Setup → Investments
-                    </Link>
-                    . Add an investments budget line only if you want that
-                    spend counted here too.
-                  </p>
-                )}
                 <p>
-                  After these:{" "}
+                  After goals:{" "}
                   <span
                     className={
                       unallocatedAfterCommitments! < 0

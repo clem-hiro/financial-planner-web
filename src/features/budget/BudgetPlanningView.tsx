@@ -6,7 +6,10 @@ import { listFinancialGoals } from "@/data/repositories/goals";
 import { listInvestments } from "@/data/repositories/investments";
 import { getProfileById } from "@/data/repositories/profiles";
 import {
+  applySetupInvestmentsToMonthlyBudgetResult,
+  buildSetupInvestmentsBudgetLine,
   computeBudgetCashFlowAllocation,
+  isInvestmentBudgetCategory,
   sumPlannedMonthlyInvestmentContributions,
 } from "@/domain/finance/budget-cash-flow-allocation";
 import { createSupabaseServerClient } from "@/data/supabase/server";
@@ -44,6 +47,7 @@ import {
   buildBudgetReviewWorkflow,
   type BudgetReviewLineInput,
 } from "@/domain/finance/budget-review";
+import { sumBucketAmounts } from "@/domain/finance/budget-guided-setup";
 import {
   isMonthlyBudgetLineApplicable,
   monthlyBudgetAggregateOverspend,
@@ -114,18 +118,49 @@ export async function BudgetPlanningView({
   const plannedGoalMonthlyTotal = sumPlannedMonthlyGoalContributions(goals);
   const plannedInvestmentMonthlyTotal =
     sumPlannedMonthlyInvestmentContributions(investments, month);
+  const setupInvestmentsBudgetLine = buildSetupInvestmentsBudgetLine({
+    userId: user.id,
+    amount: plannedInvestmentMonthlyTotal,
+  });
+  const displayLineRows = model.lineRows.filter(
+    (line) => !isInvestmentBudgetCategory(line.category)
+  );
+  if (setupInvestmentsBudgetLine) {
+    displayLineRows.push(setupInvestmentsBudgetLine);
+  }
+  const displayMonthly = applySetupInvestmentsToMonthlyBudgetResult(
+    model.monthly,
+    plannedInvestmentMonthlyTotal
+  );
+  const displayMonthlyAll = displayLineRows.filter(
+    (l) => l.cadence === "monthly"
+  );
+  const { active: activeMonthly, inactive: inactiveMonthly } =
+    partitionMonthlyLines(month, displayMonthlyAll);
+  const displayActiveMonthlyCategoryKeys = new Set(
+    activeMonthly.map((line) => normalizeCategory(line.category))
+  );
+  const displayUnbudgetedMonthlyExpenses = model.monthExpenses.filter((e) => {
+    if ((e.spend_period ?? "monthly") !== "monthly") return false;
+    return !displayActiveMonthlyCategoryKeys.has(normalizeCategory(e.category));
+  });
+  const plannedFutureYouMonthlyTotal = sumBucketAmounts(
+    activeMonthly.map((line) => ({
+      category: line.category,
+      amount: num(line.amount),
+    }))
+  ).savings;
   const currency = profile?.base_currency ?? DEFAULT_BASE_CURRENCY;
   const monthlyIncome = profileSalaryTakeHomeMonthly(profile, month);
   const cashFlowAllocation = computeBudgetCashFlowAllocation({
     takeHome: monthlyIncome,
-    plannedBudgetTotal: model.monthly.totals.budget,
+    plannedBudgetTotal: displayMonthly.totals.budget,
+    plannedFutureYouBudgetTotal: plannedFutureYouMonthlyTotal,
     plannedGoalContributions: plannedGoalMonthlyTotal,
     plannedInvestmentContributions: plannedInvestmentMonthlyTotal,
   });
 
   const monthlyAll = model.lineRows.filter((l) => l.cadence === "monthly");
-  const { active: activeMonthly, inactive: inactiveMonthly } =
-    partitionMonthlyLines(month, monthlyAll);
   const activeMonthlyBudgetLineCount = monthlyAll.filter((l) =>
     isMonthlyBudgetLineApplicable(
       month,
@@ -152,19 +187,19 @@ export async function BudgetPlanningView({
   const prevMonth = addMonthsToYearMonth(month, -1);
   const nextMonth = addMonthsToYearMonth(month, 1);
   const expenseDateDefault = defaultExpenseDateForBudgetMonth(month);
-  const unbudgetedMonthlyTotal = model.unbudgetedMonthlyExpenses.reduce(
+  const unbudgetedMonthlyTotal = displayUnbudgetedMonthlyExpenses.reduce(
     (acc, e) => acc + num(e.amount),
     0
   );
   const monthlyBudgetAgg = monthlyBudgetAggregateOverspend(
-    model.monthly.totals
+    displayMonthly.totals
   );
   const showMonthlyVerdict =
-    model.monthly.totals.budget > 0 || model.monthly.totals.spent > 0;
+    displayMonthly.totals.budget > 0 || displayMonthly.totals.spent > 0;
 
   const spendRecommendations = spendRecommendationsForUserMonth({
     expenses: model.monthExpenses,
-    budgetLineRows: model.lineRows,
+    budgetLineRows: displayLineRows,
     overrideByLineId: model.overridesThisMonth,
     yearMonth: month,
     profile,
@@ -182,7 +217,7 @@ export async function BudgetPlanningView({
       <BudgetPageHero
         month={month}
         currency={currency}
-        totals={model.monthly.totals}
+        totals={displayMonthly.totals}
         cashFlow={cashFlowAllocation}
         activeMonthlyLines={activeMonthly}
         prevMonth={prevMonth}
@@ -260,13 +295,13 @@ export async function BudgetPlanningView({
         profile={profile}
         currency={currency}
         month={month}
-        monthlyLines={model.lineRows}
+        monthlyLines={displayLineRows}
       />
 
       <BudgetReviewWorkflowPanel
         review={buildBudgetReviewWorkflow({
           month,
-          monthly: model.monthly,
+          monthly: displayMonthly,
           activeMonthlyLines: activeMonthly.map(
             (line): BudgetReviewLineInput => ({
               id: line.id,
@@ -286,7 +321,7 @@ export async function BudgetPlanningView({
             })
           ),
           overrideByLineId: model.overridesThisMonth,
-          unbudgetedMonthlyCount: model.unbudgetedMonthlyExpenses.length,
+          unbudgetedMonthlyCount: displayUnbudgetedMonthlyExpenses.length,
           unbudgetedMonthlyTotal,
         })}
         currency={currency}
@@ -342,8 +377,8 @@ export async function BudgetPlanningView({
         <BudgetMonthlyCategoriesSection
           month={month}
           currency={currency}
-          monthly={model.monthly}
-          monthlyAll={monthlyAll}
+          monthly={displayMonthly}
+          monthlyAll={displayMonthlyAll}
           activeMonthly={activeMonthly}
           overridesThisMonth={model.overridesThisMonth}
           expenseDateDefault={expenseDateDefault}
@@ -370,8 +405,8 @@ export async function BudgetPlanningView({
               </p>
               <p className="mt-2 text-xs text-zinc-700">
                 {monthlyBudgetAgg.onTrack
-                  ? `Remaining this month: ${formatCurrency(model.monthly.totals.remaining, currency)}.`
-                  : `Over by ${formatCurrency(monthlyBudgetAgg.overBy, currency)} (${formatCurrency(model.monthly.totals.spent, currency)} spent vs ${formatCurrency(model.monthly.totals.budget, currency)} planned).`}
+                  ? `Remaining this month: ${formatCurrency(displayMonthly.totals.remaining, currency)}.`
+                  : `Over by ${formatCurrency(monthlyBudgetAgg.overBy, currency)} (${formatCurrency(displayMonthly.totals.spent, currency)} spent vs ${formatCurrency(displayMonthly.totals.budget, currency)} planned).`}
               </p>
             </div>
             <div className="rounded-2xl border border-zinc-200/80 bg-white p-4 shadow-sm">
@@ -387,12 +422,12 @@ export async function BudgetPlanningView({
                         {formatCurrency(monthlyIncome, currency)}
                       </span>
                     </li>
-                    {cashFlowAllocation.unallocatedAfterBudget != null && (
+                    {cashFlowAllocation.freeCashFlow != null && (
                       <li className="text-teal-900">
-                        Unallocated:{" "}
+                        Free cash flow:{" "}
                         <span className="font-medium">
                           {formatCurrency(
-                            cashFlowAllocation.unallocatedAfterBudget,
+                            cashFlowAllocation.freeCashFlow,
                             currency
                           )}
                         </span>
@@ -403,13 +438,13 @@ export async function BudgetPlanningView({
                 <li>
                   Planned:{" "}
                   <span className="font-medium text-zinc-900">
-                    {formatCurrency(model.monthly.totals.budget, currency)}
+                    {formatCurrency(displayMonthly.totals.budget, currency)}
                   </span>
                 </li>
                 <li>
                   Logged:{" "}
                   <span className="font-medium text-zinc-900">
-                    {formatCurrency(model.monthly.totals.spent, currency)}
+                    {formatCurrency(displayMonthly.totals.spent, currency)}
                   </span>
                 </li>
                 {unbudgetedMonthlyTotal > 0 && (
@@ -438,7 +473,7 @@ export async function BudgetPlanningView({
           </Link>
         }
       >
-        {model.unbudgetedMonthlyExpenses.length === 0 ? (
+        {displayUnbudgetedMonthlyExpenses.length === 0 ? (
           <div className="rounded-2xl border border-emerald-100 bg-linear-to-br from-emerald-50/80 to-white p-6 text-center shadow-sm">
             <p className="text-lg" aria-hidden>
               ✨
@@ -466,7 +501,7 @@ export async function BudgetPlanningView({
                     </tr>
                   </thead>
                   <tbody>
-                  {model.unbudgetedMonthlyExpenses.map((e) => (
+                  {displayUnbudgetedMonthlyExpenses.map((e) => (
                     <tr
                       key={e.id}
                       className="border-b border-zinc-100 transition-colors hover:bg-teal-50/15 last:border-0"

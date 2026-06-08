@@ -30,7 +30,7 @@
 | [`src/domain/finance/age-asset-projection.ts`](#src-domain-finance-age-asset-projection-ts) | `regular` | 1 | 4 |
 | [`src/domain/finance/age-projection.ts`](#src-domain-finance-age-projection-ts) | `regular` | 3 | 4 |
 | [`src/domain/finance/budget-cash-flow-allocation.test.ts`](#src-domain-finance-budget-cash-flow-allocation-test-ts) | `regular` | 1 | 0 |
-| [`src/domain/finance/budget-cash-flow-allocation.ts`](#src-domain-finance-budget-cash-flow-allocation-ts) | `regular` | 4 | 6 |
+| [`src/domain/finance/budget-cash-flow-allocation.ts`](#src-domain-finance-budget-cash-flow-allocation-ts) | `regular` | 8 | 9 |
 | [`src/domain/finance/budget-guided-setup.test.ts`](#src-domain-finance-budget-guided-setup-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/budget-guided-setup.ts`](#src-domain-finance-budget-guided-setup-ts) | `regular` | 11 | 10 |
 | [`src/domain/finance/budget-review.test.ts`](#src-domain-finance-budget-review-test-ts) | `regular` | 0 | 0 |
@@ -651,7 +651,7 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `inv` — function, L9
+#### `inv` — function, L11
 
 _No tracked edges._
 
@@ -659,21 +659,39 @@ _No tracked edges._
 
 Classification: `regular`
 
-#### `yearMonthCompare` — function, L7
+#### `isInvestmentBudgetCategory` — function, L15
+
+- calls: `src/domain/finance/budget.ts#normalizeCategory`
+- called by: `src/domain/finance/budget-cash-flow-allocation.ts#applySetupInvestmentsToMonthlyBudgetResult`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
+
+#### `isSetupInvestmentsBudgetLine` — function, L20
+
+- called by: `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop`
+
+#### `buildSetupInvestmentsBudgetLine` — function, L24
+
+- called by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
+
+#### `applySetupInvestmentsToMonthlyBudgetResult` — function, L45
+
+- calls: `src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentBudgetCategory`, `src/domain/finance/budget.ts#normalizeCategory`
+- called by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
+
+#### `yearMonthCompare` — function, L82
 
 - called by: `src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth`
 
-#### `isInvestmentContributionActiveInYearMonth` — function, L14
+#### `isInvestmentContributionActiveInYearMonth` — function, L89
 
 - calls: `src/data/mappers.ts#num`, `src/domain/finance/budget-cash-flow-allocation.ts#yearMonthCompare`, `src/domain/finance/investment-contribution-dates.ts#parseIsoDateOnly`, `src/lib/dates.ts#formatYearMonth`
 - called by: `src/domain/finance/budget-cash-flow-allocation.ts#sumPlannedMonthlyInvestmentContributions`
 
-#### `sumPlannedMonthlyInvestmentContributions` — function, L43
+#### `sumPlannedMonthlyInvestmentContributions` — function, L118
 
 - calls: `src/data/mappers.ts#num`, `src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth`
 - called by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
 
-#### `computeBudgetCashFlowAllocation` — function, L69
+#### `computeBudgetCashFlowAllocation` — function, L151
 
 - called by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
 
@@ -736,7 +754,7 @@ Classification: `regular`
 #### `sumBucketAmounts` — function, L428
 
 - calls: `src/domain/finance/budget-guided-setup.ts#budgetBucketForCategoryLabel`
-- called by: `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`
+- called by: `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`
 
 ### `src/domain/finance/budget-review.test.ts` <a id="src-domain-finance-budget-review-test-ts"></a>
 
@@ -758,7 +776,7 @@ Classification: `regular`
 
 #### `normalizeCategory` — function, L4
 
-- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/expense-budget-guard.ts#hasBudgetCategoryMonthlyConflict`, `src/data/repositories/budget-lines.ts#insertBudgetLine`, `src/data/repositories/budget-lines.ts#updateBudgetLine`, `src/domain/finance/budget-guided-setup.ts#budgetBucketForCategoryLabel`, `src/domain/finance/budget.ts#annualBudgetVsActual`, `src/domain/finance/budget.ts#monthlyBudgetVsActual`, `src/domain/finance/budget.ts#sumSpentByCategory`, `src/domain/finance/expense-budget-lock.ts#activeMonthlyBudgetCategoryKeys`, `src/domain/finance/expense-budget-lock.ts#monthlyExpensesForBudgetCategory`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#varianceForLine`, `src/features/budget/BudgetPlanningView.tsx#varianceForLine`, `src/features/budget/budget-category-icons.ts#budgetCategoryEmoji`, `src/features/expenses/ExpenseForm.tsx#ExpenseForm`
+- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/data/budget-summary.ts#getBudgetPageModel`, `src/data/expense-budget-guard.ts#hasBudgetCategoryMonthlyConflict`, `src/data/repositories/budget-lines.ts#insertBudgetLine`, `src/data/repositories/budget-lines.ts#updateBudgetLine`, `src/domain/finance/budget-cash-flow-allocation.ts#applySetupInvestmentsToMonthlyBudgetResult`, `src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentBudgetCategory`, `src/domain/finance/budget-guided-setup.ts#budgetBucketForCategoryLabel`, `src/domain/finance/budget.ts#annualBudgetVsActual`, `src/domain/finance/budget.ts#monthlyBudgetVsActual`, `src/domain/finance/budget.ts#sumSpentByCategory`, `src/domain/finance/expense-budget-lock.ts#activeMonthlyBudgetCategoryKeys`, `src/domain/finance/expense-budget-lock.ts#monthlyExpensesForBudgetCategory`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#varianceForLine`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/budget/BudgetPlanningView.tsx#varianceForLine`, `src/features/budget/budget-category-icons.ts#budgetCategoryEmoji`, `src/features/expenses/ExpenseForm.tsx#ExpenseForm`
 
 #### `isValidYearMonth` — function, L11
 

@@ -11,6 +11,7 @@ import {
   normalizeCategory,
   type BudgetVsActualResult,
 } from "@/domain/finance/budget";
+import { isSetupInvestmentsBudgetLine } from "@/domain/finance/budget-cash-flow-allocation";
 import { monthlyExpensesForBudgetCategory } from "@/domain/finance/expense-budget-lock";
 import { num } from "@/data/mappers";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
@@ -59,6 +60,7 @@ function MonthlyLineRowDesktop({
     normalizeCategory(line.category)
   );
   const emoji = budgetCategoryEmoji(line.category);
+  const isSetupInvestment = isSetupInvestmentsBudgetLine(line.id);
 
   return (
     <tr className="border-b border-zinc-100 align-top transition-colors hover:bg-teal-50/20 last:border-0">
@@ -82,7 +84,9 @@ function MonthlyLineRowDesktop({
         </div>
       </td>
       <td className="px-3 py-3 text-zinc-700">
-        <div>Base {formatCurrency(base, currency)}</div>
+        <div>
+          {isSetupInvestment ? "Setup" : "Base"} {formatCurrency(base, currency)}
+        </div>
         {overridesThisMonth[line.id] !== undefined && (
           <div className="text-xs text-teal-800">
             This month {formatCurrency(effective, currency)}
@@ -106,20 +110,29 @@ function MonthlyLineRowDesktop({
         {formatCurrency(remaining, currency)}
       </td>
       <td className="px-3 py-3 align-top">
-        <BudgetLineActionsCollapsible
-          variant="monthly"
-          currency={currency}
-          lineId={line.id}
-          category={line.category}
-          month={month}
-          baseAmount={base}
-          effectiveBudget={effective}
-          expenseDateDefault={expenseDateDefault}
-          overrideAmount={overridesThisMonth[line.id]}
-          startYearMonth={line.start_year_month}
-          endYearMonth={line.end_year_month}
-          loggedExpenses={loggedMonthly}
-        />
+        {isSetupInvestment ? (
+          <Link
+            href="/setup?tab=investments#add-investment"
+            className={`text-xs font-medium ${appInlineLinkClass}`}
+          >
+            Setup → Investments
+          </Link>
+        ) : (
+          <BudgetLineActionsCollapsible
+            variant="monthly"
+            currency={currency}
+            lineId={line.id}
+            category={line.category}
+            month={month}
+            baseAmount={base}
+            effectiveBudget={effective}
+            expenseDateDefault={expenseDateDefault}
+            overrideAmount={overridesThisMonth[line.id]}
+            startYearMonth={line.start_year_month}
+            endYearMonth={line.end_year_month}
+            loggedExpenses={loggedMonthly}
+          />
+        )}
       </td>
     </tr>
   );
@@ -145,6 +158,7 @@ function MonthlyLineCardMobile({
     normalizeCategory(line.category)
   );
   const emoji = budgetCategoryEmoji(line.category);
+  const isSetupInvestment = isSetupInvestmentsBudgetLine(line.id);
 
   return (
     <li className="rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-sm">
@@ -172,6 +186,11 @@ function MonthlyLineCardMobile({
           <dt className="text-zinc-500">Planned</dt>
           <dd className="font-medium text-zinc-900">
             {formatCurrency(base, currency)}
+            {isSetupInvestment && (
+              <span className="mt-0.5 block text-[11px] font-normal text-teal-800">
+                From setup
+              </span>
+            )}
             {overridesThisMonth[line.id] !== undefined && (
               <span className="mt-0.5 block text-[11px] font-normal text-teal-800">
                 This month {formatCurrency(effective, currency)}
@@ -203,20 +222,29 @@ function MonthlyLineCardMobile({
         </div>
       </dl>
       <div className="mt-3 border-t border-zinc-100 pt-3">
-        <BudgetLineActionsCollapsible
-          variant="monthly"
-          currency={currency}
-          lineId={line.id}
-          category={line.category}
-          month={month}
-          baseAmount={base}
-          effectiveBudget={effective}
-          expenseDateDefault={expenseDateDefault}
-          overrideAmount={overridesThisMonth[line.id]}
-          startYearMonth={line.start_year_month}
-          endYearMonth={line.end_year_month}
-          loggedExpenses={loggedMonthly}
-        />
+        {isSetupInvestment ? (
+          <Link
+            href="/setup?tab=investments#add-investment"
+            className={`text-xs font-medium ${appInlineLinkClass}`}
+          >
+            Setup → Investments
+          </Link>
+        ) : (
+          <BudgetLineActionsCollapsible
+            variant="monthly"
+            currency={currency}
+            lineId={line.id}
+            category={line.category}
+            month={month}
+            baseAmount={base}
+            effectiveBudget={effective}
+            expenseDateDefault={expenseDateDefault}
+            overrideAmount={overridesThisMonth[line.id]}
+            startYearMonth={line.start_year_month}
+            endYearMonth={line.end_year_month}
+            loggedExpenses={loggedMonthly}
+          />
+        )}
       </div>
     </li>
   );

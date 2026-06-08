@@ -130,7 +130,7 @@
 | `src/domain/finance/age-asset-projection.ts` | `src/domain` | `regular` | 1 | 4 |
 | `src/domain/finance/age-projection.ts` | `src/domain` | `regular` | 3 | 4 |
 | `src/domain/finance/budget-cash-flow-allocation.test.ts` | `src/domain` | `regular` | 1 | 0 |
-| `src/domain/finance/budget-cash-flow-allocation.ts` | `src/domain` | `regular` | 4 | 6 |
+| `src/domain/finance/budget-cash-flow-allocation.ts` | `src/domain` | `regular` | 8 | 9 |
 | `src/domain/finance/budget-guided-setup.test.ts` | `src/domain` | `regular` | 0 | 0 |
 | `src/domain/finance/budget-guided-setup.ts` | `src/domain` | `regular` | 11 | 10 |
 | `src/domain/finance/budget-review.test.ts` | `src/domain` | `regular` | 0 | 0 |
@@ -270,10 +270,10 @@
 | `src/features/budget/BudgetLineExpenseQuickAdd.tsx` | `src/features` | `client-component` | 1 | 7 |
 | `src/features/budget/BudgetLineScheduleForm.tsx` | `src/features` | `client-component` | 1 | 2 |
 | `src/features/budget/BudgetMonthJump.tsx` | `src/features` | `client-component` | 1 | 6 |
-| `src/features/budget/BudgetMonthlyCategoriesSection.tsx` | `src/features` | `regular` | 5 | 21 |
+| `src/features/budget/BudgetMonthlyCategoriesSection.tsx` | `src/features` | `regular` | 5 | 25 |
 | `src/features/budget/BudgetMonthOverrideForm.tsx` | `src/features` | `client-component` | 1 | 5 |
 | `src/features/budget/BudgetPageHero.tsx` | `src/features` | `regular` | 3 | 15 |
-| `src/features/budget/BudgetPlanningView.tsx` | `src/features` | `regular` | 2 | 46 |
+| `src/features/budget/BudgetPlanningView.tsx` | `src/features` | `regular` | 2 | 51 |
 | `src/features/budget/BudgetQuickAddPresets.tsx` | `src/features` | `client-component` | 1 | 6 |
 | `src/features/budget/BudgetRecommendationHints.tsx` | `src/features` | `regular` | 1 | 0 |
 | `src/features/budget/BudgetReviewWorkflowPanel.tsx` | `src/features` | `regular` | 2 | 2 |

@@ -110,20 +110,20 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
   },
   {
     id: "budget-cash-flow-allocation",
-    title: "Unallocated cash (budget hero)",
+    title: "Free cash flow (budget hero)",
     summary:
-      "How much take-home is left after your monthly budget lines—and how goals and investments relate.",
+      "How much take-home remains available for savings, investing, goals, or choices after planned monthly spending.",
     bullets: [
       "Take-home uses salary-only employee CPF when gross and age band are set on your profile; otherwise stored monthly income.",
-      "Monthly planned is the sum of active monthly budget lines for the month you are viewing (including one-off overrides).",
-      "Unallocated = take-home − monthly planned. This is cash not assigned to any budget category yet.",
-      "Goals and investment accounts keep their own monthly contribution fields. They are shown separately so you do not double-count—if you budget “investments” as a line and also set account contributions, align the numbers.",
-      "After goals & investments = take-home − monthly planned − goal monthly amounts − investment monthly amounts active that month (respecting contribution start/end dates when set).",
+      "Monthly planned is the sum of active monthly budget lines for the month you are viewing, with the Investments line sourced from Setup → Investments when active monthly contributions exist.",
+      "Manual budget lines named Investments are ignored here so the Investments setup tab stays the source of truth.",
+      "Free cash flow = take-home − monthly planned + the Savings / future-you bucket. This includes planned savings, setup-sourced investment contributions, and cash not assigned to any monthly budget line.",
+      "Goal contributions keep their own monthly fields. After goals = free cash flow − goal monthly amounts.",
       "Left in plan is different: planned minus logged spend within budgeted categories only.",
     ],
     formulas: [
-      "unallocated = take-home − Σ(monthly budget lines)",
-      "after commitments = take-home − Σ(budget lines) − Σ(goals) − Σ(investments active this month)",
+      "free cash flow = take-home − Σ(monthly planned) + Σ(Savings / future-you planned)",
+      "after goals = free cash flow − Σ(goal monthly contributions)",
     ],
   },
   {
