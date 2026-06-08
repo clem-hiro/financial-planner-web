@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-06-07T17:22:55.879Z",
+  "generated_at": "2026-06-07T18:20:42.691Z",
   "roots": [
     "src/app",
     "src/components",
@@ -6977,20 +6977,10 @@
       ],
       "functions": [
         {
-          "id": "src/data/repositories/housing-loans.ts#isSchemaCacheMissingColumnError",
-          "name": "isSchemaCacheMissingColumnError",
-          "kind": "function",
-          "line": 47,
-          "exported": false,
-          "classification": [],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
           "id": "src/data/repositories/housing-loans.ts#housingLoanBasePayload",
           "name": "housingLoanBasePayload",
           "kind": "function",
-          "line": 59,
+          "line": 48,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -7000,7 +6990,7 @@
           "id": "src/data/repositories/housing-loans.ts#housingLoanFullPayload",
           "name": "housingLoanFullPayload",
           "kind": "function",
-          "line": 82,
+          "line": 71,
           "exported": false,
           "classification": [],
           "edges": [
@@ -7015,7 +7005,7 @@
           "id": "src/data/repositories/housing-loans.ts#insertHousingLoanPayload",
           "name": "insertHousingLoanPayload",
           "kind": "function",
-          "line": 118,
+          "line": 107,
           "exported": false,
           "classification": [],
           "edges": [
@@ -7042,7 +7032,7 @@
           "id": "src/data/repositories/housing-loans.ts#listHousingLoans",
           "name": "listHousingLoans",
           "kind": "function",
-          "line": 131,
+          "line": 120,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7069,7 +7059,7 @@
           "id": "src/data/repositories/housing-loans.ts#advisorReadHousingLoans",
           "name": "advisorReadHousingLoans",
           "kind": "function",
-          "line": 149,
+          "line": 138,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7084,7 +7074,7 @@
           "id": "src/data/repositories/housing-loans.ts#insertHousingLoan",
           "name": "insertHousingLoan",
           "kind": "function",
-          "line": 160,
+          "line": 149,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7098,7 +7088,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/data/repositories/housing-loans.ts#isSchemaCacheMissingColumnError"
+              "target": "src/lib/client-error.ts#isSupabaseSchemaError"
             },
             {
               "kind": "calls",
@@ -7111,7 +7101,7 @@
           "id": "src/data/repositories/housing-loans.ts#updateHousingLoan",
           "name": "updateHousingLoan",
           "kind": "function",
-          "line": 183,
+          "line": 172,
           "exported": true,
           "classification": [],
           "edges": [
@@ -7138,7 +7128,7 @@
           "id": "src/data/repositories/housing-loans.ts#deleteHousingLoan",
           "name": "deleteHousingLoan",
           "kind": "function",
-          "line": 236,
+          "line": 225,
           "exported": true,
           "classification": [],
           "edges": [
@@ -26355,6 +26345,192 @@
       ]
     },
     {
+      "path": "src/lib/client-error.test.ts",
+      "root": "src/lib",
+      "classification": [
+        "regular"
+      ],
+      "functions": []
+    },
+    {
+      "path": "src/lib/client-error.ts",
+      "root": "src/lib",
+      "classification": [
+        "regular"
+      ],
+      "functions": [
+        {
+          "id": "src/lib/client-error.ts#asErrorLike",
+          "name": "asErrorLike",
+          "kind": "function",
+          "line": 12,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/lib/client-error.ts#errorCode",
+          "name": "errorCode",
+          "kind": "function",
+          "line": 16,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/client-error.ts#asErrorLike"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/lib/client-error.ts#errorMessage",
+          "name": "errorMessage",
+          "kind": "function",
+          "line": 21,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/client-error.ts#asErrorLike"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/lib/client-error.ts#lowerErrorText",
+          "name": "lowerErrorText",
+          "kind": "function",
+          "line": 27,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/client-error.ts#asErrorLike"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/lib/client-error.ts#isSupabaseSchemaError",
+          "name": "isSupabaseSchemaError",
+          "kind": "function",
+          "line": 35,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/client-error.ts#errorCode"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/client-error.ts#lowerErrorText"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/lib/client-error.ts#isUniqueViolation",
+          "name": "isUniqueViolation",
+          "kind": "function",
+          "line": 50,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/client-error.ts#errorCode"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/lib/client-error.ts#isForeignKeyViolation",
+          "name": "isForeignKeyViolation",
+          "kind": "function",
+          "line": 54,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/client-error.ts#errorCode"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/lib/client-error.ts#isCheckViolation",
+          "name": "isCheckViolation",
+          "kind": "function",
+          "line": 58,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/client-error.ts#errorCode"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/lib/client-error.ts#isSafeDomainError",
+          "name": "isSafeDomainError",
+          "kind": "function",
+          "line": 62,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/client-error.ts#errorMessage"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/lib/client-error.ts#toClientErrorMessage",
+          "name": "toClientErrorMessage",
+          "kind": "function",
+          "line": 73,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/lib/client-error.ts#isSupabaseSchemaError"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/client-error.ts#isUniqueViolation"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/client-error.ts#isForeignKeyViolation"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/client-error.ts#isCheckViolation"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/client-error.ts#isSafeDomainError"
+            },
+            {
+              "kind": "calls",
+              "target": "src/lib/client-error.ts#errorMessage"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/lib/client-main-nav.test.ts",
       "root": "src/lib",
       "classification": [
@@ -27385,7 +27561,7 @@
           "id": "src/server/actions.ts#findNameCollision",
           "name": "findNameCollision",
           "kind": "function",
-          "line": 115,
+          "line": 116,
           "exported": false,
           "classification": [
             "server-action"
@@ -27399,22 +27575,10 @@
           "unresolved": 0
         },
         {
-          "id": "src/server/actions.ts#toClientErrorMessage",
-          "name": "toClientErrorMessage",
-          "kind": "function",
-          "line": 128,
-          "exported": false,
-          "classification": [
-            "server-action"
-          ],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
           "id": "src/server/actions.ts#signOutAction",
           "name": "signOutAction",
           "kind": "function",
-          "line": 137,
+          "line": 129,
           "exported": true,
           "classification": [
             "server-action"
@@ -27439,7 +27603,7 @@
           "id": "src/server/actions.ts#createInvestmentAction",
           "name": "createInvestmentAction",
           "kind": "function",
-          "line": 143,
+          "line": 135,
           "exported": true,
           "classification": [
             "server-action"
@@ -27487,7 +27651,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/actions.ts#toClientErrorMessage"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -27500,7 +27664,7 @@
           "id": "src/server/actions.ts#updateInvestmentAction",
           "name": "updateInvestmentAction",
           "kind": "function",
-          "line": 215,
+          "line": 207,
           "exported": true,
           "classification": [
             "server-action"
@@ -27560,7 +27724,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/actions.ts#toClientErrorMessage"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -27573,7 +27737,7 @@
           "id": "src/server/actions.ts#deleteInvestmentAction",
           "name": "deleteInvestmentAction",
           "kind": "function",
-          "line": 294,
+          "line": 286,
           "exported": true,
           "classification": [
             "server-action"
@@ -27621,7 +27785,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/actions.ts#toClientErrorMessage"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -27634,7 +27798,7 @@
           "id": "src/server/actions.ts#confirmInvestmentReviewAction",
           "name": "confirmInvestmentReviewAction",
           "kind": "function",
-          "line": 326,
+          "line": 318,
           "exported": true,
           "classification": [
             "server-action"
@@ -27666,7 +27830,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/actions.ts#toClientErrorMessage"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -27679,7 +27843,7 @@
           "id": "src/server/actions.ts#confirmCpfRulesReviewAction",
           "name": "confirmCpfRulesReviewAction",
           "kind": "function",
-          "line": 350,
+          "line": 342,
           "exported": true,
           "classification": [
             "server-action"
@@ -27703,7 +27867,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/actions.ts#toClientErrorMessage"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -27716,7 +27880,7 @@
           "id": "src/server/actions.ts#parseCashAccountForm",
           "name": "parseCashAccountForm",
           "kind": "function",
-          "line": 372,
+          "line": 364,
           "exported": false,
           "classification": [
             "server-action"
@@ -27733,7 +27897,7 @@
           "id": "src/server/actions.ts#createCashAccountAction",
           "name": "createCashAccountAction",
           "kind": "function",
-          "line": 385,
+          "line": 377,
           "exported": true,
           "classification": [
             "server-action"
@@ -27782,7 +27946,7 @@
           "id": "src/server/actions.ts#updateCashAccountAction",
           "name": "updateCashAccountAction",
           "kind": "function",
-          "line": 413,
+          "line": 405,
           "exported": true,
           "classification": [
             "server-action"
@@ -27843,7 +28007,7 @@
           "id": "src/server/actions.ts#deleteCashAccountAction",
           "name": "deleteCashAccountAction",
           "kind": "function",
-          "line": 445,
+          "line": 437,
           "exported": true,
           "classification": [
             "server-action"
@@ -27892,7 +28056,7 @@
           "id": "src/server/actions.ts#createLiabilityAction",
           "name": "createLiabilityAction",
           "kind": "function",
-          "line": 467,
+          "line": 459,
           "exported": true,
           "classification": [
             "server-action"
@@ -27949,7 +28113,7 @@
           "id": "src/server/actions.ts#updateLiabilityAction",
           "name": "updateLiabilityAction",
           "kind": "function",
-          "line": 503,
+          "line": 495,
           "exported": true,
           "classification": [
             "server-action"
@@ -28018,7 +28182,7 @@
           "id": "src/server/actions.ts#deleteLiabilityAction",
           "name": "deleteLiabilityAction",
           "kind": "function",
-          "line": 548,
+          "line": 540,
           "exported": true,
           "classification": [
             "server-action"
@@ -28075,7 +28239,7 @@
           "id": "src/server/actions.ts#optionalYearMonth",
           "name": "optionalYearMonth",
           "kind": "function",
-          "line": 572,
+          "line": 564,
           "exported": false,
           "classification": [
             "server-action"
@@ -28092,7 +28256,7 @@
           "id": "src/server/actions.ts#createVehicleAction",
           "name": "createVehicleAction",
           "kind": "function",
-          "line": 581,
+          "line": 573,
           "exported": true,
           "classification": [
             "server-action"
@@ -28137,7 +28301,7 @@
           "id": "src/server/actions.ts#updateVehicleAction",
           "name": "updateVehicleAction",
           "kind": "function",
-          "line": 779,
+          "line": 771,
           "exported": true,
           "classification": [
             "server-action"
@@ -28194,7 +28358,7 @@
           "id": "src/server/actions.ts#deleteVehicleAction",
           "name": "deleteVehicleAction",
           "kind": "function",
-          "line": 979,
+          "line": 971,
           "exported": true,
           "classification": [
             "server-action"
@@ -28239,7 +28403,7 @@
           "id": "src/server/actions.ts#createGoalAction",
           "name": "createGoalAction",
           "kind": "function",
-          "line": 998,
+          "line": 990,
           "exported": true,
           "classification": [
             "server-action"
@@ -28284,7 +28448,7 @@
           "id": "src/server/actions.ts#reorderFinancialGoalAction",
           "name": "reorderFinancialGoalAction",
           "kind": "function",
-          "line": 1062,
+          "line": 1054,
           "exported": true,
           "classification": [
             "server-action"
@@ -28321,7 +28485,7 @@
           "id": "src/server/actions.ts#updateGoalAction",
           "name": "updateGoalAction",
           "kind": "function",
-          "line": 1094,
+          "line": 1086,
           "exported": true,
           "classification": [
             "server-action"
@@ -28366,7 +28530,7 @@
           "id": "src/server/actions.ts#createBudgetLineAction",
           "name": "createBudgetLineAction",
           "kind": "function",
-          "line": 1166,
+          "line": 1158,
           "exported": true,
           "classification": [
             "server-action"
@@ -28407,7 +28571,7 @@
           "id": "src/server/actions.ts#coerceLifestyle",
           "name": "coerceLifestyle",
           "kind": "function",
-          "line": 1262,
+          "line": 1254,
           "exported": false,
           "classification": [
             "server-action"
@@ -28419,7 +28583,7 @@
           "id": "src/server/actions.ts#coerceStrategy",
           "name": "coerceStrategy",
           "kind": "function",
-          "line": 1270,
+          "line": 1262,
           "exported": false,
           "classification": [
             "server-action"
@@ -28431,7 +28595,7 @@
           "id": "src/server/actions.ts#coerceFoodBand",
           "name": "coerceFoodBand",
           "kind": "function",
-          "line": 1278,
+          "line": 1270,
           "exported": false,
           "classification": [
             "server-action"
@@ -28443,7 +28607,7 @@
           "id": "src/server/actions.ts#applyGuidedBudgetLinesAction",
           "name": "applyGuidedBudgetLinesAction",
           "kind": "function",
-          "line": 1299,
+          "line": 1291,
           "exported": true,
           "classification": [
             "server-action"
@@ -28532,7 +28696,7 @@
           "id": "src/server/actions.ts#updateBudgetLineAmountAction",
           "name": "updateBudgetLineAmountAction",
           "kind": "function",
-          "line": 1386,
+          "line": 1378,
           "exported": true,
           "classification": [
             "server-action"
@@ -28569,7 +28733,7 @@
           "id": "src/server/actions.ts#deleteBudgetLineAction",
           "name": "deleteBudgetLineAction",
           "kind": "function",
-          "line": 1416,
+          "line": 1408,
           "exported": true,
           "classification": [
             "server-action"
@@ -28606,7 +28770,7 @@
           "id": "src/server/actions.ts#setBudgetMonthOverrideAction",
           "name": "setBudgetMonthOverrideAction",
           "kind": "function",
-          "line": 1437,
+          "line": 1429,
           "exported": true,
           "classification": [
             "server-action"
@@ -28647,7 +28811,7 @@
           "id": "src/server/actions.ts#clearBudgetMonthOverrideAction",
           "name": "clearBudgetMonthOverrideAction",
           "kind": "function",
-          "line": 1474,
+          "line": 1466,
           "exported": true,
           "classification": [
             "server-action"
@@ -28688,7 +28852,7 @@
           "id": "src/server/actions.ts#updateBudgetLineScheduleAction",
           "name": "updateBudgetLineScheduleAction",
           "kind": "function",
-          "line": 1501,
+          "line": 1493,
           "exported": true,
           "classification": [
             "server-action"
@@ -28749,7 +28913,7 @@
           "id": "src/server/actions.ts#upsertCpfBalanceAction",
           "name": "upsertCpfBalanceAction",
           "kind": "function",
-          "line": 1559,
+          "line": 1551,
           "exported": true,
           "classification": [
             "server-action"
@@ -28794,7 +28958,7 @@
           "id": "src/server/actions.ts#clearCpfBalanceAction",
           "name": "clearCpfBalanceAction",
           "kind": "function",
-          "line": 1615,
+          "line": 1607,
           "exported": true,
           "classification": [
             "server-action"
@@ -28831,7 +28995,7 @@
           "id": "src/server/actions.ts#createCpfInvestmentAction",
           "name": "createCpfInvestmentAction",
           "kind": "function",
-          "line": 1631,
+          "line": 1623,
           "exported": true,
           "classification": [
             "server-action"
@@ -28859,7 +29023,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/actions.ts#toClientErrorMessage"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -28872,7 +29036,7 @@
           "id": "src/server/actions.ts#deleteCpfInvestmentAction",
           "name": "deleteCpfInvestmentAction",
           "kind": "function",
-          "line": 1673,
+          "line": 1665,
           "exported": true,
           "classification": [
             "server-action"
@@ -28917,7 +29081,7 @@
           "id": "src/server/actions.ts#parseHousingPaymentForm",
           "name": "parseHousingPaymentForm",
           "kind": "function",
-          "line": 1692,
+          "line": 1684,
           "exported": false,
           "classification": [
             "server-action"
@@ -28942,7 +29106,7 @@
           "id": "src/server/actions.ts#revalidateHousingPaths",
           "name": "revalidateHousingPaths",
           "kind": "function",
-          "line": 1758,
+          "line": 1750,
           "exported": false,
           "classification": [
             "server-action"
@@ -28975,7 +29139,7 @@
           "id": "src/server/actions.ts#parseOptionalMoneyField",
           "name": "parseOptionalMoneyField",
           "kind": "function",
-          "line": 1766,
+          "line": 1758,
           "exported": false,
           "classification": [
             "server-action"
@@ -28987,7 +29151,7 @@
           "id": "src/server/actions.ts#parseOptionalPurchaseYear",
           "name": "parseOptionalPurchaseYear",
           "kind": "function",
-          "line": 1775,
+          "line": 1767,
           "exported": false,
           "classification": [
             "server-action"
@@ -28999,7 +29163,7 @@
           "id": "src/server/actions.ts#normalizeOptionalMmyy",
           "name": "normalizeOptionalMmyy",
           "kind": "function",
-          "line": 1782,
+          "line": 1774,
           "exported": false,
           "classification": [
             "server-action"
@@ -29011,7 +29175,7 @@
           "id": "src/server/actions.ts#optionalYearMonthOrMmyy",
           "name": "optionalYearMonthOrMmyy",
           "kind": "function",
-          "line": 1800,
+          "line": 1792,
           "exported": false,
           "classification": [
             "server-action"
@@ -29032,7 +29196,7 @@
           "id": "src/server/actions.ts#insertPropertyForLoan",
           "name": "insertPropertyForLoan",
           "kind": "function",
-          "line": 1811,
+          "line": 1803,
           "exported": false,
           "classification": [
             "server-action"
@@ -29049,7 +29213,7 @@
           "id": "src/server/actions.ts#createHousingPropertyAction",
           "name": "createHousingPropertyAction",
           "kind": "function",
-          "line": 1835,
+          "line": 1827,
           "exported": true,
           "classification": [
             "server-action"
@@ -29093,7 +29257,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/actions.ts#toClientErrorMessage"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -29138,7 +29302,7 @@
           "id": "src/server/actions.ts#updateHousingPropertyAction",
           "name": "updateHousingPropertyAction",
           "kind": "function",
-          "line": 2159,
+          "line": 2151,
           "exported": true,
           "classification": [
             "server-action"
@@ -29195,7 +29359,7 @@
           "id": "src/server/actions.ts#deleteHousingPropertyAction",
           "name": "deleteHousingPropertyAction",
           "kind": "function",
-          "line": 2219,
+          "line": 2211,
           "exported": true,
           "classification": [
             "server-action"
@@ -29236,7 +29400,7 @@
           "id": "src/server/actions.ts#createHousingLoanAction",
           "name": "createHousingLoanAction",
           "kind": "function",
-          "line": 2235,
+          "line": 2227,
           "exported": true,
           "classification": [
             "server-action"
@@ -29293,7 +29457,7 @@
           "id": "src/server/actions.ts#createHousingLoanQuickAction",
           "name": "createHousingLoanQuickAction",
           "kind": "function",
-          "line": 2365,
+          "line": 2357,
           "exported": true,
           "classification": [
             "server-action"
@@ -29378,7 +29542,7 @@
           "id": "src/server/actions.ts#updateHousingLoanAction",
           "name": "updateHousingLoanAction",
           "kind": "function",
-          "line": 2630,
+          "line": 2622,
           "exported": true,
           "classification": [
             "server-action"
@@ -29443,7 +29607,7 @@
           "id": "src/server/actions.ts#deleteHousingLoanAction",
           "name": "deleteHousingLoanAction",
           "kind": "function",
-          "line": 2758,
+          "line": 2750,
           "exported": true,
           "classification": [
             "server-action"
@@ -29587,7 +29751,7 @@
           "id": "src/server/advisor-client-actions.ts#pendingCreateNames",
           "name": "pendingCreateNames",
           "kind": "function",
-          "line": 50,
+          "line": 51,
           "exported": false,
           "classification": [
             "server-action"
@@ -29605,22 +29769,10 @@
           "unresolved": 0
         },
         {
-          "id": "src/server/advisor-client-actions.ts#clientErrorFromUnknown",
-          "name": "clientErrorFromUnknown",
-          "kind": "function",
-          "line": 71,
-          "exported": false,
-          "classification": [
-            "server-action"
-          ],
-          "edges": [],
-          "unresolved": 0
-        },
-        {
           "id": "src/server/advisor-client-actions.ts#revalidateAdvisorClientViews",
           "name": "revalidateAdvisorClientViews",
           "kind": "function",
-          "line": 80,
+          "line": 72,
           "exported": false,
           "classification": [
             "server-action"
@@ -29641,7 +29793,7 @@
           "id": "src/server/advisor-client-actions.ts#optionalNumberFromForm",
           "name": "optionalNumberFromForm",
           "kind": "function",
-          "line": 85,
+          "line": 77,
           "exported": false,
           "classification": [
             "server-action"
@@ -29653,7 +29805,7 @@
           "id": "src/server/advisor-client-actions.ts#requireAdvisorLinkedClient",
           "name": "requireAdvisorLinkedClient",
           "kind": "function",
-          "line": 109,
+          "line": 101,
           "exported": false,
           "classification": [
             "server-action"
@@ -29690,7 +29842,7 @@
           "id": "src/server/advisor-client-actions.ts#patchAdvisorClientProfileAction",
           "name": "patchAdvisorClientProfileAction",
           "kind": "function",
-          "line": 145,
+          "line": 137,
           "exported": true,
           "classification": [
             "server-action"
@@ -29723,7 +29875,7 @@
           "id": "src/server/advisor-client-actions.ts#patchAdvisorClientBudgetLineAmountAction",
           "name": "patchAdvisorClientBudgetLineAmountAction",
           "kind": "function",
-          "line": 326,
+          "line": 318,
           "exported": true,
           "classification": [
             "server-action"
@@ -29756,7 +29908,7 @@
           "id": "src/server/advisor-client-actions.ts#patchAdvisorClientGoalMonthlyContributionAction",
           "name": "patchAdvisorClientGoalMonthlyContributionAction",
           "kind": "function",
-          "line": 391,
+          "line": 383,
           "exported": true,
           "classification": [
             "server-action"
@@ -29789,7 +29941,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction",
           "name": "createAdvisorClientInvestmentAction",
           "kind": "function",
-          "line": 486,
+          "line": 478,
           "exported": true,
           "classification": [
             "server-action"
@@ -29821,7 +29973,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -29834,7 +29986,7 @@
           "id": "src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction",
           "name": "updateAdvisorClientInvestmentAction",
           "kind": "function",
-          "line": 601,
+          "line": 593,
           "exported": true,
           "classification": [
             "server-action"
@@ -29870,7 +30022,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -29883,7 +30035,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction",
           "name": "deleteAdvisorClientInvestmentAction",
           "kind": "function",
-          "line": 735,
+          "line": 727,
           "exported": true,
           "classification": [
             "server-action"
@@ -29915,7 +30067,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -29928,7 +30080,7 @@
           "id": "src/server/advisor-client-actions.ts#assertCategoryVisible",
           "name": "assertCategoryVisible",
           "kind": "function",
-          "line": 782,
+          "line": 774,
           "exported": false,
           "classification": [
             "server-action"
@@ -29945,7 +30097,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientCashAccountAction",
           "name": "createAdvisorClientCashAccountAction",
           "kind": "function",
-          "line": 791,
+          "line": 783,
           "exported": true,
           "classification": [
             "server-action"
@@ -29981,7 +30133,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -29994,7 +30146,7 @@
           "id": "src/server/advisor-client-actions.ts#updateAdvisorClientCashAccountAction",
           "name": "updateAdvisorClientCashAccountAction",
           "kind": "function",
-          "line": 863,
+          "line": 855,
           "exported": true,
           "classification": [
             "server-action"
@@ -30034,7 +30186,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30047,7 +30199,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientCashAccountAction",
           "name": "deleteAdvisorClientCashAccountAction",
           "kind": "function",
-          "line": 928,
+          "line": 920,
           "exported": true,
           "classification": [
             "server-action"
@@ -30083,7 +30235,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30096,7 +30248,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientLiabilityAction",
           "name": "createAdvisorClientLiabilityAction",
           "kind": "function",
-          "line": 975,
+          "line": 967,
           "exported": true,
           "classification": [
             "server-action"
@@ -30132,7 +30284,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30145,7 +30297,7 @@
           "id": "src/server/advisor-client-actions.ts#updateAdvisorClientLiabilityAction",
           "name": "updateAdvisorClientLiabilityAction",
           "kind": "function",
-          "line": 1051,
+          "line": 1043,
           "exported": true,
           "classification": [
             "server-action"
@@ -30185,7 +30337,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30198,7 +30350,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientLiabilityAction",
           "name": "deleteAdvisorClientLiabilityAction",
           "kind": "function",
-          "line": 1134,
+          "line": 1126,
           "exported": true,
           "classification": [
             "server-action"
@@ -30234,7 +30386,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30247,7 +30399,7 @@
           "id": "src/server/advisor-client-actions.ts#optionalFormNumber",
           "name": "optionalFormNumber",
           "kind": "function",
-          "line": 1180,
+          "line": 1172,
           "exported": false,
           "classification": [
             "server-action"
@@ -30259,7 +30411,7 @@
           "id": "src/server/advisor-client-actions.ts#parsePropertyForm",
           "name": "parsePropertyForm",
           "kind": "function",
-          "line": 1187,
+          "line": 1179,
           "exported": false,
           "classification": [
             "server-action"
@@ -30280,7 +30432,7 @@
           "id": "src/server/advisor-client-actions.ts#parseHousingLoanForm",
           "name": "parseHousingLoanForm",
           "kind": "function",
-          "line": 1202,
+          "line": 1194,
           "exported": false,
           "classification": [
             "server-action"
@@ -30301,7 +30453,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientHousingLoanAction",
           "name": "createAdvisorClientHousingLoanAction",
           "kind": "function",
-          "line": 1216,
+          "line": 1208,
           "exported": true,
           "classification": [
             "server-action"
@@ -30337,7 +30489,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30350,7 +30502,7 @@
           "id": "src/server/advisor-client-actions.ts#updateAdvisorClientHousingLoanAction",
           "name": "updateAdvisorClientHousingLoanAction",
           "kind": "function",
-          "line": 1290,
+          "line": 1282,
           "exported": true,
           "classification": [
             "server-action"
@@ -30390,7 +30542,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30403,7 +30555,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientHousingLoanAction",
           "name": "deleteAdvisorClientHousingLoanAction",
           "kind": "function",
-          "line": 1371,
+          "line": 1363,
           "exported": true,
           "classification": [
             "server-action"
@@ -30439,7 +30591,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30452,7 +30604,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction",
           "name": "createAdvisorClientPropertyAction",
           "kind": "function",
-          "line": 1417,
+          "line": 1409,
           "exported": true,
           "classification": [
             "server-action"
@@ -30488,7 +30640,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30501,7 +30653,7 @@
           "id": "src/server/advisor-client-actions.ts#updateAdvisorClientPropertyAction",
           "name": "updateAdvisorClientPropertyAction",
           "kind": "function",
-          "line": 1492,
+          "line": 1484,
           "exported": true,
           "classification": [
             "server-action"
@@ -30541,7 +30693,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30554,7 +30706,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientPropertyAction",
           "name": "deleteAdvisorClientPropertyAction",
           "kind": "function",
-          "line": 1578,
+          "line": 1570,
           "exported": true,
           "classification": [
             "server-action"
@@ -30590,7 +30742,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30603,7 +30755,7 @@
           "id": "src/server/advisor-client-actions.ts#parseVehicleForm",
           "name": "parseVehicleForm",
           "kind": "function",
-          "line": 1625,
+          "line": 1617,
           "exported": false,
           "classification": [
             "server-action"
@@ -30624,7 +30776,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientVehicleAction",
           "name": "createAdvisorClientVehicleAction",
           "kind": "function",
-          "line": 1640,
+          "line": 1632,
           "exported": true,
           "classification": [
             "server-action"
@@ -30660,7 +30812,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30673,7 +30825,7 @@
           "id": "src/server/advisor-client-actions.ts#updateAdvisorClientVehicleAction",
           "name": "updateAdvisorClientVehicleAction",
           "kind": "function",
-          "line": 1718,
+          "line": 1710,
           "exported": true,
           "classification": [
             "server-action"
@@ -30713,7 +30865,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30726,7 +30878,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientVehicleAction",
           "name": "deleteAdvisorClientVehicleAction",
           "kind": "function",
-          "line": 1803,
+          "line": 1795,
           "exported": true,
           "classification": [
             "server-action"
@@ -30762,7 +30914,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30775,7 +30927,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientBudgetLineAction",
           "name": "createAdvisorClientBudgetLineAction",
           "kind": "function",
-          "line": 1855,
+          "line": 1847,
           "exported": true,
           "classification": [
             "server-action"
@@ -30791,7 +30943,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30804,7 +30956,7 @@
           "id": "src/server/advisor-client-actions.ts#createAdvisorClientGoalAction",
           "name": "createAdvisorClientGoalAction",
           "kind": "function",
-          "line": 1909,
+          "line": 1901,
           "exported": true,
           "classification": [
             "server-action"
@@ -30832,7 +30984,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30845,7 +30997,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientGoalAction",
           "name": "deleteAdvisorClientGoalAction",
           "kind": "function",
-          "line": 1985,
+          "line": 1977,
           "exported": true,
           "classification": [
             "server-action"
@@ -30877,7 +31029,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -30890,7 +31042,7 @@
           "id": "src/server/advisor-client-actions.ts#deleteAdvisorClientBudgetLineAction",
           "name": "deleteAdvisorClientBudgetLineAction",
           "kind": "function",
-          "line": 2034,
+          "line": 2026,
           "exported": true,
           "classification": [
             "server-action"
@@ -30922,7 +31074,7 @@
             },
             {
               "kind": "calls",
-              "target": "src/server/advisor-client-actions.ts#clientErrorFromUnknown"
+              "target": "src/lib/client-error.ts#toClientErrorMessage"
             },
             {
               "kind": "calls",
@@ -33748,6 +33900,40 @@
       "src/lib/body-scroll-lock.ts#getLockCount": [
         "src/lib/body-scroll-lock.ts#lockBodyScroll"
       ],
+      "src/lib/client-error.ts#asErrorLike": [
+        "src/lib/client-error.ts#errorCode",
+        "src/lib/client-error.ts#errorMessage",
+        "src/lib/client-error.ts#lowerErrorText"
+      ],
+      "src/lib/client-error.ts#errorCode": [
+        "src/lib/client-error.ts#isCheckViolation",
+        "src/lib/client-error.ts#isForeignKeyViolation",
+        "src/lib/client-error.ts#isSupabaseSchemaError",
+        "src/lib/client-error.ts#isUniqueViolation"
+      ],
+      "src/lib/client-error.ts#lowerErrorText": [
+        "src/lib/client-error.ts#isSupabaseSchemaError"
+      ],
+      "src/lib/client-error.ts#errorMessage": [
+        "src/lib/client-error.ts#isSafeDomainError",
+        "src/lib/client-error.ts#toClientErrorMessage"
+      ],
+      "src/lib/client-error.ts#isSupabaseSchemaError": [
+        "src/data/repositories/housing-loans.ts#insertHousingLoan",
+        "src/lib/client-error.ts#toClientErrorMessage"
+      ],
+      "src/lib/client-error.ts#isUniqueViolation": [
+        "src/lib/client-error.ts#toClientErrorMessage"
+      ],
+      "src/lib/client-error.ts#isForeignKeyViolation": [
+        "src/lib/client-error.ts#toClientErrorMessage"
+      ],
+      "src/lib/client-error.ts#isCheckViolation": [
+        "src/lib/client-error.ts#toClientErrorMessage"
+      ],
+      "src/lib/client-error.ts#isSafeDomainError": [
+        "src/lib/client-error.ts#toClientErrorMessage"
+      ],
       "src/lib/dates.ts#todayISODateLocal": [
         "src/lib/dates.ts#defaultExpenseDateForBudgetMonth"
       ],
@@ -33971,14 +34157,36 @@
         "src/server/actions.ts#deleteInvestmentAction",
         "src/server/actions.ts#updateInvestmentAction"
       ],
-      "src/server/actions.ts#toClientErrorMessage": [
+      "src/lib/client-error.ts#toClientErrorMessage": [
         "src/server/actions.ts#confirmCpfRulesReviewAction",
         "src/server/actions.ts#confirmInvestmentReviewAction",
         "src/server/actions.ts#createCpfInvestmentAction",
         "src/server/actions.ts#createHousingPropertyAction",
         "src/server/actions.ts#createInvestmentAction",
         "src/server/actions.ts#deleteInvestmentAction",
-        "src/server/actions.ts#updateInvestmentAction"
+        "src/server/actions.ts#updateInvestmentAction",
+        "src/server/advisor-client-actions.ts#createAdvisorClientBudgetLineAction",
+        "src/server/advisor-client-actions.ts#createAdvisorClientCashAccountAction",
+        "src/server/advisor-client-actions.ts#createAdvisorClientGoalAction",
+        "src/server/advisor-client-actions.ts#createAdvisorClientHousingLoanAction",
+        "src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction",
+        "src/server/advisor-client-actions.ts#createAdvisorClientLiabilityAction",
+        "src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction",
+        "src/server/advisor-client-actions.ts#createAdvisorClientVehicleAction",
+        "src/server/advisor-client-actions.ts#deleteAdvisorClientBudgetLineAction",
+        "src/server/advisor-client-actions.ts#deleteAdvisorClientCashAccountAction",
+        "src/server/advisor-client-actions.ts#deleteAdvisorClientGoalAction",
+        "src/server/advisor-client-actions.ts#deleteAdvisorClientHousingLoanAction",
+        "src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction",
+        "src/server/advisor-client-actions.ts#deleteAdvisorClientLiabilityAction",
+        "src/server/advisor-client-actions.ts#deleteAdvisorClientPropertyAction",
+        "src/server/advisor-client-actions.ts#deleteAdvisorClientVehicleAction",
+        "src/server/advisor-client-actions.ts#updateAdvisorClientCashAccountAction",
+        "src/server/advisor-client-actions.ts#updateAdvisorClientHousingLoanAction",
+        "src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction",
+        "src/server/advisor-client-actions.ts#updateAdvisorClientLiabilityAction",
+        "src/server/advisor-client-actions.ts#updateAdvisorClientPropertyAction",
+        "src/server/advisor-client-actions.ts#updateAdvisorClientVehicleAction"
       ],
       "src/lib/planning-revalidate.ts#revalidateSetupAndPlanning": [
         "src/app/api/expenses/[id]/route.ts#DELETE",
@@ -34353,30 +34561,6 @@
         "src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction",
         "src/server/advisor-client-actions.ts#createAdvisorClientVehicleAction"
       ],
-      "src/server/advisor-client-actions.ts#clientErrorFromUnknown": [
-        "src/server/advisor-client-actions.ts#createAdvisorClientBudgetLineAction",
-        "src/server/advisor-client-actions.ts#createAdvisorClientCashAccountAction",
-        "src/server/advisor-client-actions.ts#createAdvisorClientGoalAction",
-        "src/server/advisor-client-actions.ts#createAdvisorClientHousingLoanAction",
-        "src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction",
-        "src/server/advisor-client-actions.ts#createAdvisorClientLiabilityAction",
-        "src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction",
-        "src/server/advisor-client-actions.ts#createAdvisorClientVehicleAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientBudgetLineAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientCashAccountAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientGoalAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientHousingLoanAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientLiabilityAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientPropertyAction",
-        "src/server/advisor-client-actions.ts#deleteAdvisorClientVehicleAction",
-        "src/server/advisor-client-actions.ts#updateAdvisorClientCashAccountAction",
-        "src/server/advisor-client-actions.ts#updateAdvisorClientHousingLoanAction",
-        "src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction",
-        "src/server/advisor-client-actions.ts#updateAdvisorClientLiabilityAction",
-        "src/server/advisor-client-actions.ts#updateAdvisorClientPropertyAction",
-        "src/server/advisor-client-actions.ts#updateAdvisorClientVehicleAction"
-      ],
       "src/data/repositories/advisor-clients.ts#advisorCanReadCategory": [
         "src/server/advisor-client-actions.ts#assertCategoryVisible"
       ],
@@ -34701,9 +34885,6 @@
         "src/data/repositories/housing-loans.ts#insertHousingLoan"
       ],
       "src/data/repositories/housing-loans.ts#housingLoanFullPayload": [
-        "src/data/repositories/housing-loans.ts#insertHousingLoan"
-      ],
-      "src/data/repositories/housing-loans.ts#isSchemaCacheMissingColumnError": [
         "src/data/repositories/housing-loans.ts#insertHousingLoan"
       ],
       "src/data/repositories/investments.ts#isUnknownInvestmentContributionColumnError": [

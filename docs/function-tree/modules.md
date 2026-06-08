@@ -91,7 +91,7 @@
 | `src/data/repositories/cpf-investments.ts` | `src/data` | `regular` | 4 | 14 |
 | `src/data/repositories/expenses.ts` | `src/data` | `regular` | 8 | 33 |
 | `src/data/repositories/goals.ts` | `src/data` | `regular` | 9 | 45 |
-| `src/data/repositories/housing-loans.ts` | `src/data` | `regular` | 9 | 22 |
+| `src/data/repositories/housing-loans.ts` | `src/data` | `regular` | 8 | 22 |
 | `src/data/repositories/inbox-notifications.ts` | `src/data` | `regular` | 7 | 32 |
 | `src/data/repositories/income-tax-configs.ts` | `src/data` | `regular` | 3 | 9 |
 | `src/data/repositories/investments.ts` | `src/data` | `regular` | 7 | 32 |
@@ -373,6 +373,8 @@
 | `src/lib/advisor-client-list-filters.ts` | `src/lib` | `regular` | 3 | 1 |
 | `src/lib/advisor-visibility.ts` | `src/lib` | `regular` | 2 | 0 |
 | `src/lib/body-scroll-lock.ts` | `src/lib` | `regular` | 2 | 1 |
+| `src/lib/client-error.test.ts` | `src/lib` | `regular` | 0 | 0 |
+| `src/lib/client-error.ts` | `src/lib` | `regular` | 10 | 15 |
 | `src/lib/client-main-nav.test.ts` | `src/lib` | `regular` | 1 | 0 |
 | `src/lib/client-main-nav.ts` | `src/lib` | `regular` | 4 | 0 |
 | `src/lib/client-release.ts` | `src/lib` | `regular` | 0 | 0 |
@@ -399,10 +401,10 @@
 | `src/lib/validation.test.ts` | `src/lib` | `regular` | 0 | 0 |
 | `src/lib/validation.ts` | `src/lib` | `regular` | 5 | 8 |
 | `src/middleware.ts` | `src/server` | `middleware` | 1 | 22 |
-| `src/server/actions.ts` | `src/server` | `server-action` | 50 | 364 |
+| `src/server/actions.ts` | `src/server` | `server-action` | 49 | 364 |
 | `src/server/advisor-accept-hardening.test.ts` | `src/server` | `regular` | 1 | 0 |
 | `src/server/advisor-access-key-actions.ts` | `src/server` | `server-action` | 2 | 10 |
-| `src/server/advisor-client-actions.ts` | `src/server` | `server-action` | 35 | 224 |
+| `src/server/advisor-client-actions.ts` | `src/server` | `server-action` | 34 | 224 |
 | `src/server/advisor-compose-field-editability.test.ts` | `src/server` | `regular` | 1 | 0 |
 | `src/server/advisor-compose-name-uniqueness.test.ts` | `src/server` | `regular` | 3 | 1 |
 | `src/server/advisor-consent-gate.test.ts` | `src/server` | `regular` | 1 | 0 |

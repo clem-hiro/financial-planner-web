@@ -107,6 +107,7 @@ import {
   cpfBalanceWriteSchema,
   cpfInvestmentWriteSchema,
 } from "@/lib/validation";
+import { toClientErrorMessage } from "@/lib/client-error";
 import { z } from "zod";
 
 // Friendly per-user name-collision message before the DB unique index
@@ -123,15 +124,6 @@ function findNameCollision<T extends { id: string }>(
     .filter((r) => r.id !== excludeId)
     .map(getName);
   return entityNameUniquenessError(candidate, names, entityLabel);
-}
-
-function toClientErrorMessage(e: unknown): string {
-  if (e instanceof Error && e.message.trim()) return e.message;
-  if (e && typeof e === "object" && "message" in e) {
-    const m = (e as { message?: unknown }).message;
-    if (typeof m === "string" && m.trim()) return m;
-  }
-  return "Something went wrong while saving. Please try again.";
 }
 
 export async function signOutAction() {

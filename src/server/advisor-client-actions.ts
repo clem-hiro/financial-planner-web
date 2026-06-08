@@ -43,6 +43,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { randomUUID } from "crypto";
 import { parseInvestmentPlanningFields } from "@/server/investment-planning-parse";
+import { toClientErrorMessage } from "@/lib/client-error";
 
 // Names of not-yet-accepted entities of `entityType` already pending in this
 // advisor↔client draft. Compose must reject a second new entity that collides
@@ -66,15 +67,6 @@ async function pendingCreateNames(
         c.new_value != null
     )
     .map((c) => c.new_value as string);
-}
-
-function clientErrorFromUnknown(e: unknown): string {
-  if (e instanceof Error && e.message.trim()) return e.message;
-  if (e && typeof e === "object" && "message" in e) {
-    const m = (e as { message?: unknown }).message;
-    if (typeof m === "string" && m.trim()) return m;
-  }
-  return "Something went wrong while saving. Please try again.";
 }
 
 function revalidateAdvisorClientViews(clientId: string) {
@@ -591,7 +583,7 @@ export async function createAdvisorClientInvestmentAction(
       }))
     );
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -725,7 +717,7 @@ export async function updateAdvisorClientInvestmentAction(
       }))
     );
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -769,7 +761,7 @@ export async function deleteAdvisorClientInvestmentAction(
       },
     ]);
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -853,7 +845,7 @@ export async function createAdvisorClientCashAccountAction(
       }))
     );
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -918,7 +910,7 @@ export async function updateAdvisorClientCashAccountAction(
       }))
     );
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -965,7 +957,7 @@ export async function deleteAdvisorClientCashAccountAction(
       },
     ]);
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -1041,7 +1033,7 @@ export async function createAdvisorClientLiabilityAction(
       }))
     );
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -1124,7 +1116,7 @@ export async function updateAdvisorClientLiabilityAction(
       }))
     );
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -1170,7 +1162,7 @@ export async function deleteAdvisorClientLiabilityAction(
       },
     ]);
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -1280,7 +1272,7 @@ export async function createAdvisorClientHousingLoanAction(
       }))
     );
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -1361,7 +1353,7 @@ export async function updateAdvisorClientHousingLoanAction(
       }))
     );
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -1407,7 +1399,7 @@ export async function deleteAdvisorClientHousingLoanAction(
       },
     ]);
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -1482,7 +1474,7 @@ export async function createAdvisorClientPropertyAction(
       }))
     );
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -1568,7 +1560,7 @@ export async function updateAdvisorClientPropertyAction(
       }))
     );
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -1615,7 +1607,7 @@ export async function deleteAdvisorClientPropertyAction(
       },
     ]);
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -1708,7 +1700,7 @@ export async function createAdvisorClientVehicleAction(
       }))
     );
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -1793,7 +1785,7 @@ export async function updateAdvisorClientVehicleAction(
       }))
     );
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -1839,7 +1831,7 @@ export async function deleteAdvisorClientVehicleAction(
       },
     ]);
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -1894,7 +1886,7 @@ export async function createAdvisorClientBudgetLineAction(
       }))
     );
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -1969,7 +1961,7 @@ export async function createAdvisorClientGoalAction(
       }))
     );
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -2019,7 +2011,7 @@ export async function deleteAdvisorClientGoalAction(
       },
     ]);
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);
@@ -2068,7 +2060,7 @@ export async function deleteAdvisorClientBudgetLineAction(
       },
     ]);
   } catch (e) {
-    return { error: clientErrorFromUnknown(e) };
+    return { error: toClientErrorMessage(e) };
   }
 
   revalidateAdvisorClientViews(clientId);

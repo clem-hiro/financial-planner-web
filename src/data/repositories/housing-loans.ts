@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { HousingLoanRow } from "@/data/supabase/types";
+import { isSupabaseSchemaError } from "@/lib/client-error";
 
 type HousingLoanInsert = {
   property_id?: string | null;
@@ -43,18 +44,6 @@ type HousingLoanInsert = {
 };
 
 type HousingLoanInsertPayload = Record<string, string | number | boolean | null>;
-
-function isSchemaCacheMissingColumnError(error: unknown): boolean {
-  if (!error || typeof error !== "object") return false;
-  const code =
-    "code" in error && typeof error.code === "string" ? error.code : "";
-  const message =
-    "message" in error && typeof error.message === "string" ? error.message : "";
-  return (
-    code === "PGRST204" ||
-    (message.includes("schema cache") && message.includes("Could not find"))
-  );
-}
 
 function housingLoanBasePayload(
   userId: string,
@@ -168,7 +157,7 @@ export async function insertHousingLoan(
       housingLoanFullPayload(userId, row)
     );
   } catch (error) {
-    if (!isSchemaCacheMissingColumnError(error)) throw error;
+    if (!isSupabaseSchemaError(error)) throw error;
     console.warn(
       "financial_housing_loans is missing optional housing-planning columns; saving core mortgage fields only.",
       error

@@ -2,7 +2,7 @@
 
 # Function tree — `src/lib`
 
-30 module(s).
+32 module(s).
 
 ## Modules
 
@@ -13,6 +13,8 @@
 | [`src/lib/advisor-client-list-filters.ts`](#src-lib-advisor-client-list-filters-ts) | `regular` | 3 | 1 |
 | [`src/lib/advisor-visibility.ts`](#src-lib-advisor-visibility-ts) | `regular` | 2 | 0 |
 | [`src/lib/body-scroll-lock.ts`](#src-lib-body-scroll-lock-ts) | `regular` | 2 | 1 |
+| [`src/lib/client-error.test.ts`](#src-lib-client-error-test-ts) | `regular` | 0 | 0 |
+| [`src/lib/client-error.ts`](#src-lib-client-error-ts) | `regular` | 10 | 15 |
 | [`src/lib/client-main-nav.test.ts`](#src-lib-client-main-nav-test-ts) | `regular` | 1 | 0 |
 | [`src/lib/client-main-nav.ts`](#src-lib-client-main-nav-ts) | `regular` | 4 | 0 |
 | [`src/lib/client-release.ts`](#src-lib-client-release-ts) | `regular` | 0 | 0 |
@@ -103,6 +105,65 @@ Classification: `regular`
 
 - calls: `src/lib/body-scroll-lock.ts#getLockCount`
 - called by: `src/features/app-shell/AppShellNav.tsx#AppShellMobileNav`, `src/features/help/MethodologySheet.tsx#MethodologySheet`, `src/ui/ConfirmDialog.tsx#ConfirmDialog`
+
+### `src/lib/client-error.test.ts` <a id="src-lib-client-error-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/lib/client-error.ts` <a id="src-lib-client-error-ts"></a>
+
+Classification: `regular`
+
+#### `asErrorLike` — function, L12
+
+- called by: `src/lib/client-error.ts#errorCode`, `src/lib/client-error.ts#errorMessage`, `src/lib/client-error.ts#lowerErrorText`
+
+#### `errorCode` — function, L16
+
+- calls: `src/lib/client-error.ts#asErrorLike`
+- called by: `src/lib/client-error.ts#isCheckViolation`, `src/lib/client-error.ts#isForeignKeyViolation`, `src/lib/client-error.ts#isSupabaseSchemaError`, `src/lib/client-error.ts#isUniqueViolation`
+
+#### `errorMessage` — function, L21
+
+- calls: `src/lib/client-error.ts#asErrorLike`
+- called by: `src/lib/client-error.ts#isSafeDomainError`, `src/lib/client-error.ts#toClientErrorMessage`
+
+#### `lowerErrorText` — function, L27
+
+- calls: `src/lib/client-error.ts#asErrorLike`
+- called by: `src/lib/client-error.ts#isSupabaseSchemaError`
+
+#### `isSupabaseSchemaError` — function, L35
+
+- calls: `src/lib/client-error.ts#errorCode`, `src/lib/client-error.ts#lowerErrorText`
+- called by: `src/data/repositories/housing-loans.ts#insertHousingLoan`, `src/lib/client-error.ts#toClientErrorMessage`
+
+#### `isUniqueViolation` — function, L50
+
+- calls: `src/lib/client-error.ts#errorCode`
+- called by: `src/lib/client-error.ts#toClientErrorMessage`
+
+#### `isForeignKeyViolation` — function, L54
+
+- calls: `src/lib/client-error.ts#errorCode`
+- called by: `src/lib/client-error.ts#toClientErrorMessage`
+
+#### `isCheckViolation` — function, L58
+
+- calls: `src/lib/client-error.ts#errorCode`
+- called by: `src/lib/client-error.ts#toClientErrorMessage`
+
+#### `isSafeDomainError` — function, L62
+
+- calls: `src/lib/client-error.ts#errorMessage`
+- called by: `src/lib/client-error.ts#toClientErrorMessage`
+
+#### `toClientErrorMessage` — function, L73
+
+- calls: `src/lib/client-error.ts#errorMessage`, `src/lib/client-error.ts#isCheckViolation`, `src/lib/client-error.ts#isForeignKeyViolation`, `src/lib/client-error.ts#isSafeDomainError`, `src/lib/client-error.ts#isSupabaseSchemaError`, `src/lib/client-error.ts#isUniqueViolation`
+- called by: `src/server/actions.ts#confirmCpfRulesReviewAction`, `src/server/actions.ts#confirmInvestmentReviewAction`, `src/server/actions.ts#createCpfInvestmentAction`, `src/server/actions.ts#createHousingPropertyAction`, `src/server/actions.ts#createInvestmentAction`, `src/server/actions.ts#deleteInvestmentAction`, `src/server/actions.ts#updateInvestmentAction`, `src/server/advisor-client-actions.ts#createAdvisorClientBudgetLineAction`, `src/server/advisor-client-actions.ts#createAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#createAdvisorClientGoalAction`, `src/server/advisor-client-actions.ts#createAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#createAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#createAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#createAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#createAdvisorClientVehicleAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientBudgetLineAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientGoalAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientVehicleAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientCashAccountAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientHousingLoanAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientLiabilityAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientPropertyAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientVehicleAction`
 
 ### `src/lib/client-main-nav.test.ts` <a id="src-lib-client-main-nav-test-ts"></a>
 
