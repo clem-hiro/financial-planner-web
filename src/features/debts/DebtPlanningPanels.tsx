@@ -126,7 +126,7 @@ function DebtCard({
         >
           <input type="hidden" name="id" value={row.id} />
           {state.error ? (
-            <p className="text-sm text-red-600" role="alert">
+            <p className="text-sm text-red-600 dark:text-red-200" role="alert">
               {state.error}
             </p>
           ) : null}
@@ -147,7 +147,7 @@ function DebtCard({
             </button>
             <button
               type="button"
-              className="rounded-full px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100"
+              className="rounded-full px-4 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
               onClick={() => {
                 setValues(rowToFormValues(row));
                 setEditing(false);
@@ -166,17 +166,19 @@ function DebtCard({
       <BlockingSubmitOverlay active={deletePending} message="Removing debt…" />
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+          <p className="flex items-center gap-2 text-sm font-semibold text-slate-900 dark:text-slate-50">
             <span aria-hidden>{icon}</span>
             {row.name}
           </p>
           {categoryLabel ? (
-            <p className="mt-0.5 text-[11px] text-slate-500">{categoryLabel}</p>
+            <p className="mt-0.5 text-[11px] text-slate-500 dark:text-slate-400">
+              {categoryLabel}
+            </p>
           ) : null}
         </div>
         <button
           type="button"
-          className="shrink-0 text-xs font-medium text-emerald-800 hover:text-emerald-900"
+          className="shrink-0 text-xs font-medium text-emerald-800 hover:text-emerald-900 dark:text-emerald-200 dark:hover:text-emerald-100"
           onClick={() => setEditing(true)}
         >
           Edit
@@ -185,39 +187,39 @@ function DebtCard({
 
       <dl className="mt-4 grid gap-3 sm:grid-cols-2">
         <div>
-          <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+          <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
             Outstanding
           </dt>
-          <dd className="mt-0.5 text-lg font-semibold text-rose-900">
+          <dd className="mt-0.5 text-lg font-semibold text-rose-900 dark:text-rose-200">
             {formatCurrency(row.balance, currencyCode)}
           </dd>
         </div>
         {repayment > 0 ? (
           <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+            <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Monthly repayment
             </dt>
-            <dd className="mt-0.5 text-lg font-semibold text-slate-900">
+            <dd className="mt-0.5 text-lg font-semibold text-slate-900 dark:text-slate-50">
               {formatCurrency(repayment, currencyCode)}
             </dd>
           </div>
         ) : null}
         {row.interestRateAnnual != null ? (
           <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+            <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Interest
             </dt>
-            <dd className="mt-0.5 text-sm font-medium text-slate-800">
+            <dd className="mt-0.5 text-sm font-medium text-slate-800 dark:text-slate-200">
               {formatRatePercent(row.interestRateAnnual)}
             </dd>
           </div>
         ) : null}
         {row.remainingTenureMonths != null ? (
           <div>
-            <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+            <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Remaining tenure
             </dt>
-            <dd className="mt-0.5 text-sm font-medium text-slate-800">
+            <dd className="mt-0.5 text-sm font-medium text-slate-800 dark:text-slate-200">
               {formatTenureYears(row.remainingTenureMonths)}
             </dd>
           </div>
@@ -225,14 +227,14 @@ function DebtCard({
       </dl>
 
       {repayment <= 0 && row.balance > 0 ? (
-        <p className="mt-3 rounded-lg bg-amber-50/80 px-2.5 py-2 text-[11px] leading-relaxed text-amber-950">
+        <p className="mt-3 rounded-lg border border-amber-200/80 bg-amber-50/80 px-2.5 py-2 text-[11px] leading-relaxed text-amber-950 dark:border-amber-300/45 dark:bg-amber-950/45 dark:text-amber-100">
           Add interest rate and tenure (or a monthly repayment) so budgets and
           payoff projections can estimate this loan.
         </p>
       ) : null}
 
       {endYm ? (
-        <p className="mt-3 rounded-lg bg-emerald-50/60 px-2.5 py-2 text-[11px] leading-relaxed text-emerald-900">
+        <p className="mt-3 rounded-lg bg-emerald-50/60 px-2.5 py-2 text-[11px] leading-relaxed text-emerald-900 dark:bg-emerald-400/12 dark:text-emerald-100">
           Projected payoff around{" "}
           <strong>
             {endYm.slice(5)}/{endYm.slice(0, 4)}
@@ -241,19 +243,21 @@ function DebtCard({
           returns to your cash flow in budgets and long-term projections.
         </p>
       ) : repayment > 0 ? (
-        <p className="mt-3 text-[11px] text-slate-500">
+        <p className="mt-3 text-[11px] text-slate-500 dark:text-slate-300">
           Synced to your budget as a monthly &ldquo;Debt Repayments&rdquo; line
           while this loan is active.
         </p>
       ) : null}
 
       {row.notes ? (
-        <p className="mt-2 text-xs text-slate-500">{row.notes}</p>
+        <p className="mt-2 text-xs text-slate-500 dark:text-slate-300">
+          {row.notes}
+        </p>
       ) : null}
 
       <button
         type="button"
-        className="mt-3 text-xs text-red-600 hover:underline"
+        className="mt-3 text-xs font-medium text-red-600 hover:underline dark:text-rose-300 dark:hover:text-rose-200"
         onClick={async () => {
           setDeletePending(true);
           const fd = new FormData();
@@ -294,20 +298,20 @@ function AddDebtForm({ currencyCode }: { currencyCode: string }) {
   return (
     <form
       action={formAction}
-      className="rounded-2xl border border-dashed border-slate-300/90 bg-slate-50/50 p-4 sm:p-5"
+      className="rounded-2xl border border-dashed border-slate-300/90 bg-slate-50/50 p-4 dark:border-slate-600 dark:bg-slate-800/70 sm:p-5"
       {...(pending ? { inert: true } : {})}
     >
       <BlockingSubmitOverlay active={pending} message="Adding debt…" />
       <div className="mb-3 flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-600 dark:text-slate-300">
           New debt
         </p>
-        <span className="rounded-full bg-slate-200/80 px-2 py-0.5 text-[10px] font-medium text-slate-700">
+        <span className="rounded-full bg-slate-200/80 px-2 py-0.5 text-[10px] font-medium text-slate-700 dark:bg-slate-700 dark:text-slate-200">
           Quick add
         </span>
       </div>
       {state.error ? (
-        <p className="mb-2 text-sm text-red-600" role="alert">
+        <p className="mb-2 text-sm text-red-600 dark:text-red-200" role="alert">
           {state.error}
         </p>
       ) : null}
@@ -351,23 +355,25 @@ export function DebtPlanningPanels({
   return (
     <section className="space-y-4">
       <div>
-        <h2 className="text-sm font-semibold text-slate-900">Debts</h2>
-        <p className="mt-1 text-xs leading-relaxed text-slate-500">
+        <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">
+          Debts
+        </h2>
+        <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-300">
           Track what you owe, model repayments, and see how loans affect monthly
           cash flow and long-term projections. Outstanding balances reduce net
           worth; repayments flow into your budget automatically.
         </p>
-        <div className="mt-3 flex flex-wrap gap-4 text-sm text-slate-700">
+        <div className="mt-3 flex flex-wrap gap-4 text-sm text-slate-700 dark:text-slate-300">
           <p>
             Total owed:{" "}
-            <span className="font-semibold text-rose-900">
+            <span className="font-semibold text-rose-900 dark:text-rose-200">
               {formatCurrency(debtTotal, currencyCode)}
             </span>
           </p>
           {monthlyRepayments > 0 ? (
             <p>
               Monthly repayments:{" "}
-              <span className="font-semibold text-slate-900">
+              <span className="font-semibold text-slate-900 dark:text-slate-50">
                 {formatCurrency(monthlyRepayments, currencyCode)}
               </span>
             </p>

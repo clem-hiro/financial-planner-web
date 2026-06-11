@@ -13,20 +13,20 @@ function ExampleToggle({
 }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="rounded-xl border border-slate-200/80 bg-white/60">
+    <div className="rounded-xl border border-slate-200/80 bg-white/60 dark:border-slate-700/80 dark:bg-slate-900/80">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-left text-xs font-medium text-slate-700 hover:bg-slate-50/80"
+        className="flex w-full items-center justify-between gap-2 px-3.5 py-2.5 text-left text-xs font-medium text-slate-700 hover:bg-slate-50/80 dark:text-slate-100 dark:hover:bg-slate-800"
         aria-expanded={open}
       >
         <span>{title}</span>
-        <span className="text-slate-400" aria-hidden>
+        <span className="text-slate-400 dark:text-slate-300" aria-hidden>
           {open ? "−" : "+"}
         </span>
       </button>
       {open ? (
-        <div className="border-t border-slate-100 px-3.5 py-3 text-xs leading-relaxed text-slate-600">
+        <div className="border-t border-slate-100 px-3.5 py-3 text-xs leading-relaxed text-slate-600 dark:border-slate-700/80 dark:text-slate-300">
           {children}
         </div>
       ) : null}
@@ -43,7 +43,7 @@ export function DebtEducationalExamples({
 
   return (
     <div className="space-y-2">
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
         Learn as you plan
       </p>
       <ExampleToggle title="Property loans — reducing balance">
@@ -53,17 +53,29 @@ export function DebtEducationalExamples({
           principal and less toward interest.
         </p>
         <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-          <div className="rounded-lg bg-slate-50 px-2 py-2">
-            <p className="text-[10px] uppercase text-slate-500">Repayment</p>
-            <p className="mt-0.5 font-semibold text-slate-800">Stable</p>
+          <div className="rounded-lg bg-slate-50 px-2 py-2 dark:bg-slate-800/80">
+            <p className="text-[10px] uppercase text-slate-500 dark:text-slate-400">
+              Repayment
+            </p>
+            <p className="mt-0.5 font-semibold text-slate-800 dark:text-slate-100">
+              Stable
+            </p>
           </div>
-          <div className="rounded-lg bg-emerald-50/80 px-2 py-2">
-            <p className="text-[10px] uppercase text-emerald-700">Principal</p>
-            <p className="mt-0.5 font-semibold text-emerald-900">Grows</p>
+          <div className="rounded-lg bg-emerald-50/80 px-2 py-2 dark:bg-emerald-400/12">
+            <p className="text-[10px] uppercase text-emerald-700 dark:text-emerald-200">
+              Principal
+            </p>
+            <p className="mt-0.5 font-semibold text-emerald-900 dark:text-emerald-50">
+              Grows
+            </p>
           </div>
-          <div className="rounded-lg bg-amber-50/80 px-2 py-2">
-            <p className="text-[10px] uppercase text-amber-700">Interest</p>
-            <p className="mt-0.5 font-semibold text-amber-900">Shrinks</p>
+          <div className="rounded-lg bg-amber-50/80 px-2 py-2 dark:bg-amber-300/12">
+            <p className="text-[10px] uppercase text-amber-700 dark:text-amber-200">
+              Interest
+            </p>
+            <p className="mt-0.5 font-semibold text-amber-900 dark:text-amber-50">
+              Shrinks
+            </p>
           </div>
         </div>
       </ExampleToggle>
@@ -73,12 +85,12 @@ export function DebtEducationalExamples({
           Vehicle loans commonly use flat-rate interest: total interest is based
           on the original loan amount and tenure, then spread evenly each month.
         </p>
-        <ul className="mt-2 space-y-1 text-slate-600">
+        <ul className="mt-2 space-y-1 text-slate-600 dark:text-slate-300">
           <li>Loan: {formatCurrency(100_000, currencyCode)}</li>
           <li>Rate: 2% per year · Tenure: 7 years</li>
           <li>
             Estimated monthly:{" "}
-            <strong className="text-slate-800">
+            <strong className="text-slate-800 dark:text-slate-50">
               ~
               {formatCurrency(vehicleExample ?? 1357, currencyCode)}
               /month
@@ -93,7 +105,7 @@ export function DebtEducationalExamples({
           the loan ends. When a loan is paid off, that repayment drops to zero
           and your future cash flow improves.
         </p>
-        <p className="mt-2 rounded-lg bg-emerald-50/70 px-2.5 py-2 text-emerald-900">
+        <p className="mt-2 rounded-lg bg-emerald-50/70 px-2.5 py-2 text-emerald-900 dark:bg-emerald-400/12 dark:text-emerald-100">
           Example: once a car loan ends in 2032, monthly obligations may fall by
           about {formatCurrency(900, currencyCode)}/month — freeing cash for
           savings, goals, or lifestyle.

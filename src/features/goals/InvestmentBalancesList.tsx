@@ -187,8 +187,10 @@ function ContributionTimelineHint({
         ? String(Math.round(endContribAge))
         : endContribAge.toFixed(1);
     return (
-      <div className="mt-2 rounded-lg border border-emerald-100 bg-emerald-50/50 px-2.5 py-2 text-[11px] leading-relaxed text-emerald-950/90">
-        <p className="font-semibold text-emerald-950">Timeline (illustrative)</p>
+      <div className="mt-2 rounded-lg border border-emerald-100 bg-emerald-50/50 px-2.5 py-2 text-[11px] leading-relaxed text-emerald-950/90 dark:border-emerald-400/45 dark:bg-emerald-400/12 dark:text-emerald-100">
+        <p className="font-semibold text-emerald-950 dark:text-emerald-50">
+          Timeline (illustrative)
+        </p>
         <p className="mt-1">
           Age {age0} → {endLabel}: contributing monthly
         </p>
@@ -201,13 +203,15 @@ function ContributionTimelineHint({
   }
 
   return (
-    <div className="mt-2 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-2 text-[11px] leading-relaxed text-slate-700">
-      <p className="font-semibold text-slate-800">Timeline (illustrative)</p>
+    <div className="mt-2 rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-2 text-[11px] leading-relaxed text-slate-700 dark:border-slate-600/80 dark:bg-slate-800/70 dark:text-slate-300">
+      <p className="font-semibold text-slate-800 dark:text-slate-100">
+        Timeline (illustrative)
+      </p>
       <p className="mt-1">
         Age {age0} → {targetAge}: contributing monthly (aligned with your retirement
         age in profile)
       </p>
-      <p className="mt-0.5 text-slate-600">
+      <p className="mt-0.5 text-slate-600 dark:text-slate-300">
         Projections still grow the balance after contributions stop at retirement.
       </p>
     </div>
@@ -247,10 +251,12 @@ function InvestmentSummary({
     <div className="flex items-start justify-between gap-3 py-3.5">
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="truncate text-sm font-medium text-slate-900">{investment.name}</p>
+          <p className="truncate text-sm font-medium text-slate-900 dark:text-slate-50">
+            {investment.name}
+          </p>
           {reviewCopy ? (
             <span className="inline-flex shrink-0 items-center gap-0.5">
-              <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-900">
+              <span className="rounded-full border border-amber-200 bg-amber-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-900 dark:border-amber-300/45 dark:bg-amber-300/12 dark:text-amber-100">
                 Review due
               </span>
               <InfoTooltip ariaLabel="Why this account is due for review">
@@ -259,8 +265,10 @@ function InvestmentSummary({
             </span>
           ) : null}
         </div>
-        <p className="mt-1 text-xs text-slate-600">{flowSummary}</p>
-        <p className="mt-0.5 text-xs text-slate-500">
+        <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">
+          {flowSummary}
+        </p>
+        <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
           <span>{returnPct}% yearly growth (nominal)</span>
           {investment.investment_income_rate_annual > 0 ? (
             <span>; {incomePct}% yearly cash income</span>
@@ -271,10 +279,10 @@ function InvestmentSummary({
         ) : null}
       </div>
       <div className="flex shrink-0 flex-col items-end gap-1.5">
-        <p className="text-sm font-semibold tabular-nums text-slate-900">
+        <p className="text-sm font-semibold tabular-nums text-slate-900 dark:text-slate-50">
           {formatCurrency(investment.current_value, currencyCode)}
         </p>
-        <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400">
+        <p className="text-[10px] font-medium uppercase tracking-wide text-slate-400 dark:text-slate-500">
           Current
         </p>
         <div className="flex flex-col items-end gap-1.5">
@@ -283,7 +291,7 @@ function InvestmentSummary({
               type="button"
               onClick={onEdit}
               disabled={deletePending || actionsDisabled}
-              className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
             >
               Edit
             </button>
@@ -291,13 +299,16 @@ function InvestmentSummary({
               type="button"
               onClick={onDelete}
               disabled={deletePending || actionsDisabled}
-              className="rounded-full border border-red-200 bg-white px-3 py-1 text-xs font-medium text-red-700 transition hover:border-red-300 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500/25 disabled:cursor-not-allowed disabled:opacity-60"
+              className="rounded-full border border-red-200 bg-white px-3 py-1 text-xs font-medium text-red-700 transition hover:border-red-300 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500/25 disabled:cursor-not-allowed disabled:opacity-60 dark:border-red-400/50 dark:bg-slate-900 dark:text-red-200 dark:hover:bg-red-400/10"
             >
               {deletePending ? "Removing…" : "Delete"}
             </button>
           </div>
           {deleteError ? (
-            <p className="max-w-56 text-right text-[11px] text-red-600" role="alert">
+            <p
+              className="max-w-56 text-right text-[11px] text-red-600 dark:text-red-200"
+              role="alert"
+            >
               {deleteError}
             </p>
           ) : null}
@@ -438,7 +449,7 @@ function InvestmentEditForm({
       <form
         action={formAction}
         {...(pending ? { inert: true } : {})}
-        className="space-y-4 border-t border-slate-100 py-4"
+        className="space-y-4 border-t border-slate-100 py-4 dark:border-slate-700/80"
       >
       <input type="hidden" name="id" value={investment.id} />
       {advisorClientId ? (
@@ -446,7 +457,7 @@ function InvestmentEditForm({
       ) : null}
       {state.error && (
         <p
-          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+          className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-400/50 dark:bg-red-400/10 dark:text-red-200"
           role="alert"
         >
           {state.error}
@@ -458,12 +469,14 @@ function InvestmentEditForm({
         onPlanNatureChange={handlePlanNatureChange}
       />
 
-      <div className="rounded-lg border border-slate-100 bg-slate-50/60 p-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+      <div className="rounded-lg border border-slate-100 bg-slate-50/60 p-3 dark:border-slate-700/80 dark:bg-slate-800/70">
+        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
           Basics
         </p>
         <label className="mt-2 block text-sm">
-          <span className="mb-1 block font-medium text-slate-700">Account name</span>
+          <span className="mb-1 block font-medium text-slate-700 dark:text-slate-200">
+            Account name
+          </span>
           <input
             name="name"
             type="text"
@@ -477,9 +490,11 @@ function InvestmentEditForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block text-sm">
-          <span className="mb-1 block font-medium text-slate-700">
+          <span className="mb-1 block font-medium text-slate-700 dark:text-slate-200">
             Current balance{" "}
-            <span className="font-normal text-slate-500">({currencyCode})</span>
+            <span className="font-normal text-slate-500 dark:text-slate-400">
+              ({currencyCode})
+            </span>
           </span>
           <input
             name="current_value"
@@ -494,9 +509,11 @@ function InvestmentEditForm({
           />
         </label>
         <label className="block text-sm">
-          <span className="mb-1 block font-medium text-slate-700">
+          <span className="mb-1 block font-medium text-slate-700 dark:text-slate-200">
             Monthly contribution{" "}
-            <span className="font-normal text-slate-500">({currencyCode})</span>
+            <span className="font-normal text-slate-500 dark:text-slate-400">
+              ({currencyCode})
+            </span>
           </span>
           <input
             name="monthly_contribution"
@@ -529,7 +546,7 @@ function InvestmentEditForm({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block text-sm">
-          <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+          <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700 dark:text-slate-200">
             Expected yearly growth
             <InfoTooltip ariaLabel="What to enter for expected return">
               <p>
@@ -552,7 +569,7 @@ function InvestmentEditForm({
             />
             <span
               aria-hidden
-              className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium text-slate-400"
+              className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium text-slate-400 dark:text-slate-300"
             >
               %
             </span>
@@ -564,7 +581,7 @@ function InvestmentEditForm({
           />
         </label>
         <label className="block text-sm">
-          <span className="mb-1 block font-medium text-slate-700">
+          <span className="mb-1 block font-medium text-slate-700 dark:text-slate-200">
             {planNature === "includes_insurance_coverage"
               ? "Post-maturity income rate"
               : "Expected dividend yield"}
@@ -582,7 +599,7 @@ function InvestmentEditForm({
             />
             <span
               aria-hidden
-              className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium text-slate-400"
+              className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium text-slate-400 dark:text-slate-300"
             >
               %
             </span>
@@ -595,8 +612,8 @@ function InvestmentEditForm({
         </label>
       </div>
 
-      <details className="rounded-lg border border-dashed border-slate-200 bg-slate-50/60 px-3 py-2 text-xs text-slate-600">
-        <summary className="cursor-pointer select-none font-medium text-slate-700">
+      <details className="rounded-lg border border-dashed border-slate-200 bg-slate-50/60 px-3 py-2 text-xs text-slate-600 dark:border-slate-600/80 dark:bg-slate-800/70 dark:text-slate-300">
+        <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-100">
           Advanced planning
         </summary>
         <p className="mt-2 leading-relaxed">
@@ -605,7 +622,7 @@ function InvestmentEditForm({
         </p>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           <label className="block text-sm">
-            <span className="mb-1 block font-medium text-slate-700">
+            <span className="mb-1 block font-medium text-slate-700 dark:text-slate-200">
               Annual contribution step-up
             </span>
             <input
@@ -619,12 +636,12 @@ function InvestmentEditForm({
               onChange={(e) => setContributionGrowthRaw(e.target.value)}
               className={fieldClass}
             />
-            <span className="mt-1 block text-[11px] text-slate-500">
+            <span className="mt-1 block text-[11px] text-slate-500 dark:text-slate-300">
               Decimal format, e.g. 0.03 for 3% yearly.
             </span>
           </label>
           <label className="block text-sm">
-            <span className="mb-1 block font-medium text-slate-700">
+            <span className="mb-1 block font-medium text-slate-700 dark:text-slate-200">
               Yearly withdrawal
             </span>
             <input
@@ -639,7 +656,7 @@ function InvestmentEditForm({
             />
           </label>
           <label className="block text-sm">
-            <span className="mb-1 block font-medium text-slate-700">
+            <span className="mb-1 block font-medium text-slate-700 dark:text-slate-200">
               {currentAge != null ? "Withdrawal starts at age" : "Withdrawal starts after"}
             </span>
             {currentAge != null ? (
@@ -668,11 +685,11 @@ function InvestmentEditForm({
               className={fieldClass}
             />
             {withdrawalStartBeforeMaturity ? (
-              <span className="mt-1 block text-[11px] font-medium text-red-600">
+              <span className="mt-1 block text-[11px] font-medium text-red-600 dark:text-red-200">
                 ILP yearly withdrawal cannot start before plan maturity.
               </span>
             ) : (
-              <span className="mt-1 block text-[11px] text-slate-500">
+              <span className="mt-1 block text-[11px] text-slate-500 dark:text-slate-300">
                 {currentAge != null
                   ? "Age. Blank uses maturity for ILP withdrawals."
                   : "Years from today. Blank uses maturity for ILP withdrawals."}
@@ -682,12 +699,12 @@ function InvestmentEditForm({
         </div>
       </details>
 
-      <div className="flex flex-col-reverse items-stretch gap-2 border-t border-slate-100 pt-4 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
+      <div className="flex flex-col-reverse items-stretch gap-2 border-t border-slate-100 pt-4 dark:border-slate-700/80 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
         <button
           type="button"
           onClick={onClose}
           disabled={pending}
-          className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-slate-600 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800"
         >
           Cancel
         </button>
@@ -820,7 +837,7 @@ function InvestmentReviewPrompt({
     staleCount === 1 ? "1 account" : `${staleCount} accounts`;
 
   return (
-    <div className="rounded-xl border border-amber-300/80 bg-amber-50 px-3.5 py-3 text-xs leading-relaxed text-amber-950">
+    <div className="rounded-xl border border-amber-300/80 bg-amber-50 px-3.5 py-3 text-xs leading-relaxed text-amber-950 dark:border-amber-300/45 dark:bg-amber-300/12 dark:text-amber-100">
       <p className="font-semibold">Time to review assumptions</p>
       <p className="mt-1">
         {accountLabel} ha{staleCount === 1 ? "s" : "ve"} not been updated in over{" "}
@@ -828,7 +845,7 @@ function InvestmentReviewPrompt({
         still match reality, or edit any account below.
       </p>
       {state.error ? (
-        <p className="mt-2 text-red-700" role="alert">
+        <p className="mt-2 text-red-700 dark:text-red-200" role="alert">
           {state.error}
         </p>
       ) : null}
@@ -836,7 +853,7 @@ function InvestmentReviewPrompt({
         <button
           type="submit"
           disabled={pending || disabled}
-          className="rounded-full border border-amber-300 bg-white px-3 py-1.5 text-xs font-medium text-amber-950 transition hover:bg-amber-100/80 disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded-full border border-amber-300 bg-white px-3 py-1.5 text-xs font-medium text-amber-950 transition hover:bg-amber-100/80 disabled:cursor-not-allowed disabled:opacity-60 dark:border-amber-300/50 dark:bg-slate-900 dark:text-amber-100 dark:hover:bg-amber-300/10"
         >
           {pending ? "Saving…" : "Assumptions still accurate"}
         </button>
@@ -885,19 +902,21 @@ export function InvestmentBalancesList({
         />
       ) : null}
       <div>
-        <h2 className="text-sm font-semibold text-zinc-900">{accountsHeading}</h2>
-        <p className="mt-1 text-xs text-zinc-500">
+        <h2 className="text-sm font-semibold text-zinc-900 dark:text-slate-50">
+          {accountsHeading}
+        </h2>
+        <p className="mt-1 text-xs text-zinc-500 dark:text-slate-300">
           Investments and savings-style accounts. Amounts are in {currencyCode}. Monthly
           contributions can stop while balances keep growing in projections.
         </p>
-        <p className="mt-2 text-sm text-zinc-700">
+        <p className="mt-2 text-sm text-zinc-700 dark:text-slate-300">
           Combined current value:{" "}
-          <span className="font-semibold text-zinc-900">
+          <span className="font-semibold text-zinc-900 dark:text-slate-50">
             {formatCurrency(total, currencyCode)}
           </span>
         </p>
       </div>
-      <ul className="divide-y divide-slate-200 border-t border-slate-200">
+      <ul className="divide-y divide-slate-200 border-t border-slate-200 dark:divide-slate-700/80 dark:border-slate-700/80">
         {items.map((inv) => (
           <li key={inv.id} className="px-0 sm:px-0">
             <InvestmentRow

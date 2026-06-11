@@ -47,7 +47,7 @@
 | [`src/features/app-shell/AppShell.tsx`](#src-features-app-shell-appshell-tsx) | `client-component` | 1 | 12 |
 | [`src/features/app-shell/AppShellInbox.tsx`](#src-features-app-shell-appshellinbox-tsx) | `regular` | 2 | 6 |
 | [`src/features/app-shell/AppShellNav.tsx`](#src-features-app-shell-appshellnav-tsx) | `client-component` | 4 | 17 |
-| [`src/features/app-shell/AppShellUserMenu.tsx`](#src-features-app-shell-appshellusermenu-tsx) | `client-component` | 1 | 6 |
+| [`src/features/app-shell/AppShellUserMenu.tsx`](#src-features-app-shell-appshellusermenu-tsx) | `client-component` | 1 | 7 |
 | [`src/features/app-shell/ClientConsentStrip.tsx`](#src-features-app-shell-clientconsentstrip-tsx) | `regular` | 1 | 1 |
 | [`src/features/app-shell/ContactAdvisorButton.tsx`](#src-features-app-shell-contactadvisorbutton-tsx) | `client-component` | 1 | 17 |
 | [`src/features/auth/LoginForm.tsx`](#src-features-auth-loginform-tsx) | `client-component` | 1 | 34 |
@@ -753,10 +753,10 @@ Classification: `client-component`
 
 Classification: `client-component`
 
-#### `AppShellUserMenu` — component, L19 _(client-component)_
+#### `AppShellUserMenu` — component, L20 _(client-component)_
 
 - calls: `[external] react`
-- renders: `[external] next`, `src/features/app-shell/ContactAdvisorButton.tsx#ContactAdvisorButton`, `src/features/help/OpenMethodologyButton.tsx#OpenMethodologyButton`
+- renders: `[external] next`, `src/features/app-shell/ContactAdvisorButton.tsx#ContactAdvisorButton`, `src/features/help/OpenMethodologyButton.tsx#OpenMethodologyButton`, `src/ui/theme/ThemeModeToggle.tsx#ThemeModeToggle`
 - rendered by: `src/features/app-shell/AppShell.tsx#AppShell`
 - unresolved: 5
 
@@ -845,7 +845,7 @@ Classification: `regular`
 
 Classification: `client-component`
 
-#### `BudgetAddForm` — component, L13 _(client-component)_
+#### `BudgetAddForm` — component, L14 _(client-component)_
 
 - calls: `[external] react`, `src/domain/finance/irregular-expenses.ts#annualAmountFromIrregularInput`
 - renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
@@ -919,20 +919,20 @@ Classification: `regular`
 - renders: `[external] next`, `src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible`
 - rendered by: `src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection`
 
-#### `MonthlyLineCardMobile` — component, L141
+#### `MonthlyLineCardMobile` — component, L143
 
 - calls: `src/data/mappers.ts#num`, `src/domain/finance/budget-cash-flow-allocation.ts#isSetupInvestmentsBudgetLine`, `src/domain/finance/budget.ts#normalizeCategory`, `src/domain/finance/expense-budget-lock.ts#monthlyExpensesForBudgetCategory`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#varianceForLine`, `src/features/budget/budget-category-icons.ts#budgetCategoryEmoji`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `[external] next`, `src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible`
 - rendered by: `src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection`
 
-#### `BudgetMonthlyCategoriesSection` — component, L265
+#### `BudgetMonthlyCategoriesSection` — component, L269
 
 - calls: `src/domain/finance/budget-guided-setup.ts#budgetBucketForCategoryLabel`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `[external] next`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop`
 - rendered by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
 - unresolved: 4
 
-#### `partitionMonthlyLines` — function, L395
+#### `partitionMonthlyLines` — function, L399
 
 - calls: `src/domain/finance/budget.ts#isMonthlyBudgetLineApplicable`
 - called by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
@@ -1009,7 +1009,7 @@ Classification: `regular`
 
 - called by: `src/features/budget/BudgetReviewWorkflowPanel.tsx#BudgetReviewWorkflowPanel`
 
-#### `BudgetReviewWorkflowPanel` — component, L24
+#### `BudgetReviewWorkflowPanel` — component, L28
 
 - calls: `src/features/budget/BudgetReviewWorkflowPanel.tsx#stepTone`, `src/ui/lib/format.ts#formatCurrency`
 - rendered by: `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`
@@ -1259,116 +1259,116 @@ _No tracked edges._
 
 Classification: `client-component`
 
-#### `formatMoney` — function, L49
+#### `formatMoney` — function, L46
 
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow`
 
-#### `rowValue` — function, L58
+#### `rowValue` — function, L55
 
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`
 
-#### `colorForSegment` — function, L63
+#### `colorForSegment` — function, L60
 
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 
-#### `hasAmount` — function, L76
+#### `hasAmount` — function, L73
 
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#requiredOutflowDetails`
 
-#### `addDetail` — function, L80
+#### `addDetail` — function, L77
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount`
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#cpfDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails`
 
-#### `compactDetails` — function, L91
+#### `compactDetails` — function, L88
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount`
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails`
 
-#### `fundingDetails` — function, L107
+#### `fundingDetails` — function, L104
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount`
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`
 
-#### `requiredOutflowDetails` — function, L142
+#### `requiredOutflowDetails` — function, L139
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount`
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 
-#### `netWorthDetails` — function, L154
+#### `netWorthDetails` — function, L151
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount`
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`
 
-#### `cpfDetails` — function, L184
+#### `cpfDetails` — function, L181
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail`
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 
-#### `outflowTooltipDetails` — function, L194
+#### `outflowTooltipDetails` — function, L191
 
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`
 
-#### `useContainerWidth` — function, L205
+#### `useContainerWidth` — function, L202
 
 - calls: `[external] react`
 - called by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 - unresolved: 1
 
-#### `TooltipAmountRow` — component, L220 _(client-component)_
+#### `TooltipAmountRow` — component, L217 _(client-component)_
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney`
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails`
 
-#### `TooltipDetails` — component, L257 _(client-component)_
+#### `TooltipDetails` — component, L254 _(client-component)_
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails`
 - renders: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow`
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`
 
-#### `RunwayTooltip` — component, L285 _(client-component)_
+#### `RunwayTooltip` — component, L282 _(client-component)_
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#outflowTooltipDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#rowValue`
 - renders: `[external] react`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails`
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 
-#### `Panel` — component, L335 _(client-component)_
+#### `Panel` — component, L332 _(client-component)_
 
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 
-#### `InspectorRow` — component, L386 _(client-component)_
+#### `InspectorRow` — component, L383 _(client-component)_
 
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 
-#### `InspectorDetailRow` — component, L419 _(client-component)_
+#### `InspectorDetailRow` — component, L416 _(client-component)_
 
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails`
 
-#### `InspectorDetails` — component, L444 _(client-component)_
+#### `InspectorDetails` — component, L441 _(client-component)_
 
 - calls: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney`
 - renders: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetailRow`
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 
-#### `Toggle` — component, L469 _(client-component)_
+#### `Toggle` — component, L466 _(client-component)_
 
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 - unresolved: 1
 
-#### `RetirementRunwayLedgerChart` — component, L510 _(client-component)_
+#### `RetirementRunwayLedgerChart` — component, L507 _(client-component)_
 
 - calls: `[external] react`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#colorForSegment`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#cpfDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#requiredOutflowDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#rowValue`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#useContainerWidth`, `src/features/dashboard/retirement-runway-rows.ts#deriveMilestones`, `src/features/dashboard/retirement-runway-rows.ts#toRunwayRows`
 - renders: `[external] react`, `[external] recharts`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorRow`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneLegend`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#Panel`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip`, `src/features/dashboard/RetirementRunwayLedgerChart.tsx#Toggle`
 - rendered by: `src/features/dashboard/DashboardRetirementSection.tsx#DashboardRetirementSection`
 - unresolved: 5
 
-#### `MilestoneLegend` — component, L899 _(client-component)_
+#### `MilestoneLegend` — component, L896 _(client-component)_
 
 - renders: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneCard`
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart`
 - unresolved: 1
 
-#### `MilestoneCard` — component, L932 _(client-component)_
+#### `MilestoneCard` — component, L929 _(client-component)_
 
 - rendered by: `src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneLegend`
 
@@ -1455,18 +1455,18 @@ Classification: `client-component`
 - rendered by: `src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels`
 - unresolved: 8
 
-#### `AddDebtForm` — component, L275 _(client-component)_
+#### `AddDebtForm` — component, L279 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/features/debts/DebtPlanningPanels.tsx#emptyFormValues`, `src/server/actions.ts#createLiabilityAction`
 - renders: `src/features/debts/DebtFormFields.tsx#DebtFormFields`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels`
 - unresolved: 4
 
-#### `mapLiabilityRows` — function, L334
+#### `mapLiabilityRows` — function, L338
 
 - called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`
 
-#### `DebtPlanningPanels` — component, L338 _(client-component)_
+#### `DebtPlanningPanels` — component, L342 _(client-component)_
 
 - calls: `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/debts/DebtEducationalExamples.tsx#DebtEducationalExamples`, `src/features/debts/DebtPayoffStrategyComparison.tsx#DebtPayoffStrategyComparison`, `src/features/debts/DebtPlanningPanels.tsx#AddDebtForm`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
@@ -1526,38 +1526,38 @@ Classification: `regular`
 
 Classification: `client-component`
 
-#### `PurposeSelect` — component, L44 _(client-component)_
+#### `PurposeSelect` — component, L47 _(client-component)_
 
 - rendered by: `src/features/goals/CashAndLiabilitiesPanels.tsx#AddCashForm`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`
 
-#### `formatSnapshotDate` — function, L69
+#### `formatSnapshotDate` — function, L74
 
 - called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountHistory`
 
-#### `CashAccountHistory` — component, L79 _(client-component)_
+#### `CashAccountHistory` — component, L84 _(client-component)_
 
 - calls: `src/features/goals/CashAndLiabilitiesPanels.tsx#formatSnapshotDate`, `src/ui/lib/format.ts#formatCurrency`
 - rendered by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`
 
-#### `AddCashForm` — component, L106 _(client-component)_
+#### `AddCashForm` — component, L111 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#createCashAccountAction`
 - renders: `src/features/goals/CashAndLiabilitiesPanels.tsx#PurposeSelect`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`
 
-#### `CashAccountRow` — component, L179 _(client-component)_
+#### `CashAccountRow` — component, L186 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#deleteCashAccountAction`, `src/server/actions.ts#updateCashAccountAction`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountHistory`, `src/features/goals/CashAndLiabilitiesPanels.tsx#PurposeSelect`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`
 - unresolved: 2
 
-#### `groupCashByPurpose` — function, L284
+#### `groupCashByPurpose` — function, L293
 
 - calls: `src/domain/finance/cash-account-purpose.ts#cashPurposeSortOrder`
 - called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`
 
-#### `CashAndLiabilitiesPanels` — component, L296 _(client-component)_
+#### `CashAndLiabilitiesPanels` — component, L305 _(client-component)_
 
 - calls: `[external] react`, `src/features/debts/DebtPlanningPanels.tsx#mapLiabilityRows`, `src/features/goals/CashAndLiabilitiesPanels.tsx#groupCashByPurpose`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `[external] next`, `src/features/consent/CategoryVisibilityToggle.tsx#CategoryVisibilityToggle`, `src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels`, `src/features/goals/CashAndLiabilitiesPanels.tsx#AddCashForm`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`
@@ -1593,7 +1593,7 @@ Classification: `regular`
 
 Classification: `client-component`
 
-#### `GoalEditForm` — component, L22 _(client-component)_
+#### `GoalEditForm` — component, L23 _(client-component)_
 
 - calls: `[external] react`
 - renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
@@ -1616,7 +1616,7 @@ Classification: `regular`
 
 Classification: `client-component`
 
-#### `GoalForm` — component, L11 _(client-component)_
+#### `GoalForm` — component, L12 _(client-component)_
 
 - calls: `[external] react`
 - renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
@@ -1764,32 +1764,32 @@ Classification: `client-component`
 - calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary`
 
-#### `InvestmentSummary` — component, L217 _(client-component)_
+#### `InvestmentSummary` — component, L221 _(client-component)_
 
 - calls: `src/domain/finance/investment-review.ts#investmentReviewReason`, `src/features/goals/InvestmentBalancesList.tsx#contributionSummaryLine`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/goals/InvestmentBalancesList.tsx#ContributionTimelineHint`, `src/ui/InfoTooltip.tsx#InfoTooltip`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
 
-#### `InvestmentEditForm` — component, L310 _(client-component)_
+#### `InvestmentEditForm` — component, L321 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/features/goals/InvestmentBalancesList.tsx#ilpMaturityAge`, `src/features/goals/InvestmentBalancesList.tsx#nonNegative`, `src/features/goals/InvestmentBalancesList.tsx#percentDecimal`, `src/features/goals/InvestmentBalancesList.tsx#withdrawalStartDisplayValue`, `src/server/actions.ts#updateInvestmentAction`, `src/server/advisor-client-actions.ts#updateAdvisorClientInvestmentAction`
 - renders: `src/features/goals/InvestmentContributionScheduleFields.tsx#InvestmentContributionScheduleFields`, `src/features/goals/InvestmentPlanGuidancePanel.tsx#InvestmentPlanGuidancePanel`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`, `src/ui/InfoTooltip.tsx#InfoTooltip`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
 - unresolved: 12
 
-#### `InvestmentRow` — component, L707 _(client-component)_
+#### `InvestmentRow` — component, L724 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#deleteInvestmentAction`, `src/server/advisor-client-actions.ts#deleteAdvisorClientInvestmentAction`
 - renders: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`, `src/ui/ConfirmDialog.tsx#ConfirmDialog`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`
 - unresolved: 10
 
-#### `InvestmentReviewPrompt` — component, L797 _(client-component)_
+#### `InvestmentReviewPrompt` — component, L814 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#confirmInvestmentReviewAction`
 - rendered by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList`
 
-#### `InvestmentBalancesList` — component, L848 _(client-component)_
+#### `InvestmentBalancesList` — component, L865 _(client-component)_
 
 - calls: `src/domain/finance/investment-review.ts#investmentRowIsStale`, `src/ui/lib/format.ts#formatCurrency`
 - renders: `src/features/goals/InvestmentAssumptionBanner.tsx#InvestmentAssumptionBanner`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentReviewPrompt`, `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
@@ -1871,50 +1871,50 @@ Classification: `client-component`
 - calls: `src/data/mappers.ts#vehicleRowToValuationInput`, `src/domain/finance/vehicle-sg.ts#bodyValueEstimate`, `src/domain/finance/vehicle-sg.ts#effectiveLoanBalance`, `src/domain/finance/vehicle-sg.ts#loanMonthsRemainingResolved`, `src/domain/finance/vehicle-sg.ts#parfRebateEstimateIllustrative`, `src/domain/finance/vehicle-sg.ts#usesDeregistrationAnchors`, `src/domain/finance/vehicle-sg.ts#usesMarketValueGross`, `src/domain/finance/vehicle-sg.ts#usesNoParfBasisImplicitWithCoeTaper`, `src/domain/finance/vehicle-sg.ts#usesPurchaseToCoeTerminalSchedule`, `src/domain/finance/vehicle-sg.ts#usesRebateRemainingToTerminal`, `src/domain/finance/vehicle-sg.ts#vehicleGrossAssetEstimate`, `src/domain/finance/vehicle-sg.ts#vehicleGrossAssetFromDeregistrationAnchors`, `src/domain/finance/vehicle-sg.ts#vehicleGrossFromPurchaseToTerminalLinear`, `src/domain/finance/vehicle-sg.ts#vehicleNetEquity`, `src/ui/lib/format.ts#formatCurrency`
 - rendered by: `src/features/goals/VehiclesPanel.tsx#VehiclesPanel`
 
-#### `vehicleMoneyDefault` — function, L179
+#### `vehicleMoneyDefault` — function, L185
 
 - called by: `src/features/goals/VehiclesPanel.tsx#AdvancedModelFields`, `src/features/goals/VehiclesPanel.tsx#MarketValueFields`, `src/features/goals/VehiclesPanel.tsx#OneMotoringFields`, `src/features/goals/VehiclesPanel.tsx#PurchaseToCoeTerminalFields`
 
-#### `MarketValueFields` — component, L187 _(client-component)_
+#### `MarketValueFields` — component, L193 _(client-component)_
 
 - calls: `src/features/goals/VehiclesPanel.tsx#vehicleMoneyDefault`
 - rendered by: `src/features/goals/VehiclesPanel.tsx#AddVehicleForm`, `src/features/goals/VehiclesPanel.tsx#VehicleEditForm`
 
-#### `OneMotoringFields` — component, L220 _(client-component)_
+#### `OneMotoringFields` — component, L226 _(client-component)_
 
 - calls: `src/features/goals/VehiclesPanel.tsx#vehicleMoneyDefault`
 - rendered by: `src/features/goals/VehiclesPanel.tsx#AddVehicleForm`, `src/features/goals/VehiclesPanel.tsx#VehicleEditForm`
 
-#### `PurchaseToCoeTerminalFields` — component, L358 _(client-component)_
+#### `PurchaseToCoeTerminalFields` — component, L368 _(client-component)_
 
 - calls: `src/features/goals/VehiclesPanel.tsx#vehicleMoneyDefault`
 - rendered by: `src/features/goals/VehiclesPanel.tsx#AddVehicleForm`, `src/features/goals/VehiclesPanel.tsx#VehicleEditForm`
 
-#### `AdvancedModelFields` — component, L391 _(client-component)_
+#### `AdvancedModelFields` — component, L401 _(client-component)_
 
 - calls: `src/features/goals/VehiclesPanel.tsx#vehicleMoneyDefault`
 - rendered by: `src/features/goals/VehiclesPanel.tsx#AddVehicleForm`, `src/features/goals/VehiclesPanel.tsx#VehicleEditForm`
 
-#### `VehicleEditForm` — component, L486 _(client-component)_
+#### `VehicleEditForm` — component, L508 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#updateVehicleAction`
 - renders: `src/features/goals/VehiclesPanel.tsx#AdvancedModelFields`, `src/features/goals/VehiclesPanel.tsx#MarketValueFields`, `src/features/goals/VehiclesPanel.tsx#OneMotoringFields`, `src/features/goals/VehiclesPanel.tsx#PurchaseToCoeTerminalFields`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/goals/VehiclesPanel.tsx#VehiclesPanel`
 
-#### `AddVehicleForm` — component, L551 _(client-component)_
+#### `AddVehicleForm` — component, L577 _(client-component)_
 
 - calls: `[external] next`, `[external] react`, `src/server/actions.ts#createVehicleAction`
 - renders: `src/features/goals/VehiclesPanel.tsx#AdvancedModelFields`, `src/features/goals/VehiclesPanel.tsx#MarketValueFields`, `src/features/goals/VehiclesPanel.tsx#OneMotoringFields`, `src/features/goals/VehiclesPanel.tsx#PurchaseToCoeTerminalFields`, `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/goals/VehiclesPanel.tsx#VehiclesPanel`
 
-#### `VehicleDeleteForm` — component, L601 _(client-component)_
+#### `VehicleDeleteForm` — component, L633 _(client-component)_
 
 - calls: `[external] react`, `src/server/actions.ts#deleteVehicleAction`
 - renders: `src/ui/BlockingSubmitOverlay.tsx#BlockingSubmitOverlay`
 - rendered by: `src/features/goals/VehiclesPanel.tsx#VehiclesPanel`
 - unresolved: 2
 
-#### `VehiclesPanel` — component, L628 _(client-component)_
+#### `VehiclesPanel` — component, L660 _(client-component)_
 
 - renders: `src/features/consent/CategoryVisibilityToggle.tsx#CategoryVisibilityToggle`, `src/features/goals/VehiclesPanel.tsx#AddVehicleForm`, `src/features/goals/VehiclesPanel.tsx#VehicleDeleteForm`, `src/features/goals/VehiclesPanel.tsx#VehicleEditForm`, `src/features/goals/VehiclesPanel.tsx#VehicleSummary`, `src/features/help/MethodologyOpenLink.tsx#MethodologyOpenLink`
 - rendered by: `src/app/(app)/setup/page.tsx#SetupPage`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
@@ -2431,12 +2431,12 @@ Classification: `regular`
 - renders: `src/features/setup-hub/SetupModuleCard.tsx#CardCta`, `src/features/setup-hub/SetupModuleCard.tsx#CardTop`
 - rendered by: `src/features/setup-hub/FinancialSetupHub.tsx#FinancialSetupHub`
 
-#### `CardTop` — component, L66
+#### `CardTop` — component, L70
 
 - renders: `src/features/setup-hub/SetupModuleStatusBadge.tsx#SetupModuleStatusBadge`
 - rendered by: `src/features/setup-hub/SetupModuleCard.tsx#SetupModuleCard`
 
-#### `CardCta` — component, L95
+#### `CardCta` — component, L99
 
 - renders: `[external] next`
 - rendered by: `src/features/setup-hub/SetupModuleCard.tsx#SetupModuleCard`
@@ -2445,7 +2445,7 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `SetupModuleStatusBadge` — component, L29
+#### `SetupModuleStatusBadge` — component, L33
 
 - rendered by: `src/features/setup-hub/SetupModuleCard.tsx#CardTop`
 

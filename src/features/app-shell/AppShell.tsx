@@ -54,14 +54,16 @@ export function AppShell({
     <MethodologyProvider>
       <div
         className={`flex min-h-full flex-col ${
-          workspace === "advisor" ? "bg-slate-50 text-slate-800" : "text-slate-800"
+          workspace === "advisor"
+            ? "bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100"
+            : "text-slate-800 dark:text-slate-100"
         }`}
       >
         <header
           className={`sticky top-0 z-30 border-b backdrop-blur-xl backdrop-saturate-150 ${
             workspace === "advisor"
-              ? "border-slate-200 bg-slate-50/95"
-              : "border-slate-200/80 bg-white/95 shadow-[0_1px_0_0_rgba(4,120,87,0.08)]"
+              ? "border-slate-200 bg-slate-50/95 dark:border-slate-800 dark:bg-slate-950/90"
+              : "border-slate-200/80 bg-white/95 shadow-[0_1px_0_0_rgba(4,120,87,0.08)] dark:border-slate-800/80 dark:bg-slate-950/88 dark:shadow-[0_1px_0_0_rgba(45,212,191,0.12)]"
           }`}
         >
           <div
@@ -76,17 +78,17 @@ export function AppShell({
                 </div>
               ) : null}
               <div className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:items-baseline sm:gap-4">
-              <Link
-                href={brandHref}
-                className="truncate text-base font-semibold tracking-tight text-[#0c192f] transition-opacity hover:opacity-80 sm:text-xl"
-              >
-                BYOFA Planner
-              </Link>
-              <span className="hidden max-w-40 text-[11px] font-medium uppercase leading-snug tracking-[0.18em] text-slate-400 sm:inline md:max-w-xs">
-                {workspace === "advisor"
-                  ? "Advisor workspace"
-                  : "Private wealth clarity"}
-              </span>
+                <Link
+                  href={brandHref}
+                  className="truncate text-base font-semibold tracking-tight text-[#0c192f] transition-opacity hover:opacity-80 dark:text-slate-50 sm:text-xl"
+                >
+                  BYOFA Planner
+                </Link>
+                <span className="hidden max-w-40 text-[11px] font-medium uppercase leading-snug tracking-[0.18em] text-slate-400 dark:text-slate-500 sm:inline md:max-w-xs">
+                  {workspace === "advisor"
+                    ? "Advisor workspace"
+                    : "Private wealth clarity"}
+                </span>
               </div>
             </div>
             {showMainAppNav ? (
@@ -96,7 +98,7 @@ export function AppShell({
             ) : null}
             <div className="flex shrink-0 items-center gap-2">
               {workspace === "advisor" ? (
-                <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+                <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
                   Operations
                 </span>
               ) : null}
@@ -115,7 +117,7 @@ export function AppShell({
               ) : (
                 <Link
                   href="/login"
-                  className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#0c192f] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-slate-900/15 transition hover:bg-[#152a45] sm:min-h-0 sm:py-2"
+                  className="inline-flex min-h-10 items-center justify-center rounded-full bg-[#0c192f] px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-slate-900/15 transition hover:bg-[#152a45] dark:bg-emerald-500 dark:text-slate-950 dark:hover:bg-emerald-400 sm:min-h-0 sm:py-2"
                 >
                   Sign in
                 </Link>

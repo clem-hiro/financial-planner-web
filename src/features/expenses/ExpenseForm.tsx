@@ -90,31 +90,31 @@ export function ExpenseForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="space-y-3 rounded-2xl border border-slate-200/90 bg-linear-to-br from-white via-white to-sky-50/35 p-4 shadow-sm"
+      className="space-y-3 rounded-2xl border border-slate-200/90 bg-linear-to-br from-white via-white to-sky-50/35 p-4 shadow-sm dark:border-slate-700/80 dark:from-slate-950 dark:via-slate-900 dark:to-sky-950/30"
       {...(isBusy ? { inert: true } : {})}
     >
       <BlockingSubmitOverlay active={isBusy} message="Saving expense…" />
-      <h2 className="text-sm font-semibold text-slate-900">
+      <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">
         Custom expenses
       </h2>
-      <div className="rounded-xl border border-emerald-100/80 bg-emerald-50/60 px-3 py-2 text-xs leading-relaxed text-slate-600">
+      <div className="rounded-xl border border-emerald-100/80 bg-emerald-50/60 px-3 py-2 text-xs leading-relaxed text-slate-600 dark:border-emerald-300/35 dark:bg-emerald-950/35 dark:text-emerald-100">
         <p>
           Add one-off spending here: gifts, ad-hoc buys, or anything that
           doesn&apos;t fit your monthly budget.
         </p>
-        <p className="mt-1 font-medium text-slate-700">
+        <p className="mt-1 font-medium text-slate-700 dark:text-emerald-50">
           If it matches a budget category you already logged this month, edit
           that row instead.
         </p>
       </div>
       {error && (
-        <p className="text-sm text-red-600" role="alert">
+        <p className="text-sm text-red-600 dark:text-red-200" role="alert">
           {error}
         </p>
       )}
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="text-sm">
-          <span className="mb-1 block text-slate-600">Amount</span>
+          <span className="mb-1 block text-slate-600 dark:text-slate-200">Amount</span>
           <input
             name="amount"
             type="number"
@@ -125,7 +125,7 @@ export function ExpenseForm({
           />
         </label>
         <label className="text-sm">
-          <span className="mb-1 block text-slate-600">Category</span>
+          <span className="mb-1 block text-slate-600 dark:text-slate-200">Category</span>
           <input
             name="category"
             type="text"
@@ -136,7 +136,7 @@ export function ExpenseForm({
           />
         </label>
         <label className="text-sm">
-          <span className="mb-1 block text-slate-600">Date</span>
+          <span className="mb-1 block text-slate-600 dark:text-slate-200">Date</span>
           <input
             name="spent_at"
             type="date"
@@ -146,15 +146,15 @@ export function ExpenseForm({
           />
         </label>
         <label className="text-sm sm:col-span-2">
-          <span className="mb-1 block text-slate-600">Note (optional)</span>
+          <span className="mb-1 block text-slate-600 dark:text-slate-200">Note (optional)</span>
           <input
             name="note"
             type="text"
-            className="w-full rounded-xl border border-slate-200/90 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition-[border-color,box-shadow,background-color] placeholder:text-slate-400 focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/15"
+            className={`${fpInputClass} max-w-none`}
           />
         </label>
         <label className="text-sm sm:col-span-2">
-          <span className="mb-1 block text-slate-600">Spend type</span>
+          <span className="mb-1 block text-slate-600 dark:text-slate-200">Spend type</span>
           <select
             name="spend_period"
             className={`${fpSelectClass} max-w-none`}

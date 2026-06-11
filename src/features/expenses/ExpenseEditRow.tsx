@@ -105,27 +105,27 @@ export function ExpenseEditRow({
   if (!editing) {
     return (
       <div
-        className="mt-2 flex flex-wrap items-center gap-2 rounded-xl border border-slate-200/90 bg-linear-to-r from-white to-sky-50/40 px-3 py-2 text-xs shadow-sm"
+        className="mt-2 flex flex-wrap items-center gap-2 rounded-xl border border-slate-200/90 bg-linear-to-r from-white to-sky-50/40 px-3 py-2 text-xs shadow-sm dark:border-slate-700/80 dark:from-slate-950 dark:to-sky-950/30"
         {...(isBusy ? { inert: true } : {})}
       >
         <BlockingSubmitOverlay
           active={isBusy}
           message={deleting ? "Deleting expense…" : "Updating expense…"}
         />
-        <span className="font-medium capitalize text-slate-900">
+        <span className="font-medium capitalize text-slate-900 dark:text-slate-50">
           {expense.category}
         </span>
-        <span className="font-medium text-slate-800">
+        <span className="font-medium text-slate-800 dark:text-slate-100">
           {formatCurrency(num(expense.amount), currency)}
         </span>
-        <span className="text-slate-500">{expense.spent_at}</span>
+        <span className="text-slate-500 dark:text-slate-400">{expense.spent_at}</span>
         {(expense.spend_period ?? "monthly") === "annual" && (
-          <span className="rounded bg-amber-100 px-1 py-0.5 text-amber-900">
+          <span className="rounded bg-amber-100 px-1 py-0.5 text-amber-900 dark:bg-amber-950/50 dark:text-amber-100">
             Annual
           </span>
         )}
         {expense.note && (
-          <span className="w-full text-slate-500">{expense.note}</span>
+          <span className="w-full text-slate-500 dark:text-slate-400">{expense.note}</span>
         )}
         <div className="ml-auto flex gap-2">
           <button
@@ -140,13 +140,13 @@ export function ExpenseEditRow({
             type="button"
             onClick={onDelete}
             disabled={isBusy}
-            className="text-red-600 hover:underline disabled:opacity-50"
+            className="text-red-600 hover:underline disabled:opacity-50 dark:text-red-200"
           >
             {deleting ? "…" : isRefreshing ? "Updating…" : "Delete"}
           </button>
         </div>
         {error && (
-          <p className="w-full text-red-600" role="alert">
+          <p className="w-full text-red-600 dark:text-red-200" role="alert">
             {error}
           </p>
         )}
@@ -157,7 +157,7 @@ export function ExpenseEditRow({
   return (
     <form
       onSubmit={onSave}
-      className="mt-2 space-y-2 rounded-xl border border-slate-200/90 bg-white p-3 text-xs shadow-sm"
+      className="mt-2 space-y-2 rounded-xl border border-slate-200/90 bg-white p-3 text-xs shadow-sm dark:border-slate-700/80 dark:bg-slate-900"
       {...(isBusy ? { inert: true } : {})}
     >
       <BlockingSubmitOverlay
@@ -165,13 +165,13 @@ export function ExpenseEditRow({
         message={pending ? "Saving expense…" : "Updating expense…"}
       />
       {error && (
-        <p className="text-red-600" role="alert">
+        <p className="text-red-600 dark:text-red-200" role="alert">
           {error}
         </p>
       )}
       <div className="grid gap-2 sm:grid-cols-2">
         <label>
-          <span className="mb-0.5 block text-slate-600">Amount</span>
+          <span className="mb-0.5 block text-slate-600 dark:text-slate-200">Amount</span>
           <input
             name="amount"
             type="number"
@@ -183,7 +183,7 @@ export function ExpenseEditRow({
           />
         </label>
         <label>
-          <span className="mb-0.5 block text-slate-600">Category</span>
+          <span className="mb-0.5 block text-slate-600 dark:text-slate-200">Category</span>
           <input
             name="category"
             type="text"
@@ -193,7 +193,7 @@ export function ExpenseEditRow({
           />
         </label>
         <label>
-          <span className="mb-0.5 block text-slate-600">Date</span>
+          <span className="mb-0.5 block text-slate-600 dark:text-slate-200">Date</span>
           <input
             name="spent_at"
             type="date"
@@ -203,7 +203,7 @@ export function ExpenseEditRow({
           />
         </label>
         <label className="sm:col-span-2">
-          <span className="mb-0.5 block text-slate-600">Note</span>
+          <span className="mb-0.5 block text-slate-600 dark:text-slate-200">Note</span>
           <input
             name="note"
             type="text"
@@ -212,7 +212,7 @@ export function ExpenseEditRow({
           />
         </label>
         <label className="sm:col-span-2">
-          <span className="mb-0.5 block text-slate-600">Spend type</span>
+          <span className="mb-0.5 block text-slate-600 dark:text-slate-200">Spend type</span>
           <select
             name="spend_period"
             className={`${fpSelectClass} max-w-none py-1.5 text-xs`}
@@ -238,7 +238,7 @@ export function ExpenseEditRow({
             setError(null);
           }}
           disabled={isBusy}
-          className="rounded-full border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50"
+          className="rounded-full border border-slate-300 px-3 py-1.5 text-xs text-slate-700 transition hover:bg-slate-50 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-800"
         >
           Cancel
         </button>

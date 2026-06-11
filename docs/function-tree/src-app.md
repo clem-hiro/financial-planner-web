@@ -52,7 +52,7 @@
 | [`src/app/api/profile/route.ts`](#src-app-api-profile-route-ts) | `route-handler` | 1 | 18 |
 | [`src/app/api/projection/route.ts`](#src-app-api-projection-route-ts) | `route-handler` | 1 | 19 |
 | [`src/app/auth/callback/route.ts`](#src-app-auth-callback-route-ts) | `route-handler` | 2 | 6 |
-| [`src/app/layout.tsx`](#src-app-layout-tsx) | `layout` | 1 | 0 |
+| [`src/app/layout.tsx`](#src-app-layout-tsx) | `layout` | 1 | 1 |
 | [`src/app/login/page.tsx`](#src-app-login-page-tsx) | `page` | 2 | 7 |
 | [`src/app/page.tsx`](#src-app-page-tsx) | `page` | 1 | 4 |
 
@@ -459,9 +459,9 @@ Classification: `route-handler`
 
 Classification: `layout`
 
-#### `RootLayout` — component, L27
+#### `RootLayout` — component, L49
 
-_No tracked edges._
+- renders: `src/ui/theme/ThemeProvider.tsx#ThemeProvider`
 
 ### `src/app/login/page.tsx` <a id="src-app-login-page-tsx"></a>
 

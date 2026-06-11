@@ -437,18 +437,18 @@ export async function BudgetPlanningView({
                 )}
                 <li>
                   Planned:{" "}
-                  <span className="font-medium text-zinc-900">
+                  <span className="font-medium text-zinc-900 dark:text-slate-50">
                     {formatCurrency(displayMonthly.totals.budget, currency)}
                   </span>
                 </li>
                 <li>
                   Logged:{" "}
-                  <span className="font-medium text-zinc-900">
+                  <span className="font-medium text-zinc-900 dark:text-slate-50">
                     {formatCurrency(displayMonthly.totals.spent, currency)}
                   </span>
                 </li>
                 {unbudgetedMonthlyTotal > 0 && (
-                  <li className="text-amber-900">
+                  <li className="text-amber-900 dark:text-amber-200">
                     Unbudgeted monthly spend (below):{" "}
                     <span className="font-medium">
                       {formatCurrency(unbudgetedMonthlyTotal, currency)}
@@ -474,14 +474,14 @@ export async function BudgetPlanningView({
         }
       >
         {displayUnbudgetedMonthlyExpenses.length === 0 ? (
-          <div className="rounded-2xl border border-emerald-100 bg-linear-to-br from-emerald-50/80 to-white p-6 text-center shadow-sm">
+          <div className="rounded-2xl border border-emerald-100 bg-linear-to-br from-emerald-50/80 to-white p-6 text-center shadow-sm dark:border-emerald-400/30 dark:from-slate-950 dark:to-emerald-950/35 dark:shadow-black/25">
             <p className="text-lg" aria-hidden>
               ✨
             </p>
-            <p className="mt-2 text-sm font-semibold text-emerald-950">
+            <p className="mt-2 text-sm font-semibold text-emerald-950 dark:text-emerald-100">
               Nothing unbudgeted this month
             </p>
-            <p className="mt-1 text-xs text-emerald-900/80">
+            <p className="mt-1 text-xs text-emerald-900/80 dark:text-emerald-100/80">
               Every monthly expense lines up with a category in your plan — or
               you have not logged spend yet. Either way, you are all caught up
               here.
@@ -489,34 +489,34 @@ export async function BudgetPlanningView({
           </div>
         ) : (
           <>
-            <div className="overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-sm">
+            <div className="overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950">
               <div className="max-h-[min(65vh,42rem)] overflow-x-auto overflow-y-auto">
                 <table className="min-w-full text-left text-sm">
-                  <thead className="sticky top-0 z-10 border-b border-zinc-200 bg-zinc-50/95 text-[11px] font-semibold uppercase tracking-wide text-zinc-500 shadow-sm backdrop-blur-sm">
+                  <thead className="sticky top-0 z-10 border-b border-zinc-200 bg-zinc-50/95 text-[11px] font-semibold uppercase tracking-wide text-zinc-500 shadow-sm backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/95 dark:text-slate-300">
                     <tr>
-                      <th className="bg-zinc-50/95 px-3 py-3">Category</th>
-                      <th className="bg-zinc-50/95 px-3 py-3">Date</th>
-                      <th className="bg-zinc-50/95 px-3 py-3">Amount</th>
-                      <th className="bg-zinc-50/95 px-3 py-3">Note</th>
+                      <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">Category</th>
+                      <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">Date</th>
+                      <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">Amount</th>
+                      <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">Note</th>
                     </tr>
                   </thead>
                   <tbody>
                   {displayUnbudgetedMonthlyExpenses.map((e) => (
                     <tr
                       key={e.id}
-                      className="border-b border-zinc-100 transition-colors hover:bg-teal-50/15 last:border-0"
+                      className="border-b border-zinc-100 transition-colors hover:bg-teal-50/15 last:border-0 dark:border-slate-800 dark:hover:bg-teal-950/25"
                     >
-                      <td className="px-3 py-2 font-medium capitalize text-zinc-800">
+                      <td className="px-3 py-2 font-medium capitalize text-zinc-800 dark:text-slate-50">
                         <span className="mr-1.5" aria-hidden>
                           {budgetCategoryEmoji(e.category)}
                         </span>
                         {e.category}
                       </td>
-                      <td className="px-3 py-2 text-zinc-600">{e.spent_at}</td>
-                      <td className="px-3 py-2 text-zinc-800">
+                      <td className="px-3 py-2 text-zinc-600 dark:text-slate-300">{e.spent_at}</td>
+                      <td className="px-3 py-2 text-zinc-800 dark:text-slate-200">
                         {formatCurrency(num(e.amount), currency)}
                       </td>
-                      <td className="px-3 py-2 text-xs text-zinc-500">
+                      <td className="px-3 py-2 text-xs text-zinc-500 dark:text-slate-400">
                         {e.note ?? "—"}
                       </td>
                     </tr>
@@ -525,9 +525,9 @@ export async function BudgetPlanningView({
                 </table>
               </div>
             </div>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-zinc-500 dark:text-slate-400">
               Subtotal:{" "}
-              <span className="font-medium text-zinc-800">
+              <span className="font-medium text-zinc-800 dark:text-slate-200">
                 {formatCurrency(unbudgetedMonthlyTotal, currency)}
               </span>
               . Tip: quick-add a line above, then expenses will map here
@@ -544,16 +544,16 @@ export async function BudgetPlanningView({
           title="Lines not active this month"
           description="These lines start later or already ended (for example after a loan payoff). You can adjust the schedule or remove the line."
         >
-          <ul className="space-y-4 rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-sm">
+          <ul className="space-y-4 rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-950">
             {inactiveMonthly.map((line) => (
               <li
                 key={line.id}
-                className="border-b border-zinc-100 pb-4 last:border-0 last:pb-0"
+                className="border-b border-zinc-100 pb-4 last:border-0 last:pb-0 dark:border-slate-800"
               >
-                <p className="flex items-center gap-2 font-medium capitalize text-zinc-800">
+                <p className="flex items-center gap-2 font-medium capitalize text-zinc-800 dark:text-slate-50">
                   <span aria-hidden>{budgetCategoryEmoji(line.category)}</span>
                   {line.category}{" "}
-                  <span className="text-xs font-normal text-zinc-500">
+                  <span className="text-xs font-normal text-zinc-500 dark:text-slate-400">
                     Base {formatCurrency(num(line.amount), currency)}
                     {line.start_year_month
                       ? ` · from ${line.start_year_month}`
@@ -590,7 +590,7 @@ export async function BudgetPlanningView({
         className="scroll-mt-4 space-y-3"
         title={`Annual & irregular expenses (${calendarYear})`}
         description={
-          <span className="text-xs text-zinc-600">
+          <span className="text-xs text-zinc-600 dark:text-slate-300">
             For insurance, holidays, road tax, gifts, school fees, quarterly
             bills, and other non-monthly costs. Totals use annual-tagged
             expenses dated in {calendarYear}.{" "}
@@ -602,7 +602,7 @@ export async function BudgetPlanningView({
         actions={
           <div className="flex flex-wrap items-center gap-3 text-xs">
             <Link
-              className="font-medium text-zinc-600 hover:text-zinc-900"
+              className="font-medium text-zinc-600 hover:text-zinc-900 dark:text-slate-400 dark:hover:text-slate-100"
               href={budgetMonthHref(
                 budgetPathVariant,
                 month,
@@ -612,7 +612,7 @@ export async function BudgetPlanningView({
               Previous year
             </Link>
             <Link
-              className="font-medium text-zinc-600 hover:text-zinc-900"
+              className="font-medium text-zinc-600 hover:text-zinc-900 dark:text-slate-400 dark:hover:text-slate-100"
               href={budgetMonthHref(
                 budgetPathVariant,
                 month,
@@ -631,9 +631,9 @@ export async function BudgetPlanningView({
         />
 
         {annualRows.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-violet-200/80 bg-linear-to-br from-violet-50/50 to-white p-6 text-sm text-zinc-700 shadow-sm">
-            <p className="font-semibold text-zinc-900">No yearly lines yet</p>
-            <p className="mt-2 text-xs leading-relaxed text-zinc-600">
+          <div className="rounded-2xl border border-dashed border-violet-200/80 bg-linear-to-br from-violet-50/50 to-white p-6 text-sm text-zinc-700 shadow-sm dark:border-violet-400/30 dark:from-slate-950 dark:to-violet-950/35 dark:text-slate-200 dark:shadow-black/25">
+            <p className="font-semibold text-zinc-900 dark:text-slate-50">No yearly lines yet</p>
+            <p className="mt-2 text-xs leading-relaxed text-zinc-600 dark:text-slate-300">
               Add categories such as insurance premiums, travel, vehicle tax,
               school fees, quarterly bills, or annual subscriptions — then tag
               matching expenses as annual in {calendarYear}.

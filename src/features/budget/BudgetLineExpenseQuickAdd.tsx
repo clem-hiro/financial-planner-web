@@ -92,23 +92,23 @@ export function BudgetLineExpenseQuickAdd({
   return (
     <form
       onSubmit={onSubmit}
-      className="mt-2 rounded-xl border border-slate-200/90 bg-linear-to-r from-white to-emerald-50/45 p-2.5 shadow-sm"
+      className="mt-2 rounded-xl border border-slate-200/90 bg-linear-to-r from-white to-emerald-50/45 p-2.5 shadow-sm dark:border-slate-700/80 dark:from-slate-950 dark:to-emerald-950/30"
       {...(isBusy ? { inert: true } : {})}
     >
       <BlockingSubmitOverlay active={isBusy} message="Saving expense…" />
       {!compact && (
-        <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+        <p className="mb-1 text-[10px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
           Log actual (monthly)
         </p>
       )}
       {error && (
-        <p className="mb-1 text-xs text-red-600" role="alert">
+        <p className="mb-1 text-xs text-red-600 dark:text-red-200" role="alert">
           {error}
         </p>
       )}
       <div className="flex flex-wrap items-end gap-2">
         <label className="text-xs">
-          <span className="mb-0.5 block text-slate-600">Amount</span>
+          <span className="mb-0.5 block text-slate-600 dark:text-slate-200">Amount</span>
           <input
             name="amount"
             type="number"
@@ -126,7 +126,7 @@ export function BudgetLineExpenseQuickAdd({
           />
         </label>
         <label className="text-xs">
-          <span className="mb-0.5 block text-slate-600">Date</span>
+          <span className="mb-0.5 block text-slate-600 dark:text-slate-200">Date</span>
           <input
             name="spent_at"
             type="date"

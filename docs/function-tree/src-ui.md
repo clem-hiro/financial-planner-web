@@ -2,7 +2,7 @@
 
 # Function tree — `src/ui`
 
-19 module(s).
+21 module(s).
 
 ## Modules
 
@@ -26,6 +26,8 @@
 | [`src/ui/runway-chart-styles.ts`](#src-ui-runway-chart-styles-ts) | `regular` | 0 | 0 |
 | [`src/ui/ScrollToTopButton.tsx`](#src-ui-scrolltotopbutton-tsx) | `client-component` | 1 | 2 |
 | [`src/ui/surface-classes.ts`](#src-ui-surface-classes-ts) | `regular` | 0 | 0 |
+| [`src/ui/theme/ThemeModeToggle.tsx`](#src-ui-theme-thememodetoggle-tsx) | `client-component` | 1 | 1 |
+| [`src/ui/theme/ThemeProvider.tsx`](#src-ui-theme-themeprovider-tsx) | `client-component` | 10 | 12 |
 | [`src/ui/use-narrow-screen.ts`](#src-ui-use-narrow-screen-ts) | `client-component` | 4 | 1 |
 
 ## Functions
@@ -176,6 +178,66 @@ Classification: `client-component`
 Classification: `regular`
 
 _No top-level functions detected._
+
+### `src/ui/theme/ThemeModeToggle.tsx` <a id="src-ui-theme-thememodetoggle-tsx"></a>
+
+Classification: `client-component`
+
+#### `ThemeModeToggle` — component, L15 _(client-component)_
+
+- calls: `src/ui/theme/ThemeProvider.tsx#useTheme`
+- rendered by: `src/features/app-shell/AppShellUserMenu.tsx#AppShellUserMenu`
+- unresolved: 1
+
+### `src/ui/theme/ThemeProvider.tsx` <a id="src-ui-theme-themeprovider-tsx"></a>
+
+Classification: `client-component`
+
+#### `isThemeMode` — function, L28
+
+- called by: `src/ui/theme/ThemeProvider.tsx#getModeFromStorage`
+
+#### `getSystemTheme` — function, L32
+
+- called by: `src/ui/theme/ThemeProvider.tsx#resolveTheme`
+
+#### `resolveTheme` — function, L37
+
+- calls: `src/ui/theme/ThemeProvider.tsx#getSystemTheme`
+- called by: `src/ui/theme/ThemeProvider.tsx#applyTheme`, `src/ui/theme/ThemeProvider.tsx#getSnapshot`
+
+#### `applyTheme` — function, L41
+
+- calls: `src/ui/theme/ThemeProvider.tsx#resolveTheme`
+- called by: `src/ui/theme/ThemeProvider.tsx#ThemeProvider`
+
+#### `getModeFromStorage` — function, L50
+
+- calls: `src/ui/theme/ThemeProvider.tsx#isThemeMode`
+- called by: `src/ui/theme/ThemeProvider.tsx#getSnapshot`
+
+#### `getSnapshot` — function, L56
+
+- calls: `src/ui/theme/ThemeProvider.tsx#getModeFromStorage`, `src/ui/theme/ThemeProvider.tsx#resolveTheme`
+
+#### `getServerSnapshot` — function, L61
+
+_No tracked edges._
+
+#### `subscribe` — function, L65
+
+- unresolved: 1
+
+#### `ThemeProvider` — component, L78 _(client-component)_
+
+- calls: `[external] react`, `src/ui/theme/ThemeProvider.tsx#applyTheme`
+- renders: `[external] react`
+- rendered by: `src/app/layout.tsx#RootLayout`
+
+#### `useTheme` — function, L111
+
+- calls: `[external] react`
+- called by: `src/ui/theme/ThemeModeToggle.tsx#ThemeModeToggle`
 
 ### `src/ui/use-narrow-screen.ts` <a id="src-ui-use-narrow-screen-ts"></a>
 

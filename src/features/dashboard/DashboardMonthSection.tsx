@@ -33,7 +33,7 @@ export function DashboardMonthSection({
       <PageSection
         title="Insights"
         description={
-          <span className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-600">
+          <span className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-600 dark:text-slate-300">
             <span>From this month.</span>
             <MethodologyOpenLink topicId="savings-rate" className={`text-xs ${appInlineLinkClass}`}>
               Context
@@ -41,7 +41,7 @@ export function DashboardMonthSection({
           </span>
         }
       >
-        <ul className="list-inside list-disc space-y-1 text-sm text-zinc-700">
+        <ul className="list-inside list-disc space-y-1 text-sm text-zinc-700 dark:text-slate-200">
           {payload.insights.map((line) => (
             <li key={line}>{line}</li>
           ))}
@@ -52,7 +52,7 @@ export function DashboardMonthSection({
         <PageSection
           title="Goals & cash flow"
           description={
-            <span className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-600">
+            <span className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-600 dark:text-slate-300">
               <span>
                 Take-home minus spend basis (logged when any expense in the month,
                 else planned monthly budget), then minus each goal&apos;s planned monthly
@@ -70,7 +70,7 @@ export function DashboardMonthSection({
           }
         >
           {payload.takeHomeMinusExpenses == null ? (
-            <p className="text-sm text-zinc-600">
+            <p className="text-sm text-zinc-600 dark:text-slate-300">
               Set monthly take-home on your profile to show balances after spend basis
               and planned goals.
             </p>
@@ -79,8 +79,8 @@ export function DashboardMonthSection({
               <p
                 className={
                   payload.takeHomeMinusExpenses >= 0
-                    ? "text-zinc-700"
-                    : "font-medium text-amber-900"
+                    ? "text-zinc-700 dark:text-slate-200"
+                    : "font-medium text-amber-900 dark:text-amber-200"
                 }
               >
                 {payload.takeHomeMinusExpenses >= 0
@@ -98,8 +98,8 @@ export function DashboardMonthSection({
                   <p
                     className={
                       payload.discretionaryAfterGoals >= 0
-                        ? "font-medium text-zinc-900"
-                        : "font-medium text-amber-900"
+                        ? "font-medium text-zinc-900 dark:text-slate-50"
+                        : "font-medium text-amber-900 dark:text-amber-200"
                     }
                   >
                     After planned goal contributions (
@@ -112,20 +112,20 @@ export function DashboardMonthSection({
                       payload.discretionaryAfterGoals,
                       payload.baseCurrency
                     )}{" "}
-                    <span className="font-normal text-zinc-600">
+                    <span className="font-normal text-zinc-600 dark:text-slate-300">
                       — your true balance for the month (can be negative).
                     </span>
                   </p>
                 )}
             </div>
           )}
-          <ul className="mt-4 space-y-2 text-sm text-zinc-700">
+          <ul className="mt-4 space-y-2 text-sm text-zinc-700 dark:text-slate-200">
             {payload.goalBudgetHints.map((h) => (
               <li
                 key={h.goalId}
-                className="border-b border-zinc-100 pb-2 last:border-0"
+                className="border-b border-zinc-100 pb-2 last:border-0 dark:border-slate-700/80"
               >
-                <span className="font-medium text-zinc-900">{h.title}</span>
+                <span className="font-medium text-zinc-900 dark:text-slate-50">{h.title}</span>
                 {": planned "}
                 {formatCurrency(h.plannedMonthly, payload.baseCurrency)}
                 /mo on Setup → Goals (progress and ETA).
@@ -138,7 +138,7 @@ export function DashboardMonthSection({
       <PageSection
         title="Budget check"
         description={
-          <span className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-600">
+          <span className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-600 dark:text-slate-300">
             <span>Budget lines vs monthly-tagged expenses.</span>
             <MethodologyOpenLink topicId="monthly-budget-check" className={`text-xs ${appInlineLinkClass}`}>
               How calculated
@@ -162,8 +162,8 @@ export function DashboardMonthSection({
           <p
             className={
               payload.monthlyBudgetAggregate.onTrack
-                ? "text-sm text-emerald-800"
-                : "text-sm font-medium text-red-800"
+                ? "text-sm text-emerald-800 dark:text-emerald-200"
+                : "text-sm font-medium text-red-800 dark:text-rose-200"
             }
           >
             {payload.monthlyBudgetAggregate.onTrack
@@ -184,7 +184,7 @@ export function DashboardMonthSection({
           </p>
         )}
         {payload.monthlyBudgetOver.length === 0 ? (
-          <p className="mt-3 text-sm text-zinc-600">
+          <p className="mt-3 text-sm text-zinc-600 dark:text-slate-300">
             {payload.monthlyBudgetTotals.budget > 0 ||
             payload.monthlyBudgetTotals.spent > 0
               ? "No single category is over its own budget cap (top overs would appear here)."
@@ -192,18 +192,18 @@ export function DashboardMonthSection({
           </p>
         ) : (
           <ul className="mt-3 space-y-2 text-sm">
-            <li className="text-xs font-medium uppercase tracking-wide text-zinc-500">
+            <li className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-slate-400">
               Top categories over their own cap
             </li>
             {payload.monthlyBudgetOver.map((row) => (
               <li
                 key={row.categoryLabel}
-                className="flex flex-wrap justify-between gap-2 border-b border-zinc-100 pb-2 last:border-0"
+                className="flex flex-wrap justify-between gap-2 border-b border-zinc-100 pb-2 last:border-0 dark:border-slate-700/80"
               >
-                <span className="font-medium capitalize text-zinc-800">
+                <span className="font-medium capitalize text-zinc-800 dark:text-slate-100">
                   {row.categoryLabel}
                 </span>
-                <span className="text-red-700">
+                <span className="text-red-700 dark:text-rose-200">
                   {formatCurrency(row.overBy, payload.baseCurrency)} over (
                   {formatCurrency(row.spent, payload.baseCurrency)} /{" "}
                   {formatCurrency(row.budget, payload.baseCurrency)})
@@ -217,7 +217,7 @@ export function DashboardMonthSection({
       <PageSection
         title="Investments (36 mo preview)"
         description={
-          <span className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-600">
+          <span className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-600 dark:text-slate-300">
             <span>
               Merged investment accounts: each account&apos;s monthly contribution
               and return only, compounded. Cash / debt balances are not grown on

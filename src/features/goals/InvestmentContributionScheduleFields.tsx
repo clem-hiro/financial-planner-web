@@ -34,11 +34,11 @@ export function InvestmentContributionScheduleFields({
 }) {
   if (planNature === "includes_insurance_coverage") {
     return (
-      <fieldset className="rounded-xl border border-slate-200 bg-white p-4">
-        <legend className="text-sm font-medium text-slate-800">
+      <fieldset className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700/80 dark:bg-slate-900">
+        <legend className="text-sm font-medium text-slate-800 dark:text-slate-100">
           ILP premium period
         </legend>
-        <p className="mt-1 text-xs text-slate-500">
+        <p className="mt-1 text-xs text-slate-500 dark:text-slate-300">
           ILPs use a fixed premium period here. The plan start date and duration
           determine the maturity month used by withdrawals and cashflow projections.
         </p>
@@ -46,7 +46,7 @@ export function InvestmentContributionScheduleFields({
         <input type="hidden" name="contribution_schedule_mode" value="duration_years" />
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <label className="block text-sm">
-            <span className="mb-1 block font-medium text-slate-800">
+            <span className="mb-1 block font-medium text-slate-800 dark:text-slate-200">
               Plan start date
             </span>
             <input
@@ -59,7 +59,7 @@ export function InvestmentContributionScheduleFields({
             />
           </label>
           <label className="block text-sm">
-            <span className="mb-1 block font-medium text-slate-800">
+            <span className="mb-1 block font-medium text-slate-800 dark:text-slate-200">
               Fixed period (years)
             </span>
             <input
@@ -80,17 +80,17 @@ export function InvestmentContributionScheduleFields({
   }
 
   return (
-    <fieldset className="rounded-xl border border-slate-200 bg-white p-4">
-      <legend className="text-sm font-medium text-slate-800">
+    <fieldset className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700/80 dark:bg-slate-900">
+      <legend className="text-sm font-medium text-slate-800 dark:text-slate-100">
         How long will you contribute monthly?
       </legend>
-      <p className="mt-1 text-xs text-slate-500">
+      <p className="mt-1 text-xs text-slate-500 dark:text-slate-300">
         After this phase, we still grow what you already built—we only stop adding
         new monthly deposits. For ILPs and endowments, use calendar dates when you
         know premium start and end.
       </p>
       <div className="mt-3 space-y-2.5">
-        <label className="flex cursor-pointer items-start gap-2.5 text-sm text-slate-700">
+        <label className="flex cursor-pointer items-start gap-2.5 text-sm text-slate-700 dark:text-slate-200">
           <input
             type="radio"
             name="contribution_type"
@@ -100,14 +100,16 @@ export function InvestmentContributionScheduleFields({
             onChange={() => onContributionModeChange("until_retirement")}
           />
           <span>
-            <span className="font-medium text-slate-900">Until retirement</span>
-            <span className="mt-0.5 block text-xs font-normal text-slate-500">
+            <span className="font-medium text-slate-900 dark:text-slate-50">
+              Until retirement
+            </span>
+            <span className="mt-0.5 block text-xs font-normal text-slate-500 dark:text-slate-300">
               Uses your profile retirement age when set; otherwise the full
               projection window.
             </span>
           </span>
         </label>
-        <label className="flex cursor-pointer items-start gap-2.5 text-sm text-slate-700">
+        <label className="flex cursor-pointer items-start gap-2.5 text-sm text-slate-700 dark:text-slate-200">
           <input
             type="radio"
             name="contribution_type"
@@ -117,8 +119,10 @@ export function InvestmentContributionScheduleFields({
             onChange={() => onContributionModeChange("fixed_duration")}
           />
           <span>
-            <span className="font-medium text-slate-900">Fixed period</span>
-            <span className="mt-0.5 block text-xs font-normal text-slate-500">
+            <span className="font-medium text-slate-900 dark:text-slate-50">
+              Fixed period
+            </span>
+            <span className="mt-0.5 block text-xs font-normal text-slate-500 dark:text-slate-300">
               Time-bound premiums (ILPs, education plans, endowments).
             </span>
           </span>
@@ -126,10 +130,12 @@ export function InvestmentContributionScheduleFields({
       </div>
 
       {contributionMode === "fixed_duration" ? (
-        <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
-          <p className="text-xs font-medium text-slate-700">Premium window</p>
+        <div className="mt-4 space-y-3 border-t border-slate-100 pt-4 dark:border-slate-700/80">
+          <p className="text-xs font-medium text-slate-700 dark:text-slate-200">
+            Premium window
+          </p>
           <div className="flex flex-wrap gap-2">
-            <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 has-[:checked]:border-emerald-300 has-[:checked]:bg-emerald-50 has-[:checked]:text-emerald-900">
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 has-[:checked]:border-emerald-300 has-[:checked]:bg-emerald-50 has-[:checked]:text-emerald-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:has-[:checked]:border-emerald-300 dark:has-[:checked]:bg-emerald-300/20 dark:has-[:checked]:text-emerald-50">
               <input
                 type="radio"
                 name="contribution_schedule_mode"
@@ -140,7 +146,7 @@ export function InvestmentContributionScheduleFields({
               />
               By years from today
             </label>
-            <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 has-[:checked]:border-emerald-300 has-[:checked]:bg-emerald-50 has-[:checked]:text-emerald-900">
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 has-[:checked]:border-emerald-300 has-[:checked]:bg-emerald-50 has-[:checked]:text-emerald-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-200 dark:has-[:checked]:border-emerald-300 dark:has-[:checked]:bg-emerald-300/20 dark:has-[:checked]:text-emerald-50">
               <input
                 type="radio"
                 name="contribution_schedule_mode"
@@ -155,7 +161,7 @@ export function InvestmentContributionScheduleFields({
 
           {fixedScheduleMode === "duration_years" ? (
             <label className="block text-sm">
-              <span className="mb-1 block font-medium text-slate-800">
+              <span className="mb-1 block font-medium text-slate-800 dark:text-slate-200">
                 Contribution duration (years)
               </span>
               <input
@@ -173,7 +179,7 @@ export function InvestmentContributionScheduleFields({
           ) : (
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="block text-sm">
-                <span className="mb-1 block font-medium text-slate-800">
+                <span className="mb-1 block font-medium text-slate-800 dark:text-slate-200">
                   Premium start (optional)
                 </span>
                 <input
@@ -183,12 +189,12 @@ export function InvestmentContributionScheduleFields({
                   onChange={(e) => onStartDateChange(e.target.value)}
                   className={inputClassName}
                 />
-                <span className="mt-1 block text-[11px] text-slate-500">
+                <span className="mt-1 block text-[11px] text-slate-500 dark:text-slate-300">
                   Leave blank if you are already paying premiums today.
                 </span>
               </label>
               <label className="block text-sm">
-                <span className="mb-1 block font-medium text-slate-800">
+                <span className="mb-1 block font-medium text-slate-800 dark:text-slate-200">
                   Premium / contribution end
                 </span>
                 <input

@@ -16,9 +16,13 @@ const STATUS_LABEL: Record<BudgetReviewWorkflow["status"], string> = {
 };
 
 function stepTone(status: BudgetReviewWorkflow["steps"][number]["status"]) {
-  if (status === "review") return "border-amber-200 bg-amber-50/70 text-amber-950";
-  if (status === "empty") return "border-zinc-200 bg-zinc-50 text-zinc-700";
-  return "border-emerald-100 bg-emerald-50/70 text-emerald-950";
+  if (status === "review") {
+    return "border-amber-200 bg-amber-50/70 text-amber-950 dark:border-amber-400/35 dark:bg-amber-950/35 dark:text-amber-100";
+  }
+  if (status === "empty") {
+    return "border-zinc-200 bg-zinc-50 text-zinc-700 dark:border-slate-700/80 dark:bg-slate-900/70 dark:text-slate-200";
+  }
+  return "border-emerald-100 bg-emerald-50/70 text-emerald-950 dark:border-emerald-400/35 dark:bg-emerald-950/35 dark:text-emerald-100";
 }
 
 export function BudgetReviewWorkflowPanel({
@@ -35,14 +39,14 @@ export function BudgetReviewWorkflowPanel({
       className={`${appCardClass} scroll-mt-4 overflow-hidden`}
     >
       <div className="grid gap-0 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="bg-linear-to-br from-teal-50/90 via-white to-slate-50 px-5 py-6 sm:px-6">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-teal-700">
+        <div className="bg-linear-to-br from-teal-50/90 via-white to-slate-50 px-5 py-6 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 sm:px-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-teal-700 dark:text-teal-300">
             Recurring budget review
           </p>
-          <h2 className="mt-3 text-xl font-semibold tracking-tight text-slate-950">
+          <h2 className="mt-3 text-xl font-semibold tracking-tight text-slate-950 dark:text-slate-50">
             {STATUS_LABEL[review.status]} for {review.month}
           </h2>
-          <p className="mt-2 text-sm leading-relaxed text-slate-600">
+          <p className="mt-2 text-sm leading-relaxed text-slate-600 dark:text-slate-300">
             {review.summary}
           </p>
           <div className="mt-5 flex flex-wrap gap-3 text-xs">
@@ -58,7 +62,7 @@ export function BudgetReviewWorkflowPanel({
           </div>
         </div>
 
-        <div className="space-y-4 px-5 py-6 sm:px-6">
+        <div className="space-y-4 px-5 py-6 dark:bg-slate-950 sm:px-6">
           <div className="grid gap-3 sm:grid-cols-2">
             {review.steps.map((step) => (
               <div
@@ -67,7 +71,7 @@ export function BudgetReviewWorkflowPanel({
               >
                 <div className="flex items-start justify-between gap-3">
                   <p className="text-sm font-semibold">{step.label}</p>
-                  <span className="rounded-full bg-white/70 px-2 py-0.5 text-[11px] font-medium">
+                  <span className="rounded-full bg-white/70 px-2 py-0.5 text-[11px] font-medium text-current dark:bg-slate-800 dark:text-slate-100">
                     {step.count}
                   </span>
                 </div>
@@ -82,15 +86,15 @@ export function BudgetReviewWorkflowPanel({
           {(topOverspent.length > 0 ||
             review.overrides.length > 0 ||
             topUnused.length > 0) && (
-            <div className="grid gap-3 text-xs text-slate-700 md:grid-cols-3">
+            <div className="grid gap-3 text-xs text-slate-700 dark:text-slate-200 md:grid-cols-3">
               {topOverspent.length > 0 && (
-                <div className="rounded-xl border border-red-100 bg-red-50/70 p-3">
-                  <p className="font-semibold text-red-950">Over plan</p>
+                <div className="rounded-xl border border-red-100 bg-red-50/70 p-3 dark:border-red-400/35 dark:bg-red-950/35">
+                  <p className="font-semibold text-red-950 dark:text-red-100">Over plan</p>
                   <ul className="mt-2 space-y-1">
                     {topOverspent.map((line) => (
                       <li key={line.categoryKey}>
                         {line.categoryLabel}:{" "}
-                        <span className="font-medium text-red-900">
+                        <span className="font-medium text-red-900 dark:text-red-200">
                           {formatCurrency(line.spent - line.budget, currency)} over
                         </span>
                       </li>
@@ -99,13 +103,13 @@ export function BudgetReviewWorkflowPanel({
                 </div>
               )}
               {review.overrides.length > 0 && (
-                <div className="rounded-xl border border-amber-100 bg-amber-50/80 p-3">
-                  <p className="font-semibold text-amber-950">Overrides</p>
+                <div className="rounded-xl border border-amber-100 bg-amber-50/80 p-3 dark:border-amber-400/35 dark:bg-amber-950/35">
+                  <p className="font-semibold text-amber-950 dark:text-amber-100">Overrides</p>
                   <ul className="mt-2 space-y-1">
                     {review.overrides.slice(0, 3).map((override) => (
                       <li key={override.lineId}>
                         {override.category}:{" "}
-                        <span className="font-medium text-amber-950">
+                        <span className="font-medium text-amber-950 dark:text-amber-200">
                           {formatCurrency(override.overrideAmount, currency)}
                         </span>
                       </li>
@@ -114,13 +118,13 @@ export function BudgetReviewWorkflowPanel({
                 </div>
               )}
               {topUnused.length > 0 && (
-                <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-3">
-                  <p className="font-semibold text-slate-950">No spend logged</p>
+                <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-3 dark:border-slate-700 dark:bg-slate-900/70">
+                  <p className="font-semibold text-slate-950 dark:text-slate-50">No spend logged</p>
                   <ul className="mt-2 space-y-1">
                     {topUnused.map((line) => (
                       <li key={line.categoryKey}>
                         {line.categoryLabel}:{" "}
-                        <span className="font-medium text-slate-900">
+                        <span className="font-medium text-slate-900 dark:text-slate-100">
                           {formatCurrency(line.budget, currency)} planned
                         </span>
                       </li>

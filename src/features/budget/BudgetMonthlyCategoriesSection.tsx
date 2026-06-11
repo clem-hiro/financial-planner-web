@@ -63,18 +63,18 @@ function MonthlyLineRowDesktop({
   const isSetupInvestment = isSetupInvestmentsBudgetLine(line.id);
 
   return (
-    <tr className="border-b border-zinc-100 align-top transition-colors hover:bg-teal-50/20 last:border-0">
+    <tr className="border-b border-zinc-100 align-top transition-colors hover:bg-teal-50/20 last:border-0 dark:border-slate-800 dark:hover:bg-teal-950/25">
       <td className="px-3 py-3">
         <div className="flex items-start gap-2">
           <span className="mt-0.5 text-lg" aria-hidden>
             {emoji}
           </span>
           <div>
-            <span className="font-medium capitalize text-zinc-900">
+            <span className="font-medium capitalize text-zinc-900 dark:text-slate-50">
               {line.category}
             </span>
             {(line.start_year_month || line.end_year_month) && (
-              <p className="mt-1 text-xs font-normal text-zinc-500">
+              <p className="mt-1 text-xs font-normal text-zinc-500 dark:text-slate-400">
                 {line.start_year_month ? `From ${line.start_year_month}` : ""}
                 {line.start_year_month && line.end_year_month ? " · " : ""}
                 {line.end_year_month ? `Through ${line.end_year_month}` : ""}
@@ -83,19 +83,21 @@ function MonthlyLineRowDesktop({
           </div>
         </div>
       </td>
-      <td className="px-3 py-3 text-zinc-700">
+      <td className="px-3 py-3 text-zinc-700 dark:text-slate-300">
         <div>
           {isSetupInvestment ? "Setup" : "Base"} {formatCurrency(base, currency)}
         </div>
         {overridesThisMonth[line.id] !== undefined && (
-          <div className="text-xs text-teal-800">
+          <div className="text-xs text-teal-800 dark:text-teal-200">
             This month {formatCurrency(effective, currency)}
           </div>
         )}
       </td>
       <td
         className={
-          over ? "px-3 py-3 font-medium text-red-700" : "px-3 py-3 text-zinc-800"
+          over
+            ? "px-3 py-3 font-medium text-red-700 dark:text-red-300"
+            : "px-3 py-3 text-zinc-800 dark:text-slate-200"
         }
       >
         {formatCurrency(spent, currency)}
@@ -103,8 +105,8 @@ function MonthlyLineRowDesktop({
       <td
         className={
           remaining < 0
-            ? "px-3 py-3 text-red-600"
-            : "px-3 py-3 text-zinc-700"
+            ? "px-3 py-3 text-red-600 dark:text-red-300"
+            : "px-3 py-3 text-zinc-700 dark:text-slate-300"
         }
       >
         {formatCurrency(remaining, currency)}
@@ -161,18 +163,18 @@ function MonthlyLineCardMobile({
   const isSetupInvestment = isSetupInvestmentsBudgetLine(line.id);
 
   return (
-    <li className="rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-sm">
+    <li className="rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900/75">
       <div className="flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-start gap-2">
           <span className="text-xl" aria-hidden>
             {emoji}
           </span>
           <div className="min-w-0">
-            <p className="font-semibold capitalize text-zinc-900">
+            <p className="font-semibold capitalize text-zinc-900 dark:text-slate-50">
               {line.category}
             </p>
             {(line.start_year_month || line.end_year_month) && (
-              <p className="mt-0.5 text-xs text-zinc-500">
+              <p className="mt-0.5 text-xs text-zinc-500 dark:text-slate-400">
                 {line.start_year_month ? `From ${line.start_year_month}` : ""}
                 {line.start_year_month && line.end_year_month ? " · " : ""}
                 {line.end_year_month ? `Through ${line.end_year_month}` : ""}
@@ -182,46 +184,48 @@ function MonthlyLineCardMobile({
         </div>
       </div>
       <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
-        <div className="rounded-lg bg-zinc-50 px-2 py-1.5">
-          <dt className="text-zinc-500">Planned</dt>
-          <dd className="font-medium text-zinc-900">
+        <div className="rounded-lg bg-zinc-50 px-2 py-1.5 dark:bg-slate-800/80">
+          <dt className="text-zinc-500 dark:text-slate-400">Planned</dt>
+          <dd className="font-medium text-zinc-900 dark:text-slate-50">
             {formatCurrency(base, currency)}
             {isSetupInvestment && (
-              <span className="mt-0.5 block text-[11px] font-normal text-teal-800">
+              <span className="mt-0.5 block text-[11px] font-normal text-teal-800 dark:text-teal-200">
                 From setup
               </span>
             )}
             {overridesThisMonth[line.id] !== undefined && (
-              <span className="mt-0.5 block text-[11px] font-normal text-teal-800">
+              <span className="mt-0.5 block text-[11px] font-normal text-teal-800 dark:text-teal-200">
                 This month {formatCurrency(effective, currency)}
               </span>
             )}
           </dd>
         </div>
-        <div className="rounded-lg bg-zinc-50 px-2 py-1.5">
-          <dt className="text-zinc-500">Spent</dt>
+        <div className="rounded-lg bg-zinc-50 px-2 py-1.5 dark:bg-slate-800/80">
+          <dt className="text-zinc-500 dark:text-slate-400">Spent</dt>
           <dd
             className={
-              over ? "font-semibold text-red-700" : "font-medium text-zinc-900"
+              over
+                ? "font-semibold text-red-700 dark:text-red-300"
+                : "font-medium text-zinc-900 dark:text-slate-50"
             }
           >
             {formatCurrency(spent, currency)}
           </dd>
         </div>
-        <div className="col-span-2 rounded-lg bg-zinc-50 px-2 py-1.5">
-          <dt className="text-zinc-500">Remaining</dt>
+        <div className="col-span-2 rounded-lg bg-zinc-50 px-2 py-1.5 dark:bg-slate-800/80">
+          <dt className="text-zinc-500 dark:text-slate-400">Remaining</dt>
           <dd
             className={
               remaining < 0
-                ? "font-semibold text-red-600"
-                : "font-medium text-zinc-900"
+                ? "font-semibold text-red-600 dark:text-red-300"
+                : "font-medium text-zinc-900 dark:text-slate-50"
             }
           >
             {formatCurrency(remaining, currency)}
           </dd>
         </div>
       </dl>
-      <div className="mt-3 border-t border-zinc-100 pt-3">
+      <div className="mt-3 border-t border-zinc-100 pt-3 dark:border-slate-800">
         {isSetupInvestment ? (
           <Link
             href="/setup?tab=investments#add-investment"
@@ -306,16 +310,16 @@ export function BudgetMonthlyCategoriesSection({
       ) : (
         <>
           {/* Desktop table */}
-          <div className="hidden overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-sm md:block">
+          <div className="hidden overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950 md:block">
             <div className="max-h-[min(65vh,42rem)] overflow-x-auto overflow-y-auto">
               <table className="min-w-full text-left text-sm">
-                <thead className="sticky top-0 z-10 border-b border-zinc-200 bg-zinc-50/95 text-[11px] font-semibold uppercase tracking-wide text-zinc-500 shadow-sm backdrop-blur-sm">
+                <thead className="sticky top-0 z-10 border-b border-zinc-200 bg-zinc-50/95 text-[11px] font-semibold uppercase tracking-wide text-zinc-500 shadow-sm backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/95 dark:text-slate-300">
                   <tr>
-                    <th className="bg-zinc-50/95 px-3 py-3">Category</th>
-                    <th className="bg-zinc-50/95 px-3 py-3">Planned</th>
-                    <th className="bg-zinc-50/95 px-3 py-3">Spent</th>
-                    <th className="bg-zinc-50/95 px-3 py-3">Left</th>
-                    <th className="min-w-40 bg-zinc-50/95 px-3 py-3">Details</th>
+                    <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">Category</th>
+                    <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">Planned</th>
+                    <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">Spent</th>
+                    <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">Left</th>
+                    <th className="min-w-40 bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">Details</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -325,11 +329,11 @@ export function BudgetMonthlyCategoriesSection({
                     return [
                       <tr
                         key={`h-${bucket}`}
-                        className="bg-linear-to-r from-zinc-100/90 to-zinc-50/80"
+                        className="bg-linear-to-r from-zinc-100/90 to-zinc-50/80 dark:from-slate-900 dark:to-slate-800/80"
                       >
                         <td
                           colSpan={5}
-                          className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-600"
+                          className="px-3 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-600 dark:text-slate-300"
                         >
                           {BUCKET_LABEL[bucket]}
                         </td>
@@ -354,7 +358,7 @@ export function BudgetMonthlyCategoriesSection({
               if (lines.length === 0) return null;
               return (
                 <div key={bucket} className="space-y-2">
-                  <h4 className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                  <h4 className="text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-slate-400">
                     {BUCKET_LABEL[bucket]}
                   </h4>
                   <ul className="space-y-3">
@@ -372,14 +376,14 @@ export function BudgetMonthlyCategoriesSection({
         </>
       )}
 
-      <p className="text-xs text-zinc-500">
+      <p className="text-xs text-zinc-500 dark:text-slate-400">
         Monthly planned total:{" "}
-        <span className="font-medium text-zinc-800">
+        <span className="font-medium text-zinc-800 dark:text-slate-200">
           {formatCurrency(monthly.totals.budget, currency)}
         </span>
         {" · "}
         Spent (budgeted categories):{" "}
-        <span className="font-medium text-zinc-800">
+        <span className="font-medium text-zinc-800 dark:text-slate-200">
           {formatCurrency(monthly.totals.spent, currency)}
         </span>
         {" · "}

@@ -156,7 +156,7 @@ export function BudgetLensProfileForm(props: Props) {
   return (
     <form
       onSubmit={(ev) => void onSaveLens(ev)}
-      className="space-y-4 rounded-xl border border-zinc-200 bg-white p-4 sm:p-5"
+      className="space-y-4 rounded-xl border border-zinc-200 bg-white p-4 dark:border-slate-700/80 dark:bg-slate-900 sm:p-5"
       {...(pending ? { inert: true } : {})}
     >
       <BlockingSubmitOverlay
@@ -164,15 +164,19 @@ export function BudgetLensProfileForm(props: Props) {
         message="Updating budget lens…"
       />
       <div>
-        <h3 className="text-sm font-semibold text-zinc-900">Budget lens</h3>
-        <p className="mt-1 text-xs text-zinc-600">
+        <h3 className="text-sm font-semibold text-zinc-900 dark:text-slate-50">
+          Budget lens
+        </h3>
+        <p className="mt-1 text-xs text-zinc-600 dark:text-slate-300">
           Lifestyle, food spend, and money style tune a recommended monthly
           category mix. Save lens to update targets; apply when you want new
           budget lines from those settings.
         </p>
       </div>
       <label className="block max-w-md space-y-1 text-sm">
-        <span className="text-zinc-600">Lifestyle template</span>
+        <span className="text-zinc-600 dark:text-slate-200">
+          Lifestyle template
+        </span>
         <select
           className={fpSelectClass}
           value={lifestyle}
@@ -186,7 +190,9 @@ export function BudgetLensProfileForm(props: Props) {
         </select>
       </label>
       <label className="block max-w-md space-y-1 text-sm">
-        <span className="text-zinc-600">Typical food spend (monthly)</span>
+        <span className="text-zinc-600 dark:text-slate-200">
+          Typical food spend (monthly)
+        </span>
         <select
           className={fpSelectClass}
           value={foodBand}
@@ -200,7 +206,9 @@ export function BudgetLensProfileForm(props: Props) {
         </select>
       </label>
       <label className="block max-w-md space-y-1 text-sm">
-        <span className="text-zinc-600">Money management style</span>
+        <span className="text-zinc-600 dark:text-slate-200">
+          Money management style
+        </span>
         <select
           className={fpSelectClass}
           value={strategy}
@@ -214,7 +222,9 @@ export function BudgetLensProfileForm(props: Props) {
         </select>
       </label>
       <label className="block max-w-md space-y-1 text-sm">
-        <span className="text-zinc-600">Onboarding precision</span>
+        <span className="text-zinc-600 dark:text-slate-200">
+          Onboarding precision
+        </span>
         <select
           className={fpSelectClass}
           value={confidence}
@@ -228,24 +238,26 @@ export function BudgetLensProfileForm(props: Props) {
         </select>
       </label>
       <div>
-        <p className="text-sm font-medium text-zinc-800">
+        <p className="text-sm font-medium text-zinc-800 dark:text-slate-100">
           Recommended monthly plan
         </p>
         {incomeNum <= 0 ? (
-          <p className="mt-2 text-sm text-amber-800">
+          <p className="mt-2 text-sm text-amber-800 dark:text-amber-100">
             Set a positive monthly take-home in{" "}
             <span className="font-medium">Income &amp; retirement</span> above to
             preview and apply amounts.
           </p>
         ) : (
-          <ul className="mt-2 divide-y divide-zinc-100 rounded-xl border border-zinc-100">
+          <ul className="mt-2 divide-y divide-zinc-100 rounded-xl border border-zinc-100 dark:divide-slate-700/80 dark:border-slate-700/80">
             {previewLines.map((l) => (
               <li
                 key={l.category}
                 className="flex items-center justify-between px-3 py-2 text-sm"
               >
-                <span className="capitalize text-zinc-800">{l.category}</span>
-                <span className="tabular-nums text-zinc-700">
+                <span className="capitalize text-zinc-800 dark:text-slate-100">
+                  {l.category}
+                </span>
+                <span className="tabular-nums text-zinc-700 dark:text-slate-200">
                   {formatCurrency(l.amount, props.currency)}
                 </span>
               </li>
@@ -254,7 +266,7 @@ export function BudgetLensProfileForm(props: Props) {
         )}
       </div>
       {needsReplaceConfirm && (
-        <label className="flex items-start gap-2 text-sm text-zinc-700">
+        <label className="flex items-start gap-2 text-sm text-zinc-700 dark:text-slate-200">
           <input
             type="checkbox"
             className="mt-1"
@@ -280,7 +292,7 @@ export function BudgetLensProfileForm(props: Props) {
           <button
             type="button"
             disabled={!canApply}
-            className="rounded-full border border-zinc-200 px-5 py-2.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-full border border-zinc-200 px-5 py-2.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-slate-600 dark:text-slate-100 dark:hover:bg-slate-800"
             onClick={() => void onApplyRecommended()}
           >
             {pending ? "Applying…" : "Apply recommended budget"}
@@ -291,15 +303,15 @@ export function BudgetLensProfileForm(props: Props) {
             className={
               lensStatus?.startsWith("Saved") ||
               applyStatus?.startsWith("Recommended")
-                ? "text-sm text-emerald-800"
-                : "text-sm text-red-700"
+                ? "text-sm text-emerald-800 dark:text-emerald-100"
+                : "text-sm text-red-700 dark:text-red-200"
             }
           >
             {applyStatus ?? lensStatus}
           </p>
         )}
         {applyStatus?.startsWith("Recommended") && (
-          <p className="text-xs text-zinc-600">
+          <p className="text-xs text-zinc-600 dark:text-slate-300">
             <Link href="/budget" className={appInlineLinkClass}>
               Open Budget
             </Link>{" "}

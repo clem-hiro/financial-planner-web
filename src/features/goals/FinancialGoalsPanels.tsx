@@ -117,8 +117,8 @@ export async function FinancialGoalsPanels({
         currencyCode={currency}
       />
 
-      <div className="rounded-xl border border-zinc-200/90 bg-zinc-50/50 px-4 py-3 sm:px-5">
-        <p className="text-sm text-zinc-600">
+      <div className="rounded-xl border border-zinc-200/90 bg-zinc-50/50 px-4 py-3 dark:border-slate-700/80 dark:bg-slate-900 sm:px-5">
+        <p className="text-sm text-zinc-600 dark:text-slate-300">
           Savings targets with their own balances and monthly plans. Time-to-goal
           uses these numbers (not your investment account balances). Other balances
           live in this page&apos;s{" "}
@@ -144,7 +144,7 @@ export async function FinancialGoalsPanels({
             </Link>{" "}
             in the Wealth workspace.
         </p>
-        <p className="mt-2 flex flex-wrap gap-x-3 text-xs text-zinc-600">
+        <p className="mt-2 flex flex-wrap gap-x-3 text-xs text-zinc-600 dark:text-slate-300">
           <MethodologyOpenLink topicId="goals-eta" className={appInlineLinkClass}>
             How goal progress & timing work →
           </MethodologyOpenLink>
@@ -172,7 +172,7 @@ export async function FinancialGoalsPanels({
       <PageSection
         title="Your goals"
         description={
-          <span className="text-xs text-zinc-600">
+          <span className="text-xs text-zinc-600 dark:text-slate-300">
             Higher priority goals are funded first in the trade-off view above.
             Use ↑ / ↓ to reorder.{" "}
             <MethodologyOpenLink topicId="goals-eta" className={appInlineLinkClass}>
@@ -182,7 +182,7 @@ export async function FinancialGoalsPanels({
         }
       >
         {rows.length === 0 ? (
-          <p className="mt-2 text-sm text-zinc-500">
+          <p className="mt-2 text-sm text-zinc-500 dark:text-slate-400">
             Add a goal with how much you&apos;ve already saved and what you add
             each month.
           </p>
@@ -201,11 +201,11 @@ export async function FinancialGoalsPanels({
               }) => (
               <li
                 key={g.id}
-                className="border-b border-zinc-100 pb-4 last:border-0 last:pb-0"
+                className="border-b border-zinc-100 pb-4 last:border-0 last:pb-0 dark:border-slate-700/80"
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">
-                  <p className="font-medium text-zinc-900">
-                    <span className="mr-2 text-xs font-normal text-zinc-500">
+                  <p className="font-medium text-zinc-900 dark:text-slate-50">
+                    <span className="mr-2 text-xs font-normal text-zinc-500 dark:text-slate-400">
                       Priority {priorityRank}
                     </span>
                     {g.title}
@@ -216,18 +216,18 @@ export async function FinancialGoalsPanels({
                     canMoveDown={canMoveDown}
                   />
                 </div>
-                <p className="text-sm text-zinc-600">
+                <p className="text-sm text-zinc-600 dark:text-slate-300">
                   {formatCurrency(num(g.current_amount), currency)} of{" "}
                   {formatCurrency(num(g.target_amount), currency)}
                   {g.target_date ? ` by ${g.target_date}` : ""}
                 </p>
-                <div className="mt-2 h-2 w-full max-w-md overflow-hidden rounded-full bg-zinc-100">
+                <div className="mt-2 h-2 w-full max-w-md overflow-hidden rounded-full bg-zinc-100 dark:bg-slate-800">
                   <div
-                    className="h-full rounded-full bg-zinc-800 transition-[width]"
+                    className="h-full rounded-full bg-zinc-800 transition-[width] dark:bg-emerald-300"
                     style={{ width: `${Math.round(progress * 100)}%` }}
                   />
                 </div>
-                <p className="mt-1 text-xs text-zinc-500">
+                <p className="mt-1 text-xs text-zinc-500 dark:text-slate-400">
                   {formatPercent(progress)} complete ·{" "}
                   {formatCurrency(remaining, currency)} remaining
                 </p>
@@ -236,7 +236,7 @@ export async function FinancialGoalsPanels({
                   targetDateYmd={g.target_date}
                   currency={currency}
                 />
-                <p className="mt-1 text-sm text-zinc-700">
+                <p className="mt-1 text-sm text-zinc-700 dark:text-slate-300">
                   {estimate.kind === "met" && (
                     <span>
                       Already at or above target (under current assumptions).
@@ -249,14 +249,14 @@ export async function FinancialGoalsPanels({
                     </span>
                   )}
                   {estimate.kind === "unreachable" && (
-                    <span className="text-amber-800">
+                    <span className="text-amber-800 dark:text-amber-200">
                       Not reachable within 150 years at current saved balance,
                       monthly addition, and return assumptions.
                     </span>
                   )}
                 </p>
                 <details className="mt-2">
-                  <summary className="cursor-pointer text-xs font-medium text-zinc-600 hover:text-zinc-900">
+                  <summary className="cursor-pointer text-xs font-medium text-zinc-600 hover:text-zinc-900 dark:text-slate-300 dark:hover:text-slate-50">
                     Edit goal
                   </summary>
                   <GoalEditForm goal={g} investments={investmentOptions} />

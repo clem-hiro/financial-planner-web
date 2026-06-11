@@ -29,7 +29,7 @@ export function SetupTabsNav({
   return (
     <nav
       aria-label="Setup sections"
-      className="sticky top-14 z-20 -mx-4 bg-white/90 px-4 py-1.5 backdrop-blur-md sm:top-22 sm:mx-0 sm:bg-transparent sm:px-0 sm:py-2"
+      className="sticky top-14 z-20 -mx-4 bg-white/90 px-4 py-1.5 backdrop-blur-md dark:bg-slate-950/90 sm:top-22 sm:mx-0 sm:bg-transparent sm:px-0 sm:py-2 sm:dark:bg-transparent"
     >
       <div className="scrollbar-hide -mx-1 overflow-x-auto scroll-smooth px-1 pb-0.5 sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
         <div
@@ -42,7 +42,7 @@ export function SetupTabsNav({
               className={`${appTabPillClass} max-sm:min-h-9 max-sm:px-3.5 max-sm:py-1.5 max-sm:text-[13px] ${
                 activeTab === "overview"
                   ? appTabPillActiveClass
-                  : `${appTabPillInactiveClass} max-sm:bg-slate-100/80 max-sm:text-slate-500 max-sm:hover:bg-slate-100 max-sm:hover:text-slate-700`
+                  : `${appTabPillInactiveClass} max-sm:bg-slate-100/80 max-sm:text-slate-500 max-sm:hover:bg-slate-100 max-sm:hover:text-slate-700 max-sm:dark:bg-slate-900 max-sm:dark:text-slate-300 max-sm:dark:hover:bg-slate-800 max-sm:dark:hover:text-slate-100`
               }`}
               style={activeTab === "overview" ? appActiveGradientStyle : undefined}
             >
@@ -62,7 +62,7 @@ export function SetupTabsNav({
                 className={`${appTabPillClass} inline-flex items-center gap-1.5 max-sm:min-h-9 max-sm:px-3.5 max-sm:py-1.5 max-sm:text-[13px] ${
                   isActive
                     ? appTabPillActiveClass
-                    : `${appTabPillInactiveClass} max-sm:bg-slate-100/80 max-sm:text-slate-500 max-sm:hover:bg-slate-100 max-sm:hover:text-slate-700`
+                    : `${appTabPillInactiveClass} max-sm:bg-slate-100/80 max-sm:text-slate-500 max-sm:hover:bg-slate-100 max-sm:hover:text-slate-700 max-sm:dark:bg-slate-900 max-sm:dark:text-slate-300 max-sm:dark:hover:bg-slate-800 max-sm:dark:hover:text-slate-100`
                 }`}
                 style={isActive ? appActiveGradientStyle : undefined}
               >

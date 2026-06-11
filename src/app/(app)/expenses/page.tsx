@@ -47,7 +47,7 @@ type PageProps = {
 export default async function ExpensesPage({ searchParams }: PageProps) {
   if (!isSupabaseConfigured()) {
     return (
-      <p className="text-sm text-zinc-600">
+      <p className="text-sm text-zinc-600 dark:text-slate-300">
         Configure Supabase environment variables to use expenses.
       </p>
     );
@@ -146,23 +146,23 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
     <div className="space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-zinc-900">Expenses</h1>
+          <h1 className="text-2xl font-semibold text-zinc-900 dark:text-slate-50">Expenses</h1>
           {categoryPrefill ? (
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 text-sm text-zinc-500 dark:text-slate-400">
               Category{" "}
-              <span className="font-medium text-zinc-800">
+              <span className="font-medium text-zinc-800 dark:text-slate-200">
                 {categoryPrefill}
               </span>
             </p>
           ) : null}
-          <p className="mt-1 max-w-xl text-xs text-zinc-500">
+          <p className="mt-1 max-w-xl text-xs text-zinc-500 dark:text-slate-400">
             Custom categories first (any name, multiple entries). Budget
             shortcuts below are optional for planned lines.
           </p>
-          <p className="mt-2 text-xs text-zinc-500">
+          <p className="mt-2 text-xs text-zinc-500 dark:text-slate-400">
             <MethodologyOpenLink
               topicId="expenses-month"
-              className="text-zinc-500 underline decoration-zinc-300/90 underline-offset-2 transition-colors hover:text-zinc-700"
+              className="text-zinc-500 underline decoration-zinc-300/90 underline-offset-2 transition-colors hover:text-zinc-700 dark:text-slate-400 dark:decoration-slate-600 dark:hover:text-slate-200"
             >
               How this month view works
             </MethodologyOpenLink>
@@ -170,14 +170,14 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
         </div>
         <div className="flex flex-wrap items-center gap-3 text-sm">
           <Link
-            className="text-zinc-600 hover:text-zinc-900"
+            className="text-zinc-600 hover:text-zinc-900 dark:text-slate-300 dark:hover:text-slate-50"
             href={`/expenses?month=${prevMonth}${catQs}`}
           >
             Previous month
           </Link>
           <ExpenseMonthJump category={categoryPrefill} month={month} />
           <Link
-            className="text-zinc-600 hover:text-zinc-900"
+            className="text-zinc-600 hover:text-zinc-900 dark:text-slate-300 dark:hover:text-slate-50"
             href={`/expenses?month=${nextMonth}${catQs}`}
           >
             Next month
@@ -186,7 +186,7 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
       </div>
 
       <div className="space-y-4">
-        <p className="text-sm text-zinc-600">
+        <p className="text-sm text-zinc-600 dark:text-slate-300">
           <Link
             href={planningCashFlowBudgetPath(month, yearFromYearMonth(month))}
             className={appInlineLinkClass}
@@ -241,11 +241,11 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
 
       <PageSection id="expenses-form" title="Add expense" className="scroll-mt-4">
       {categoryPrefillBlocked ? (
-        <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-700">
-          <p className="font-medium text-zinc-900">
+        <div className="rounded-lg border border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-700 dark:border-slate-700/80 dark:bg-slate-900 dark:text-slate-300">
+          <p className="font-medium text-zinc-900 dark:text-slate-50">
             This category is already logged for {month}
           </p>
-          <p className="mt-1 text-xs text-zinc-600">
+          <p className="mt-1 text-xs text-zinc-600 dark:text-slate-300">
             Use <strong>Edit</strong> in the budget list below, or add a{" "}
             <strong>custom</strong> expense with a different category name.
           </p>
@@ -272,7 +272,7 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
           className="scroll-mt-4 space-y-3"
           title={`From your monthly budget (${month})`}
           description={
-            <span className="text-xs text-zinc-600">
+            <span className="text-xs text-zinc-600 dark:text-slate-300">
               One end-of-month entry per budget category (monthly spend type).
               After you log actuals, use Edit or Delete here; add again only after
               deleting. For anything else, use <strong>Custom expenses</strong>{" "}
@@ -300,16 +300,16 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
               return (
                 <li
                   key={s.lineId}
-                  className="rounded-md border border-zinc-100 bg-zinc-50/50 px-3 py-2"
+                  className="rounded-md border border-zinc-100 bg-zinc-50/50 px-3 py-2 dark:border-slate-700/80 dark:bg-slate-900"
                 >
                   <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <span className="font-medium capitalize text-zinc-900">
+                    <span className="font-medium capitalize text-zinc-900 dark:text-slate-50">
                       {s.category}
                     </span>
-                    <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500">
+                    <div className="flex flex-wrap items-center gap-2 text-xs text-zinc-500 dark:text-slate-400">
                       <span>
                         Planned{" "}
-                        <span className="font-medium text-zinc-700">
+                        <span className="font-medium text-zinc-700 dark:text-slate-200">
                           {formatCurrency(s.planned, currency)}
                         </span>
                       </span>
@@ -320,20 +320,20 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
                             <span
                               className={
                                 categoryOver
-                                  ? "font-medium text-red-700"
-                                  : "font-medium text-zinc-700"
+                                  ? "font-medium text-red-700 dark:text-red-200"
+                                  : "font-medium text-zinc-700 dark:text-slate-200"
                               }
                             >
                               {formatCurrency(actualTotal, currency)}
                             </span>
                           </span>
                           {categoryOver ? (
-                            <span className="font-medium text-red-700">
+                            <span className="font-medium text-red-700 dark:text-red-200">
                               Over by{" "}
                               {formatCurrency(categoryOverBy, currency)}
                             </span>
                           ) : (
-                            <span className="text-zinc-600">
+                            <span className="text-zinc-600 dark:text-slate-300">
                               Remaining{" "}
                               {formatCurrency(categoryRemaining, currency)}
                             </span>
@@ -363,8 +363,8 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
                       <p
                         className={
                           categoryOver
-                            ? "text-xs font-medium text-red-800"
-                            : "text-xs font-medium text-emerald-800"
+                            ? "text-xs font-medium text-red-800 dark:text-red-200"
+                            : "text-xs font-medium text-emerald-800 dark:text-emerald-200"
                         }
                       >
                         {categoryOver
@@ -395,7 +395,7 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
         className="scroll-mt-4"
         title="This month"
         description={
-          <span className="text-xs text-zinc-600">
+          <span className="text-xs text-zinc-600 dark:text-slate-300">
             Edit or delete any row. Budget categories allow at most one monthly
             entry per month.{" "}
             <MethodologyOpenLink topicId="expenses-month" className={appInlineLinkClass}>
@@ -405,15 +405,15 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
         }
       >
         {expenses.length === 0 ? (
-          <p className="mt-2 text-sm text-zinc-500">No rows yet.</p>
+          <p className="mt-2 text-sm text-zinc-500 dark:text-slate-400">No rows yet.</p>
         ) : (
-          <div className="mt-3 overflow-hidden rounded-md border border-zinc-200">
-            <div className="sticky top-0 z-10 border-b border-zinc-200 bg-zinc-50 px-3 py-2 text-xs font-medium text-zinc-700">
+          <div className="mt-3 overflow-hidden rounded-md border border-zinc-200 dark:border-slate-700/80">
+            <div className="sticky top-0 z-10 border-b border-zinc-200 bg-zinc-50 px-3 py-2 text-xs font-medium text-zinc-700 dark:border-slate-700/80 dark:bg-slate-900 dark:text-slate-200">
               {expenses.length}{" "}
               {expenses.length === 1 ? "entry" : "entries"}
             </div>
             <div className="max-h-[min(60vh,36rem)] overflow-y-auto px-2 py-2">
-              <ul className="space-y-2 divide-y divide-zinc-100">
+              <ul className="space-y-2 divide-y divide-zinc-100 dark:divide-slate-700/80">
                 {expenses.map((e) => (
                   <li key={e.id} className="pt-2 first:pt-0">
                     <ExpenseEditRow expense={e} currency={currency} />
@@ -445,9 +445,9 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
         className="scroll-mt-4"
         title="By category"
         actions={
-          <p className="text-sm text-zinc-600">
+          <p className="text-sm text-zinc-600 dark:text-slate-300">
             Total:{" "}
-            <span className="font-medium text-zinc-900">
+            <span className="font-medium text-zinc-900 dark:text-slate-50">
               {formatCurrency(total, currency)}
             </span>
           </p>
@@ -456,7 +456,7 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
         {chartData.length ? (
           <CategoryBarChart data={chartData} currency={currency} />
         ) : (
-          <p className="text-sm text-zinc-500">No expenses this month yet.</p>
+          <p className="text-sm text-zinc-500 dark:text-slate-400">No expenses this month yet.</p>
         )}
       </PageSection>
     </div>

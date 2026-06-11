@@ -297,21 +297,23 @@ export function ProfileIncomeForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="overflow-hidden rounded-2xl border border-slate-200/90 bg-linear-to-br from-white via-white to-sky-50/30 shadow-sm divide-y divide-slate-200"
+      className="overflow-hidden rounded-2xl border border-slate-200/90 bg-linear-to-br from-white via-white to-sky-50/30 shadow-sm divide-y divide-slate-200 dark:border-slate-700/80 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 dark:shadow-none dark:divide-slate-700/80"
       {...(isBusy ? { inert: true } : {})}
     >
       <BlockingSubmitOverlay active={isBusy} message="Saving profile…" />
       <section id="salary" className="space-y-4 p-5">
         <div className="space-y-1">
-          <p className="text-sm font-semibold text-slate-900">Income & CPF</p>
-          <p className="text-xs text-slate-500">
+          <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">
+            Income & CPF
+          </p>
+          <p className="text-xs text-slate-500 dark:text-slate-300">
             Keep this up to date so your monthly plan and projections stay realistic.
           </p>
         </div>
         {isSalaryReviewMode ? (
-          <div className={`${appCardClass} border-emerald-200/80 bg-emerald-50/70 p-4 text-sm text-emerald-900`}>
+          <div className={`${appCardClass} border-emerald-200/80 bg-emerald-50/70 p-4 text-sm text-emerald-900 dark:border-emerald-400/50 dark:bg-emerald-400/12 dark:text-emerald-50`}>
             <p className="font-semibold">Reviewing for {currentYear}</p>
-            <p className="mt-1 text-emerald-900/85">
+            <p className="mt-1 text-emerald-900/85 dark:text-emerald-100">
               Update your salary if it changed, otherwise confirm unchanged.
               Either action clears the reminder.
             </p>
@@ -319,10 +321,10 @@ export function ProfileIncomeForm({
         ) : null}
         {showOnboardingIncomeBanner ? (
           <div
-            className={`${appCardClass} border-sky-200/80 bg-sky-50/70 p-4 text-sm text-sky-950`}
+            className={`${appCardClass} border-sky-200/80 bg-sky-50/70 p-4 text-sm text-sky-950 dark:border-sky-400/50 dark:bg-sky-400/12 dark:text-sky-50`}
           >
             <p className="font-semibold">Synced from onboarding</p>
-            <p className="mt-1 text-sky-950/85">
+            <p className="mt-1 text-sky-950/85 dark:text-sky-100">
               {initialGross != null && initialGross > 0 ? (
                 <>
                   Gross salary from onboarding:{" "}
@@ -360,7 +362,7 @@ export function ProfileIncomeForm({
         <div className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <label className="text-sm sm:min-w-0">
-                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700 dark:text-slate-200">
                   Monthly gross salary ({currencyCode})
                   <InfoTooltip ariaLabel="When to use gross salary">
                     <p className="text-[11px] leading-snug">
@@ -383,7 +385,7 @@ export function ProfileIncomeForm({
                 />
               </label>
               <label className="text-sm sm:min-w-0">
-                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700 dark:text-slate-200">
                   Annual bonus ({currencyCode}, optional)
                   <InfoTooltip ariaLabel="How bonus is used in the app">
                     <p className="text-[11px] leading-snug">
@@ -412,33 +414,42 @@ export function ProfileIncomeForm({
               annualBonusRaw.trim() !== "" &&
               Number.isFinite(Number(annualBonusRaw.trim())) &&
               Number(annualBonusRaw.trim()) > 0 && (
-              <div className="rounded-lg border border-sky-200/80 bg-sky-50/50 px-3 py-2.5 text-xs leading-relaxed text-slate-700">
-                <p className="font-medium text-slate-800">Estimated take-home</p>
+              <div className="rounded-lg border border-sky-200/80 bg-sky-50/50 px-3 py-2.5 text-xs leading-relaxed text-slate-700 dark:border-sky-400/40 dark:bg-sky-400/10 dark:text-slate-200">
+                <p className="font-medium text-slate-800 dark:text-slate-50">
+                  Estimated take-home
+                </p>
                 <p className="mt-1">
-                  <span className="text-slate-500">Salary (monthly): </span>
-                  <span className="font-mono tabular-nums font-semibold text-slate-900">
+                  <span className="text-slate-500 dark:text-slate-400">
+                    Salary (monthly):{" "}
+                  </span>
+                  <span className="font-mono tabular-nums font-semibold text-slate-900 dark:text-slate-50">
                     {currencyCode}{" "}
                     {breakdown.takeHomeFromSalaryMonthly.toLocaleString("en-SG", {
                       maximumFractionDigits: 2,
                     })}
                   </span>
-                  <span className="text-slate-500"> — used for your monthly budget.</span>
+                  <span className="text-slate-500 dark:text-slate-400">
+                    {" "}
+                    — used for your monthly budget.
+                  </span>
                 </p>
                 <p className="mt-1">
-                  <span className="text-slate-500">Bonus (once per year, after employee CPF on AW): </span>
-                  <span className="font-mono tabular-nums font-semibold text-slate-900">
+                  <span className="text-slate-500 dark:text-slate-400">
+                    Bonus (once per year, after employee CPF on AW):{" "}
+                  </span>
+                  <span className="font-mono tabular-nums font-semibold text-slate-900 dark:text-slate-50">
                     {currencyCode}{" "}
                     {breakdown.takeHomeFromBonusNetAnnual.toLocaleString("en-SG", {
                       maximumFractionDigits: 2,
                     })}
                   </span>
-                  <span className="text-slate-500">
+                  <span className="text-slate-500 dark:text-slate-400">
                     {" "}
                     — added to projected cash (not spread into monthly income).
                   </span>
                 </p>
                 {breakdown.employeeCpfOnAwAnnual > 0 && (
-                  <p className="mt-1 text-slate-500">
+                  <p className="mt-1 text-slate-500 dark:text-slate-400">
                     Employee CPF on bonus (annual): {currencyCode}{" "}
                     {breakdown.employeeCpfOnAwAnnual.toLocaleString("en-SG", {
                       maximumFractionDigits: 2,
@@ -449,7 +460,7 @@ export function ProfileIncomeForm({
               </div>
             )}
         <label className="mb-6 block pt-6 text-sm sm:mb-8 sm:pt-8">
-          <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+          <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700 dark:text-slate-200">
             Birth date
             <InfoTooltip ariaLabel="Why birth date matters">
               <p>
@@ -467,17 +478,17 @@ export function ProfileIncomeForm({
           />
         </label>
 
-        <div className="rounded-xl border border-slate-200 bg-linear-to-r from-slate-50/90 to-sky-50/40 p-3.5">
+        <div className="rounded-xl border border-slate-200 bg-linear-to-r from-slate-50/90 to-sky-50/40 p-3.5 dark:border-slate-600/80 dark:from-slate-800 dark:to-slate-800/70">
           <button
             type="button"
             onClick={() => setShowCpfSalaryPath((prev) => !prev)}
-            className="flex w-fit items-center gap-1.5 rounded-lg px-1 py-1 text-left text-sm font-medium text-slate-700 hover:text-slate-900"
+            className="flex w-fit items-center gap-1.5 rounded-lg px-1 py-1 text-left text-sm font-medium text-slate-700 hover:text-slate-900 dark:text-slate-100 dark:hover:text-white"
             aria-expanded={showCpfSalaryPath}
             aria-controls="income-cpf-projection"
           >
             <span>CPF chart: salary path (optional)</span>
             <span
-              className={`inline-flex text-slate-400 transition-transform ${
+              className={`inline-flex text-slate-400 transition-transform dark:text-slate-300 ${
                 showCpfSalaryPath ? "rotate-180" : "rotate-0"
               }`}
               aria-hidden="true"
@@ -498,14 +509,14 @@ export function ProfileIncomeForm({
               </svg>
             </span>
           </button>
-          <p className="mt-1 px-1 text-xs text-slate-500">
+          <p className="mt-1 px-1 text-xs text-slate-500 dark:text-slate-300">
             Only affects projected CPF inflows when gross salary is set—not net worth
             today.
           </p>
           {showCpfSalaryPath && (
             <div id="income-cpf-projection" className="mt-3 max-w-md">
               <label className="text-sm sm:min-w-0">
-                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700 dark:text-slate-200">
                   Annual salary growth (nominal %)
                   <InfoTooltip ariaLabel="How salary growth is used">
                     <p>
@@ -542,7 +553,7 @@ export function ProfileIncomeForm({
                 />
               </label>
               <label className="mt-3 block text-sm sm:min-w-0">
-                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700">
+                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700 dark:text-slate-200">
                   Salary increment month (optional)
                   <InfoTooltip ariaLabel="How salary increment month is used">
                     <p>
@@ -574,7 +585,10 @@ export function ProfileIncomeForm({
         </div>
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
           {status && (
-            <span className="text-sm text-slate-600 sm:text-right" role="status">
+            <span
+              className="text-sm text-slate-600 dark:text-slate-300 sm:text-right"
+              role="status"
+            >
               {status}
             </span>
           )}
@@ -583,7 +597,7 @@ export function ProfileIncomeForm({
               type="submit"
               value="salary-confirm"
               disabled={isBusy}
-              className="rounded-full border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 w-full sm:w-auto"
+              className="w-full rounded-full border border-emerald-200 bg-white px-4 py-2 text-sm font-semibold text-emerald-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 dark:border-emerald-400/50 dark:bg-slate-900 dark:text-emerald-100 dark:shadow-none dark:hover:bg-emerald-400/10 sm:w-auto"
             >
               {isBusy ? "Saving..." : "Confirm unchanged"}
             </button>

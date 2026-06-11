@@ -18,14 +18,14 @@ import { formatCurrency } from "@/ui/lib/format";
 export default async function DashboardPage() {
   if (!isSupabaseConfigured()) {
     return (
-      <div className="rounded-2xl border border-amber-200/80 bg-amber-50/95 p-6 text-sm leading-relaxed text-amber-950 shadow-sm sm:p-8">
+      <div className="rounded-2xl border border-amber-200/80 bg-amber-50/95 p-6 text-sm leading-relaxed text-amber-950 shadow-sm dark:border-amber-300/45 dark:bg-amber-950/45 dark:text-amber-100 dark:shadow-none sm:p-8">
         Set{" "}
-        <code className="rounded bg-amber-100 px-1">NEXT_PUBLIC_SUPABASE_URL</code>{" "}
+        <code className="rounded bg-amber-100 px-1 dark:bg-amber-900/70">NEXT_PUBLIC_SUPABASE_URL</code>{" "}
         and{" "}
-        <code className="rounded bg-amber-100 px-1">
+        <code className="rounded bg-amber-100 px-1 dark:bg-amber-900/70">
           NEXT_PUBLIC_SUPABASE_ANON_KEY
         </code>{" "}
-        in <code className="rounded bg-amber-100 px-1">.env.local</code>, run
+        in <code className="rounded bg-amber-100 px-1 dark:bg-amber-900/70">.env.local</code>, run
         migrations, then sign in.
       </div>
     );
@@ -37,7 +37,7 @@ export default async function DashboardPage() {
     return (
       <div className="mx-auto max-w-lg space-y-6">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-800/90">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-800/90 dark:text-emerald-300">
             Secure access
           </p>
           <h1
@@ -46,7 +46,7 @@ export default async function DashboardPage() {
           >
             Dashboard
           </h1>
-          <p className="mt-3 text-base leading-relaxed text-slate-600">
+          <p className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">
             Sign in to review net worth, savings rate, and projections in one
             calm view.
           </p>
@@ -68,9 +68,9 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-10 sm:space-y-12">
-      <header className="space-y-6 border-b border-slate-200/80 pb-8 sm:pb-10">
+      <header className="space-y-6 border-b border-slate-200/80 pb-8 dark:border-slate-800/80 sm:pb-10">
         <div
-          className="rounded-3xl border border-slate-200/80 p-6 text-white sm:p-8"
+          className="rounded-3xl border border-slate-200/80 p-6 text-white dark:border-sky-400/20 sm:p-8"
           style={appBrandHeaderStyle}
         >
           <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
@@ -95,11 +95,11 @@ export default async function DashboardPage() {
           </div>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border border-emerald-200/70 bg-emerald-50/80 p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-800">
+          <div className="rounded-2xl border border-emerald-200/70 bg-emerald-50/80 p-4 dark:border-emerald-300/35 dark:bg-emerald-950/35">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-800 dark:text-emerald-200">
               Safe to Spend
             </p>
-            <p className="mt-1 text-2xl font-semibold tracking-tight text-emerald-950">
+            <p className="mt-1 text-2xl font-semibold tracking-tight text-emerald-950 dark:text-emerald-50">
               {payload.discretionaryAfterGoals != null
                 ? formatCurrency(
                     Math.max(0, payload.discretionaryAfterGoals),
@@ -107,43 +107,43 @@ export default async function DashboardPage() {
                   )
                 : "Set income"}
             </p>
-            <p className="mt-1 text-xs text-emerald-900/90">
+            <p className="mt-1 text-xs text-emerald-900/90 dark:text-emerald-100/85">
               Monthly buffer after spend basis and planned goals.
             </p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700/80 dark:bg-slate-900">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Monthly health
             </p>
-            <p className="mt-1 text-lg font-semibold text-slate-900">
+            <p className="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-50">
               {payload.savingsRate != null ? "On track" : "Needs setup"}
             </p>
-            <p className="mt-1 text-xs text-slate-500">Based on income, spend, and goals.</p>
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Based on income, spend, and goals.</p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700/80 dark:bg-slate-900">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Spending control
             </p>
-            <p className="mt-1 text-lg font-semibold text-slate-900">
+            <p className="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-50">
               {payload.monthlyBudgetAggregate.onTrack ? "Within plan" : "Over plan"}
             </p>
-            <p className="mt-1 text-xs text-slate-500">Top categories and guidance below.</p>
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Top categories and guidance below.</p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+          <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700/80 dark:bg-slate-900">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
               Retirement progress
             </p>
-            <p className="mt-1 text-lg font-semibold text-slate-900">
+            <p className="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-50">
               {payload.ageProjection ? "Projection ready" : "Add birth date"}
             </p>
-            <p className="mt-1 text-xs text-slate-500">Long-term view from your current plan.</p>
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Long-term view from your current plan.</p>
           </div>
         </div>
         <DashboardSubnav />
       </header>
 
       {profileIncomplete ? (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950">
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-300/45 dark:bg-amber-950/45 dark:text-amber-100">
           Complete your financial profile to improve savings rate and projection
           quality.
           <div className="mt-2">

@@ -95,7 +95,7 @@ export function DebtFormFields({
     <div className="space-y-3">
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block text-xs">
-          <span className="mb-1 block font-medium text-slate-600">
+          <span className="mb-1 block font-medium text-slate-600 dark:text-slate-200">
             Debt name
           </span>
           <input
@@ -109,7 +109,7 @@ export function DebtFormFields({
           />
         </label>
         <label className="block text-xs">
-          <span className="mb-1 block font-medium text-slate-600">
+          <span className="mb-1 block font-medium text-slate-600 dark:text-slate-200">
             Outstanding balance ({currencyCode})
           </span>
           <input
@@ -128,7 +128,9 @@ export function DebtFormFields({
       </div>
 
       <label className="block text-xs">
-        <span className="mb-1 block font-medium text-slate-600">Category</span>
+        <span className="mb-1 block font-medium text-slate-600 dark:text-slate-200">
+          Category
+        </span>
         <select
           name="category"
           value={values.category}
@@ -154,21 +156,21 @@ export function DebtFormFields({
       <button
         type="button"
         onClick={onToggleAdvanced}
-        className="text-xs font-medium text-emerald-800 hover:text-emerald-900"
+        className="text-xs font-medium text-emerald-800 hover:text-emerald-900 dark:text-emerald-200 dark:hover:text-emerald-100"
       >
         {showAdvanced ? "Hide loan details" : "Add loan details"}
       </button>
 
       {showAdvanced ? (
-        <div className="space-y-3 rounded-xl border border-slate-200/70 bg-slate-50/40 p-3.5">
-          <p className="text-[11px] text-slate-500">
+        <div className="space-y-3 rounded-xl border border-slate-200/70 bg-slate-50/40 p-3.5 dark:border-slate-700/80 dark:bg-slate-800/70">
+          <p className="text-[11px] text-slate-500 dark:text-slate-300">
             Optional — helps estimate repayments and future cash flow. You can
             override the monthly amount if your actual payment differs.
           </p>
 
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="block text-xs">
-              <span className="mb-1 block font-medium text-slate-600">
+              <span className="mb-1 block font-medium text-slate-600 dark:text-slate-200">
                 Interest rate (% per year)
               </span>
               <input
@@ -190,7 +192,7 @@ export function DebtFormFields({
             </label>
             <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_7rem]">
               <label className="block text-xs">
-                <span className="mb-1 block font-medium text-slate-600">
+                <span className="mb-1 block font-medium text-slate-600 dark:text-slate-200">
                   Remaining tenure (years)
                 </span>
                 <input
@@ -211,7 +213,7 @@ export function DebtFormFields({
                 />
               </label>
               <label className="block text-xs">
-                <span className="mb-1 block font-medium text-slate-600">
+                <span className="mb-1 block font-medium text-slate-600 dark:text-slate-200">
                   Months
                 </span>
                 <input
@@ -238,7 +240,7 @@ export function DebtFormFields({
           </div>
 
           <label className="block text-xs">
-            <span className="mb-1 block font-medium text-slate-600">
+            <span className="mb-1 block font-medium text-slate-600 dark:text-slate-200">
               Repayment style
             </span>
             <select
@@ -255,13 +257,13 @@ export function DebtFormFields({
                 </option>
               ))}
             </select>
-            <span className="mt-1 block text-[11px] text-slate-500">
+            <span className="mt-1 block text-[11px] text-slate-500 dark:text-slate-300">
               {LOAN_TYPE_OPTIONS.find((o) => o.value === loanType)?.hint}
             </span>
           </label>
 
           <label className="block text-xs">
-            <span className="mb-1 block font-medium text-slate-600">
+            <span className="mb-1 block font-medium text-slate-600 dark:text-slate-200">
               Monthly repayment ({currencyCode})
             </span>
             <input
@@ -285,12 +287,12 @@ export function DebtFormFields({
               className={fpInputClass}
             />
             {estimated != null && !values.repaymentOverride ? (
-              <span className="mt-1 block text-[11px] text-slate-500">
+              <span className="mt-1 block text-[11px] text-slate-500 dark:text-slate-300">
                 Estimated: {formatCurrency(estimated, currencyCode)}/month from
                 balance, rate, and tenure
               </span>
             ) : null}
-            <label className="mt-2 flex items-center gap-2 text-[11px] text-slate-600">
+            <label className="mt-2 flex items-center gap-2 text-[11px] text-slate-600 dark:text-slate-300">
               <input
                 type="checkbox"
                 name="repayment_override"
@@ -306,7 +308,7 @@ export function DebtFormFields({
 
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="block text-xs">
-              <span className="mb-1 block font-medium text-slate-600">
+              <span className="mb-1 block font-medium text-slate-600 dark:text-slate-200">
                 Loan start date (optional)
               </span>
               <input
@@ -318,7 +320,7 @@ export function DebtFormFields({
               />
             </label>
             <label className="block text-xs sm:col-span-2">
-              <span className="mb-1 block font-medium text-slate-600">
+              <span className="mb-1 block font-medium text-slate-600 dark:text-slate-200">
                 Notes (optional)
               </span>
               <textarea

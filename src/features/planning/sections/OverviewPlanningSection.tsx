@@ -32,23 +32,23 @@ export async function OverviewPlanningSection() {
   return (
     <div className="space-y-10">
       <div className="grid gap-6 xl:grid-cols-3">
-        <div className="rounded-3xl bg-linear-to-br from-white via-slate-50/60 to-sky-50/30 p-6 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.35)] ring-1 ring-slate-200/60 xl:col-span-2">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500">
+        <div className="rounded-3xl bg-linear-to-br from-white via-slate-50/60 to-sky-50/30 p-6 shadow-[0_20px_60px_-40px_rgba(15,23,42,0.35)] ring-1 ring-slate-200/60 dark:from-slate-950 dark:via-slate-900 dark:to-sky-950/35 dark:ring-slate-700/80 xl:col-span-2">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
             Level 1 · Snapshot
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[#0c192f] sm:text-3xl">
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[#0c192f] dark:text-slate-50 sm:text-3xl">
             Financial overview
           </h2>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-600">
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-600 dark:text-slate-300">
             High-signal metrics for this month. Open detailed workspaces below when you
             are ready to adjust assumptions.
           </p>
           <dl className="mt-6 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl bg-white/80 p-4 ring-1 ring-slate-200/60">
-              <dt className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            <div className="rounded-2xl bg-white/80 p-4 ring-1 ring-slate-200/60 dark:bg-slate-900 dark:ring-slate-700/80">
+              <dt className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Safe to spend
               </dt>
-              <dd className="mt-1 font-mono text-xl font-semibold tabular-nums text-emerald-900">
+              <dd className="mt-1 font-mono text-xl font-semibold tabular-nums text-emerald-900 dark:text-emerald-200">
                 {payload.discretionaryAfterGoals != null
                   ? formatCurrency(
                       Math.max(0, payload.discretionaryAfterGoals),
@@ -57,11 +57,11 @@ export async function OverviewPlanningSection() {
                   : "Set income"}
               </dd>
             </div>
-            <div className="rounded-2xl bg-white/80 p-4 ring-1 ring-slate-200/60">
-              <dt className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
+            <div className="rounded-2xl bg-white/80 p-4 ring-1 ring-slate-200/60 dark:bg-slate-900 dark:ring-slate-700/80">
+              <dt className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
                 Net worth
               </dt>
-              <dd className="mt-1 font-mono text-xl font-semibold tabular-nums text-[#0c192f]">
+              <dd className="mt-1 font-mono text-xl font-semibold tabular-nums text-[#0c192f] dark:text-slate-50">
                 {formatCurrency(payload.netWorth, payload.baseCurrency)}
               </dd>
             </div>
@@ -91,7 +91,7 @@ export async function OverviewPlanningSection() {
       </div>
 
       {profileIncomplete ? (
-        <div className="rounded-2xl bg-amber-50/90 px-4 py-3 text-sm text-amber-950 ring-1 ring-amber-200/80">
+        <div className="rounded-2xl bg-amber-50/90 px-4 py-3 text-sm text-amber-950 ring-1 ring-amber-200/80 dark:bg-amber-950/45 dark:text-amber-100 dark:ring-amber-300/45">
           Complete a few profile fields to sharpen savings rate and projections.{" "}
           <Link href="/setup/overview" className={appInlineLinkClass}>
             Continue setup →
@@ -102,10 +102,10 @@ export async function OverviewPlanningSection() {
       <section className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h3 className="text-lg font-semibold tracking-tight text-[#0c192f]">
+            <h3 className="text-lg font-semibold tracking-tight text-[#0c192f] dark:text-slate-50">
               Position detail
             </h3>
-            <p className="text-sm text-slate-600">
+            <p className="text-sm text-slate-600 dark:text-slate-300">
               Level 2 · Same breakdown as Home, without navigation noise.
             </p>
           </div>
@@ -114,10 +114,10 @@ export async function OverviewPlanningSection() {
       </section>
 
       <section className="space-y-4">
-        <h3 className="text-lg font-semibold tracking-tight text-[#0c192f]">
+        <h3 className="text-lg font-semibold tracking-tight text-[#0c192f] dark:text-slate-50">
           Roadmap visibility
         </h3>
-        <p className="max-w-2xl text-sm text-slate-600">
+        <p className="max-w-2xl text-sm text-slate-600 dark:text-slate-300">
           Upcoming intelligence layers stay visible here so the product direction is
           honest — nothing in this row changes your stored numbers.
         </p>

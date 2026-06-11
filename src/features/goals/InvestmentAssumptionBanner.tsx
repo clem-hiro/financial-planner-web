@@ -9,10 +9,12 @@ export function InvestmentAssumptionBanner({
 }) {
   return (
     <div
-      className={`rounded-xl border border-amber-200/90 bg-amber-50/70 px-3.5 py-3 text-xs leading-relaxed text-amber-950/90 ${className}`.trim()}
+      className={`rounded-xl border border-amber-200/90 bg-amber-50/70 px-3.5 py-3 text-xs leading-relaxed text-amber-950/90 dark:border-amber-300/45 dark:bg-amber-300/12 dark:text-amber-100 ${className}`.trim()}
       role="note"
     >
-      <p className="font-semibold text-amber-950">Assumption-based illustrations</p>
+      <p className="font-semibold text-amber-950 dark:text-amber-50">
+        Assumption-based illustrations
+      </p>
       <p className="mt-1">
         Balances and expected returns you enter drive net worth and retirement charts—they
         are not live portfolio data, performance tracking, or financial advice. Update

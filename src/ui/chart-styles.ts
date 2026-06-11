@@ -16,4 +16,4 @@ export const fpChartTooltipProps = {
 };
 
 export const fpChartAxisTick = { fill: "#64748b", fontSize: 11 };
-export const fpChartGridColor = "#e2e8f0";
+export const fpChartGridColor = "var(--chart-grid, #e2e8f0)";

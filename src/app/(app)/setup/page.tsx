@@ -62,7 +62,7 @@ type PageProps = {
 export default async function SetupPage({ searchParams }: PageProps) {
   if (!isSupabaseConfigured()) {
     return (
-      <p className="text-sm text-zinc-600">
+      <p className="text-sm text-zinc-600 dark:text-slate-300">
         Configure Supabase to edit your setup.
       </p>
     );
@@ -73,7 +73,9 @@ export default async function SetupPage({ searchParams }: PageProps) {
   if (!user) {
     return (
       <div className="space-y-4">
-        <h1 className="text-2xl font-semibold">Setup</h1>
+        <h1 className="text-2xl font-semibold text-[#0c192f] dark:text-slate-50">
+          Setup
+        </h1>
         <Link href="/login" className={`text-sm ${appInlineLinkClass}`}>
           Sign in
         </Link>
@@ -208,28 +210,28 @@ export default async function SetupPage({ searchParams }: PageProps) {
 
   return (
     <div className="flex flex-col gap-5 sm:gap-8">
-      <div className="order-1 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm sm:px-6 sm:py-5">
+      <div className="order-1 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm dark:border-slate-700/80 dark:bg-slate-900 dark:shadow-none sm:px-6 sm:py-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
               Financial setup
             </p>
-            <h1 className="mt-1 text-xl font-semibold tracking-tight text-zinc-900 sm:text-2xl">
+            <h1 className="mt-1 text-xl font-semibold tracking-tight text-zinc-900 dark:text-slate-50 sm:text-2xl">
               Edit {activeTabLabel}
             </h1>
-            <p className="mt-1 text-sm text-zinc-600">
+            <p className="mt-1 text-sm text-zinc-600 dark:text-slate-300">
               This is one setup section. Use Overview to see progress and the
               next recommended step.
             </p>
           </div>
           <Link
             href={SETUP_OVERVIEW_PATH}
-            className="inline-flex shrink-0 items-center text-sm font-semibold text-slate-600 transition hover:text-slate-900"
+            className="inline-flex shrink-0 items-center text-sm font-semibold text-slate-600 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-50"
           >
             Back to overview →
           </Link>
         </div>
-        <p className="mt-3 flex flex-wrap gap-x-3 text-xs text-zinc-600">
+        <p className="mt-3 flex flex-wrap gap-x-3 text-xs text-zinc-600 dark:text-slate-400">
           <MethodologyOpenLink topicId="net-worth" className={appInlineLinkClass}>
             Net worth methodology →
           </MethodologyOpenLink>
@@ -307,7 +309,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
             title="Investments"
             description="New accounts appear below and in dashboard projections."
           >
-            <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
+            <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200 dark:border-slate-700/80 dark:bg-slate-900 dark:divide-slate-700/80">
               <div className="p-4 sm:p-5">
                 <InvestmentForm planningContext={investmentPlanningContext} />
               </div>

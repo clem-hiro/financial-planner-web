@@ -14,8 +14,8 @@ import { appInlineLinkClass } from "@/ui/app-link-styles";
 function CpfProjectionStatusPanel({ payload }: { payload: DashboardPayload }) {
   if (payload.cpfProjectionMissingInputs.length > 0) {
     return (
-      <div className="mt-5 rounded-lg border border-amber-300/70 bg-amber-50/80 p-3 text-xs text-amber-950">
-        <h3 className="text-sm font-semibold text-amber-950">
+      <div className="mt-5 rounded-lg border border-amber-300/70 bg-amber-50/80 p-3 text-xs text-amber-950 dark:border-amber-300/45 dark:bg-amber-950/45 dark:text-amber-100">
+        <h3 className="text-sm font-semibold text-amber-950 dark:text-amber-50">
           Complete CPF projection inputs
         </h3>
         <p className="mt-1 leading-relaxed">
@@ -46,39 +46,39 @@ function CpfProjectionStatusPanel({ payload }: { payload: DashboardPayload }) {
       ? `Projection starts from ${p.startYearMonth} and runs to ${p.targetYearMonth}.`
       : `No future month is added before ${p.targetYearMonth}.`;
   return (
-    <div className="mt-5 rounded-lg border border-indigo-200/70 bg-indigo-50/60 p-3 text-xs text-indigo-950">
+    <div className="mt-5 rounded-lg border border-indigo-200/70 bg-indigo-50/60 p-3 text-xs text-indigo-950 dark:border-indigo-300/35 dark:bg-indigo-950/35 dark:text-indigo-100">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-indigo-950">
+          <h3 className="text-sm font-semibold text-indigo-950 dark:text-indigo-50">
             CPF year-end projection
           </h3>
-          <p className="mt-1 leading-relaxed text-indigo-900/90">
+          <p className="mt-1 leading-relaxed text-indigo-900/90 dark:text-indigo-100/85">
             {balanceBasisText} {projectionRangeText}
           </p>
         </div>
-        <p className="text-right text-lg font-bold tabular-nums text-indigo-950">
+        <p className="text-right text-lg font-bold tabular-nums text-indigo-950 dark:text-indigo-50">
           {formatCurrency(p.totalCpf, payload.baseCurrency)}
         </p>
       </div>
       <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 font-mono tabular-nums sm:grid-cols-5">
         <div>
-          <dt className="text-indigo-800/80">OA</dt>
+          <dt className="text-indigo-800/80 dark:text-indigo-200/80">OA</dt>
           <dd className="font-semibold">{formatCurrency(p.oa, payload.baseCurrency)}</dd>
         </div>
         <div>
-          <dt className="text-indigo-800/80">SA</dt>
+          <dt className="text-indigo-800/80 dark:text-indigo-200/80">SA</dt>
           <dd className="font-semibold">{formatCurrency(p.sa, payload.baseCurrency)}</dd>
         </div>
         <div>
-          <dt className="text-indigo-800/80">MA</dt>
+          <dt className="text-indigo-800/80 dark:text-indigo-200/80">MA</dt>
           <dd className="font-semibold">{formatCurrency(p.ma, payload.baseCurrency)}</dd>
         </div>
         <div>
-          <dt className="text-indigo-800/80">RA</dt>
+          <dt className="text-indigo-800/80 dark:text-indigo-200/80">RA</dt>
           <dd className="font-semibold">{formatCurrency(p.ra, payload.baseCurrency)}</dd>
         </div>
         <div>
-          <dt className="text-indigo-800/80">CPFIS</dt>
+          <dt className="text-indigo-800/80 dark:text-indigo-200/80">CPFIS</dt>
           <dd className="font-semibold">
             {formatCurrency(p.cpfis, payload.baseCurrency)}
           </dd>
@@ -112,26 +112,26 @@ export function DashboardRetirementSection({
 
   return (
     <div
-      className={`${appEmeraldPanelClass} max-w-full p-4 text-emerald-950 sm:p-5 md:p-6`}
+      className={`${appEmeraldPanelClass} max-w-full p-4 text-emerald-950 dark:text-emerald-100 sm:p-5 md:p-6`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-base font-semibold text-emerald-950">
+        <h2 className="text-base font-semibold text-emerald-950 dark:text-emerald-50">
           Projected wealth
         </h2>
         <MethodologyOpenLink
           topicId="retirement-fv"
-          className="text-xs font-medium text-teal-900 underline decoration-teal-300/60 underline-offset-2 hover:text-teal-950"
+          className="text-xs font-medium text-teal-900 underline decoration-teal-300/60 underline-offset-2 hover:text-teal-950 dark:text-teal-200 dark:decoration-teal-300/40 dark:hover:text-teal-100"
         >
           Read more
         </MethodologyOpenLink>
       </div>
-      <p className="mt-1 text-[11px] text-emerald-900/80">
+      <p className="mt-1 text-[11px] text-emerald-900/80 dark:text-emerald-100/70">
         Illustrative only.
       </p>
       {payload.ageProjection ? (
         <>
           {payload.investmentSummary.count === 0 && (
-            <p className="mt-2 text-xs text-amber-900">
+            <p className="mt-2 text-xs text-amber-900 dark:text-amber-200">
               You have no investment rows yet — growth is mainly projected cash
               (surplus) minus debts until you add accounts with value and assumptions.
             </p>
@@ -146,9 +146,9 @@ export function DashboardRetirementSection({
           <CpfProjectionStatusPanel payload={payload} />
           {payload.cpfProjectionByAge &&
             payload.cpfProjectionByAge.length > 0 && (
-              <div className="mt-5 rounded-lg border border-indigo-200/60 bg-white/60 p-3">
+              <div className="mt-5 rounded-lg border border-indigo-200/60 bg-white/60 p-3 dark:border-indigo-300/35 dark:bg-slate-950/75">
                 <div className="flex flex-wrap items-center gap-2">
-                  <h3 className="text-sm font-semibold text-indigo-950">
+                  <h3 className="text-sm font-semibold text-indigo-950 dark:text-indigo-50">
                     Projected CPF by age (OA / SA / MA)
                   </h3>
                   {payload.cpfHousingLoanCountInProjection > 0 ? (
@@ -168,12 +168,12 @@ export function DashboardRetirementSection({
                   </InfoTooltip>
                   <MethodologyOpenLink
                     topicId="cpf-projection"
-                    className="text-xs font-medium text-indigo-900 underline decoration-indigo-300/60 underline-offset-2"
+                    className="text-xs font-medium text-indigo-900 underline decoration-indigo-300/60 underline-offset-2 dark:text-indigo-200 dark:decoration-indigo-300/40"
                   >
                     Assumptions →
                   </MethodologyOpenLink>
                 </div>
-                <p className="mt-1 text-xs text-indigo-900/85 sm:hidden">
+                <p className="mt-1 text-xs text-indigo-900/85 dark:text-indigo-100/80 sm:hidden">
                   One line per bucket + total; dashed markers = housing milestones.
                   Housing OA only if saved under{" "}
                   <Link
@@ -184,7 +184,7 @@ export function DashboardRetirementSection({
                   </Link>
                   . Full rules: <strong>Assumptions →</strong>
                 </p>
-                <p className="mt-1 hidden text-xs text-indigo-900/85 sm:block">
+                <p className="mt-1 hidden text-xs text-indigo-900/85 dark:text-indigo-100/80 sm:block">
                   Separate trend lines per account, plus total. Vertical markers
                   show keys / repayment start from your housing loan rows. Uses
                   gross salary, CPF Investments, and{" "}
@@ -200,11 +200,11 @@ export function DashboardRetirementSection({
                 </p>
                 {payload.cpfHousingLoanCountInProjection > 0 ? (
                   <>
-                    <p className="mt-2 text-xs text-indigo-900/90 sm:hidden">
+                    <p className="mt-2 text-xs text-indigo-900/90 dark:text-indigo-100/85 sm:hidden">
                       <strong>OA includes your loan(s):</strong> instalment share
                       + OA lumps in the completion month (see methodology).
                     </p>
-                    <p className="mt-2 hidden text-xs text-indigo-900/90 sm:block">
+                    <p className="mt-2 hidden text-xs text-indigo-900/90 dark:text-indigo-100/85 sm:block">
                       <strong>Yes — OA here reflects your loan(s):</strong> each
                       month the model subtracts your configured share of the
                       amortized instalment from OA (and any OA downpayment / fees
@@ -214,7 +214,7 @@ export function DashboardRetirementSection({
                   </>
                 ) : (
                   <>
-                    <p className="mt-2 text-xs text-indigo-900/90 sm:hidden">
+                    <p className="mt-2 text-xs text-indigo-900/90 dark:text-indigo-100/85 sm:hidden">
                       <strong>No housing loan in this run</strong> — add one under{" "}
                       <Link
                         href="/setup?tab=housing"
@@ -224,7 +224,7 @@ export function DashboardRetirementSection({
                       </Link>{" "}
                       to model OA after instalments.
                     </p>
-                    <p className="mt-2 hidden text-xs text-indigo-900/90 sm:block">
+                    <p className="mt-2 hidden text-xs text-indigo-900/90 dark:text-indigo-100/85 sm:block">
                       <strong>No housing loan in this run</strong> — the OA line
                       does not include mortgage payments yet. Add or enable a loan
                       under{" "}
@@ -263,13 +263,13 @@ export function DashboardRetirementSection({
                 hasCpfBalances={hasCpfBalances}
               />
             )}
-          <div className="mt-3 rounded-md border border-emerald-300/60 bg-white/55 p-4 text-emerald-950 shadow-sm">
-            <div className="flex flex-col gap-3 border-b border-emerald-200/70 pb-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+          <div className="mt-3 rounded-md border border-emerald-300/60 bg-white/55 p-4 text-emerald-950 shadow-sm dark:border-emerald-300/35 dark:bg-slate-950/75 dark:text-emerald-100 dark:shadow-none">
+            <div className="flex flex-col gap-3 border-b border-emerald-200/70 pb-3 dark:border-emerald-300/25 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
               <div className="min-w-0 flex-1">
-                <h3 className="text-sm font-semibold text-emerald-900">
+                <h3 className="text-sm font-semibold text-emerald-900 dark:text-emerald-50">
                   Retirement income (simplified dividend check)
                 </h3>
-                <p className="mt-1 text-xs leading-relaxed wrap-break-word text-emerald-900/85">
+                <p className="mt-1 text-xs leading-relaxed wrap-break-word text-emerald-900/85 dark:text-emerald-100/80">
                   {payload.ageProjection.currentAge >=
                   payload.ageProjection.targetRetirementAge ? (
                     <>
@@ -307,8 +307,8 @@ export function DashboardRetirementSection({
                   )}
                 </p>
                 {payload.ageProjection.cpfBucketsAtTargetRetirement && (
-                  <div className="mt-3 rounded-md border border-indigo-200/70 bg-indigo-50/50 px-3 py-2.5 text-xs text-indigo-950">
-                    <p className="font-semibold text-indigo-950">
+                  <div className="mt-3 rounded-md border border-indigo-200/70 bg-indigo-50/50 px-3 py-2.5 text-xs text-indigo-950 dark:border-indigo-300/35 dark:bg-indigo-950/35 dark:text-indigo-100">
+                    <p className="font-semibold text-indigo-950 dark:text-indigo-50">
                       Projected CPF at age{" "}
                       {payload.ageProjection.cpfBucketsAtTargetRetirement.age}
                       {payload.ageProjection.currentAge >=
@@ -316,28 +316,28 @@ export function DashboardRetirementSection({
                         ? " (you are at or past target — shown for today&apos;s row in the path)"
                         : ""}
                     </p>
-                    <p className="mt-1 text-[11px] leading-relaxed text-indigo-900/90">
+                    <p className="mt-1 text-[11px] leading-relaxed text-indigo-900/90 dark:text-indigo-100/80">
                       Not withdrawal-ready amounts; rules differ by use.{" "}
                       <strong>OA</strong> is usually what you can direct toward
                       housing first (within limits).
                     </p>
                     <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 font-mono text-xs tabular-nums sm:text-[11px]">
-                      <dt className="text-indigo-800/90">OA</dt>
-                      <dd className="text-right font-semibold text-indigo-950">
+                      <dt className="text-indigo-800/90 dark:text-indigo-200/80">OA</dt>
+                      <dd className="text-right font-semibold text-indigo-950 dark:text-indigo-50">
                         {formatCurrency(
                           payload.ageProjection.cpfBucketsAtTargetRetirement.oa,
                           payload.baseCurrency
                         )}
                       </dd>
-                      <dt className="text-indigo-800/90">SA</dt>
-                      <dd className="text-right font-semibold text-indigo-950">
+                      <dt className="text-indigo-800/90 dark:text-indigo-200/80">SA</dt>
+                      <dd className="text-right font-semibold text-indigo-950 dark:text-indigo-50">
                         {formatCurrency(
                           payload.ageProjection.cpfBucketsAtTargetRetirement.sa,
                           payload.baseCurrency
                         )}
                       </dd>
-                      <dt className="text-indigo-800/90">MA</dt>
-                      <dd className="text-right font-semibold text-indigo-950">
+                      <dt className="text-indigo-800/90 dark:text-indigo-200/80">MA</dt>
+                      <dd className="text-right font-semibold text-indigo-950 dark:text-indigo-50">
                         {formatCurrency(
                           payload.ageProjection.cpfBucketsAtTargetRetirement.ma,
                           payload.baseCurrency
@@ -346,8 +346,8 @@ export function DashboardRetirementSection({
                       {payload.ageProjection.cpfBucketsAtTargetRetirement.ra >
                         0.5 && (
                         <>
-                          <dt className="text-indigo-800/90">RA</dt>
-                          <dd className="text-right font-semibold text-indigo-950">
+                          <dt className="text-indigo-800/90 dark:text-indigo-200/80">RA</dt>
+                          <dd className="text-right font-semibold text-indigo-950 dark:text-indigo-50">
                             {formatCurrency(
                               payload.ageProjection.cpfBucketsAtTargetRetirement.ra,
                               payload.baseCurrency
@@ -358,8 +358,8 @@ export function DashboardRetirementSection({
                       {payload.ageProjection.cpfBucketsAtTargetRetirement.cpfis >
                         0.5 && (
                         <>
-                          <dt className="text-indigo-800/90">CPFIS</dt>
-                          <dd className="text-right font-semibold text-indigo-950">
+                          <dt className="text-indigo-800/90 dark:text-indigo-200/80">CPFIS</dt>
+                          <dd className="text-right font-semibold text-indigo-950 dark:text-indigo-50">
                             {formatCurrency(
                               payload.ageProjection.cpfBucketsAtTargetRetirement
                                 .cpfis,
@@ -368,10 +368,10 @@ export function DashboardRetirementSection({
                           </dd>
                         </>
                       )}
-                      <dt className="border-t border-indigo-200/80 pt-1 font-semibold text-indigo-900">
+                      <dt className="border-t border-indigo-200/80 pt-1 font-semibold text-indigo-900 dark:border-indigo-300/25 dark:text-indigo-100">
                         Total
                       </dt>
-                      <dd className="border-t border-indigo-200/80 pt-1 text-right font-semibold text-indigo-950">
+                      <dd className="border-t border-indigo-200/80 pt-1 text-right font-semibold text-indigo-950 dark:border-indigo-300/25 dark:text-indigo-50">
                         {formatCurrency(
                           payload.ageProjection.cpfBucketsAtTargetRetirement
                             .totalCpf,
@@ -390,24 +390,24 @@ export function DashboardRetirementSection({
               </Link>
             </div>
 
-            <div className="mt-4 rounded-lg border border-emerald-200/80 bg-emerald-50/40 px-4 py-3">
-              <p className="text-[11px] font-medium uppercase tracking-wide text-emerald-800/90">
+            <div className="mt-4 rounded-lg border border-emerald-200/80 bg-emerald-50/40 px-4 py-3 dark:border-emerald-300/35 dark:bg-emerald-950/35">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-emerald-800/90 dark:text-emerald-200">
                 Rough monthly income from investments only
               </p>
-              <p className="mt-1 text-2xl font-bold tabular-nums tracking-tight text-emerald-950 sm:text-3xl">
+              <p className="mt-1 text-2xl font-bold tabular-nums tracking-tight text-emerald-950 dark:text-emerald-50 sm:text-3xl">
                 {formatCurrency(
                   payload.ageProjection.spendCheck.dividendPlan
                     .monthlyDividendIncome,
                   payload.baseCurrency
                 )}
-                <span className="text-base font-semibold text-emerald-800">
+                <span className="text-base font-semibold text-emerald-800 dark:text-emerald-200">
                   {" "}
                   / month
                 </span>
               </p>
-              <ul className="mt-3 list-none space-y-2 text-xs leading-relaxed text-emerald-900/90">
+              <ul className="mt-3 list-none space-y-2 text-xs leading-relaxed text-emerald-900/90 dark:text-emerald-100/80">
                 <li>
-                  <span className="font-semibold text-emerald-950">What it is: </span>
+                  <span className="font-semibold text-emerald-950 dark:text-emerald-50">What it is: </span>
                   One illustration—imagine your{" "}
                   <strong>investment accounts</strong> (Setup → Goals tab, optional
                   links to investments) reach
@@ -425,14 +425,14 @@ export function DashboardRetirementSection({
                   per year as cash flow. The big number above is that flow ÷ 12.
                 </li>
                 <li>
-                  <span className="font-semibold text-emerald-950">What it is not: </span>
+                  <span className="font-semibold text-emerald-950 dark:text-emerald-50">What it is not: </span>
                   Not your full retirement budget. This path{" "}
                   <strong>ignores salary</strong> after retirement,{" "}
                   <strong>ignores CPF withdrawals</strong>, rent, and other income—it
                   is only this dividend-style math on listed investments.
                 </li>
                 <li>
-                  <span className="font-semibold text-emerald-950">Cash &amp; yield: </span>
+                  <span className="font-semibold text-emerald-950 dark:text-emerald-50">Cash &amp; yield: </span>
                   Bank <strong>cash</strong> is not earning yield in this line (0%
                   here). The percentage comes from{" "}
                   {profile?.retirement_dividend_yield_annual != null &&
@@ -447,13 +447,13 @@ export function DashboardRetirementSection({
               null &&
             payload.ageProjection.spendCheck.dividendPlan.monthlySpendGoal >
               0 && (
-              <div className="mt-3 space-y-3 rounded-lg border border-emerald-200/70 bg-white/70 p-3 text-sm text-emerald-950">
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-900/90">
+              <div className="mt-3 space-y-3 rounded-lg border border-emerald-200/70 bg-white/70 p-3 text-sm text-emerald-950 dark:border-emerald-300/35 dark:bg-slate-900/75 dark:text-emerald-100">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-900/90 dark:text-emerald-200">
                   Compared to your monthly spend goal
                 </p>
                 <ol className="list-decimal space-y-2 pl-4 text-sm leading-snug">
                   <li>
-                    <span className="text-emerald-900/85">You want about </span>
+                    <span className="text-emerald-900/85 dark:text-emerald-100/80">You want about </span>
                     <span className="font-semibold tabular-nums">
                       {formatCurrency(
                         payload.ageProjection.spendCheck.dividendPlan
@@ -461,8 +461,8 @@ export function DashboardRetirementSection({
                         payload.baseCurrency
                       )}
                     </span>
-                    <span className="text-emerald-900/85"> / month </span>
-                    <span className="text-emerald-900/85">
+                    <span className="text-emerald-900/85 dark:text-emerald-100/80"> / month </span>
+                    <span className="text-emerald-900/85 dark:text-emerald-100/80">
                       in retirement (from your profile).
                     </span>
                     {payload.ageProjection.spendCheck.dividendPlan
@@ -477,7 +477,7 @@ export function DashboardRetirementSection({
                           payload.ageProjection.spendCheck.dividendPlan
                             .monthlySpendGoal
                         ) && (
-                      <span className="text-emerald-900/85">
+                      <span className="text-emerald-900/85 dark:text-emerald-100/80">
                         {" "}
                         That is about{" "}
                         <span className="font-semibold tabular-nums">
@@ -493,7 +493,7 @@ export function DashboardRetirementSection({
                     )}
                   </li>
                   <li>
-                    <span className="text-emerald-900/85">
+                    <span className="text-emerald-900/85 dark:text-emerald-100/80">
                       The dividend-style investments line above covers about{" "}
                     </span>
                     <span className="font-semibold tabular-nums">
@@ -503,11 +503,11 @@ export function DashboardRetirementSection({
                         payload.baseCurrency
                       )}
                     </span>
-                    <span className="text-emerald-900/85"> / month.</span>
+                    <span className="text-emerald-900/85 dark:text-emerald-100/80"> / month.</span>
                   </li>
                   {payload.ageProjection.spendCheck.dividendPlan
                     .dividendsCoverGoal ? (
-                    <li className="text-emerald-900/90">
+                    <li className="text-emerald-900/90 dark:text-emerald-100/85">
                       So in this simplified check, dividends meet or beat the goal.
                       The spend goal is inflated to retirement-year dollars; dividend
                       yields stay nominal and untaxed here—log taxes as expenses if
@@ -515,17 +515,17 @@ export function DashboardRetirementSection({
                     </li>
                   ) : (
                     <li>
-                      <span className="text-emerald-900/85">
+                      <span className="text-emerald-900/85 dark:text-emerald-100/80">
                         The difference is about{" "}
                       </span>
-                      <span className="font-semibold tabular-nums text-amber-950">
+                      <span className="font-semibold tabular-nums text-amber-950 dark:text-amber-200">
                         {formatCurrency(
                           payload.ageProjection.spendCheck.dividendPlan
                             .monthlyCashSupplementNeeded ?? 0,
                           payload.baseCurrency
                         )}
                       </span>
-                      <span className="text-emerald-900/85">
+                      <span className="text-emerald-900/85 dark:text-emerald-100/80">
                         {" "}
                         / month. The app treats that slice as coming from{" "}
                         <strong>cash savings</strong> each month (not from selling
@@ -539,7 +539,7 @@ export function DashboardRetirementSection({
                   .requiredInvestedForDividendGoal != null &&
                   !payload.ageProjection.spendCheck.dividendPlan.dividendsCoverGoal && (
                   <p className="border-t border-emerald-100 pt-2 text-xs text-emerald-900/85">
-                    <span className="font-medium text-emerald-950">Rule-of-thumb: </span>
+                    <span className="font-medium text-emerald-950 dark:text-emerald-50">Rule-of-thumb: </span>
                     To hit your goal from dividends alone at this yield, you&apos;d
                     need roughly{" "}
                     <span className="font-semibold tabular-nums">
@@ -556,8 +556,8 @@ export function DashboardRetirementSection({
                   .dividendsCoverGoal &&
                   payload.ageProjection.spendCheck.dividendPlan
                     .cashRunwayMonthsAtSupplement != null && (
-                    <p className="text-xs leading-relaxed text-emerald-900/90">
-                      <span className="font-medium text-emerald-950">
+                    <p className="text-xs leading-relaxed text-emerald-900/90 dark:text-emerald-100/85">
+                      <span className="font-medium text-emerald-950 dark:text-emerald-50">
                         Cash buffer note:{" "}
                       </span>
                       If today&apos;s cash (
@@ -583,7 +583,7 @@ export function DashboardRetirementSection({
             {(!payload.ageProjection.spendCheck.dividendPlan.monthlySpendGoal ||
               payload.ageProjection.spendCheck.dividendPlan.monthlySpendGoal <=
                 0) && (
-              <p className="mt-3 text-xs text-emerald-900">
+              <p className="mt-3 text-xs text-emerald-900 dark:text-emerald-100/85">
                 Add a <strong>monthly spend in retirement</strong> in{" "}
                 <Link
                   href="/setup?tab=profile#profile-assumptions"
@@ -596,11 +596,11 @@ export function DashboardRetirementSection({
             )}
           </div>
 
-          <details className="mt-3 overflow-x-auto rounded-md border border-emerald-200/80 bg-white/60 p-3 text-emerald-950">
-            <summary className="cursor-pointer text-sm font-medium text-emerald-900 hover:underline">
+          <details className="mt-3 overflow-x-auto rounded-md border border-emerald-200/80 bg-white/60 p-3 text-emerald-950 dark:border-emerald-300/35 dark:bg-slate-950/75 dark:text-emerald-100">
+            <summary className="cursor-pointer text-sm font-medium text-emerald-900 hover:underline dark:text-emerald-100">
               Net worth by age (table)
             </summary>
-            <p className="mt-2 text-xs leading-relaxed text-emerald-900/90">
+            <p className="mt-2 text-xs leading-relaxed text-emerald-900/90 dark:text-emerald-100/80">
               Same numbers as the chart: investments (growing), cash (balances +
               monthly surplus × months + modeled annual bonus take-home to cash when
               applicable + vehicle proceeds when modeled), vehicles, CPF when
@@ -608,8 +608,8 @@ export function DashboardRetirementSection({
             </p>
             <table className="mt-3 min-w-full text-left text-xs">
               <thead>
-                <tr className="border-b border-emerald-200 bg-emerald-100/50">
-                  <th className="sticky left-0 bg-emerald-100/95 px-2 py-2 font-medium">
+                <tr className="border-b border-emerald-200 bg-emerald-100/50 dark:border-emerald-300/25 dark:bg-emerald-950/50">
+                  <th className="sticky left-0 bg-emerald-100/95 px-2 py-2 font-medium dark:bg-emerald-950">
                     <span className="inline-flex items-center gap-1">
                       Age
                       <InfoTooltip
@@ -658,9 +658,9 @@ export function DashboardRetirementSection({
                 {payload.ageProjection.points.map((row) => (
                   <tr
                     key={row.age}
-                    className="border-b border-emerald-100/80 last:border-0"
+                    className="border-b border-emerald-100/80 last:border-0 dark:border-emerald-300/20"
                   >
-                    <td className="sticky left-0 bg-white/90 px-2 py-1.5 font-medium backdrop-blur-sm">
+                    <td className="sticky left-0 bg-white/90 px-2 py-1.5 font-medium backdrop-blur-sm dark:bg-slate-950/95">
                       {row.age}
                     </td>
                     <td className="px-2 py-1.5 text-right tabular-nums">
@@ -675,13 +675,13 @@ export function DashboardRetirementSection({
                     <td className="px-2 py-1.5 text-right tabular-nums">
                       {formatCurrency(row.vehiclesNet, payload.baseCurrency)}
                     </td>
-                    <td className="px-2 py-1.5 text-right tabular-nums text-rose-800">
+                    <td className="px-2 py-1.5 text-right tabular-nums text-rose-800 dark:text-rose-200">
                       −{formatCurrency(row.liabilities, payload.baseCurrency)}
                     </td>
                     <td className="px-2 py-1.5 text-right font-medium tabular-nums">
                       {formatCurrency(row.value, payload.baseCurrency)}
                     </td>
-                    <td className="px-2 py-1.5 text-right tabular-nums text-emerald-900/90">
+                    <td className="px-2 py-1.5 text-right tabular-nums text-emerald-900/90 dark:text-emerald-100/80">
                       {formatCurrency(
                         row.value - row.cpf,
                         payload.baseCurrency
@@ -696,7 +696,7 @@ export function DashboardRetirementSection({
       ) : (
         <>
           <CpfProjectionStatusPanel payload={payload} />
-          <p className="mt-2 text-sm text-emerald-900">
+          <p className="mt-2 text-sm text-emerald-900 dark:text-emerald-100">
             Set your <strong>birth date</strong> in{" "}
             <Link
               href="/setup?tab=profile#profile-assumptions"

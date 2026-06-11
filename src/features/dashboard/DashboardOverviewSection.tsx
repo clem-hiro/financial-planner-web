@@ -9,7 +9,7 @@ import { appCardClass, appCardPadding } from "@/ui/surface-classes";
 import { formatCurrency, formatPercent } from "@/ui/lib/format";
 
 const labelClass =
-  "text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500";
+  "text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500 dark:text-slate-400";
 const metricCard = `${appCardClass} ${appCardPadding} transition-[box-shadow,transform] duration-200 hover:-translate-y-px hover:shadow-md hover:shadow-slate-900/8`;
 const figureClass =
   "mt-3 font-mono text-2xl font-semibold tracking-tight tabular-nums sm:text-[1.65rem]";
@@ -38,7 +38,7 @@ export function DashboardOverviewSection({
           {formatCurrency(payload.netWorth, payload.baseCurrency)}
         </p>
         {payload.netWorthBreakdown.cpf > 0 && (
-          <div className="relative mt-5 border-t border-slate-100 pt-5">
+          <div className="relative mt-5 border-t border-slate-100 pt-5 dark:border-slate-700/80">
             <div className="flex flex-wrap items-center gap-1">
               <p className={labelClass}>Net excluding CPF</p>
               <InfoTooltip ariaLabel="How net excluding CPF relates to full net worth">
@@ -46,23 +46,23 @@ export function DashboardOverviewSection({
                 balances omitted.
               </InfoTooltip>
             </div>
-            <p className="mt-2 font-mono text-xl font-semibold tracking-tight text-slate-800 tabular-nums sm:text-2xl">
+            <p className="mt-2 font-mono text-xl font-semibold tracking-tight text-slate-800 tabular-nums dark:text-slate-100 sm:text-2xl">
               {formatCurrency(
                 payload.netWorthExcludingCpf,
                 payload.baseCurrency
               )}
             </p>
-            <p className="mt-1.5 text-xs leading-relaxed text-slate-500">
+            <p className="mt-1.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
               Investments + cash + property and vehicles − debts; CPF balances
               omitted for a more liquid picture.
             </p>
           </div>
         )}
-        <details className="relative mt-3 text-xs text-slate-600">
-          <summary className="cursor-pointer select-none font-medium text-slate-500 hover:text-slate-800">
+        <details className="relative mt-3 text-xs text-slate-600 dark:text-slate-300">
+          <summary className="cursor-pointer select-none font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100">
             Breakdown
           </summary>
-          <ul className="mt-2 space-y-1 border-t border-slate-100/80 pt-2 font-mono tabular-nums">
+          <ul className="mt-2 space-y-1 border-t border-slate-100/80 pt-2 font-mono tabular-nums dark:border-slate-700/80">
             <li>
               Investments{" "}
               {formatCurrency(
@@ -87,7 +87,7 @@ export function DashboardOverviewSection({
               </li>
             )}
             {payload.netWorthBreakdown.propertyCount > 0 && (
-              <li className="flex flex-wrap items-baseline gap-x-1.5 text-zinc-600">
+              <li className="flex flex-wrap items-baseline gap-x-1.5 text-zinc-600 dark:text-slate-300">
                 <span>
                   Property equity{" "}
                   {formatCurrency(
@@ -111,7 +111,7 @@ export function DashboardOverviewSection({
               </span>
             </li>
             {payload.netWorthBreakdown.vehicleCount > 0 && (
-              <li className="flex flex-wrap items-baseline gap-x-1.5 text-zinc-600">
+              <li className="flex flex-wrap items-baseline gap-x-1.5 text-zinc-600 dark:text-slate-300">
                 <span>
                   Vehicles (est.){" "}
                   {formatCurrency(
@@ -126,25 +126,25 @@ export function DashboardOverviewSection({
             )}
           </ul>
         </details>
-        <p className="relative mt-2 text-xs text-slate-500">
+        <p className="relative mt-2 text-xs text-slate-500 dark:text-slate-400">
           <Link
             href="/setup?tab=add-account#add-investment"
             className={appInlineLinkClass}
           >
             Setup
           </Link>
-          <span className="text-slate-400"> · </span>
+          <span className="text-slate-400 dark:text-slate-500"> · </span>
           {payload.investmentSummary.count} linked account
           {payload.investmentSummary.count === 1 ? "" : "s"}
         </p>
         {payload.investmentSummary.count > 0 ? (
-          <p className="relative mt-1 text-[11px] leading-relaxed text-slate-500">
+          <p className="relative mt-1 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
             Investment totals use balances and return assumptions you entered—not live
             portfolio data.
           </p>
         ) : null}
       </div>
-      <div className={`${metricCard} bg-linear-to-br from-white via-white to-sky-50/45`}>
+      <div className={`${metricCard} bg-linear-to-br from-white via-white to-sky-50/45 dark:from-slate-950 dark:via-slate-900 dark:to-sky-950/35`}>
         <div className="flex flex-wrap items-center gap-1">
           <p className={labelClass}>Savings rate</p>
           <InfoTooltip ariaLabel="How savings rate is calculated">
@@ -154,11 +154,11 @@ export function DashboardOverviewSection({
           </InfoTooltip>
         </div>
         <p className={figureClass} style={appBrandNavyTextStyle}>{formatPercent(payload.savingsRate)}</p>
-        <p className="mt-2 text-xs text-slate-500">
+        <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
           Take-home − spend basis − planned goals ({currency})
         </p>
       </div>
-      <div className={`${metricCard} bg-linear-to-br from-white via-white to-amber-50/35 sm:col-span-2 xl:col-span-1`}>
+      <div className={`${metricCard} bg-linear-to-br from-white via-white to-amber-50/35 dark:from-slate-950 dark:via-slate-900 dark:to-amber-950/25 sm:col-span-2 xl:col-span-1`}>
         <div className="flex flex-wrap items-center gap-1">
           <p className={labelClass}>Spend basis (this month)</p>
           <InfoTooltip ariaLabel="How monthly spend basis is calculated">
@@ -171,7 +171,7 @@ export function DashboardOverviewSection({
             payload.baseCurrency
           )}
         </p>
-        <p className="mt-2 text-xs text-slate-500">
+        <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
           {payload.monthlyExpensesLoggedTotal > 0 ? (
             <>
               Logged {formatCurrency(payload.monthlyExpensesLoggedTotal, currency)}

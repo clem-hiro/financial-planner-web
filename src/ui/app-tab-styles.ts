@@ -1,17 +1,17 @@
 /** Outer track for pill tab rows (app shell + in-page section tabs). */
 export const appTabRailClass =
-  "flex min-w-max snap-x items-center gap-1 rounded-full border border-slate-200/90 bg-linear-to-r from-slate-50/95 via-white to-sky-50/90 p-1 shadow-inner shadow-slate-900/3 sm:min-w-0 sm:flex-wrap";
+  "flex min-w-max snap-x items-center gap-1 rounded-full border border-slate-200/90 bg-linear-to-r from-slate-50/95 via-white to-sky-50/90 p-1 shadow-inner shadow-slate-900/3 dark:border-slate-800/90 dark:from-slate-950/95 dark:via-slate-900 dark:to-sky-950/70 dark:shadow-black/20 sm:min-w-0 sm:flex-wrap";
 
 /** Main app shell top nav — single horizontal row (no wrap); parent supplies `overflow-x-auto`. */
 export const appShellMainNavRailClass =
-  "flex w-max min-w-max flex-nowrap snap-x items-center gap-1 rounded-full border border-slate-200/90 bg-linear-to-r from-slate-50/95 via-white to-sky-50/90 p-1 shadow-inner shadow-slate-900/3";
+  "flex w-max min-w-max flex-nowrap snap-x items-center gap-1 rounded-full border border-slate-200/90 bg-linear-to-r from-slate-50/95 via-white to-sky-50/90 p-1 shadow-inner shadow-slate-900/3 dark:border-slate-800/90 dark:from-slate-950/95 dark:via-slate-900 dark:to-sky-950/70 dark:shadow-black/20";
 
 /** Base classes for each tab control (button or link). */
 export const appTabPillClass =
   "inline-flex min-h-10 shrink-0 snap-start items-center justify-center whitespace-nowrap rounded-full px-4 py-2 text-sm font-medium transition-[background-color,color,box-shadow] duration-200 touch-manipulation sm:min-h-0 sm:px-3.5 sm:py-1.5";
 
 export const appTabPillActiveClass =
-  "text-white shadow-sm shadow-slate-900/20";
+  "text-white shadow-sm shadow-slate-900/20 dark:text-slate-950 dark:shadow-black/30";
 
 /**
  * Brand active-state gradient as inline style. Tailwind v4 + Turbopack
@@ -21,11 +21,12 @@ export const appTabPillActiveClass =
  * be dropped. Apply alongside `appTabPillActiveClass` whenever a tab/pill is active.
  */
 export const appActiveGradientStyle = {
-  backgroundImage: "linear-gradient(to right, #0c192f, #133359, #047857)",
+  backgroundImage:
+    "linear-gradient(to right, var(--theme-active-pill-from, #0c192f), var(--theme-active-pill-mid, #133359), var(--theme-active-pill-to, #047857))",
 } as const;
 
 export const appTabPillInactiveClass =
-  "text-slate-600 hover:bg-white hover:text-slate-900";
+  "text-slate-600 hover:bg-white hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800 dark:hover:text-white";
 
 /**
  * Brand navy as inline style, sourced from the globals.css `--exec-navy`

@@ -1,6 +1,6 @@
 {
   "$schema": "function-tree/v1",
-  "generated_at": "2026-06-08T19:06:12.932Z",
+  "generated_at": "2026-06-11T18:10:04.363Z",
   "roots": [
     "src/app",
     "src/components",
@@ -2643,10 +2643,15 @@
           "id": "src/app/layout.tsx#RootLayout",
           "name": "RootLayout",
           "kind": "component",
-          "line": 27,
+          "line": 49,
           "exported": true,
           "classification": [],
-          "edges": [],
+          "edges": [
+            {
+              "kind": "renders",
+              "target": "src/ui/theme/ThemeProvider.tsx#ThemeProvider"
+            }
+          ],
           "unresolved": 0
         }
       ]
@@ -17947,7 +17952,7 @@
           "id": "src/features/app-shell/AppShellUserMenu.tsx#AppShellUserMenu",
           "name": "AppShellUserMenu",
           "kind": "component",
-          "line": 19,
+          "line": 20,
           "exported": true,
           "classification": [
             "client-component"
@@ -17972,6 +17977,10 @@
             {
               "kind": "renders",
               "target": "src/features/app-shell/ContactAdvisorButton.tsx#ContactAdvisorButton"
+            },
+            {
+              "kind": "renders",
+              "target": "src/ui/theme/ThemeModeToggle.tsx#ThemeModeToggle"
             },
             {
               "kind": "renders",
@@ -18388,7 +18397,7 @@
           "id": "src/features/budget/BudgetAddForm.tsx#BudgetAddForm",
           "name": "BudgetAddForm",
           "kind": "component",
-          "line": 13,
+          "line": 14,
           "exported": true,
           "classification": [
             "client-component"
@@ -18712,7 +18721,7 @@
           "id": "src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile",
           "name": "MonthlyLineCardMobile",
           "kind": "component",
-          "line": 141,
+          "line": 143,
           "exported": false,
           "classification": [],
           "edges": [
@@ -18759,7 +18768,7 @@
           "id": "src/features/budget/BudgetMonthlyCategoriesSection.tsx#BudgetMonthlyCategoriesSection",
           "name": "BudgetMonthlyCategoriesSection",
           "kind": "component",
-          "line": 265,
+          "line": 269,
           "exported": true,
           "classification": [],
           "edges": [
@@ -18790,7 +18799,7 @@
           "id": "src/features/budget/BudgetMonthlyCategoriesSection.tsx#partitionMonthlyLines",
           "name": "partitionMonthlyLines",
           "kind": "function",
-          "line": 395,
+          "line": 399,
           "exported": true,
           "classification": [],
           "edges": [
@@ -19266,7 +19275,7 @@
           "id": "src/features/budget/BudgetReviewWorkflowPanel.tsx#BudgetReviewWorkflowPanel",
           "name": "BudgetReviewWorkflowPanel",
           "kind": "component",
-          "line": 24,
+          "line": 28,
           "exported": true,
           "classification": [],
           "edges": [
@@ -20412,7 +20421,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#formatMoney",
           "name": "formatMoney",
           "kind": "function",
-          "line": 49,
+          "line": 46,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -20422,7 +20431,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#rowValue",
           "name": "rowValue",
           "kind": "function",
-          "line": 58,
+          "line": 55,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -20432,7 +20441,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#colorForSegment",
           "name": "colorForSegment",
           "kind": "function",
-          "line": 63,
+          "line": 60,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -20442,7 +20451,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#hasAmount",
           "name": "hasAmount",
           "kind": "function",
-          "line": 76,
+          "line": 73,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -20452,7 +20461,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#addDetail",
           "name": "addDetail",
           "kind": "function",
-          "line": 80,
+          "line": 77,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20467,7 +20476,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#compactDetails",
           "name": "compactDetails",
           "kind": "function",
-          "line": 91,
+          "line": 88,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20482,7 +20491,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#fundingDetails",
           "name": "fundingDetails",
           "kind": "function",
-          "line": 107,
+          "line": 104,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20501,7 +20510,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#requiredOutflowDetails",
           "name": "requiredOutflowDetails",
           "kind": "function",
-          "line": 142,
+          "line": 139,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20516,7 +20525,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#netWorthDetails",
           "name": "netWorthDetails",
           "kind": "function",
-          "line": 154,
+          "line": 151,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20535,7 +20544,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#cpfDetails",
           "name": "cpfDetails",
           "kind": "function",
-          "line": 184,
+          "line": 181,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20550,7 +20559,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#outflowTooltipDetails",
           "name": "outflowTooltipDetails",
           "kind": "function",
-          "line": 194,
+          "line": 191,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -20560,7 +20569,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#useContainerWidth",
           "name": "useContainerWidth",
           "kind": "function",
-          "line": 205,
+          "line": 202,
           "exported": false,
           "classification": [],
           "edges": [
@@ -20583,7 +20592,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipAmountRow",
           "name": "TooltipAmountRow",
           "kind": "component",
-          "line": 220,
+          "line": 217,
           "exported": false,
           "classification": [
             "client-component"
@@ -20600,7 +20609,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#TooltipDetails",
           "name": "TooltipDetails",
           "kind": "component",
-          "line": 257,
+          "line": 254,
           "exported": false,
           "classification": [
             "client-component"
@@ -20621,7 +20630,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RunwayTooltip",
           "name": "RunwayTooltip",
           "kind": "component",
-          "line": 285,
+          "line": 282,
           "exported": false,
           "classification": [
             "client-component"
@@ -20662,7 +20671,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#Panel",
           "name": "Panel",
           "kind": "component",
-          "line": 335,
+          "line": 332,
           "exported": false,
           "classification": [
             "client-component"
@@ -20674,7 +20683,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorRow",
           "name": "InspectorRow",
           "kind": "component",
-          "line": 386,
+          "line": 383,
           "exported": false,
           "classification": [
             "client-component"
@@ -20686,7 +20695,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetailRow",
           "name": "InspectorDetailRow",
           "kind": "component",
-          "line": 419,
+          "line": 416,
           "exported": false,
           "classification": [
             "client-component"
@@ -20698,7 +20707,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#InspectorDetails",
           "name": "InspectorDetails",
           "kind": "component",
-          "line": 444,
+          "line": 441,
           "exported": false,
           "classification": [
             "client-component"
@@ -20723,7 +20732,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#Toggle",
           "name": "Toggle",
           "kind": "component",
-          "line": 469,
+          "line": 466,
           "exported": false,
           "classification": [
             "client-component"
@@ -20735,7 +20744,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#RetirementRunwayLedgerChart",
           "name": "RetirementRunwayLedgerChart",
           "kind": "component",
-          "line": 510,
+          "line": 507,
           "exported": true,
           "classification": [
             "client-component"
@@ -20888,7 +20897,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneLegend",
           "name": "MilestoneLegend",
           "kind": "component",
-          "line": 899,
+          "line": 896,
           "exported": false,
           "classification": [
             "client-component"
@@ -20905,7 +20914,7 @@
           "id": "src/features/dashboard/RetirementRunwayLedgerChart.tsx#MilestoneCard",
           "name": "MilestoneCard",
           "kind": "component",
-          "line": 932,
+          "line": 929,
           "exported": false,
           "classification": [
             "client-component"
@@ -21264,7 +21273,7 @@
           "id": "src/features/debts/DebtPlanningPanels.tsx#AddDebtForm",
           "name": "AddDebtForm",
           "kind": "component",
-          "line": 275,
+          "line": 279,
           "exported": false,
           "classification": [
             "client-component"
@@ -21313,7 +21322,7 @@
           "id": "src/features/debts/DebtPlanningPanels.tsx#mapLiabilityRows",
           "name": "mapLiabilityRows",
           "kind": "function",
-          "line": 334,
+          "line": 338,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -21323,7 +21332,7 @@
           "id": "src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels",
           "name": "DebtPlanningPanels",
           "kind": "component",
-          "line": 338,
+          "line": 342,
           "exported": true,
           "classification": [
             "client-component"
@@ -21617,7 +21626,7 @@
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#PurposeSelect",
           "name": "PurposeSelect",
           "kind": "component",
-          "line": 44,
+          "line": 47,
           "exported": false,
           "classification": [
             "client-component"
@@ -21629,7 +21638,7 @@
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#formatSnapshotDate",
           "name": "formatSnapshotDate",
           "kind": "function",
-          "line": 69,
+          "line": 74,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -21639,7 +21648,7 @@
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountHistory",
           "name": "CashAccountHistory",
           "kind": "component",
-          "line": 79,
+          "line": 84,
           "exported": false,
           "classification": [
             "client-component"
@@ -21660,7 +21669,7 @@
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#AddCashForm",
           "name": "AddCashForm",
           "kind": "component",
-          "line": 106,
+          "line": 111,
           "exported": false,
           "classification": [
             "client-component"
@@ -21697,7 +21706,7 @@
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow",
           "name": "CashAccountRow",
           "kind": "component",
-          "line": 179,
+          "line": 186,
           "exported": false,
           "classification": [
             "client-component"
@@ -21754,7 +21763,7 @@
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#groupCashByPurpose",
           "name": "groupCashByPurpose",
           "kind": "function",
-          "line": 284,
+          "line": 293,
           "exported": false,
           "classification": [],
           "edges": [
@@ -21769,7 +21778,7 @@
           "id": "src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels",
           "name": "CashAndLiabilitiesPanels",
           "kind": "component",
-          "line": 296,
+          "line": 305,
           "exported": true,
           "classification": [
             "client-component"
@@ -22030,7 +22039,7 @@
           "id": "src/features/goals/GoalEditForm.tsx#GoalEditForm",
           "name": "GoalEditForm",
           "kind": "component",
-          "line": 22,
+          "line": 23,
           "exported": true,
           "classification": [
             "client-component"
@@ -22102,7 +22111,7 @@
           "id": "src/features/goals/GoalForm.tsx#GoalForm",
           "name": "GoalForm",
           "kind": "component",
-          "line": 11,
+          "line": 12,
           "exported": true,
           "classification": [
             "client-component"
@@ -22779,7 +22788,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentSummary",
           "name": "InvestmentSummary",
           "kind": "component",
-          "line": 217,
+          "line": 221,
           "exported": false,
           "classification": [
             "client-component"
@@ -22812,7 +22821,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm",
           "name": "InvestmentEditForm",
           "kind": "component",
-          "line": 310,
+          "line": 321,
           "exported": false,
           "classification": [
             "client-component"
@@ -22953,7 +22962,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentRow",
           "name": "InvestmentRow",
           "kind": "component",
-          "line": 707,
+          "line": 724,
           "exported": false,
           "classification": [
             "client-component"
@@ -23018,7 +23027,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentReviewPrompt",
           "name": "InvestmentReviewPrompt",
           "kind": "component",
-          "line": 797,
+          "line": 814,
           "exported": false,
           "classification": [
             "client-component"
@@ -23051,7 +23060,7 @@
           "id": "src/features/goals/InvestmentBalancesList.tsx#InvestmentBalancesList",
           "name": "InvestmentBalancesList",
           "kind": "component",
-          "line": 848,
+          "line": 865,
           "exported": true,
           "classification": [
             "client-component"
@@ -23498,7 +23507,7 @@
           "id": "src/features/goals/VehiclesPanel.tsx#vehicleMoneyDefault",
           "name": "vehicleMoneyDefault",
           "kind": "function",
-          "line": 179,
+          "line": 185,
           "exported": false,
           "classification": [],
           "edges": [],
@@ -23508,7 +23517,7 @@
           "id": "src/features/goals/VehiclesPanel.tsx#MarketValueFields",
           "name": "MarketValueFields",
           "kind": "component",
-          "line": 187,
+          "line": 193,
           "exported": false,
           "classification": [
             "client-component"
@@ -23525,7 +23534,7 @@
           "id": "src/features/goals/VehiclesPanel.tsx#OneMotoringFields",
           "name": "OneMotoringFields",
           "kind": "component",
-          "line": 220,
+          "line": 226,
           "exported": false,
           "classification": [
             "client-component"
@@ -23542,7 +23551,7 @@
           "id": "src/features/goals/VehiclesPanel.tsx#PurchaseToCoeTerminalFields",
           "name": "PurchaseToCoeTerminalFields",
           "kind": "component",
-          "line": 358,
+          "line": 368,
           "exported": false,
           "classification": [
             "client-component"
@@ -23559,7 +23568,7 @@
           "id": "src/features/goals/VehiclesPanel.tsx#AdvancedModelFields",
           "name": "AdvancedModelFields",
           "kind": "component",
-          "line": 391,
+          "line": 401,
           "exported": false,
           "classification": [
             "client-component"
@@ -23576,7 +23585,7 @@
           "id": "src/features/goals/VehiclesPanel.tsx#VehicleEditForm",
           "name": "VehicleEditForm",
           "kind": "component",
-          "line": 486,
+          "line": 508,
           "exported": false,
           "classification": [
             "client-component"
@@ -23625,7 +23634,7 @@
           "id": "src/features/goals/VehiclesPanel.tsx#AddVehicleForm",
           "name": "AddVehicleForm",
           "kind": "component",
-          "line": 551,
+          "line": 577,
           "exported": false,
           "classification": [
             "client-component"
@@ -23674,7 +23683,7 @@
           "id": "src/features/goals/VehiclesPanel.tsx#VehicleDeleteForm",
           "name": "VehicleDeleteForm",
           "kind": "component",
-          "line": 601,
+          "line": 633,
           "exported": false,
           "classification": [
             "client-component"
@@ -23703,7 +23712,7 @@
           "id": "src/features/goals/VehiclesPanel.tsx#VehiclesPanel",
           "name": "VehiclesPanel",
           "kind": "component",
-          "line": 628,
+          "line": 660,
           "exported": true,
           "classification": [
             "client-component"
@@ -25991,7 +26000,7 @@
           "id": "src/features/setup-hub/SetupModuleCard.tsx#CardTop",
           "name": "CardTop",
           "kind": "component",
-          "line": 66,
+          "line": 70,
           "exported": false,
           "classification": [],
           "edges": [
@@ -26006,7 +26015,7 @@
           "id": "src/features/setup-hub/SetupModuleCard.tsx#CardCta",
           "name": "CardCta",
           "kind": "component",
-          "line": 95,
+          "line": 99,
           "exported": false,
           "classification": [],
           "edges": [
@@ -26030,7 +26039,7 @@
           "id": "src/features/setup-hub/SetupModuleStatusBadge.tsx#SetupModuleStatusBadge",
           "name": "SetupModuleStatusBadge",
           "kind": "component",
-          "line": 29,
+          "line": 33,
           "exported": true,
           "classification": [],
           "edges": [],
@@ -33130,6 +33139,197 @@
       "functions": []
     },
     {
+      "path": "src/ui/theme/ThemeModeToggle.tsx",
+      "root": "src/ui",
+      "classification": [
+        "client-component"
+      ],
+      "functions": [
+        {
+          "id": "src/ui/theme/ThemeModeToggle.tsx#ThemeModeToggle",
+          "name": "ThemeModeToggle",
+          "kind": "component",
+          "line": 15,
+          "exported": true,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/ui/theme/ThemeProvider.tsx#useTheme"
+            }
+          ],
+          "unresolved": 1
+        }
+      ]
+    },
+    {
+      "path": "src/ui/theme/ThemeProvider.tsx",
+      "root": "src/ui",
+      "classification": [
+        "client-component"
+      ],
+      "functions": [
+        {
+          "id": "src/ui/theme/ThemeProvider.tsx#isThemeMode",
+          "name": "isThemeMode",
+          "kind": "function",
+          "line": 28,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/ui/theme/ThemeProvider.tsx#getSystemTheme",
+          "name": "getSystemTheme",
+          "kind": "function",
+          "line": 32,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/ui/theme/ThemeProvider.tsx#resolveTheme",
+          "name": "resolveTheme",
+          "kind": "function",
+          "line": 37,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/ui/theme/ThemeProvider.tsx#getSystemTheme"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/ui/theme/ThemeProvider.tsx#applyTheme",
+          "name": "applyTheme",
+          "kind": "function",
+          "line": 41,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/ui/theme/ThemeProvider.tsx#resolveTheme"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/ui/theme/ThemeProvider.tsx#getModeFromStorage",
+          "name": "getModeFromStorage",
+          "kind": "function",
+          "line": 50,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/ui/theme/ThemeProvider.tsx#isThemeMode"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/ui/theme/ThemeProvider.tsx#getSnapshot",
+          "name": "getSnapshot",
+          "kind": "function",
+          "line": 56,
+          "exported": false,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "target": "src/ui/theme/ThemeProvider.tsx#getModeFromStorage"
+            },
+            {
+              "kind": "calls",
+              "target": "src/ui/theme/ThemeProvider.tsx#resolveTheme"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/ui/theme/ThemeProvider.tsx#getServerSnapshot",
+          "name": "getServerSnapshot",
+          "kind": "function",
+          "line": 61,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 0
+        },
+        {
+          "id": "src/ui/theme/ThemeProvider.tsx#subscribe",
+          "name": "subscribe",
+          "kind": "function",
+          "line": 65,
+          "exported": false,
+          "classification": [],
+          "edges": [],
+          "unresolved": 1
+        },
+        {
+          "id": "src/ui/theme/ThemeProvider.tsx#ThemeProvider",
+          "name": "ThemeProvider",
+          "kind": "component",
+          "line": 78,
+          "exported": true,
+          "classification": [
+            "client-component"
+          ],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "external": "react"
+            },
+            {
+              "kind": "renders",
+              "external": "react"
+            },
+            {
+              "kind": "calls",
+              "target": "src/ui/theme/ThemeProvider.tsx#applyTheme"
+            }
+          ],
+          "unresolved": 0
+        },
+        {
+          "id": "src/ui/theme/ThemeProvider.tsx#useTheme",
+          "name": "useTheme",
+          "kind": "function",
+          "line": 111,
+          "exported": true,
+          "classification": [],
+          "edges": [
+            {
+              "kind": "calls",
+              "external": "react"
+            }
+          ],
+          "unresolved": 0
+        }
+      ]
+    },
+    {
       "path": "src/ui/use-narrow-screen.ts",
       "root": "src/ui",
       "classification": [
@@ -36497,6 +36697,25 @@
         "src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection",
         "src/server/inbox/ensure-investment-review-notification.ts#ensureInvestmentReviewNotification"
       ],
+      "src/ui/theme/ThemeProvider.tsx#useTheme": [
+        "src/ui/theme/ThemeModeToggle.tsx#ThemeModeToggle"
+      ],
+      "src/ui/theme/ThemeProvider.tsx#getSystemTheme": [
+        "src/ui/theme/ThemeProvider.tsx#resolveTheme"
+      ],
+      "src/ui/theme/ThemeProvider.tsx#resolveTheme": [
+        "src/ui/theme/ThemeProvider.tsx#applyTheme",
+        "src/ui/theme/ThemeProvider.tsx#getSnapshot"
+      ],
+      "src/ui/theme/ThemeProvider.tsx#isThemeMode": [
+        "src/ui/theme/ThemeProvider.tsx#getModeFromStorage"
+      ],
+      "src/ui/theme/ThemeProvider.tsx#getModeFromStorage": [
+        "src/ui/theme/ThemeProvider.tsx#getSnapshot"
+      ],
+      "src/ui/theme/ThemeProvider.tsx#applyTheme": [
+        "src/ui/theme/ThemeProvider.tsx#ThemeProvider"
+      ],
       "src/data/repositories/advisor-dashboard.ts#getAdvisorDashboardData": [
         "src/app/(app)/advisor/page.tsx#AdvisorDashboardPage"
       ],
@@ -36601,6 +36820,9 @@
       ]
     },
     "renders": {
+      "src/ui/theme/ThemeProvider.tsx#ThemeProvider": [
+        "src/app/layout.tsx#RootLayout"
+      ],
       "src/features/landing/RootSplash.tsx#RootSplash": [
         "src/app/page.tsx#Home"
       ],
@@ -36934,6 +37156,9 @@
         "src/features/app-shell/AppShellInbox.tsx#AppShellInbox"
       ],
       "src/features/app-shell/ContactAdvisorButton.tsx#ContactAdvisorButton": [
+        "src/features/app-shell/AppShellUserMenu.tsx#AppShellUserMenu"
+      ],
+      "src/ui/theme/ThemeModeToggle.tsx#ThemeModeToggle": [
         "src/features/app-shell/AppShellUserMenu.tsx#AppShellUserMenu"
       ],
       "src/features/help/OpenMethodologyButton.tsx#OpenMethodologyButton": [

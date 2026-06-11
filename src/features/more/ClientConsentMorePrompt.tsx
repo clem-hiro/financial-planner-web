@@ -9,10 +9,10 @@ export function ClientConsentMorePrompt({
 }) {
   return (
     <div
-      className="rounded-2xl border border-amber-200/80 bg-amber-50/90 px-4 py-3 sm:px-5"
+      className="rounded-2xl border border-amber-200/80 bg-amber-50/90 px-4 py-3 dark:border-amber-300/45 dark:bg-amber-950/45 sm:px-5"
       role="status"
     >
-      <p className="text-sm text-amber-950">
+      <p className="text-sm text-amber-950 dark:text-amber-100">
         {status === "withdrawn"
           ? "You withdrew advisor consent — your advisor cannot see your financial data until you grant it again."
           : "Your advisor cannot see your financial data until you grant consent. You control this and can withdraw anytime."}

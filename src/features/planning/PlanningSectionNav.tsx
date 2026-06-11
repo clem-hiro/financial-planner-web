@@ -26,7 +26,7 @@ export function PlanningSectionNav() {
       className="sticky top-[4.75rem] z-20 py-2 sm:top-[5.5rem]"
     >
       <div className="-mx-1 overflow-x-auto px-1 pb-0.5 scroll-smooth sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
-        <div className="inline-flex min-w-max snap-x items-center gap-1.5 rounded-full bg-white/88 p-1 shadow-[0_14px_40px_rgba(15,23,42,0.12)] ring-1 ring-slate-200/70 backdrop-blur-xl sm:min-w-0 sm:flex-wrap">
+        <div className="inline-flex min-w-max snap-x items-center gap-1.5 rounded-full bg-white/88 p-1 shadow-[0_14px_40px_rgba(15,23,42,0.12)] ring-1 ring-slate-200/70 backdrop-blur-xl dark:bg-slate-950/88 dark:ring-slate-700/80 dark:shadow-black/25 sm:min-w-0 sm:flex-wrap">
           {PLANNING_SECTIONS.map((id) => {
             const href = `/planning/${id}`;
             const isActive = active === id;

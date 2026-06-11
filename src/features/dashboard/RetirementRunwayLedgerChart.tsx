@@ -19,10 +19,7 @@ import {
   fpRunwayAxisTick,
   fpRunwayBandFill,
   fpRunwayFundingPalette,
-  fpRunwayGridColor,
-  fpRunwayNetWorthColor,
   fpRunwayOutflowPalette,
-  fpRunwaySurface,
   fpRunwayTooltipProps,
 } from "@/ui/runway-chart-styles";
 import {
@@ -346,12 +343,12 @@ function Panel({
   return (
     <details
       open
-      className="group shrink-0 overflow-hidden rounded-2xl border bg-white"
-      style={{ borderColor: fpRunwaySurface.line }}
+      className="group shrink-0 overflow-hidden rounded-2xl border bg-white dark:bg-slate-950/80"
+      style={{ borderColor: "var(--runway-surface-line)" }}
     >
       <summary
         className="flex min-h-11 w-full cursor-pointer list-none items-center justify-between gap-2 px-3.5 py-3 text-[11px] font-extrabold uppercase tracking-wider [&::-webkit-details-marker]:hidden"
-        style={{ color: fpRunwaySurface.muted }}
+        style={{ color: "var(--runway-surface-muted)" }}
       >
         <span className="inline-flex items-center gap-2">{title}</span>
         <span className="inline-flex items-center gap-2.5">
@@ -399,17 +396,17 @@ function InspectorRow({
       ? fpRunwayFundingPalette.shortfall
       : tone === "good"
         ? "#4f7a52"
-        : fpRunwaySurface.ink;
+        : "var(--runway-surface-ink)";
   return (
     <div
       className="flex items-center justify-between border-b py-2 text-[13px] last:border-b-0"
-      style={{ borderColor: fpRunwayGridColor }}
+      style={{ borderColor: "var(--runway-grid-line)" }}
     >
-      <dt className="inline-flex items-center gap-2" style={{ color: fpRunwaySurface.inkSoft }}>
+      <dt className="inline-flex items-center gap-2" style={{ color: "var(--runway-surface-ink-soft)" }}>
         {color ? <span className="h-2.5 w-2.5 rounded-sm" style={{ background: color }} /> : null}
         {label}
       </dt>
-      <dd className="font-mono font-bold tabular-nums" style={{ color: valueColor }}>
+      <dd className="font-mono font-bold tabular-nums" style={{ color: tone ? valueColor : "var(--runway-surface-ink)" }}>
         {value}
       </dd>
     </div>
@@ -428,12 +425,12 @@ function InspectorDetailRow({
   return (
     <div
       className="flex items-center justify-between border-b py-1.5 pl-5 text-[12px] last:border-b-0"
-      style={{ borderColor: fpRunwayGridColor }}
+      style={{ borderColor: "var(--runway-grid-line)" }}
     >
-      <dt style={{ color: fpRunwaySurface.muted }}>{label}</dt>
+      <dt style={{ color: "var(--runway-surface-muted)" }}>{label}</dt>
       <dd
         className="font-mono font-semibold tabular-nums"
-        style={{ color: tone === "bad" ? fpRunwayFundingPalette.shortfall : fpRunwaySurface.inkSoft }}
+        style={{ color: tone === "bad" ? fpRunwayFundingPalette.shortfall : "var(--runway-surface-ink-soft)" }}
       >
         {value}
       </dd>
@@ -479,9 +476,9 @@ function Toggle({
     <label
       className="inline-flex min-h-8 cursor-pointer items-center gap-2 rounded-full border px-2.5 text-[12px] font-bold"
       style={{
-        borderColor: checked ? fpRunwaySurface.ink : fpRunwaySurface.line,
-        background: checked ? fpRunwaySurface.ink : "#fff",
-        color: checked ? "#fff" : fpRunwaySurface.inkSoft,
+        borderColor: checked ? "var(--runway-surface-ink)" : "var(--runway-surface-line)",
+        background: checked ? "var(--runway-surface-ink)" : "var(--runway-control-bg)",
+        color: checked ? "var(--runway-control-on-ink)" : "var(--runway-surface-ink-soft)",
       }}
     >
       <input
@@ -493,7 +490,7 @@ function Toggle({
       <span
         className="inline-flex h-4 w-7 items-center rounded-full px-0.5"
         style={{
-          background: checked ? fpRunwayFundingPalette.passive : fpRunwaySurface.line,
+          background: checked ? fpRunwayFundingPalette.passive : "var(--runway-surface-line)",
         }}
         aria-hidden
       >
@@ -559,11 +556,11 @@ export function RetirementRunwayLedgerChart({
   return (
     <div
       ref={ref}
-      className="overflow-hidden rounded-3xl border"
+      className="overflow-hidden rounded-3xl border [--runway-chart-bg:linear-gradient(180deg,#fffefb,#fdfbf6)] [--runway-control-bg:rgba(255,255,255,0.62)] [--runway-control-on-ink:#fff] [--runway-grid-line:#f1ede6] [--runway-net-worth-color:#2c3a4f] [--runway-surface-card:#fffdfa] [--runway-surface-ink-soft:#595f6b] [--runway-surface-ink:#20242c] [--runway-surface-line:#ece7df] [--runway-surface-muted:#8a909c] dark:[--runway-chart-bg:#020617] dark:[--runway-control-bg:rgba(15,23,42,0.72)] dark:[--runway-control-on-ink:#020617] dark:[--runway-grid-line:rgba(148,163,184,0.18)] dark:[--runway-net-worth-color:#94a3b8] dark:[--runway-surface-card:#0f172a] dark:[--runway-surface-ink-soft:#cbd5e1] dark:[--runway-surface-ink:#f8fafc] dark:[--runway-surface-line:rgba(148,163,184,0.28)] dark:[--runway-surface-muted:#94a3b8]"
       style={{
-        borderColor: fpRunwaySurface.line,
-        background: fpRunwaySurface.card,
-        color: fpRunwaySurface.ink,
+        borderColor: "var(--runway-surface-line)",
+        background: "var(--runway-surface-card)",
+        color: "var(--runway-surface-ink)",
       }}
     >
       <div className="px-5 pt-5">
@@ -579,7 +576,7 @@ export function RetirementRunwayLedgerChart({
               {formatMoney(heroRow.networth, currency)}
               <span
                 className="ml-2 text-[0.34em] font-semibold"
-                style={{ color: fpRunwaySurface.muted }}
+                style={{ color: "var(--runway-surface-muted)" }}
               >
                 net worth at {heroRow.age}
               </span>
@@ -620,7 +617,7 @@ export function RetirementRunwayLedgerChart({
                 onClick={() => toggleSegment(s.key)}
                 className="inline-flex items-center gap-2 text-[13px] font-semibold"
                 style={{
-                  color: fpRunwaySurface.inkSoft,
+                  color: "var(--runway-surface-ink-soft)",
                   opacity: off ? 0.38 : 1,
                   textDecoration: off ? "line-through" : "none",
                 }}
@@ -632,11 +629,11 @@ export function RetirementRunwayLedgerChart({
           })}
           <span
             className="inline-flex items-center gap-2 text-[13px] font-semibold"
-            style={{ color: fpRunwaySurface.inkSoft }}
+            style={{ color: "var(--runway-surface-ink-soft)" }}
           >
             <span
               className="h-[3px] w-4 rounded-sm"
-              style={{ background: fpRunwayNetWorthColor }}
+              style={{ background: "var(--runway-net-worth-color)" }}
             />
             Net worth
           </span>
@@ -649,14 +646,14 @@ export function RetirementRunwayLedgerChart({
           style={
             paneOpen
               ? {
-                  borderColor: fpRunwaySurface.line,
-                  background: "#fff",
-                  color: fpRunwaySurface.inkSoft,
+                  borderColor: "var(--runway-surface-line)",
+                  background: "var(--runway-control-bg)",
+                  color: "var(--runway-surface-ink-soft)",
                 }
               : {
-                  borderColor: fpRunwaySurface.ink,
-                  background: fpRunwaySurface.ink,
-                  color: "#fff",
+                  borderColor: "var(--runway-surface-ink)",
+                  background: "var(--runway-surface-ink)",
+                  color: "var(--runway-control-on-ink)",
                 }
           }
         >
@@ -675,8 +672,8 @@ export function RetirementRunwayLedgerChart({
           <div
             className={`${CHART_PANEL_HEIGHT_CLASS} rounded-2xl border p-2 sm:p-3`}
             style={{
-              borderColor: fpRunwaySurface.line,
-              background: "linear-gradient(180deg, #fffefb, #fdfbf6)",
+              borderColor: "var(--runway-surface-line)",
+              background: "var(--runway-chart-bg)",
             }}
           >
             <div className="h-full w-full min-w-0">
@@ -689,7 +686,7 @@ export function RetirementRunwayLedgerChart({
                     if (label != null) setSelectedAge(Number(label));
                   }}
                 >
-                  <CartesianGrid stroke={fpRunwayGridColor} vertical={false} />
+                  <CartesianGrid stroke="var(--runway-grid-line)" vertical={false} />
                   {retireAge != null && lastAge != null ? (
                     <ReferenceArea
                       yAxisId="left"
@@ -701,9 +698,9 @@ export function RetirementRunwayLedgerChart({
                   ) : null}
                   <XAxis
                     dataKey="age"
-                    tick={fpRunwayAxisTick}
+                    tick={{ ...fpRunwayAxisTick, fill: "var(--runway-surface-muted)" }}
                     tickLine={false}
-                    axisLine={{ stroke: fpRunwayGridColor }}
+                    axisLine={{ stroke: "var(--runway-grid-line)" }}
                   />
                   <YAxis
                     yAxisId="left"
@@ -717,7 +714,7 @@ export function RetirementRunwayLedgerChart({
                     yAxisId="right"
                     orientation="right"
                     width={48}
-                    tick={{ ...fpRunwayAxisTick, fill: fpRunwayNetWorthColor }}
+                    tick={{ ...fpRunwayAxisTick, fill: "var(--runway-net-worth-color)" }}
                     tickLine={false}
                     axisLine={false}
                     tickFormatter={(v) => formatMoney(v as number, currency)}
@@ -751,12 +748,12 @@ export function RetirementRunwayLedgerChart({
                     type="monotone"
                     dataKey="networth"
                     name="Net worth"
-                    stroke={fpRunwayNetWorthColor}
+                    stroke="var(--runway-net-worth-color)"
                     strokeWidth={3}
                     dot={false}
                     activeDot={{
                       r: 6,
-                      fill: fpRunwayNetWorthColor,
+                      fill: "var(--runway-net-worth-color)",
                       stroke: "#fff",
                       strokeWidth: 3,
                     }}
@@ -770,7 +767,7 @@ export function RetirementRunwayLedgerChart({
                       stroke={
                         m.tone === "risk"
                           ? fpRunwayFundingPalette.shortfall
-                          : fpRunwaySurface.muted
+                          : "var(--runway-surface-muted)"
                       }
                       strokeOpacity={0.4}
                       strokeDasharray="3 4"
@@ -796,7 +793,7 @@ export function RetirementRunwayLedgerChart({
             <div className="px-1.5 pt-2.5">
               <div
                 className="flex items-center justify-between text-[12px] font-bold"
-                style={{ color: fpRunwaySurface.muted }}
+                style={{ color: "var(--runway-surface-muted)" }}
               >
                 <span>Selected age</span>
                 <span>Age {activeAge}</span>
@@ -910,7 +907,7 @@ function MilestoneLegend({
     <div className="pt-3">
       <div
         className="mb-2 text-[11px] font-extrabold uppercase tracking-wider"
-        style={{ color: fpRunwaySurface.muted }}
+        style={{ color: "var(--runway-surface-muted)" }}
       >
         Milestones
       </div>
@@ -951,9 +948,9 @@ function MilestoneCard({
       type="button"
       aria-current={current}
       onClick={onSelect}
-      className="grid grid-cols-[40px_1fr] items-center gap-3 rounded-2xl border bg-white p-3 text-left"
+      className="grid grid-cols-[40px_1fr] items-center gap-3 rounded-2xl border bg-white p-3 text-left dark:bg-slate-950/80"
       style={{
-        borderColor: current ? fpRunwayFundingPalette.passive : fpRunwaySurface.line,
+        borderColor: current ? fpRunwayFundingPalette.passive : "var(--runway-surface-line)",
         boxShadow: current ? "0 0 0 3px rgba(122,160,126,0.12)" : undefined,
       }}
     >
@@ -967,13 +964,13 @@ function MilestoneCard({
       <span>
         <span
           className="block text-[11px] font-extrabold tracking-wide"
-          style={{ color: fpRunwaySurface.muted }}
+          style={{ color: "var(--runway-surface-muted)" }}
         >
           Age {milestone.age}
         </span>
         <span
           className={compact ? "block text-[13px] font-bold" : "block text-[14px] font-bold"}
-          style={{ color: fpRunwaySurface.ink }}
+          style={{ color: "var(--runway-surface-ink)" }}
         >
           {milestone.title}
         </span>

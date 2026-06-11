@@ -84,7 +84,8 @@ export function CpfProjectionByAgeChart({
               value: "Age",
               position: "insideBottom",
               offset: -2,
-              style: { fontSize: 11, fill: "#64748b", fontWeight: 500 },
+              style: { fontSize: 11, fill: "currentColor", fontWeight: 500 },
+              className: "fill-slate-500 dark:fill-slate-400",
             }}
           />
           <YAxis
@@ -121,7 +122,7 @@ export function CpfProjectionByAgeChart({
               maxWidth: "100%",
               lineHeight: 1.25,
             }}
-            formatter={(value) => <span className="text-slate-600">{value}</span>}
+            formatter={(value) => <span className="text-slate-600 dark:text-slate-300">{value}</span>}
           />
           {markers.map((m, i) => (
             <ReferenceLine
@@ -135,8 +136,9 @@ export function CpfProjectionByAgeChart({
                   : {
                       value: m.label,
                       position: "insideTopLeft",
-                      fill: "#64748b",
+                      fill: "currentColor",
                       fontSize: 9,
+                      className: "fill-slate-500 dark:fill-slate-400",
                     }
               }
             />

@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { updateGoalAction } from "@/server/actions";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
+import { fpInputClass, fpPrimaryButtonClass, fpSelectClass } from "@/ui/input-classes";
 
 const initial = { error: null as string | null };
 
@@ -31,29 +32,29 @@ export function GoalEditForm({
   return (
     <form
       action={formAction}
-      className="mt-3 space-y-3 rounded border border-zinc-100 bg-zinc-50 p-3"
+      className="mt-3 space-y-3 rounded border border-zinc-100 bg-zinc-50 p-3 dark:border-slate-700/80 dark:bg-slate-800/70"
       {...(pending ? { inert: true } : {})}
     >
       <BlockingSubmitOverlay active={pending} message="Saving goal…" />
       <input type="hidden" name="goal_id" value={goal.id} />
       {state.error && (
-        <p className="text-sm text-red-600" role="alert">
+        <p className="text-sm text-red-600 dark:text-red-200" role="alert">
           {state.error}
         </p>
       )}
       <div className="grid gap-2 sm:grid-cols-2">
         <label className="text-xs sm:col-span-2">
-          <span className="mb-0.5 block text-zinc-600">Title</span>
+          <span className="mb-0.5 block text-zinc-600 dark:text-slate-200">Title</span>
           <input
             name="title"
             type="text"
             required
             defaultValue={goal.title}
-            className="w-full rounded border border-zinc-300 px-2 py-1 text-sm"
+            className={`${fpInputClass} max-w-none py-1 text-sm`}
           />
         </label>
         <label className="text-xs">
-          <span className="mb-0.5 block text-zinc-600">Target</span>
+          <span className="mb-0.5 block text-zinc-600 dark:text-slate-200">Target</span>
           <input
             name="target_amount"
             type="number"
@@ -61,11 +62,11 @@ export function GoalEditForm({
             step="0.01"
             required
             defaultValue={goal.target_amount}
-            className="w-full rounded border border-zinc-300 px-2 py-1 text-sm"
+            className={`${fpInputClass} max-w-none py-1 text-sm`}
           />
         </label>
         <label className="text-xs">
-          <span className="mb-0.5 block text-zinc-600">Saved</span>
+          <span className="mb-0.5 block text-zinc-600 dark:text-slate-200">Saved</span>
           <input
             name="current_amount"
             type="number"
@@ -73,11 +74,11 @@ export function GoalEditForm({
             step="0.01"
             required
             defaultValue={goal.current_amount}
-            className="w-full rounded border border-zinc-300 px-2 py-1 text-sm"
+            className={`${fpInputClass} max-w-none py-1 text-sm`}
           />
         </label>
         <label className="text-xs">
-          <span className="mb-0.5 block text-zinc-600">Monthly</span>
+          <span className="mb-0.5 block text-zinc-600 dark:text-slate-200">Monthly</span>
           <input
             name="monthly_contribution"
             type="number"
@@ -85,11 +86,11 @@ export function GoalEditForm({
             step="0.01"
             required
             defaultValue={goal.monthly_contribution}
-            className="w-full rounded border border-zinc-300 px-2 py-1 text-sm"
+            className={`${fpInputClass} max-w-none py-1 text-sm`}
           />
         </label>
         <label className="text-xs sm:col-span-2">
-          <span className="mb-0.5 block text-zinc-600">
+          <span className="mb-0.5 block text-zinc-600 dark:text-slate-200">
             Expected return (0–1, e.g. 0.07)
           </span>
           <input
@@ -100,25 +101,25 @@ export function GoalEditForm({
             step="0.001"
             required
             defaultValue={goal.expected_annual_return}
-            className="w-full rounded border border-zinc-300 px-2 py-1 text-sm"
+            className={`${fpInputClass} max-w-none py-1 text-sm`}
           />
         </label>
         <label className="text-xs sm:col-span-2">
-          <span className="mb-0.5 block text-zinc-600">Target date</span>
+          <span className="mb-0.5 block text-zinc-600 dark:text-slate-200">Target date</span>
           <input
             name="target_date"
             type="date"
             defaultValue={goal.target_date ?? ""}
-            className="w-full rounded border border-zinc-300 px-2 py-1 text-sm"
+            className={`${fpInputClass} max-w-none py-1 text-sm`}
           />
         </label>
         <label className="text-xs sm:col-span-2">
-          <span className="mb-0.5 block text-zinc-600">
+          <span className="mb-0.5 block text-zinc-600 dark:text-slate-200">
             Linked investment (optional)
           </span>
           <select
             name="linked_investment_id"
-            className="w-full rounded border border-zinc-300 px-2 py-1 text-sm"
+            className={`${fpSelectClass} max-w-none py-1 text-sm`}
             defaultValue={goal.linked_investment_id ?? ""}
           >
             <option value="">None</option>
@@ -133,7 +134,7 @@ export function GoalEditForm({
       <button
         type="submit"
         disabled={pending}
-        className="rounded bg-zinc-800 px-2 py-1 text-xs font-medium text-white hover:bg-zinc-700"
+        className={`${fpPrimaryButtonClass} px-3 py-1.5 text-xs`}
       >
         {pending ? "Saving…" : "Update goal"}
       </button>

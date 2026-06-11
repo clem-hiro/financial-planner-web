@@ -174,15 +174,20 @@ export function InvestmentForm(
           <InvestmentAssumptionBanner className="mb-1" />
         ) : null}
         <div>
-          <h2 className="text-sm font-semibold text-slate-900">Add an account</h2>
-          <p className="mt-1 text-xs leading-relaxed text-slate-500">
+          <h2 className="text-sm font-semibold text-slate-900 dark:text-slate-50">
+            Add an account
+          </h2>
+          <p className="mt-1 text-xs leading-relaxed text-slate-500 dark:text-slate-300">
             Capture investment value, premiums, growth, cash income, and future
             withdrawal timing in one account.
           </p>
         </div>
 
-        <details open className="rounded-xl border border-slate-200 bg-white p-4">
-          <summary className="cursor-pointer select-none text-sm font-medium text-slate-800">
+        <details
+          open
+          className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700/80 dark:bg-slate-900"
+        >
+          <summary className="cursor-pointer select-none text-sm font-medium text-slate-800 dark:text-slate-100">
             Plan type
           </summary>
           <div className="mt-3">
@@ -203,14 +208,14 @@ export function InvestmentForm(
 
         <details
           open={planComplete}
-          className="rounded-xl border border-slate-200 bg-white p-4"
+          className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700/80 dark:bg-slate-900"
         >
-          <summary className="cursor-pointer select-none text-sm font-medium text-slate-800">
+          <summary className="cursor-pointer select-none text-sm font-medium text-slate-800 dark:text-slate-100">
             Account basics
           </summary>
           <fieldset disabled={!planComplete} className="mt-3 grid gap-4 sm:grid-cols-2">
             <label className="block text-sm sm:col-span-2">
-              <span className="mb-1 block font-medium text-slate-800">
+              <span className="mb-1 block font-medium text-slate-800 dark:text-slate-200">
                 What is this?
               </span>
               <input
@@ -224,7 +229,7 @@ export function InvestmentForm(
               />
             </label>
             <label className="block text-sm">
-              <span className="mb-1 block font-medium text-slate-800">
+              <span className="mb-1 block font-medium text-slate-800 dark:text-slate-200">
               Current balance
               </span>
               <input
@@ -239,7 +244,7 @@ export function InvestmentForm(
               />
             </label>
             <label className="block text-sm">
-              <span className="mb-1 block font-medium text-slate-800">
+              <span className="mb-1 block font-medium text-slate-800 dark:text-slate-200">
                 Monthly contribution
               </span>
               <input
@@ -258,9 +263,9 @@ export function InvestmentForm(
 
         <details
           open={basicsComplete}
-          className="rounded-xl border border-slate-200 bg-white p-4"
+          className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700/80 dark:bg-slate-900"
         >
-          <summary className="cursor-pointer select-none text-sm font-medium text-slate-800">
+          <summary className="cursor-pointer select-none text-sm font-medium text-slate-800 dark:text-slate-100">
             Contribution schedule
           </summary>
           <fieldset disabled={!basicsComplete} className="mt-3">
@@ -283,9 +288,9 @@ export function InvestmentForm(
 
         <details
           open={scheduleComplete}
-          className="rounded-xl border border-slate-200 bg-white p-4"
+          className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-700/80 dark:bg-slate-900"
         >
-          <summary className="cursor-pointer select-none text-sm font-medium text-slate-800">
+          <summary className="cursor-pointer select-none text-sm font-medium text-slate-800 dark:text-slate-100">
             Growth and income
           </summary>
           <fieldset
@@ -293,7 +298,7 @@ export function InvestmentForm(
             className="mt-3 grid gap-4 sm:grid-cols-2"
           >
             <label className="block text-sm">
-              <span className="mb-1 block font-medium text-slate-800">
+              <span className="mb-1 block font-medium text-slate-800 dark:text-slate-200">
                 Expected yearly growth
               </span>
               <div className="relative max-w-40">
@@ -307,7 +312,7 @@ export function InvestmentForm(
                   required
                   className={`${fpInputNarrowClass} mt-1 pr-10`}
                 />
-                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium text-slate-400">
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium text-slate-400 dark:text-slate-300">
                   %
                 </span>
               </div>
@@ -319,7 +324,7 @@ export function InvestmentForm(
             </label>
 
             <label className="block text-sm">
-              <span className="mb-1 block font-medium text-slate-800">
+              <span className="mb-1 block font-medium text-slate-800 dark:text-slate-200">
                 {planNature === "includes_insurance_coverage"
                   ? "Post-maturity income rate"
                   : "Expected dividend yield"}
@@ -334,7 +339,7 @@ export function InvestmentForm(
                   onChange={(e) => setIncomeRatePctRaw(e.target.value)}
                   className={`${fpInputNarrowClass} mt-1 pr-10`}
                 />
-                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium text-slate-400">
+                <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm font-medium text-slate-400 dark:text-slate-300">
                   %
                 </span>
               </div>
@@ -343,7 +348,7 @@ export function InvestmentForm(
                 name="investment_income_rate_annual"
                 value={incomeRateDecimal.toString()}
               />
-              <span className="mt-1 block text-[11px] text-slate-500">
+              <span className="mt-1 block text-[11px] text-slate-500 dark:text-slate-300">
                 Counted as cash inflow in December; asset growth stays in the
                 investment balance.
               </span>
@@ -353,9 +358,9 @@ export function InvestmentForm(
 
         <details
           open={returnsComplete}
-          className="rounded-xl border border-dashed border-slate-200 bg-slate-50/60 px-3 py-2 text-xs text-slate-600"
+          className="rounded-xl border border-dashed border-slate-200 bg-slate-50/60 px-3 py-2 text-xs text-slate-600 dark:border-slate-600/80 dark:bg-slate-800/70 dark:text-slate-300"
         >
-          <summary className="cursor-pointer select-none font-medium text-slate-700">
+          <summary className="cursor-pointer select-none font-medium text-slate-700 dark:text-slate-100">
             Advanced planning
           </summary>
           <fieldset
@@ -363,7 +368,7 @@ export function InvestmentForm(
             className="mt-3 grid gap-3 sm:grid-cols-3"
           >
             <label className="block text-sm">
-              <span className="mb-1 block font-medium text-slate-700">
+              <span className="mb-1 block font-medium text-slate-700 dark:text-slate-200">
                 Annual contribution step-up
               </span>
               <input
@@ -376,12 +381,12 @@ export function InvestmentForm(
                 onChange={(e) => setContributionGrowthRaw(e.target.value)}
                 className={fieldClass}
               />
-              <span className="mt-1 block text-[11px] text-slate-500">
+              <span className="mt-1 block text-[11px] text-slate-500 dark:text-slate-300">
                 Decimal format, e.g. 0.03 for 3% yearly.
               </span>
             </label>
             <label className="block text-sm">
-              <span className="mb-1 block font-medium text-slate-700">
+              <span className="mb-1 block font-medium text-slate-700 dark:text-slate-200">
                 Yearly withdrawal
               </span>
               <input
@@ -395,7 +400,7 @@ export function InvestmentForm(
               />
             </label>
             <label className="block text-sm">
-              <span className="mb-1 block font-medium text-slate-700">
+              <span className="mb-1 block font-medium text-slate-700 dark:text-slate-200">
                 {currentAge != null ? "Withdrawal starts at age" : "Withdrawal starts after"}
               </span>
               {currentAge != null ? (
@@ -423,11 +428,11 @@ export function InvestmentForm(
                 className={fieldClass}
               />
               {withdrawalStartBeforeMaturity ? (
-                <span className="mt-1 block text-[11px] font-medium text-red-600">
+                <span className="mt-1 block text-[11px] font-medium text-red-600 dark:text-red-200">
                   ILP yearly withdrawal cannot start before plan maturity.
                 </span>
               ) : (
-                <span className="mt-1 block text-[11px] text-slate-500">
+                <span className="mt-1 block text-[11px] text-slate-500 dark:text-slate-300">
                   Blank starts at maturity for ILP withdrawals.
                 </span>
               )}

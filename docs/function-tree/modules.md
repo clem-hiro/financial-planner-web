@@ -48,7 +48,7 @@
 | `src/app/api/profile/route.ts` | `src/app` | `route-handler` | 1 | 18 |
 | `src/app/api/projection/route.ts` | `src/app` | `route-handler` | 1 | 19 |
 | `src/app/auth/callback/route.ts` | `src/app` | `route-handler` | 2 | 6 |
-| `src/app/layout.tsx` | `src/app` | `layout` | 1 | 0 |
+| `src/app/layout.tsx` | `src/app` | `layout` | 1 | 1 |
 | `src/app/login/page.tsx` | `src/app` | `page` | 2 | 7 |
 | `src/app/page.tsx` | `src/app` | `page` | 1 | 4 |
 | `src/components/insights/InsightCard.tsx` | `src/components` | `regular` | 1 | 0 |
@@ -255,7 +255,7 @@
 | `src/features/app-shell/AppShell.tsx` | `src/features` | `client-component` | 1 | 12 |
 | `src/features/app-shell/AppShellInbox.tsx` | `src/features` | `regular` | 2 | 6 |
 | `src/features/app-shell/AppShellNav.tsx` | `src/features` | `client-component` | 4 | 17 |
-| `src/features/app-shell/AppShellUserMenu.tsx` | `src/features` | `client-component` | 1 | 6 |
+| `src/features/app-shell/AppShellUserMenu.tsx` | `src/features` | `client-component` | 1 | 7 |
 | `src/features/app-shell/ClientConsentStrip.tsx` | `src/features` | `regular` | 1 | 1 |
 | `src/features/app-shell/ContactAdvisorButton.tsx` | `src/features` | `client-component` | 1 | 17 |
 | `src/features/auth/LoginForm.tsx` | `src/features` | `client-component` | 1 | 34 |
@@ -453,4 +453,6 @@
 | `src/ui/runway-chart-styles.ts` | `src/ui` | `regular` | 0 | 0 |
 | `src/ui/ScrollToTopButton.tsx` | `src/ui` | `client-component` | 1 | 2 |
 | `src/ui/surface-classes.ts` | `src/ui` | `regular` | 0 | 0 |
+| `src/ui/theme/ThemeModeToggle.tsx` | `src/ui` | `client-component` | 1 | 1 |
+| `src/ui/theme/ThemeProvider.tsx` | `src/ui` | `client-component` | 10 | 12 |
 | `src/ui/use-narrow-screen.ts` | `src/ui` | `client-component` | 4 | 1 |
