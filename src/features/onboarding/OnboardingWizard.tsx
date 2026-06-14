@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import {
   BUDGET_STRATEGY_PRESETS,
-  FOOD_SPEND_BAND_PRESETS,
   LIFESTYLE_PRESETS,
-  listOnboardingLifestylePresets,
   generateGuidedMonthlyBudgetLines,
   type BudgetingStrategyId,
   type FoodSpendBandId,
@@ -32,11 +30,14 @@ import {
 } from "@/ui/input-classes";
 import { formatCurrency } from "@/ui/lib/format";
 import { BonusMonthSelector } from "@/features/onboarding/BonusMonthSelector";
+import {
+  onboardingStepToStore,
+  onboardingUiStepFromStored,
+} from "@/features/onboarding/onboarding-profile-hints";
 import { OnboardingProgress } from "@/features/onboarding/OnboardingProgress";
 import {
   onboardingCardClass,
   onboardingChoiceChipClass,
-  onboardingOptionCardClass,
   onboardingStrategyCardClass,
 } from "@/features/onboarding/onboarding-ui";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
@@ -82,7 +83,14 @@ function isConfidence(
 }
 
 function isFoodBand(s: string | null): s is FoodSpendBandId {
-  return s != null && FOOD_SPEND_BAND_PRESETS.some((b) => b.id === s);
+  return (
+    s != null &&
+    (s === "under_300" ||
+      s === "range_300_600" ||
+      s === "range_600_1000" ||
+      s === "above_1000" ||
+      s === "unknown")
+  );
 }
 
 function parsePositive(raw: string): number | null {
@@ -94,7 +102,7 @@ export function OnboardingWizard(props: Props) {
   const router = useRouter();
   const cpfYearMonth = useMemo(() => formatYearMonth(new Date()), []);
   const [step, setStep] = useState(
-    Math.min(4, Math.max(1, props.initialStep || 1))
+    onboardingUiStepFromStored(props.initialStep || 1)
   );
   const [status, setStatus] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -132,11 +140,14 @@ export function OnboardingWizard(props: Props) {
       ? String(props.initialDebtObligations)
       : ""
   );
-  const [lifestyle, setLifestyle] = useState<LifestyleProfileId>(
-    isLifestyleId(props.initialLifestyleProfile)
-      ? props.initialLifestyleProfile
-      : "young_professional"
-  );
+  const lifestyle: LifestyleProfileId = isLifestyleId(
+    props.initialLifestyleProfile
+  )
+    ? props.initialLifestyleProfile
+    : "young_professional";
+  const foodBand: FoodSpendBandId = isFoodBand(props.initialFoodSpendBand)
+    ? props.initialFoodSpendBand
+    : "unknown";
   const [strategy, setStrategy] = useState<BudgetingStrategyId>(
     isStrategyId(props.initialBudgetingStrategy)
       ? props.initialBudgetingStrategy
@@ -148,11 +159,6 @@ export function OnboardingWizard(props: Props) {
       : props.initialEstimatedBudgetMode
         ? "rough"
         : "moderate"
-  );
-  const [foodBand, setFoodBand] = useState<FoodSpendBandId>(
-    isFoodBand(props.initialFoodSpendBand)
-      ? props.initialFoodSpendBand
-      : "unknown"
   );
 
   const grossNum = useMemo(
@@ -183,11 +189,6 @@ export function OnboardingWizard(props: Props) {
       foodSpendBand: foodBand,
     });
   }, [takeHomeForBudget, lifestyle, strategy, foodBand]);
-
-  const lifestyleOptions = useMemo(
-    () => listOnboardingLifestylePresets(lifestyle),
-    [lifestyle]
-  );
 
   function resolveBonusPayload(gross: number | null): {
     annual_bonus: number | null;
@@ -244,7 +245,7 @@ export function OnboardingWizard(props: Props) {
     setPending(true);
     setStatus(null);
     try {
-      await savePatch({ onboarding_step: prev });
+      await savePatch({ onboarding_step: onboardingStepToStore(prev) });
       setStep(prev);
     } catch (e) {
       console.error(e);
@@ -287,7 +288,7 @@ export function OnboardingWizard(props: Props) {
             salary_frequency: "monthly",
             onboarding_confidence_level: confidence,
             estimated_budget_mode: confidence === "rough",
-            onboarding_step: 2,
+            onboarding_step: onboardingStepToStore(2),
           });
         } else if (props.initialLegacyTakeHomeMonthly != null) {
           await savePatch({
@@ -299,7 +300,7 @@ export function OnboardingWizard(props: Props) {
             salary_frequency: "monthly",
             onboarding_confidence_level: confidence,
             estimated_budget_mode: confidence === "rough",
-            onboarding_step: 2,
+            onboarding_step: onboardingStepToStore(2),
           });
         } else {
           await savePatch({
@@ -311,26 +312,19 @@ export function OnboardingWizard(props: Props) {
             salary_frequency: "monthly",
             onboarding_confidence_level: confidence,
             estimated_budget_mode: confidence === "rough",
-            onboarding_step: 2,
+            onboarding_step: onboardingStepToStore(2),
           });
         }
         setStep(2);
       } else if (step === 2) {
-        await savePatch({
-          lifestyle_profile: lifestyle,
-          food_spend_band: foodBand,
-          onboarding_step: 3,
-        });
-        setStep(3);
-      } else if (step === 3) {
         await persistStrategyAndOptionalCommitments();
-        await savePatch({ onboarding_step: 4 });
-        setStep(4);
+        await savePatch({ onboarding_step: onboardingStepToStore(3) });
+        setStep(3);
       } else {
         await savePatch({
           onboarding_required: false,
           onboarding_completed_at: new Date().toISOString(),
-          onboarding_step: 4,
+          onboarding_step: onboardingStepToStore(3),
         });
         router.push("/dashboard");
         router.refresh();
@@ -356,8 +350,8 @@ export function OnboardingWizard(props: Props) {
         setStatus(result.error);
         return;
       }
-      await savePatch({ onboarding_step: 4 });
-      setStep(4);
+      await savePatch({ onboarding_step: onboardingStepToStore(3) });
+      setStep(3);
     } catch (e) {
       console.error(e);
       setStatus("Could not create budget lines. Try again or skip for now.");
@@ -370,19 +364,15 @@ export function OnboardingWizard(props: Props) {
     step === 1
       ? "Start with your income"
       : step === 2
-        ? "Pick a lifestyle lens"
-        : step === 3
-          ? "How do you usually manage money?"
-          : "You're ready to go";
+        ? "How do you usually manage money?"
+        : "You're ready to go";
 
   const stepBlurb =
     step === 1
       ? "One gross salary is enough — we'll estimate CPF and take-home. Refine the rest later in Settings."
       : step === 2
-        ? "Templates tune category weights. Nothing is locked — edit anytime in Budget."
-        : step === 3
-          ? "We'll draft a starting monthly plan from your income and style."
-          : "Add goals and balances when you're ready — your dashboard is set up.";
+        ? "We'll draft a starting monthly plan from your income and style."
+        : "Add goals and balances when you're ready — your dashboard is set up.";
 
   const navBackBase =
     "inline-flex min-h-11 items-center justify-center rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:opacity-50 min-w-[7.5rem]";
@@ -394,12 +384,12 @@ export function OnboardingWizard(props: Props) {
 
   return (
     <div
-      className={`mx-auto max-w-xl space-y-8 ${step === 3 ? "pb-44" : "pb-28"}`}
+      className={`mx-auto max-w-xl space-y-8 ${step === 2 ? "pb-44" : "pb-28"}`}
     >
       <BlockingSubmitOverlay
         active={pending}
         message={
-          step === 3 ? "Creating your illustrated budget…" : "Saving onboarding…"
+          step === 2 ? "Creating your illustrated budget…" : "Saving onboarding…"
         }
       />
       <header className="space-y-6">
@@ -412,7 +402,7 @@ export function OnboardingWizard(props: Props) {
         </div>
       </header>
 
-      {step >= 2 && step <= 4 && (
+      {step >= 2 && step <= 3 && (
         <div
           className={
             takeHomeForBudget > 0
@@ -595,52 +585,6 @@ export function OnboardingWizard(props: Props) {
       )}
 
       {step === 2 && (
-        <div className="space-y-6" {...(pending ? { inert: true } : {})}>
-          <div className={`${onboardingCardClass} space-y-4`}>
-            <p className="text-sm font-semibold text-slate-900">Lifestyle</p>
-            <div className="grid gap-2.5 sm:grid-cols-2">
-              {lifestyleOptions.map((p) => (
-                <button
-                  key={p.id}
-                  type="button"
-                  onClick={() => setLifestyle(p.id)}
-                  className={`${onboardingOptionCardClass(lifestyle === p.id)} text-sm`}
-                >
-                  <span className="font-semibold text-slate-900">
-                    {p.label}
-                  </span>
-                  <span className="mt-1 block text-xs leading-snug text-slate-600">
-                    {p.blurb}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className={`${onboardingCardClass} space-y-3`}>
-            <p className="text-sm font-semibold text-slate-900">
-              Roughly, monthly food (dining + groceries)
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {FOOD_SPEND_BAND_PRESETS.map((b) => (
-                <button
-                  key={b.id}
-                  type="button"
-                  onClick={() => setFoodBand(b.id)}
-                  className={onboardingChoiceChipClass(foodBand === b.id)}
-                >
-                  {b.label}
-                </button>
-              ))}
-            </div>
-            <p className="text-xs text-slate-500">
-              Ranges keep things light — you will tune categories on the Budget
-              page.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {step === 3 && (
         <div className="space-y-6">
           <div className={`${onboardingCardClass} space-y-4`}>
             <p className="text-sm font-semibold text-slate-900">
@@ -755,7 +699,7 @@ export function OnboardingWizard(props: Props) {
         </div>
       )}
 
-      {step === 4 && (
+      {step === 3 && (
         <div className={`${onboardingCardClass} space-y-5 text-sm text-slate-700`}>
           <div
             className={`${appEmeraldPanelClass} px-4 py-4 text-center`}
@@ -809,7 +753,7 @@ export function OnboardingWizard(props: Props) {
               {status}
             </p>
           )}
-          {step === 3 ? (
+          {step === 2 ? (
             <div className="flex w-full flex-col gap-2">
               <button
                 type="button"
@@ -860,7 +804,7 @@ export function OnboardingWizard(props: Props) {
                 disabled={pending}
                 onClick={() => void onContinue()}
               >
-                {step === 4 ? "Finish onboarding" : "Continue"}
+                {step === 3 ? "Finish onboarding" : "Continue"}
               </button>
             </div>
           )}

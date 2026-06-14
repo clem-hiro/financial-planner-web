@@ -2,17 +2,17 @@
 
 import { appActiveGradientStyle } from "@/ui/app-tab-styles";
 
-const STEP_LABELS = ["Income", "Lifestyle", "Budget", "Done"] as const;
+const STEP_LABELS = ["Income", "Budget", "Done"] as const;
 
 type Props = {
   step: number;
 };
 
 export function OnboardingProgress({ step }: Props) {
-  const current = Math.min(4, Math.max(1, step));
+  const current = Math.min(3, Math.max(1, step));
 
   return (
-    <div className="space-y-3" aria-label={`Guided setup, step ${current} of 4`}>
+    <div className="space-y-3" aria-label={`Guided setup, step ${current} of 3`}>
       <div className="flex gap-1.5" role="presentation">
         {STEP_LABELS.map((label, index) => {
           const segment = index + 1;
@@ -43,7 +43,7 @@ export function OnboardingProgress({ step }: Props) {
         })}
       </div>
       <p className="text-center text-[11px] font-semibold uppercase tracking-[0.22em] text-emerald-800/90">
-        Step {current} of 4
+        Step {current} of 3
       </p>
     </div>
   );
