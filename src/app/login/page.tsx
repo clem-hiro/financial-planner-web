@@ -2,6 +2,8 @@ import { LoginForm } from "@/features/auth/LoginForm";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
 import { qrShareTokenSchema } from "@/lib/validation";
+import { appInlineLinkClass } from "@/ui/app-link-styles";
+import { appBrandNavyTextStyle } from "@/ui/app-tab-styles";
 import Link from "next/link";
 
 type PageProps = {
@@ -52,13 +54,16 @@ export default async function LoginPage({ searchParams }: PageProps) {
     <div className="flex min-h-full flex-col items-center justify-center px-4 py-16 sm:py-20">
       <div className="w-full max-w-md space-y-8 text-center">
         <div className="space-y-1">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-800/90">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-800/90 dark:text-emerald-300/90">
             Client access
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight text-[#0c192f] sm:text-3xl">
+          <h1
+            className="text-2xl font-semibold tracking-tight sm:text-3xl"
+            style={appBrandNavyTextStyle}
+          >
             Welcome back
           </h1>
-          <p className="text-sm leading-relaxed text-slate-600">
+          <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-400">
             Sign in to your private workspace.
           </p>
         </div>
@@ -78,10 +83,7 @@ export default async function LoginPage({ searchParams }: PageProps) {
             initialAdvisorName={initialAdvisorName}
           />
         )}
-        <Link
-          href="/"
-          className="inline-block text-sm font-medium text-slate-600 underline decoration-slate-300/80 underline-offset-4 transition hover:text-emerald-800 hover:decoration-emerald-300/70"
-        >
+        <Link href="/" className={`inline-block text-sm ${appInlineLinkClass}`}>
           Back to home
         </Link>
       </div>

@@ -120,7 +120,7 @@ dialog::backdrop {
 .dark :is(.bg-white\/55, .bg-white\/60, .bg-white\/70, .bg-white\/80, .bg-white\/85) {
   background-color: rgb(15 23 42 / 0.78);
 }
-.dark :is(.bg-slate-50, .bg-slate-50\/40, .bg-slate-50\/50, .bg-slate-50\/60, .bg-slate-50\/80, .bg-slate-50\/90, .bg-slate-50\/95, .bg-zinc-50, .bg-zinc-50\/40, .bg-zinc-50\/50, .bg-zinc-50\/60, .bg-zinc-50\/80, .bg-zinc-50\/90, .bg-zinc-100, .bg-zinc-100\/90) {
+.dark :is(.bg-slate-50, .bg-slate-50\/40, .bg-slate-50\/50, .bg-slate-50\/60, .bg-slate-50\/80, .bg-slate-50\/90, .bg-slate-50\/95, .bg-slate-100, .bg-slate-100\/80, .bg-slate-100\/90, .bg-zinc-50, .bg-zinc-50\/40, .bg-zinc-50\/50, .bg-zinc-50\/60, .bg-zinc-50\/80, .bg-zinc-50\/90, .bg-zinc-100, .bg-zinc-100\/90) {
   background-color: rgb(30 41 59 / 0.72);
 }
 .dark :is(.bg-amber-50, .bg-amber-50\/40, .bg-amber-50\/60, .bg-amber-50\/70, .bg-amber-50\/80, .bg-amber-50\/95, .bg-amber-100) {

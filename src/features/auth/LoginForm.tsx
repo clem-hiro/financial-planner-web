@@ -5,7 +5,19 @@ import {
   clientAccessKeyInputSchema,
   signupFinancialRoleSchema,
 } from "@/lib/validation";
-import { appEmeraldPanelClass } from "@/ui/surface-classes";
+import {
+  appActiveGradientStyle,
+  appTabPillActiveClass,
+  appTabPillClass,
+  appTabPillInactiveClass,
+  appTabRailClass,
+} from "@/ui/app-tab-styles";
+import { fpInputFullClass, fpPrimaryButtonClass } from "@/ui/input-classes";
+import {
+  appCardClass,
+  appCardPadding,
+  appEmeraldPanelClass,
+} from "@/ui/surface-classes";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { formatSignupError } from "@/features/auth/signup-error";
 import { useRouter } from "next/navigation";
@@ -15,13 +27,10 @@ type Mode = "signin" | "signup";
 
 type SignupRole = "advisor" | "client";
 
-const tabBase =
-  "flex-1 rounded-lg py-2.5 text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/35 focus-visible:ring-offset-2";
+const authInputClass = `${fpInputFullClass} min-h-11`;
 
-const authInputClass =
-  "min-h-11 w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-emerald-500/60 focus:ring-2 focus:ring-emerald-500/20";
-
-const authLabelClass = "block text-sm font-medium text-slate-700";
+const authLabelClass =
+  "block text-sm font-medium text-slate-700 dark:text-slate-300";
 
 export function LoginForm({
   initialAuthError,
@@ -207,7 +216,7 @@ export function LoginForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="mx-auto w-full max-w-sm space-y-5 rounded-2xl border border-slate-200/90 border-t-emerald-600 border-t-4 bg-white p-6 text-left shadow-[0_16px_48px_-24px_rgba(12,25,47,0.12)] sm:max-w-md sm:p-8"
+      className={`mx-auto w-full max-w-sm space-y-5 border-t-4 border-t-emerald-600 text-left sm:max-w-md ${appCardClass} ${appCardPadding}`}
       {...(pending ? { inert: true } : {})}
     >
       <BlockingSubmitOverlay
@@ -216,7 +225,7 @@ export function LoginForm({
       />
       {mode === "signup" && initialAdvisorName ? (
         <div
-          className={`${appEmeraldPanelClass} px-4 py-3 text-sm text-emerald-950`}
+          className={`${appEmeraldPanelClass} px-4 py-3 text-sm text-emerald-950 dark:text-emerald-100`}
           role="note"
         >
           You&rsquo;re connecting with{" "}
@@ -225,7 +234,7 @@ export function LoginForm({
       ) : null}
 
       <div
-        className="flex rounded-xl bg-slate-100/90 p-1"
+        className={`${appTabRailClass} w-full`}
         role="tablist"
         aria-label="Authentication mode"
       >
@@ -234,11 +243,10 @@ export function LoginForm({
           role="tab"
           aria-selected={mode === "signin"}
           id="tab-signin"
-          className={`${tabBase} ${
-            mode === "signin"
-              ? "bg-white text-[#0c192f] shadow-sm"
-              : "text-slate-500 hover:text-slate-700"
+          className={`${appTabPillClass} flex-1 ${
+            mode === "signin" ? appTabPillActiveClass : appTabPillInactiveClass
           }`}
+          style={mode === "signin" ? appActiveGradientStyle : undefined}
           onClick={() => switchMode("signin")}
         >
           Sign in
@@ -248,18 +256,17 @@ export function LoginForm({
           role="tab"
           aria-selected={mode === "signup"}
           id="tab-signup"
-          className={`${tabBase} ${
-            mode === "signup"
-              ? "bg-white text-[#0c192f] shadow-sm"
-              : "text-slate-500 hover:text-slate-700"
+          className={`${appTabPillClass} flex-1 ${
+            mode === "signup" ? appTabPillActiveClass : appTabPillInactiveClass
           }`}
+          style={mode === "signup" ? appActiveGradientStyle : undefined}
           onClick={() => switchMode("signup")}
         >
           Sign up
         </button>
       </div>
 
-      <h2 className="text-lg font-semibold tracking-tight text-[#0c192f]">
+      <h2 className="text-lg font-semibold tracking-tight text-[#0c192f] dark:text-slate-100">
         {mode === "signin" ? "Welcome back" : "Create your account"}
       </h2>
 
@@ -281,26 +288,26 @@ export function LoginForm({
       )}
 
       {mode === "signup" ? (
-        <fieldset className="space-y-2 rounded-xl border border-slate-200/90 bg-slate-50/50 p-3">
-          <legend className="px-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <fieldset className="space-y-2 rounded-xl border border-slate-200/90 bg-slate-50/50 p-3 dark:border-slate-700/90 dark:bg-slate-900/45">
+          <legend className="px-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
             I am signing up as
           </legend>
           <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-800">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-800 dark:text-slate-200">
               <input
                 type="radio"
                 name="signup_role"
-                className="h-4 w-4 border-slate-300 text-emerald-700 focus:ring-emerald-500/30"
+                className="h-4 w-4 border-slate-300 text-emerald-700 focus:ring-emerald-500/30 dark:border-slate-600 dark:bg-slate-900 dark:text-emerald-400"
                 checked={signupRole === "advisor"}
                 onChange={() => setSignupRole("advisor")}
               />
               Financial advisor
             </label>
-            <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-800">
+            <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-800 dark:text-slate-200">
               <input
                 type="radio"
                 name="signup_role"
-                className="h-4 w-4 border-slate-300 text-emerald-700 focus:ring-emerald-500/30"
+                className="h-4 w-4 border-slate-300 text-emerald-700 focus:ring-emerald-500/30 dark:border-slate-600 dark:bg-slate-900 dark:text-emerald-400"
                 checked={signupRole === "client"}
                 onChange={() => setSignupRole("client")}
               />
@@ -308,7 +315,7 @@ export function LoginForm({
             </label>
           </div>
           {signupRole === "client" ? (
-            <p className="text-xs text-slate-600">
+            <p className="text-xs text-slate-600 dark:text-slate-400">
               Clients need a one-time access key from their financial advisor. Free-form public signup
               is not available for clients.
             </p>
@@ -369,7 +376,7 @@ export function LoginForm({
       <button
         type="submit"
         disabled={pending}
-        className="w-full rounded-full bg-[#0c192f] py-3 text-sm font-semibold text-white shadow-md shadow-slate-900/15 transition hover:bg-[#152a45] disabled:opacity-60 sm:py-2.5"
+        className={`w-full py-3 disabled:opacity-60 sm:py-2.5 ${fpPrimaryButtonClass}`}
       >
         {pending ? "Working…" : mode === "signin" ? "Sign in" : "Sign up"}
       </button>

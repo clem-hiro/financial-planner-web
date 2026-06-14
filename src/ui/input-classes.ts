@@ -7,6 +7,8 @@ export const fpNumberNoSpinnerClass =
   "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none";
 
 export const fpInputClass = `w-full max-w-xs ${base} ${fpNumberNoSpinnerClass}`;
+/** Full-width fields for stacked forms (auth, onboarding) — no `max-w-xs` cap. */
+export const fpInputFullClass = `w-full ${base} ${fpNumberNoSpinnerClass}`;
 export const fpInputNarrowClass = `w-full max-w-[8rem] ${base} ${fpNumberNoSpinnerClass}`;
 export const fpSelectClass = `w-full max-w-xs ${base} cursor-pointer bg-white`;
 
