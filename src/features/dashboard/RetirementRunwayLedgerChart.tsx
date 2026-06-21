@@ -135,6 +135,21 @@ function fundingDetails(row: RunwayRow, key: string): AmountDetail[] {
     }
   } else if (key === "cashReserve") {
     addDetail(out, "cash:spend-down", "Cash balance spend-down", row.cashReserve);
+  } else if (key === "shortfall") {
+    addDetail(
+      out,
+      "shortfall:debt",
+      "Unpaid debt repayment",
+      row.rawUnfundedDebtRepayment,
+      "bad"
+    );
+    addDetail(
+      out,
+      "shortfall:living",
+      "Unfunded living expenses",
+      row.rawUnfundedLivingOutflow,
+      "bad"
+    );
   }
   return out;
 }
@@ -162,6 +177,13 @@ function netWorthDetails(row: RunwayRow): AmountDetail[] {
   addDetail(out, "networth:property", "Property", row.propertyNet);
   addDetail(out, "networth:vehicles", "Vehicles", row.vehiclesNet);
   addDetail(out, "networth:liabilities", "Liabilities", -row.liabilities, "bad");
+  addDetail(
+    out,
+    "networth:housing-liabilities",
+    "Housing loan balance",
+    -row.projectedHousingLiabilities,
+    "bad"
+  );
 
   const explainedNetWorth =
     row.cashBalance +

@@ -111,6 +111,46 @@ describe("toRunwayRows - financing stack", () => {
     expect(stackSum(result.rows[0])).toBe(110);
   });
 
+  it("groups debt repayment outflows separately and preserves unpaid debt fields", () => {
+    const result = toRunwayRows([
+      point({
+        age: 40,
+        requiredOutflow: 120,
+        employmentInflow: 70,
+        requiredDebtRepayment: 80,
+        fundedDebtRepayment: 70,
+        unfundedDebtRepayment: 10,
+        requiredLivingOutflow: 40,
+        unfundedLivingOutflow: 40,
+        goalsGap: 50,
+        outflowBreakdown: [
+          {
+            key: "debt_repayment:home-loan",
+            label: "Home loan",
+            sourceType: "debt_repayment",
+            amount: 80,
+          },
+          {
+            key: "planned_expense:Food",
+            label: "Food",
+            sourceType: "planned_expense",
+            amount: 40,
+          },
+        ],
+      }),
+    ]);
+
+    const row = result.rows[0];
+    expect(row.outflowSegments.map((s) => s.label)).toEqual([
+      "Home loan",
+      "Food",
+    ]);
+    expect(row.rawRequiredDebtRepayment).toBe(80);
+    expect(row.rawUnfundedDebtRepayment).toBe(10);
+    expect(row.rawUnfundedLivingOutflow).toBe(40);
+    expect(row.shortfall).toBe(50);
+  });
+
   it("uses retirement financing components without generic retirement labels", () => {
     const result = toRunwayRows([
       point({

@@ -8,6 +8,7 @@ import {
 } from "@/domain/finance/debt-repayment";
 import {
   DEBT_CATEGORY_OPTIONS,
+  GENERIC_DEBT_CATEGORY_OPTIONS,
   LOAN_TYPE_OPTIONS,
 } from "@/features/debts/debt-constants";
 import {
@@ -61,6 +62,28 @@ export function DebtFormFields({
   showAdvanced,
   onToggleAdvanced,
 }: DebtFormFieldsProps) {
+  const categoryOptions = useMemo(() => {
+    if (
+      values.category === "" ||
+      GENERIC_DEBT_CATEGORY_OPTIONS.some((o) => o.value === values.category)
+    ) {
+      return GENERIC_DEBT_CATEGORY_OPTIONS;
+    }
+
+    const legacy = DEBT_CATEGORY_OPTIONS.find(
+      (o) => o.value === values.category
+    );
+    return legacy
+      ? [
+          {
+            ...legacy,
+            label: `${legacy.label} (legacy)`,
+          },
+          ...GENERIC_DEBT_CATEGORY_OPTIONS,
+        ]
+      : GENERIC_DEBT_CATEGORY_OPTIONS;
+  }, [values.category]);
+
   const loanType =
     (values.loanType ||
       (values.category
@@ -93,6 +116,29 @@ export function DebtFormFields({
 
   return (
     <div className="space-y-3">
+      <label className="block text-xs">
+        <span className="mb-1 block font-medium text-slate-600">Category</span>
+        <select
+          name="category"
+          value={values.category}
+          onChange={(e) => {
+            const category = e.target.value as DebtCategory | "";
+            const patch: Partial<DebtFormValues> = { category };
+            if (category && !values.loanType) {
+              patch.loanType = defaultLoanTypeForCategory(category);
+            }
+            onChange(patch);
+          }}
+          className={fpSelectClass}
+        >
+          <option value="">Choose a debt type (optional)</option>
+          {categoryOptions.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.icon} {o.label}
+            </option>
+          ))}
+        </select>
+      </label>
       <div className="grid gap-3 sm:grid-cols-2">
         <label className="block text-xs">
           <span className="mb-1 block font-medium text-slate-600">
@@ -104,7 +150,7 @@ export function DebtFormFields({
             required
             value={values.name}
             onChange={(e) => onChange({ name: e.target.value })}
-            placeholder="Home loan"
+            placeholder="Credit card"
             className={fpInputClass}
           />
         </label>
@@ -126,30 +172,6 @@ export function DebtFormFields({
           />
         </label>
       </div>
-
-      <label className="block text-xs">
-        <span className="mb-1 block font-medium text-slate-600">Category</span>
-        <select
-          name="category"
-          value={values.category}
-          onChange={(e) => {
-            const category = e.target.value as DebtCategory | "";
-            const patch: Partial<DebtFormValues> = { category };
-            if (category && !values.loanType) {
-              patch.loanType = defaultLoanTypeForCategory(category);
-            }
-            onChange(patch);
-          }}
-          className={fpSelectClass}
-        >
-          <option value="">Choose a category (optional)</option>
-          {DEBT_CATEGORY_OPTIONS.map((o) => (
-            <option key={o.value} value={o.value}>
-              {o.icon} {o.label}
-            </option>
-          ))}
-        </select>
-      </label>
 
       <button
         type="button"
