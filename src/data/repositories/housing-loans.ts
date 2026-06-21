@@ -33,6 +33,18 @@ type HousingLoanInsert = {
   first_downpayment_paid_month?: string | null;
   first_downpayment_cpf_oa?: number | null;
   first_downpayment_cash?: number | null;
+  option_fee_total?: number | null;
+  option_fee_paid_month?: string | null;
+  option_fee_cpf_oa?: number | null;
+  option_fee_cash?: number | null;
+  bsd_total?: number | null;
+  bsd_paid_month?: string | null;
+  bsd_cpf_oa?: number | null;
+  bsd_cash?: number | null;
+  legal_fee_total?: number | null;
+  legal_fee_paid_month?: string | null;
+  legal_fee_cpf_oa?: number | null;
+  legal_fee_cash?: number | null;
   bsd_legal_total?: number | null;
   bsd_legal_paid_month?: string | null;
   bsd_legal_cpf_oa?: number | null;
@@ -93,6 +105,18 @@ function housingLoanFullPayload(
     first_downpayment_paid_month: row.first_downpayment_paid_month ?? null,
     first_downpayment_cpf_oa: row.first_downpayment_cpf_oa ?? null,
     first_downpayment_cash: row.first_downpayment_cash ?? null,
+    option_fee_total: row.option_fee_total ?? null,
+    option_fee_paid_month: row.option_fee_paid_month ?? null,
+    option_fee_cpf_oa: row.option_fee_cpf_oa ?? null,
+    option_fee_cash: row.option_fee_cash ?? null,
+    bsd_total: row.bsd_total ?? null,
+    bsd_paid_month: row.bsd_paid_month ?? null,
+    bsd_cpf_oa: row.bsd_cpf_oa ?? null,
+    bsd_cash: row.bsd_cash ?? null,
+    legal_fee_total: row.legal_fee_total ?? null,
+    legal_fee_paid_month: row.legal_fee_paid_month ?? null,
+    legal_fee_cpf_oa: row.legal_fee_cpf_oa ?? null,
+    legal_fee_cash: row.legal_fee_cash ?? null,
     bsd_legal_total: row.bsd_legal_total ?? null,
     bsd_legal_paid_month: row.bsd_legal_paid_month ?? null,
     bsd_legal_cpf_oa: row.bsd_legal_cpf_oa ?? null,
@@ -204,6 +228,18 @@ export async function updateHousingLoan(
     first_downpayment_paid_month?: string | null;
     first_downpayment_cpf_oa?: number | null;
     first_downpayment_cash?: number | null;
+    option_fee_total?: number | null;
+    option_fee_paid_month?: string | null;
+    option_fee_cpf_oa?: number | null;
+    option_fee_cash?: number | null;
+    bsd_total?: number | null;
+    bsd_paid_month?: string | null;
+    bsd_cpf_oa?: number | null;
+    bsd_cash?: number | null;
+    legal_fee_total?: number | null;
+    legal_fee_paid_month?: string | null;
+    legal_fee_cpf_oa?: number | null;
+    legal_fee_cash?: number | null;
     bsd_legal_total?: number | null;
     bsd_legal_paid_month?: string | null;
     bsd_legal_cpf_oa?: number | null;

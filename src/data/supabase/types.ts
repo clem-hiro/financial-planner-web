@@ -547,6 +547,18 @@ export type HousingLoanRow = {
   first_downpayment_paid_month?: string | null;
   first_downpayment_cpf_oa?: string | null;
   first_downpayment_cash?: string | null;
+  option_fee_total?: string | null;
+  option_fee_paid_month?: string | null;
+  option_fee_cpf_oa?: string | null;
+  option_fee_cash?: string | null;
+  bsd_total?: string | null;
+  bsd_paid_month?: string | null;
+  bsd_cpf_oa?: string | null;
+  bsd_cash?: string | null;
+  legal_fee_total?: string | null;
+  legal_fee_paid_month?: string | null;
+  legal_fee_cpf_oa?: string | null;
+  legal_fee_cash?: string | null;
   bsd_legal_total?: string | null;
   bsd_legal_paid_month?: string | null;
   bsd_legal_cpf_oa?: string | null;

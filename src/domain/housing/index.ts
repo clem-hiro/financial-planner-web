@@ -2,6 +2,7 @@ export {
   composeHousingPropertyViews,
   housingLoansForProjection,
 } from "@/domain/housing/compose";
+export { housingUpfrontOaEvents } from "@/domain/housing/upfront-oa-events";
 export {
   buildPropertyEquityBreakdown,
   normalizePropertyOwnership,

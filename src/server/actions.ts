@@ -1965,13 +1965,25 @@ export async function createHousingPropertyAction(
     formData,
     "first_downpayment_cash"
   );
-  const bsd_legal_total = parseOptionalMoneyField(formData, "bsd_legal_total");
-  const bsd_legal_cpf_oa = parseOptionalMoneyField(
+  const option_fee_total = parseOptionalMoneyField(formData, "option_fee_total");
+  const option_fee_cpf_oa = parseOptionalMoneyField(
     formData,
-    "bsd_legal_cpf_oa",
-    bsd_legal_total
+    "option_fee_cpf_oa"
   );
-  const bsd_legal_cash = parseOptionalMoneyField(formData, "bsd_legal_cash");
+  const option_fee_cash = parseOptionalMoneyField(formData, "option_fee_cash");
+  const bsd_total = parseOptionalMoneyField(formData, "bsd_total");
+  const bsd_cpf_oa = parseOptionalMoneyField(formData, "bsd_cpf_oa", bsd_total);
+  const bsd_cash = parseOptionalMoneyField(formData, "bsd_cash");
+  const legal_fee_total = parseOptionalMoneyField(formData, "legal_fee_total");
+  const legal_fee_cpf_oa = parseOptionalMoneyField(
+    formData,
+    "legal_fee_cpf_oa",
+    legal_fee_total
+  );
+  const legal_fee_cash = parseOptionalMoneyField(formData, "legal_fee_cash");
+  const bsd_legal_total = bsd_total + legal_fee_total;
+  const bsd_legal_cpf_oa = bsd_cpf_oa + legal_fee_cpf_oa;
+  const bsd_legal_cash = bsd_cash + legal_fee_cash;
   const second_downpayment_total = parseOptionalMoneyField(
     formData,
     "second_downpayment_total"
@@ -1991,6 +2003,24 @@ export async function createHousingPropertyAction(
     "First downpayment paid date"
   );
   if ("error" in firstDownpaymentMonth) return firstDownpaymentMonth;
+  const optionFeeMonth = optionalYearMonthOrMmyy(
+    formData,
+    "option_fee_paid_month",
+    "Option fee paid date"
+  );
+  if ("error" in optionFeeMonth) return optionFeeMonth;
+  const bsdMonth = optionalYearMonthOrMmyy(
+    formData,
+    "bsd_paid_month",
+    "BSD paid date"
+  );
+  if ("error" in bsdMonth) return bsdMonth;
+  const legalFeeMonth = optionalYearMonthOrMmyy(
+    formData,
+    "legal_fee_paid_month",
+    "Legal fee paid date"
+  );
+  if ("error" in legalFeeMonth) return legalFeeMonth;
   const bsdLegalMonth = optionalYearMonthOrMmyy(
     formData,
     "bsd_legal_paid_month",
@@ -2005,10 +2035,13 @@ export async function createHousingPropertyAction(
   if ("error" in secondDownpaymentMonth) return secondDownpaymentMonth;
   const downpayment_from_oa =
     first_downpayment_cpf_oa + second_downpayment_cpf_oa;
-  const fees_from_oa = bsd_legal_cpf_oa;
+  const fees_from_oa = bsd_cpf_oa + legal_fee_cpf_oa;
   const completion_month =
     completionRaw ||
     secondDownpaymentMonth.value ||
+    legalFeeMonth.value ||
+    bsdMonth.value ||
+    optionFeeMonth.value ||
     bsdLegalMonth.value ||
     firstDownpaymentMonth.value ||
     first_payment_month;
@@ -2031,6 +2064,12 @@ export async function createHousingPropertyAction(
   if (!Number.isFinite(annual_nominal_rate) || annual_nominal_rate < 0) {
     return { error: "Annual rate must be ≥ 0" };
   }
+  if (
+    lender_type === "bank" &&
+    (!Number.isFinite(annual_nominal_rate) || annual_nominal_rate <= 0)
+  ) {
+    return { error: "Enter your bank loan interest rate (% p.a.)" };
+  }
   if (!Number.isFinite(term_months) || term_months <= 0 || term_months > 600) {
     return { error: "Term must be 1–600 months" };
   }
@@ -2047,9 +2086,18 @@ export async function createHousingPropertyAction(
     return { error: "Invalid fees from OA" };
   }
   const upfrontAmounts = [
+    option_fee_total,
+    option_fee_cpf_oa,
+    option_fee_cash,
     first_downpayment_total,
     first_downpayment_cpf_oa,
     first_downpayment_cash,
+    bsd_total,
+    bsd_cpf_oa,
+    bsd_cash,
+    legal_fee_total,
+    legal_fee_cpf_oa,
+    legal_fee_cash,
     bsd_legal_total,
     bsd_legal_cpf_oa,
     bsd_legal_cash,
@@ -2062,6 +2110,15 @@ export async function createHousingPropertyAction(
   }
   if (first_downpayment_cpf_oa + first_downpayment_cash > first_downpayment_total + 1e-6) {
     return { error: "First downpayment CPF + cash cannot exceed total" };
+  }
+  if (option_fee_cpf_oa + option_fee_cash > option_fee_total + 1e-6) {
+    return { error: "Option fee CPF + cash cannot exceed total" };
+  }
+  if (bsd_cpf_oa + bsd_cash > bsd_total + 1e-6) {
+    return { error: "BSD CPF + cash cannot exceed total" };
+  }
+  if (legal_fee_cpf_oa + legal_fee_cash > legal_fee_total + 1e-6) {
+    return { error: "Legal fee CPF + cash cannot exceed total" };
   }
   if (bsd_legal_cpf_oa + bsd_legal_cash > bsd_legal_total + 1e-6) {
     return { error: "BSD/legal CPF + cash cannot exceed total" };
@@ -2116,14 +2173,26 @@ export async function createHousingPropertyAction(
           : propertyTypeParsed.data === "resale_hdb"
             ? "pct_25"
             : null,
-      buyers_stamp_duty: bsd_legal_total > 0 ? bsd_legal_total : null,
-      buyers_stamp_duty_paid_from_cpf_oa: bsd_legal_cpf_oa > 0,
+      buyers_stamp_duty: bsd_total > 0 ? bsd_total : null,
+      buyers_stamp_duty_paid_from_cpf_oa: bsd_cpf_oa > 0,
       first_downpayment_total,
       first_downpayment_paid_month: firstDownpaymentMonth.value,
       first_downpayment_cpf_oa,
       first_downpayment_cash,
-      bsd_legal_total,
-      bsd_legal_paid_month: bsdLegalMonth.value,
+      option_fee_total,
+      option_fee_paid_month: optionFeeMonth.value,
+      option_fee_cpf_oa,
+      option_fee_cash,
+      bsd_total,
+      bsd_paid_month: bsdMonth.value,
+      bsd_cpf_oa,
+      bsd_cash,
+      legal_fee_total,
+      legal_fee_paid_month: legalFeeMonth.value,
+      legal_fee_cpf_oa,
+      legal_fee_cash,
+      bsd_legal_total: bsd_legal_total > 0 ? bsd_legal_total : null,
+      bsd_legal_paid_month: bsdLegalMonth.value || legalFeeMonth.value || bsdMonth.value,
       bsd_legal_cpf_oa,
       bsd_legal_cash,
       second_downpayment_total,

@@ -1,8 +1,10 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 import { createHousingPropertyAction } from "@/server/actions";
-import { HDB_CONCESSIONARY_RATE_ANNUAL } from "@/domain/finance/housing-loan-quick";
+import {
+  HDB_CONCESSIONARY_RATE_ANNUAL,
+} from "@/domain/finance/housing-loan-quick";
 import type { HousingPaymentSource } from "@/domain/finance/housing-loan-payments";
 import { buildAmortizationSchedule } from "@/domain/finance/mortgage-amortization";
 import { computeSingaporeResidentialBuyersStampDuty } from "@/domain/finance/singapore-residential-bsd";
@@ -13,6 +15,7 @@ import { appCardClass } from "@/ui/surface-classes";
 import { formatCurrency } from "@/ui/lib/format";
 
 const initial = { error: null as string | null };
+const OPTION_FEE_DEFAULT_BTO = 2_000;
 const LEGAL_FEE_ESTIMATE = 3_000;
 
 const PROPERTY_TYPES = [
@@ -42,8 +45,12 @@ function monthHint(): string {
   ).slice(2)}`;
 }
 
-function monthlyInstalment(principal: number, annualRate: number, months: number) {
-  if (principal <= 0 || months <= 0) return 0;
+function monthlyInstalment(
+  principal: number,
+  annualRate: number,
+  months: number
+) {
+  if (principal <= 0 || months <= 0 || annualRate < 0) return 0;
   return (
     buildAmortizationSchedule({
       principal,
@@ -52,6 +59,17 @@ function monthlyInstalment(principal: number, annualRate: number, months: number
       firstPaymentYearMonth: `${CURRENT_YEAR}-01`,
     })[0]?.totalPayment ?? 0
   );
+}
+
+function defaultOptionFee(propertyType: "bto" | "resale_hdb") {
+  if (propertyType === "bto") {
+    return {
+      total: String(OPTION_FEE_DEFAULT_BTO),
+      cpf: "0",
+      cash: String(OPTION_FEE_DEFAULT_BTO),
+    };
+  }
+  return { total: "0", cpf: "0", cash: "0" };
 }
 
 export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
@@ -68,10 +86,25 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
   const [firstCpf, setFirstCpf] = useState("");
   const [firstCash, setFirstCash] = useState("0");
   const [firstMonth, setFirstMonth] = useState(monthHint);
+  const [optionTotalTouched, setOptionTotalTouched] = useState(false);
+  const [optionTotal, setOptionTotal] = useState(
+    String(OPTION_FEE_DEFAULT_BTO)
+  );
+  const [optionCpf, setOptionCpf] = useState("0");
+  const [optionCash, setOptionCash] = useState(String(OPTION_FEE_DEFAULT_BTO));
+  const [optionMonth, setOptionMonth] = useState(monthHint);
+  const [bsdTotalTouched, setBsdTotalTouched] = useState(false);
+  const [bsdTotal, setBsdTotal] = useState("");
   const [bsdCpfTouched, setBsdCpfTouched] = useState(false);
   const [bsdCpf, setBsdCpf] = useState("");
   const [bsdCash, setBsdCash] = useState("0");
   const [bsdMonth, setBsdMonth] = useState(monthHint);
+  const [legalTotalTouched, setLegalTotalTouched] = useState(false);
+  const [legalTotal, setLegalTotal] = useState(String(LEGAL_FEE_ESTIMATE));
+  const [legalCpfTouched, setLegalCpfTouched] = useState(false);
+  const [legalCpf, setLegalCpf] = useState(String(LEGAL_FEE_ESTIMATE));
+  const [legalCash, setLegalCash] = useState("0");
+  const [legalMonth, setLegalMonth] = useState(monthHint);
   const [secondTotal, setSecondTotal] = useState("0");
   const [secondCpfTouched, setSecondCpfTouched] = useState(false);
   const [secondCpf, setSecondCpf] = useState("0");
@@ -81,6 +114,8 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
   const [loanAmount, setLoanAmount] = useState("");
   const [termMonths, setTermMonths] = useState("300");
   const [firstPaymentMonth, setFirstPaymentMonth] = useState(currentYearMonth);
+  const [lenderType, setLenderType] = useState<"hdb" | "bank">("hdb");
+  const [bankRatePct, setBankRatePct] = useState("");
   const [paymentSource, setPaymentSource] =
     useState<HousingPaymentSource>("cpf_oa");
   const [cpfOaPayment, setCpfOaPayment] = useState("");
@@ -97,9 +132,15 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
       }),
     [pp, py]
   );
-  const bsdLegalTotal = bsd.total + LEGAL_FEE_ESTIMATE;
+  const effectiveBsdTotal = bsdTotalTouched ? moneyValue(bsdTotal) : bsd.total;
+  const effectiveLegalTotal = legalTotalTouched
+    ? moneyValue(legalTotal)
+    : LEGAL_FEE_ESTIMATE;
   const effectiveFirstCpf = firstCpfTouched ? moneyValue(firstCpf) : effectiveFirstTotal;
-  const effectiveBsdCpf = bsdCpfTouched ? moneyValue(bsdCpf) : bsdLegalTotal;
+  const effectiveBsdCpf = bsdCpfTouched ? moneyValue(bsdCpf) : effectiveBsdTotal;
+  const effectiveLegalCpf = legalCpfTouched
+    ? moneyValue(legalCpf)
+    : effectiveLegalTotal;
   const effectiveSecondCpf = secondCpfTouched
     ? moneyValue(secondCpf)
     : moneyValue(secondTotal);
@@ -108,13 +149,51 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
     pp - effectiveFirstTotal - moneyValue(secondTotal)
   );
   const effectiveLoanAmount = loanAmountTouched ? moneyValue(loanAmount) : derivedLoan;
+  const annualRate =
+    lenderType === "hdb"
+      ? HDB_CONCESSIONARY_RATE_ANNUAL
+      : bankRatePct.trim() === ""
+        ? NaN
+        : Number(bankRatePct) / 100;
   const monthlyTotal = monthlyInstalment(
     effectiveLoanAmount,
-    HDB_CONCESSIONARY_RATE_ANNUAL,
+    annualRate,
     Math.round(moneyValue(termMonths))
   );
   const oaShare =
     paymentSource === "split" ? 0.5 : paymentSource === "cash" ? 0 : 1;
+  const bsdTierHint =
+    pp > 0
+      ? bsd.bands
+          .map(
+            (b) =>
+              `${b.label}: ${(b.rate * 100).toFixed(0)}% on ${formatCurrency(
+                b.taxableAmount,
+                currencyCode
+              )}`
+          )
+          .join(" · ")
+      : "Enter purchase price to estimate BSD tiers (BTO stays under S$1M).";
+
+  useEffect(() => {
+    if (bsdTotalTouched) return;
+    setBsdTotal(pp > 0 ? String(bsd.total) : "");
+    if (!bsdCpfTouched) {
+      setBsdCpf(pp > 0 ? String(bsd.total) : "");
+    }
+  }, [bsd.total, bsdCpfTouched, bsdTotalTouched, pp]);
+
+  function onPropertyTypeChange(next: "bto" | "resale_hdb") {
+    setPropertyType(next);
+    setFirstTotalTouched(false);
+    setFirstCpfTouched(false);
+    setLoanAmountTouched(false);
+    setOptionTotalTouched(false);
+    const optionDefaults = defaultOptionFee(next);
+    setOptionTotal(optionDefaults.total);
+    setOptionCpf(optionDefaults.cpf);
+    setOptionCash(optionDefaults.cash);
+  }
 
   return (
     <form
@@ -128,11 +207,17 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
       <input type="hidden" name="current_valuation" value={purchasePrice} />
       <input type="hidden" name="ownership_percent" value="100" />
       <input type="hidden" name="rental_income_monthly" value="0" />
-      <input type="hidden" name="lender_type" value="hdb" />
+      <input type="hidden" name="lender_type" value={lenderType} />
       <input
         type="hidden"
         name="annual_nominal_rate"
-        value={String(HDB_CONCESSIONARY_RATE_ANNUAL)}
+        value={
+          lenderType === "hdb"
+            ? String(HDB_CONCESSIONARY_RATE_ANNUAL)
+            : bankRatePct.trim() === ""
+              ? ""
+              : String(Number(bankRatePct) / 100)
+        }
       />
       <input type="hidden" name="oa_share_of_payment" value={String(oaShare)} />
       <input type="hidden" name="payment_source" value={paymentSource} />
@@ -147,9 +232,9 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
       <div>
         <h2 className="text-sm font-semibold text-zinc-900">Add HDB home</h2>
         <p className="mt-1 text-xs leading-relaxed text-zinc-500">
-          Built for existing BTO and resale HDB homeowners first. Upfront CPF OA
-          outflows are saved by paid month so CPF projections start accruing from
-          the right point.
+          Plan before key collection or refine after — every amount and date stays
+          editable. CPF OA is deducted in the month you enter for each payment
+          (option fee, BSD, legal, downpayments).
         </p>
       </div>
 
@@ -176,12 +261,9 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
           <select
             name="property_type"
             value={propertyType}
-            onChange={(e) => {
-              setPropertyType(e.target.value as "bto" | "resale_hdb");
-              setFirstTotalTouched(false);
-              setFirstCpfTouched(false);
-              setLoanAmountTouched(false);
-            }}
+            onChange={(e) =>
+              onPropertyTypeChange(e.target.value as "bto" | "resale_hdb")
+            }
             className={fpInputClass}
           >
             {PROPERTY_TYPES.map(([value, label, planned]) => (
@@ -221,6 +303,7 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
               setPurchasePrice(e.target.value);
               if (!firstTotalTouched) setFirstCpfTouched(false);
               if (!loanAmountTouched) setCpfOaPayment("");
+              if (!bsdTotalTouched) setBsdCpfTouched(false);
             }}
             className={fpInputClass}
           />
@@ -228,10 +311,97 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
       </section>
 
       <PaymentEvent
+        title="Option fee"
+        defaultHint={`Default ${formatCurrency(
+          OPTION_FEE_DEFAULT_BTO,
+          currencyCode
+        )} cash for BTO — adjust if your booking fee differs.`}
+        totalName="option_fee_total"
+        total={optionTotalTouched ? optionTotal : defaultOptionFee(propertyType).total}
+        setTotal={(value) => {
+          setOptionTotalTouched(true);
+          setOptionTotal(value);
+        }}
+        monthName="option_fee_paid_month"
+        month={optionMonth}
+        setMonth={setOptionMonth}
+        cpfName="option_fee_cpf_oa"
+        cpf={optionCpf}
+        setCpf={setOptionCpf}
+        cashName="option_fee_cash"
+        cash={optionCash}
+        setCash={setOptionCash}
+        currencyCode={currencyCode}
+      />
+
+      <PaymentEvent
+        title="Buyer's stamp duty (BSD)"
+        defaultHint={`${bsd.scheduleLabel}. ${bsdTierHint} Only you know your split with a co-owner — adjust CPF vs cash.`}
+        totalName="bsd_total"
+        total={
+          bsdTotalTouched ? bsdTotal : pp > 0 ? String(bsd.total) : "0"
+        }
+        setTotal={(value) => {
+          setBsdTotalTouched(true);
+          setBsdTotal(value);
+          if (!bsdCpfTouched) setBsdCpf(value);
+        }}
+        monthName="bsd_paid_month"
+        month={bsdMonth}
+        setMonth={setBsdMonth}
+        cpfName="bsd_cpf_oa"
+        cpf={
+          bsdCpfTouched ? bsdCpf : pp > 0 ? String(Math.round(effectiveBsdCpf)) : "0"
+        }
+        setCpf={(value) => {
+          setBsdCpfTouched(true);
+          setBsdCpf(value);
+        }}
+        cashName="bsd_cash"
+        cash={bsdCash}
+        setCash={setBsdCash}
+        currencyCode={currencyCode}
+      />
+
+      <PaymentEvent
+        title="Legal fees"
+        defaultHint={`Estimate ${formatCurrency(
+          LEGAL_FEE_ESTIMATE,
+          currencyCode
+        )} — confirm with your solicitor or bank panel. Split CPF vs cash to match your arrangement.`}
+        totalName="legal_fee_total"
+        total={
+          legalTotalTouched ? legalTotal : String(LEGAL_FEE_ESTIMATE)
+        }
+        setTotal={(value) => {
+          setLegalTotalTouched(true);
+          setLegalTotal(value);
+          if (!legalCpfTouched) setLegalCpf(value);
+        }}
+        monthName="legal_fee_paid_month"
+        month={legalMonth}
+        setMonth={setLegalMonth}
+        cpfName="legal_fee_cpf_oa"
+        cpf={
+          legalCpfTouched
+            ? legalCpf
+            : String(Math.round(effectiveLegalTotal))
+        }
+        setCpf={(value) => {
+          setLegalCpfTouched(true);
+          setLegalCpf(value);
+        }}
+        cashName="legal_fee_cash"
+        cash={legalCash}
+        setCash={setLegalCash}
+        currencyCode={currencyCode}
+      />
+
+      <PaymentEvent
         title="1st downpayment / upfront payment"
         defaultHint={
           propertyType === "bto"
-            ? "Auto-filled at 10% for BTO"
+            ? "Auto-filled at 10% for BTO — usually at signing after balloting"
             : "Auto-filled at 25% for resale HDB"
         }
         totalName="first_downpayment_total"
@@ -258,33 +428,8 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
       />
 
       <PaymentEvent
-        title="BSD & legal fees"
-        defaultHint={`BSD uses ${bsd.scheduleLabel}; legal fee estimate ${formatCurrency(
-          LEGAL_FEE_ESTIMATE,
-          currencyCode
-        )}`}
-        totalName="bsd_legal_total"
-        total={String(Math.round(bsdLegalTotal))}
-        setTotal={() => undefined}
-        monthName="bsd_legal_paid_month"
-        month={bsdMonth}
-        setMonth={setBsdMonth}
-        cpfName="bsd_legal_cpf_oa"
-        cpf={bsdCpfTouched ? bsdCpf : String(Math.round(effectiveBsdCpf))}
-        setCpf={(value) => {
-          setBsdCpfTouched(true);
-          setBsdCpf(value);
-        }}
-        cashName="bsd_legal_cash"
-        cash={bsdCash}
-        setCash={setBsdCash}
-        currencyCode={currencyCode}
-        readOnlyTotal
-      />
-
-      <PaymentEvent
         title="2nd downpayment"
-        defaultHint="Usually applicable for BTO key collection; leave 0 if not relevant"
+        defaultHint="Usually at BTO key collection — leave 0 if not applicable yet"
         totalName="second_downpayment_total"
         total={secondTotal}
         setTotal={(value) => {
@@ -311,19 +456,58 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-              Loan & monthly instalment
+              Remaining loan amount & monthly instalment
             </h3>
             <p className="mt-1 text-xs text-zinc-500">
-              HDB concessionary rate is set to{" "}
-              {(HDB_CONCESSIONARY_RATE_ANNUAL * 100).toFixed(1)}% p.a.
+              Loan = purchase price minus downpayments (BSD, legal, and option fee
+              stay outside the facility).
             </p>
           </div>
           <div className="text-right text-xs text-zinc-500">
-            <p>Total original loan</p>
+            <p>Remaining loan</p>
             <p className="text-base font-semibold text-zinc-900">
               {formatCurrency(effectiveLoanAmount, currencyCode)}
             </p>
           </div>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="text-sm">
+            <span className="mb-1 block text-zinc-600">Lender</span>
+            <select
+              value={lenderType}
+              onChange={(e) =>
+                setLenderType(e.target.value as "hdb" | "bank")
+              }
+              className={fpInputClass}
+            >
+              <option value="hdb">
+                HDB loan ({(HDB_CONCESSIONARY_RATE_ANNUAL * 100).toFixed(1)}% p.a.)
+              </option>
+              <option value="bank">Bank loan</option>
+            </select>
+          </label>
+          <label className="text-sm">
+            <span className="mb-1 block text-zinc-600">
+              {lenderType === "hdb"
+                ? "Interest rate (fixed default)"
+                : "Bank interest rate (% p.a.)"}
+            </span>
+            <input
+              type="number"
+              min={0}
+              step="0.01"
+              readOnly={lenderType === "hdb"}
+              value={
+                lenderType === "hdb"
+                  ? (HDB_CONCESSIONARY_RATE_ANNUAL * 100).toFixed(1)
+                  : bankRatePct
+              }
+              onChange={(e) => setBankRatePct(e.target.value)}
+              placeholder={lenderType === "bank" ? "Enter your bank rate" : undefined}
+              className={fpInputClass}
+            />
+          </label>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-3">
@@ -336,7 +520,9 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
               type="number"
               min={1}
               step="0.01"
-              value={loanAmountTouched ? loanAmount : Math.round(effectiveLoanAmount)}
+              value={
+                loanAmountTouched ? loanAmount : Math.round(effectiveLoanAmount)
+              }
               onChange={(e) => {
                 setLoanAmountTouched(true);
                 setLoanAmount(e.target.value);
@@ -358,7 +544,7 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
             />
           </label>
           <label className="text-sm">
-            <span className="mb-1 block text-zinc-600">Starting date (YYYY-MM)</span>
+            <span className="mb-1 block text-zinc-600">First instalment (YYYY-MM)</span>
             <input
               name="first_payment_month"
               type="text"
@@ -366,6 +552,7 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
               value={firstPaymentMonth}
               onChange={(e) => setFirstPaymentMonth(e.target.value)}
               className={`${fpInputClass} font-mono text-xs`}
+              placeholder="2027-07"
             />
           </label>
         </div>
@@ -391,16 +578,24 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
       <div className="grid gap-2 rounded-md border border-zinc-100 bg-zinc-50 p-3 text-xs text-zinc-600 sm:grid-cols-3">
         <SummaryPill
           label="Estimated BSD"
-          value={formatCurrency(bsd.total, currencyCode)}
+          value={formatCurrency(effectiveBsdTotal, currencyCode)}
         />
         <SummaryPill
           label="Monthly instalment"
-          value={formatCurrency(monthlyTotal, currencyCode)}
+          value={
+            lenderType === "bank" && bankRatePct.trim() === ""
+              ? "Enter bank rate"
+              : formatCurrency(monthlyTotal, currencyCode)
+          }
         />
         <SummaryPill
-          label="CPF upfront tracked"
+          label="CPF OA upfront tracked"
           value={formatCurrency(
-            effectiveFirstCpf + effectiveBsdCpf + effectiveSecondCpf,
+            moneyValue(optionCpf) +
+              effectiveBsdCpf +
+              effectiveLegalCpf +
+              effectiveFirstCpf +
+              effectiveSecondCpf,
             currencyCode
           )}
         />
@@ -409,7 +604,11 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
       <div className="flex justify-end border-t border-zinc-100 pt-3">
         <button
           type="submit"
-          disabled={pending || effectiveLoanAmount <= 0}
+          disabled={
+            pending ||
+            effectiveLoanAmount <= 0 ||
+            (lenderType === "bank" && bankRatePct.trim() === "")
+          }
           className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
         >
           {pending ? "Saving..." : "Save HDB home"}
@@ -435,7 +634,6 @@ function PaymentEvent({
   cash,
   setCash,
   currencyCode,
-  readOnlyTotal = false,
 }: {
   title: string;
   defaultHint: string;
@@ -452,7 +650,6 @@ function PaymentEvent({
   cash: string;
   setCash: (value: string) => void;
   currencyCode: string;
-  readOnlyTotal?: boolean;
 }) {
   return (
     <section className="space-y-3 border-t border-zinc-100 pt-4">
@@ -473,7 +670,6 @@ function PaymentEvent({
             min={0}
             step="0.01"
             required
-            readOnly={readOnlyTotal}
             value={total}
             onChange={(e) => setTotal(e.target.value)}
             className={fpInputClass}

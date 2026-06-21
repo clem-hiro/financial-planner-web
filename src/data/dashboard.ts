@@ -31,6 +31,7 @@ import {
   vehicleNetProceedsAtCoeMonthEnd,
 } from "@/domain/finance";
 import { buildPropertyEquityBreakdown } from "@/domain/housing";
+import { housingUpfrontOaEvents } from "@/domain/housing/upfront-oa-events";
 import type {
   CpfInvestmentProjectionInput,
   HousingLoanProjectionInput,
@@ -349,34 +350,7 @@ export type DashboardPayload = {
 function housingLoanToProjection(
   row: HousingLoanRow
 ): HousingLoanProjectionInput {
-  const upfrontOaEvents = [
-    {
-      yearMonth: row.first_downpayment_paid_month,
-      amount: row.first_downpayment_cpf_oa,
-    },
-    { yearMonth: row.bsd_legal_paid_month, amount: row.bsd_legal_cpf_oa },
-    {
-      yearMonth: row.second_downpayment_paid_month,
-      amount: row.second_downpayment_cpf_oa,
-    },
-  ]
-    .filter(
-      (
-        event
-      ): event is {
-        yearMonth: string;
-        amount: NonNullable<typeof event.amount>;
-      } =>
-        event.yearMonth != null &&
-        /^\d{4}-\d{2}$/.test(event.yearMonth) &&
-        event.amount != null &&
-        String(event.amount).trim() !== ""
-    )
-    .map((event) => ({
-      yearMonth: event.yearMonth,
-      amount: num(event.amount),
-    }))
-    .filter((event) => event.amount > 0);
+  const upfrontOaEvents = housingUpfrontOaEvents(row);
 
   return {
     completionMonth: row.completion_month,
