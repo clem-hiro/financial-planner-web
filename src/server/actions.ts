@@ -2825,7 +2825,18 @@ export async function deleteHousingLoanAction(formData: FormData) {
   const idParsed = z.string().uuid().safeParse(String(formData.get("id") ?? "").trim());
   if (!idParsed.success) return;
   try {
-    await deleteHousingLoan(supabase, user.id, idParsed.data);
+    const { data: row, error: fetchError } = await supabase
+      .from("financial_housing_loans")
+      .select("property_id")
+      .eq("user_id", user.id)
+      .eq("id", idParsed.data)
+      .maybeSingle();
+    if (fetchError) throw fetchError;
+    if (row?.property_id) {
+      await deleteProperty(supabase, user.id, row.property_id);
+    } else {
+      await deleteHousingLoan(supabase, user.id, idParsed.data);
+    }
   } catch (e) {
     console.error(e);
   }

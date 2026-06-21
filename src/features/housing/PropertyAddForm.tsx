@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useMemo, useState } from "react";
 import { createHousingPropertyAction } from "@/server/actions";
 import {
@@ -14,7 +15,7 @@ import { fpInputClass } from "@/ui/input-classes";
 import { appCardClass } from "@/ui/surface-classes";
 import { formatCurrency } from "@/ui/lib/format";
 
-const initial = { error: null as string | null };
+const initial = { error: null as string | null, savedName: null as string | null };
 const OPTION_FEE_DEFAULT_BTO = 2_000;
 const LEGAL_FEE_ESTIMATE = 3_000;
 
@@ -73,10 +74,21 @@ function defaultOptionFee(propertyType: "bto" | "resale_hdb") {
 }
 
 export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
-  const [state, action, pending] = useActionState(
-    createHousingPropertyAction,
-    initial
-  );
+  const router = useRouter();
+  const wrappedCreate = async (
+    prev: typeof initial,
+    formData: FormData
+  ): Promise<typeof initial> => {
+    const res = await createHousingPropertyAction(prev, formData);
+    if (res.error === null) {
+      router.refresh();
+      const savedName =
+        String(formData.get("name") ?? "").trim() || "Property";
+      return { error: null, savedName };
+    }
+    return { error: res.error, savedName: null };
+  };
+  const [state, action, pending] = useActionState(wrappedCreate, initial);
   const [propertyType, setPropertyType] = useState<"bto" | "resale_hdb">("bto");
   const [purchasePrice, setPurchasePrice] = useState("");
   const [purchaseYear, setPurchaseYear] = useState(String(CURRENT_YEAR));
@@ -241,6 +253,11 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
       {state.error && (
         <p className="text-sm text-red-600" role="alert">
           {state.error}
+        </p>
+      )}
+      {state.savedName && !state.error && (
+        <p className="text-sm text-emerald-800" role="status">
+          Saved {state.savedName}. It appears in Your homes below.
         </p>
       )}
 

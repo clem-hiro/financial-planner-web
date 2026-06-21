@@ -1,12 +1,16 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useActionState, useMemo, useState } from "react";
 import {
   createHousingLoanAction,
   deleteHousingLoanAction,
+  deleteHousingPropertyAction,
   updateHousingLoanAction,
 } from "@/server/actions";
 import type { HousingLoanRow, PropertyRow } from "@/data/supabase/types";
+import { composeHousingPropertyViews } from "@/domain/housing/compose";
+import type { HousingPropertyView } from "@/domain/housing/types";
 import { CategoryVisibilityToggle } from "@/features/consent/CategoryVisibilityToggle";
 import { PropertyAddForm } from "@/features/housing/PropertyAddForm";
 import type { AdvisorCategoryVisibility } from "@/lib/advisor-visibility";
@@ -304,7 +308,16 @@ function HousingLoanEditForm({
   L: HousingLoanRow;
   currencyCode: string;
 }) {
-  const [state, action, pending] = useActionState(updateHousingLoanAction, initial);
+  const router = useRouter();
+  const wrappedUpdate = async (
+    prev: typeof initial,
+    formData: FormData
+  ): Promise<typeof initial> => {
+    const res = await updateHousingLoanAction(prev, formData);
+    if (res.error === null) router.refresh();
+    return res;
+  };
+  const [state, action, pending] = useActionState(wrappedUpdate, initial);
   const initLender = (L.lender_type ?? "hdb") as "hdb" | "bank" | "other";
   const [lender, setLender] = useState<"hdb" | "bank" | "other">(initLender);
   const [bankPct, setBankPct] = useState(() =>
@@ -630,6 +643,7 @@ function HousingLoanEditForm({
 }
 
 function HousingLoanDeleteForm({ id }: { id: string }) {
+  const router = useRouter();
   const [pending, setPending] = useState(false);
 
   return (
@@ -638,9 +652,9 @@ function HousingLoanDeleteForm({ id }: { id: string }) {
       onSubmit={(event) => {
         event.preventDefault();
         setPending(true);
-        deleteHousingLoanAction(new FormData(event.currentTarget)).finally(() =>
-          setPending(false)
-        );
+        deleteHousingLoanAction(new FormData(event.currentTarget))
+          .then(() => router.refresh())
+          .finally(() => setPending(false));
       }}
       {...(pending ? { inert: true } : {})}
     >
@@ -657,7 +671,163 @@ function HousingLoanDeleteForm({ id }: { id: string }) {
   );
 }
 
+function PropertyDeleteForm({ id }: { id: string }) {
+  const router = useRouter();
+  const [pending, setPending] = useState(false);
+
+  return (
+    <form
+      className="shrink-0"
+      onSubmit={(event) => {
+        event.preventDefault();
+        setPending(true);
+        deleteHousingPropertyAction(new FormData(event.currentTarget))
+          .then(() => router.refresh())
+          .finally(() => setPending(false));
+      }}
+      {...(pending ? { inert: true } : {})}
+    >
+      <BlockingSubmitOverlay active={pending} message="Deleting property…" />
+      <input type="hidden" name="id" value={id} />
+      <button
+        type="submit"
+        disabled={pending}
+        className="text-xs font-medium text-rose-700 hover:underline"
+      >
+        {pending ? "Deleting…" : "Delete"}
+      </button>
+    </form>
+  );
+}
+
+function HousingHomeListItem({
+  view,
+  currencyCode,
+}: {
+  view: HousingPropertyView;
+  currencyCode: string;
+}) {
+  const L = view.mortgage?.row;
+  if (!L) {
+    return (
+      <li className="rounded border border-zinc-100 bg-zinc-50/80 px-3 py-2">
+        <div className="flex flex-wrap items-start justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <p className="font-medium text-zinc-900">{view.name}</p>
+            <p className="text-xs text-zinc-600">
+              Property saved — no linked mortgage yet.
+              {view.purchasePrice != null
+                ? ` Purchase ${formatCurrency(view.purchasePrice, currencyCode)}.`
+                : ""}
+            </p>
+          </div>
+          {view.propertyRow ? (
+            <PropertyDeleteForm id={view.propertyRow.id} />
+          ) : null}
+        </div>
+      </li>
+    );
+  }
+
+  const planningPrice =
+    L.property_purchase_price != null &&
+    String(L.property_purchase_price).trim() !== "";
+  const presetLabel = (() => {
+    const p = L.downpayment_guidance_preset;
+    if (p === "pct_20") return "20% guidance";
+    if (p === "pct_25") return "25% guidance";
+    if (p === "custom") return "Custom downpayment";
+    return null;
+  })();
+  const bsdSaved =
+    L.buyers_stamp_duty != null && String(L.buyers_stamp_duty).trim() !== ""
+      ? num(L.buyers_stamp_duty)
+      : null;
+  const bsdFromOa = Boolean(L.buyers_stamp_duty_paid_from_cpf_oa);
+  const legacyBsdInLoan = Boolean(L.financing_includes_bsd);
+  const orig =
+    L.original_loan_principal != null &&
+    String(L.original_loan_principal).trim() !== ""
+      ? num(L.original_loan_principal)
+      : null;
+  const repaid = num(L.principal_repaid_before_schedule);
+  const lender = L.lender_type ?? "hdb";
+  const paymentLabel = (() => {
+    const src = resolveHousingPaymentSource(L);
+    if (src === "cpf_oa") return "Paid via CPF OA";
+    if (src === "cash") return "Cash housing burden";
+    return "Split (CPF OA + cash)";
+  })();
+
+  return (
+    <li className="rounded border border-zinc-100 bg-zinc-50/80 px-3 py-2">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <p className="font-medium text-zinc-900">{view.name}</p>
+          <p className="text-xs text-zinc-600">
+            {lenderLabel(lender)} · outstanding{" "}
+            {formatCurrency(num(L.principal), currencyCode)} @{" "}
+            {(num(L.annual_nominal_rate) * 100).toFixed(2)}% · {L.term_months}{" "}
+            mo left · {paymentLabel} · completion {L.completion_month} · first
+            pay {L.first_payment_month}
+          </p>
+          {planningPrice && (
+            <p className="mt-1 text-xs text-emerald-900/90">
+              Planned purchase{" "}
+              {formatCurrency(num(L.property_purchase_price ?? "0"), currencyCode)}
+              {presetLabel ? ` · ${presetLabel}` : ""}
+              {bsdSaved != null && (
+                <>
+                  {" "}
+                  · est. BSD {formatCurrency(bsdSaved, currencyCode)}
+                </>
+              )}
+              {bsdSaved != null && (
+                <span className="text-zinc-500">
+                  {" "}
+                  (
+                  {bsdFromOa
+                    ? "BSD from CPF OA"
+                    : legacyBsdInLoan
+                      ? "BSD was inside loan principal (legacy)"
+                      : "BSD outside OA (e.g. cash)"}
+                  )
+                </span>
+              )}
+              {L.property_kind ? (
+                <span className="text-zinc-500">
+                  {" "}
+                  · {L.property_kind.toUpperCase()}
+                </span>
+              ) : null}
+            </p>
+          )}
+          {(orig != null || repaid > 0) && (
+            <p className="mt-0.5 text-xs text-zinc-500">
+              {orig != null && (
+                <>
+                  Original facility {formatCurrency(orig, currencyCode)}
+                  {repaid > 0 ? " · " : ""}
+                </>
+              )}
+              {repaid > 0 && (
+                <>
+                  Principal repaid (recorded){" "}
+                  {formatCurrency(repaid, currencyCode)}
+                </>
+              )}
+            </p>
+          )}
+        </div>
+        <HousingLoanDeleteForm id={L.id} />
+      </div>
+      <HousingLoanEditForm L={L} currencyCode={currencyCode} />
+    </li>
+  );
+}
+
 export function HousingPanel({
+  properties,
   loans,
   currencyCode,
   advisorVisibility = null,
@@ -669,7 +839,20 @@ export function HousingPanel({
    * per-category visibility toggles. Null hides them (advisor view / no consent). */
   advisorVisibility?: AdvisorCategoryVisibility | null;
 }) {
-  const [state, action, pending] = useActionState(createHousingLoanAction, initial);
+  const router = useRouter();
+  const wrappedCreateLoan = async (
+    prev: typeof initial,
+    formData: FormData
+  ): Promise<typeof initial> => {
+    const res = await createHousingLoanAction(prev, formData);
+    if (res.error === null) router.refresh();
+    return res;
+  };
+  const [state, action, pending] = useActionState(wrappedCreateLoan, initial);
+  const homeViews = useMemo(
+    () => composeHousingPropertyViews(properties, loans),
+    [properties, loans]
+  );
 
   return (
     <div className="space-y-4">
@@ -708,111 +891,17 @@ export function HousingPanel({
         </details>
       </div>
 
-      {loans.length > 0 && (
+      {homeViews.length > 0 && (
         <div className="p-4 sm:p-5">
+          <p className="mb-3 text-sm font-medium text-zinc-800">Your homes</p>
           <ul className="space-y-2 text-sm">
-          {loans.map((L) => {
-            const planningPrice =
-              L.property_purchase_price != null &&
-              String(L.property_purchase_price).trim() !== "";
-            const presetLabel = (() => {
-              const p = L.downpayment_guidance_preset;
-              if (p === "pct_20") return "20% guidance";
-              if (p === "pct_25") return "25% guidance";
-              if (p === "custom") return "Custom downpayment";
-              return null;
-            })();
-            const bsdSaved =
-              L.buyers_stamp_duty != null && String(L.buyers_stamp_duty).trim() !== ""
-                ? num(L.buyers_stamp_duty)
-                : null;
-            const bsdFromOa = Boolean(L.buyers_stamp_duty_paid_from_cpf_oa);
-            const legacyBsdInLoan = Boolean(L.financing_includes_bsd);
-            const orig =
-              L.original_loan_principal != null &&
-              String(L.original_loan_principal).trim() !== ""
-                ? num(L.original_loan_principal)
-                : null;
-            const repaid = num(L.principal_repaid_before_schedule);
-            const lender = L.lender_type ?? "hdb";
-            const paymentLabel = (() => {
-              const src = resolveHousingPaymentSource(L);
-              if (src === "cpf_oa") return "Paid via CPF OA";
-              if (src === "cash") return "Cash housing burden";
-              return "Split (CPF OA + cash)";
-            })();
-            return (
-              <li
-                key={L.id}
-                className="rounded border border-zinc-100 bg-zinc-50/80 px-3 py-2"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-zinc-900">{L.label}</p>
-                    <p className="text-xs text-zinc-600">
-                      {lenderLabel(lender)} · outstanding{" "}
-                      {formatCurrency(num(L.principal), currencyCode)} @{" "}
-                      {(num(L.annual_nominal_rate) * 100).toFixed(2)}% ·{" "}
-                      {L.term_months} mo left · {paymentLabel} · completion{" "}
-                      {L.completion_month} · first pay {L.first_payment_month}
-                    </p>
-                    {planningPrice && (
-                      <p className="mt-1 text-xs text-emerald-900/90">
-                        Planned purchase{" "}
-                        {formatCurrency(
-                          num(L.property_purchase_price ?? "0"),
-                          currencyCode
-                        )}
-                        {presetLabel ? ` · ${presetLabel}` : ""}
-                        {bsdSaved != null && (
-                          <>
-                            {" "}
-                            · est. BSD {formatCurrency(bsdSaved, currencyCode)}
-                          </>
-                        )}
-                        {bsdSaved != null && (
-                          <span className="text-zinc-500">
-                            {" "}
-                            (
-                            {bsdFromOa
-                              ? "BSD from CPF OA"
-                              : legacyBsdInLoan
-                                ? "BSD was inside loan principal (legacy)"
-                                : "BSD outside OA (e.g. cash)"}
-                            )
-                          </span>
-                        )}
-                        {L.property_kind ? (
-                          <span className="text-zinc-500">
-                            {" "}
-                            · {L.property_kind.toUpperCase()}
-                          </span>
-                        ) : null}
-                      </p>
-                    )}
-                    {(orig != null || repaid > 0) && (
-                      <p className="mt-0.5 text-xs text-zinc-500">
-                        {orig != null && (
-                          <>
-                            Original facility {formatCurrency(orig, currencyCode)}
-                            {repaid > 0 ? " · " : ""}
-                          </>
-                        )}
-                        {repaid > 0 && (
-                          <>
-                            Principal repaid (recorded){" "}
-                            {formatCurrency(repaid, currencyCode)}
-                          </>
-                        )}
-                      </p>
-                    )}
-                  </div>
-                  <HousingLoanDeleteForm id={L.id} />
-                </div>
-                <HousingLoanEditForm L={L} currencyCode={currencyCode} />
-              </li>
-            );
-          })}
+            {homeViews.map((view) => (
+              <HousingHomeListItem
+                key={view.id}
+                view={view}
+                currencyCode={currencyCode}
+              />
+            ))}
           </ul>
         </div>
       )}
