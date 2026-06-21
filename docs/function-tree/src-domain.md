@@ -2,7 +2,7 @@
 
 # Function tree — `src/domain`
 
-108 module(s).
+113 module(s).
 
 ## Modules
 
@@ -49,10 +49,12 @@
 | [`src/domain/finance/cpf-retirement-projection.ts`](#src-domain-finance-cpf-retirement-projection-ts) | `regular` | 11 | 17 |
 | [`src/domain/finance/cpf-rules-review.test.ts`](#src-domain-finance-cpf-rules-review-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/cpf-rules-review.ts`](#src-domain-finance-cpf-rules-review-ts) | `regular` | 3 | 1 |
+| [`src/domain/finance/debt-cashflow.test.ts`](#src-domain-finance-debt-cashflow-test-ts) | `regular` | 1 | 0 |
+| [`src/domain/finance/debt-cashflow.ts`](#src-domain-finance-debt-cashflow-ts) | `regular` | 17 | 27 |
 | [`src/domain/finance/debt-payoff-strategies.test.ts`](#src-domain-finance-debt-payoff-strategies-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/debt-payoff-strategies.ts`](#src-domain-finance-debt-payoff-strategies-ts) | `regular` | 5 | 4 |
 | [`src/domain/finance/debt-repayment.test.ts`](#src-domain-finance-debt-repayment-test-ts) | `regular` | 0 | 0 |
-| [`src/domain/finance/debt-repayment.ts`](#src-domain-finance-debt-repayment-ts) | `regular` | 15 | 16 |
+| [`src/domain/finance/debt-repayment.ts`](#src-domain-finance-debt-repayment-ts) | `regular` | 16 | 16 |
 | [`src/domain/finance/expense-budget-lock.ts`](#src-domain-finance-expense-budget-lock-ts) | `regular` | 3 | 3 |
 | [`src/domain/finance/goal-deadline.ts`](#src-domain-finance-goal-deadline-ts) | `regular` | 11 | 13 |
 | [`src/domain/finance/goal-feasibility.test.ts`](#src-domain-finance-goal-feasibility-test-ts) | `regular` | 0 | 0 |
@@ -78,6 +80,9 @@
 | [`src/domain/finance/investment-review.ts`](#src-domain-finance-investment-review-ts) | `regular` | 7 | 6 |
 | [`src/domain/finance/irregular-expenses.test.ts`](#src-domain-finance-irregular-expenses-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/irregular-expenses.ts`](#src-domain-finance-irregular-expenses-ts) | `regular` | 3 | 1 |
+| [`src/domain/finance/loan-register.test.ts`](#src-domain-finance-loan-register-test-ts) | `regular` | 1 | 0 |
+| [`src/domain/finance/loan-register.ts`](#src-domain-finance-loan-register-ts) | `regular` | 4 | 4 |
+| [`src/domain/finance/loan-source-registry.ts`](#src-domain-finance-loan-source-registry-ts) | `regular` | 2 | 0 |
 | [`src/domain/finance/mortgage-amortization.test.ts`](#src-domain-finance-mortgage-amortization-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/mortgage-amortization.ts`](#src-domain-finance-mortgage-amortization-ts) | `regular` | 2 | 2 |
 | [`src/domain/finance/net-worth.ts`](#src-domain-finance-net-worth-ts) | `regular` | 2 | 1 |
@@ -87,8 +92,8 @@
 | [`src/domain/finance/projection.ts`](#src-domain-finance-projection-ts) | `regular` | 6 | 6 |
 | [`src/domain/finance/property-financing-plan.test.ts`](#src-domain-finance-property-financing-plan-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/property-financing-plan.ts`](#src-domain-finance-property-financing-plan-ts) | `regular` | 2 | 0 |
-| [`src/domain/finance/retirement-cashflow-projection.test.ts`](#src-domain-finance-retirement-cashflow-projection-test-ts) | `regular` | 2 | 0 |
-| [`src/domain/finance/retirement-cashflow-projection.ts`](#src-domain-finance-retirement-cashflow-projection-ts) | `regular` | 23 | 27 |
+| [`src/domain/finance/retirement-cashflow-projection.test.ts`](#src-domain-finance-retirement-cashflow-projection-test-ts) | `regular` | 3 | 0 |
+| [`src/domain/finance/retirement-cashflow-projection.ts`](#src-domain-finance-retirement-cashflow-projection-ts) | `regular` | 28 | 37 |
 | [`src/domain/finance/retirement-spend-vs-portfolio.test.ts`](#src-domain-finance-retirement-spend-vs-portfolio-test-ts) | `regular` | 0 | 0 |
 | [`src/domain/finance/retirement-spend-vs-portfolio.ts`](#src-domain-finance-retirement-spend-vs-portfolio-ts) | `regular` | 2 | 0 |
 | [`src/domain/finance/savings-rate.ts`](#src-domain-finance-savings-rate-ts) | `regular` | 1 | 0 |
@@ -926,7 +931,7 @@ Classification: `regular`
 - calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/cpf-monthly-projection.ts#applicableBasicHealthcareSumForMonthSg`, `src/domain/finance/cpf-monthly-projection.ts#endOfPreviousYearMonthDate`, `src/domain/finance/cpf-monthly-projection.ts#endOfYearMonthDate`, `src/domain/finance/cpf-monthly-projection.ts#fixedBandAgeProxy`, `src/domain/finance/cpf-monthly-projection.ts#monthDiff`, `src/domain/finance/cpf-monthly-projection.ts#overflowMediSaveAboveBhsToSpecialAccount`, `src/domain/finance/cpf-monthly-projection.ts#round2`, `src/domain/finance/cpf-monthly-projection.ts#validYearMonth`, `src/domain/finance/cpf-retirement-projection.ts#routeCpfSaInvestmentMaturityProceeds`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`, `src/domain/finance/sg-cpf-contribution-buckets.ts#monthlyCpfInflowsFromOwSubject`, `src/domain/finance/sg-cpf-contribution-buckets.ts#ordinaryWagesSubjectWithYtd`, `src/domain/finance/sg-cpf-contribution-buckets.ts#sgCpfAgeBandForCompletedAge`, `src/domain/finance/sg-cpf.ts#additionalWageCeilingRemaining`, `src/lib/dates.ts#addMonthsToYearMonth`
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `downsampleCpfSeries` — function, L493
+#### `downsampleCpfSeries` — function, L498
 
 _No tracked edges._
 
@@ -1016,6 +1021,95 @@ Classification: `regular`
 
 - called by: `src/server/inbox/acknowledge-cpf-rules-review.ts#acknowledgeCpfRulesReview`, `src/server/inbox/ensure-cpf-rules-review-notification.ts#ensureCpfRulesReviewNotification`
 
+### `src/domain/finance/debt-cashflow.test.ts` <a id="src-domain-finance-debt-cashflow-test-ts"></a>
+
+Classification: `regular`
+
+#### `baseDebt` — arrow, L10
+
+_No tracked edges._
+
+### `src/domain/finance/debt-cashflow.ts` <a id="src-domain-finance-debt-cashflow-ts"></a>
+
+Classification: `regular`
+
+#### `roundMoney` — function, L55
+
+- called by: `src/domain/finance/debt-cashflow.ts#amortizedPayment`, `src/domain/finance/debt-cashflow.ts#createDebtProjectionStates`, `src/domain/finance/debt-cashflow.ts#debtPaymentDueForMonth`, `src/domain/finance/debt-cashflow.ts#flatRatePayment`, `src/domain/finance/debt-cashflow.ts#preferredCpfOaForPayment`, `src/domain/finance/debt-cashflow.ts#settleDebtPayment`
+
+#### `nonNegativeFinite` — function, L59
+
+- called by: `src/domain/finance/debt-cashflow.ts#createDebtProjectionStates`, `src/domain/finance/debt-cashflow.ts#settleDebtPayment`
+
+#### `positiveFinite` — function, L63
+
+- called by: `src/domain/finance/debt-cashflow.ts#initialScheduledPayment`, `src/domain/finance/debt-cashflow.ts#preferredCpfOaForPayment`
+
+#### `safeRate` — function, L68
+
+- called by: `src/domain/finance/debt-cashflow.ts#createDebtProjectionStates`, `src/domain/finance/debt-cashflow.ts#debtPaymentDueForMonth`, `src/domain/finance/debt-cashflow.ts#initialScheduledPayment`
+
+#### `clampShare` — function, L73
+
+- called by: `src/domain/finance/debt-cashflow.ts#preferredCpfOaForPayment`
+
+#### `startMonthForDebt` — function, L78
+
+- called by: `src/domain/finance/debt-cashflow.ts#debtPaymentDueForMonth`
+
+#### `termMonthsForDebt` — function, L83
+
+- called by: `src/domain/finance/debt-cashflow.ts#createDebtProjectionStates`, `src/domain/finance/debt-cashflow.ts#initialScheduledPayment`, `src/domain/finance/debt-cashflow.ts#remainingPayments`
+
+#### `remainingPayments` — function, L89
+
+- calls: `src/domain/finance/debt-cashflow.ts#termMonthsForDebt`
+- called by: `src/domain/finance/debt-cashflow.ts#debtPaymentDueForMonth`
+
+#### `amortizedPayment` — function, L95
+
+- calls: `src/domain/finance/debt-cashflow.ts#roundMoney`
+- called by: `src/domain/finance/debt-cashflow.ts#initialScheduledPayment`
+
+#### `flatRatePayment` — function, L107
+
+- calls: `src/domain/finance/debt-cashflow.ts#roundMoney`
+- called by: `src/domain/finance/debt-cashflow.ts#initialScheduledPayment`
+
+#### `initialScheduledPayment` — function, L117
+
+- calls: `src/domain/finance/debt-cashflow.ts#amortizedPayment`, `src/domain/finance/debt-cashflow.ts#flatRatePayment`, `src/domain/finance/debt-cashflow.ts#positiveFinite`, `src/domain/finance/debt-cashflow.ts#safeRate`, `src/domain/finance/debt-cashflow.ts#termMonthsForDebt`
+- called by: `src/domain/finance/debt-cashflow.ts#createDebtProjectionStates`
+
+#### `scheduledPaymentForState` — function, L135
+
+- called by: `src/domain/finance/debt-cashflow.ts#debtPaymentDueForMonth`
+
+#### `preferredCpfOaForPayment` — function, L139
+
+- calls: `src/domain/finance/debt-cashflow.ts#clampShare`, `src/domain/finance/debt-cashflow.ts#positiveFinite`, `src/domain/finance/debt-cashflow.ts#roundMoney`
+- called by: `src/domain/finance/debt-cashflow.ts#debtPaymentDueForMonth`
+
+#### `createDebtProjectionStates` — function, L156
+
+- calls: `src/domain/finance/debt-cashflow.ts#initialScheduledPayment`, `src/domain/finance/debt-cashflow.ts#nonNegativeFinite`, `src/domain/finance/debt-cashflow.ts#roundMoney`, `src/domain/finance/debt-cashflow.ts#safeRate`, `src/domain/finance/debt-cashflow.ts#termMonthsForDebt`
+- called by: `src/domain/finance/debt-cashflow.ts#buildDebtPaymentSchedule`, `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
+
+#### `debtPaymentDueForMonth` — function, L181
+
+- calls: `src/domain/finance/debt-cashflow.ts#preferredCpfOaForPayment`, `src/domain/finance/debt-cashflow.ts#remainingPayments`, `src/domain/finance/debt-cashflow.ts#roundMoney`, `src/domain/finance/debt-cashflow.ts#safeRate`, `src/domain/finance/debt-cashflow.ts#scheduledPaymentForState`, `src/domain/finance/debt-cashflow.ts#startMonthForDebt`
+- called by: `src/domain/finance/debt-cashflow.ts#buildDebtPaymentSchedule`, `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
+
+#### `settleDebtPayment` — function, L224
+
+- calls: `src/domain/finance/debt-cashflow.ts#nonNegativeFinite`, `src/domain/finance/debt-cashflow.ts#roundMoney`
+- called by: `src/domain/finance/debt-cashflow.ts#buildDebtPaymentSchedule`, `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
+
+#### `buildDebtPaymentSchedule` — function, L249
+
+- calls: `src/domain/finance/debt-cashflow.ts#createDebtProjectionStates`, `src/domain/finance/debt-cashflow.ts#debtPaymentDueForMonth`, `src/domain/finance/debt-cashflow.ts#settleDebtPayment`
+- unresolved: 1
+
 ### `src/domain/finance/debt-payoff-strategies.test.ts` <a id="src-domain-finance-debt-payoff-strategies-test-ts"></a>
 
 Classification: `regular`
@@ -1058,73 +1152,77 @@ _No top-level functions detected._
 
 Classification: `regular`
 
-#### `debtBudgetCategoryName` — function, L38
+#### `isSourceOwnedDebtCategory` — function, L23
+
+- called by: `src/server/actions.ts#createLiabilityAction`, `src/server/actions.ts#updateLiabilityAction`
+
+#### `debtBudgetCategoryName` — function, L49
 
 - called by: `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`
 
-#### `isDebtBudgetCategory` — function, L45
+#### `isDebtBudgetCategory` — function, L56
 
 - calls: `src/domain/finance/debt-repayment.ts#normalizeDebtCategoryKey`
 - called by: `src/domain/finance/budget-guided-setup.ts#isPreservedOnGuidedBudgetReplace`
 
-#### `normalizeDebtCategoryKey` — function, L51
+#### `normalizeDebtCategoryKey` — function, L62
 
 - called by: `src/domain/finance/debt-repayment.ts#isDebtBudgetCategory`
 
-#### `defaultLoanTypeForCategory` — function, L55
+#### `defaultLoanTypeForCategory` — function, L66
 
-- called by: `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`, `src/features/debts/DebtFormFields.tsx#DebtFormFields`, `src/server/liability-form.ts#parseLiabilityFormData`
+- called by: `src/data/dashboard.ts#liabilityToDebtObligation`, `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`, `src/features/debts/DebtFormFields.tsx#DebtFormFields`, `src/server/liability-form.ts#parseLiabilityFormData`
 
-#### `estimateAmortizedMonthlyPayment` — function, L77
+#### `estimateAmortizedMonthlyPayment` — function, L88
 
 - calls: `src/domain/finance/debt-repayment.ts#roundMoney`
 - called by: `src/domain/finance/debt-repayment.ts#estimateMonthlyRepayment`
 
-#### `estimateFlatRateMonthlyPayment` — function, L98
+#### `estimateFlatRateMonthlyPayment` — function, L109
 
 - calls: `src/domain/finance/debt-repayment.ts#roundMoney`
 - called by: `src/domain/finance/debt-repayment.ts#estimateMonthlyRepayment`, `src/features/debts/DebtEducationalExamples.tsx#DebtEducationalExamples`
 
-#### `estimateMonthlyRepayment` — function, L110
+#### `estimateMonthlyRepayment` — function, L121
 
 - calls: `src/domain/finance/debt-repayment.ts#estimateAmortizedMonthlyPayment`, `src/domain/finance/debt-repayment.ts#estimateFlatRateMonthlyPayment`
 - called by: `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`, `src/features/debts/DebtFormFields.tsx#DebtFormFields`
 
-#### `effectiveMonthlyRepayment` — function, L135
+#### `effectiveMonthlyRepayment` — function, L146
 
 - calls: `src/domain/finance/debt-repayment.ts#defaultLoanTypeForCategory`, `src/domain/finance/debt-repayment.ts#estimateMonthlyRepayment`
-- called by: `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/domain/finance/debt-repayment.ts#debtRepaymentAppliesInMonth`, `src/domain/finance/debt-repayment.ts#sumDebtRepaymentsInMonth`, `src/features/debts/DebtPayoffStrategyComparison.tsx#debtToSimInput`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`, `src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels`
+- called by: `src/data/dashboard.ts#liabilityToDebtObligation`, `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/domain/finance/debt-repayment.ts#debtRepaymentAppliesInMonth`, `src/domain/finance/debt-repayment.ts#sumDebtRepaymentsInMonth`, `src/features/debts/DebtPayoffStrategyComparison.tsx#debtToSimInput`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`, `src/features/debts/DebtPlanningPanels.tsx#DebtPlanningPanels`
 
-#### `debtRepaymentStartYearMonth` — function, L151
+#### `debtRepaymentStartYearMonth` — function, L162
 
-- called by: `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/domain/finance/debt-repayment.ts#debtRepaymentAppliesInMonth`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
+- called by: `src/data/dashboard.ts#liabilityToDebtObligation`, `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/domain/finance/debt-repayment.ts#debtRepaymentAppliesInMonth`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
 
-#### `debtRepaymentEndYearMonth` — function, L165
+#### `debtRepaymentEndYearMonth` — function, L176
 
 - calls: `src/domain/finance/budget.ts#isValidYearMonth`, `src/lib/dates.ts#addMonthsToYearMonth`
 - called by: `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/domain/finance/debt-repayment.ts#debtRepaymentAppliesInMonth`, `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
 
-#### `debtRepaymentAppliesInMonth` — function, L176
+#### `debtRepaymentAppliesInMonth` — function, L187
 
 - calls: `src/domain/finance/budget.ts#isValidYearMonth`, `src/domain/finance/debt-repayment.ts#debtRepaymentEndYearMonth`, `src/domain/finance/debt-repayment.ts#debtRepaymentStartYearMonth`, `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`
 - called by: `src/domain/finance/debt-repayment.ts#sumDebtRepaymentsInMonth`
 
-#### `sumDebtRepaymentsInMonth` — function, L191
+#### `sumDebtRepaymentsInMonth` — function, L202
 
 - calls: `src/domain/finance/debt-repayment.ts#debtRepaymentAppliesInMonth`, `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`
 
-#### `roundMoney` — function, L204
+#### `roundMoney` — function, L215
 
 - called by: `src/domain/finance/debt-repayment.ts#estimateAmortizedMonthlyPayment`, `src/domain/finance/debt-repayment.ts#estimateFlatRateMonthlyPayment`
 
-#### `dec` — function, L208
+#### `dec` — function, L219
 
 - called by: `src/domain/finance/debt-repayment.ts#liabilityRowToPlanning`
 
-#### `liabilityRowToPlanning` — function, L215
+#### `liabilityRowToPlanning` — function, L226
 
 - calls: `src/domain/finance/debt-repayment.ts#dec`
-- called by: `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`
+- called by: `src/data/dashboard.ts#liabilityToDebtObligation`, `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`
 
 ### `src/domain/finance/expense-budget-lock.ts` <a id="src-domain-finance-expense-budget-lock-ts"></a>
 
@@ -1333,7 +1431,7 @@ Classification: `regular`
 #### `splitHousingInstalment` — function, L127
 
 - calls: `src/domain/finance/housing-loan-payments.ts#parseAmount`, `src/domain/finance/housing-loan-payments.ts#parseShare`, `src/domain/finance/housing-loan-payments.ts#resolveHousingPaymentSourceForCash`
-- called by: `src/domain/finance/housing-loan-payments.ts#buildHousingPaymentInsights`, `src/domain/finance/housing-loan-payments.ts#normalizeHousingPaymentForPersist`, `src/domain/finance/housing-loan-payments.ts#oaShareForCpfProjection`, `src/domain/finance/housing-loan-payments.ts#oaShareForStoredHousingLoan`, `src/domain/finance/housing-loan-payments.ts#sumHousingCashInstalmentsForMonth`
+- called by: `src/data/dashboard.ts#housingLoanToDebtObligation`, `src/data/loan-register-read-model.ts#housingLoanToRegisterEntry`, `src/domain/finance/housing-loan-payments.ts#buildHousingPaymentInsights`, `src/domain/finance/housing-loan-payments.ts#normalizeHousingPaymentForPersist`, `src/domain/finance/housing-loan-payments.ts#oaShareForCpfProjection`, `src/domain/finance/housing-loan-payments.ts#oaShareForStoredHousingLoan`, `src/domain/finance/housing-loan-payments.ts#sumHousingCashInstalmentsForMonth`
 
 #### `oaShareForCpfProjection` — function, L191
 
@@ -1552,6 +1650,48 @@ Classification: `regular`
 
 - called by: `src/features/budget/BudgetIrregularExpenseReservePanel.tsx#BudgetIrregularExpenseReservePanel`
 
+### `src/domain/finance/loan-register.test.ts` <a id="src-domain-finance-loan-register-test-ts"></a>
+
+Classification: `regular`
+
+#### `entry` — function, L7
+
+_No tracked edges._
+
+### `src/domain/finance/loan-register.ts` <a id="src-domain-finance-loan-register-ts"></a>
+
+Classification: `regular`
+
+#### `normalizeLoanName` — function, L40
+
+- called by: `src/domain/finance/loan-register.ts#dedupeSourceOwnedLoanNames`, `src/domain/finance/loan-register.ts#nameCount`
+
+#### `displayLoanName` — function, L44
+
+- called by: `src/domain/finance/loan-register.ts#dedupeSourceOwnedLoanNames`
+
+#### `nameCount` — function, L48
+
+- calls: `src/domain/finance/loan-register.ts#normalizeLoanName`
+- called by: `src/domain/finance/loan-register.ts#dedupeSourceOwnedLoanNames`
+
+#### `dedupeSourceOwnedLoanNames` — function, L66
+
+- calls: `src/domain/finance/loan-register.ts#displayLoanName`, `src/domain/finance/loan-register.ts#nameCount`, `src/domain/finance/loan-register.ts#normalizeLoanName`
+- called by: `src/data/loan-register-read-model.ts#buildSourceOwnedLoanRegisterEntries`
+
+### `src/domain/finance/loan-source-registry.ts` <a id="src-domain-finance-loan-source-registry-ts"></a>
+
+Classification: `regular`
+
+#### `loanSourceDefinition` — function, L31
+
+- called by: `src/data/loan-register-read-model.ts#housingLoanToRegisterEntry`, `src/data/loan-register-read-model.ts#vehicleLoanToRegisterEntry`, `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`
+
+#### `expandTabsForLoanRegisterSources` — function, L41
+
+- called by: `src/features/planning/load-setup-tab-bundle.ts#loadSetupTabBundle`
+
 ### `src/domain/finance/mortgage-amortization.test.ts` <a id="src-domain-finance-mortgage-amortization-test-ts"></a>
 
 Classification: `regular`
@@ -1565,7 +1705,7 @@ Classification: `regular`
 #### `buildAmortizationSchedule` — function, L31
 
 - calls: `src/domain/finance/mortgage-amortization.ts#roundMoney`, `src/lib/dates.ts#addMonthsToYearMonth`
-- called by: `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount`, `src/domain/finance/housing-loan-payments.ts#housingInstalmentForMonth`, `src/domain/housing/property-equity.ts#housingLoanBalanceAt`, `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`, `src/features/housing/PropertyAddForm.tsx#monthlyInstalment`
+- called by: `src/data/dashboard.ts#housingLoanBalanceAndRemainingSchedule`, `src/data/dashboard.ts#housingLoanToDebtObligation`, `src/data/loan-register-read-model.ts#currentHousingLoanSchedule`, `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/domain/finance/housing-loan-payments.ts#firstHousingInstalmentAmount`, `src/domain/finance/housing-loan-payments.ts#housingInstalmentForMonth`, `src/domain/housing/property-equity.ts#housingLoanBalanceAt`, `src/features/goals/HousingLoanQuickAddForm.tsx#HousingLoanQuickAddForm`, `src/features/housing/PropertyAddForm.tsx#monthlyInstalment`
 
 #### `roundMoney` — function, L75
 
@@ -1667,11 +1807,15 @@ Classification: `regular`
 
 Classification: `regular`
 
-#### `component` — function, L31
+#### `component` — function, L32
 
 _No tracked edges._
 
-#### `monthlyEntry` — function, L47
+#### `monthlyEntry` — function, L48
+
+_No tracked edges._
+
+#### `debt` — function, L64
 
 _No tracked edges._
 
@@ -1679,107 +1823,129 @@ _No tracked edges._
 
 Classification: `regular`
 
-#### `clampMonth` — function, L198
+#### `clampMonth` — function, L239
 
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
 
-#### `isEntryActive` — function, L203
+#### `isEntryActive` — function, L244
 
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
 
-#### `annualGrowthMultiplier` — function, L221
+#### `annualGrowthMultiplier` — function, L262
 
 - calls: `src/lib/dates.ts#addMonthsToYearMonth`
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#amountForEntry`
 
-#### `amountForEntry` — function, L239
+#### `amountForEntry` — function, L280
 
 - calls: `src/domain/finance/retirement-cashflow-projection.ts#annualGrowthMultiplier`
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
 
-#### `snapshotForMonth` — function, L250
+#### `snapshotForMonth` — function, L291
 
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
 
-#### `nonNegativeFinite` — function, L262
+#### `nonNegativeFinite` — function, L303
 
-- called by: `src/domain/finance/retirement-cashflow-projection.ts#addDecemberComponentInflows`, `src/domain/finance/retirement-cashflow-projection.ts#buildInvestmentStates`, `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
+- called by: `src/domain/finance/retirement-cashflow-projection.ts#addDecemberComponentInflows`, `src/domain/finance/retirement-cashflow-projection.ts#buildInvestmentStates`, `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`, `src/domain/finance/retirement-cashflow-projection.ts#resolveCpfSnapshot`
 
-#### `safeRate` — function, L266
+#### `roundMoney` — function, L307
+
+- called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`, `src/domain/finance/retirement-cashflow-projection.ts#debtBalanceTotal`
+
+#### `safeRate` — function, L311
 
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#applyComponentGrowth`
 
-#### `incomeRate` — function, L271
+#### `incomeRate` — function, L316
 
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#addDecemberComponentInflows`
 
-#### `createInitialBreakdown` — function, L276
+#### `createInitialBreakdown` — function, L321
 
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
 
-#### `createInitialDrawBreakdown` — function, L287
+#### `createInitialDrawBreakdown` — function, L332
 
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
 
-#### `buildInvestmentStates` — function, L294
+#### `createInitialDebtMetrics` — function, L339
+
+- called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
+
+#### `buildInvestmentStates` — function, L350
 
 - calls: `src/domain/finance/retirement-cashflow-projection.ts#nonNegativeFinite`
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
 
-#### `investmentPrincipalTotal` — function, L323
+#### `investmentPrincipalTotal` — function, L379
 
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`, `src/domain/finance/retirement-cashflow-projection.ts#drawPrincipalProRata`
 
-#### `addSourceBreakdown` — function, L327
+#### `addSourceBreakdown` — function, L383
 
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
 
-#### `outflowBreakdownKey` — function, L344
+#### `outflowBreakdownKey` — function, L400
 
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#addOutflowBreakdown`
 
-#### `addOutflowBreakdown` — function, L348
+#### `addOutflowBreakdown` — function, L404
 
 - calls: `src/domain/finance/retirement-cashflow-projection.ts#outflowBreakdownKey`
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
 
-#### `componentCanUsePrincipal` — function, L367
+#### `addDebtOutflowBreakdown` — function, L423
 
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
 
-#### `componentCanProduceIncome` — function, L375
+#### `debtBalanceTotal` — function, L441
+
+- calls: `src/domain/finance/retirement-cashflow-projection.ts#roundMoney`
+- called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
+
+#### `resolveCpfSnapshot` — function, L453
+
+- calls: `src/domain/finance/retirement-cashflow-projection.ts#nonNegativeFinite`
+- called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
+
+#### `componentCanUsePrincipal` — function, L479
+
+- called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
+
+#### `componentCanProduceIncome` — function, L487
 
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#addDecemberComponentInflows`
 
-#### `componentCanWithdraw` — function, L383
+#### `componentCanWithdraw` — function, L495
 
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#addDecemberComponentInflows`
 
-#### `drawPrincipalProRata` — function, L394
+#### `drawPrincipalProRata` — function, L506
 
 - calls: `src/domain/finance/retirement-cashflow-projection.ts#investmentPrincipalTotal`
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
 - unresolved: 1
 
-#### `fundTransfersProRata` — function, L419
+#### `fundTransfersProRata` — function, L531
 
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
 
-#### `applyComponentGrowth` — function, L436
+#### `applyComponentGrowth` — function, L548
 
 - calls: `src/domain/finance/retirement-cashflow-projection.ts#safeRate`
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
 
-#### `addDecemberComponentInflows` — function, L446
+#### `addDecemberComponentInflows` — function, L558
 
 - calls: `src/domain/finance/retirement-cashflow-projection.ts#componentCanProduceIncome`, `src/domain/finance/retirement-cashflow-projection.ts#componentCanWithdraw`, `src/domain/finance/retirement-cashflow-projection.ts#incomeRate`, `src/domain/finance/retirement-cashflow-projection.ts#nonNegativeFinite`
 - called by: `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`
 
-#### `buildRetirementCashflowProjection` — function, L481
+#### `buildRetirementCashflowProjection` — function, L593
 
-- calls: `src/domain/finance/retirement-cashflow-projection.ts#addDecemberComponentInflows`, `src/domain/finance/retirement-cashflow-projection.ts#addOutflowBreakdown`, `src/domain/finance/retirement-cashflow-projection.ts#addSourceBreakdown`, `src/domain/finance/retirement-cashflow-projection.ts#amountForEntry`, `src/domain/finance/retirement-cashflow-projection.ts#applyComponentGrowth`, `src/domain/finance/retirement-cashflow-projection.ts#buildInvestmentStates`, `src/domain/finance/retirement-cashflow-projection.ts#clampMonth`, `src/domain/finance/retirement-cashflow-projection.ts#componentCanUsePrincipal`, `src/domain/finance/retirement-cashflow-projection.ts#createInitialBreakdown`, `src/domain/finance/retirement-cashflow-projection.ts#createInitialDrawBreakdown`, `src/domain/finance/retirement-cashflow-projection.ts#drawPrincipalProRata`, `src/domain/finance/retirement-cashflow-projection.ts#fundTransfersProRata`, `src/domain/finance/retirement-cashflow-projection.ts#investmentPrincipalTotal`, `src/domain/finance/retirement-cashflow-projection.ts#isEntryActive`, `src/domain/finance/retirement-cashflow-projection.ts#nonNegativeFinite`, `src/domain/finance/retirement-cashflow-projection.ts#snapshotForMonth`, `src/lib/dates.ts#addMonthsToYearMonth`
+- calls: `src/domain/finance/debt-cashflow.ts#createDebtProjectionStates`, `src/domain/finance/debt-cashflow.ts#debtPaymentDueForMonth`, `src/domain/finance/debt-cashflow.ts#settleDebtPayment`, `src/domain/finance/retirement-cashflow-projection.ts#addDebtOutflowBreakdown`, `src/domain/finance/retirement-cashflow-projection.ts#addDecemberComponentInflows`, `src/domain/finance/retirement-cashflow-projection.ts#addOutflowBreakdown`, `src/domain/finance/retirement-cashflow-projection.ts#addSourceBreakdown`, `src/domain/finance/retirement-cashflow-projection.ts#amountForEntry`, `src/domain/finance/retirement-cashflow-projection.ts#applyComponentGrowth`, `src/domain/finance/retirement-cashflow-projection.ts#buildInvestmentStates`, `src/domain/finance/retirement-cashflow-projection.ts#clampMonth`, `src/domain/finance/retirement-cashflow-projection.ts#componentCanUsePrincipal`, `src/domain/finance/retirement-cashflow-projection.ts#createInitialBreakdown`, `src/domain/finance/retirement-cashflow-projection.ts#createInitialDebtMetrics`, `src/domain/finance/retirement-cashflow-projection.ts#createInitialDrawBreakdown`, `src/domain/finance/retirement-cashflow-projection.ts#debtBalanceTotal`, `src/domain/finance/retirement-cashflow-projection.ts#drawPrincipalProRata`, `src/domain/finance/retirement-cashflow-projection.ts#fundTransfersProRata`, `src/domain/finance/retirement-cashflow-projection.ts#investmentPrincipalTotal`, `src/domain/finance/retirement-cashflow-projection.ts#isEntryActive`, `src/domain/finance/retirement-cashflow-projection.ts#nonNegativeFinite`, `src/domain/finance/retirement-cashflow-projection.ts#resolveCpfSnapshot`, `src/domain/finance/retirement-cashflow-projection.ts#roundMoney`, `src/domain/finance/retirement-cashflow-projection.ts#snapshotForMonth`, `src/lib/dates.ts#addMonthsToYearMonth`
 - called by: `src/data/dashboard.ts#getDashboardPayload`
-- unresolved: 2
+- unresolved: 7
 
 ### `src/domain/finance/retirement-spend-vs-portfolio.test.ts` <a id="src-domain-finance-retirement-spend-vs-portfolio-test-ts"></a>
 
@@ -2053,12 +2219,12 @@ Classification: `regular`
 #### `loanMonthsRemainingResolved` — function, L282
 
 - calls: `src/domain/finance/vehicle-sg.ts#monthsBetweenYearMonths`, `src/lib/dates.ts#formatYearMonth`
-- called by: `src/domain/finance/vehicle-sg.ts#effectiveLoanBalance`, `src/features/goals/VehiclesPanel.tsx#VehicleSummary`
+- called by: `src/data/loan-register-read-model.ts#vehicleLoanToRegisterEntry`, `src/domain/finance/vehicle-sg.ts#effectiveLoanBalance`, `src/features/goals/VehiclesPanel.tsx#VehicleSummary`
 
 #### `effectiveLoanBalance` — function, L309
 
 - calls: `src/domain/finance/vehicle-sg.ts#loanMonthsRemainingResolved`
-- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/domain/finance/vehicle-sg.ts#vehicleNetEquity`, `src/features/goals/VehiclesPanel.tsx#VehicleSummary`
+- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/data/loan-register-read-model.ts#vehicleLoanToRegisterEntry`, `src/domain/finance/vehicle-sg.ts#vehicleNetEquity`, `src/features/goals/VehiclesPanel.tsx#VehicleSummary`
 
 #### `vehicleGrossAssetEstimate` — function, L337
 

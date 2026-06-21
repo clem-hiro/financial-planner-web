@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import { createHousingPropertyAction } from "@/server/actions";
 import { HDB_CONCESSIONARY_RATE_ANNUAL } from "@/domain/finance/housing-loan-quick";
 import type { HousingPaymentSource } from "@/domain/finance/housing-loan-payments";
@@ -59,6 +60,13 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
     createHousingPropertyAction,
     initial
   );
+  const [addPaneOpen, setAddPaneOpen] = useState(false);
+  const [propertySectionOpen, setPropertySectionOpen] = useState(false);
+  const [firstPaymentOpen, setFirstPaymentOpen] = useState(false);
+  const [bsdOpen, setBsdOpen] = useState(false);
+  const [secondPaymentOpen, setSecondPaymentOpen] = useState(false);
+  const [loanOpen, setLoanOpen] = useState(false);
+  const [propertyName, setPropertyName] = useState("");
   const [propertyType, setPropertyType] = useState<"bto" | "resale_hdb">("bto");
   const [purchasePrice, setPurchasePrice] = useState("");
   const [purchaseYear, setPurchaseYear] = useState(String(CURRENT_YEAR));
@@ -115,121 +123,200 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
   );
   const oaShare =
     paymentSource === "split" ? 0.5 : paymentSource === "cash" ? 0 : 1;
+  const propertyBasicsComplete =
+    propertyName.trim().length > 0 &&
+    pp > 0 &&
+    Number.isFinite(py) &&
+    py >= 1960 &&
+    py <= 2100;
+  const firstPaymentComplete =
+    propertyBasicsComplete && effectiveFirstTotal >= 0 && firstMonth.trim().length >= 4;
+
+  const openAfterPropertyIfComplete = (
+    nextName: string,
+    nextPurchasePrice: string,
+    nextPurchaseYear: string
+  ) => {
+    const nextPrice = moneyValue(nextPurchasePrice);
+    const nextYear = Number(nextPurchaseYear);
+    if (
+      nextName.trim().length > 0 &&
+      nextPrice > 0 &&
+      Number.isFinite(nextYear) &&
+      nextYear >= 1960 &&
+      nextYear <= 2100
+    ) {
+      setFirstPaymentOpen(true);
+    }
+  };
+
+  const openAfterFirstPaymentIfComplete = (nextMonth: string) => {
+    if (
+      propertyBasicsComplete &&
+      effectiveFirstTotal >= 0 &&
+      nextMonth.trim().length >= 4
+    ) {
+      setBsdOpen(true);
+    }
+  };
+
+  const openAfterBsdIfComplete = (nextMonth: string) => {
+    if (firstPaymentComplete && nextMonth.trim().length >= 4) {
+      setSecondPaymentOpen(true);
+      setLoanOpen(true);
+    }
+  };
 
   return (
-    <form
-      action={action}
-      className={`${appCardClass} relative space-y-5 p-4 sm:p-5`}
-      {...(pending ? { inert: true } : {})}
+    <details
+      open={addPaneOpen || state.error != null}
+      onToggle={(event) => {
+        if (!state.error) setAddPaneOpen(event.currentTarget.open);
+      }}
+      className={`${appCardClass} overflow-hidden`}
     >
-      <BlockingSubmitOverlay active={pending} message="Saving HDB home…" />
-      <input type="hidden" name="has_loan" value="yes" />
-      <input type="hidden" name="status" value="living_in" />
-      <input type="hidden" name="current_valuation" value={purchasePrice} />
-      <input type="hidden" name="ownership_percent" value="100" />
-      <input type="hidden" name="rental_income_monthly" value="0" />
-      <input type="hidden" name="lender_type" value="hdb" />
-      <input
-        type="hidden"
-        name="annual_nominal_rate"
-        value={String(HDB_CONCESSIONARY_RATE_ANNUAL)}
-      />
-      <input type="hidden" name="oa_share_of_payment" value={String(oaShare)} />
-      <input type="hidden" name="payment_source" value={paymentSource} />
-      <input type="hidden" name="principal" value={String(effectiveLoanAmount)} />
-      <input
-        type="hidden"
-        name="original_loan_principal"
-        value={String(effectiveLoanAmount)}
-      />
-      <input type="hidden" name="max_oa_per_month" value="" />
-      <input type="hidden" name="principal_repaid_before_schedule" value="0" />
+      <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-zinc-900 hover:bg-zinc-50 sm:px-5">
+        Add HDB home
+        <span className="mt-1 block text-xs font-normal leading-relaxed text-zinc-500">
+          Existing BTO and resale HDB first. Upfront CPF OA outflows are saved by
+          paid month.
+        </span>
+      </summary>
+      <form
+        action={action}
+        className="relative space-y-4 border-t border-zinc-100 p-4 sm:p-5"
+        {...(pending ? { inert: true } : {})}
+      >
+        <BlockingSubmitOverlay active={pending} message="Saving HDB home…" />
+        <input type="hidden" name="has_loan" value="yes" />
+        <input type="hidden" name="status" value="living_in" />
+        <input type="hidden" name="current_valuation" value={purchasePrice} />
+        <input type="hidden" name="ownership_percent" value="100" />
+        <input type="hidden" name="rental_income_monthly" value="0" />
+        <input type="hidden" name="lender_type" value="hdb" />
+        <input
+          type="hidden"
+          name="annual_nominal_rate"
+          value={String(HDB_CONCESSIONARY_RATE_ANNUAL)}
+        />
+        <input type="hidden" name="oa_share_of_payment" value={String(oaShare)} />
+        <input type="hidden" name="payment_source" value={paymentSource} />
+        <input type="hidden" name="principal" value={String(effectiveLoanAmount)} />
+        <input
+          type="hidden"
+          name="original_loan_principal"
+          value={String(effectiveLoanAmount)}
+        />
+        <input type="hidden" name="max_oa_per_month" value="" />
+        <input type="hidden" name="principal_repaid_before_schedule" value="0" />
 
-      <div>
-        <h2 className="text-sm font-semibold text-zinc-900">Add HDB home</h2>
-        <p className="mt-1 text-xs leading-relaxed text-zinc-500">
-          Built for existing BTO and resale HDB homeowners first. Upfront CPF OA
-          outflows are saved by paid month so CPF projections start accruing from
-          the right point.
-        </p>
-      </div>
+        {state.error && (
+          <p className="text-sm text-red-600" role="alert">
+            {state.error}
+          </p>
+        )}
 
-      {state.error && (
-        <p className="text-sm text-red-600" role="alert">
-          {state.error}
-        </p>
-      )}
+        <FormDisclosureSection
+          title="Property"
+          description="Name, type, purchase year, and purchase price."
+          open={propertySectionOpen || state.error != null}
+          onOpenChange={setPropertySectionOpen}
+          status={propertyBasicsComplete ? "Ready" : "Required"}
+        >
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="text-sm sm:col-span-2">
+              <span className="mb-1 block text-zinc-600">Name of property</span>
+              <input
+                name="name"
+                type="text"
+                required
+                value={propertyName}
+                onChange={(e) => {
+                  setPropertyName(e.target.value);
+                  openAfterPropertyIfComplete(
+                    e.target.value,
+                    purchasePrice,
+                    purchaseYear
+                  );
+                }}
+                className={fpInputClass}
+                placeholder="Tengah BTO"
+              />
+            </label>
 
-      <section className="grid gap-3 sm:grid-cols-2">
-        <label className="text-sm sm:col-span-2">
-          <span className="mb-1 block text-zinc-600">Name of property</span>
-          <input
-            name="name"
-            type="text"
-            required
-            className={fpInputClass}
-            placeholder="Tengah BTO"
-          />
-        </label>
+            <label className="text-sm">
+              <span className="mb-1 block text-zinc-600">Property type</span>
+              <select
+                name="property_type"
+                value={propertyType}
+                onChange={(e) => {
+                  setPropertyType(e.target.value as "bto" | "resale_hdb");
+                  setFirstTotalTouched(false);
+                  setFirstCpfTouched(false);
+                  setLoanAmountTouched(false);
+                }}
+                className={fpInputClass}
+              >
+                {PROPERTY_TYPES.map(([value, label, planned]) => (
+                  <option key={value} value={value} disabled={planned}>
+                    {planned ? `${label} (planned)` : label}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-        <label className="text-sm">
-          <span className="mb-1 block text-zinc-600">Property type</span>
-          <select
-            name="property_type"
-            value={propertyType}
-            onChange={(e) => {
-              setPropertyType(e.target.value as "bto" | "resale_hdb");
-              setFirstTotalTouched(false);
-              setFirstCpfTouched(false);
-              setLoanAmountTouched(false);
-            }}
-            className={fpInputClass}
-          >
-            {PROPERTY_TYPES.map(([value, label, planned]) => (
-              <option key={value} value={value} disabled={planned}>
-                {planned ? `${label} (planned)` : label}
-              </option>
-            ))}
-          </select>
-        </label>
+            <label className="text-sm">
+              <span className="mb-1 block text-zinc-600">Purchase year</span>
+              <input
+                name="purchase_year"
+                type="number"
+                min={1960}
+                max={2100}
+                required
+                value={purchaseYear}
+                onChange={(e) => {
+                  setPurchaseYear(e.target.value);
+                  openAfterPropertyIfComplete(
+                    propertyName,
+                    purchasePrice,
+                    e.target.value
+                  );
+                }}
+                className={fpInputClass}
+              />
+            </label>
 
-        <label className="text-sm">
-          <span className="mb-1 block text-zinc-600">Purchase year</span>
-          <input
-            name="purchase_year"
-            type="number"
-            min={1960}
-            max={2100}
-            required
-            value={purchaseYear}
-            onChange={(e) => setPurchaseYear(e.target.value)}
-            className={fpInputClass}
-          />
-        </label>
-
-        <label className="text-sm sm:col-span-2">
-          <span className="mb-1 block text-zinc-600">
-            Purchase price ({currencyCode})
-          </span>
-          <input
-            name="purchase_price"
-            type="number"
-            min={1}
-            step="0.01"
-            required
-            value={purchasePrice}
-            onChange={(e) => {
-              setPurchasePrice(e.target.value);
-              if (!firstTotalTouched) setFirstCpfTouched(false);
-              if (!loanAmountTouched) setCpfOaPayment("");
-            }}
-            className={fpInputClass}
-          />
-        </label>
-      </section>
+            <label className="text-sm sm:col-span-2">
+              <span className="mb-1 block text-zinc-600">
+                Purchase price ({currencyCode})
+              </span>
+              <input
+                name="purchase_price"
+                type="number"
+                min={1}
+                step="0.01"
+                required
+                value={purchasePrice}
+                onChange={(e) => {
+                  setPurchasePrice(e.target.value);
+                  if (!firstTotalTouched) setFirstCpfTouched(false);
+                  if (!loanAmountTouched) setCpfOaPayment("");
+                  openAfterPropertyIfComplete(
+                    propertyName,
+                    e.target.value,
+                    purchaseYear
+                  );
+                }}
+                className={fpInputClass}
+              />
+            </label>
+          </div>
+        </FormDisclosureSection>
 
       <PaymentEvent
         title="1st downpayment / upfront payment"
+        open={firstPaymentOpen || state.error != null}
+        onOpenChange={setFirstPaymentOpen}
         defaultHint={
           propertyType === "bto"
             ? "Auto-filled at 10% for BTO"
@@ -242,10 +329,14 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
           setFirstTotal(value);
           if (!firstCpfTouched) setFirstCpf(value);
           setLoanAmountTouched(false);
+          openAfterFirstPaymentIfComplete(firstMonth);
         }}
         monthName="first_downpayment_paid_month"
         month={firstMonth}
-        setMonth={setFirstMonth}
+        setMonth={(value) => {
+          setFirstMonth(value);
+          openAfterFirstPaymentIfComplete(value);
+        }}
         cpfName="first_downpayment_cpf_oa"
         cpf={firstCpfTouched ? firstCpf : String(Math.round(effectiveFirstCpf))}
         setCpf={(value) => {
@@ -260,6 +351,8 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
 
       <PaymentEvent
         title="BSD & legal fees"
+        open={bsdOpen || state.error != null}
+        onOpenChange={setBsdOpen}
         defaultHint={`BSD uses ${bsd.scheduleLabel}; legal fee estimate ${formatCurrency(
           LEGAL_FEE_ESTIMATE,
           currencyCode
@@ -269,7 +362,10 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
         setTotal={() => undefined}
         monthName="bsd_legal_paid_month"
         month={bsdMonth}
-        setMonth={setBsdMonth}
+        setMonth={(value) => {
+          setBsdMonth(value);
+          openAfterBsdIfComplete(value);
+        }}
         cpfName="bsd_legal_cpf_oa"
         cpf={bsdCpfTouched ? bsdCpf : String(Math.round(effectiveBsdCpf))}
         setCpf={(value) => {
@@ -285,6 +381,8 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
 
       <PaymentEvent
         title="2nd downpayment"
+        open={secondPaymentOpen || state.error != null}
+        onOpenChange={setSecondPaymentOpen}
         defaultHint="Usually applicable for BTO key collection; leave 0 if not relevant"
         totalName="second_downpayment_total"
         total={secondTotal}
@@ -308,17 +406,17 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
         currencyCode={currencyCode}
       />
 
-      <section className="space-y-3 border-t border-zinc-100 pt-4">
+      <FormDisclosureSection
+        title="Loan & monthly instalment"
+        description={`HDB concessionary rate is set to ${(
+          HDB_CONCESSIONARY_RATE_ANNUAL * 100
+        ).toFixed(1)}% p.a.`}
+        open={loanOpen || state.error != null}
+        onOpenChange={setLoanOpen}
+        status={effectiveLoanAmount > 0 ? "Ready" : "Required"}
+      >
+        <div className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-              Loan & monthly instalment
-            </h3>
-            <p className="mt-1 text-xs text-zinc-500">
-              HDB concessionary rate is set to{" "}
-              {(HDB_CONCESSIONARY_RATE_ANNUAL * 100).toFixed(1)}% p.a.
-            </p>
-          </div>
           <div className="text-right text-xs text-zinc-500">
             <p>Total original loan</p>
             <p className="text-base font-semibold text-zinc-900">
@@ -386,7 +484,8 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
             compact
           />
         </div>
-      </section>
+        </div>
+      </FormDisclosureSection>
 
       <div className="grid gap-2 rounded-md border border-zinc-100 bg-zinc-50 p-3 text-xs text-zinc-600 sm:grid-cols-3">
         <SummaryPill
@@ -409,18 +508,68 @@ export function PropertyAddForm({ currencyCode }: { currencyCode: string }) {
       <div className="flex justify-end border-t border-zinc-100 pt-3">
         <button
           type="submit"
-          disabled={pending || effectiveLoanAmount <= 0}
+          disabled={pending || !propertyBasicsComplete || effectiveLoanAmount <= 0}
           className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-800 disabled:opacity-60"
         >
           {pending ? "Saving..." : "Save HDB home"}
         </button>
       </div>
-    </form>
+      </form>
+    </details>
+  );
+}
+
+function FormDisclosureSection({
+  title,
+  description,
+  open,
+  onOpenChange,
+  status,
+  children,
+}: {
+  title: string;
+  description: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  status?: string;
+  children: ReactNode;
+}) {
+  return (
+    <details
+      open={open}
+      onToggle={(event) => onOpenChange(event.currentTarget.open)}
+      className="group border-t border-zinc-100 pt-3 first:border-t-0 first:pt-0"
+    >
+      <summary className="flex cursor-pointer list-none items-start justify-between gap-3 rounded-md px-1 py-1 text-sm font-medium text-zinc-800 hover:bg-zinc-50">
+        <span className="flex min-w-0 flex-1 items-start gap-2">
+          <span
+            aria-hidden="true"
+            className="mt-0.5 inline-flex size-4 shrink-0 items-center justify-center text-xs text-zinc-500 transition-transform group-open:rotate-90"
+          >
+            &gt;
+          </span>
+          <span className="min-w-0">
+            {title}
+            <span className="mt-0.5 block text-xs font-normal leading-relaxed text-zinc-500">
+              {description}
+            </span>
+          </span>
+        </span>
+        {status ? (
+          <span className="shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-600">
+            {status}
+          </span>
+        ) : null}
+      </summary>
+      <div className="mt-3">{children}</div>
+    </details>
   );
 }
 
 function PaymentEvent({
   title,
+  open,
+  onOpenChange,
   defaultHint,
   totalName,
   total,
@@ -438,6 +587,8 @@ function PaymentEvent({
   readOnlyTotal = false,
 }: {
   title: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
   defaultHint: string;
   totalName: string;
   total: string;
@@ -455,13 +606,12 @@ function PaymentEvent({
   readOnlyTotal?: boolean;
 }) {
   return (
-    <section className="space-y-3 border-t border-zinc-100 pt-4">
-      <div>
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-zinc-500">
-          {title}
-        </h3>
-        <p className="mt-1 text-xs text-zinc-500">{defaultHint}</p>
-      </div>
+    <FormDisclosureSection
+      title={title}
+      description={defaultHint}
+      open={open}
+      onOpenChange={onOpenChange}
+    >
       <div className="grid gap-3 sm:grid-cols-4">
         <label className="text-sm">
           <span className="mb-1 block text-zinc-600">
@@ -516,7 +666,7 @@ function PaymentEvent({
           />
         </label>
       </div>
-    </section>
+    </FormDisclosureSection>
   );
 }
 

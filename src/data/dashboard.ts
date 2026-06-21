@@ -3,6 +3,7 @@ import {
   ageCompletedOnDate,
   analyzeRetirementDividendVsSpend,
   analyzeRetirementSpendVsPortfolio,
+  buildAmortizationSchedule,
   buildCpfMonthlyProjectionSeries,
   buildDashboardInsights,
   buildNetWorthByAgeProjection,
@@ -14,8 +15,13 @@ import {
   annualWithdrawalFromInvestmentRow,
   contributionMonthsLimitFromInvestmentRow,
   contributionStartMonthFromInvestmentRow,
+  debtRepaymentStartYearMonth,
+  defaultLoanTypeForCategory,
+  effectiveMonthlyRepayment,
   investmentMaturityMonthFromInvestmentRow,
+  liabilityRowToPlanning,
   oaShareForCpfProjection,
+  splitHousingInstalment,
   withdrawalStartMonthFromInvestmentRow,
   DEFAULT_RETIREMENT_DIVIDEND_YIELD_ANNUAL,
   DEFAULT_CPF_LIFE_PAYOUT_RATE_ANNUAL,
@@ -33,6 +39,7 @@ import {
 import { buildPropertyEquityBreakdown } from "@/domain/housing";
 import type {
   CpfInvestmentProjectionInput,
+  DebtObligationInput,
   HousingLoanProjectionInput,
   ProjectionAssetSnapshot,
   ProjectionInvestmentComponent,
@@ -125,6 +132,7 @@ import type {
   CpfBalanceRow,
   CpfInvestmentRow,
   HousingLoanRow,
+  LiabilityRow,
 } from "@/data/supabase/types";
 import {
   buildInvestmentProjectionSeries,
@@ -396,6 +404,120 @@ function housingLoanToProjection(
   };
 }
 
+function liabilityToDebtObligation(
+  row: LiabilityRow,
+  startYearMonth: string
+): DebtObligationInput | null {
+  const liability = liabilityRowToPlanning(row);
+  if (liability.balance <= 0) return null;
+
+  const startYm = debtRepaymentStartYearMonth(liability, startYearMonth);
+  const repayment = effectiveMonthlyRepayment(liability);
+  return {
+    id: `liability-${row.id}`,
+    label: liability.name,
+    kind: "liability",
+    balance: liability.balance,
+    annualInterestRate: liability.interestRateAnnual ?? 0,
+    loanType:
+      liability.loanType ?? defaultLoanTypeForCategory(liability.category),
+    termMonths: liability.remainingTenureMonths,
+    monthlyPayment: repayment > 0 ? repayment : null,
+    startMonth: Math.max(0, monthDistance(startYearMonth, startYm)),
+    fundingSource: "cash",
+  };
+}
+
+function housingLoanBalanceAndRemainingSchedule(
+  row: HousingLoanRow,
+  startYearMonth: string
+): { balance: number; firstDueMonth: string; remainingPayments: number } | null {
+  const principal = num(row.principal);
+  if (principal <= 0 || row.term_months <= 0) return null;
+
+  const schedule = buildAmortizationSchedule({
+    principal,
+    annualNominalRate: Math.max(0, num(row.annual_nominal_rate)),
+    termMonths: row.term_months,
+    firstPaymentYearMonth: row.first_payment_month,
+  });
+  if (schedule.length === 0) return null;
+
+  let balance = principal;
+  const remaining = [];
+  for (const payment of schedule) {
+    if (payment.yearMonth < startYearMonth) {
+      balance = payment.balanceAfter;
+    } else {
+      remaining.push(payment);
+    }
+  }
+  const firstDue = remaining[0];
+  if (!firstDue || balance <= 0) return null;
+  return {
+    balance,
+    firstDueMonth: firstDue.yearMonth,
+    remainingPayments: remaining.length,
+  };
+}
+
+function housingLoanToDebtObligation(
+  row: HousingLoanRow,
+  startYearMonth: string
+): DebtObligationInput | null {
+  const schedule = housingLoanBalanceAndRemainingSchedule(row, startYearMonth);
+  if (!schedule) return null;
+
+  const firstInstalment = buildAmortizationSchedule({
+    principal: schedule.balance,
+    annualNominalRate: Math.max(0, num(row.annual_nominal_rate)),
+    termMonths: schedule.remainingPayments,
+    firstPaymentYearMonth: schedule.firstDueMonth,
+  })[0]?.totalPayment;
+  const monthlyPayment = firstInstalment ?? 0;
+  if (monthlyPayment <= 0) return null;
+
+  const split = splitHousingInstalment(row, monthlyPayment);
+  return {
+    id: `housing-${row.id}`,
+    label: row.label,
+    kind: "housing",
+    balance: schedule.balance,
+    annualInterestRate: Math.max(0, num(row.annual_nominal_rate)),
+    loanType: "amortized",
+    termMonths: schedule.remainingPayments,
+    monthlyPayment,
+    startMonth: Math.max(0, monthDistance(startYearMonth, schedule.firstDueMonth)),
+    fundingSource: split.paymentSource,
+    cpfOaShare:
+      monthlyPayment > 0 ? Math.min(1, split.cpfOaPayment / monthlyPayment) : 0,
+    maxCpfOaMonthly:
+      row.max_oa_per_month != null &&
+      String(row.max_oa_per_month).trim() !== ""
+        ? num(row.max_oa_per_month)
+        : null,
+  };
+}
+
+function buildProjectionDebtObligations({
+  liabilities,
+  housingLoans,
+  startYearMonth,
+}: {
+  liabilities: LiabilityRow[];
+  housingLoans: HousingLoanRow[];
+  startYearMonth: string;
+}): DebtObligationInput[] {
+  return [
+    ...liabilities
+      .map((row) => liabilityToDebtObligation(row, startYearMonth))
+      .filter((row): row is DebtObligationInput => row != null),
+    ...housingLoans
+      .map((row) => housingLoanToDebtObligation(row, startYearMonth))
+      .filter((row): row is DebtObligationInput => row != null),
+  ];
+}
+
 function cpfInvestmentToProjection(
   row: CpfInvestmentRow
 ): CpfInvestmentProjectionInput {
@@ -453,7 +575,12 @@ function annualGrowthMultiplierAtYear(
  */
 const PROJECTION_FLOW_FIELDS = [
   "cashAccessibleInflow",
+  "requiredLivingOutflow",
   "requiredOutflow",
+  "fundedLivingOutflow",
+  "unfundedLivingOutflow",
+  "fundedOutflow",
+  "unfundedOutflow",
   "prePortfolioGap",
   "investmentYieldAvailable",
   "investmentYieldUsed",
@@ -470,6 +597,12 @@ const PROJECTION_FLOW_FIELDS = [
   "goalsGap",
   "scheduledInvestmentTransfer",
   "fundedInvestmentTransfer",
+  "requiredDebtRepayment",
+  "fundedDebtRepayment",
+  "unfundedDebtRepayment",
+  "debtPrincipalPaid",
+  "debtInterestPaid",
+  "debtCpfOaDrawdown",
 ] as const;
 
 type ProjectionFlowSums = Record<(typeof PROJECTION_FLOW_FIELDS)[number], number>;
@@ -478,6 +611,7 @@ const ANNUALIZED_OUTFLOW_SOURCE_TYPES = new Set([
   "planned_expense",
   "tax",
   "housing_cash",
+  "debt_repayment",
   "retirement_spend",
 ]);
 
@@ -546,6 +680,11 @@ function annualizeProjectionFlows(
 
   const annualized: ProjectionFlowSums = { ...flows };
   annualized.employmentInflow *= annualizationFactor;
+  annualized.requiredLivingOutflow *= annualizationFactor;
+  annualized.fundedLivingOutflow *= annualizationFactor;
+  annualized.unfundedLivingOutflow *= annualizationFactor;
+  annualized.fundedOutflow *= annualizationFactor;
+  annualized.unfundedOutflow *= annualizationFactor;
   annualized.cpfLifeInflow *= annualizationFactor;
   annualized.rentalInflow *= annualizationFactor;
   annualized.principalWithdrawn *= annualizationFactor;
@@ -555,6 +694,12 @@ function annualizeProjectionFlows(
   annualized.goalsGap *= annualizationFactor;
   annualized.scheduledInvestmentTransfer *= annualizationFactor;
   annualized.fundedInvestmentTransfer *= annualizationFactor;
+  annualized.requiredDebtRepayment *= annualizationFactor;
+  annualized.fundedDebtRepayment *= annualizationFactor;
+  annualized.unfundedDebtRepayment *= annualizationFactor;
+  annualized.debtPrincipalPaid *= annualizationFactor;
+  annualized.debtInterestPaid *= annualizationFactor;
+  annualized.debtCpfOaDrawdown *= annualizationFactor;
 
   annualized.cashAccessibleInflow =
     rawOtherCashInflow +
@@ -834,6 +979,9 @@ export async function getDashboardPayload(
 
   const amountOverrideByLineId = overridesToLineIdMap(overrideRows);
   const domainBudgetLines = budgetLineRows.map(budgetLineRowToDomain);
+  const projectionBudgetLines = budgetLineRows
+    .filter((row) => row.source_liability_id == null)
+    .map(budgetLineRowToDomain);
   const baseBudgetExpenses = expenses.map(expenseRowToBudgetExpense);
   const syntheticTax = buildSyntheticTaxExpense(
     incomeTaxConfig,
@@ -1015,6 +1163,7 @@ export async function getDashboardPayload(
         employmentContributionEndMonth: cpfEmploymentContributionEndMonth,
         initial: cpfInitialSnapshot(cpfRow),
         housingLoans: housingLoanRows.map(housingLoanToProjection),
+        deductRecurringHousingPayments: false,
         cpfInvestments: cpfInvestmentRows.map(cpfInvestmentToProjection),
       });
       const yearEndRow =
@@ -1148,31 +1297,6 @@ export async function getDashboardPayload(
       syntheticTax?.expense.spendPeriod === "monthly"
         ? syntheticTax.expense.amount
         : 0;
-    const extraHousingCashMonthly = syntheticHousingCash?.expense.amount ?? 0;
-    const vehicleNetByAge = nwAgePoints.map((p) => {
-      const asOfHorizon = addCalendarMonths(
-        dashboardAsOf,
-        p.monthsFromToday
-      );
-      return vehicleValuationInputs
-        .filter((v) => v.vehicleStatus === "active")
-        .reduce(
-          (sum, vehicle) =>
-            sum + vehicleNetListedBeforeLiquidation(vehicle, asOfHorizon),
-          0
-        );
-    });
-    const propertyNetByAge = nwAgePoints.map((p) => {
-      const asOfHorizon = addCalendarMonths(
-        dashboardAsOf,
-        p.monthsFromToday
-      );
-      return buildPropertyEquityBreakdown({
-        properties,
-        housingLoans: housingLoanRows,
-        asOfYearMonth: formatYearMonth(asOfHorizon),
-      }).propertiesNet;
-    });
     if (
       cpfMonthlySeriesForProjection != null &&
       cpfProjectionStartYearMonth != null &&
@@ -1201,8 +1325,10 @@ export async function getDashboardPayload(
               employmentContributionEndMonth: cpfEmploymentContributionEndMonth,
               initial: cpfInitialSnapshot(cpfRow),
               housingLoans: housingLoanRows.map(housingLoanToProjection),
+              deductRecurringHousingPayments: false,
               cpfInvestments: cpfInvestmentRows.map(cpfInvestmentToProjection),
             });
+      cpfMonthlySeriesForProjection = monthlySeries;
       cpfProjectionByAge = nwAgePoints.map((p) => {
         const targetYearMonth = addMonthsToYearMonth(
           yearMonth,
@@ -1334,7 +1460,7 @@ export async function getDashboardPayload(
         });
       }
     }
-    for (const line of domainBudgetLines) {
+    for (const line of projectionBudgetLines) {
       if (line.cadence !== "monthly" || line.amount <= 0) continue;
       const startMonth =
         line.startYearMonth != null && line.startYearMonth !== ""
@@ -1378,21 +1504,6 @@ export async function getDashboardPayload(
         startMonth: 0,
         endMonth: retirementStartMonth,
         amount: extraTaxMonthly,
-        growthAnnual: profileExpenseGrowthNominal(profile),
-      });
-    }
-    if (extraHousingCashMonthly > 0 && retirementStartMonth > 0) {
-      ledger.push({
-        id: "synthetic-housing-cash",
-        sourceType: "housing_cash",
-        label: "Housing cash payment",
-        direction: "outflow",
-        cashAccess: "cash",
-        phase: "pre_retirement",
-        cadence: "monthly",
-        startMonth: 0,
-        endMonth: retirementStartMonth,
-        amount: extraHousingCashMonthly,
         growthAnnual: profileExpenseGrowthNominal(profile),
       });
     }
@@ -1501,19 +1612,65 @@ export async function getDashboardPayload(
         assetTarget: "cpf",
       });
     }
-    const externalAssetSnapshots: ProjectionAssetSnapshot[] = nwAgePoints.map(
-      (p, i) => {
-        const cpfRowAge = cpfProjectionByAge?.[i];
+    const cpfSnapshotForProjectionMonth = (month: number) => {
+      const targetYearMonth = addMonthsToYearMonth(yearMonth, month);
+      if (
+        cpfMonthlySeriesForProjection != null &&
+        cpfProjectionStartYearMonth != null &&
+        cpfMonthlySeriesForProjection.length > 0
+      ) {
+        const idx = monthDistance(cpfProjectionStartYearMonth, targetYearMonth);
+        if (idx >= 0) {
+          const row =
+            cpfMonthlySeriesForProjection[
+              Math.min(idx, cpfMonthlySeriesForProjection.length - 1)
+            ];
+          return {
+            cpf: row?.totalCpf ?? 0,
+            cpfOa: row?.oa ?? 0,
+            cpfSa: row?.sa ?? 0,
+            cpfMa: row?.ma ?? 0,
+            cpfRa: row?.ra ?? 0,
+            cpfCpfis: row?.cpfis ?? 0,
+          };
+        }
+      }
+
+      const initial = cpfInitialSnapshot(cpfRow);
+      return {
+        cpf:
+          initial.oa +
+          initial.sa +
+          initial.ma +
+          (initial.ra ?? 0) +
+          initial.cpfisNotionalBalance,
+        cpfOa: initial.oa,
+        cpfSa: initial.sa,
+        cpfMa: initial.ma,
+        cpfRa: initial.ra ?? 0,
+        cpfCpfis: initial.cpfisNotionalBalance,
+      };
+    };
+    const externalAssetSnapshots: ProjectionAssetSnapshot[] = Array.from(
+      { length: horizonMonths + 1 },
+      (_, month) => {
+        const asOfHorizon = addCalendarMonths(dashboardAsOf, month);
+        const propertyEquity = buildPropertyEquityBreakdown({
+          properties,
+          housingLoans: housingLoanRows,
+          asOfYearMonth: formatYearMonth(asOfHorizon),
+        });
         return {
-          month: p.monthsFromToday,
-          cpf: cpfRowAge?.totalCpf ?? 0,
-          cpfOa: cpfRowAge?.oa ?? 0,
-          cpfSa: cpfRowAge?.sa ?? 0,
-          cpfMa: cpfRowAge?.ma ?? 0,
-          cpfRa: cpfRowAge?.ra ?? 0,
-          cpfCpfis: cpfRowAge?.cpfis ?? 0,
-          vehiclesNet: vehicleNetByAge[i] ?? 0,
-          propertyNet: propertyNetByAge[i] ?? 0,
+          month,
+          ...cpfSnapshotForProjectionMonth(month),
+          vehiclesNet: vehicleValuationInputs
+            .filter((v) => v.vehicleStatus === "active")
+            .reduce(
+              (sum, vehicle) =>
+                sum + vehicleNetListedBeforeLiquidation(vehicle, asOfHorizon),
+              0
+            ),
+          propertyGross: propertyEquity.propertiesGrossAsset,
         };
       }
     );
@@ -1547,6 +1704,11 @@ export async function getDashboardPayload(
         };
       }
     );
+    const debtObligations = buildProjectionDebtObligations({
+      liabilities: liabilityRows,
+      housingLoans: housingLoanRows,
+      startYearMonth: yearMonth,
+    });
     const cashflowProjectionInput = {
       startYearMonth: yearMonth,
       horizonMonths,
@@ -1554,6 +1716,7 @@ export async function getDashboardPayload(
       initialCash: cashTotal + vehicleProceedsCashNow,
       initialInvestmentPrincipal: investmentsTotal,
       liabilities: liabilitiesTotal,
+      debtObligations,
       investmentTotalReturnAnnual: snapForAgeBase.annualReturn,
       investmentComponents,
       ledger,
@@ -1642,7 +1805,10 @@ export async function getDashboardPayload(
           cpfMa: p.cpfMa,
           cpfRa: p.cpfRa,
           cpfCpfis: p.cpfCpfis,
-          liabilities: liabilitiesTotal,
+          liabilities: p.liabilities,
+          projectedLiabilities: p.projectedLiabilities,
+          projectedHousingLiabilities: p.projectedHousingLiabilities,
+          projectedNonHousingLiabilities: p.projectedNonHousingLiabilities,
           vehiclesNet: p.vehiclesNet,
         };
       });

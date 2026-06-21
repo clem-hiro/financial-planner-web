@@ -2,7 +2,7 @@
 
 # Function tree — `src/data`
 
-52 module(s).
+55 module(s).
 
 ## Modules
 
@@ -14,16 +14,19 @@
 | [`src/data/dashboard-advisor-viewer.test.ts`](#src-data-dashboard-advisor-viewer-test-ts) | `regular` | 0 | 0 |
 | [`src/data/dashboard-cpf-retirement-stop.test.ts`](#src-data-dashboard-cpf-retirement-stop-test-ts) | `regular` | 0 | 0 |
 | [`src/data/dashboard-cpf-zero-balance.test.ts`](#src-data-dashboard-cpf-zero-balance-test-ts) | `regular` | 1 | 30 |
+| [`src/data/dashboard-debt-ledger.test.ts`](#src-data-dashboard-debt-ledger-test-ts) | `regular` | 0 | 0 |
 | [`src/data/dashboard-overlay.test.ts`](#src-data-dashboard-overlay-test-ts) | `regular` | 0 | 0 |
 | [`src/data/dashboard-property-equity.test.ts`](#src-data-dashboard-property-equity-test-ts) | `regular` | 0 | 0 |
 | [`src/data/dashboard-runway-annual.test.ts`](#src-data-dashboard-runway-annual-test-ts) | `regular` | 0 | 0 |
-| [`src/data/dashboard.ts`](#src-data-dashboard-ts) | `regular` | 15 | 96 |
+| [`src/data/dashboard.ts`](#src-data-dashboard-ts) | `regular` | 19 | 111 |
 | [`src/data/expense-budget-guard.ts`](#src-data-expense-budget-guard-ts) | `regular` | 1 | 6 |
 | [`src/data/financial-profile.ts`](#src-data-financial-profile-ts) | `regular` | 2 | 1 |
 | [`src/data/goal-tradeoff-context.ts`](#src-data-goal-tradeoff-context-ts) | `regular` | 1 | 17 |
 | [`src/data/housing-cash-synthetic-expense.ts`](#src-data-housing-cash-synthetic-expense-ts) | `regular` | 1 | 1 |
 | [`src/data/income-tax-synthetic-expense.ts`](#src-data-income-tax-synthetic-expense-ts) | `regular` | 1 | 6 |
 | [`src/data/liability-budget-sync.ts`](#src-data-liability-budget-sync-ts) | `regular` | 2 | 12 |
+| [`src/data/loan-register-read-model.test.ts`](#src-data-loan-register-read-model-test-ts) | `regular` | 0 | 0 |
+| [`src/data/loan-register-read-model.ts`](#src-data-loan-register-read-model-ts) | `regular` | 5 | 15 |
 | [`src/data/mappers.ts`](#src-data-mappers-ts) | `regular` | 17 | 23 |
 | [`src/data/projection.ts`](#src-data-projection-ts) | `regular` | 6 | 10 |
 | [`src/data/repositories/advisor-access-keys.test.ts`](#src-data-repositories-advisor-access-keys-test-ts) | `regular` | 1 | 0 |
@@ -107,6 +110,12 @@ Classification: `regular`
 
 - calls: `[external] @vitest/expect`, `[external] vitest`
 
+### `src/data/dashboard-debt-ledger.test.ts` <a id="src-data-dashboard-debt-ledger-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
 ### `src/data/dashboard-overlay.test.ts` <a id="src-data-dashboard-overlay-test-ts"></a>
 
 Classification: `regular`
@@ -129,73 +138,93 @@ _No top-level functions detected._
 
 Classification: `regular`
 
-#### `housingLoanToProjection` — function, L349
+#### `housingLoanToProjection` — function, L357
 
 - calls: `src/data/mappers.ts#num`, `src/domain/finance/housing-loan-payments.ts#oaShareForCpfProjection`
 
-#### `cpfInvestmentToProjection` — function, L399
+#### `liabilityToDebtObligation` — function, L407
+
+- calls: `src/data/dashboard.ts#monthDistance`, `src/domain/finance/debt-repayment.ts#debtRepaymentStartYearMonth`, `src/domain/finance/debt-repayment.ts#defaultLoanTypeForCategory`, `src/domain/finance/debt-repayment.ts#effectiveMonthlyRepayment`, `src/domain/finance/debt-repayment.ts#liabilityRowToPlanning`
+- called by: `src/data/dashboard.ts#buildProjectionDebtObligations`
+
+#### `housingLoanBalanceAndRemainingSchedule` — function, L431
+
+- calls: `src/data/mappers.ts#num`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`
+- called by: `src/data/dashboard.ts#housingLoanToDebtObligation`
+
+#### `housingLoanToDebtObligation` — function, L464
+
+- calls: `src/data/dashboard.ts#housingLoanBalanceAndRemainingSchedule`, `src/data/dashboard.ts#monthDistance`, `src/data/mappers.ts#num`, `src/domain/finance/housing-loan-payments.ts#splitHousingInstalment`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`
+- called by: `src/data/dashboard.ts#buildProjectionDebtObligations`
+
+#### `buildProjectionDebtObligations` — function, L502
+
+- calls: `src/data/dashboard.ts#housingLoanToDebtObligation`, `src/data/dashboard.ts#liabilityToDebtObligation`
+- called by: `src/data/dashboard.ts#getDashboardPayload`
+
+#### `cpfInvestmentToProjection` — function, L521
 
 - calls: `src/data/mappers.ts#num`
 
-#### `ageAtEndOfYearMonth` — function, L412
+#### `ageAtEndOfYearMonth` — function, L534
 
 - calls: `src/domain/finance/age-projection.ts#ageCompletedOnDate`
 - called by: `src/data/dashboard.ts#buildCpfHousingMarkers`
 
-#### `isYearMonth` — function, L418
+#### `isYearMonth` — function, L540
 
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `monthDistance` — function, L422
+#### `monthDistance` — function, L544
 
-- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/data/dashboard.ts#retirementSpendLedgerEntries`
+- called by: `src/data/dashboard.ts#getDashboardPayload`, `src/data/dashboard.ts#housingLoanToDebtObligation`, `src/data/dashboard.ts#liabilityToDebtObligation`, `src/data/dashboard.ts#retirementSpendLedgerEntries`
 
-#### `annualGrowthMultiplierAtYear` — function, L428
+#### `annualGrowthMultiplierAtYear` — function, L550
 
 - calls: `src/lib/dates.ts#addMonthsToYearMonth`
 - called by: `src/data/dashboard.ts#retirementSpendLedgerEntries`
 
-#### `sumProjectionFlows` — function, L484
+#### `sumProjectionFlows` — function, L618
 
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `annualizationFactorForRows` — function, L494
+#### `annualizationFactorForRows` — function, L628
 
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `sumProjectionOutflows` — function, L499
+#### `sumProjectionOutflows` — function, L633
 
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `annualizeProjectionFlows` — function, L521
+#### `annualizeProjectionFlows` — function, L655
 
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `sampleYearPhaseFlowRows` — function, L575
+#### `sampleYearPhaseFlowRows` — function, L720
 
 - calls: `src/lib/dates.ts#addMonthsToYearMonth`
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `retirementSpendLedgerEntries` — function, L603
+#### `retirementSpendLedgerEntries` — function, L748
 
 - calls: `src/data/dashboard.ts#annualGrowthMultiplierAtYear`, `src/data/dashboard.ts#monthDistance`, `src/lib/dates.ts#addMonthsToYearMonth`
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `cpfInitialSnapshot` — function, L651
+#### `cpfInitialSnapshot` — function, L796
 
 - calls: `src/data/mappers.ts#num`
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `buildCpfHousingMarkers` — function, L681
+#### `buildCpfHousingMarkers` — function, L826
 
 - calls: `src/data/dashboard.ts#ageAtEndOfYearMonth`
 - called by: `src/data/dashboard.ts#getDashboardPayload`
 
-#### `getDashboardPayload` — function, L707
+#### `getDashboardPayload` — function, L852
 
-- calls: `src/data/dashboard.ts#annualizationFactorForRows`, `src/data/dashboard.ts#annualizeProjectionFlows`, `src/data/dashboard.ts#buildCpfHousingMarkers`, `src/data/dashboard.ts#cpfInitialSnapshot`, `src/data/dashboard.ts#isYearMonth`, `src/data/dashboard.ts#monthDistance`, `src/data/dashboard.ts#retirementSpendLedgerEntries`, `src/data/dashboard.ts#sampleYearPhaseFlowRows`, `src/data/dashboard.ts#sumProjectionFlows`, `src/data/dashboard.ts#sumProjectionOutflows`, `src/data/housing-cash-synthetic-expense.ts#buildSyntheticHousingCashExpense`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/data/mappers.ts#investmentValues`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileAnnualBonusTakeHomeCash`, `src/data/mappers.ts#profileAnnualBonus`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileCpfAgeBand`, `src/data/mappers.ts#profileExpenseGrowthNominal`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileRetirementWithdrawalRateAnnual`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/mappers.ts#sumExpenseAmounts`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/projection.ts#buildInvestmentProjectionSeries`, `src/data/projection.ts#projectionSnapshotFromInvestmentRows`, `src/data/repositories/budget-line-overrides.ts#advisorReadBudgetLineOverridesForMonth`, `src/data/repositories/budget-line-overrides.ts#listBudgetLineOverridesForMonth`, `src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap`, `src/data/repositories/budget-lines.ts#advisorReadBudgetLines`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/cash-accounts.ts#advisorReadCashAccounts`, `src/data/repositories/cash-accounts.ts#listCashAccounts`, `src/data/repositories/cpf-balances.ts#advisorReadCpfBalances`, `src/data/repositories/cpf-balances.ts#getCpfBalanceByUserId`, `src/data/repositories/cpf-investments.ts#advisorReadCpfInvestments`, `src/data/repositories/cpf-investments.ts#listCpfInvestments`, `src/data/repositories/expenses.ts#advisorReadExpensesForMonth`, `src/data/repositories/expenses.ts#listExpensesForMonth`, `src/data/repositories/goals.ts#advisorReadGoals`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/housing-loans.ts#advisorReadHousingLoans`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/income-tax-configs.ts#advisorReadIncomeTaxConfig`, `src/data/repositories/income-tax-configs.ts#getIncomeTaxConfig`, `src/data/repositories/investments.ts#advisorReadInvestments`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/liabilities.ts#advisorReadLiabilities`, `src/data/repositories/liabilities.ts#listLiabilities`, `src/data/repositories/profiles.ts#advisorReadProfile`, `src/data/repositories/properties.ts#advisorReadProperties`, `src/data/repositories/properties.ts#listProperties`, `src/data/repositories/vehicles.ts#advisorReadVehicles`, `src/data/repositories/vehicles.ts#listVehicles`, `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`, `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/age-projection.ts#buildNetWorthByAgeProjection`, `src/domain/finance/budget.ts#monthlyBudgetAggregateOverspend`, `src/domain/finance/budget.ts#monthlyBudgetVsActual`, `src/domain/finance/budget.ts#topOverBudgetCategories`, `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/domain/finance/housing-loan-payments.ts#buildHousingPaymentInsights`, `src/domain/finance/insights.ts#buildDashboardInsights`, `src/domain/finance/investment-contribution.ts#annualWithdrawalFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#contributionStartMonthFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#investmentMaturityMonthFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow`, `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`, `src/domain/finance/net-worth.ts#calculateNetWorth`, `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`, `src/domain/finance/retirement-spend-vs-portfolio.ts#analyzeRetirementDividendVsSpend`, `src/domain/finance/retirement-spend-vs-portfolio.ts#analyzeRetirementSpendVsPortfolio`, `src/domain/finance/savings-rate.ts#calculateSavingsRate`, `src/domain/finance/spend-recommendations.ts#buildSpendRecommendationsForMonth`, `src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash`, `src/domain/finance/vehicle-sg.ts#effectiveLoanBalance`, `src/domain/finance/vehicle-sg.ts#vehicleGrossAssetEstimate`, `src/domain/finance/vehicle-sg.ts#vehicleNetListedBeforeLiquidation`, `src/domain/finance/vehicle-sg.ts#vehicleNetProceedsAtCoeMonthEnd`, `src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown`, `src/lib/dates.ts#addCalendarMonths`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#formatYearMonth`, `src/lib/validation.ts#birthDateIsValidPast`
+- calls: `src/data/dashboard.ts#annualizationFactorForRows`, `src/data/dashboard.ts#annualizeProjectionFlows`, `src/data/dashboard.ts#buildCpfHousingMarkers`, `src/data/dashboard.ts#buildProjectionDebtObligations`, `src/data/dashboard.ts#cpfInitialSnapshot`, `src/data/dashboard.ts#isYearMonth`, `src/data/dashboard.ts#monthDistance`, `src/data/dashboard.ts#retirementSpendLedgerEntries`, `src/data/dashboard.ts#sampleYearPhaseFlowRows`, `src/data/dashboard.ts#sumProjectionFlows`, `src/data/dashboard.ts#sumProjectionOutflows`, `src/data/housing-cash-synthetic-expense.ts#buildSyntheticHousingCashExpense`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/data/mappers.ts#investmentValues`, `src/data/mappers.ts#num`, `src/data/mappers.ts#profileAnnualBonusTakeHomeCash`, `src/data/mappers.ts#profileAnnualBonus`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileCpfAgeBand`, `src/data/mappers.ts#profileExpenseGrowthNominal`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileRetirementWithdrawalRateAnnual`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/mappers.ts#sumExpenseAmounts`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/projection.ts#buildInvestmentProjectionSeries`, `src/data/projection.ts#projectionSnapshotFromInvestmentRows`, `src/data/repositories/budget-line-overrides.ts#advisorReadBudgetLineOverridesForMonth`, `src/data/repositories/budget-line-overrides.ts#listBudgetLineOverridesForMonth`, `src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap`, `src/data/repositories/budget-lines.ts#advisorReadBudgetLines`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/cash-accounts.ts#advisorReadCashAccounts`, `src/data/repositories/cash-accounts.ts#listCashAccounts`, `src/data/repositories/cpf-balances.ts#advisorReadCpfBalances`, `src/data/repositories/cpf-balances.ts#getCpfBalanceByUserId`, `src/data/repositories/cpf-investments.ts#advisorReadCpfInvestments`, `src/data/repositories/cpf-investments.ts#listCpfInvestments`, `src/data/repositories/expenses.ts#advisorReadExpensesForMonth`, `src/data/repositories/expenses.ts#listExpensesForMonth`, `src/data/repositories/goals.ts#advisorReadGoals`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/housing-loans.ts#advisorReadHousingLoans`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/income-tax-configs.ts#advisorReadIncomeTaxConfig`, `src/data/repositories/income-tax-configs.ts#getIncomeTaxConfig`, `src/data/repositories/investments.ts#advisorReadInvestments`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/liabilities.ts#advisorReadLiabilities`, `src/data/repositories/liabilities.ts#listLiabilities`, `src/data/repositories/profiles.ts#advisorReadProfile`, `src/data/repositories/properties.ts#advisorReadProperties`, `src/data/repositories/properties.ts#listProperties`, `src/data/repositories/vehicles.ts#advisorReadVehicles`, `src/data/repositories/vehicles.ts#listVehicles`, `src/domain/advisor-proposals/apply-overlay.ts#applyProposalChanges`, `src/domain/finance/age-projection.ts#ageCompletedOnDate`, `src/domain/finance/age-projection.ts#buildNetWorthByAgeProjection`, `src/domain/finance/budget.ts#monthlyBudgetAggregateOverspend`, `src/domain/finance/budget.ts#monthlyBudgetVsActual`, `src/domain/finance/budget.ts#topOverBudgetCategories`, `src/domain/finance/cpf-monthly-projection.ts#buildCpfMonthlyProjectionSeries`, `src/domain/finance/housing-loan-payments.ts#buildHousingPaymentInsights`, `src/domain/finance/insights.ts#buildDashboardInsights`, `src/domain/finance/investment-contribution.ts#annualWithdrawalFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#contributionStartMonthFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#investmentMaturityMonthFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow`, `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`, `src/domain/finance/net-worth.ts#calculateNetWorth`, `src/domain/finance/retirement-cashflow-projection.ts#buildRetirementCashflowProjection`, `src/domain/finance/retirement-spend-vs-portfolio.ts#analyzeRetirementDividendVsSpend`, `src/domain/finance/retirement-spend-vs-portfolio.ts#analyzeRetirementSpendVsPortfolio`, `src/domain/finance/savings-rate.ts#calculateSavingsRate`, `src/domain/finance/spend-recommendations.ts#buildSpendRecommendationsForMonth`, `src/domain/finance/vehicle-sg.ts#cumulativeVehicleProceedsToCash`, `src/domain/finance/vehicle-sg.ts#effectiveLoanBalance`, `src/domain/finance/vehicle-sg.ts#vehicleGrossAssetEstimate`, `src/domain/finance/vehicle-sg.ts#vehicleNetListedBeforeLiquidation`, `src/domain/finance/vehicle-sg.ts#vehicleNetProceedsAtCoeMonthEnd`, `src/domain/housing/property-equity.ts#buildPropertyEquityBreakdown`, `src/lib/dates.ts#addCalendarMonths`, `src/lib/dates.ts#addMonthsToYearMonth`, `src/lib/dates.ts#formatYearMonth`, `src/lib/validation.ts#birthDateIsValidPast`
 - called by: `src/app/(app)/advisor/client/[id]/page.tsx#AdvisorClientDetailPage`, `src/app/(app)/dashboard/page.tsx#DashboardPage`, `src/app/(app)/review/proposal/[id]/page.tsx#ProposalReviewPage`, `src/app/(app)/setup/advisor-proposals/[id]/page.tsx#ClientProposalReviewPage`, `src/app/api/dashboard/route.ts#GET`, `src/features/planning/sections/OverviewPlanningSection.tsx#OverviewPlanningSection`
-- unresolved: 3
+- unresolved: 4
 
 ### `src/data/expense-budget-guard.ts` <a id="src-data-expense-budget-guard-ts"></a>
 
@@ -260,13 +289,47 @@ Classification: `regular`
 - calls: `src/data/repositories/budget-lines.ts#deleteBudgetLine`, `src/data/repositories/budget-lines.ts#getBudgetLineBySourceLiabilityId`
 - called by: `src/server/actions.ts#deleteLiabilityAction`
 
+### `src/data/loan-register-read-model.test.ts` <a id="src-data-loan-register-read-model-test-ts"></a>
+
+Classification: `regular`
+
+_No top-level functions detected._
+
+### `src/data/loan-register-read-model.ts` <a id="src-data-loan-register-read-model-ts"></a>
+
+Classification: `regular`
+
+#### `num` — function, L16
+
+- called by: `src/data/loan-register-read-model.ts#currentHousingLoanSchedule`, `src/data/loan-register-read-model.ts#housingLoanToRegisterEntry`, `src/data/loan-register-read-model.ts#vehicleLoanToRegisterEntry`
+
+#### `currentHousingLoanSchedule` — function, L22
+
+- calls: `src/data/loan-register-read-model.ts#num`, `src/domain/finance/mortgage-amortization.ts#buildAmortizationSchedule`
+- called by: `src/data/loan-register-read-model.ts#housingLoanToRegisterEntry`
+
+#### `housingLoanToRegisterEntry` — function, L56
+
+- calls: `src/data/loan-register-read-model.ts#currentHousingLoanSchedule`, `src/data/loan-register-read-model.ts#num`, `src/domain/finance/housing-loan-payments.ts#splitHousingInstalment`, `src/domain/finance/loan-source-registry.ts#loanSourceDefinition`
+- called by: `src/data/loan-register-read-model.ts#buildSourceOwnedLoanRegisterEntries`
+
+#### `vehicleLoanToRegisterEntry` — function, L100
+
+- calls: `src/data/loan-register-read-model.ts#num`, `src/data/mappers.ts#vehicleRowToValuationInput`, `src/domain/finance/loan-source-registry.ts#loanSourceDefinition`, `src/domain/finance/vehicle-sg.ts#effectiveLoanBalance`, `src/domain/finance/vehicle-sg.ts#loanMonthsRemainingResolved`
+- called by: `src/data/loan-register-read-model.ts#buildSourceOwnedLoanRegisterEntries`
+
+#### `buildSourceOwnedLoanRegisterEntries` — function, L142
+
+- calls: `src/data/loan-register-read-model.ts#housingLoanToRegisterEntry`, `src/data/loan-register-read-model.ts#vehicleLoanToRegisterEntry`, `src/domain/finance/loan-register.ts#dedupeSourceOwnedLoanNames`, `src/lib/dates.ts#formatYearMonth`
+- called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAndLiabilitiesPanels`
+
 ### `src/data/mappers.ts` <a id="src-data-mappers-ts"></a>
 
 Classification: `regular`
 
 #### `num` — function, L22
 
-- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/onboarding/page.tsx#OnboardingPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/profile/route.ts#PATCH`, `src/data/cash-account-history-build.ts#buildCashHistoryByAccountId`, `src/data/dashboard.ts#cpfInitialSnapshot`, `src/data/dashboard.ts#cpfInvestmentToProjection`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/dashboard.ts#housingLoanToProjection`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/data/mappers.ts#budgetLineRowToDomain`, `src/data/mappers.ts#expenseRowToBudgetExpense`, `src/data/mappers.ts#incomeTaxConfigRowToDomain`, `src/data/mappers.ts#investmentValues`, `src/data/mappers.ts#profileAnnualBonus`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileExpenseGrowthNominal`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileMonthlyIncome`, `src/data/mappers.ts#profileRetirementWithdrawalRateAnnual`, `src/data/mappers.ts#sumExpenseAmounts`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/mappers.ts#vehicleRowToValuationInput`, `src/data/projection.ts#aggregateInvestments`, `src/data/projection.ts#resolveProjectionSnapshot`, `src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap`, `src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth`, `src/domain/finance/budget-cash-flow-allocation.ts#sumPlannedMonthlyInvestmentContributions`, `src/domain/finance/investment-contribution.ts#annualWithdrawalFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#investmentMaturityMonthFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow`, `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`, `src/domain/housing/compose.ts#loanToMortgage`, `src/domain/housing/compose.ts#propertyRowToView`, `src/domain/housing/compose.ts#syntheticPropertyFromLoan`, `src/domain/setup/evaluators.ts#evaluateCpf`, `src/domain/setup/evaluators.ts#evaluateEmergencyFunds`, `src/domain/setup/evaluators.ts#evaluateIncomeExpenses`, `src/domain/setup/evaluators.ts#evaluateRetirement`, `src/domain/setup/evaluators.ts#housingLoanIsComplete`, `src/domain/setup/evaluators.ts#liabilityIsComplete`, `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`, `src/features/advisor/AdvisorClientCompose.tsx#profilePercentValue`, `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`, `src/features/expenses/ExpenseEditRow.tsx#ExpenseEditRow`, `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm`, `src/features/goals/HousingLoansPanel.tsx#HousingPanel`, `src/features/goals/cash-history.ts#buildCashHistoryByAccountId`, `src/features/goals/investment-balance-row.ts#investmentRowToBalanceRow`, `src/features/goals/profile-retirement-props.ts#profileRetirementTargetsProps`, `src/features/income-tax/IncomeTaxForm.tsx#IncomeTaxForm`, `src/features/income-tax/IncomeTaxForm.tsx#initialValues`, `src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
+- called by: `src/app/(app)/expenses/page.tsx#ExpensesPage`, `src/app/(app)/onboarding/page.tsx#OnboardingPage`, `src/app/(app)/setup/page.tsx#SetupPage`, `src/app/api/profile/route.ts#PATCH`, `src/data/cash-account-history-build.ts#buildCashHistoryByAccountId`, `src/data/dashboard.ts#cpfInitialSnapshot`, `src/data/dashboard.ts#cpfInvestmentToProjection`, `src/data/dashboard.ts#getDashboardPayload`, `src/data/dashboard.ts#housingLoanBalanceAndRemainingSchedule`, `src/data/dashboard.ts#housingLoanToDebtObligation`, `src/data/dashboard.ts#housingLoanToProjection`, `src/data/goal-tradeoff-context.ts#loadGoalTradeoffContext`, `src/data/income-tax-synthetic-expense.ts#buildSyntheticTaxExpense`, `src/data/mappers.ts#budgetLineRowToDomain`, `src/data/mappers.ts#expenseRowToBudgetExpense`, `src/data/mappers.ts#incomeTaxConfigRowToDomain`, `src/data/mappers.ts#investmentValues`, `src/data/mappers.ts#profileAnnualBonus`, `src/data/mappers.ts#profileAnnualSalaryGrowthNominal`, `src/data/mappers.ts#profileExpenseGrowthNominal`, `src/data/mappers.ts#profileMonthlyGross`, `src/data/mappers.ts#profileMonthlyIncome`, `src/data/mappers.ts#profileRetirementWithdrawalRateAnnual`, `src/data/mappers.ts#sumExpenseAmounts`, `src/data/mappers.ts#sumPlannedMonthlyGoalContributions`, `src/data/mappers.ts#vehicleRowToValuationInput`, `src/data/projection.ts#aggregateInvestments`, `src/data/projection.ts#resolveProjectionSnapshot`, `src/data/repositories/budget-line-overrides.ts#overridesToLineIdMap`, `src/domain/finance/budget-cash-flow-allocation.ts#isInvestmentContributionActiveInYearMonth`, `src/domain/finance/budget-cash-flow-allocation.ts#sumPlannedMonthlyInvestmentContributions`, `src/domain/finance/investment-contribution.ts#annualWithdrawalFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#contributionMonthsLimitFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#investmentMaturityMonthFromInvestmentRow`, `src/domain/finance/investment-contribution.ts#withdrawalStartMonthFromInvestmentRow`, `src/domain/finance/investment-portfolio-fv.ts#futureValueInvestmentPortfolioAtMonth`, `src/domain/housing/compose.ts#loanToMortgage`, `src/domain/housing/compose.ts#propertyRowToView`, `src/domain/housing/compose.ts#syntheticPropertyFromLoan`, `src/domain/setup/evaluators.ts#evaluateCpf`, `src/domain/setup/evaluators.ts#evaluateEmergencyFunds`, `src/domain/setup/evaluators.ts#evaluateIncomeExpenses`, `src/domain/setup/evaluators.ts#evaluateRetirement`, `src/domain/setup/evaluators.ts#housingLoanIsComplete`, `src/domain/setup/evaluators.ts#liabilityIsComplete`, `src/features/advisor/AdvisorClientCompose.tsx#AdvisorClientCompose`, `src/features/advisor/AdvisorClientCompose.tsx#profilePercentValue`, `src/features/advisor/AdvisorClientOverview.tsx#AdvisorClientOverview`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineCardMobile`, `src/features/budget/BudgetMonthlyCategoriesSection.tsx#MonthlyLineRowDesktop`, `src/features/budget/BudgetPageHero.tsx#BudgetPageHero`, `src/features/budget/BudgetPlanningView.tsx#BudgetPlanningView`, `src/features/budget/BudgetStrategyInsightPanel.tsx#BudgetStrategyInsightPanel`, `src/features/expenses/ExpenseEditRow.tsx#ExpenseEditRow`, `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`, `src/features/goals/FinancialGoalsPanels.tsx#FinancialGoalsPanels`, `src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm`, `src/features/goals/HousingLoansPanel.tsx#HousingPanel`, `src/features/goals/HousingLoansPanel.tsx#PropertyList`, `src/features/goals/HousingLoansPanel.tsx#propertyValue`, `src/features/goals/cash-history.ts#buildCashHistoryByAccountId`, `src/features/goals/investment-balance-row.ts#investmentRowToBalanceRow`, `src/features/goals/profile-retirement-props.ts#profileRetirementTargetsProps`, `src/features/income-tax/IncomeTaxForm.tsx#IncomeTaxForm`, `src/features/income-tax/IncomeTaxForm.tsx#initialValues`, `src/features/income-tax/IncomeTaxSection.tsx#deriveAutoAppliedReliefs`, `src/features/planning/sections/CashFlowPlanningSection.tsx#CashFlowPlanningSection`, `src/features/planning/sections/WealthPlanningSection.tsx#WealthPlanningSection`
 
 #### `sumPlannedMonthlyGoalContributions` — function, L29
 
@@ -320,7 +383,7 @@ Classification: `regular`
 #### `vehicleRowToValuationInput` — function, L153
 
 - calls: `src/data/mappers.ts#num`
-- called by: `src/features/goals/VehiclesPanel.tsx#VehicleSummary`
+- called by: `src/data/loan-register-read-model.ts#vehicleLoanToRegisterEntry`, `src/features/goals/VehiclesPanel.tsx#VehicleSummary`
 
 #### `sumExpenseAmounts` — function, L209
 
@@ -1151,7 +1214,7 @@ Classification: `regular`
 #### `deleteProperty` — function, L82
 
 - calls: `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`
-- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#deleteHousingPropertyAction`
+- called by: `src/domain/advisor-proposals/apply-changes.ts#applyAcceptedProposalChanges`, `src/server/actions.ts#deleteHousingPropertyAction`, `src/server/actions.ts#deletePropertyBestEffort`
 
 ### `src/data/repositories/purchases.ts` <a id="src-data-repositories-purchases-ts"></a>
 

@@ -268,6 +268,50 @@ export type LiabilityRow = {
   notes?: string | null;
 };
 
+export type FinancialLoanSourceKey =
+  | "generic_liability"
+  | "housing"
+  | "vehicle";
+
+export type FinancialLoanRow = {
+  id: string;
+  user_id: string;
+  source_key: FinancialLoanSourceKey;
+  source_table: string;
+  source_row_id: string;
+  source_owned: boolean;
+  is_editable_in_debt_register: boolean;
+  name: string;
+  category:
+    | "property"
+    | "vehicle"
+    | "personal"
+    | "credit_card"
+    | "renovation"
+    | "education"
+    | "other"
+    | null;
+  loan_type: "amortized" | "flat_rate" | "revolving" | null;
+  balance: string;
+  annual_interest_rate: string | null;
+  remaining_tenure_months: number | null;
+  term_months: number | null;
+  monthly_payment: string | null;
+  repayment_override: boolean;
+  start_year_month: string | null;
+  start_date: string | null;
+  funding_source: "cash" | "cpf_oa" | "split";
+  cpf_oa_payment: string | null;
+  cash_payment: string | null;
+  cpf_oa_share: string | null;
+  max_cpf_oa_monthly: string | null;
+  projection_kind: "liability" | "housing" | "vehicle";
+  notes: string | null;
+  source_snapshot: Record<string, unknown>;
+  created_at: string;
+  updated_at: string;
+};
+
 export type VehicleRow = {
   id: string;
   user_id: string;

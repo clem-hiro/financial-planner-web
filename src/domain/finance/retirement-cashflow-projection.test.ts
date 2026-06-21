@@ -4,6 +4,7 @@ import {
   type ProjectionInvestmentComponent,
   type ProjectionLedgerEntry,
 } from "./retirement-cashflow-projection";
+import type { DebtObligationInput } from "./debt-cashflow";
 
 const base = {
   startYearMonth: "2026-01",
@@ -57,6 +58,21 @@ function monthlyEntry(
     startMonth: 0,
     amount: 0,
     ...partial,
+  };
+}
+
+function debt(over: Partial<DebtObligationInput>): DebtObligationInput {
+  return {
+    id: "debt-1",
+    label: "Debt",
+    kind: "liability",
+    balance: 1_000,
+    annualInterestRate: 0,
+    loanType: "amortized",
+    termMonths: 10,
+    startMonth: 0,
+    fundingSource: "cash",
+    ...over,
   };
 }
 
@@ -342,5 +358,130 @@ describe("buildRetirementCashflowProjection", () => {
     expect(row.cashAccessibleInflow).toBe(12_000);
     expect(row.employmentInflow).toBe(9_500);
     expect(row.cpfLifeInflow).toBe(2_500);
+  });
+
+  it("reduces projected liabilities only by funded principal", () => {
+    const result = buildRetirementCashflowProjection({
+      ...base,
+      horizonMonths: 1,
+      initialCash: 50,
+      investmentComponents: [],
+      ledger: [],
+      liabilities: 1_000,
+      debtObligations: [
+        debt({
+          balance: 1_000,
+          annualInterestRate: 0.12,
+          monthlyPayment: 200,
+        }),
+      ],
+    });
+
+    const row = result.periods[1];
+    expect(row.requiredDebtRepayment).toBe(200);
+    expect(row.fundedDebtRepayment).toBe(50);
+    expect(row.debtInterestPaid).toBe(10);
+    expect(row.debtPrincipalPaid).toBe(40);
+    expect(row.unfundedDebtRepayment).toBe(150);
+    expect(row.projectedLiabilities).toBe(960);
+    expect(row.netWorth).toBe(-960);
+  });
+
+  it("funds CPF OA-designated debt from OA without cash shortfall", () => {
+    const result = buildRetirementCashflowProjection({
+      ...base,
+      horizonMonths: 1,
+      initialCash: 0,
+      investmentComponents: [],
+      ledger: [],
+      liabilities: 0,
+      externalAssetSnapshots: [
+        { month: 0, cpf: 1_000, cpfOa: 1_000 },
+        { month: 1, cpf: 1_000, cpfOa: 1_000 },
+      ],
+      debtObligations: [
+        debt({
+          id: "home-loan",
+          label: "Home loan",
+          kind: "housing",
+          balance: 1_000,
+          termMonths: 10,
+          fundingSource: "cpf_oa",
+        }),
+      ],
+    });
+
+    const row = result.periods[1];
+    expect(row.requiredDebtRepayment).toBe(100);
+    expect(row.fundedDebtRepayment).toBe(100);
+    expect(row.unfundedDebtRepayment).toBe(0);
+    expect(row.debtCpfOaDrawdown).toBe(100);
+    expect(row.cashReserveDrawdown).toBe(0);
+    expect(row.goalsGap).toBe(0);
+    expect(row.cpfOa).toBe(900);
+    expect(row.projectedHousingLiabilities).toBe(900);
+  });
+
+  it("falls back after CPF OA is insufficient for designated debt", () => {
+    const result = buildRetirementCashflowProjection({
+      ...base,
+      horizonMonths: 1,
+      initialCash: 30,
+      investmentComponents: [],
+      ledger: [],
+      liabilities: 0,
+      externalAssetSnapshots: [
+        { month: 0, cpf: 50, cpfOa: 50 },
+        { month: 1, cpf: 50, cpfOa: 50 },
+      ],
+      debtObligations: [
+        debt({
+          id: "home-loan",
+          label: "Home loan",
+          kind: "housing",
+          balance: 1_000,
+          termMonths: 10,
+          fundingSource: "cpf_oa",
+        }),
+      ],
+    });
+
+    const row = result.periods[1];
+    expect(row.debtCpfOaDrawdown).toBe(50);
+    expect(row.cashReserveDrawdown).toBe(30);
+    expect(row.fundedDebtRepayment).toBe(80);
+    expect(row.unfundedDebtRepayment).toBe(20);
+    expect(row.goalsGap).toBe(20);
+    expect(row.projectedHousingLiabilities).toBe(920);
+  });
+
+  it("prioritizes debt repayment before living expenses when funding is scarce", () => {
+    const result = buildRetirementCashflowProjection({
+      ...base,
+      horizonMonths: 1,
+      initialCash: 0,
+      investmentComponents: [],
+      ledger: [
+        monthlyEntry({ id: "income", direction: "inflow", amount: 100 }),
+        monthlyEntry({ id: "living", direction: "outflow", amount: 50 }),
+      ],
+      liabilities: 0,
+      debtObligations: [
+        debt({
+          balance: 800,
+          termMonths: 10,
+          monthlyPayment: 80,
+        }),
+      ],
+    });
+
+    const row = result.periods[1];
+    expect(row.requiredDebtRepayment).toBe(80);
+    expect(row.fundedDebtRepayment).toBe(80);
+    expect(row.requiredLivingOutflow).toBe(50);
+    expect(row.fundedLivingOutflow).toBe(20);
+    expect(row.unfundedLivingOutflow).toBe(30);
+    expect(row.goalsGap).toBe(30);
+    expect(row.unfundedOutflow).toBe(30);
   });
 });

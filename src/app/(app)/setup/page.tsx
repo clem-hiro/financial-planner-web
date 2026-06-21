@@ -361,6 +361,9 @@ export default async function SetupPage({ searchParams }: PageProps) {
               cashRows={cashBalanceRows}
               cashHistoryByAccountId={cashHistoryByAccountId}
               liabilityRows={liabilityRows}
+              properties={properties}
+              housingLoans={housingLoans}
+              vehicleRows={vehicleRows}
               currencyCode={currency}
               advisorVisibility={advisorVisibility}
             />

@@ -24,6 +24,7 @@ import {
   type FoodSpendBandId,
   type LifestyleProfileId,
 } from "@/domain/finance/budget-guided-setup";
+import { isSourceOwnedDebtCategory } from "@/domain/finance/debt-repayment";
 import { createSupabaseServerClient } from "@/data/supabase/server";
 import {
   insertFinancialGoal,
@@ -107,6 +108,7 @@ import {
   cpfBalanceWriteSchema,
   cpfInvestmentWriteSchema,
 } from "@/lib/validation";
+import { formatSupabaseError } from "@/lib/supabase-error";
 import { z } from "zod";
 
 // Friendly per-user name-collision message before the DB unique index
@@ -476,9 +478,16 @@ export async function createLiabilityAction(
 
   const parsed = parseLiabilityFormData(formData);
   if (!parsed.ok) return { error: parsed.error };
+  if (isSourceOwnedDebtCategory(parsed.data.category)) {
+    return {
+      error:
+        "Add property loans under Housing and vehicle loans under Vehicles so repayment-source details stay attached.",
+    };
+  }
 
+  const existingLiabilities = await listLiabilities(supabase, user.id);
   const dup = findNameCollision(
-    await listLiabilities(supabase, user.id),
+    existingLiabilities,
     (l) => l.name,
     parsed.data.name,
     "a debt"
@@ -516,8 +525,20 @@ export async function updateLiabilityAction(
   const parsed = parseLiabilityFormData(formData);
   if (!parsed.ok) return { error: parsed.error };
 
+  const existingLiabilities = await listLiabilities(supabase, user.id);
+  const existing = existingLiabilities.find((l) => l.id === idParsed.data);
+  if (
+    isSourceOwnedDebtCategory(parsed.data.category) &&
+    parsed.data.category !== existing?.category
+  ) {
+    return {
+      error:
+        "Add property loans under Housing and vehicle loans under Vehicles so repayment-source details stay attached.",
+    };
+  }
+
   const dup = findNameCollision(
-    await listLiabilities(supabase, user.id),
+    existingLiabilities,
     (l) => l.name,
     parsed.data.name,
     "a debt",
@@ -735,15 +756,15 @@ export async function createVehicleAction(
     return { error: "Loan end month must be YYYY-MM or blank" };
   }
 
-  const dup = findNameCollision(
-    await listVehicles(supabase, user.id),
-    (v) => v.label,
-    label,
-    "a vehicle"
-  );
-  if (dup) return { error: dup };
-
   try {
+    const dup = findNameCollision(
+      await listVehicles(supabase, user.id),
+      (v) => v.label,
+      label,
+      "a vehicle"
+    );
+    if (dup) return { error: dup };
+
     await insertVehicle(supabase, user.id, {
       label,
       vehicle_status,
@@ -769,10 +790,11 @@ export async function createVehicleAction(
     });
   } catch (e) {
     console.error(e);
-    return { error: "Could not save vehicle" };
+    return { error: formatSupabaseError(e, "Could not save vehicle.") };
   }
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
   return { error: null as string | null };
 }
 
@@ -935,16 +957,16 @@ export async function updateVehicleAction(
     return { error: "Loan end month must be YYYY-MM or blank" };
   }
 
-  const dup = findNameCollision(
-    await listVehicles(supabase, user.id),
-    (v) => v.label,
-    label,
-    "a vehicle",
-    idParsed.data
-  );
-  if (dup) return { error: dup };
-
   try {
+    const dup = findNameCollision(
+      await listVehicles(supabase, user.id),
+      (v) => v.label,
+      label,
+      "a vehicle",
+      idParsed.data
+    );
+    if (dup) return { error: dup };
+
     await updateVehicle(supabase, user.id, idParsed.data, {
       label,
       vehicle_status,
@@ -969,10 +991,11 @@ export async function updateVehicleAction(
     });
   } catch (e) {
     console.error(e);
-    return { error: "Could not update vehicle" };
+    return { error: formatSupabaseError(e, "Could not update vehicle.") };
   }
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
   return { error: null as string | null };
 }
 
@@ -993,6 +1016,7 @@ export async function deleteVehicleAction(formData: FormData) {
   }
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidateSetupAndPlanning();
 }
 
 export async function createGoalAction(
@@ -1832,6 +1856,18 @@ async function insertPropertyForLoan(
   });
 }
 
+async function deletePropertyBestEffort(
+  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
+  userId: string,
+  propertyId: string
+) {
+  try {
+    await deleteProperty(supabase, userId, propertyId);
+  } catch (cleanupError) {
+    console.error(cleanupError);
+  }
+}
+
 export async function createHousingPropertyAction(
   _prev: { error: string | null },
   formData: FormData
@@ -1897,27 +1933,41 @@ export async function createHousingPropertyAction(
     return { error: "Rental income must be ≥ 0" };
   }
 
-  const dup = findNameCollision(
-    await listProperties(supabase, user.id),
-    (p) => p.name,
-    name,
-    "a property"
-  );
+  let dup: string | null;
+  try {
+    dup = findNameCollision(
+      await listProperties(supabase, user.id),
+      (p) => p.name,
+      name,
+      "a property"
+    );
+  } catch (e) {
+    console.error(e);
+    return {
+      error: formatSupabaseError(e, "Could not check existing properties."),
+    };
+  }
   if (dup) return { error: dup };
 
-  const property = await insertProperty(supabase, user.id, {
-    name,
-    property_type: propertyTypeParsed.data,
-    purchase_price,
-    purchase_year,
-    current_valuation,
-    ownership_percent,
-    status: statusParsed.data,
-    rental_income_monthly,
-    planning_scope: "current",
-  });
-
   if (!hasLoan) {
+    try {
+      await insertProperty(supabase, user.id, {
+        name,
+        property_type: propertyTypeParsed.data,
+        purchase_price,
+        purchase_year,
+        current_valuation,
+        ownership_percent,
+        status: statusParsed.data,
+        rental_income_monthly,
+        planning_scope: "current",
+      });
+    } catch (e) {
+      console.error(e);
+      return {
+        error: formatSupabaseError(e, "Could not save property."),
+      };
+    }
     revalidateHousingPaths();
     return { error: null };
   }
@@ -2060,57 +2110,81 @@ export async function createHousingPropertyAction(
   });
   if ("error" in paymentParsed) return paymentParsed;
 
-  await insertHousingLoan(supabase, user.id, {
-    property_id: property.id,
-    label,
-    principal,
-    annual_nominal_rate: annual_nominal_rate_effective,
-    term_months,
-    completion_month,
-    first_payment_month,
-    downpayment_from_oa,
-    fees_from_oa,
-    oa_share_of_payment: paymentParsed.oa_share_of_payment,
-    max_oa_per_month,
-    lender_type,
-    original_loan_principal,
-    principal_repaid_before_schedule,
-    property_purchase_price: purchase_price,
-    property_purchase_year: purchase_year,
-    property_kind:
-      propertyTypeParsed.data === "bto" ||
-      propertyTypeParsed.data === "resale_hdb" ||
-      propertyTypeParsed.data === "hdb"
-        ? "hdb"
-        : propertyTypeParsed.data === "condo" ||
-            propertyTypeParsed.data === "ec" ||
-            propertyTypeParsed.data === "landed"
-          ? propertyTypeParsed.data
-          : null,
-    downpayment_guidance_preset:
-      propertyTypeParsed.data === "bto"
-        ? "custom"
-        : propertyTypeParsed.data === "resale_hdb"
-          ? "pct_25"
-          : null,
-    buyers_stamp_duty: bsd_legal_total > 0 ? bsd_legal_total : null,
-    buyers_stamp_duty_paid_from_cpf_oa: bsd_legal_cpf_oa > 0,
-    first_downpayment_total,
-    first_downpayment_paid_month: firstDownpaymentMonth.value,
-    first_downpayment_cpf_oa,
-    first_downpayment_cash,
-    bsd_legal_total,
-    bsd_legal_paid_month: bsdLegalMonth.value,
-    bsd_legal_cpf_oa,
-    bsd_legal_cash,
-    second_downpayment_total,
-    second_downpayment_paid_month: secondDownpaymentMonth.value,
-    second_downpayment_cpf_oa,
-    second_downpayment_cash,
-    payment_source: paymentParsed.payment_source,
-    cpf_oa_payment: paymentParsed.cpf_oa_payment,
-    cash_payment: paymentParsed.cash_payment,
-  });
+  try {
+    const property = await insertProperty(supabase, user.id, {
+      name,
+      property_type: propertyTypeParsed.data,
+      purchase_price,
+      purchase_year,
+      current_valuation,
+      ownership_percent,
+      status: statusParsed.data,
+      rental_income_monthly,
+      planning_scope: "current",
+    });
+
+    try {
+      await insertHousingLoan(supabase, user.id, {
+        property_id: property.id,
+        label,
+        principal,
+        annual_nominal_rate: annual_nominal_rate_effective,
+        term_months,
+        completion_month,
+        first_payment_month,
+        downpayment_from_oa,
+        fees_from_oa,
+        oa_share_of_payment: paymentParsed.oa_share_of_payment,
+        max_oa_per_month,
+        lender_type,
+        original_loan_principal,
+        principal_repaid_before_schedule,
+        property_purchase_price: purchase_price,
+        property_purchase_year: purchase_year,
+        property_kind:
+          propertyTypeParsed.data === "bto" ||
+          propertyTypeParsed.data === "resale_hdb" ||
+          propertyTypeParsed.data === "hdb"
+            ? "hdb"
+            : propertyTypeParsed.data === "condo" ||
+                propertyTypeParsed.data === "ec" ||
+                propertyTypeParsed.data === "landed"
+              ? propertyTypeParsed.data
+              : null,
+        downpayment_guidance_preset:
+          propertyTypeParsed.data === "bto"
+            ? "custom"
+            : propertyTypeParsed.data === "resale_hdb"
+              ? "pct_25"
+              : null,
+        buyers_stamp_duty: bsd_legal_total > 0 ? bsd_legal_total : null,
+        buyers_stamp_duty_paid_from_cpf_oa: bsd_legal_cpf_oa > 0,
+        first_downpayment_total,
+        first_downpayment_paid_month: firstDownpaymentMonth.value,
+        first_downpayment_cpf_oa,
+        first_downpayment_cash,
+        bsd_legal_total,
+        bsd_legal_paid_month: bsdLegalMonth.value,
+        bsd_legal_cpf_oa,
+        bsd_legal_cash,
+        second_downpayment_total,
+        second_downpayment_paid_month: secondDownpaymentMonth.value,
+        second_downpayment_cpf_oa,
+        second_downpayment_cash,
+        payment_source: paymentParsed.payment_source,
+        cpf_oa_payment: paymentParsed.cpf_oa_payment,
+        cash_payment: paymentParsed.cash_payment,
+      });
+    } catch (loanError) {
+      await deletePropertyBestEffort(supabase, user.id, property.id);
+      throw loanError;
+    }
+  } catch (e) {
+    console.error(e);
+    return {
+      error: formatSupabaseError(e, "Could not save HDB home."),
+    };
+  }
 
   revalidateHousingPaths();
   return { error: null };
@@ -2153,24 +2227,39 @@ export async function updateHousingPropertyAction(
     String(formData.get("rental_income_monthly") ?? "0").trim()
   );
 
-  const dup = findNameCollision(
-    await listProperties(supabase, user.id),
-    (p) => p.name,
-    name,
-    "a property",
-    idParsed.data
-  );
+  let dup: string | null;
+  try {
+    dup = findNameCollision(
+      await listProperties(supabase, user.id),
+      (p) => p.name,
+      name,
+      "a property",
+      idParsed.data
+    );
+  } catch (e) {
+    console.error(e);
+    return {
+      error: formatSupabaseError(e, "Could not check existing properties."),
+    };
+  }
   if (dup) return { error: dup };
 
-  await updateProperty(supabase, user.id, idParsed.data, {
-    name,
-    property_type: propertyTypeParsed.data,
-    purchase_price,
-    current_valuation,
-    ownership_percent,
-    status: statusParsed.data,
-    rental_income_monthly,
-  });
+  try {
+    await updateProperty(supabase, user.id, idParsed.data, {
+      name,
+      property_type: propertyTypeParsed.data,
+      purchase_price,
+      current_valuation,
+      ownership_percent,
+      status: statusParsed.data,
+      rental_income_monthly,
+    });
+  } catch (e) {
+    console.error(e);
+    return {
+      error: formatSupabaseError(e, "Could not update property."),
+    };
+  }
 
   revalidateHousingPaths();
   return { error: null };
@@ -2286,38 +2375,50 @@ export async function createHousingLoanAction(
     return { error: "Principal repaid must be ≥ 0" };
   }
 
-  const dup = findNameCollision(
-    await listHousingLoans(supabase, user.id),
-    (l) => l.label,
-    label,
-    "a home loan"
-  );
-  if (dup) return { error: dup };
+  try {
+    const dup = findNameCollision(
+      await listHousingLoans(supabase, user.id),
+      (l) => l.label,
+      label,
+      "a home loan"
+    );
+    if (dup) return { error: dup };
 
-  const property = await insertPropertyForLoan(supabase, user.id, {
-    name: label,
-    status: "living_in",
-  });
+    const property = await insertPropertyForLoan(supabase, user.id, {
+      name: label,
+      status: "living_in",
+    });
 
-  await insertHousingLoan(supabase, user.id, {
-    property_id: property.id,
-    label,
-    principal,
-    annual_nominal_rate: annual_nominal_rate_effective,
-    term_months,
-    completion_month,
-    first_payment_month,
-    downpayment_from_oa,
-    fees_from_oa,
-    oa_share_of_payment,
-    max_oa_per_month,
-    lender_type,
-    original_loan_principal,
-    principal_repaid_before_schedule,
-    payment_source,
-    cpf_oa_payment,
-    cash_payment,
-  });
+    try {
+      await insertHousingLoan(supabase, user.id, {
+        property_id: property.id,
+        label,
+        principal,
+        annual_nominal_rate: annual_nominal_rate_effective,
+        term_months,
+        completion_month,
+        first_payment_month,
+        downpayment_from_oa,
+        fees_from_oa,
+        oa_share_of_payment,
+        max_oa_per_month,
+        lender_type,
+        original_loan_principal,
+        principal_repaid_before_schedule,
+        payment_source,
+        cpf_oa_payment,
+        cash_payment,
+      });
+    } catch (loanError) {
+      await deletePropertyBestEffort(supabase, user.id, property.id);
+      throw loanError;
+    }
+  } catch (e) {
+    console.error(e);
+    return {
+      error: formatSupabaseError(e, "Could not save home loan."),
+    };
+  }
   revalidateHousingPaths();
   return { error: null };
 }
@@ -2538,51 +2639,63 @@ export async function createHousingLoanQuickAction(
       ? (property_kind as import("@/data/supabase/types").PropertyRow["property_type"])
       : "unknown";
 
-  const dup = findNameCollision(
-    await listHousingLoans(supabase, user.id),
-    (l) => l.label,
-    derived.label,
-    "a home loan"
-  );
-  if (dup) return { error: dup };
+  try {
+    const dup = findNameCollision(
+      await listHousingLoans(supabase, user.id),
+      (l) => l.label,
+      derived.label,
+      "a home loan"
+    );
+    if (dup) return { error: dup };
 
-  const property = await insertPropertyForLoan(supabase, user.id, {
-    name: derived.label,
-    property_type: propertyTypeForQuick,
-    purchase_price: purchasePrice,
-    status: "living_in",
-  });
+    const property = await insertPropertyForLoan(supabase, user.id, {
+      name: derived.label,
+      property_type: propertyTypeForQuick,
+      purchase_price: purchasePrice,
+      status: "living_in",
+    });
 
-  await insertHousingLoan(supabase, user.id, {
-    property_id: property.id,
-    label: derived.label,
-    principal: derived.principal,
-    annual_nominal_rate: derived.annual_nominal_rate,
-    term_months: derived.term_months,
-    completion_month: derived.completion_month,
-    first_payment_month: derived.first_payment_month,
-    downpayment_from_oa: derived.downpayment_from_oa,
-    fees_from_oa: derived.fees_from_oa,
-    oa_share_of_payment: paymentNormalized.oa_share_of_payment,
-    max_oa_per_month: derived.max_oa_per_month,
-    lender_type: derived.lender_type,
-    original_loan_principal: derived.original_loan_principal,
-    principal_repaid_before_schedule: derived.principal_repaid_before_schedule,
-    property_purchase_price: planning?.property_purchase_price ?? null,
-    property_kind: planning?.property_kind ?? null,
-    downpayment_guidance_preset: planning?.downpayment_guidance_preset ?? null,
-    downpayment_guidance_custom_percent:
-      planning?.downpayment_guidance_custom_percent ?? null,
-    downpayment_guidance_custom_amount:
-      planning?.downpayment_guidance_custom_amount ?? null,
-    buyers_stamp_duty: planning?.buyers_stamp_duty ?? null,
-    financing_includes_bsd: false,
-    buyers_stamp_duty_paid_from_cpf_oa:
-      planning?.buyers_stamp_duty_paid_from_cpf_oa ?? false,
-    payment_source: paymentNormalized.payment_source,
-    cpf_oa_payment: paymentNormalized.cpf_oa_payment,
-    cash_payment: paymentNormalized.cash_payment,
-  });
+    try {
+      await insertHousingLoan(supabase, user.id, {
+        property_id: property.id,
+        label: derived.label,
+        principal: derived.principal,
+        annual_nominal_rate: derived.annual_nominal_rate,
+        term_months: derived.term_months,
+        completion_month: derived.completion_month,
+        first_payment_month: derived.first_payment_month,
+        downpayment_from_oa: derived.downpayment_from_oa,
+        fees_from_oa: derived.fees_from_oa,
+        oa_share_of_payment: paymentNormalized.oa_share_of_payment,
+        max_oa_per_month: derived.max_oa_per_month,
+        lender_type: derived.lender_type,
+        original_loan_principal: derived.original_loan_principal,
+        principal_repaid_before_schedule: derived.principal_repaid_before_schedule,
+        property_purchase_price: planning?.property_purchase_price ?? null,
+        property_kind: planning?.property_kind ?? null,
+        downpayment_guidance_preset: planning?.downpayment_guidance_preset ?? null,
+        downpayment_guidance_custom_percent:
+          planning?.downpayment_guidance_custom_percent ?? null,
+        downpayment_guidance_custom_amount:
+          planning?.downpayment_guidance_custom_amount ?? null,
+        buyers_stamp_duty: planning?.buyers_stamp_duty ?? null,
+        financing_includes_bsd: false,
+        buyers_stamp_duty_paid_from_cpf_oa:
+          planning?.buyers_stamp_duty_paid_from_cpf_oa ?? false,
+        payment_source: paymentNormalized.payment_source,
+        cpf_oa_payment: paymentNormalized.cpf_oa_payment,
+        cash_payment: paymentNormalized.cash_payment,
+      });
+    } catch (loanError) {
+      await deletePropertyBestEffort(supabase, user.id, property.id);
+      throw loanError;
+    }
+  } catch (e) {
+    console.error(e);
+    return {
+      error: formatSupabaseError(e, "Could not save home loan."),
+    };
+  }
   revalidateHousingPaths();
   return { error: null };
 }
@@ -2684,33 +2797,40 @@ export async function updateHousingLoanAction(
     oa_share_of_payment,
   } = paymentParsed;
 
-  const dup = findNameCollision(
-    await listHousingLoans(supabase, user.id),
-    (l) => l.label,
-    label,
-    "a home loan",
-    idParsed.data
-  );
-  if (dup) return { error: dup };
+  try {
+    const dup = findNameCollision(
+      await listHousingLoans(supabase, user.id),
+      (l) => l.label,
+      label,
+      "a home loan",
+      idParsed.data
+    );
+    if (dup) return { error: dup };
 
-  await updateHousingLoan(supabase, user.id, idParsed.data, {
-    label,
-    principal,
-    annual_nominal_rate: annual_nominal_rate_effective,
-    term_months,
-    completion_month,
-    first_payment_month,
-    downpayment_from_oa,
-    fees_from_oa,
-    oa_share_of_payment,
-    max_oa_per_month,
-    lender_type,
-    original_loan_principal,
-    principal_repaid_before_schedule,
-    payment_source,
-    cpf_oa_payment,
-    cash_payment,
-  });
+    await updateHousingLoan(supabase, user.id, idParsed.data, {
+      label,
+      principal,
+      annual_nominal_rate: annual_nominal_rate_effective,
+      term_months,
+      completion_month,
+      first_payment_month,
+      downpayment_from_oa,
+      fees_from_oa,
+      oa_share_of_payment,
+      max_oa_per_month,
+      lender_type,
+      original_loan_principal,
+      principal_repaid_before_schedule,
+      payment_source,
+      cpf_oa_payment,
+      cash_payment,
+    });
+  } catch (e) {
+    console.error(e);
+    return {
+      error: formatSupabaseError(e, "Could not update home loan."),
+    };
+  }
   revalidateHousingPaths();
   return { error: null };
 }

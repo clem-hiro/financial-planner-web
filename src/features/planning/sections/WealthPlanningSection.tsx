@@ -169,6 +169,9 @@ export async function WealthPlanningSection() {
               cashRows={cashBalanceRows}
               cashHistoryByAccountId={cashHistoryByAccountId}
               liabilityRows={bundle.liabilityRows}
+              properties={bundle.properties}
+              housingLoans={bundle.housingLoans}
+              vehicleRows={bundle.vehicleRows}
               currencyCode={currency}
             />
           </PageSection>

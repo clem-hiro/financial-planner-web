@@ -1,4 +1,5 @@
 import type { LiabilityRow } from "@/data/supabase/types";
+import { LOAN_SOURCE_DEFINITIONS } from "@/domain/finance/loan-source-registry";
 import { addMonthsToYearMonth } from "@/lib/dates";
 import { isValidYearMonth } from "./budget";
 
@@ -14,6 +15,16 @@ export const DEBT_CATEGORIES = [
 ] as const;
 
 export type DebtCategory = (typeof DEBT_CATEGORIES)[number];
+
+export const SOURCE_OWNED_DEBT_CATEGORIES = LOAN_SOURCE_DEFINITIONS.map(
+  (source) => source.debtCategory
+) as readonly DebtCategory[];
+
+export function isSourceOwnedDebtCategory(
+  category: DebtCategory | null | undefined
+): boolean {
+  return category != null && SOURCE_OWNED_DEBT_CATEGORIES.includes(category);
+}
 
 export const LOAN_TYPES = ["amortized", "flat_rate", "revolving"] as const;
 export type LoanType = (typeof LOAN_TYPES)[number];
