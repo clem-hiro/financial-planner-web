@@ -41,6 +41,7 @@ import {
   listVehicles,
   advisorReadVehicles,
 } from "@/data/repositories/vehicles";
+import { expandTabsForLoanRegisterSources } from "@/domain/finance/loan-source-registry";
 import type {
   CashAccountRow,
   CashAccountSnapshotRow,
@@ -84,15 +85,16 @@ export async function loadSetupTabBundle(
   viewer?: "advisor"
 ): Promise<SetupTabBundle> {
   const isAdvisorViewer = viewer === "advisor";
+  const expandedTabs = expandTabsForLoanRegisterSources(tabs);
   const needInvestments =
-    tabs.has("add-account") || tabs.has("goals");
-  const needCash = tabs.has("cash-liabilities");
-  const needLiabilities = tabs.has("cash-liabilities");
-  const needVehicles = tabs.has("vehicles");
-  const needCpf = tabs.has("cpf");
+    expandedTabs.has("add-account") || expandedTabs.has("goals");
+  const needCash = expandedTabs.has("cash-liabilities");
+  const needLiabilities = expandedTabs.has("cash-liabilities");
+  const needVehicles = expandedTabs.has("vehicles");
+  const needCpf = expandedTabs.has("cpf");
   const needHousing =
-    tabs.has("housing") || tabs.has("housing-loans");
-  const needGoals = tabs.has("goals");
+    expandedTabs.has("housing") || expandedTabs.has("housing-loans");
+  const needGoals = expandedTabs.has("goals");
 
   const [
     investments,

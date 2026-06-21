@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import type { ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import {
   createVehicleAction,
@@ -559,42 +560,174 @@ function AddVehicleForm({ currencyCode }: { currencyCode: string }) {
     return res;
   };
   const [state, action, pending] = useActionState(wrapped, initial);
+  const [addPaneOpen, setAddPaneOpen] = useState(false);
+  const [identityOpen, setIdentityOpen] = useState(false);
+  const [marketOpen, setMarketOpen] = useState(false);
+  const [oneMotoringOpen, setOneMotoringOpen] = useState(false);
+  const [terminalOpen, setTerminalOpen] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [label, setLabel] = useState("");
+  const identityComplete = label.trim().length > 0;
+
   return (
-    <form
-      action={action}
-      className="rounded-lg border border-dashed border-zinc-300 bg-zinc-50/50 p-4"
-      {...(pending ? { inert: true } : {})}
+    <details
+      open={addPaneOpen || state.error != null}
+      onToggle={(event) => {
+        if (!state.error) setAddPaneOpen(event.currentTarget.open);
+      }}
+      className="overflow-hidden rounded-lg border border-dashed border-zinc-300 bg-zinc-50/50"
     >
-      <BlockingSubmitOverlay active={pending} message="Adding vehicle…" />
-      <p className="mb-2 text-sm font-medium text-zinc-800">Add vehicle</p>
-      {state.error && (
-        <p className="mb-2 text-sm text-red-600" role="alert">
-          {state.error}
-        </p>
-      )}
-      <div className="grid gap-2 sm:grid-cols-2">
-        <label className="text-xs sm:col-span-2">
-          <span className="mb-0.5 block text-zinc-600">Label</span>
-          <input name="label" type="text" placeholder="Car" className={fpInputClass} />
-        </label>
-        <label className="text-xs sm:col-span-2">
-          <span className="mb-0.5 block text-zinc-600">Status</span>
-          <select name="vehicle_status" className={fpSelectClass} defaultValue="active">
-            <option value="active">Active</option>
-            <option value="planned">Planned future</option>
-          </select>
-        </label>
-        <MarketValueFields currencyCode={currencyCode} />
-        <OneMotoringFields currencyCode={currencyCode} />
-        <PurchaseToCoeTerminalFields currencyCode={currencyCode} />
-        <AdvancedModelFields />
-      </div>
-      <div className="mt-3 flex justify-end">
-        <button type="submit" disabled={pending} className={fpPrimaryButtonClass}>
-          {pending ? "Adding…" : "Add vehicle"}
-        </button>
-      </div>
-    </form>
+      <summary className="cursor-pointer px-4 py-3 text-sm font-medium text-zinc-800 hover:bg-white/70">
+        Add vehicle
+        <span className="mt-1 block text-xs font-normal text-zinc-600">
+          Start with the vehicle name, then expand valuation and loan assumptions as needed.
+        </span>
+      </summary>
+      <form
+        action={action}
+        className="relative space-y-3 border-t border-zinc-200/70 p-4"
+        {...(pending ? { inert: true } : {})}
+      >
+        <BlockingSubmitOverlay active={pending} message="Adding vehicle…" />
+        {state.error && (
+          <p className="text-sm text-red-600" role="alert">
+            {state.error}
+          </p>
+        )}
+        <VehicleFormSection
+          title="Vehicle"
+          description="Name and whether it is active or planned."
+          open={identityOpen || state.error != null}
+          onOpenChange={setIdentityOpen}
+          status={identityComplete ? "Ready" : "Required"}
+        >
+          <div className="grid gap-2 sm:grid-cols-2">
+            <label className="text-xs sm:col-span-2">
+              <span className="mb-0.5 block text-zinc-600">Label</span>
+              <input
+                name="label"
+                type="text"
+                required
+                value={label}
+                onChange={(event) => {
+                  setLabel(event.target.value);
+                  if (event.target.value.trim().length > 0) setMarketOpen(true);
+                }}
+                placeholder="Car"
+                className={fpInputClass}
+              />
+            </label>
+            <label className="text-xs sm:col-span-2">
+              <span className="mb-0.5 block text-zinc-600">Status</span>
+              <select
+                name="vehicle_status"
+                className={fpSelectClass}
+                defaultValue="active"
+              >
+                <option value="active">Active</option>
+                <option value="planned">Planned future</option>
+              </select>
+            </label>
+          </div>
+        </VehicleFormSection>
+        <VehicleFormSection
+          title="Market estimate"
+          description="Fast path for motorcycles or resale-value based estimates."
+          open={marketOpen || state.error != null}
+          onOpenChange={setMarketOpen}
+        >
+          <div className="grid gap-2 sm:grid-cols-2">
+            <MarketValueFields currencyCode={currencyCode} />
+          </div>
+        </VehicleFormSection>
+        <VehicleFormSection
+          title="OneMotoring values"
+          description="PARF, COE, and loan figures from LTA or lender statements."
+          open={oneMotoringOpen || state.error != null}
+          onOpenChange={setOneMotoringOpen}
+        >
+          <div className="grid gap-2 sm:grid-cols-2">
+            <OneMotoringFields currencyCode={currencyCode} />
+          </div>
+        </VehicleFormSection>
+        <VehicleFormSection
+          title="COE expiry recovery"
+          description="Optional terminal value at COE expiry."
+          open={terminalOpen || state.error != null}
+          onOpenChange={setTerminalOpen}
+        >
+          <div className="grid gap-2 sm:grid-cols-2">
+            <PurchaseToCoeTerminalFields currencyCode={currencyCode} />
+          </div>
+        </VehicleFormSection>
+        <VehicleFormSection
+          title="Advanced assumptions"
+          description="OTR, first registration, PARF basis, and loan model overrides."
+          open={advancedOpen || state.error != null}
+          onOpenChange={setAdvancedOpen}
+        >
+          <div className="grid gap-2 sm:grid-cols-2">
+            <AdvancedModelFields />
+          </div>
+        </VehicleFormSection>
+        <div className="flex justify-end border-t border-zinc-200/70 pt-3">
+          <button
+            type="submit"
+            disabled={pending || !identityComplete}
+            className={fpPrimaryButtonClass}
+          >
+            {pending ? "Adding…" : "Add vehicle"}
+          </button>
+        </div>
+      </form>
+    </details>
+  );
+}
+
+function VehicleFormSection({
+  title,
+  description,
+  open,
+  onOpenChange,
+  status,
+  children,
+}: {
+  title: string;
+  description: string;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  status?: string;
+  children: ReactNode;
+}) {
+  return (
+    <details
+      open={open}
+      onToggle={(event) => onOpenChange(event.currentTarget.open)}
+      className="group border-t border-zinc-200/70 pt-3 first:border-t-0 first:pt-0"
+    >
+      <summary className="flex cursor-pointer list-none items-start justify-between gap-3 rounded-md px-1 py-1 text-sm font-medium text-zinc-800 hover:bg-white/70">
+        <span className="flex min-w-0 flex-1 items-start gap-2">
+          <span
+            aria-hidden="true"
+            className="mt-0.5 inline-flex size-4 shrink-0 items-center justify-center text-xs text-zinc-500 transition-transform group-open:rotate-90"
+          >
+            &gt;
+          </span>
+          <span className="min-w-0">
+            {title}
+            <span className="mt-0.5 block text-xs font-normal leading-relaxed text-zinc-600">
+              {description}
+            </span>
+          </span>
+        </span>
+        {status ? (
+          <span className="shrink-0 rounded-full bg-white px-2 py-0.5 text-[11px] font-medium text-zinc-600 ring-1 ring-zinc-200">
+            {status}
+          </span>
+        ) : null}
+      </summary>
+      <div className="mt-3">{children}</div>
+    </details>
   );
 }
 
@@ -670,21 +803,20 @@ export function VehiclesPanel({
               key={row.id}
               className="rounded-lg border border-zinc-200 bg-white p-3 shadow-sm"
             >
-              <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                  <p className="font-medium text-zinc-900">{row.label}</p>
+              <details>
+                <summary className="cursor-pointer text-sm font-medium text-zinc-900 hover:text-zinc-700">
+                  {row.label}
+                </summary>
+                <div className="mt-3 space-y-3 border-t border-zinc-200 pt-3">
                   <p className="text-xs capitalize text-zinc-500">
                     {row.vehicle_status === "planned" ? "Planned" : "Active"}
                   </p>
+                  <VehicleSummary row={row} currencyCode={currencyCode} />
+                  <VehicleEditForm row={row} currencyCode={currencyCode} />
+                  <div className="flex justify-end">
+                    <VehicleDeleteForm id={row.id} />
+                  </div>
                 </div>
-                <VehicleDeleteForm id={row.id} />
-              </div>
-              <VehicleSummary row={row} currencyCode={currencyCode} />
-              <details className="mt-2">
-                <summary className="cursor-pointer text-xs font-medium text-zinc-600 hover:text-zinc-900">
-                  Edit
-                </summary>
-                <VehicleEditForm row={row} currencyCode={currencyCode} />
               </details>
             </li>
           ))}

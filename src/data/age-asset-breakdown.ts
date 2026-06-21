@@ -15,6 +15,17 @@ export type AgeAssetBreakdownPoint = {
   cashAccessibleInflow?: number;
   /** Outflows for the chart-facing sample year / phase. */
   requiredOutflow?: number;
+  requiredLivingOutflow?: number;
+  fundedLivingOutflow?: number;
+  unfundedLivingOutflow?: number;
+  fundedOutflow?: number;
+  unfundedOutflow?: number;
+  requiredDebtRepayment?: number;
+  fundedDebtRepayment?: number;
+  unfundedDebtRepayment?: number;
+  debtPrincipalPaid?: number;
+  debtInterestPaid?: number;
+  debtCpfOaDrawdown?: number;
   /** `cashAccessibleInflow - requiredOutflow` before portfolio yield/principal. */
   prePortfolioGap?: number;
   investmentYieldAvailable?: number;
@@ -52,5 +63,8 @@ export type AgeAssetBreakdownPoint = {
   cpfRa: number;
   cpfCpfis: number;
   liabilities: number;
+  projectedLiabilities?: number;
+  projectedHousingLiabilities?: number;
+  projectedNonHousingLiabilities?: number;
   vehiclesNet: number;
 };

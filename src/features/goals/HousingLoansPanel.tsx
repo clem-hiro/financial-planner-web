@@ -4,6 +4,7 @@ import { useActionState, useState } from "react";
 import {
   createHousingLoanAction,
   deleteHousingLoanAction,
+  deleteHousingPropertyAction,
   updateHousingLoanAction,
 } from "@/server/actions";
 import type { HousingLoanRow, PropertyRow } from "@/data/supabase/types";
@@ -27,6 +28,178 @@ function lenderLabel(t: string): string {
   if (t === "hdb") return "HDB";
   if (t === "bank") return "Bank";
   return "Other";
+}
+
+function propertyTypeLabel(t: PropertyRow["property_type"]): string {
+  if (t === "bto") return "BTO";
+  if (t === "resale_hdb") return "Resale HDB";
+  if (t === "resale_ec_condo") return "Resale EC/Condo";
+  if (t === "new_launch_ec_condo") return "New Launch EC/Condo";
+  if (t === "hdb") return "HDB";
+  if (t === "condo") return "Condo";
+  if (t === "ec") return "Executive condo";
+  if (t === "landed") return "Landed";
+  if (t === "overseas") return "Overseas property";
+  if (t === "other") return "Other property";
+  return "Property";
+}
+
+function propertyStatusLabel(t: PropertyRow["status"]): string {
+  if (t === "living_in") return "Living in";
+  if (t === "renting_out") return "Rented out";
+  if (t === "under_construction") return "Under construction";
+  return "Fully paid";
+}
+
+function propertyValue(row: PropertyRow): number | null {
+  const valuation = num(row.current_valuation);
+  if (valuation > 0) return valuation;
+  const purchasePrice = num(row.purchase_price);
+  return purchasePrice > 0 ? purchasePrice : null;
+}
+
+function loansByPropertyId(loans: HousingLoanRow[]): Map<string, HousingLoanRow[]> {
+  const grouped = new Map<string, HousingLoanRow[]>();
+  for (const loan of loans) {
+    if (!loan.property_id) continue;
+    const rows = grouped.get(loan.property_id) ?? [];
+    rows.push(loan);
+    grouped.set(loan.property_id, rows);
+  }
+  return grouped;
+}
+
+function PropertyList({
+  properties,
+  loans,
+  currencyCode,
+}: {
+  properties: PropertyRow[];
+  loans: HousingLoanRow[];
+  currencyCode: string;
+}) {
+  if (properties.length === 0) return null;
+
+  const groupedLoans = loansByPropertyId(loans);
+  return (
+    <div className="p-4 sm:p-5">
+      <div className="mb-2">
+        <h2 className="text-sm font-semibold text-zinc-900">Properties</h2>
+      </div>
+      <ul className="space-y-2 text-sm">
+        {properties.map((property) => {
+          const value = propertyValue(property);
+          const linkedLoans = groupedLoans.get(property.id) ?? [];
+          return (
+            <li
+              key={property.id}
+              className="rounded border border-zinc-100 bg-zinc-50/80 px-3 py-2"
+            >
+              <details>
+                <summary className="cursor-pointer text-sm font-medium text-zinc-900 hover:text-zinc-700">
+                  {property.name}
+                  <span
+                    className={
+                      linkedLoans.length > 0
+                        ? "ml-2 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-800"
+                        : "ml-2 rounded-full bg-amber-50 px-2 py-0.5 text-[11px] font-medium text-amber-800"
+                    }
+                  >
+                    {linkedLoans.length > 0
+                      ? `${linkedLoans.length} linked mortgage${
+                          linkedLoans.length === 1 ? "" : "s"
+                        }`
+                      : "No linked mortgage"}
+                  </span>
+                </summary>
+                <div className="mt-3 space-y-3 border-t border-zinc-200 pt-3">
+                  <dl className="grid gap-2 text-xs text-zinc-600 sm:grid-cols-2">
+                    <div>
+                      <dt className="font-medium text-zinc-500">Type</dt>
+                      <dd className="text-zinc-800">
+                        {propertyTypeLabel(property.property_type)}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium text-zinc-500">Status</dt>
+                      <dd className="text-zinc-800">
+                        {propertyStatusLabel(property.status)}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium text-zinc-500">Value</dt>
+                      <dd className="text-zinc-800">
+                        {value != null
+                          ? formatCurrency(value, currencyCode)
+                          : "Not entered"}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt className="font-medium text-zinc-500">Purchase year</dt>
+                      <dd className="text-zinc-800">
+                        {property.purchase_year ?? "Not entered"}
+                      </dd>
+                    </div>
+                  </dl>
+                  {linkedLoans.length > 0 ? (
+                    <div className="rounded-md border border-zinc-100 bg-white p-3 text-xs text-zinc-600">
+                      <p className="font-medium text-zinc-800">
+                        Linked mortgage{linkedLoans.length === 1 ? "" : "s"}
+                      </p>
+                      <ul className="mt-1 space-y-1">
+                        {linkedLoans.map((loan) => (
+                          <li key={loan.id}>
+                            {loan.label} · outstanding{" "}
+                            {formatCurrency(num(loan.principal), currencyCode)}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
+                  <div className="flex justify-end">
+                    <HousingPropertyDeleteForm
+                      id={property.id}
+                      name={property.name}
+                    />
+                  </div>
+                </div>
+              </details>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
+
+function HousingPropertyDeleteForm({ id, name }: { id: string; name: string }) {
+  const [pending, setPending] = useState(false);
+
+  return (
+    <form
+      className="shrink-0"
+      onSubmit={(event) => {
+        event.preventDefault();
+        const ok = window.confirm(`Delete property "${name}"?`);
+        if (!ok) return;
+        setPending(true);
+        deleteHousingPropertyAction(new FormData(event.currentTarget)).finally(() =>
+          setPending(false)
+        );
+      }}
+      {...(pending ? { inert: true } : {})}
+    >
+      <BlockingSubmitOverlay active={pending} message="Deleting property…" />
+      <input type="hidden" name="id" value={id} />
+      <button
+        type="submit"
+        disabled={pending}
+        className="text-xs font-medium text-rose-700 hover:underline"
+      >
+        {pending ? "Deleting…" : "Delete property"}
+      </button>
+    </form>
+  );
 }
 
 function instalmentPresetFromShare(s: number): "cpf100" | "split50" | "cash100" | "custom" {
@@ -658,6 +831,7 @@ function HousingLoanDeleteForm({ id }: { id: string }) {
 }
 
 export function HousingPanel({
+  properties,
   loans,
   currencyCode,
   advisorVisibility = null,
@@ -687,26 +861,33 @@ export function HousingPanel({
           />
         </div>
       ) : null}
-      <PropertyAddForm currencyCode={currencyCode} />
       <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white divide-y divide-zinc-200">
-      <div className="p-4 sm:p-5">
-        <details className="group">
-        <summary className="cursor-pointer text-sm font-medium text-zinc-700 hover:text-zinc-900">
-          Manual mortgage entry (edge cases)
-        </summary>
-        <p className="mt-2 text-xs text-zinc-500">
-          Use when you already know outstanding principal, term, months, or
-          principal repaid to date — same data as quick add, without the purchase
-          price shortcut.
-        </p>
-          <HousingLoanManualAddForm
-            formError={state.error}
-            action={action}
-            pending={pending}
-            currencyCode={currencyCode}
-          />
-        </details>
-      </div>
+        <PropertyList
+          properties={properties}
+          loans={loans}
+          currencyCode={currencyCode}
+        />
+        <div className="p-4 sm:p-5">
+          <PropertyAddForm currencyCode={currencyCode} />
+        </div>
+        <div className="p-4 sm:p-5">
+          <details className="group">
+            <summary className="cursor-pointer text-sm font-medium text-zinc-700 hover:text-zinc-900">
+              Manual mortgage entry (edge cases)
+            </summary>
+            <p className="mt-2 text-xs text-zinc-500">
+              Use when you already know outstanding principal, term, months, or
+              principal repaid to date — same data as quick add, without the
+              purchase price shortcut.
+            </p>
+            <HousingLoanManualAddForm
+              formError={state.error}
+              action={action}
+              pending={pending}
+              currencyCode={currencyCode}
+            />
+          </details>
+        </div>
 
       {loans.length > 0 && (
         <div className="p-4 sm:p-5">
@@ -746,9 +927,11 @@ export function HousingPanel({
                 key={L.id}
                 className="rounded border border-zinc-100 bg-zinc-50/80 px-3 py-2"
               >
-                <div className="flex flex-wrap items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <p className="font-medium text-zinc-900">{L.label}</p>
+                <details>
+                  <summary className="cursor-pointer text-sm font-medium text-zinc-900 hover:text-zinc-700">
+                    {L.label}
+                  </summary>
+                  <div className="mt-3 space-y-3 border-t border-zinc-200 pt-3">
                     <p className="text-xs text-zinc-600">
                       {lenderLabel(lender)} · outstanding{" "}
                       {formatCurrency(num(L.principal), currencyCode)} @{" "}
@@ -806,10 +989,12 @@ export function HousingPanel({
                         )}
                       </p>
                     )}
+                    <div className="flex justify-end">
+                      <HousingLoanDeleteForm id={L.id} />
+                    </div>
+                    <HousingLoanEditForm L={L} currencyCode={currencyCode} />
                   </div>
-                  <HousingLoanDeleteForm id={L.id} />
-                </div>
-                <HousingLoanEditForm L={L} currencyCode={currencyCode} />
+                </details>
               </li>
             );
           })}
