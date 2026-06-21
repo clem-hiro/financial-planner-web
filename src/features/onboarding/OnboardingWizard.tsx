@@ -5,11 +5,8 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import {
   BUDGET_STRATEGY_PRESETS,
-  LIFESTYLE_PRESETS,
-  generateGuidedMonthlyBudgetLines,
+  strategyNeedsWantsSavings,
   type BudgetingStrategyId,
-  type FoodSpendBandId,
-  type LifestyleProfileId,
   type OnboardingConfidenceLevel,
 } from "@/domain/finance/budget-guided-setup";
 import {
@@ -62,13 +59,6 @@ type Props = {
   initialEstimatedBudgetMode: boolean;
 };
 
-function isLifestyleId(s: string | null): s is LifestyleProfileId {
-  return (
-    s != null &&
-    LIFESTYLE_PRESETS.some((p) => p.id === (s as LifestyleProfileId))
-  );
-}
-
 function isStrategyId(s: string | null): s is BudgetingStrategyId {
   return (
     s != null &&
@@ -82,20 +72,38 @@ function isConfidence(
   return s === "rough" || s === "moderate" || s === "detailed";
 }
 
-function isFoodBand(s: string | null): s is FoodSpendBandId {
-  return (
-    s != null &&
-    (s === "under_300" ||
-      s === "range_300_600" ||
-      s === "range_600_1000" ||
-      s === "above_1000" ||
-      s === "unknown")
-  );
-}
-
 function parsePositive(raw: string): number | null {
   const n = Number(raw);
   return Number.isFinite(n) && n > 0 ? n : null;
+}
+
+function NeedsWantsSavingsBar({
+  needs,
+  wants,
+  savings,
+}: {
+  needs: number;
+  wants: number;
+  savings: number;
+}) {
+  const total = Math.max(0, needs) + Math.max(0, wants) + Math.max(0, savings) || 1;
+  const needsPct = (Math.max(0, needs) / total) * 100;
+  const wantsPct = (Math.max(0, wants) / total) * 100;
+  const savingsPct = (Math.max(0, savings) / total) * 100;
+  return (
+    <div
+      className="flex h-3.5 w-full overflow-hidden rounded-full bg-slate-200"
+      role="img"
+      aria-label={`Needs ${needsPct.toFixed(0)} percent, wants ${wantsPct.toFixed(0)} percent, savings ${savingsPct.toFixed(0)} percent`}
+    >
+      <div className="h-full bg-sky-500/90" style={{ width: `${needsPct}%` }} />
+      <div className="h-full bg-violet-500/85" style={{ width: `${wantsPct}%` }} />
+      <div
+        className="h-full bg-emerald-600/90"
+        style={{ width: `${savingsPct}%` }}
+      />
+    </div>
+  );
 }
 
 export function OnboardingWizard(props: Props) {
@@ -140,14 +148,6 @@ export function OnboardingWizard(props: Props) {
       ? String(props.initialDebtObligations)
       : ""
   );
-  const lifestyle: LifestyleProfileId = isLifestyleId(
-    props.initialLifestyleProfile
-  )
-    ? props.initialLifestyleProfile
-    : "young_professional";
-  const foodBand: FoodSpendBandId = isFoodBand(props.initialFoodSpendBand)
-    ? props.initialFoodSpendBand
-    : "unknown";
   const [strategy, setStrategy] = useState<BudgetingStrategyId>(
     isStrategyId(props.initialBudgetingStrategy)
       ? props.initialBudgetingStrategy
@@ -180,15 +180,10 @@ export function OnboardingWizard(props: Props) {
     return 0;
   }, [estimatedTakeHome, grossNum, props.initialLegacyTakeHomeMonthly]);
 
-  const previewLines = useMemo(() => {
-    if (takeHomeForBudget <= 0) return [];
-    return generateGuidedMonthlyBudgetLines({
-      monthlyIncome: takeHomeForBudget,
-      lifestyle,
-      strategy,
-      foodSpendBand: foodBand,
-    });
-  }, [takeHomeForBudget, lifestyle, strategy, foodBand]);
+  const strategySplit = useMemo(
+    () => strategyNeedsWantsSavings(strategy),
+    [strategy]
+  );
 
   function resolveBonusPayload(gross: number | null): {
     annual_bonus: number | null;
@@ -354,7 +349,7 @@ export function OnboardingWizard(props: Props) {
       setStep(3);
     } catch (e) {
       console.error(e);
-      setStatus("Could not create budget lines. Try again or skip for now.");
+      setStatus("Could not create budget lines. Please try again.");
     } finally {
       setPending(false);
     }
@@ -371,25 +366,19 @@ export function OnboardingWizard(props: Props) {
     step === 1
       ? "One gross salary is enough — we'll estimate CPF and take-home. Refine the rest later in Settings."
       : step === 2
-        ? "We'll draft a starting monthly plan from your income and style."
+        ? "Pick a needs / wants / savings split — we'll use it as your starting budget style."
         : "Add goals and balances when you're ready — your dashboard is set up.";
 
-  const navBackBase =
-    "inline-flex min-h-11 items-center justify-center rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:opacity-50 min-w-[7.5rem]";
-  const navBackClass = `${navBackBase} flex-1 sm:flex-initial`;
-  const navPrimaryClass = `${fpPrimaryButtonClass} inline-flex min-h-11 flex-1 items-center justify-center disabled:cursor-not-allowed disabled:opacity-50 sm:flex-initial sm:min-w-[9.5rem]`;
-  const navPrimaryFullClass = `${fpPrimaryButtonClass} flex min-h-11 w-full items-center justify-center disabled:cursor-not-allowed disabled:opacity-50`;
-  const navSkipClass =
-    "inline-flex min-h-11 flex-1 items-center justify-center rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-800 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:opacity-50";
+  const navBackClass =
+    "inline-flex min-h-11 shrink-0 items-center justify-center rounded-full border border-slate-200 bg-white px-4 text-sm font-medium text-slate-700 hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-600 disabled:cursor-not-allowed disabled:opacity-50 min-w-[7.5rem]";
+  const navPrimaryClass = `${fpPrimaryButtonClass} inline-flex min-h-11 shrink-0 items-center justify-center px-4 text-sm disabled:cursor-not-allowed disabled:opacity-50 sm:min-w-[9.5rem]`;
 
   return (
-    <div
-      className={`mx-auto max-w-xl space-y-8 ${step === 2 ? "pb-44" : "pb-28"}`}
-    >
+    <div className="mx-auto max-w-xl space-y-8 pb-28">
       <BlockingSubmitOverlay
         active={pending}
         message={
-          step === 2 ? "Creating your illustrated budget…" : "Saving onboarding…"
+          step === 2 ? "Creating your starter budget…" : "Saving onboarding…"
         }
       />
       <header className="space-y-6">
@@ -591,7 +580,7 @@ export function OnboardingWizard(props: Props) {
               Money management style
             </p>
             <p className="text-xs text-slate-500">
-              We&apos;ll draft a starting plan you can adjust anytime.
+              Each style sets a needs / wants / savings target below.
             </p>
             <div className="space-y-2">
               {BUDGET_STRATEGY_PRESETS.map((p) => (
@@ -610,21 +599,70 @@ export function OnboardingWizard(props: Props) {
             </div>
           </div>
           <div className={`${onboardingCardClass} space-y-4`}>
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <div>
               <p className="text-sm font-semibold text-slate-900">
-                Illustrated monthly plan
+                Needs, wants & savings
               </p>
-              {takeHomeForBudget > 0 && (
-                <span className="text-xs text-slate-500">
-                  Preview · {currency}
-                </span>
-              )}
+              <p className="mt-1 text-xs text-slate-500">
+                A simple split from your style — not a category-by-category
+                plan. Fine-tune lines later on Budget.
+              </p>
             </div>
-            {takeHomeForBudget <= 0 ? (
+            <NeedsWantsSavingsBar
+              needs={strategySplit.needs}
+              wants={strategySplit.wants}
+              savings={strategySplit.savings}
+            />
+            <dl className="grid grid-cols-3 gap-2 text-xs text-slate-600">
+              <div className="rounded-lg bg-sky-50/80 px-2 py-2">
+                <dt className="font-medium text-sky-900">Needs</dt>
+                <dd className="mt-0.5 font-semibold tabular-nums text-slate-900">
+                  {(strategySplit.needs * 100).toFixed(0)}%
+                </dd>
+                {takeHomeForBudget > 0 && (
+                  <dd className="mt-0.5 tabular-nums text-slate-700">
+                    ~
+                    {formatCurrency(
+                      takeHomeForBudget * strategySplit.needs,
+                      currency
+                    )}
+                  </dd>
+                )}
+              </div>
+              <div className="rounded-lg bg-violet-50/80 px-2 py-2">
+                <dt className="font-medium text-violet-900">Wants</dt>
+                <dd className="mt-0.5 font-semibold tabular-nums text-slate-900">
+                  {(strategySplit.wants * 100).toFixed(0)}%
+                </dd>
+                {takeHomeForBudget > 0 && (
+                  <dd className="mt-0.5 tabular-nums text-slate-700">
+                    ~
+                    {formatCurrency(
+                      takeHomeForBudget * strategySplit.wants,
+                      currency
+                    )}
+                  </dd>
+                )}
+              </div>
+              <div className="rounded-lg bg-emerald-50/80 px-2 py-2">
+                <dt className="font-medium text-emerald-900">Savings</dt>
+                <dd className="mt-0.5 font-semibold tabular-nums text-slate-900">
+                  {(strategySplit.savings * 100).toFixed(0)}%
+                </dd>
+                {takeHomeForBudget > 0 && (
+                  <dd className="mt-0.5 tabular-nums text-slate-700">
+                    ~
+                    {formatCurrency(
+                      takeHomeForBudget * strategySplit.savings,
+                      currency
+                    )}
+                  </dd>
+                )}
+              </div>
+            </dl>
+            {takeHomeForBudget <= 0 && (
               <div className="space-y-3 rounded-xl border border-amber-200/80 bg-amber-50/60 px-3 py-3 text-sm text-amber-900">
-                <p>
-                  Add a positive gross monthly income to preview amounts.
-                </p>
+                <p>Add gross monthly income to see estimated monthly amounts.</p>
                 <button
                   type="button"
                   disabled={pending}
@@ -634,22 +672,6 @@ export function OnboardingWizard(props: Props) {
                   Add gross monthly income
                 </button>
               </div>
-            ) : (
-              <ul className="divide-y divide-slate-100 overflow-hidden rounded-xl border border-slate-200/90 bg-slate-50/40">
-                {previewLines.map((l) => (
-                  <li
-                    key={l.category}
-                    className="flex items-center justify-between bg-white/80 px-4 py-2.5 text-sm"
-                  >
-                    <span className="capitalize text-slate-800">
-                      {l.category}
-                    </span>
-                    <span className="tabular-nums text-slate-700">
-                      {formatCurrency(l.amount, currency)}
-                    </span>
-                  </li>
-                ))}
-              </ul>
             )}
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="block space-y-1">
@@ -691,11 +713,6 @@ export function OnboardingWizard(props: Props) {
               {status}
             </p>
           )}
-          <p className="text-center text-[11px] text-slate-500">
-            Create or skip your illustrated plan using the actions at the bottom
-            of the screen. If you already have monthly budget lines, choose Skip
-            — we will not duplicate them.
-          </p>
         </div>
       )}
 
@@ -753,61 +770,34 @@ export function OnboardingWizard(props: Props) {
               {status}
             </p>
           )}
-          {step === 2 ? (
-            <div className="flex w-full flex-col gap-2">
+          <div
+            className={`flex items-stretch gap-3 ${step === 1 ? "justify-end" : "justify-between"}`}
+          >
+            {step > 1 && (
               <button
                 type="button"
-                className={navPrimaryFullClass}
-                disabled={pending || takeHomeForBudget <= 0}
-                onClick={() => void onCreateIllustratedBudget()}
+                className={navBackClass}
+                disabled={pending}
+                onClick={() => void onBack()}
               >
-                Create my illustrated budget
+                ← Back
               </button>
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  className={navBackBase}
-                  disabled={pending}
-                  onClick={() => void onBack()}
-                >
-                  ← Back
-                </button>
-                <button
-                  type="button"
-                  className={navSkipClass}
-                  disabled={pending}
-                  onClick={() => void onContinue()}
-                >
-                  Skip lines for now
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div
-              className={
-                step === 1 ? "flex justify-end" : "flex items-stretch gap-3"
+            )}
+            <button
+              type="button"
+              className={navPrimaryClass}
+              disabled={pending || (step === 2 && takeHomeForBudget <= 0)}
+              onClick={() =>
+                void (step === 2 ? onCreateIllustratedBudget() : onContinue())
               }
             >
-              {step > 1 && (
-                <button
-                  type="button"
-                  className={navBackClass}
-                  disabled={pending}
-                  onClick={() => void onBack()}
-                >
-                  ← Back
-                </button>
-              )}
-              <button
-                type="button"
-                className={navPrimaryClass}
-                disabled={pending}
-                onClick={() => void onContinue()}
-              >
-                {step === 3 ? "Finish onboarding" : "Continue"}
-              </button>
-            </div>
-          )}
+              {step === 1
+                ? "Continue"
+                : step === 2
+                  ? "Create my starter budget"
+                  : "Finish onboarding"}
+            </button>
+          </div>
         </div>
       </nav>
     </div>
