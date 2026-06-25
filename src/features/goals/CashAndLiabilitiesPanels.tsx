@@ -13,7 +13,16 @@ import {
   mapLiabilityRows,
   type DebtPlanningRow,
 } from "@/features/debts/DebtPlanningPanels";
-import type { CashAccountPurpose, LiabilityRow } from "@/data/supabase/types";
+import type {
+  CashAccountPurpose,
+  HousingLoanRow,
+  LiabilityRow,
+  PropertyRow,
+  VehicleRow,
+} from "@/data/supabase/types";
+import { buildSourceOwnedLoanRegisterEntries } from "@/data/loan-register-read-model";
+import type { SourceOwnedLoanFollowUp } from "@/domain/finance/loan-register";
+import { loanSourceDefinition } from "@/domain/finance/loan-source-registry";
 import { CategoryVisibilityToggle } from "@/features/consent/CategoryVisibilityToggle";
 import type { AdvisorCategoryVisibility } from "@/lib/advisor-visibility";
 import {
@@ -23,8 +32,8 @@ import {
 } from "@/domain/finance/cash-account-purpose";
 import type { CashAccountHistoryPoint } from "@/domain/finance/cash-account-history.types";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
-import { formatCurrency } from "@/ui/lib/format";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
+import { formatCurrency } from "@/ui/lib/format";
 
 export type CashAccountBalanceRow = {
   id: string;
@@ -306,12 +315,18 @@ export function CashAndLiabilitiesPanels({
   cashRows,
   cashHistoryByAccountId = {},
   liabilityRows,
+  properties = [],
+  housingLoans = [],
+  vehicleRows = [],
   currencyCode,
   advisorVisibility = null,
 }: {
   cashRows: CashAccountBalanceRow[];
   cashHistoryByAccountId?: Record<string, CashAccountHistoryPoint[]>;
   liabilityRows: LiabilityRow[] | LiabilityBalanceRow[];
+  properties?: PropertyRow[];
+  housingLoans?: HousingLoanRow[];
+  vehicleRows?: VehicleRow[];
   currencyCode: string;
   /** When set (client self-view with linked+consented advisor), show the
    * per-category visibility toggles. Null hides them (advisor view / no consent). */
@@ -319,10 +334,48 @@ export function CashAndLiabilitiesPanels({
 }) {
   const cashTotal = cashRows.reduce((a, r) => a + r.balance, 0);
   const groupedCash = useMemo(() => groupCashByPurpose(cashRows), [cashRows]);
-  const debtRows =
-    liabilityRows.length > 0 && "user_id" in liabilityRows[0]
-      ? mapLiabilityRows(liabilityRows as LiabilityRow[])
-      : (liabilityRows as DebtPlanningRow[]);
+  const debtRows = useMemo(
+    () =>
+      liabilityRows.length > 0 && "user_id" in liabilityRows[0]
+        ? mapLiabilityRows(liabilityRows as LiabilityRow[])
+        : (liabilityRows as DebtPlanningRow[]),
+    [liabilityRows]
+  );
+  const sourceOwnedLoans = useMemo(
+    () =>
+      buildSourceOwnedLoanRegisterEntries({
+        housingLoans,
+        vehicleRows,
+        reservedNames: debtRows.map((row) => row.name),
+      }),
+    [debtRows, housingLoans, vehicleRows]
+  );
+  const sourceOwnedLoanFollowUps = useMemo((): SourceOwnedLoanFollowUp[] => {
+    const housingSource = loanSourceDefinition("housing");
+    const propertyIdsWithLoans = new Set(
+      housingLoans
+        .map((loan) => loan.property_id)
+        .filter((id): id is string => typeof id === "string" && id.length > 0)
+    );
+
+    return properties
+      .filter(
+        (property) =>
+          property.planning_scope === "current" &&
+          property.status !== "fully_paid" &&
+          !propertyIdsWithLoans.has(property.id)
+      )
+      .map((property) => ({
+        id: `${housingSource.key}:property:${property.id}`,
+        sourceKey: housingSource.key,
+        sourceLabel: housingSource.label,
+        displayName: property.name,
+        setupTabId: housingSource.setupTabId,
+        message:
+          "This property is saved in Housing, but no linked mortgage row exists yet. If there is an outstanding loan, add or edit it in Housing so it appears here as a debt.",
+        actionLabel: `Edit in ${housingSource.label}`,
+      }));
+  }, [housingLoans, properties]);
   return (
     <div className="grid gap-8 lg:grid-cols-2">
       <section className="space-y-3 rounded-2xl border border-zinc-200 bg-zinc-50/30 p-4 dark:border-slate-700/80 dark:bg-slate-900">
@@ -402,7 +455,12 @@ export function CashAndLiabilitiesPanels({
           </Link>{" "}
           (property-first, with optional linked loan).
         </p>
-        <DebtPlanningPanels debtRows={debtRows} currencyCode={currencyCode} />
+        <DebtPlanningPanels
+          debtRows={debtRows}
+          sourceOwnedLoans={sourceOwnedLoans}
+          sourceOwnedLoanFollowUps={sourceOwnedLoanFollowUps}
+          currencyCode={currencyCode}
+        />
       </div>
     </div>
   );

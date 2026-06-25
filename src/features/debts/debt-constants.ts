@@ -1,4 +1,8 @@
-import type { DebtCategory, LoanType } from "@/domain/finance/debt-repayment";
+import {
+  SOURCE_OWNED_DEBT_CATEGORIES,
+  type DebtCategory,
+  type LoanType,
+} from "@/domain/finance/debt-repayment";
 
 export const DEBT_CATEGORY_OPTIONS: {
   value: DebtCategory;
@@ -13,6 +17,10 @@ export const DEBT_CATEGORY_OPTIONS: {
   { value: "education", label: "Education loan", icon: "\u{1F4DA}" },
   { value: "other", label: "Other", icon: "\u{1F4CB}" },
 ];
+
+export const GENERIC_DEBT_CATEGORY_OPTIONS = DEBT_CATEGORY_OPTIONS.filter(
+  (option) => !SOURCE_OWNED_DEBT_CATEGORIES.includes(option.value)
+);
 
 export const LOAN_TYPE_OPTIONS: {
   value: LoanType;

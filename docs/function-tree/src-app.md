@@ -467,12 +467,12 @@ Classification: `layout`
 
 Classification: `page`
 
-#### `peekQrTokenIfPresent` — function, L14
+#### `peekQrTokenIfPresent` — function, L16
 
 - calls: `[external] @supabase/supabase-js`, `[external] zod`, `src/data/supabase/server.ts#createSupabaseServerClient`
 - called by: `src/app/login/page.tsx#LoginPage`
 
-#### `LoginPage` — component, L40
+#### `LoginPage` — component, L42
 
 - calls: `src/app/login/page.tsx#peekQrTokenIfPresent`, `src/lib/env.ts#isSupabaseConfigured`
 - renders: `[external] next`, `src/features/auth/LoginForm.tsx#LoginForm`

@@ -9,7 +9,7 @@
 | Module | Classification | Fns | Edges out |
 | --- | --- | ---: | ---: |
 | [`src/middleware.ts`](#src-middleware-ts) | `middleware` | 1 | 22 |
-| [`src/server/actions.ts`](#src-server-actions-ts) | `server-action` | 49 | 364 |
+| [`src/server/actions.ts`](#src-server-actions-ts) | `server-action` | 50 | 385 |
 | [`src/server/advisor-accept-hardening.test.ts`](#src-server-advisor-accept-hardening-test-ts) | `regular` | 1 | 0 |
 | [`src/server/advisor-access-key-actions.ts`](#src-server-advisor-access-key-actions-ts) | `server-action` | 2 | 10 |
 | [`src/server/advisor-client-actions.ts`](#src-server-advisor-client-actions-ts) | `server-action` | 34 | 224 |
@@ -58,226 +58,235 @@ Classification: `middleware`
 
 Classification: `server-action`
 
-#### `findNameCollision` — function, L116 _(server-action)_
+#### `findNameCollision` — function, L118 _(server-action)_
 
 - calls: `src/lib/validation.ts#entityNameUniquenessError`
 - called by: `src/server/actions.ts#createCashAccountAction`, `src/server/actions.ts#createGoalAction`, `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingLoanQuickAction`, `src/server/actions.ts#createHousingPropertyAction`, `src/server/actions.ts#createInvestmentAction`, `src/server/actions.ts#createLiabilityAction`, `src/server/actions.ts#createVehicleAction`, `src/server/actions.ts#updateCashAccountAction`, `src/server/actions.ts#updateGoalAction`, `src/server/actions.ts#updateHousingLoanAction`, `src/server/actions.ts#updateHousingPropertyAction`, `src/server/actions.ts#updateInvestmentAction`, `src/server/actions.ts#updateLiabilityAction`, `src/server/actions.ts#updateVehicleAction`
 
-#### `signOutAction` — function, L129 _(server-action)_
+#### `signOutAction` — function, L131 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/supabase/server.ts#createSupabaseServerClient`
 
-#### `createInvestmentAction` — function, L135 _(server-action)_
+#### `createInvestmentAction` — function, L137 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/investments.ts#insertInvestment`, `src/data/repositories/investments.ts#listInvestments`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/client-error.ts#toClientErrorMessage`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#findNameCollision`, `src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview`, `src/server/investment-planning-parse.ts#parseInvestmentPlanningFields`
 
-#### `updateInvestmentAction` — function, L207 _(server-action)_
+#### `updateInvestmentAction` — function, L209 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/investments.ts#listInvestments`, `src/data/repositories/investments.ts#updateInvestment`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/client-error.ts#toClientErrorMessage`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#findNameCollision`, `src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview`, `src/server/investment-planning-parse.ts#parseInvestmentPlanningFields`
 - called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentEditForm`
 
-#### `deleteInvestmentAction` — function, L286 _(server-action)_
+#### `deleteInvestmentAction` — function, L288 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/investments.ts#deleteInvestment`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/client-error.ts#toClientErrorMessage`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview`
 - called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentRow`
 
-#### `confirmInvestmentReviewAction` — function, L318 _(server-action)_
+#### `confirmInvestmentReviewAction` — function, L320 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/client-error.ts#toClientErrorMessage`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/inbox/acknowledge-investment-review.ts#acknowledgeInvestmentReview`
 - called by: `src/features/goals/InvestmentBalancesList.tsx#InvestmentReviewPrompt`
 
-#### `confirmCpfRulesReviewAction` — function, L342 _(server-action)_
+#### `confirmCpfRulesReviewAction` — function, L344 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/client-error.ts#toClientErrorMessage`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/inbox/acknowledge-cpf-rules-review.ts#acknowledgeCpfRulesReview`
 - called by: `src/features/goals/CpfBalancesForm.tsx#CpfRulesReviewPrompt`
 
-#### `parseCashAccountForm` — function, L364 _(server-action)_
+#### `parseCashAccountForm` — function, L366 _(server-action)_
 
 - calls: `[external] zod`
 - called by: `src/server/actions.ts#createCashAccountAction`, `src/server/actions.ts#updateCashAccountAction`
 
-#### `createCashAccountAction` — function, L377 _(server-action)_
+#### `createCashAccountAction` — function, L379 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/cash-accounts.ts#insertCashAccount`, `src/data/repositories/cash-accounts.ts#listCashAccounts`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#parseCashAccountForm`
 - called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#AddCashForm`
 
-#### `updateCashAccountAction` — function, L405 _(server-action)_
+#### `updateCashAccountAction` — function, L407 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/cash-accounts.ts#listCashAccounts`, `src/data/repositories/cash-accounts.ts#updateCashAccount`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#parseCashAccountForm`
 - called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`
 
-#### `deleteCashAccountAction` — function, L437 _(server-action)_
+#### `deleteCashAccountAction` — function, L439 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/cash-accounts.ts#deleteCashAccount`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 - called by: `src/features/goals/CashAndLiabilitiesPanels.tsx#CashAccountRow`
 
-#### `createLiabilityAction` — function, L459 _(server-action)_
+#### `createLiabilityAction` — function, L461 _(server-action)_
 
-- calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/data/repositories/liabilities.ts#insertLiability`, `src/data/repositories/liabilities.ts#listLiabilities`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#findNameCollision`, `src/server/liability-form.ts#parseLiabilityFormData`
+- calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/data/repositories/liabilities.ts#insertLiability`, `src/data/repositories/liabilities.ts#listLiabilities`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/debt-repayment.ts#isSourceOwnedDebtCategory`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#findNameCollision`, `src/server/liability-form.ts#parseLiabilityFormData`
 - called by: `src/features/debts/DebtPlanningPanels.tsx#AddDebtForm`
 
-#### `updateLiabilityAction` — function, L495 _(server-action)_
+#### `updateLiabilityAction` — function, L504 _(server-action)_
 
-- calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/data/repositories/liabilities.ts#listLiabilities`, `src/data/repositories/liabilities.ts#updateLiability`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#findNameCollision`, `src/server/liability-form.ts#parseLiabilityFormData`
+- calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/liability-budget-sync.ts#syncLiabilityBudgetLine`, `src/data/repositories/liabilities.ts#listLiabilities`, `src/data/repositories/liabilities.ts#updateLiability`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/debt-repayment.ts#isSourceOwnedDebtCategory`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#findNameCollision`, `src/server/liability-form.ts#parseLiabilityFormData`
 - called by: `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
 
-#### `deleteLiabilityAction` — function, L540 _(server-action)_
+#### `deleteLiabilityAction` — function, L561 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/liability-budget-sync.ts#removeLiabilityBudgetLines`, `src/data/repositories/liabilities.ts#deleteLiability`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 - called by: `src/features/debts/DebtPlanningPanels.tsx#DebtCard`
 
-#### `optionalYearMonth` — function, L564 _(server-action)_
+#### `optionalYearMonth` — function, L585 _(server-action)_
 
 - calls: `[external] zod`
 - called by: `src/server/actions.ts#createVehicleAction`, `src/server/actions.ts#updateVehicleAction`
 
-#### `createVehicleAction` — function, L573 _(server-action)_
+#### `createVehicleAction` — function, L594 _(server-action)_
 
-- calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/vehicles.ts#insertVehicle`, `src/data/repositories/vehicles.ts#listVehicles`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#optionalYearMonth`
+- calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/vehicles.ts#insertVehicle`, `src/data/repositories/vehicles.ts#listVehicles`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/lib/supabase-error.ts#formatSupabaseError`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#optionalYearMonth`
 - called by: `src/features/goals/VehiclesPanel.tsx#AddVehicleForm`
 
-#### `updateVehicleAction` — function, L771 _(server-action)_
+#### `updateVehicleAction` — function, L793 _(server-action)_
 
-- calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/vehicles.ts#listVehicles`, `src/data/repositories/vehicles.ts#updateVehicle`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#optionalYearMonth`
+- calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/vehicles.ts#listVehicles`, `src/data/repositories/vehicles.ts#updateVehicle`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/lib/supabase-error.ts#formatSupabaseError`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#optionalYearMonth`
 - called by: `src/features/goals/VehiclesPanel.tsx#VehicleEditForm`
 
-#### `deleteVehicleAction` — function, L971 _(server-action)_
+#### `deleteVehicleAction` — function, L994 _(server-action)_
 
-- calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/vehicles.ts#deleteVehicle`, `src/data/supabase/server.ts#createSupabaseServerClient`
+- calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/vehicles.ts#deleteVehicle`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 - called by: `src/features/goals/VehiclesPanel.tsx#VehicleDeleteForm`
 
-#### `createGoalAction` — function, L990 _(server-action)_
+#### `createGoalAction` — function, L1014 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/goals.ts#insertFinancialGoal`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#findNameCollision`
 
-#### `reorderFinancialGoalAction` — function, L1054 _(server-action)_
+#### `reorderFinancialGoalAction` — function, L1078 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/goals.ts#reorderFinancialGoal`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 
-#### `updateGoalAction` — function, L1086 _(server-action)_
+#### `updateGoalAction` — function, L1110 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/goals.ts#listFinancialGoals`, `src/data/repositories/goals.ts#updateFinancialGoal`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#findNameCollision`
 
-#### `createBudgetLineAction` — function, L1158 _(server-action)_
+#### `createBudgetLineAction` — function, L1182 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/budget-lines.ts#insertBudgetLine`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget.ts#isValidYearMonth`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 
-#### `coerceLifestyle` — function, L1254 _(server-action)_
+#### `coerceLifestyle` — function, L1278 _(server-action)_
 
 - called by: `src/server/actions.ts#applyGuidedBudgetLinesAction`
 
-#### `coerceStrategy` — function, L1262 _(server-action)_
+#### `coerceStrategy` — function, L1286 _(server-action)_
 
 - called by: `src/server/actions.ts#applyGuidedBudgetLinesAction`
 
-#### `coerceFoodBand` — function, L1270 _(server-action)_
+#### `coerceFoodBand` — function, L1294 _(server-action)_
 
 - called by: `src/server/actions.ts#applyGuidedBudgetLinesAction`
 
-#### `applyGuidedBudgetLinesAction` — function, L1291 _(server-action)_
+#### `applyGuidedBudgetLinesAction` — function, L1315 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/mappers.ts#profileSalaryTakeHomeMonthly`, `src/data/repositories/budget-lines.ts#deleteBudgetLine`, `src/data/repositories/budget-lines.ts#insertBudgetLine`, `src/data/repositories/budget-lines.ts#listBudgetLines`, `src/data/repositories/profiles.ts#getProfileById`, `src/data/repositories/profiles.ts#updateProfile`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget-guided-setup.ts#generateGuidedMonthlyBudgetLines`, `src/domain/finance/budget-guided-setup.ts#isPreservedOnGuidedBudgetReplace`, `src/lib/dates.ts#formatYearMonth`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`, `src/server/actions.ts#coerceFoodBand`, `src/server/actions.ts#coerceLifestyle`, `src/server/actions.ts#coerceStrategy`
 - called by: `src/features/onboarding/OnboardingWizard.tsx#OnboardingWizard`, `src/features/setup/BudgetLensProfileForm.tsx#BudgetLensProfileForm`
 
-#### `updateBudgetLineAmountAction` — function, L1378 _(server-action)_
+#### `updateBudgetLineAmountAction` — function, L1402 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/budget-lines.ts#updateBudgetLine`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 
-#### `deleteBudgetLineAction` — function, L1408 _(server-action)_
+#### `deleteBudgetLineAction` — function, L1432 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/budget-lines.ts#deleteBudgetLine`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 - called by: `src/features/budget/BudgetLineActionsCollapsible.tsx#BudgetLineActionsCollapsible`
 
-#### `setBudgetMonthOverrideAction` — function, L1429 _(server-action)_
+#### `setBudgetMonthOverrideAction` — function, L1453 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/budget-line-overrides.ts#upsertBudgetLineMonthOverride`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget.ts#isValidYearMonth`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 
-#### `clearBudgetMonthOverrideAction` — function, L1466 _(server-action)_
+#### `clearBudgetMonthOverrideAction` — function, L1490 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/budget-line-overrides.ts#deleteBudgetLineMonthOverride`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget.ts#isValidYearMonth`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 - called by: `src/features/budget/BudgetMonthOverrideForm.tsx#BudgetMonthOverrideForm`
 
-#### `updateBudgetLineScheduleAction` — function, L1493 _(server-action)_
+#### `updateBudgetLineScheduleAction` — function, L1517 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `[external] next`, `src/data/repositories/budget-lines.ts#updateBudgetLine`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/budget.ts#isValidYearMonth`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 
-#### `upsertCpfBalanceAction` — function, L1551 _(server-action)_
+#### `upsertCpfBalanceAction` — function, L1575 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/cpf-balances.ts#upsertCpfBalance`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/dates.ts#formatYearMonth`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 - unresolved: 3
 
-#### `clearCpfBalanceAction` — function, L1607 _(server-action)_
+#### `clearCpfBalanceAction` — function, L1631 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `src/data/repositories/cpf-balances.ts#deleteCpfBalance`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 - called by: `src/features/goals/CpfBalancesForm.tsx#CpfBalancesForm`
 
-#### `createCpfInvestmentAction` — function, L1623 _(server-action)_
+#### `createCpfInvestmentAction` — function, L1647 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/cpf-investments.ts#insertCpfInvestment`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/client-error.ts#toClientErrorMessage`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 
-#### `deleteCpfInvestmentAction` — function, L1665 _(server-action)_
+#### `deleteCpfInvestmentAction` — function, L1689 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] next`, `[external] zod`, `src/data/repositories/cpf-investments.ts#deleteCpfInvestment`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/planning-revalidate.ts#revalidateSetupAndPlanning`
 
-#### `parseHousingPaymentForm` — function, L1684 _(server-action)_
+#### `parseHousingPaymentForm` — function, L1708 _(server-action)_
 
 - calls: `[external] zod`, `src/domain/finance/housing-loan-payments.ts#normalizeHousingPaymentForPersist`, `src/domain/finance/housing-loan-payments.ts#paymentSourceFromLegacyPreset`
 - called by: `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingPropertyAction`, `src/server/actions.ts#updateHousingLoanAction`
 
-#### `revalidateHousingPaths` — function, L1750 _(server-action)_
+#### `revalidateHousingPaths` — function, L1774 _(server-action)_
 
 - calls: `[external] next`
 - called by: `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingLoanQuickAction`, `src/server/actions.ts#createHousingPropertyAction`, `src/server/actions.ts#deleteHousingLoanAction`, `src/server/actions.ts#deleteHousingPropertyAction`, `src/server/actions.ts#updateHousingLoanAction`, `src/server/actions.ts#updateHousingPropertyAction`
 
-#### `parseOptionalMoneyField` — function, L1758 _(server-action)_
+#### `parseOptionalMoneyField` — function, L1782 _(server-action)_
 
 - called by: `src/server/actions.ts#createHousingPropertyAction`
 
-#### `parseOptionalPurchaseYear` — function, L1767 _(server-action)_
+#### `parseOptionalPurchaseYear` — function, L1791 _(server-action)_
 
 - called by: `src/server/actions.ts#createHousingPropertyAction`
 
-#### `normalizeOptionalMmyy` — function, L1774 _(server-action)_
+#### `normalizeOptionalMmyy` — function, L1798 _(server-action)_
 
 - called by: `src/server/actions.ts#optionalYearMonthOrMmyy`
 
-#### `optionalYearMonthOrMmyy` — function, L1792 _(server-action)_
+#### `optionalYearMonthOrMmyy` — function, L1816 _(server-action)_
 
 - calls: `[external] zod`, `src/server/actions.ts#normalizeOptionalMmyy`
 - called by: `src/server/actions.ts#createHousingPropertyAction`
 
-#### `insertPropertyForLoan` — function, L1803 _(server-action)_
+#### `insertPropertyForLoan` — function, L1827 _(server-action)_
 
 - calls: `src/data/repositories/properties.ts#insertProperty`
 - called by: `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingLoanQuickAction`
 
-#### `createHousingPropertyAction` — function, L1827 _(server-action)_
+#### `deletePropertyBestEffort` — function, L1851 _(server-action)_
 
-- calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#insertHousingLoan`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/properties.ts#deleteProperty`, `src/data/repositories/properties.ts#insertProperty`, `src/data/repositories/properties.ts#listProperties`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/client-error.ts#toClientErrorMessage`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#optionalYearMonthOrMmyy`, `src/server/actions.ts#parseHousingPaymentForm`, `src/server/actions.ts#parseOptionalMoneyField`, `src/server/actions.ts#parseOptionalPurchaseYear`, `src/server/actions.ts#revalidateHousingPaths`
+- calls: `src/data/repositories/properties.ts#deleteProperty`
+- called by: `src/server/actions.ts#createHousingLoanAction`, `src/server/actions.ts#createHousingLoanQuickAction`, `src/server/actions.ts#createHousingPropertyAction`
 
-#### `updateHousingPropertyAction` — function, L2151 _(server-action)_
+#### `createHousingPropertyAction` — function, L1863 _(server-action)_
 
-- calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/properties.ts#listProperties`, `src/data/repositories/properties.ts#updateProperty`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#revalidateHousingPaths`
+- calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#insertHousingLoan`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/properties.ts#insertProperty`, `src/data/repositories/properties.ts#listProperties`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/client-error.ts#toClientErrorMessage`, `src/lib/supabase-error.ts#formatSupabaseError`, `src/server/actions.ts#deletePropertyBestEffort`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#optionalYearMonthOrMmyy`, `src/server/actions.ts#parseHousingPaymentForm`, `src/server/actions.ts#parseOptionalMoneyField`, `src/server/actions.ts#parseOptionalPurchaseYear`, `src/server/actions.ts#revalidateHousingPaths`
+- called by: `src/features/housing/PropertyAddForm.tsx#PropertyAddForm`
 
-#### `deleteHousingPropertyAction` — function, L2211 _(server-action)_
+#### `updateHousingPropertyAction` — function, L2268 _(server-action)_
+
+- calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/properties.ts#listProperties`, `src/data/repositories/properties.ts#updateProperty`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/supabase-error.ts#formatSupabaseError`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#revalidateHousingPaths`
+
+#### `deleteHousingPropertyAction` — function, L2343 _(server-action)_
 
 - calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/properties.ts#deleteProperty`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#revalidateHousingPaths`
+- called by: `src/features/goals/HousingLoansPanel.tsx#HousingPropertyDeleteForm`, `src/features/goals/HousingLoansPanel.tsx#PropertyDeleteForm`
 
-#### `createHousingLoanAction` — function, L2227 _(server-action)_
+#### `createHousingLoanAction` — function, L2359 _(server-action)_
 
-- calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#insertHousingLoan`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#insertPropertyForLoan`, `src/server/actions.ts#parseHousingPaymentForm`, `src/server/actions.ts#revalidateHousingPaths`
+- calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#insertHousingLoan`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/supabase-error.ts#formatSupabaseError`, `src/server/actions.ts#deletePropertyBestEffort`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#insertPropertyForLoan`, `src/server/actions.ts#parseHousingPaymentForm`, `src/server/actions.ts#revalidateHousingPaths`
+- called by: `src/features/goals/HousingLoansPanel.tsx#HousingPanel`
 
-#### `createHousingLoanQuickAction` — function, L2357 _(server-action)_
+#### `createHousingLoanQuickAction` — function, L2501 _(server-action)_
 
-- calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#insertHousingLoan`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/housing-loan-payments.ts#normalizeHousingPaymentForPersist`, `src/domain/finance/housing-loan-payments.ts#paymentSourceFromLegacyPreset`, `src/domain/finance/housing-loan-quick.ts#deriveQuickHousingLoanRow`, `src/domain/finance/housing-loan-quick.ts#oaInstalmentShareFromPreset`, `src/domain/finance/property-financing-plan.ts#resolveGuidedCashDownpayment`, `src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#insertPropertyForLoan`, `src/server/actions.ts#revalidateHousingPaths`
+- calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#insertHousingLoan`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/domain/finance/housing-loan-payments.ts#normalizeHousingPaymentForPersist`, `src/domain/finance/housing-loan-payments.ts#paymentSourceFromLegacyPreset`, `src/domain/finance/housing-loan-quick.ts#deriveQuickHousingLoanRow`, `src/domain/finance/housing-loan-quick.ts#oaInstalmentShareFromPreset`, `src/domain/finance/property-financing-plan.ts#resolveGuidedCashDownpayment`, `src/domain/finance/singapore-residential-bsd.ts#computeSingaporeResidentialBuyersStampDuty`, `src/lib/supabase-error.ts#formatSupabaseError`, `src/server/actions.ts#deletePropertyBestEffort`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#insertPropertyForLoan`, `src/server/actions.ts#revalidateHousingPaths`
 
-#### `updateHousingLoanAction` — function, L2622 _(server-action)_
+#### `updateHousingLoanAction` — function, L2778 _(server-action)_
 
-- calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/housing-loans.ts#updateHousingLoan`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#parseHousingPaymentForm`, `src/server/actions.ts#revalidateHousingPaths`
+- calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#listHousingLoans`, `src/data/repositories/housing-loans.ts#updateHousingLoan`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/lib/supabase-error.ts#formatSupabaseError`, `src/server/actions.ts#findNameCollision`, `src/server/actions.ts#parseHousingPaymentForm`, `src/server/actions.ts#revalidateHousingPaths`
+- called by: `src/features/goals/HousingLoansPanel.tsx#HousingLoanEditForm`
 
-#### `deleteHousingLoanAction` — function, L2750 _(server-action)_
+#### `deleteHousingLoanAction` — function, L2913 _(server-action)_
 
-- calls: `[external] @supabase/auth-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#deleteHousingLoan`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#revalidateHousingPaths`
+- calls: `[external] @supabase/auth-js`, `[external] @supabase/postgrest-js`, `[external] @supabase/supabase-js`, `[external] zod`, `src/data/repositories/housing-loans.ts#deleteHousingLoan`, `src/data/repositories/properties.ts#deleteProperty`, `src/data/supabase/server.ts#createSupabaseServerClient`, `src/server/actions.ts#revalidateHousingPaths`
 - called by: `src/features/goals/HousingLoansPanel.tsx#HousingLoanDeleteForm`
 
 ### `src/server/advisor-accept-hardening.test.ts` <a id="src-server-advisor-accept-hardening-test-ts"></a>

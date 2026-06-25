@@ -198,6 +198,43 @@ describe("buildCpfMonthlyProjectionSeries", () => {
     expect(jan.oa).toBeLessThanOrEqual(0);
   });
 
+  it("can leave recurring mortgage payments to the debt ledger while keeping upfront OA events", () => {
+    const series = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-01",
+      horizonMonths: 2,
+      birthDate: "1990-01-15",
+      grossMonthly: 0,
+      deductRecurringHousingPayments: false,
+      initial: {
+        oa: 50_000,
+        sa: 0,
+        ma: 0,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [
+        {
+          completionMonth: "2026-01",
+          firstPaymentMonth: "2026-01",
+          downpaymentFromOa: 10_000,
+          feesFromOa: 0,
+          principal: 12_000,
+          annualNominalRate: 0,
+          termMonths: 12,
+          oaShareOfPayment: 1,
+          maxOaPerMonth: null,
+        },
+      ],
+    });
+
+    expect(series[0].oa).toBe(40_000);
+    expect(series[1].oa).toBe(40_000);
+  });
+
   it("applies annual salary growth on January after the start month", () => {
     const initial = {
       oa: 1_000,

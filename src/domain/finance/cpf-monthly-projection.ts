@@ -217,6 +217,8 @@ export function buildCpfMonthlyProjectionSeries(params: {
   employmentContributionEndMonth?: number | null;
   initial: CpfBalanceSnapshot;
   housingLoans: HousingLoanProjectionInput[];
+  /** Recurring mortgage instalments are owned by the unified debt ledger when false. */
+  deductRecurringHousingPayments?: boolean;
   cpfInvestments?: CpfInvestmentProjectionInput[];
   cpfRaTargetAt55?: number;
 }): CpfMonthPoint[] {
@@ -232,6 +234,7 @@ export function buildCpfMonthlyProjectionSeries(params: {
     employmentContributionEndMonth = null,
     initial,
     housingLoans,
+    deductRecurringHousingPayments = true,
     cpfInvestments = [],
     cpfRaTargetAt55 = CURRENT_FRS_SG,
   } = params;
@@ -398,15 +401,17 @@ export function buildCpfMonthlyProjectionSeries(params: {
       }
     }
 
-    for (const { loan, map } of paymentByYmByLoan) {
-      const due = map.get(ym);
-      if (due == null || due <= 0) continue;
-      let fromOa = round2(due * loan.oaShareOfPayment);
-      if (loan.maxOaPerMonth != null && loan.maxOaPerMonth >= 0) {
-        fromOa = Math.min(fromOa, loan.maxOaPerMonth);
+    if (deductRecurringHousingPayments) {
+      for (const { loan, map } of paymentByYmByLoan) {
+        const due = map.get(ym);
+        if (due == null || due <= 0) continue;
+        let fromOa = round2(due * loan.oaShareOfPayment);
+        if (loan.maxOaPerMonth != null && loan.maxOaPerMonth >= 0) {
+          fromOa = Math.min(fromOa, loan.maxOaPerMonth);
+        }
+        fromOa = Math.min(fromOa, oa);
+        oa = round2(oa - fromOa);
       }
-      fromOa = Math.min(fromOa, oa);
-      oa = round2(oa - fromOa);
     }
 
     for (const state of cpfInvestmentStates) {

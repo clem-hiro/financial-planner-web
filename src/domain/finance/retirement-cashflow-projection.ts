@@ -1,4 +1,12 @@
 import { addMonthsToYearMonth } from "@/lib/dates";
+import {
+  createDebtProjectionStates,
+  debtPaymentDueForMonth,
+  settleDebtPayment,
+  type DebtObligationInput,
+  type DebtPaymentDue,
+  type DebtProjectionState,
+} from "./debt-cashflow";
 
 export type ProjectionDirection =
   | "inflow"
@@ -23,6 +31,7 @@ export type ProjectionSourceType =
   | "planned_expense"
   | "tax"
   | "housing_cash"
+  | "debt_repayment"
   | "goal_event"
   | "retirement_spend"
   | "investment_contribution"
@@ -82,6 +91,7 @@ export type ProjectionAssetSnapshot = {
   cpfRa?: number;
   cpfCpfis?: number;
   vehiclesNet?: number;
+  propertyGross?: number;
   propertyNet?: number;
 };
 
@@ -102,7 +112,12 @@ export type ProjectionPeriodRow = {
   yearMonth: string;
   phase: "pre_retirement" | "post_retirement";
   cashAccessibleInflow: number;
+  requiredLivingOutflow: number;
   requiredOutflow: number;
+  fundedLivingOutflow: number;
+  unfundedLivingOutflow: number;
+  fundedOutflow: number;
+  unfundedOutflow: number;
   prePortfolioGap: number;
   /** Deprecated compatibility field. Component income is reported in breakdown fields. */
   investmentYieldAvailable: number;
@@ -125,6 +140,12 @@ export type ProjectionPeriodRow = {
   cumulativeGoalsGap: number;
   scheduledInvestmentTransfer: number;
   fundedInvestmentTransfer: number;
+  requiredDebtRepayment: number;
+  fundedDebtRepayment: number;
+  unfundedDebtRepayment: number;
+  debtPrincipalPaid: number;
+  debtInterestPaid: number;
+  debtCpfOaDrawdown: number;
   outflowBreakdown: ProjectionOutflowBreakdownItem[];
   cash: number;
   investmentPrincipal: number;
@@ -138,7 +159,11 @@ export type ProjectionPeriodRow = {
   vehiclesNet: number;
   propertyNet: number;
   liabilities: number;
+  projectedLiabilities: number;
+  projectedHousingLiabilities: number;
+  projectedNonHousingLiabilities: number;
   netWorth: number;
+  cumulativeShortfall: number;
 };
 
 export type ProjectionAgeRow = ProjectionPeriodRow & {
@@ -153,6 +178,7 @@ export type RetirementCashflowProjectionInput = {
   initialCash: number;
   initialInvestmentPrincipal: number;
   liabilities: number;
+  debtObligations?: DebtObligationInput[];
   /** Legacy fallback when `investmentComponents` is empty. */
   investmentTotalReturnAnnual?: number;
   /** Legacy fallback only; new calculations should use component cash inflows. */
@@ -190,6 +216,21 @@ type InflowBreakdown = Pick<
 type PrincipalDrawBreakdown = Pick<
   ProjectionPeriodRow,
   "investmentPrincipalWithdrawn" | "ilpPrincipalWithdrawn"
+>;
+
+type DebtPeriodMetrics = Pick<
+  ProjectionPeriodRow,
+  | "requiredDebtRepayment"
+  | "fundedDebtRepayment"
+  | "unfundedDebtRepayment"
+  | "debtPrincipalPaid"
+  | "debtInterestPaid"
+  | "debtCpfOaDrawdown"
+>;
+
+type CpfResolvedSnapshot = Pick<
+  ProjectionPeriodRow,
+  "cpf" | "cpfOa" | "cpfSa" | "cpfMa" | "cpfRa" | "cpfCpfis"
 >;
 
 const POOLED_INVESTMENT_ID = "__pooled_investments__";
@@ -263,6 +304,10 @@ function nonNegativeFinite(n: number): number {
   return Number.isFinite(n) ? Math.max(0, n) : 0;
 }
 
+function roundMoney(n: number): number {
+  return Math.round(n * 100) / 100;
+}
+
 function safeRate(n: number | null | undefined): number {
   if (!Number.isFinite(n ?? Number.NaN)) return 0;
   return Math.max(-0.99, n as number);
@@ -288,6 +333,17 @@ function createInitialDrawBreakdown(): PrincipalDrawBreakdown {
   return {
     investmentPrincipalWithdrawn: 0,
     ilpPrincipalWithdrawn: 0,
+  };
+}
+
+function createInitialDebtMetrics(): DebtPeriodMetrics {
+  return {
+    requiredDebtRepayment: 0,
+    fundedDebtRepayment: 0,
+    unfundedDebtRepayment: 0,
+    debtPrincipalPaid: 0,
+    debtInterestPaid: 0,
+    debtCpfOaDrawdown: 0,
   };
 }
 
@@ -362,6 +418,62 @@ function addOutflowBreakdown(
     sourceType: entry.sourceType,
     amount,
   });
+}
+
+function addDebtOutflowBreakdown(
+  breakdown: Map<string, ProjectionOutflowBreakdownItem>,
+  due: DebtPaymentDue
+): void {
+  const key = `debt_repayment:${due.debtId}`;
+  const existing = breakdown.get(key);
+  if (existing) {
+    existing.amount += due.totalPayment;
+    return;
+  }
+  breakdown.set(key, {
+    key,
+    label: due.label,
+    sourceType: "debt_repayment",
+    amount: due.totalPayment,
+  });
+}
+
+function debtBalanceTotal(
+  states: DebtProjectionState[],
+  kind?: "housing" | "liability"
+): number {
+  return roundMoney(
+    states.reduce((sum, state) => {
+      if (kind != null && state.obligation.kind !== kind) return sum;
+      return sum + state.balance;
+    }, 0)
+  );
+}
+
+function resolveCpfSnapshot(
+  snap: ProjectionAssetSnapshot,
+  cpfAssetAdjustment: number,
+  cpfOaDebtAdjustment: number
+): CpfResolvedSnapshot {
+  const cpfBeforeDebt = nonNegativeFinite((snap.cpf ?? 0) + cpfAssetAdjustment);
+  let remainingCpfDeduction = Math.min(0, cpfAssetAdjustment);
+  const cpfRa = nonNegativeFinite((snap.cpfRa ?? 0) + remainingCpfDeduction);
+  remainingCpfDeduction = Math.min(
+    0,
+    (snap.cpfRa ?? 0) + remainingCpfDeduction
+  );
+  const cpfOaBeforeDebt = nonNegativeFinite(
+    (snap.cpfOa ?? 0) + remainingCpfDeduction
+  );
+  const cpfOa = nonNegativeFinite(cpfOaBeforeDebt + cpfOaDebtAdjustment);
+  return {
+    cpf: nonNegativeFinite(cpfBeforeDebt + cpfOaDebtAdjustment),
+    cpfOa,
+    cpfSa: snap.cpfSa ?? 0,
+    cpfMa: snap.cpfMa ?? 0,
+    cpfRa,
+    cpfCpfis: snap.cpfCpfis ?? 0,
+  };
 }
 
 function componentCanUsePrincipal(
@@ -485,9 +597,12 @@ export function buildRetirementCashflowProjection(
   const targetRetirementMonth = clampMonth(input.targetRetirementMonth);
   const periods: ProjectionPeriodRow[] = [];
   const investmentComponents = buildInvestmentStates(input);
+  const hasDebtObligations = input.debtObligations != null;
+  const debtStates = createDebtProjectionStates(input.debtObligations);
   let cash = nonNegativeFinite(input.initialCash);
   let cpfAssetAdjustment = 0;
-  let cumulativeGoalsGap = 0;
+  let cpfOaDebtAdjustment = 0;
+  let cumulativeShortfall = 0;
 
   // If a conversion event has already happened by the projection start, reflect
   // it in the initial asset state. This keeps CPF LIFE independent of retirement
@@ -505,35 +620,57 @@ export function buildRetirementCashflowProjection(
   const buildRow = (
     month: number,
     cashAccessibleInflow: number,
-    requiredOutflow: number,
+    requiredLivingOutflow: number,
+    fundedLivingOutflow: number,
+    unfundedLivingOutflow: number,
     scheduledInvestmentTransfer: number,
     fundedInvestmentTransfer: number,
     cashReserveDrawdown: number,
     drawBreakdown: PrincipalDrawBreakdown,
+    debtMetrics: DebtPeriodMetrics,
     inflowBreakdown: InflowBreakdown,
     outflowBreakdown: ProjectionOutflowBreakdownItem[],
-    goalsGap: number
+    goalsGap: number,
+    fundedOutflow: number,
+    unfundedOutflow: number
   ): ProjectionPeriodRow => {
     const yearMonth = addMonthsToYearMonth(input.startYearMonth, month);
     const snap = snapshotForMonth(input.externalAssetSnapshots, month);
-    const cpf = nonNegativeFinite((snap.cpf ?? 0) + cpfAssetAdjustment);
-    let remainingCpfDeduction = Math.min(0, cpfAssetAdjustment);
-    const cpfRa = nonNegativeFinite((snap.cpfRa ?? 0) + remainingCpfDeduction);
-    remainingCpfDeduction = Math.min(
-      0,
-      (snap.cpfRa ?? 0) + remainingCpfDeduction
+    const cpfSnapshot = resolveCpfSnapshot(
+      snap,
+      cpfAssetAdjustment,
+      cpfOaDebtAdjustment
     );
-    const cpfOa = nonNegativeFinite((snap.cpfOa ?? 0) + remainingCpfDeduction);
     const vehiclesNet = snap.vehiclesNet ?? 0;
-    const propertyNet = snap.propertyNet ?? 0;
+    const projectedLiabilities = hasDebtObligations
+      ? debtBalanceTotal(debtStates)
+      : nonNegativeFinite(input.liabilities);
+    const projectedHousingLiabilities = hasDebtObligations
+      ? debtBalanceTotal(debtStates, "housing")
+      : 0;
+    const propertyNet =
+      snap.propertyGross != null
+        ? snap.propertyGross - projectedHousingLiabilities
+        : snap.propertyNet ?? 0;
+    const housingDebtEmbeddedInProperty =
+      snap.propertyGross != null || snap.propertyNet != null;
+    const projectedNonHousingLiabilities = hasDebtObligations
+      ? Math.max(
+          0,
+          projectedLiabilities -
+            (housingDebtEmbeddedInProperty ? projectedHousingLiabilities : 0)
+        )
+      : nonNegativeFinite(input.liabilities);
     const investmentPrincipal = investmentPrincipalTotal(investmentComponents);
+    const requiredOutflow =
+      requiredLivingOutflow + debtMetrics.requiredDebtRepayment;
     const netWorth =
       investmentPrincipal +
       cash +
-      cpf +
+      cpfSnapshot.cpf +
       vehiclesNet +
       propertyNet -
-      input.liabilities;
+      projectedNonHousingLiabilities;
     const principalWithdrawn =
       drawBreakdown.investmentPrincipalWithdrawn +
       drawBreakdown.ilpPrincipalWithdrawn;
@@ -543,7 +680,12 @@ export function buildRetirementCashflowProjection(
       phase:
         month >= targetRetirementMonth ? "post_retirement" : "pre_retirement",
       cashAccessibleInflow,
+      requiredLivingOutflow,
       requiredOutflow,
+      fundedLivingOutflow,
+      unfundedLivingOutflow,
+      fundedOutflow,
+      unfundedOutflow,
       prePortfolioGap: cashAccessibleInflow - requiredOutflow,
       investmentYieldAvailable: 0,
       investmentYieldUsed: 0,
@@ -553,23 +695,23 @@ export function buildRetirementCashflowProjection(
       ...inflowBreakdown,
       cashReserveDrawdown,
       goalsGap,
-      cumulativeGoalsGap,
+      cumulativeGoalsGap: cumulativeShortfall,
       scheduledInvestmentTransfer,
       fundedInvestmentTransfer,
+      ...debtMetrics,
       outflowBreakdown,
       cash,
       investmentPrincipal,
-      cpf,
-      cpfOa,
-      cpfSa: snap.cpfSa ?? 0,
-      cpfMa: snap.cpfMa ?? 0,
-      cpfRa,
-      cpfCpfis: snap.cpfCpfis ?? 0,
+      ...cpfSnapshot,
       cpfAssetAdjustment,
       vehiclesNet,
       propertyNet,
-      liabilities: input.liabilities,
+      liabilities: projectedNonHousingLiabilities,
+      projectedLiabilities,
+      projectedHousingLiabilities,
+      projectedNonHousingLiabilities,
       netWorth,
+      cumulativeShortfall,
     };
   };
 
@@ -581,9 +723,14 @@ export function buildRetirementCashflowProjection(
       0,
       0,
       0,
+      0,
+      0,
       createInitialDrawBreakdown(),
+      createInitialDebtMetrics(),
       createInitialBreakdown(),
       [],
+      0,
+      0,
       0
     )
   );
@@ -591,7 +738,7 @@ export function buildRetirementCashflowProjection(
   for (let month = 0; month < horizonMonths; month++) {
     const yearMonth = addMonthsToYearMonth(input.startYearMonth, month);
     let cashAccessibleInflow = 0;
-    let requiredOutflow = 0;
+    let requiredLivingOutflow = 0;
     let scheduledInvestmentTransfer = 0;
     let cpfAdjustmentThisMonth = 0;
     const scheduledByComponent = new Map<string, number>();
@@ -608,7 +755,7 @@ export function buildRetirementCashflowProjection(
         cashAccessibleInflow += amount;
         addSourceBreakdown(inflowBreakdown, entry.sourceType, amount);
       } else if (entry.direction === "outflow") {
-        requiredOutflow += amount;
+        requiredLivingOutflow += amount;
         addOutflowBreakdown(outflowBreakdown, entry, amount);
       } else if (
         entry.direction === "transfer" &&
@@ -630,37 +777,42 @@ export function buildRetirementCashflowProjection(
 
     cpfAssetAdjustment += cpfAdjustmentThisMonth;
 
-    const periodSurplus = cashAccessibleInflow - requiredOutflow;
+    let cashInflowAvailable = cashAccessibleInflow;
     let fundedInvestmentTransfer = 0;
     let cashReserveDrawdown = 0;
     let goalsGap = 0;
+    const debtMetrics = createInitialDebtMetrics();
 
-    if (periodSurplus >= 0) {
-      fundedInvestmentTransfer = Math.min(
-        scheduledInvestmentTransfer,
-        periodSurplus
-      );
-      fundTransfersProRata(
-        investmentComponents,
-        scheduledByComponent,
-        fundedInvestmentTransfer,
-        scheduledInvestmentTransfer
-      );
-      cash += periodSurplus - fundedInvestmentTransfer;
-    } else {
-      let shortfall = Math.abs(periodSurplus);
+    const fundFromCashInflow = (needed: number): number => {
+      if (needed <= 0 || cashInflowAvailable <= 0) return 0;
+      const funded = Math.min(needed, cashInflowAvailable);
+      cashInflowAvailable = roundMoney(cashInflowAvailable - funded);
+      return funded;
+    };
+
+    const fundFromFallback = (needed: number): number => {
+      let shortfall = Math.max(0, needed);
+      let funded = fundFromCashInflow(shortfall);
+      shortfall = roundMoney(shortfall - funded);
+      if (shortfall <= 0) return funded;
+
       if (month < targetRetirementMonth) {
-        cashReserveDrawdown = Math.min(shortfall, cash);
-        cash -= cashReserveDrawdown;
-        shortfall -= cashReserveDrawdown;
+        const reserveDraw = Math.min(shortfall, cash);
+        cashReserveDrawdown = roundMoney(cashReserveDrawdown + reserveDraw);
+        cash = roundMoney(cash - reserveDraw);
+        funded = roundMoney(funded + reserveDraw);
+        shortfall = roundMoney(shortfall - reserveDraw);
       } else {
         const investmentDraw = drawPrincipalProRata(
           investmentComponents,
           shortfall,
           (component) => component.kind === "pure_investment"
         );
-        drawBreakdown.investmentPrincipalWithdrawn = investmentDraw;
-        shortfall -= investmentDraw;
+        drawBreakdown.investmentPrincipalWithdrawn = roundMoney(
+          drawBreakdown.investmentPrincipalWithdrawn + investmentDraw
+        );
+        funded = roundMoney(funded + investmentDraw);
+        shortfall = roundMoney(shortfall - investmentDraw);
 
         const ilpDraw = drawPrincipalProRata(
           investmentComponents,
@@ -668,19 +820,114 @@ export function buildRetirementCashflowProjection(
           (component) =>
             component.kind === "ilp" && componentCanUsePrincipal(component, month)
         );
-        drawBreakdown.ilpPrincipalWithdrawn = ilpDraw;
-        shortfall -= ilpDraw;
+        drawBreakdown.ilpPrincipalWithdrawn = roundMoney(
+          drawBreakdown.ilpPrincipalWithdrawn + ilpDraw
+        );
+        funded = roundMoney(funded + ilpDraw);
+        shortfall = roundMoney(shortfall - ilpDraw);
 
         if (input.useCashReserveForDeficits && shortfall > 0) {
-          cashReserveDrawdown = Math.min(shortfall, cash);
-          cash -= cashReserveDrawdown;
-          shortfall -= cashReserveDrawdown;
+          const reserveDraw = Math.min(shortfall, cash);
+          cashReserveDrawdown = roundMoney(cashReserveDrawdown + reserveDraw);
+          cash = roundMoney(cash - reserveDraw);
+          funded = roundMoney(funded + reserveDraw);
+        }
+      }
+      return funded;
+    };
+
+    for (const state of debtStates) {
+      const due = debtPaymentDueForMonth(state, month);
+      if (!due) continue;
+      addDebtOutflowBreakdown(outflowBreakdown, due);
+      debtMetrics.requiredDebtRepayment = roundMoney(
+        debtMetrics.requiredDebtRepayment + due.totalPayment
+      );
+
+      let funded = 0;
+      const preferredCpf = Math.min(due.preferredCpfOa, due.totalPayment);
+      if (preferredCpf > 0) {
+        const snap = snapshotForMonth(input.externalAssetSnapshots, month);
+        const cpfSnapshot = resolveCpfSnapshot(
+          snap,
+          cpfAssetAdjustment,
+          cpfOaDebtAdjustment
+        );
+        const fromCpf = roundMoney(Math.min(preferredCpf, cpfSnapshot.cpfOa));
+        if (fromCpf > 0) {
+          cpfOaDebtAdjustment = roundMoney(cpfOaDebtAdjustment - fromCpf);
+          debtMetrics.debtCpfOaDrawdown = roundMoney(
+            debtMetrics.debtCpfOaDrawdown + fromCpf
+          );
+          funded = roundMoney(funded + fromCpf);
         }
       }
 
-      goalsGap = Math.max(0, shortfall);
-      cumulativeGoalsGap += goalsGap;
+      const remainingAfterCpf = roundMoney(due.totalPayment - funded);
+      const preferredCash = Math.max(0, due.totalPayment - preferredCpf);
+      const fromPreferredCash = fundFromCashInflow(
+        Math.min(preferredCash, remainingAfterCpf)
+      );
+      funded = roundMoney(funded + fromPreferredCash);
+
+      const fallbackNeed = roundMoney(due.totalPayment - funded);
+      if (fallbackNeed > 0) {
+        funded = roundMoney(funded + fundFromFallback(fallbackNeed));
+      }
+
+      const settled = settleDebtPayment(state, due, funded);
+      debtMetrics.fundedDebtRepayment = roundMoney(
+        debtMetrics.fundedDebtRepayment + settled.funded
+      );
+      debtMetrics.unfundedDebtRepayment = roundMoney(
+        debtMetrics.unfundedDebtRepayment + settled.unfunded
+      );
+      debtMetrics.debtPrincipalPaid = roundMoney(
+        debtMetrics.debtPrincipalPaid + settled.fundedPrincipal
+      );
+      debtMetrics.debtInterestPaid = roundMoney(
+        debtMetrics.debtInterestPaid + settled.fundedInterest
+      );
     }
+
+    let fundedLivingOutflow = fundFromCashInflow(requiredLivingOutflow);
+    const livingFallbackNeed = roundMoney(
+      requiredLivingOutflow - fundedLivingOutflow
+    );
+    if (livingFallbackNeed > 0) {
+      fundedLivingOutflow = roundMoney(
+        fundedLivingOutflow + fundFromFallback(livingFallbackNeed)
+      );
+    }
+    const unfundedLivingOutflow = roundMoney(
+      Math.max(0, requiredLivingOutflow - fundedLivingOutflow)
+    );
+
+    fundedInvestmentTransfer = Math.min(
+      scheduledInvestmentTransfer,
+      cashInflowAvailable
+    );
+    cashInflowAvailable = roundMoney(
+      cashInflowAvailable - fundedInvestmentTransfer
+    );
+    fundTransfersProRata(
+      investmentComponents,
+      scheduledByComponent,
+      fundedInvestmentTransfer,
+      scheduledInvestmentTransfer
+    );
+    cash = roundMoney(cash + cashInflowAvailable);
+
+    goalsGap = roundMoney(
+      debtMetrics.unfundedDebtRepayment + unfundedLivingOutflow
+    );
+    cumulativeShortfall = roundMoney(cumulativeShortfall + goalsGap);
+    const fundedOutflow = roundMoney(
+      debtMetrics.fundedDebtRepayment + fundedLivingOutflow
+    );
+    const unfundedOutflow = roundMoney(
+      debtMetrics.unfundedDebtRepayment + unfundedLivingOutflow
+    );
 
     applyComponentGrowth(investmentComponents);
     const componentCashInflow = addDecemberComponentInflows(
@@ -690,20 +937,25 @@ export function buildRetirementCashflowProjection(
       inflowBreakdown
     );
     cashAccessibleInflow += componentCashInflow;
-    cash += componentCashInflow;
+    cash = roundMoney(cash + componentCashInflow);
 
     periods.push(
       buildRow(
         month + 1,
         cashAccessibleInflow,
-        requiredOutflow,
+        requiredLivingOutflow,
+        fundedLivingOutflow,
+        unfundedLivingOutflow,
         scheduledInvestmentTransfer,
         fundedInvestmentTransfer,
         cashReserveDrawdown,
         drawBreakdown,
+        debtMetrics,
         inflowBreakdown,
         Array.from(outflowBreakdown.values()),
-        goalsGap
+        goalsGap,
+        fundedOutflow,
+        unfundedOutflow
       )
     );
   }

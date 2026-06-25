@@ -1,9 +1,15 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useActionState, useState } from "react";
+import { useActionState, useId, useState } from "react";
 import { liabilityRowToPlanning } from "@/domain/finance/debt-repayment";
 import type { LiabilityRow } from "@/data/supabase/types";
+import type {
+  SourceOwnedLoanFollowUp,
+  SourceOwnedLoanRegisterEntry,
+} from "@/domain/finance/loan-register";
+import { LOAN_SOURCE_DEFINITIONS } from "@/domain/finance/loan-source-registry";
 import {
   debtRepaymentEndYearMonth,
   debtRepaymentStartYearMonth,
@@ -31,6 +37,8 @@ import { appCardClass } from "@/ui/surface-classes";
 import { formatCurrency } from "@/ui/lib/format";
 import { fpPrimaryButtonClass } from "@/ui/input-classes";
 import { formatYearMonth } from "@/lib/dates";
+import { setupTabPath } from "@/lib/setup-urls";
+import { appInlineLinkClass } from "@/ui/app-link-styles";
 
 export type DebtPlanningRow = ReturnType<typeof liabilityRowToPlanning>;
 
@@ -339,18 +347,177 @@ export function mapLiabilityRows(rows: LiabilityRow[]): DebtPlanningRow[] {
   return rows.map(liabilityRowToPlanning);
 }
 
+function SourceOwnedLoanCard({
+  row,
+  currencyCode,
+}: {
+  row: SourceOwnedLoanRegisterEntry;
+  currencyCode: string;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const panelId = useId();
+  const editHref = setupTabPath(row.setupTabId, {});
+
+  return (
+    <article className={`${appCardClass} p-3.5 sm:p-4`}>
+      <div className="flex items-center justify-between gap-3">
+        <button
+          type="button"
+          className="flex min-w-0 flex-1 items-center gap-2 text-left text-sm font-semibold text-slate-900"
+          aria-expanded={expanded}
+          aria-controls={panelId}
+          onClick={() => setExpanded((v) => !v)}
+        >
+          <span
+            aria-hidden="true"
+            className={`inline-flex size-4 shrink-0 items-center justify-center text-xs text-slate-500 transition-transform ${
+              expanded ? "rotate-90" : ""
+            }`}
+          >
+            &gt;
+          </span>
+          <span className="block truncate">{row.displayName}</span>
+        </button>
+        <Link
+          href={editHref}
+          className="shrink-0 text-xs font-medium text-emerald-800 hover:text-emerald-900"
+        >
+          Edit in {row.sourceLabel}
+        </Link>
+      </div>
+
+      {expanded ? (
+        <div id={panelId} className="mt-4 space-y-3">
+          <dl className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                Outstanding
+              </dt>
+              <dd className="mt-0.5 text-lg font-semibold text-rose-900">
+                {formatCurrency(row.balance, currencyCode)}
+              </dd>
+            </div>
+            {row.monthlyPayment != null && row.monthlyPayment > 0 ? (
+              <div>
+                <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                  Monthly repayment
+                </dt>
+                <dd className="mt-0.5 text-lg font-semibold text-slate-900">
+                  {formatCurrency(row.monthlyPayment, currencyCode)}
+                </dd>
+              </div>
+            ) : null}
+            {row.annualInterestRate != null ? (
+              <div>
+                <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                  Interest
+                </dt>
+                <dd className="mt-0.5 text-sm font-medium text-slate-800">
+                  {formatRatePercent(row.annualInterestRate)}
+                </dd>
+              </div>
+            ) : null}
+            {row.remainingTenureMonths != null ? (
+              <div>
+                <dt className="text-[11px] font-medium uppercase tracking-wide text-slate-500">
+                  Remaining tenure
+                </dt>
+                <dd className="mt-0.5 text-sm font-medium text-slate-800">
+                  {formatTenureYears(row.remainingTenureMonths)}
+                </dd>
+              </div>
+            ) : null}
+          </dl>
+
+          {row.fundingSource === "split" ? (
+            <p className="rounded-lg bg-slate-50 px-2.5 py-2 text-[11px] leading-relaxed text-slate-600">
+              Split repayment:{" "}
+              {formatCurrency(row.cashPayment ?? 0, currencyCode)} cash and{" "}
+              {formatCurrency(row.cpfOaPayment ?? 0, currencyCode)} CPF OA per
+              month.
+            </p>
+          ) : null}
+
+          <dl className="grid gap-2 text-[11px] text-slate-600 sm:grid-cols-2">
+            {row.details.map((detail) => (
+              <div key={`${detail.label}:${detail.value}`}>
+                <dt className="font-medium text-slate-500">{detail.label}</dt>
+                <dd className="mt-0.5 text-slate-800">{detail.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
+function SourceOwnedLoanFollowUpCard({ row }: { row: SourceOwnedLoanFollowUp }) {
+  return (
+    <article className={`${appCardClass} p-3.5 sm:p-4`}>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold text-slate-900">
+            {row.displayName}
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-slate-600">
+            {row.message}
+          </p>
+        </div>
+        <Link
+          href={setupTabPath(row.setupTabId, {})}
+          className="shrink-0 text-xs font-medium text-emerald-800 hover:text-emerald-900"
+        >
+          {row.actionLabel}
+        </Link>
+      </div>
+    </article>
+  );
+}
+
+function SourceOwnedLoanNotice() {
+  return (
+    <div className="rounded-xl border border-emerald-100 bg-emerald-50/50 p-3 text-xs leading-relaxed text-emerald-950">
+      <p>
+        Source-owned loans are entered in their setup sections so asset details,
+        Singapore-specific assumptions, and repayment sources stay in one place.
+      </p>
+      <div className="mt-2 flex flex-wrap gap-2">
+        {LOAN_SOURCE_DEFINITIONS.map((source) => (
+          <Link
+            key={source.key}
+            href={setupTabPath(source.setupTabId, {})}
+            className={appInlineLinkClass}
+          >
+            Add or edit in {source.label}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export function DebtPlanningPanels({
   debtRows,
+  sourceOwnedLoans = [],
+  sourceOwnedLoanFollowUps = [],
   currencyCode,
 }: {
   debtRows: DebtPlanningRow[];
+  sourceOwnedLoans?: SourceOwnedLoanRegisterEntry[];
+  sourceOwnedLoanFollowUps?: SourceOwnedLoanFollowUp[];
   currencyCode: string;
 }) {
-  const debtTotal = debtRows.reduce((a, r) => a + r.balance, 0);
+  const sourceOwnedDebtTotal = sourceOwnedLoans.reduce(
+    (a, r) => a + r.balance,
+    0
+  );
+  const debtTotal =
+    debtRows.reduce((a, r) => a + r.balance, 0) + sourceOwnedDebtTotal;
   const monthlyRepayments = debtRows.reduce(
     (a, r) => a + effectiveMonthlyRepayment(r),
     0
-  );
+  ) + sourceOwnedLoans.reduce((a, r) => a + (r.monthlyPayment ?? 0), 0);
 
   return (
     <section className="space-y-4">
@@ -381,22 +548,61 @@ export function DebtPlanningPanels({
         </div>
       </div>
 
-      <DebtEducationalExamples currencyCode={currencyCode} />
+      <SourceOwnedLoanNotice />
+
+      <AddDebtForm currencyCode={currencyCode} />
+
+      {debtRows.length > 0 ? (
+        <div className="space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
+            Debts entered here
+          </p>
+          <ul className="space-y-4">
+            {debtRows.map((row) => (
+              <li key={row.id}>
+                <DebtCard row={row} currencyCode={currencyCode} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {sourceOwnedLoans.length > 0 ? (
+        <div className="space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
+            Loans managed elsewhere
+          </p>
+          <ul className="space-y-3">
+            {sourceOwnedLoans.map((row) => (
+              <li key={row.id}>
+                <SourceOwnedLoanCard row={row} currencyCode={currencyCode} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {sourceOwnedLoanFollowUps.length > 0 ? (
+        <div className="space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-600">
+            Housing records needing mortgage details
+          </p>
+          <ul className="space-y-3">
+            {sourceOwnedLoanFollowUps.map((row) => (
+              <li key={row.id}>
+                <SourceOwnedLoanFollowUpCard row={row} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
 
       <DebtPayoffStrategyComparison
         debtRows={debtRows}
         currencyCode={currencyCode}
       />
 
-      <AddDebtForm currencyCode={currencyCode} />
-
-      <ul className="space-y-4">
-        {debtRows.map((row) => (
-          <li key={row.id}>
-            <DebtCard row={row} currencyCode={currencyCode} />
-          </li>
-        ))}
-      </ul>
+      <DebtEducationalExamples currencyCode={currencyCode} />
     </section>
   );
 }

@@ -161,11 +161,26 @@ export {
   isDebtBudgetCategory,
   sumDebtRepaymentsInMonth,
 } from "./debt-repayment";
+export {
+  buildDebtPaymentSchedule,
+  createDebtProjectionStates,
+  debtPaymentDueForMonth,
+  settleDebtPayment,
+} from "./debt-cashflow";
 export type {
   DebtCategory,
   LiabilityForPlanning,
   LoanType,
 } from "./debt-repayment";
+export type {
+  DebtFundingSource,
+  DebtLoanType,
+  DebtObligationInput,
+  DebtPaymentDue,
+  DebtPaymentSettlement,
+  DebtProjectionKind,
+  DebtProjectionState,
+} from "./debt-cashflow";
 export { liabilityRowToPlanning } from "./debt-repayment";
 export { sumInvestableSurplusOverHorizon } from "./investable-surplus";
 export { buildAmortizationSchedule } from "./mortgage-amortization";

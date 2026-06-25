@@ -64,6 +64,15 @@ export type RunwayRow = {
   rawInvestmentPrincipalWithdrawn: number;
   rawIlpPrincipalWithdrawn: number;
   rawGoalsGap: number;
+  rawRequiredLivingOutflow: number;
+  rawFundedLivingOutflow: number;
+  rawUnfundedLivingOutflow: number;
+  rawRequiredDebtRepayment: number;
+  rawFundedDebtRepayment: number;
+  rawUnfundedDebtRepayment: number;
+  rawDebtPrincipalPaid: number;
+  rawDebtInterestPaid: number;
+  rawDebtCpfOaDrawdown: number;
   coveredTakehome: number;
   coveredPassive: number;
   coveredYield: number;
@@ -71,6 +80,9 @@ export type RunwayRow = {
   coveredDrawdown: number;
   coveredCashReserve: number;
   outflowSegments: RunwayAmountDetail[];
+  projectedLiabilities: number;
+  projectedHousingLiabilities: number;
+  projectedNonHousingLiabilities: number;
 };
 
 export type RunwayRowsResult = {
@@ -100,6 +112,7 @@ const SEGMENTS: RunwaySegment[] = [
 
 const TAX_EXPENSES = "outflow:tax";
 const HOUSING_EXPENSES = "outflow:housing";
+const DEBT_EXPENSES = "outflow:debt";
 const GOAL_EXPENSES = "outflow:goals";
 const RETIREMENT_EXPENSES = "outflow:retirement";
 const OTHER_EXPENSES = "outflow:other";
@@ -146,6 +159,12 @@ function outflowBreakdownItem(
   if (item.sourceType === "housing_cash") {
     return { key: HOUSING_EXPENSES, label: "Housing cash payment" };
   }
+  if (item.sourceType === "debt_repayment") {
+    return {
+      key: `${DEBT_EXPENSES}:${safeSegmentKey(item.key)}`,
+      label: item.label || "Debt repayment",
+    };
+  }
   if (item.sourceType === "goal_event") {
     return { key: GOAL_EXPENSES, label: "Goal outflows" };
   }
@@ -184,6 +203,15 @@ export function toRunwayRows(points: AgeAssetBreakdownPoint[]): RunwayRowsResult
     const rawPrincipalWithdrawn = num(p.principalWithdrawn);
     const rawInvestmentPrincipalWithdrawn = num(p.investmentPrincipalWithdrawn);
     const rawIlpPrincipalWithdrawn = num(p.ilpPrincipalWithdrawn);
+    const rawRequiredLivingOutflow = num(p.requiredLivingOutflow);
+    const rawFundedLivingOutflow = num(p.fundedLivingOutflow);
+    const rawUnfundedLivingOutflow = num(p.unfundedLivingOutflow);
+    const rawRequiredDebtRepayment = num(p.requiredDebtRepayment);
+    const rawFundedDebtRepayment = num(p.fundedDebtRepayment);
+    const rawUnfundedDebtRepayment = num(p.unfundedDebtRepayment);
+    const rawDebtPrincipalPaid = num(p.debtPrincipalPaid);
+    const rawDebtInterestPaid = num(p.debtInterestPaid);
+    const rawDebtCpfOaDrawdown = num(p.debtCpfOaDrawdown);
     const rawPassive = rawCpfLife + rawRental;
     const rawYield = rawInvestmentDividend + rawIlpIncome;
     const rawDrawdown =
@@ -266,6 +294,15 @@ export function toRunwayRows(points: AgeAssetBreakdownPoint[]): RunwayRowsResult
       rawInvestmentPrincipalWithdrawn,
       rawIlpPrincipalWithdrawn,
       rawGoalsGap,
+      rawRequiredLivingOutflow,
+      rawFundedLivingOutflow,
+      rawUnfundedLivingOutflow,
+      rawRequiredDebtRepayment,
+      rawFundedDebtRepayment,
+      rawUnfundedDebtRepayment,
+      rawDebtPrincipalPaid,
+      rawDebtInterestPaid,
+      rawDebtCpfOaDrawdown,
       coveredTakehome: takehome,
       coveredPassive: passive,
       coveredYield: yieldValue,
@@ -273,6 +310,9 @@ export function toRunwayRows(points: AgeAssetBreakdownPoint[]): RunwayRowsResult
       coveredDrawdown: drawdown,
       coveredCashReserve: cashReserve,
       outflowSegments: outflowSegmentsForPoint(p),
+      projectedLiabilities: num(p.projectedLiabilities),
+      projectedHousingLiabilities: num(p.projectedHousingLiabilities),
+      projectedNonHousingLiabilities: num(p.projectedNonHousingLiabilities),
     };
   });
 
