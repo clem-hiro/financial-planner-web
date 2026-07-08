@@ -10,7 +10,7 @@ import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { formatYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
 import {
-  appBrandHeaderStyle,
+  appBrandHeaderCompactStyle,
   appBrandNavyTextStyle,
 } from "@/ui/app-tab-styles";
 import { formatCurrency } from "@/ui/lib/format";
@@ -68,29 +68,26 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-10 sm:space-y-12">
-      <header className="space-y-6 border-b border-slate-200/80 pb-8 dark:border-slate-800/80 sm:pb-10">
+      <header className="space-y-5 border-b border-slate-200/80 pb-6 dark:border-slate-800/80 sm:space-y-6 sm:pb-8">
         <div
-          className="rounded-3xl border border-slate-200/80 p-6 text-white dark:border-sky-400/20 sm:p-8"
-          style={appBrandHeaderStyle}
+          className="rounded-2xl border border-slate-200/80 p-4 text-white dark:border-sky-400/20 sm:p-5"
+          style={appBrandHeaderCompactStyle}
         >
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
-            <div className="max-w-2xl space-y-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200/90">
+          <div className="space-y-1.5">
+            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-200/90">
                 Today&apos;s command center
               </p>
-              <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-                Your financial day at a glance.
-              </h1>
-              <p className="text-sm leading-relaxed text-slate-200 sm:text-base">
-                Safe to spend, recent rhythm, and alerts — with deeper planning one tap
-                away in Workspaces.
+              <p className="shrink-0 rounded-lg border border-white/15 bg-white/10 px-2.5 py-1 font-mono text-[11px] font-medium tabular-nums text-white/90">
+                <span className="sr-only">Period </span>
+                {month}
               </p>
             </div>
-            <p className="shrink-0 rounded-xl border border-white/20 bg-white/10 px-3 py-2 text-center font-mono text-xs font-medium tabular-nums text-white/90 sm:text-sm">
-              <span className="block text-[10px] font-semibold uppercase tracking-wider text-slate-300">
-                Period
-              </span>
-              {month}
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+              Your financial day at a glance
+            </h1>
+            <p className="max-w-2xl text-sm leading-relaxed text-slate-200/90">
+              Key numbers for this month — deeper planning in Workspaces.
             </p>
           </div>
         </div>

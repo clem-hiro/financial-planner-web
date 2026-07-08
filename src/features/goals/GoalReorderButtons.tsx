@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useRef } from "react";
 import { reorderFinancialGoalAction } from "@/server/actions";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
+import { fpSecondaryButtonCompactClass } from "@/ui/input-classes";
 
 const initial = { error: null as string | null };
 
@@ -47,7 +48,7 @@ export function GoalReorderButtons({
           <button
             type="submit"
             disabled={pending}
-            className="rounded border border-zinc-200 bg-white px-2 py-0.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
+            className={fpSecondaryButtonCompactClass}
             aria-label="Raise priority"
           >
             ↑ Higher
@@ -61,7 +62,7 @@ export function GoalReorderButtons({
           <button
             type="submit"
             disabled={pending}
-            className="rounded border border-zinc-200 bg-white px-2 py-0.5 text-xs font-medium text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
+            className={fpSecondaryButtonCompactClass}
             aria-label="Lower priority"
           >
             ↓ Lower

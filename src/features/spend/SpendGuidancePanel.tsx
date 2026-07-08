@@ -1,6 +1,8 @@
 /**
  * Rule-based “spend less” guidance for the selected month — compact insight cards.
  */
+import { appTealGuidancePanelClass } from "@/ui/surface-classes";
+
 export function SpendGuidancePanel({
   month,
   lines,
@@ -11,7 +13,7 @@ export function SpendGuidancePanel({
   if (lines.length === 0) return null;
 
   return (
-    <div className="rounded-2xl border border-teal-200/50 bg-linear-to-br from-teal-50/90 via-white to-cyan-50/40 p-5 text-teal-950 shadow-md shadow-teal-900/4 ring-1 ring-teal-100/40 dark:border-teal-400/35 dark:from-slate-950 dark:via-slate-950 dark:to-teal-950/45 dark:text-teal-50 dark:shadow-black/30 dark:ring-teal-400/20">
+    <div className={appTealGuidancePanelClass}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h2 className="text-sm font-semibold tracking-tight">
           Guidance for {month}

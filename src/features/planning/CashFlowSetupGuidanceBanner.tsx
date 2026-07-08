@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CashFlowSetupGap } from "@/domain/finance/cash-flow-setup-guidance";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
+import { appAmberGuidanceBannerClass } from "@/ui/surface-classes";
 
 type Props = {
   gaps: CashFlowSetupGap[];
@@ -11,7 +12,7 @@ export function CashFlowSetupGuidanceBanner({ gaps }: Props) {
 
   return (
     <div
-      className="rounded-2xl bg-amber-50/95 px-4 py-4 text-sm text-amber-950 ring-1 ring-amber-200/80"
+      className={appAmberGuidanceBannerClass}
       role="status"
       aria-live="polite"
     >

@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { updateBudgetLineScheduleAction } from "@/server/actions";
+import { fpInputNarrowClass, fpSecondaryButtonCompactClass } from "@/ui/input-classes";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 
 const initial = { error: null as string | null };
@@ -23,33 +24,33 @@ export function BudgetLineScheduleForm({
   return (
     <form
       action={formAction}
-      className="mt-2 flex flex-col gap-2 border-t border-zinc-100 pt-2 text-xs sm:flex-row sm:flex-wrap sm:items-end"
+      className="mt-2 flex flex-col gap-2 border-t border-slate-100 pt-2 text-xs dark:border-slate-800 sm:flex-row sm:flex-wrap sm:items-end"
       {...(pending ? { inert: true } : {})}
     >
       <BlockingSubmitOverlay active={pending} message="Saving schedule…" />
       <input type="hidden" name="id" value={lineId} />
       <label className="flex flex-col gap-0.5">
-        <span className="text-zinc-500">First month (optional)</span>
+        <span className="text-slate-500 dark:text-slate-400">First month (optional)</span>
         <input
           name="start_year_month"
           type="month"
           defaultValue={startYearMonth ?? ""}
-          className="rounded border border-zinc-300 px-1 py-0.5"
+          className={fpInputNarrowClass}
         />
       </label>
       <label className="flex flex-col gap-0.5">
-        <span className="text-zinc-500">Last month / payoff (optional)</span>
+        <span className="text-slate-500 dark:text-slate-400">Last month / payoff (optional)</span>
         <input
           name="end_year_month"
           type="month"
           defaultValue={endYearMonth ?? ""}
-          className="rounded border border-zinc-300 px-1 py-0.5"
+          className={fpInputNarrowClass}
         />
       </label>
       <button
         type="submit"
         disabled={pending}
-        className="rounded border border-zinc-300 px-2 py-1 font-medium text-zinc-800 hover:bg-zinc-50"
+        className={fpSecondaryButtonCompactClass}
       >
         {pending ? "Saving…" : "Save schedule"}
       </button>

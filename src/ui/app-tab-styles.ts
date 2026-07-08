@@ -52,3 +52,10 @@ export const appBrandHeaderStyle = {
     "linear-gradient(to bottom right, var(--exec-navy), #10213a, #123355)",
   boxShadow: "0 16px 44px -20px rgba(12, 25, 47, 0.55)",
 } as const;
+
+/** Lighter hero for daily-use pages (dashboard home). */
+export const appBrandHeaderCompactStyle = {
+  backgroundImage:
+    "linear-gradient(to bottom right, var(--exec-navy), #10213a, #123355)",
+  boxShadow: "0 8px 24px -16px rgba(12, 25, 47, 0.32)",
+} as const;

@@ -1,5 +1,6 @@
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
+import { appAmberBannerClass } from "@/ui/surface-classes";
 
 /** Shared copy: projections use stated balances and returns only. */
 export function InvestmentAssumptionBanner({
@@ -8,10 +9,7 @@ export function InvestmentAssumptionBanner({
   className?: string;
 }) {
   return (
-    <div
-      className={`rounded-xl border border-amber-200/90 bg-amber-50/70 px-3.5 py-3 text-xs leading-relaxed text-amber-950/90 dark:border-amber-300/45 dark:bg-amber-300/12 dark:text-amber-100 ${className}`.trim()}
-      role="note"
-    >
+    <div className={`${appAmberBannerClass} ${className}`.trim()} role="note">
       <p className="font-semibold text-amber-950 dark:text-amber-50">
         Assumption-based illustrations
       </p>

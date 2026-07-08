@@ -58,12 +58,23 @@ export function PageSection({
     <div className={descClass}>{description}</div>
   ) : null;
 
+  const collapsibleSummary = (
+    <>
+      <span className="group-open:hidden">Show details</span>
+      <span className="hidden group-open:inline">Hide details</span>
+      <span className="text-slate-400 group-open:hidden" aria-hidden>
+        ▼
+      </span>
+      <span className="hidden text-slate-400 group-open:inline" aria-hidden>
+        ▲
+      </span>
+    </>
+  );
+
   const childBlock = collapsible ? (
     <details className="group mt-6">
       <summary className="inline-flex cursor-pointer list-none items-center gap-1.5 rounded-xl border border-slate-200/80 bg-slate-50/90 px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-800 [&::-webkit-details-marker]:hidden">
-        <span>Show details</span>
-        <span className="text-slate-400 group-open:hidden">▼</span>
-        <span className="hidden text-slate-400 group-open:inline">▲</span>
+        {collapsibleSummary}
       </summary>
       <div className="mt-6">{children}</div>
     </details>
@@ -82,7 +93,7 @@ export function PageSection({
         {collapsible ? (
           <details className="group">
             <summary className="inline-flex cursor-pointer list-none items-center gap-1 rounded-xl border border-slate-200/80 bg-slate-50/90 px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300 hover:bg-white dark:border-slate-700 dark:bg-slate-900 dark:text-slate-200 dark:hover:border-slate-600 dark:hover:bg-slate-800 [&::-webkit-details-marker]:hidden">
-              Show details <span className="text-slate-400">▼</span>
+              {collapsibleSummary}
             </summary>
             <div className="mt-6">{children}</div>
           </details>
