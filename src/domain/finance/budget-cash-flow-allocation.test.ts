@@ -4,6 +4,7 @@ import {
   buildSetupInvestmentsBudgetLine,
   computeBudgetCashFlowAllocation,
   isInvestmentContributionActiveInYearMonth,
+  isProjectionLivingExpenseBudgetCategory,
   sumPlannedMonthlyInvestmentContributions,
 } from "./budget-cash-flow-allocation";
 import type { InvestmentRow } from "@/data/supabase/types";
@@ -68,6 +69,17 @@ describe("sumPlannedMonthlyInvestmentContributions", () => {
       "2026-05"
     );
     expect(total).toBe(300);
+  });
+});
+
+describe("isProjectionLivingExpenseBudgetCategory", () => {
+  it("excludes savings bucket and Investments lines from living expenses", () => {
+    expect(isProjectionLivingExpenseBudgetCategory("Rent")).toBe(true);
+    expect(isProjectionLivingExpenseBudgetCategory("Savings")).toBe(false);
+    expect(isProjectionLivingExpenseBudgetCategory("Investments")).toBe(false);
+    expect(isProjectionLivingExpenseBudgetCategory("Retirement savings")).toBe(
+      false
+    );
   });
 });
 

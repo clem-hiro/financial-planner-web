@@ -6,6 +6,7 @@ import {
   type BudgetLineVariance,
   type BudgetVsActualResult,
 } from "./budget";
+import { budgetBucketForCategoryLabel } from "./budget-guided-setup";
 import { parseIsoDateOnly } from "./investment-contribution-dates";
 
 export const SETUP_INVESTMENTS_BUDGET_CATEGORY = "Investments";
@@ -15,6 +16,12 @@ export const SETUP_INVESTMENTS_BUDGET_LINE_ID =
 export function isInvestmentBudgetCategory(category: string): boolean {
   return normalizeCategory(category) ===
     normalizeCategory(SETUP_INVESTMENTS_BUDGET_CATEGORY);
+}
+
+/** Living expenses in the long-term projection ledger (excludes savings bucket + Investments). */
+export function isProjectionLivingExpenseBudgetCategory(category: string): boolean {
+  if (isInvestmentBudgetCategory(category)) return false;
+  return budgetBucketForCategoryLabel(category) !== "savings";
 }
 
 export function isSetupInvestmentsBudgetLine(lineId: string): boolean {

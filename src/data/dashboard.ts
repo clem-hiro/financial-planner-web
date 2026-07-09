@@ -134,12 +134,14 @@ import type {
   CpfInvestmentRow,
   HousingLoanRow,
   LiabilityRow,
+  BudgetLineRow,
 } from "@/data/supabase/types";
 import {
   buildInvestmentProjectionSeries,
   projectionSnapshotFromInvestmentRows,
 } from "@/data/projection";
 import type { ProjectionSeriesPoint } from "@/data/projection";
+import { isProjectionLivingExpenseBudgetCategory } from "@/domain/finance/budget-cash-flow-allocation";
 import { birthDateIsValidPast } from "@/lib/validation";
 import type { AgeAssetBreakdownPoint } from "@/data/age-asset-breakdown";
 import { applyProposalChanges } from "@/domain/advisor-proposals/apply-overlay";
@@ -378,15 +380,36 @@ function housingLoanToProjection(
   };
 }
 
+function liabilityBudgetRepaymentById(
+  budgetLineRows: BudgetLineRow[],
+  amountOverrideByLineId: Record<string, number>
+): Map<string, number> {
+  const map = new Map<string, number>();
+  for (const row of budgetLineRows) {
+    const liabilityId = row.source_liability_id;
+    if (!liabilityId || row.cadence !== "monthly") continue;
+    const amount =
+      amountOverrideByLineId[row.id] != null
+        ? amountOverrideByLineId[row.id]
+        : num(row.amount);
+    if (amount > 0) map.set(liabilityId, amount);
+  }
+  return map;
+}
+
 function liabilityToDebtObligation(
   row: LiabilityRow,
-  startYearMonth: string
+  startYearMonth: string,
+  budgetRepayment?: number | null
 ): DebtObligationInput | null {
   const liability = liabilityRowToPlanning(row);
   if (liability.balance <= 0) return null;
 
   const startYm = debtRepaymentStartYearMonth(liability, startYearMonth);
-  const repayment = effectiveMonthlyRepayment(liability);
+  const repayment =
+    budgetRepayment != null && budgetRepayment > 0
+      ? budgetRepayment
+      : effectiveMonthlyRepayment(liability);
   return {
     id: `liability-${row.id}`,
     label: liability.name,
@@ -476,15 +499,29 @@ function housingLoanToDebtObligation(
 function buildProjectionDebtObligations({
   liabilities,
   housingLoans,
+  budgetLineRows,
+  amountOverrideByLineId,
   startYearMonth,
 }: {
   liabilities: LiabilityRow[];
   housingLoans: HousingLoanRow[];
+  budgetLineRows: BudgetLineRow[];
+  amountOverrideByLineId: Record<string, number>;
   startYearMonth: string;
 }): DebtObligationInput[] {
+  const budgetRepaymentByLiabilityId = liabilityBudgetRepaymentById(
+    budgetLineRows,
+    amountOverrideByLineId
+  );
   return [
     ...liabilities
-      .map((row) => liabilityToDebtObligation(row, startYearMonth))
+      .map((row) =>
+        liabilityToDebtObligation(
+          row,
+          startYearMonth,
+          budgetRepaymentByLiabilityId.get(row.id)
+        )
+      )
       .filter((row): row is DebtObligationInput => row != null),
     ...housingLoans
       .map((row) => housingLoanToDebtObligation(row, startYearMonth))
@@ -1436,6 +1473,7 @@ export async function getDashboardPayload(
     }
     for (const line of projectionBudgetLines) {
       if (line.cadence !== "monthly" || line.amount <= 0) continue;
+      if (!isProjectionLivingExpenseBudgetCategory(line.category)) continue;
       const startMonth =
         line.startYearMonth != null && line.startYearMonth !== ""
           ? Math.max(0, monthDistance(yearMonth, line.startYearMonth))
@@ -1463,6 +1501,24 @@ export async function getDashboardPayload(
           line.id != null && amountOverrideByLineId[line.id] != null
             ? amountOverrideByLineId[line.id]
             : line.amount,
+        growthAnnual: profileExpenseGrowthNominal(profile),
+      });
+    }
+    if (
+      totalPlannedGoalContributionsMonthly > 0 &&
+      retirementStartMonth > 0
+    ) {
+      ledger.push({
+        id: "goal-monthly-contributions",
+        sourceType: "planned_expense",
+        label: "Goal monthly contributions",
+        direction: "outflow",
+        cashAccess: "cash",
+        phase: "pre_retirement",
+        cadence: "monthly",
+        startMonth: 0,
+        endMonth: retirementStartMonth,
+        amount: totalPlannedGoalContributionsMonthly,
         growthAnnual: profileExpenseGrowthNominal(profile),
       });
     }
@@ -1681,6 +1737,8 @@ export async function getDashboardPayload(
     const debtObligations = buildProjectionDebtObligations({
       liabilities: liabilityRows,
       housingLoans: housingLoanRows,
+      budgetLineRows,
+      amountOverrideByLineId,
       startYearMonth: yearMonth,
     });
     const cashflowProjectionInput = {
