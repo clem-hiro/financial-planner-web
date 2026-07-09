@@ -546,7 +546,7 @@ describe("change_op writer: create / delete across entity types", () => {
       }),
       ch({
         entity_type: "vehicle",
-        field_key: "current_market_value",
+        field_key: "loan_balance",
         new_value: "40000",
         change_op: "create",
         draft_entity_key: "nv",
@@ -556,7 +556,7 @@ describe("change_op writer: create / delete across entity types", () => {
     expect(fake.store.financial_vehicles).toHaveLength(1);
     const created = fake.store.financial_vehicles[0];
     expect(created.label).toBe("Family car");
-    expect(Number(created.current_market_value)).toBe(40000);
+    expect(Number(created.loan_balance)).toBe(40000);
     expect(created.user_id).toBe("c1");
   });
 

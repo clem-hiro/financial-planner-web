@@ -240,29 +240,22 @@ export type {
   HousingLoanProjectionInput,
 } from "./cpf-monthly-projection";
 export {
-  bodyAtPurchaseResolved,
-  bodyValueEstimate,
-  completedMonthsSinceReg,
   effectiveLoanBalance,
   loanMonthsRemainingResolved,
   monthsBetweenYearMonths,
-  parfRebateEstimateIllustrative,
-  usesDeregistrationAnchors,
-  usesImplicitArfBodyFallbackOnly,
-  usesMarketValueGross,
-  usesNoParfBasisImplicitWithCoeTaper,
-  usesPurchaseToCoeTerminalSchedule,
-  usesRebateRemainingToTerminal,
-  vehicleGrossAssetEstimate,
-  vehicleGrossAssetFromDeregistrationAnchors,
-  vehicleGrossFromPurchaseToTerminalLinear,
-  vehicleGrossFromRebatesRemainingToTerminal,
   cumulativeVehicleProceedsToCash,
+  vehicleGrossAssetEstimate,
   vehicleNetEquity,
   vehicleNetListedBeforeLiquidation,
   vehicleNetProceedsAtCoeMonthEnd,
 } from "./vehicle-sg";
 export type { VehicleStatus, VehicleValuationInput } from "./vehicle-sg";
+export {
+  isVehicleLoanRepaymentBudgetLine,
+  vehicleBudgetCategoryName,
+  VEHICLE_BUDGET_SLOTS,
+} from "./vehicle-budget";
+export type { VehicleBudgetSlot } from "./vehicle-budget";
 export type { MonthlyBudgetVsActualOptions } from "./budget";
 export type {
   IrregularExpenseCadence,

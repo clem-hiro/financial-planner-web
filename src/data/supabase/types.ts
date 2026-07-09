@@ -176,6 +176,8 @@ export type BudgetLineRow = {
   // Optional in TS for code-before-migration order-skew safety.
   updated_at?: string;
   source_liability_id?: string | null;
+  source_vehicle_id?: string | null;
+  vehicle_budget_slot?: string | null;
 };
 
 export type BudgetLineMonthOverrideRow = {
@@ -343,6 +345,10 @@ export type VehicleRow = {
   /** Rebates + body expected at COE expiry; drives OTR→terminal straight-line gross. */
   terminal_recovery_at_coe_expiry?: string | null;
   loan_annual_nominal_rate: string | null;
+  monthly_petrol_cashcard?: string;
+  annual_insurance?: string;
+  annual_road_tax?: string;
+  annual_maintenance?: string;
   display_order: number;
   created_at: string;
 };

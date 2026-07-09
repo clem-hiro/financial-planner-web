@@ -151,45 +151,9 @@ export function profileRetirementWithdrawalRateAnnual(
 }
 
 export function vehicleRowToValuationInput(row: VehicleRow): VehicleValuationInput {
-  const marketRaw = row.current_market_value;
-  const arfRaw = row.arf_for_parf;
-  const bodyRaw = row.body_open_market_at_purchase;
-  const rateRaw = row.loan_annual_nominal_rate;
-  const parfD = row.parf_if_deregistered_today;
-  const coeD = row.coe_if_deregistered_today;
-  const bodyScrapD = row.body_scrap_if_deregistered_today;
-  const coeEx = row.coe_expiry_ym;
   const loanEnd = row.loan_end_ym;
-  const termRec = row.terminal_recovery_at_coe_expiry;
   return {
     vehicleStatus: row.vehicle_status,
-    currentMarketValue:
-      marketRaw != null && String(marketRaw).trim() !== ""
-        ? num(marketRaw)
-        : null,
-    firstRegistrationYm: row.first_registration_ym,
-    onTheRoadPaid: num(row.on_the_road_paid),
-    arfForParf:
-      arfRaw != null && String(arfRaw).trim() !== "" ? num(arfRaw) : null,
-    bodyOpenMarketAtPurchase:
-      bodyRaw != null && String(bodyRaw).trim() !== ""
-        ? num(bodyRaw)
-        : null,
-    bodyDepreciationYears: row.body_depreciation_years,
-    coeExpiryYm:
-      coeEx != null && String(coeEx).trim() !== "" ? String(coeEx).trim() : null,
-    terminalRecoveryAtCoeExpiry:
-      termRec != null && String(termRec).trim() !== ""
-        ? num(termRec)
-        : null,
-    parfIfDeregisteredToday:
-      parfD != null && String(parfD).trim() !== "" ? num(parfD) : null,
-    coeIfDeregisteredToday:
-      coeD != null && String(coeD).trim() !== "" ? num(coeD) : null,
-    bodyScrapIfDeregisteredToday:
-      bodyScrapD != null && String(bodyScrapD).trim() !== ""
-        ? num(bodyScrapD)
-        : null,
     loanBalanceStored: num(row.loan_balance),
     loanMonthlyPayment: num(row.loan_monthly_payment),
     loanMonthsRemaining: row.loan_months_remaining,
@@ -197,12 +161,6 @@ export function vehicleRowToValuationInput(row: VehicleRow): VehicleValuationInp
       loanEnd != null && String(loanEnd).trim() !== ""
         ? String(loanEnd).trim()
         : null,
-    loanAnnualNominalRate:
-      rateRaw != null && String(rateRaw).trim() !== ""
-        ? num(rateRaw)
-        : null,
-    loanPreferStoredBalance: row.loan_prefer_stored_balance === true,
-    loanSimpleRemainingEstimate: row.loan_simple_remaining_estimate === true,
   };
 }
 

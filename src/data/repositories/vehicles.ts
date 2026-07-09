@@ -34,26 +34,34 @@ export async function advisorReadVehicles(
 export type VehicleInsert = {
   label: string;
   vehicle_status: "active" | "planned";
-  current_market_value: number | null;
-  first_registration_ym: string | null;
-  on_the_road_paid: number;
-  arf_for_parf: number | null;
-  body_open_market_at_purchase: number | null;
-  body_depreciation_years: number;
-  coe_expiry_ym: string | null;
-  parf_if_deregistered_today: number | null;
-  coe_if_deregistered_today: number | null;
-  body_scrap_if_deregistered_today: number | null;
   loan_balance: number;
   loan_monthly_payment: number;
-  loan_months_remaining: number | null;
   loan_end_ym: string | null;
-  loan_prefer_stored_balance: boolean;
-  loan_simple_remaining_estimate: boolean;
-  terminal_recovery_at_coe_expiry: number | null;
-  loan_annual_nominal_rate: number | null;
+  monthly_petrol_cashcard: number;
+  annual_insurance: number;
+  annual_road_tax: number;
+  annual_maintenance: number;
   display_order: number;
 };
+
+/** Legacy valuation columns kept at DB defaults — no longer user-facing. */
+const LEGACY_VEHICLE_DEFAULTS = {
+  current_market_value: null,
+  first_registration_ym: null,
+  on_the_road_paid: 0,
+  arf_for_parf: null,
+  body_open_market_at_purchase: null,
+  body_depreciation_years: 10,
+  coe_expiry_ym: null,
+  parf_if_deregistered_today: null,
+  coe_if_deregistered_today: null,
+  body_scrap_if_deregistered_today: null,
+  loan_months_remaining: null,
+  loan_prefer_stored_balance: true,
+  loan_simple_remaining_estimate: false,
+  terminal_recovery_at_coe_expiry: null,
+  loan_annual_nominal_rate: null,
+} as const;
 
 export async function insertVehicle(
   supabase: SupabaseClient,
@@ -66,25 +74,15 @@ export async function insertVehicle(
       user_id: userId,
       label: row.label,
       vehicle_status: row.vehicle_status,
-      current_market_value: row.current_market_value,
-      first_registration_ym: row.first_registration_ym,
-      on_the_road_paid: row.on_the_road_paid,
-      arf_for_parf: row.arf_for_parf,
-      body_open_market_at_purchase: row.body_open_market_at_purchase,
-      body_depreciation_years: row.body_depreciation_years,
-      coe_expiry_ym: row.coe_expiry_ym,
-      parf_if_deregistered_today: row.parf_if_deregistered_today,
-      coe_if_deregistered_today: row.coe_if_deregistered_today,
-      body_scrap_if_deregistered_today: row.body_scrap_if_deregistered_today,
       loan_balance: row.loan_balance,
       loan_monthly_payment: row.loan_monthly_payment,
-      loan_months_remaining: row.loan_months_remaining,
       loan_end_ym: row.loan_end_ym,
-      loan_prefer_stored_balance: row.loan_prefer_stored_balance,
-      loan_simple_remaining_estimate: row.loan_simple_remaining_estimate,
-      terminal_recovery_at_coe_expiry: row.terminal_recovery_at_coe_expiry,
-      loan_annual_nominal_rate: row.loan_annual_nominal_rate,
+      monthly_petrol_cashcard: row.monthly_petrol_cashcard,
+      annual_insurance: row.annual_insurance,
+      annual_road_tax: row.annual_road_tax,
+      annual_maintenance: row.annual_maintenance,
       display_order: row.display_order,
+      ...LEGACY_VEHICLE_DEFAULTS,
     })
     .select()
     .single();

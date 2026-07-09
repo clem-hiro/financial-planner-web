@@ -32,6 +32,20 @@ export async function advisorReadBudgetLines(
   return (data ?? []) as BudgetLineRow[];
 }
 
+export async function getBudgetLinesBySourceVehicleId(
+  supabase: SupabaseClient,
+  userId: string,
+  vehicleId: string
+): Promise<BudgetLineRow[]> {
+  const { data, error } = await supabase
+    .from("financial_budget_lines")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("source_vehicle_id", vehicleId);
+  if (error) throw error;
+  return (data ?? []) as BudgetLineRow[];
+}
+
 export async function getBudgetLineBySourceLiabilityId(
   supabase: SupabaseClient,
   userId: string,
@@ -70,6 +84,8 @@ export type NewBudgetLine = {
   start_year_month?: string | null;
   end_year_month?: string | null;
   source_liability_id?: string | null;
+  source_vehicle_id?: string | null;
+  vehicle_budget_slot?: string | null;
 };
 
 export async function insertBudgetLine(
@@ -92,6 +108,8 @@ export async function insertBudgetLine(
     end_year_month:
       row.cadence === "monthly" ? row.end_year_month ?? null : null,
     source_liability_id: row.source_liability_id ?? null,
+    source_vehicle_id: row.source_vehicle_id ?? null,
+    vehicle_budget_slot: row.vehicle_budget_slot ?? null,
   };
   if (row.cadence === "annual" && row.calendar_year == null) {
     throw new Error("calendar_year is required for annual budget lines");

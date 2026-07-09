@@ -48,7 +48,12 @@ import {
   removeLiabilityBudgetLines,
   syncLiabilityBudgetLine,
 } from "@/data/liability-budget-sync";
+import {
+  removeVehicleBudgetLines,
+  syncVehicleBudgetLines,
+} from "@/data/vehicle-budget-sync";
 import { parseLiabilityFormData } from "@/server/liability-form";
+import { parseVehicleFormData } from "@/server/vehicle-form";
 import {
   deleteVehicle,
   insertVehicle,
@@ -601,191 +606,39 @@ export async function createVehicleAction(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Sign in required" };
 
-  const label = String(formData.get("label") ?? "").trim() || "Vehicle";
-  const statusRaw = String(formData.get("vehicle_status") ?? "active").trim();
-  const vehicle_status =
-    statusRaw === "planned" ? "planned" : ("active" as const);
-  const marketStr = String(formData.get("current_market_value") ?? "").trim();
-  const current_market_value =
-    marketStr === "" ? null : Number(marketStr);
-  if (
-    current_market_value != null &&
-    (!Number.isFinite(current_market_value) || current_market_value < 0)
-  ) {
-    return { error: "Invalid current market value" };
-  }
-  const regParsed = optionalYearMonth(
-    String(formData.get("first_registration_ym") ?? "")
-  );
-  if (!regParsed.ok) {
-    return { error: "First registration must be YYYY-MM or blank" };
-  }
-  const first_registration_ym = regParsed.value;
-
-  const otr = Number(formData.get("on_the_road_paid"));
-  if (!Number.isFinite(otr) || otr < 0) {
-    return { error: "Invalid on-the-road / purchase amount" };
-  }
-  const arfRaw = String(formData.get("arf_for_parf") ?? "").trim();
-  const arf_for_parf =
-    arfRaw === "" ? null : Number(arfRaw);
-  if (arf_for_parf != null && (!Number.isFinite(arf_for_parf) || arf_for_parf < 0)) {
-    return { error: "Invalid ARF for PARF" };
-  }
-  const bodyRaw = String(formData.get("body_open_market_at_purchase") ?? "").trim();
-  const body_open_market_at_purchase =
-    bodyRaw === "" ? null : Number(bodyRaw);
-  if (
-    body_open_market_at_purchase != null &&
-    (!Number.isFinite(body_open_market_at_purchase) ||
-      body_open_market_at_purchase < 0)
-  ) {
-    return { error: "Invalid body value at purchase" };
-  }
-  const body_depreciation_years = Math.round(
-    Number(formData.get("body_depreciation_years"))
-  );
-  if (
-    !Number.isFinite(body_depreciation_years) ||
-    body_depreciation_years < 1 ||
-    body_depreciation_years > 20
-  ) {
-    return { error: "Body depreciation years must be 1–20" };
-  }
-  const loanBalRaw = String(formData.get("loan_balance") ?? "").trim();
-  const loan_balance = loanBalRaw === "" ? 0 : Number(loanBalRaw);
-  const loan_monthly_payment = Number(formData.get("loan_monthly_payment"));
-  if (!Number.isFinite(loan_balance) || loan_balance < 0) {
-    return { error: "Invalid loan balance" };
-  }
-  if (!Number.isFinite(loan_monthly_payment) || loan_monthly_payment < 0) {
-    return { error: "Invalid monthly payment" };
-  }
-  const remRaw = String(formData.get("loan_months_remaining") ?? "").trim();
-  const loan_months_remaining =
-    remRaw === "" ? null : Math.round(Number(remRaw));
-  if (
-    loan_months_remaining != null &&
-    (!Number.isFinite(loan_months_remaining) || loan_months_remaining < 0)
-  ) {
-    return { error: "Invalid months remaining on loan" };
-  }
-  const rateRaw = String(formData.get("loan_annual_nominal_rate") ?? "").trim();
-  const loan_annual_nominal_rate =
-    rateRaw === "" ? null : Number(rateRaw);
-  if (
-    loan_annual_nominal_rate != null &&
-    (!Number.isFinite(loan_annual_nominal_rate) ||
-      loan_annual_nominal_rate < 0 ||
-      loan_annual_nominal_rate > 0.5)
-  ) {
-    return { error: "Loan rate must be blank or 0–0.5 (decimal annual)" };
-  }
-
-  const coeExpParsed = optionalYearMonth(
-    String(formData.get("coe_expiry_ym") ?? "")
-  );
-  if (!coeExpParsed.ok) {
-    return { error: "COE expiry must be YYYY-MM or blank" };
-  }
-  const parfDeregStr = String(
-    formData.get("parf_if_deregistered_today") ?? ""
-  ).trim();
-  const parf_if_deregistered_today =
-    parfDeregStr === "" ? null : Number(parfDeregStr);
-  if (
-    parf_if_deregistered_today != null &&
-    (!Number.isFinite(parf_if_deregistered_today) ||
-      parf_if_deregistered_today < 0)
-  ) {
-    return { error: "Invalid PARF if deregistered today" };
-  }
-  const coeDeregStr = String(
-    formData.get("coe_if_deregistered_today") ?? ""
-  ).trim();
-  const coe_if_deregistered_today =
-    coeDeregStr === "" ? null : Number(coeDeregStr);
-  if (
-    coe_if_deregistered_today != null &&
-    (!Number.isFinite(coe_if_deregistered_today) || coe_if_deregistered_today < 0)
-  ) {
-    return { error: "Invalid COE if deregistered today" };
-  }
-  const bodyScrapStr = String(
-    formData.get("body_scrap_if_deregistered_today") ?? ""
-  ).trim();
-  const body_scrap_if_deregistered_today =
-    bodyScrapStr === "" ? null : Number(bodyScrapStr);
-  if (
-    body_scrap_if_deregistered_today != null &&
-    (!Number.isFinite(body_scrap_if_deregistered_today) ||
-      body_scrap_if_deregistered_today < 0)
-  ) {
-    return { error: "Invalid body/scrap if deregistered today" };
-  }
-  const loan_prefer_stored_balance =
-    formData.get("loan_prefer_stored_balance") === "on";
-  const loan_simple_remaining_estimate =
-    loan_prefer_stored_balance
-      ? false
-      : formData.get("loan_simple_remaining_estimate") === "on";
-  const termRecStr = String(
-    formData.get("terminal_recovery_at_coe_expiry") ?? ""
-  ).trim();
-  const terminal_recovery_at_coe_expiry =
-    termRecStr === "" ? null : Number(termRecStr);
-  if (
-    terminal_recovery_at_coe_expiry != null &&
-    (!Number.isFinite(terminal_recovery_at_coe_expiry) ||
-      terminal_recovery_at_coe_expiry < 0)
-  ) {
-    return { error: "Invalid terminal recovery at COE expiry" };
-  }
-  const loanEndParsed = optionalYearMonth(
-    String(formData.get("loan_end_ym") ?? "")
-  );
-  if (!loanEndParsed.ok) {
-    return { error: "Loan end month must be YYYY-MM or blank" };
-  }
+  const parsed = parseVehicleFormData(formData);
+  if (!parsed.ok) return { error: parsed.error };
+  const d = parsed.data;
 
   try {
     const dup = findNameCollision(
       await listVehicles(supabase, user.id),
       (v) => v.label,
-      label,
+      d.label,
       "a vehicle"
     );
     if (dup) return { error: dup };
 
-    await insertVehicle(supabase, user.id, {
-      label,
-      vehicle_status,
-      current_market_value,
-      first_registration_ym,
-      on_the_road_paid: otr,
-      arf_for_parf,
-      body_open_market_at_purchase,
-      body_depreciation_years,
-      coe_expiry_ym: coeExpParsed.value,
-      parf_if_deregistered_today,
-      coe_if_deregistered_today,
-      body_scrap_if_deregistered_today,
-      loan_balance,
-      loan_monthly_payment,
-      loan_months_remaining,
-      loan_end_ym: loanEndParsed.value,
-      loan_prefer_stored_balance,
-      loan_simple_remaining_estimate,
-      terminal_recovery_at_coe_expiry,
-      loan_annual_nominal_rate,
+    const vehicle = await insertVehicle(supabase, user.id, {
+      label: d.label,
+      vehicle_status: d.vehicle_status,
+      loan_balance: d.loan_balance,
+      loan_monthly_payment: d.loan_monthly_payment,
+      loan_end_ym: d.loan_end_ym,
+      monthly_petrol_cashcard: d.monthly_petrol_cashcard,
+      annual_insurance: d.annual_insurance,
+      annual_road_tax: d.annual_road_tax,
+      annual_maintenance: d.annual_maintenance,
       display_order: 0,
     });
+    await syncVehicleBudgetLines(supabase, user.id, vehicle);
   } catch (e) {
     console.error(e);
     return { error: formatSupabaseError(e, "Could not save vehicle.") };
   }
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidatePath("/budget");
   revalidateSetupAndPlanning();
   return { error: null as string | null };
 }
@@ -803,190 +656,43 @@ export async function updateVehicleAction(
   const idParsed = z.string().uuid().safeParse(String(formData.get("id") ?? "").trim());
   if (!idParsed.success) return { error: "Invalid vehicle" };
 
-  const label = String(formData.get("label") ?? "").trim() || "Vehicle";
-  const statusRaw = String(formData.get("vehicle_status") ?? "active").trim();
-  const vehicle_status =
-    statusRaw === "planned" ? "planned" : ("active" as const);
-  const marketStr = String(formData.get("current_market_value") ?? "").trim();
-  const current_market_value =
-    marketStr === "" ? null : Number(marketStr);
-  if (
-    current_market_value != null &&
-    (!Number.isFinite(current_market_value) || current_market_value < 0)
-  ) {
-    return { error: "Invalid current market value" };
-  }
-  const regParsed = optionalYearMonth(
-    String(formData.get("first_registration_ym") ?? "")
-  );
-  if (!regParsed.ok) {
-    return { error: "First registration must be YYYY-MM or blank" };
-  }
-
-  const otr = Number(formData.get("on_the_road_paid"));
-  if (!Number.isFinite(otr) || otr < 0) {
-    return { error: "Invalid on-the-road / purchase amount" };
-  }
-  const arfRaw = String(formData.get("arf_for_parf") ?? "").trim();
-  const arf_for_parf =
-    arfRaw === "" ? null : Number(arfRaw);
-  if (arf_for_parf != null && (!Number.isFinite(arf_for_parf) || arf_for_parf < 0)) {
-    return { error: "Invalid ARF for PARF" };
-  }
-  const bodyRaw = String(formData.get("body_open_market_at_purchase") ?? "").trim();
-  const body_open_market_at_purchase =
-    bodyRaw === "" ? null : Number(bodyRaw);
-  if (
-    body_open_market_at_purchase != null &&
-    (!Number.isFinite(body_open_market_at_purchase) ||
-      body_open_market_at_purchase < 0)
-  ) {
-    return { error: "Invalid body value at purchase" };
-  }
-  const body_depreciation_years = Math.round(
-    Number(formData.get("body_depreciation_years"))
-  );
-  if (
-    !Number.isFinite(body_depreciation_years) ||
-    body_depreciation_years < 1 ||
-    body_depreciation_years > 20
-  ) {
-    return { error: "Body depreciation years must be 1–20" };
-  }
-  const loanBalRawUpd = String(formData.get("loan_balance") ?? "").trim();
-  const loan_balance = loanBalRawUpd === "" ? 0 : Number(loanBalRawUpd);
-  const loan_monthly_payment = Number(formData.get("loan_monthly_payment"));
-  if (!Number.isFinite(loan_balance) || loan_balance < 0) {
-    return { error: "Invalid loan balance" };
-  }
-  if (!Number.isFinite(loan_monthly_payment) || loan_monthly_payment < 0) {
-    return { error: "Invalid monthly payment" };
-  }
-  const remRaw = String(formData.get("loan_months_remaining") ?? "").trim();
-  const loan_months_remaining =
-    remRaw === "" ? null : Math.round(Number(remRaw));
-  if (
-    loan_months_remaining != null &&
-    (!Number.isFinite(loan_months_remaining) || loan_months_remaining < 0)
-  ) {
-    return { error: "Invalid months remaining on loan" };
-  }
-  const rateRaw = String(formData.get("loan_annual_nominal_rate") ?? "").trim();
-  const loan_annual_nominal_rate =
-    rateRaw === "" ? null : Number(rateRaw);
-  if (
-    loan_annual_nominal_rate != null &&
-    (!Number.isFinite(loan_annual_nominal_rate) ||
-      loan_annual_nominal_rate < 0 ||
-      loan_annual_nominal_rate > 0.5)
-  ) {
-    return { error: "Loan rate must be blank or 0–0.5 (decimal annual)" };
-  }
-
-  const coeExpParsed = optionalYearMonth(
-    String(formData.get("coe_expiry_ym") ?? "")
-  );
-  if (!coeExpParsed.ok) {
-    return { error: "COE expiry must be YYYY-MM or blank" };
-  }
-  const parfDeregStr = String(
-    formData.get("parf_if_deregistered_today") ?? ""
-  ).trim();
-  const parf_if_deregistered_today =
-    parfDeregStr === "" ? null : Number(parfDeregStr);
-  if (
-    parf_if_deregistered_today != null &&
-    (!Number.isFinite(parf_if_deregistered_today) ||
-      parf_if_deregistered_today < 0)
-  ) {
-    return { error: "Invalid PARF if deregistered today" };
-  }
-  const coeDeregStr = String(
-    formData.get("coe_if_deregistered_today") ?? ""
-  ).trim();
-  const coe_if_deregistered_today =
-    coeDeregStr === "" ? null : Number(coeDeregStr);
-  if (
-    coe_if_deregistered_today != null &&
-    (!Number.isFinite(coe_if_deregistered_today) || coe_if_deregistered_today < 0)
-  ) {
-    return { error: "Invalid COE if deregistered today" };
-  }
-  const bodyScrapStr = String(
-    formData.get("body_scrap_if_deregistered_today") ?? ""
-  ).trim();
-  const body_scrap_if_deregistered_today =
-    bodyScrapStr === "" ? null : Number(bodyScrapStr);
-  if (
-    body_scrap_if_deregistered_today != null &&
-    (!Number.isFinite(body_scrap_if_deregistered_today) ||
-      body_scrap_if_deregistered_today < 0)
-  ) {
-    return { error: "Invalid body/scrap if deregistered today" };
-  }
-  const loan_prefer_stored_balance =
-    formData.get("loan_prefer_stored_balance") === "on";
-  const loan_simple_remaining_estimate =
-    loan_prefer_stored_balance
-      ? false
-      : formData.get("loan_simple_remaining_estimate") === "on";
-  const termRecStr = String(
-    formData.get("terminal_recovery_at_coe_expiry") ?? ""
-  ).trim();
-  const terminal_recovery_at_coe_expiry =
-    termRecStr === "" ? null : Number(termRecStr);
-  if (
-    terminal_recovery_at_coe_expiry != null &&
-    (!Number.isFinite(terminal_recovery_at_coe_expiry) ||
-      terminal_recovery_at_coe_expiry < 0)
-  ) {
-    return { error: "Invalid terminal recovery at COE expiry" };
-  }
-  const loanEndParsed = optionalYearMonth(
-    String(formData.get("loan_end_ym") ?? "")
-  );
-  if (!loanEndParsed.ok) {
-    return { error: "Loan end month must be YYYY-MM or blank" };
-  }
+  const parsed = parseVehicleFormData(formData);
+  if (!parsed.ok) return { error: parsed.error };
+  const d = parsed.data;
 
   try {
     const dup = findNameCollision(
       await listVehicles(supabase, user.id),
       (v) => v.label,
-      label,
+      d.label,
       "a vehicle",
       idParsed.data
     );
     if (dup) return { error: dup };
 
     await updateVehicle(supabase, user.id, idParsed.data, {
-      label,
-      vehicle_status,
-      current_market_value,
-      first_registration_ym: regParsed.value,
-      on_the_road_paid: otr,
-      arf_for_parf,
-      body_open_market_at_purchase,
-      body_depreciation_years,
-      coe_expiry_ym: coeExpParsed.value,
-      parf_if_deregistered_today,
-      coe_if_deregistered_today,
-      body_scrap_if_deregistered_today,
-      loan_balance,
-      loan_monthly_payment,
-      loan_months_remaining,
-      loan_end_ym: loanEndParsed.value,
-      loan_prefer_stored_balance,
-      loan_simple_remaining_estimate,
-      terminal_recovery_at_coe_expiry,
-      loan_annual_nominal_rate,
+      label: d.label,
+      vehicle_status: d.vehicle_status,
+      loan_balance: d.loan_balance,
+      loan_monthly_payment: d.loan_monthly_payment,
+      loan_end_ym: d.loan_end_ym,
+      monthly_petrol_cashcard: d.monthly_petrol_cashcard,
+      annual_insurance: d.annual_insurance,
+      annual_road_tax: d.annual_road_tax,
+      annual_maintenance: d.annual_maintenance,
     });
+    const vehicles = await listVehicles(supabase, user.id);
+    const vehicle = vehicles.find((v) => v.id === idParsed.data);
+    if (vehicle) {
+      await syncVehicleBudgetLines(supabase, user.id, vehicle);
+    }
   } catch (e) {
     console.error(e);
     return { error: formatSupabaseError(e, "Could not update vehicle.") };
   }
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidatePath("/budget");
   revalidateSetupAndPlanning();
   return { error: null as string | null };
 }
@@ -1002,12 +708,14 @@ export async function deleteVehicleAction(formData: FormData) {
   if (!idParsed.success) return;
 
   try {
+    await removeVehicleBudgetLines(supabase, user.id, idParsed.data);
     await deleteVehicle(supabase, user.id, idParsed.data);
   } catch (e) {
     console.error(e);
   }
   revalidatePath("/balances");
   revalidatePath("/dashboard");
+  revalidatePath("/budget");
   revalidateSetupAndPlanning();
 }
 

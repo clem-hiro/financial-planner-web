@@ -26,16 +26,14 @@ import {
   DEFAULT_RETIREMENT_DIVIDEND_YIELD_ANNUAL,
   DEFAULT_CPF_LIFE_PAYOUT_RATE_ANNUAL,
   DEFAULT_CPF_LIFE_START_AGE,
-  cumulativeVehicleProceedsToCash,
   effectiveLoanBalance,
   futureValueInvestmentPortfolioAtMonth,
   monthlyBudgetAggregateOverspend,
   monthlyBudgetVsActual,
   topOverBudgetCategories,
-  vehicleGrossAssetEstimate,
   vehicleNetListedBeforeLiquidation,
-  vehicleNetProceedsAtCoeMonthEnd,
 } from "@/domain/finance";
+import { isVehicleLoanRepaymentBudgetLine } from "@/domain/finance/vehicle-budget";
 import { buildPropertyEquityBreakdown } from "@/domain/housing";
 import { housingUpfrontOaEvents } from "@/domain/housing/upfront-oa-events";
 import type {
@@ -991,7 +989,11 @@ export async function getDashboardPayload(
   const amountOverrideByLineId = overridesToLineIdMap(overrideRows);
   const domainBudgetLines = budgetLineRows.map(budgetLineRowToDomain);
   const projectionBudgetLines = budgetLineRows
-    .filter((row) => row.source_liability_id == null)
+    .filter(
+      (row) =>
+        row.source_liability_id == null &&
+        !isVehicleLoanRepaymentBudgetLine(row)
+    )
     .map(budgetLineRowToDomain);
   const baseBudgetExpenses = expenses.map(expenseRowToBudgetExpense);
   const syntheticTax = buildSyntheticTaxExpense(
@@ -1196,28 +1198,14 @@ export async function getDashboardPayload(
     }
   }
   const vehicleValuationInputs = vehicleRows.map(vehicleRowToValuationInput);
-  const vehicleProceedsCashNow = cumulativeVehicleProceedsToCash(
-    vehicleValuationInputs,
-    dashboardAsOf
-  );
-  let vehiclesGrossAsset = 0;
   let vehiclesLoanForNw = 0;
   let activeVehicleCount = 0;
   for (const vi of vehicleValuationInputs) {
     if (vi.vehicleStatus !== "active") continue;
     activeVehicleCount += 1;
-    const vn = vehicleNetListedBeforeLiquidation(vi, dashboardAsOf);
-    if (vn > 0) {
-      vehiclesGrossAsset += vehicleGrossAssetEstimate(vi, dashboardAsOf);
-      vehiclesLoanForNw += effectiveLoanBalance(vi, dashboardAsOf);
-    }
+    vehiclesLoanForNw += effectiveLoanBalance(vi, dashboardAsOf);
   }
-  const vehiclesNetEquityTotal = vehicleValuationInputs
-    .filter((v) => v.vehicleStatus === "active")
-    .reduce(
-      (s, vi) => s + vehicleNetListedBeforeLiquidation(vi, dashboardAsOf),
-      0
-    );
+  const vehiclesNetEquityTotal = -vehiclesLoanForNw;
   const baseNetWorth = calculateNetWorth({
     investmentValues: values,
     cashBalances,
@@ -1232,17 +1220,16 @@ export async function getDashboardPayload(
   const netWorth =
     baseNetWorth +
     vehiclesNetEquityTotal +
-    vehicleProceedsCashNow +
     propertyEquityNow.propertiesNet;
   const investmentsTotal = values.reduce((a, b) => a + b, 0);
   const cashTotal = cashBalances.reduce((a, b) => a + b, 0);
   const liabilitiesTotal = liabilities.reduce((a, b) => a + b, 0);
   const netWorthBreakdown = {
     investments: investmentsTotal,
-    cash: cashTotal + vehicleProceedsCashNow,
+    cash: cashTotal,
     cpf: cpfRow ? cpfTotalTracked : 0,
     liabilities: liabilitiesTotal,
-    vehiclesGrossAsset,
+    vehiclesGrossAsset: 0,
     vehiclesLoan: vehiclesLoanForNw,
     vehiclesNet: vehiclesNetEquityTotal,
     vehicleCount: activeVehicleCount,
@@ -1428,32 +1415,6 @@ export async function getDashboardPayload(
         monthOfYear: DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
       });
     }
-    vehicleRows.forEach((vehicleRow, index) => {
-      const vehicle = vehicleValuationInputs[index];
-      if (!vehicle) return;
-      if (vehicle.vehicleStatus !== "active" || vehicle.coeExpiryYm == null) {
-        return;
-      }
-      const proceeds = vehicleNetProceedsAtCoeMonthEnd(vehicle);
-      if (proceeds <= 0) return;
-      const cashInMonth = monthDistance(
-        yearMonth,
-        addMonthsToYearMonth(vehicle.coeExpiryYm, 1)
-      );
-      if (cashInMonth < 0 || cashInMonth > horizonMonths) return;
-      ledger.push({
-        id: `vehicle-proceeds-${vehicleRow.id}`,
-        sourceType: "vehicle_proceeds",
-        sourceId: vehicleRow.id,
-        label: `${vehicleRow.label} COE proceeds`,
-        direction: "inflow",
-        cashAccess: "cash",
-        phase: "both",
-        cadence: "one_off",
-        startMonth: cashInMonth,
-        amount: proceeds,
-      });
-    });
     for (const property of properties) {
       const rental = num(property.rental_income_monthly);
       if (property.planning_scope === "current" && rental > 0) {
@@ -1745,7 +1706,7 @@ export async function getDashboardPayload(
       startYearMonth: yearMonth,
       horizonMonths,
       targetRetirementMonth: retirementStartMonth,
-      initialCash: cashTotal + vehicleProceedsCashNow,
+      initialCash: cashTotal,
       initialInvestmentPrincipal: investmentsTotal,
       liabilities: liabilitiesTotal,
       debtObligations,
