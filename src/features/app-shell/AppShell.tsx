@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import type { ProfileRow } from "@/data/supabase/types";
 import { AdvisorPhonePromptBanner } from "@/features/app-shell/AdvisorPhonePromptBanner";
-import { ClientConsentStrip } from "@/features/app-shell/ClientConsentStrip";
 import {
   AppShellDesktopNav,
   AppShellMobileNav,
@@ -30,7 +29,7 @@ export function AppShell({
   workspace: "client" | "advisor";
   /** Inbox bell loaded in Suspense so page content can stream first. */
   inboxSlot: React.ReactNode;
-  /** Linked client whose latest consent event is not active (strip + account cue). */
+  /** Linked client whose latest consent event is not active (account menu cue). */
   clientConsentNeeded?: boolean;
   children: React.ReactNode;
 }) {
@@ -82,12 +81,12 @@ export function AppShell({
                   href={brandHref}
                   className="truncate text-base font-semibold tracking-tight text-[#0c192f] transition-opacity hover:opacity-80 dark:text-slate-50 sm:text-xl"
                 >
-                  BYOFA Planner
+                  BYOFA
                 </Link>
-                <span className="hidden max-w-40 text-[11px] font-medium uppercase leading-snug tracking-[0.18em] text-slate-400 dark:text-slate-500 sm:inline md:max-w-xs">
+                <span className="hidden max-w-40 text-[11px] font-medium leading-snug tracking-wide text-slate-400 dark:text-slate-500 sm:inline md:max-w-xs">
                   {workspace === "advisor"
                     ? "Advisor workspace"
-                    : "Private wealth clarity"}
+                    : "Wealth planner"}
                 </span>
               </div>
             </div>
@@ -126,12 +125,6 @@ export function AppShell({
           </div>
           {user && workspace === "advisor" ? (
             <AdvisorPhonePromptBanner user={user} />
-          ) : null}
-          {user &&
-          workspace === "client" &&
-          clientConsentNeeded &&
-          !pathname.startsWith("/onboarding") ? (
-            <ClientConsentStrip />
           ) : null}
         </header>
         <main

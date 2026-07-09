@@ -28,8 +28,8 @@ export function RootSplash() {
           className="rounded-3xl border border-slate-200/80 p-6 text-white shadow-lg sm:p-8"
           style={appBrandHeaderStyle}
         >
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-emerald-200/90">
-            Private wealth clarity
+          <p className="text-xs font-semibold tracking-wide text-emerald-200/90">
+            Wealth planner
           </p>
           <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
             BYOFA
