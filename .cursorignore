@@ -1,0 +1,328 @@
+# =============================================================================
+# .cursorignore — finance-planner-web
+# Reduces Cursor indexing load (CPU / fan spikes) by excluding heavy, generated,
+# and sensitive paths. Syntax matches .gitignore.
+#
+# After editing: Cmd+Shift+P → "Cursor: Reindex" (or restart Cursor).
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Dependencies (largest CPU offenders)
+# -----------------------------------------------------------------------------
+node_modules/
+**/node_modules/
+.pnp/
+.pnp.js
+.pnp.*
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+.yarn-integrity
+vendor/
+bower_components/
+jspm_packages/
+
+# Python / Ruby / PHP / Java deps (monorepos / tooling)
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+.Python
+pip-wheel-metadata/
+*.egg-info/
+.eggs/
+.bundle/
+vendor/bundle/
+
+# -----------------------------------------------------------------------------
+# Build outputs & framework caches
+# -----------------------------------------------------------------------------
+.next/
+**/.next/
+out/
+dist/
+build/
+.output/
+.nuxt/
+.nitro/
+.svelte-kit/
+.astro/
+.remix/
+.parcel-cache/
+.cache/
+.vite/
+.turbo/
+.vercel/
+.netlify/
+.firebase/
+.open-next/
+storybook-static/
+.docusaurus/
+.angular/
+.expo/
+.expo-shared/
+web-build/
+
+# TypeScript / compiler artifacts
+*.tsbuildinfo
+next-env.d.ts
+
+# -----------------------------------------------------------------------------
+# Package-manager lockfiles (large, rarely needed for AI context)
+# -----------------------------------------------------------------------------
+package-lock.json
+npm-shrinkwrap.json
+yarn.lock
+pnpm-lock.yaml
+bun.lockb
+composer.lock
+Gemfile.lock
+poetry.lock
+Pipfile.lock
+Cargo.lock
+go.sum
+mix.lock
+
+# -----------------------------------------------------------------------------
+# Logs, dumps & temp files
+# -----------------------------------------------------------------------------
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+pnpm-debug.log*
+*.log.*
+logs/
+**/logs/
+tmp/
+temp/
+.tmp/
+.temp/
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+*.pid
+*.seed
+*.pid.lock
+core
+core.*
+
+# -----------------------------------------------------------------------------
+# Environment, secrets & credentials
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.local.example
+!.env*.example
+**/.env
+**/.env.*
+credentials.json
+secrets.json
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa
+id_rsa.*
+id_dsa
+id_ed25519
+id_ed25519.*
+.npmrc
+.pypirc
+.netrc
+.mcp.json
+
+# -----------------------------------------------------------------------------
+# Test & coverage artifacts (keep source tests; ignore generated output)
+# -----------------------------------------------------------------------------
+coverage/
+.nyc_output/
+.coverage
+htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.hypothesis/
+junit.xml
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+
+# -----------------------------------------------------------------------------
+# Version control & worktrees
+# -----------------------------------------------------------------------------
+.git/
+**/.git/
+.svn/
+.hg/
+.bzr/
+.worktrees/
+**/.worktrees/
+
+# -----------------------------------------------------------------------------
+# OS & editor cruft
+# -----------------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+._*
+.Spotlight-V100
+.Trashes
+.idea/
+*.iml
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+.history/
+.ipynb_checkpoints/
+
+# -----------------------------------------------------------------------------
+# Docker, infra & local databases
+# -----------------------------------------------------------------------------
+.docker/
+docker-compose.override.yml
+.terraform/
+*.tfstate
+*.tfstate.*
+.terragrunt-cache/
+.pulumi/
+.serverless/
+cdk.out/
+.localstack/
+postgres-data/
+mysql-data/
+redis-data/
+mongo-data/
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Supabase local CLI state (migrations under supabase/ stay indexed)
+supabase/.branches/
+supabase/.temp/
+supabase/.output/
+
+# -----------------------------------------------------------------------------
+# Mobile (React Native, Flutter, iOS, Android)
+# -----------------------------------------------------------------------------
+ios/Pods/
+ios/build/
+ios/DerivedData/
+android/.gradle/
+android/build/
+android/app/build/
+android/.cxx/
+.gradle/
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+Pods/
+DerivedData/
+*.ipa
+*.apk
+*.aab
+*.xcarchive
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+pubspec.lock
+
+# -----------------------------------------------------------------------------
+# Backend / compiled binaries & native artifacts
+# -----------------------------------------------------------------------------
+target/
+bin/
+obj/
+*.o
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+*.class
+*.jar
+*.war
+*.nar
+*.ear
+
+# -----------------------------------------------------------------------------
+# Large binary & media assets (adjust public/ subpaths if needed)
+# -----------------------------------------------------------------------------
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.rar
+*.7z
+*.gz
+*.bz2
+*.xz
+*.dmg
+*.iso
+*.img
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+*.mp3
+*.wav
+*.flac
+*.aac
+*.ogg
+*.pdf
+*.doc
+*.docx
+*.xls
+*.xlsx
+*.ppt
+*.pptx
+*.csv
+*.parquet
+*.wasm
+*.map
+
+# Fonts & packaged web assets (often huge inside node_modules; belt-and-suspenders)
+*.woff
+*.woff2
+*.eot
+*.ttf
+*.otf
+*.pak
+
+# -----------------------------------------------------------------------------
+# Project-specific generated / ephemeral / per-developer state
+# -----------------------------------------------------------------------------
+.claude/agent-memory/
+.claude/clickup-sync.json
+.claude/notion-sync.json
+.claude/.simplify-last-run
+.claude-worktree-task.md
+.claude-worktree-completion.md
+src/features/advisor/.claude/
+exports/
+
+# Auto-generated function-tree map (~1.8 MB). Skills read on demand via Read tool.
+# Remove this block if you want @-mentions / semantic search over the map.
+docs/function-tree/
