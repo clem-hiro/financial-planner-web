@@ -2,9 +2,7 @@ import Link from "next/link";
 import type { DashboardPayload } from "@/data/dashboard";
 import { yearFromYearMonth } from "@/lib/dates";
 import { planningCashFlowBudgetPath } from "@/lib/setup-urls";
-import { ProjectionMiniChart } from "@/features/dashboard/ProjectionMiniChart";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
-import { SpendGuidancePanel } from "@/features/spend/SpendGuidancePanel";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { PageSection } from "@/ui/PageSection";
 import { formatCurrency } from "@/ui/lib/format";
@@ -16,38 +14,6 @@ export function DashboardMonthSection({
 }) {
   return (
     <div className="space-y-6">
-      {payload.spendRecommendations.length > 0 && (
-        <div>
-          <div className="mb-1 flex flex-wrap items-center justify-end gap-2">
-            <MethodologyOpenLink topicId="spend-guidance" className={`text-xs ${appInlineLinkClass}`}>
-              How this works
-            </MethodologyOpenLink>
-          </div>
-          <SpendGuidancePanel
-            month={payload.month}
-            lines={payload.spendRecommendations}
-          />
-        </div>
-      )}
-
-      <PageSection
-        title="Insights"
-        description={
-          <span className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-600 dark:text-slate-300">
-            <span>From this month.</span>
-            <MethodologyOpenLink topicId="savings-rate" className={`text-xs ${appInlineLinkClass}`}>
-              Context
-            </MethodologyOpenLink>
-          </span>
-        }
-      >
-        <ul className="list-inside list-disc space-y-1 text-sm text-zinc-700 dark:text-slate-200">
-          {payload.insights.map((line) => (
-            <li key={line}>{line}</li>
-          ))}
-        </ul>
-      </PageSection>
-
       {payload.goalBudgetHints.length > 0 && (
         <PageSection
           title="Goals & cash flow"
@@ -212,30 +178,6 @@ export function DashboardMonthSection({
             ))}
           </ul>
         )}
-      </PageSection>
-
-      <PageSection
-        title="Investments (36 mo preview)"
-        description={
-          <span className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-600 dark:text-slate-300">
-            <span>
-              Merged investment accounts: each account&apos;s monthly contribution
-              and return only, compounded. Cash / debt balances are not grown on
-              this chart.
-            </span>
-            <MethodologyOpenLink
-              topicId="investment-projection-36m"
-              className={`text-xs ${appInlineLinkClass}`}
-            >
-              Assumptions
-            </MethodologyOpenLink>
-          </span>
-        }
-      >
-        <ProjectionMiniChart
-          data={payload.projectionPreview}
-          currency={payload.baseCurrency}
-        />
       </PageSection>
     </div>
   );

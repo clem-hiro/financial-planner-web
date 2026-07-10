@@ -124,7 +124,7 @@ export default async function DashboardPage() {
             <p className="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-50">
               {payload.monthlyBudgetAggregate.onTrack ? "Within plan" : "Over plan"}
             </p>
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Top categories and guidance below.</p>
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Budget check below.</p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700/80 dark:bg-slate-900">
             <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">

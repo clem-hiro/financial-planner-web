@@ -5,11 +5,8 @@ import {
   analyzeRetirementSpendVsPortfolio,
   buildAmortizationSchedule,
   buildCpfMonthlyProjectionSeries,
-  buildDashboardInsights,
   buildNetWorthByAgeProjection,
-  buildHousingPaymentInsights,
   buildRetirementCashflowProjection,
-  buildSpendRecommendationsForMonth,
   calculateNetWorth,
   calculateSavingsRate,
   annualWithdrawalFromInvestmentRow,
@@ -134,11 +131,7 @@ import type {
   LiabilityRow,
   BudgetLineRow,
 } from "@/data/supabase/types";
-import {
-  buildInvestmentProjectionSeries,
-  projectionSnapshotFromInvestmentRows,
-} from "@/data/projection";
-import type { ProjectionSeriesPoint } from "@/data/projection";
+import { projectionSnapshotFromInvestmentRows } from "@/data/projection";
 import { isProjectionLivingExpenseBudgetCategory } from "@/domain/finance/budget-cash-flow-allocation";
 import { birthDateIsValidPast } from "@/lib/validation";
 import type { AgeAssetBreakdownPoint } from "@/data/age-asset-breakdown";
@@ -248,16 +241,12 @@ export type DashboardPayload = {
    * logged total when any expense exists in the month, otherwise planned monthly budget.
    */
   monthlyExpensesTotal: number;
-  insights: string[];
-  /** Rule-based “spend less” / budget guidance for the payload month. */
-  spendRecommendations: string[];
   baseCurrency: string;
   month: string;
   investmentSummary: {
     totalValue: number;
     count: number;
   };
-  projectionPreview: ProjectionSeriesPoint[];
   /**
    * Net worth by age from the time-aware cash-flow ledger: cash-accessible
    * inflows cover active outflows first; portfolio yield and then principal cover
@@ -1241,22 +1230,9 @@ export async function getDashboardPayload(
   };
   const netWorthExcludingCpf = netWorth - netWorthBreakdown.cpf;
 
-  const baseInsights = buildDashboardInsights({
-    monthlyIncome: income,
-    monthlyExpensesTotal,
-    savingsRate,
-    netWorth,
-  });
-
   const totalValue = investmentsTotal;
 
   const snap = projectionSnapshotFromInvestmentRows(investments);
-  const projectionPreview =
-    snap != null
-      ? buildInvestmentProjectionSeries(investments, 36, {
-          monthsToRetirementFromNow: monthsToRetirementHorizon,
-        })
-      : [];
 
   let ageProjection: DashboardPayload["ageProjection"] = null;
   let cpfProjectionByAge: DashboardPayload["cpfProjectionByAge"] = null;
@@ -1843,25 +1819,7 @@ export async function getDashboardPayload(
     monthlyBudget.totals
   );
 
-  const spendRecommendations = buildSpendRecommendationsForMonth({
-    monthlyTakeHome: income,
-    monthlyExpensesTotal,
-    savingsRate,
-    monthlyPlannedGoalContributions: totalPlannedGoalContributionsMonthly,
-    budgetAggregate: monthlyBudgetAggregate,
-    topOverBudget: monthlyBudgetOver.map((o) => ({
-      categoryLabel: o.categoryLabel,
-      overBy: o.overBy,
-    })),
-  });
-
   const currencyCode = profile?.base_currency ?? DEFAULT_BASE_CURRENCY;
-  const housingInsights = buildHousingPaymentInsights(
-    housingLoanRows,
-    yearMonth,
-    currencyCode
-  );
-  const insights = [...baseInsights, ...housingInsights];
 
   const takeHomeMinusExpenses =
     income != null ? income - monthlyExpensesTotal : null;
@@ -1887,15 +1845,12 @@ export async function getDashboardPayload(
     monthlyExpensesLoggedTotal,
     monthlyPlannedMonthlyBudgetTotal,
     monthlyExpensesTotal,
-    insights,
-    spendRecommendations,
     baseCurrency: currencyCode,
     month: yearMonth,
     investmentSummary: {
       totalValue,
       count: investments.length,
     },
-    projectionPreview,
     ageProjection,
     cpfProjectionByAge,
     cpfYearEndProjection,

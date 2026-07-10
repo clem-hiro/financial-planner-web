@@ -102,7 +102,6 @@ export type {
   RetirementCashflowProjectionInput,
   RetirementCashflowProjectionResult,
 } from "./retirement-cashflow-projection";
-export { buildDashboardInsights } from "./insights";
 export { buildSpendRecommendationsForMonth } from "./spend-recommendations";
 export type { SpendRecommendationsInput } from "./spend-recommendations";
 export {
@@ -186,7 +185,6 @@ export { sumInvestableSurplusOverHorizon } from "./investable-surplus";
 export { buildAmortizationSchedule } from "./mortgage-amortization";
 export type { AmortizationPayment } from "./mortgage-amortization";
 export {
-  buildHousingPaymentInsights,
   firstHousingInstalmentAmount,
   housingInstalmentForMonth,
   oaShareForCpfProjection,

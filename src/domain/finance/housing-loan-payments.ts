@@ -229,56 +229,6 @@ export function oaShareForStoredHousingLoan(
   return splitHousingInstalment(row, instalment).oaShareForCpf;
 }
 
-export function buildHousingPaymentInsights(
-  loans: HousingLoanPaymentFields[],
-  yearMonth: string,
-  currencyCode: string
-): string[] {
-  const insights: string[] = [];
-  let cashBurden = 0;
-  let cpfFunded = 0;
-  let cpfOnlyCount = 0;
-
-  for (const loan of loans) {
-    const due = housingInstalmentForMonth(loan, yearMonth);
-    if (due <= 0) continue;
-    const explicit = resolveHousingPaymentSourceExplicit(loan);
-    if (explicit != null) {
-      const split = splitHousingInstalment(loan, due);
-      cashBurden += split.cashPayment;
-      cpfFunded += split.cpfOaPayment;
-      if (explicit === "cpf_oa" && split.cpfOaPayment > 0) {
-        cpfOnlyCount += 1;
-      }
-    } else {
-      const share = parseShare(loan.oa_share_of_payment);
-      cashBurden += due;
-      cpfFunded += due * share;
-      if (share >= 0.999) cpfOnlyCount += 1;
-    }
-  }
-
-  if (cashBurden > 0) {
-    insights.push(
-      `Cash housing burden: ${formatInsightMoney(cashBurden, currencyCode)} this month from loan schedules (cash portion only).`
-    );
-  }
-  if (cpfFunded > 0) {
-    insights.push(
-      `CPF-funded housing: ${formatInsightMoney(cpfFunded, currencyCode)} from OA this month in your CPF projection.`
-    );
-  }
-  if (cpfOnlyCount > 0) {
-    insights.push(
-      cpfOnlyCount === 1
-        ? "Paid via CPF OA — one housing loan has no cash instalment in this month's budget."
-        : `Paid via CPF OA — ${cpfOnlyCount} housing loans have no cash instalment in this month's budget.`
-    );
-  }
-
-  return insights;
-}
-
 export type NormalizedHousingPaymentPersist = {
   payment_source: HousingPaymentSource;
   cpf_oa_payment: number | null;
@@ -329,16 +279,4 @@ export function normalizeHousingPaymentForPersist(
       input.paymentSource === "split" ? split.cashPayment : null,
     oa_share_of_payment: split.oaShareForCpf,
   };
-}
-
-function formatInsightMoney(amount: number, currencyCode: string): string {
-  try {
-    return new Intl.NumberFormat(undefined, {
-      style: "currency",
-      currency: currencyCode,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  } catch {
-    return `${currencyCode} ${Math.round(amount).toLocaleString()}`;
-  }
 }
