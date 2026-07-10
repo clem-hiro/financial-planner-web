@@ -9,7 +9,6 @@ import {
 } from "@/data/repositories/advisor-clients";
 import type { AdvisorCategoryVisibility } from "@/lib/advisor-visibility";
 import { getMyAdvisorContact } from "@/data/repositories/coupons";
-import { ClientConsentControl } from "@/features/consent/ClientConsentControl";
 import { ClientConsentMorePrompt } from "@/features/more/ClientConsentMorePrompt";
 import { OpenMethodologyButton } from "@/features/help/OpenMethodologyButton";
 import { CLIENT_UI_VERSION_LABEL } from "@/lib/client-release";
@@ -56,9 +55,11 @@ export default async function MorePage() {
         </p>
       </header>
 
-      {showConsent && consentStatus !== "active" ? (
+      {showConsent ? (
         <ClientConsentMorePrompt
-          status={consentStatus === "withdrawn" ? "withdrawn" : "none"}
+          status={consentStatus}
+          consentText={consentText}
+          categoryVisibility={categoryVisibility}
         />
       ) : null}
 
@@ -126,30 +127,6 @@ export default async function MorePage() {
           </div>
         </div>
       </div>
-
-      {showConsent ? (
-        <section
-          id="privacy-advisor-access"
-          className="scroll-mt-24 rounded-2xl bg-white p-5 ring-1 ring-slate-200/70 dark:bg-slate-900 dark:ring-slate-700/80 sm:p-7"
-        >
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-            Privacy &amp; Advisor Access
-          </p>
-          <h2 className="mt-2 text-lg font-semibold text-[#0c192f] dark:text-slate-50">
-            Consent for your advisor
-          </h2>
-          <p className="mt-1 mb-4 text-sm text-slate-600 dark:text-slate-300">
-            Your linked advisor can only view your financial data and prepare
-            plan suggestions while consent is active. You control this and can
-            withdraw at any time.
-          </p>
-          <ClientConsentControl
-            status={consentStatus}
-            consentText={consentText}
-            categoryVisibility={categoryVisibility}
-          />
-        </section>
-      ) : null}
 
       <div className="space-y-2 border-t border-slate-200/80 pt-8 dark:border-slate-700/80">
         <p className="text-xs text-slate-500 dark:text-slate-400">

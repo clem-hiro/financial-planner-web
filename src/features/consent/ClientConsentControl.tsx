@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { recordAdvisorConsentAction } from "@/server/client-consent-actions";
 import {
   ADVISOR_VISIBILITY_CATEGORIES,
@@ -27,11 +27,14 @@ export function ClientConsentControl({
   status,
   consentText,
   categoryVisibility,
+  onResolved,
 }: {
   status: Status;
   consentText: string;
   /** Per-category opt-in state; toggles render only while consent is active. */
   categoryVisibility?: AdvisorCategoryVisibility;
+  /** Called after a successful grant or withdraw (e.g. close a hosting dialog). */
+  onResolved?: (result: "granted" | "withdrawn") => void;
 }) {
   const [state, formAction, pending] = useActionState(
     recordAdvisorConsentAction,
@@ -39,6 +42,14 @@ export function ClientConsentControl({
   );
   const [agreed, setAgreed] = useState(false);
   const isActive = status === "active";
+  const wasPendingRef = useRef(false);
+
+  useEffect(() => {
+    if (wasPendingRef.current && !pending && state.status && !state.error) {
+      onResolved?.(state.status);
+    }
+    wasPendingRef.current = pending;
+  }, [pending, state.status, state.error, onResolved]);
 
   return (
     <div className="space-y-4">

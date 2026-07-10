@@ -132,6 +132,7 @@ export async function recordAdvisorConsentAction(
   revalidatePath("/advisor/clients");
   revalidatePath(`/advisor/client/${user.id}`);
   revalidatePath("/dashboard");
+  revalidatePath("/more");
   revalidateSetupAndPlanning();
   return { error: null, status };
 }
