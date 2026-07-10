@@ -6,8 +6,7 @@ import { DashboardMonthSection } from "@/features/dashboard/DashboardMonthSectio
 import { DashboardOverviewSection } from "@/features/dashboard/DashboardOverviewSection";
 import { DashboardRetirementSection } from "@/features/dashboard/DashboardRetirementSection";
 import { DashboardSubnav } from "@/features/dashboard/DashboardSubnav";
-import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
-import { formatYearMonth } from "@/lib/dates";
+import { formatYearMonth, formatYearMonthLong } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
 import {
   appBrandHeaderCompactStyle,
@@ -61,38 +60,35 @@ export default async function DashboardPage() {
   }
 
   const month = formatYearMonth(new Date());
+  const monthLabel = formatYearMonthLong(month);
   const payload = await getDashboardPayload(supabase, user.id, month);
-  const currency = profile?.base_currency ?? DEFAULT_BASE_CURRENCY;
   const profileIncomplete = isFinancialProfileIncomplete(profile);
 
   return (
-    <div className="space-y-8 sm:space-y-10">
-      <header className="border-b border-slate-200/80 pb-4 dark:border-slate-800/80 sm:pb-5">
+    <div className="space-y-6 sm:space-y-8">
+      <header className="border-b border-slate-200/80 pb-3 dark:border-slate-800/80 sm:pb-4">
         <div
-          className="rounded-2xl border border-slate-200/80 p-4 text-white dark:border-sky-400/20 sm:p-5"
+          className="rounded-xl border border-slate-200/80 px-4 py-3.5 text-white dark:border-sky-400/20 sm:px-5 sm:py-4"
           style={appBrandHeaderCompactStyle}
         >
-          <div className="space-y-1.5">
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-200/90">
-                Today&apos;s command center
-              </p>
-              <p className="shrink-0 rounded-lg border border-white/15 bg-white/10 px-2.5 py-1 font-mono text-[11px] font-medium tabular-nums text-white/90">
-                <span className="sr-only">Period </span>
-                {month}
+          <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
+            <div className="min-w-0 space-y-1">
+              <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
+                Home
+              </h1>
+              <p className="max-w-xl text-sm leading-relaxed text-slate-200/90">
+                Key numbers for {monthLabel} — deeper planning in Planning.
               </p>
             </div>
-            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-              Your financial day at a glance
-            </h1>
-            <p className="max-w-2xl text-sm leading-relaxed text-slate-200/90">
-              Key numbers for this month — deeper planning in Workspaces.
+            <p className="shrink-0 font-mono text-[11px] font-medium tabular-nums text-white/75">
+              <span className="sr-only">Period </span>
+              {month}
             </p>
           </div>
         </div>
       </header>
 
-      <div className="space-y-4">
+      <div className="space-y-5">
         <DashboardSubnav />
 
         {profileIncomplete ? (
@@ -109,7 +105,7 @@ export default async function DashboardPage() {
 
         <section id="overview" className="scroll-mt-28 sm:scroll-mt-32">
           <h2 className="sr-only">Overview</h2>
-          <DashboardOverviewSection payload={payload} currency={currency} />
+          <DashboardOverviewSection payload={payload} />
         </section>
       </div>
 

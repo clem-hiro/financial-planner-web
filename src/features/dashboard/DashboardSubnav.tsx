@@ -11,7 +11,7 @@ import {
 
 const items = [
   { id: "overview", label: "Overview" },
-  { id: "retirement", label: "Retirement" },
+  { id: "retirement", label: "Projected wealth" },
   { id: "month", label: "This month" },
 ] as const;
 
@@ -73,7 +73,10 @@ export function DashboardSubnav() {
   }, [activeId]);
 
   return (
-    <nav aria-label="Dashboard sections" className="sm:mx-0">
+    <nav
+      aria-label="Dashboard sections"
+      className="sticky top-14 z-20 -mx-4 border-b border-slate-200/70 bg-background/95 px-4 py-2 backdrop-blur-md dark:border-slate-800/80 sm:-mx-8 sm:px-8 sm:top-[5.5rem]"
+    >
       <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
         On this page
       </p>

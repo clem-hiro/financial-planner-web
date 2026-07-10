@@ -5,85 +5,38 @@ import { RetirementRunwayLedgerChart } from "@/features/dashboard/RetirementRunw
 import { CpfProjectionByAgeChart } from "@/features/dashboard/CpfProjectionByAgeChart";
 import { CpfRetirementProjectionPanel } from "@/features/dashboard/CpfRetirementProjectionPanel";
 import { CPF_RA_FORMATION_AGE } from "@/domain/finance/cpf-retirement-projection";
+import { formatYearMonthLong } from "@/lib/dates";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { formatCurrency, formatPercent } from "@/ui/lib/format";
 import { appEmeraldPanelClass } from "@/ui/surface-classes";
 import { InfoTooltip } from "@/ui/InfoTooltip";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 
-function CpfProjectionStatusPanel({ payload }: { payload: DashboardPayload }) {
-  if (payload.cpfProjectionMissingInputs.length > 0) {
-    return (
-      <div className="mt-5 rounded-lg border border-amber-300/70 bg-amber-50/80 p-3 text-xs text-amber-950 dark:border-amber-300/45 dark:bg-amber-950/45 dark:text-amber-100">
-        <h3 className="text-sm font-semibold text-amber-950 dark:text-amber-50">
-          Complete CPF projection inputs
-        </h3>
-        <p className="mt-1 leading-relaxed">
-          Add the missing information below before showing contribution-based CPF
-          projection.
-        </p>
-        <ul className="mt-2 list-disc space-y-1 pl-4">
-          {payload.cpfProjectionMissingInputs.map((item) => (
-            <li key={item.label}>
-              <Link href={item.href} className={appInlineLinkClass}>
-                {item.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
-  }
+function CpfProjectionMissingInputsBanner({
+  payload,
+}: {
+  payload: DashboardPayload;
+}) {
+  if (payload.cpfProjectionMissingInputs.length === 0) return null;
 
-  if (!payload.cpfYearEndProjection) return null;
-
-  const p = payload.cpfYearEndProjection;
-  const balanceBasisText = payload.hasCpfBalanceRecord
-    ? `Balances are treated as updated through ${p.balanceAsOfMonth}.`
-    : `No CPF balance is saved yet, so this projection treats OA, SA, MA, and CPFIS as $0 through ${p.balanceAsOfMonth}.`;
-  const projectionRangeText =
-    p.projectedMonths > 0 && p.startYearMonth != null
-      ? `Projection starts from ${p.startYearMonth} and runs to ${p.targetYearMonth}.`
-      : `No future month is added before ${p.targetYearMonth}.`;
   return (
-    <div className="mt-5 rounded-lg border border-indigo-200/70 bg-indigo-50/60 p-3 text-xs text-indigo-950 dark:border-indigo-300/35 dark:bg-indigo-950/35 dark:text-indigo-100">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h3 className="text-sm font-semibold text-indigo-950 dark:text-indigo-50">
-            CPF year-end projection
-          </h3>
-          <p className="mt-1 leading-relaxed text-indigo-900/90 dark:text-indigo-100/85">
-            {balanceBasisText} {projectionRangeText}
-          </p>
-        </div>
-        <p className="text-right text-lg font-bold tabular-nums text-indigo-950 dark:text-indigo-50">
-          {formatCurrency(p.totalCpf, payload.baseCurrency)}
-        </p>
-      </div>
-      <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 font-mono tabular-nums sm:grid-cols-5">
-        <div>
-          <dt className="text-indigo-800/80 dark:text-indigo-200/80">OA</dt>
-          <dd className="font-semibold">{formatCurrency(p.oa, payload.baseCurrency)}</dd>
-        </div>
-        <div>
-          <dt className="text-indigo-800/80 dark:text-indigo-200/80">SA</dt>
-          <dd className="font-semibold">{formatCurrency(p.sa, payload.baseCurrency)}</dd>
-        </div>
-        <div>
-          <dt className="text-indigo-800/80 dark:text-indigo-200/80">MA</dt>
-          <dd className="font-semibold">{formatCurrency(p.ma, payload.baseCurrency)}</dd>
-        </div>
-        <div>
-          <dt className="text-indigo-800/80 dark:text-indigo-200/80">RA</dt>
-          <dd className="font-semibold">{formatCurrency(p.ra, payload.baseCurrency)}</dd>
-        </div>
-        <div>
-          <dt className="text-indigo-800/80 dark:text-indigo-200/80">CPFIS</dt>
-          <dd className="font-semibold">
-            {formatCurrency(p.cpfis, payload.baseCurrency)}
-          </dd>
-        </div>
-      </dl>
+    <div className="mt-5 rounded-lg border border-amber-300/70 bg-amber-50/80 p-3 text-xs text-amber-950 dark:border-amber-300/45 dark:bg-amber-950/45 dark:text-amber-100">
+      <h3 className="text-sm font-semibold text-amber-950 dark:text-amber-50">
+        Complete CPF projection inputs
+      </h3>
+      <p className="mt-1 leading-relaxed">
+        Add the missing information below before showing contribution-based CPF
+        projection.
+      </p>
+      <ul className="mt-2 list-disc space-y-1 pl-4">
+        {payload.cpfProjectionMissingInputs.map((item) => (
+          <li key={item.label}>
+            <Link href={item.href} className={appInlineLinkClass}>
+              {item.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -143,7 +96,7 @@ export function DashboardRetirementSection({
               currency={payload.baseCurrency}
             />
           </div>
-          <CpfProjectionStatusPanel payload={payload} />
+          <CpfProjectionMissingInputsBanner payload={payload} />
           {payload.cpfProjectionByAge &&
             payload.cpfProjectionByAge.length > 0 && (
               <div className="mt-5 rounded-lg border border-indigo-200/60 bg-white/60 p-3 dark:border-indigo-300/35 dark:bg-slate-950/75">
@@ -173,6 +126,19 @@ export function DashboardRetirementSection({
                     Assumptions →
                   </MethodologyOpenLink>
                 </div>
+                {payload.cpfYearEndProjection ? (
+                  <p className="mt-1 text-xs text-indigo-900/90 dark:text-indigo-100/85">
+                    Projected{" "}
+                    {formatYearMonthLong(payload.cpfYearEndProjection.targetYearMonth)}{" "}
+                    total:{" "}
+                    <span className="font-mono font-semibold tabular-nums">
+                      {formatCurrency(
+                        payload.cpfYearEndProjection.totalCpf,
+                        payload.baseCurrency
+                      )}
+                    </span>
+                  </p>
+                ) : null}
                 <p className="mt-1 text-xs text-indigo-900/85 dark:text-indigo-100/80 sm:hidden">
                   One line per bucket + total; dashed markers = housing milestones.
                   Housing OA only if saved under{" "}
@@ -695,7 +661,7 @@ export function DashboardRetirementSection({
         </>
       ) : (
         <>
-          <CpfProjectionStatusPanel payload={payload} />
+          <CpfProjectionMissingInputsBanner payload={payload} />
           <p className="mt-2 text-sm text-emerald-900 dark:text-emerald-100">
             Set your <strong>birth date</strong> in{" "}
             <Link

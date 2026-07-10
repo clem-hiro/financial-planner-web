@@ -70,7 +70,7 @@ export function InfoTooltip({
     >
       <button
         type="button"
-        className={`ml-0.5 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border bg-white/90 text-xs font-bold leading-none shadow-sm focus-visible:outline-none focus-visible:ring-2 touch-manipulation sm:h-6 sm:w-6 sm:text-[10px] ${triggerClass[variant]}`}
+        className={`inline-flex size-5 shrink-0 items-center justify-center rounded-full border bg-white/90 text-[10px] font-bold leading-none shadow-sm focus-visible:outline-none focus-visible:ring-2 touch-manipulation sm:size-4 sm:text-[9px] ${triggerClass[variant]}`}
         aria-expanded={opensSheet ? undefined : open}
         aria-controls={opensSheet ? undefined : panelId}
         aria-haspopup={opensSheet ? "dialog" : "true"}

@@ -21,6 +21,15 @@ export function yearFromYearMonth(ym: string): number {
   return Number(ym.slice(0, 4));
 }
 
+/** `July 2026` from `YYYY-MM` (local calendar month). */
+export function formatYearMonthLong(ym: string): string {
+  const [y, m] = ym.split("-").map(Number);
+  return new Date(y, m - 1, 1).toLocaleDateString("en-SG", {
+    month: "long",
+    year: "numeric",
+  });
+}
+
 /** Shift `YYYY-MM` by `delta` months (local calendar). */
 export function addMonthsToYearMonth(ym: string, delta: number): string {
   const [y, m] = ym.split("-").map(Number);

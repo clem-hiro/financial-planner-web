@@ -110,7 +110,7 @@ export async function OverviewPlanningSection() {
             </p>
           </div>
         </div>
-        <DashboardOverviewSection payload={payload} currency={currency} />
+        <DashboardOverviewSection payload={payload} />
       </section>
 
       <section className="space-y-4">
