@@ -13,7 +13,6 @@ import {
   appBrandHeaderCompactStyle,
   appBrandNavyTextStyle,
 } from "@/ui/app-tab-styles";
-import { formatCurrency } from "@/ui/lib/format";
 
 export default async function DashboardPage() {
   if (!isSupabaseConfigured()) {
@@ -67,8 +66,8 @@ export default async function DashboardPage() {
   const profileIncomplete = isFinancialProfileIncomplete(profile);
 
   return (
-    <div className="space-y-10 sm:space-y-12">
-      <header className="space-y-5 border-b border-slate-200/80 pb-6 dark:border-slate-800/80 sm:space-y-6 sm:pb-8">
+    <div className="space-y-8 sm:space-y-10">
+      <header className="border-b border-slate-200/80 pb-4 dark:border-slate-800/80 sm:pb-5">
         <div
           className="rounded-2xl border border-slate-200/80 p-4 text-white dark:border-sky-400/20 sm:p-5"
           style={appBrandHeaderCompactStyle}
@@ -91,70 +90,28 @@ export default async function DashboardPage() {
             </p>
           </div>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="rounded-2xl border border-emerald-200/70 bg-emerald-50/80 p-4 dark:border-emerald-300/35 dark:bg-emerald-950/35">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-800 dark:text-emerald-200">
-              Safe to Spend
-            </p>
-            <p className="mt-1 text-2xl font-semibold tracking-tight text-emerald-950 dark:text-emerald-50">
-              {payload.discretionaryAfterGoals != null
-                ? formatCurrency(
-                    Math.max(0, payload.discretionaryAfterGoals),
-                    payload.baseCurrency
-                  )
-                : "Set income"}
-            </p>
-            <p className="mt-1 text-xs text-emerald-900/90 dark:text-emerald-100/85">
-              Monthly buffer after spend basis and planned goals.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700/80 dark:bg-slate-900">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-              Monthly health
-            </p>
-            <p className="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-50">
-              {payload.savingsRate != null ? "On track" : "Needs setup"}
-            </p>
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Based on income, spend, and goals.</p>
-          </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700/80 dark:bg-slate-900">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-              Spending control
-            </p>
-            <p className="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-50">
-              {payload.monthlyBudgetAggregate.onTrack ? "Within plan" : "Over plan"}
-            </p>
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Budget check below.</p>
-          </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 dark:border-slate-700/80 dark:bg-slate-900">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-              Retirement progress
-            </p>
-            <p className="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-50">
-              {payload.ageProjection ? "Projection ready" : "Add birth date"}
-            </p>
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Long-term view from your current plan.</p>
-          </div>
-        </div>
-        <DashboardSubnav />
       </header>
 
-      {profileIncomplete ? (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-300/45 dark:bg-amber-950/45 dark:text-amber-100">
-          Complete your financial profile to improve savings rate and projection
-          quality.
-          <div className="mt-2">
-            <Link href="/setup?tab=profile#profile-assumptions" className="underline">
-              Complete your financial profile
-            </Link>
-          </div>
-        </div>
-      ) : null}
+      <div className="space-y-4">
+        <DashboardSubnav />
 
-      <section id="overview" className="scroll-mt-28 space-y-3 sm:scroll-mt-32">
-        <h2 className="sr-only">Overview</h2>
-        <DashboardOverviewSection payload={payload} currency={currency} />
-      </section>
+        {profileIncomplete ? (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-300/45 dark:bg-amber-950/45 dark:text-amber-100">
+            Complete your financial profile to improve savings rate and projection
+            quality.
+            <div className="mt-2">
+              <Link href="/setup?tab=profile#profile-assumptions" className="underline">
+                Complete your financial profile
+              </Link>
+            </div>
+          </div>
+        ) : null}
+
+        <section id="overview" className="scroll-mt-28 sm:scroll-mt-32">
+          <h2 className="sr-only">Overview</h2>
+          <DashboardOverviewSection payload={payload} currency={currency} />
+        </section>
+      </div>
 
       <section id="retirement" className="scroll-mt-28 sm:scroll-mt-32">
         <h2 className="sr-only">Projected wealth</h2>

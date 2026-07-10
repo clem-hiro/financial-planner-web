@@ -74,7 +74,7 @@ export function DashboardSubnav() {
 
   return (
     <nav aria-label="Dashboard sections" className="sm:mx-0">
-      <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
         On this page
       </p>
       <div
