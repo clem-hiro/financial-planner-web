@@ -17,4 +17,4 @@ Quick reference:
 - Status: `done` | `in progress` | `not started`
 - Custom fields: **What it does**, **Area**, **User Type**, **Priority**, **Next step**
 - Inventory alignment: `.cursor/rules/project-context-clickup-sync.mdc`
-- Manual-only ClickUp statuses (never auto-set): `READY TO TEST`, `TO BE DISCUSSED`, `TESTED BY DARREN`. Automation may set `DONE` when inventory is Shipped.
+- Manual-only ClickUp statuses (never auto-set): `READY TO TEST`, `TO BE DISCUSSED`, `TESTED`. Automation may set `DONE` when inventory is Shipped.

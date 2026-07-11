@@ -31,9 +31,9 @@ Field mapping and inventory → task list: `.cursor/rules/project-context-clicku
 | `NOT STARTED` | Partial, MVP, stub, or scaffold with known gaps |
 | `OPEN` | Planned, not implemented, or removed from inventory |
 
-**Manual-only — never propose or apply:** `READY TO TEST`, `TO BE DISCUSSED`, `TESTED BY DARREN`. If a task is already on one of these, skip status in the proposal (description / custom fields may still change).
+**Manual-only — never propose or apply:** `READY TO TEST`, `TO BE DISCUSSED`, `TESTED`. If a task is already on one of these, skip status in the proposal (description / custom fields may still change).
 
-`DONE` = recognized in `PROJECT_CONTEXT.md`, not QA complete. You move items to `READY TO TEST`; Darren moves to `TESTED BY DARREN`.
+`DONE` = recognized in `PROJECT_CONTEXT.md`, not QA complete. You move items to `READY TO TEST`; QA moves to `TESTED`.
 
 Also update **description** and custom fields (**What it does**, **Next step**, **Area**, **User Type**, **Priority**) when git activity materially changes shipped behaviour. Align copy with `PROJECT_CONTEXT.md` inventory when available.
 
@@ -70,7 +70,7 @@ When ambiguous, ask the user which **Task name** to update.
 - `refactor` / `chore` / `docs` only → no task update unless inventory changed
 - Multi-commit sequence with working end-state → `DONE` only when inventory says Shipped
 - Explicit MVP / stub / scaffold → `NOT STARTED`
-- Task on `READY TO TEST`, `TO BE DISCUSSED`, or `TESTED BY DARREN` → **no status field** in proposal
+- Task on `READY TO TEST`, `TO BE DISCUSSED`, or `TESTED` → **no status field** in proposal
 
 Never downgrade `DONE` → `OPEN` without explicit user instruction. Never change manual-only statuses without explicit user instruction.
 

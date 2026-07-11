@@ -39,7 +39,7 @@ Status meanings: **Shipped** = end-to-end for normal users; **Partial** = real w
 
 When adding inventory rows, use product **Task name** values from `.cursor/rules/project-context-clickup-sync.mdc` so BYOFA stays aligned (e.g. split Home metrics into dashboard / net worth / spending tasks when appropriate).
 
-On sync: inventory **Shipped** → ClickUp `DONE` only. Do not set `READY TO TEST`, `TO BE DISCUSSED`, or `TESTED BY DARREN` — those are manual workflow steps after implementation.
+On sync: inventory **Shipped** → ClickUp `DONE` only. Do not set `READY TO TEST`, `TO BE DISCUSSED`, or `TESTED` — those are manual workflow steps after implementation.
 
 ## Completion check
 

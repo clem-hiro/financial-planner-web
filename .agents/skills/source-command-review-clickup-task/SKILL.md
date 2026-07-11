@@ -15,5 +15,5 @@ Quick reference:
 - List: Feature Roadmap `901818233981` — https://app.clickup.com/90182722727/v/l/6-901818233981-1
 - ClickUp IDs / field mapping: `.cursor/rules/project-context-clickup-sync.mdc`
 - Inventory: `PROJECT_CONTEXT.md`
-- Manual-only statuses: `READY TO TEST`, `TO BE DISCUSSED`, `TESTED BY DARREN`
+- Manual-only statuses: `READY TO TEST`, `TO BE DISCUSSED`, `TESTED`
 - **Every sub-task:** implement when **Not in repo** / **Partial** (same session), then chat verdict (§4 C) + `clickup_update_task` (§4 D). Parent may stay **Shipped** while sub-tasks ship; roll verdicts up in parent description.

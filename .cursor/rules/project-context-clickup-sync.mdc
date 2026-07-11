@@ -77,11 +77,11 @@ These are **manual only** (never set or clear via sync; leave unchanged when upd
 |--------|----------------|
 | `READY TO TEST` | You — after you want something in test |
 | `TO BE DISCUSSED` | Team — discussion queue |
-| `TESTED BY DARREN` | Darren — QA sign-off |
+| `TESTED` | QA sign-off (formerly `TESTED BY DARREN`) |
 
-**Before any status update:** read the task’s current native status. If it is one of the three above, **omit `status`** from `clickup_update_task` (update description / custom fields only). Do not downgrade `TESTED BY DARREN`, `READY TO TEST`, or `TO BE DISCUSSED` without explicit user instruction.
+**Before any status update:** read the task’s current native status. If it is one of the three above, **omit `status`** from `clickup_update_task` (update description / custom fields only). Do not downgrade `TESTED`, `READY TO TEST`, or `TO BE DISCUSSED` without explicit user instruction.
 
-`DONE` means **repo implementation recognized** in `PROJECT_CONTEXT.md` (inventory **Shipped**), not “released to users” or “QA complete”. Downstream QA (`READY TO TEST` → `TESTED BY DARREN` → `CLOSED`) stays manual.
+`DONE` means **repo implementation recognized** in `PROJECT_CONTEXT.md` (inventory **Shipped**), not “released to users” or “QA complete”. Downstream QA (`READY TO TEST` → `TESTED` → `CLOSED`) stays manual.
 
 If a status string is rejected by the API, run `clickup_filter_tasks` on this list and use an existing status name from returned tasks before retrying.
 

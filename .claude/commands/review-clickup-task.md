@@ -103,7 +103,7 @@ Next step for QA
 
 **Custom fields** (optional, when materially changed): **What it does**, **Next step** — see `.cursor/rules/project-context-clickup-sync.mdc`.
 
-**Never auto-set** ClickUp statuses: `READY TO TEST`, `TO BE DISCUSSED`, `TESTED BY DARREN`. Do not set `DONE` unless user asks and inventory is Shipped.
+**Never auto-set** ClickUp statuses: `READY TO TEST`, `TO BE DISCUSSED`, `TESTED`. Do not set `DONE` unless user asks and inventory is Shipped.
 
 ### E. PROJECT_CONTEXT
 
