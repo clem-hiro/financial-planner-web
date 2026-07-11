@@ -422,7 +422,7 @@ export function ProfileIncomeForm({
             aria-expanded={showCpfSalaryPath}
             aria-controls="income-cpf-projection"
           >
-            <span>CPF chart: salary path (optional)</span>
+            <span>Expected pay rises (optional)</span>
             <span
               className={`inline-flex text-slate-400 transition-transform dark:text-slate-300 ${
                 showCpfSalaryPath ? "rotate-180" : "rotate-0"
@@ -446,27 +446,27 @@ export function ProfileIncomeForm({
             </span>
           </button>
           <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            Only affects projected CPF inflows when gross salary is set—not net worth
-            today.
+            Used only for long-term CPF charts. Leave blank if you prefer to assume
+            pay stays the same.
           </p>
           {showCpfSalaryPath && (
             <div id="income-cpf-projection" className="mt-3 max-w-md">
               <label className="text-sm sm:min-w-0">
                 <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700 dark:text-slate-200">
-                  Annual salary growth (nominal %)
-                  <InfoTooltip ariaLabel="How salary growth is used">
+                  Expected yearly pay rise (%)
+                  <InfoTooltip ariaLabel="How expected pay rise is used">
                     <p>
-                      Each <strong>January</strong> in the CPF projection, gross is
-                      multiplied by <strong>(1 + this rate)</strong>. The first
-                      projection month always uses your entered gross as-is.
+                      In CPF projections, your gross salary is increased by this
+                      percentage once a year (in January). The first month always
+                      uses the gross you entered above.
                     </p>
                     <p className="mt-2 text-slate-400">
-                      Not financial advice. Many plans stress-test at 0% and use a
-                      modest nominal rate (e.g. 0–3%) for a middle case. Does not
-                      change current net worth—only forward CPF inflows.
+                      This does not change your current net worth or this month&apos;s
+                      budget — only future CPF contributions in the charts. Many
+                      people leave this at 0, or try a modest figure like 1–3%.
                     </p>
                     <p className="mt-2 border-t border-zinc-600/40 pt-2 text-[11px] text-slate-300">
-                      Blank = no raises in the CPF chart (only when gross is set).{" "}
+                      Blank means no assumed raises.{" "}
                       <MethodologyOpenLink
                         topicId="cpf-projection"
                         className={appInlineLinkClass}
@@ -485,19 +485,19 @@ export function ProfileIncomeForm({
                   className={fpInputNarrowClass}
                   value={salaryGrowthPctRaw}
                   onChange={(e) => setSalaryGrowthPctRaw(e.target.value)}
-                  placeholder="0 = flat gross"
+                  placeholder="0 = no rise"
                 />
               </label>
               <label className="mt-3 block text-sm sm:min-w-0">
                 <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700 dark:text-slate-200">
-                  Salary increment month (optional)
-                  <InfoTooltip ariaLabel="How salary increment month is used">
+                  Remind me to review pay in
+                  <InfoTooltip ariaLabel="How pay review month is used">
                     <p>
-                      Once a year, starting in this month, we&apos;ll drop an
-                      inbox reminder to confirm whether your salary changed.
+                      Once a year in this month, we&apos;ll send an inbox reminder to
+                      check whether your salary has changed.
                     </p>
                     <p className="mt-2 text-slate-400">
-                      Leave as &quot;Not set / None&quot; to skip the reminder.
+                      Choose &quot;No reminder&quot; if you don&apos;t want that.
                     </p>
                   </InfoTooltip>
                 </span>
@@ -507,7 +507,7 @@ export function ProfileIncomeForm({
                   onChange={(e) => setSalaryIncrementMonth(e.target.value)}
                   className={fpInputNarrowClass}
                 >
-                  <option value="">Not set / None</option>
+                  <option value="">No reminder</option>
                   {MONTH_OPTIONS.map((opt) => (
                     <option key={opt.value} value={opt.value}>
                       {opt.label}
