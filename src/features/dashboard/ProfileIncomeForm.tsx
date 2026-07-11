@@ -24,7 +24,6 @@ import {
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { InfoTooltip } from "@/ui/InfoTooltip";
-import { appCardClass } from "@/ui/surface-classes";
 
 const CPF_BANDS: { value: SgCpfAgeBand; label: string }[] = [
   { value: "below_55", label: "Below 55" },
@@ -297,34 +296,32 @@ export function ProfileIncomeForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="overflow-hidden rounded-2xl border border-slate-200/90 bg-linear-to-br from-white via-white to-sky-50/30 shadow-sm divide-y divide-slate-200 dark:border-slate-700/80 dark:from-slate-900 dark:via-slate-900 dark:to-slate-800 dark:shadow-none dark:divide-slate-700/80"
+      className="relative overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm dark:border-slate-700/80 dark:bg-slate-900 dark:shadow-none"
       {...(isBusy ? { inert: true } : {})}
     >
       <BlockingSubmitOverlay active={isBusy} message="Saving profile…" />
-      <section id="salary" className="space-y-4 p-5">
+      <section id="salary" className="space-y-4 p-5 sm:p-6">
         <div className="space-y-1">
-          <p className="text-sm font-semibold text-slate-900 dark:text-slate-50">
-            Income & CPF
-          </p>
-          <p className="text-xs text-slate-500 dark:text-slate-300">
+          <h2 className="text-base font-semibold text-slate-900 dark:text-slate-50">
+            Income &amp; CPF
+          </h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Keep this up to date so your monthly plan and projections stay realistic.
           </p>
         </div>
         {isSalaryReviewMode ? (
-          <div className={`${appCardClass} border-emerald-200/80 bg-emerald-50/70 p-4 text-sm text-emerald-900 dark:border-emerald-400/50 dark:bg-emerald-400/12 dark:text-emerald-50`}>
+          <div className="rounded-lg border border-emerald-200/80 bg-emerald-50/70 px-3.5 py-3 text-sm text-emerald-950 dark:border-emerald-400/40 dark:bg-emerald-400/10 dark:text-emerald-50">
             <p className="font-semibold">Reviewing for {currentYear}</p>
-            <p className="mt-1 text-emerald-900/85 dark:text-emerald-100">
+            <p className="mt-1 text-emerald-900/85 dark:text-emerald-100/90">
               Update your salary if it changed, otherwise confirm unchanged.
               Either action clears the reminder.
             </p>
           </div>
         ) : null}
         {showOnboardingIncomeBanner ? (
-          <div
-            className={`${appCardClass} border-sky-200/80 bg-sky-50/70 p-4 text-sm text-sky-950 dark:border-sky-400/50 dark:bg-sky-400/12 dark:text-sky-50`}
-          >
+          <div className="rounded-lg border border-sky-200/80 bg-sky-50/70 px-3.5 py-3 text-sm text-sky-950 dark:border-sky-400/40 dark:bg-sky-400/10 dark:text-sky-50">
             <p className="font-semibold">Synced from onboarding</p>
-            <p className="mt-1 text-sky-950/85 dark:text-sky-100">
+            <p className="mt-1 text-sky-950/85 dark:text-sky-100/90">
               {initialGross != null && initialGross > 0 ? (
                 <>
                   Gross salary from onboarding:{" "}
@@ -414,7 +411,7 @@ export function ProfileIncomeForm({
               annualBonusRaw.trim() !== "" &&
               Number.isFinite(Number(annualBonusRaw.trim())) &&
               Number(annualBonusRaw.trim()) > 0 && (
-              <div className="rounded-lg border border-sky-200/80 bg-sky-50/50 px-3 py-2.5 text-xs leading-relaxed text-slate-700 dark:border-sky-400/40 dark:bg-sky-400/10 dark:text-slate-200">
+              <div className="rounded-lg border border-sky-200/70 bg-sky-50/50 px-3 py-2.5 text-xs leading-relaxed text-slate-700 dark:border-sky-400/35 dark:bg-sky-400/10 dark:text-slate-200">
                 <p className="font-medium text-slate-800 dark:text-slate-50">
                   Estimated take-home
                 </p>
@@ -459,7 +456,7 @@ export function ProfileIncomeForm({
                 )}
               </div>
             )}
-        <label className="mb-6 block pt-6 text-sm sm:mb-8 sm:pt-8">
+        <label className="block text-sm">
           <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700 dark:text-slate-200">
             Birth date
             <InfoTooltip ariaLabel="Why birth date matters">
@@ -478,11 +475,11 @@ export function ProfileIncomeForm({
           />
         </label>
 
-        <div className="rounded-xl border border-slate-200 bg-linear-to-r from-slate-50/90 to-sky-50/40 p-3.5 dark:border-slate-600/80 dark:from-slate-800 dark:to-slate-800/70">
+        <div className="rounded-xl border border-slate-200/80 bg-slate-50/50 p-3.5 dark:border-slate-700/80 dark:bg-slate-800/40">
           <button
             type="button"
             onClick={() => setShowCpfSalaryPath((prev) => !prev)}
-            className="flex w-fit items-center gap-1.5 rounded-lg px-1 py-1 text-left text-sm font-medium text-slate-700 hover:text-slate-900 dark:text-slate-100 dark:hover:text-white"
+            className="flex w-fit items-center gap-1.5 text-left text-sm font-medium text-slate-700 hover:text-slate-900 dark:text-slate-100 dark:hover:text-white"
             aria-expanded={showCpfSalaryPath}
             aria-controls="income-cpf-projection"
           >
@@ -509,7 +506,7 @@ export function ProfileIncomeForm({
               </svg>
             </span>
           </button>
-          <p className="mt-1 px-1 text-xs text-slate-500 dark:text-slate-300">
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
             Only affects projected CPF inflows when gross salary is set—not net worth
             today.
           </p>
@@ -583,7 +580,7 @@ export function ProfileIncomeForm({
           )}
         </div>
         </div>
-        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
+        <div className="flex flex-col-reverse gap-2 border-t border-slate-100 pt-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
           {status && (
             <span
               className="text-sm text-slate-600 dark:text-slate-300 sm:text-right"

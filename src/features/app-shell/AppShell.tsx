@@ -58,7 +58,7 @@ export function AppShell({
           className={`sticky top-0 z-30 border-b backdrop-blur-xl backdrop-saturate-150 ${
             workspace === "advisor"
               ? "border-slate-200 bg-background/95 dark:border-slate-800 dark:bg-background/90"
-              : "border-slate-200/80 bg-white/95 shadow-[0_1px_0_0_rgba(4,120,87,0.08)] dark:border-slate-800/80 dark:bg-slate-950/88 dark:shadow-[0_1px_0_0_rgba(45,212,191,0.12)]"
+              : "border-slate-200/80 bg-white/95 shadow-[0_1px_0_0_rgba(4,120,87,0.08)] dark:border-slate-700/70 dark:bg-background/92 dark:shadow-[0_1px_0_0_rgba(45,212,191,0.12)]"
           }`}
         >
           <div

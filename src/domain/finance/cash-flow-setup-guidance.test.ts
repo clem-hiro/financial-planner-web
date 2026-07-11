@@ -21,7 +21,7 @@ describe("cashFlowSetupGaps", () => {
     profile: profile(),
     monthlyIncome: 5000,
     activeMonthlyBudgetLineCount: 3,
-    pathVariant: "planning" as const,
+    pathVariant: "setup" as const,
     month: "2026-05",
     calendarYear: 2026,
   };
@@ -31,7 +31,7 @@ describe("cashFlowSetupGaps", () => {
     expect(shouldShowCashFlowSetupGuidance(base)).toBe(false);
   });
 
-  it("flags missing income with planning anchor", () => {
+  it("flags missing income with setup profile path", () => {
     const gaps = cashFlowSetupGaps({
       ...base,
       profile: profile({
@@ -43,7 +43,7 @@ describe("cashFlowSetupGaps", () => {
       activeMonthlyBudgetLineCount: 0,
     });
     expect(gaps.map((g) => g.id)).toEqual(["income", "budget_lines", "budget_lens"]);
-    expect(gaps[0]!.ctaHref).toBe("#planning-cashflow-profile");
+    expect(gaps[0]!.ctaHref).toContain("tab=profile");
   });
 
   it("flags missing budget lines only when income is set", () => {
@@ -54,12 +54,12 @@ describe("cashFlowSetupGaps", () => {
     expect(gaps.map((g) => g.id)).toEqual(["budget_lines"]);
   });
 
-  it("uses setup profile path for income on setup variant", () => {
+  it("uses setup paths even when pathVariant is legacy planning", () => {
     const gaps = cashFlowSetupGaps({
       ...base,
       profile: profile({ monthly_income: null }),
       monthlyIncome: null,
-      pathVariant: "setup",
+      pathVariant: "planning",
     });
     expect(gaps[0]!.ctaHref).toContain("tab=profile");
   });

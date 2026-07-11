@@ -8,7 +8,7 @@ export function revalidatePlanningWorkspace() {
   }
 }
 
-/** Keep `/setup` and modular `/planning/**` views coherent after profile or ledger edits. */
+/** Keep `/setup` (and legacy `/planning/**` redirect routes) coherent after profile or ledger edits. */
 export function revalidateSetupAndPlanning() {
   revalidatePath("/setup");
   revalidatePath("/setup/overview");

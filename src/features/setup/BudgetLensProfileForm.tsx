@@ -156,7 +156,7 @@ export function BudgetLensProfileForm(props: Props) {
   return (
     <form
       onSubmit={(ev) => void onSaveLens(ev)}
-      className="space-y-4 rounded-xl border border-zinc-200 bg-white p-4 dark:border-slate-700/80 dark:bg-slate-900 sm:p-5"
+      className="space-y-4 rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm dark:border-slate-700/80 dark:bg-slate-900 dark:shadow-none sm:p-6"
       {...(pending ? { inert: true } : {})}
     >
       <BlockingSubmitOverlay
@@ -164,10 +164,10 @@ export function BudgetLensProfileForm(props: Props) {
         message="Updating budget lens…"
       />
       <div>
-        <h3 className="text-sm font-semibold text-zinc-900 dark:text-slate-50">
+        <h2 className="text-base font-semibold text-zinc-900 dark:text-slate-50">
           Budget lens
-        </h3>
-        <p className="mt-1 text-xs text-zinc-600 dark:text-slate-300">
+        </h2>
+        <p className="mt-1 text-sm text-zinc-600 dark:text-slate-300">
           Lifestyle, food spend, and money style tune a recommended monthly
           category mix. Save lens to update targets; apply when you want new
           budget lines from those settings.

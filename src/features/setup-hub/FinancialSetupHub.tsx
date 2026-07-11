@@ -12,6 +12,10 @@ import { SetupModuleCard } from "@/features/setup-hub/SetupModuleCard";
 import { SetupProgressCard } from "@/features/setup-hub/SetupProgressCard";
 import { SetupRecommendedNextStep } from "@/features/setup-hub/SetupRecommendedNextStep";
 import { SetupTabsNav } from "@/features/setup/SetupTabsNav";
+import {
+  AdvisorWorkspaceRoadmapCard,
+  AiInsightsRoadmapCard,
+} from "@/features/planning/roadmap-modules";
 import { SETUP_OVERVIEW_PATH, setupTabPath } from "@/lib/setup-urls";
 import { buildSetupTabs } from "@/lib/setup-tabs";
 
@@ -25,7 +29,7 @@ const GROUP_ORDER: SetupModuleGroupId[] = [
 const GROUP_DESCRIPTIONS: Record<SetupModuleGroupId, string> = {
   core: "Facts that keep Home, cash flow, and net worth grounded.",
   protection:
-    "Planning workspaces for resilience gaps that do not have setup editors yet.",
+    "Resilience gaps and roadmap modules — open Protection for insurance, dependents, and estate placeholders.",
   future: "Long-horizon inputs for retirement, CPF, investments, and goals.",
   advisor_system: "Records and readiness items that support reviews later.",
 };
@@ -58,7 +62,15 @@ export function FinancialSetupHub({
       : null;
 
   return (
-    <div className="space-y-6 sm:space-y-8">
+    <div className="flex flex-col gap-6 sm:gap-8 lg:flex-row lg:items-start lg:gap-8">
+      <SetupTabsNav
+        tabs={setupTabs}
+        activeTab="overview"
+        overviewHref={SETUP_OVERVIEW_PATH}
+        buildHref={(tabId) => setupTabPath(tabId, {})}
+      />
+
+      <div className="min-w-0 flex-1 space-y-6 sm:space-y-8">
       <header className="max-w-2xl space-y-2">
         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
           Financial setup
@@ -70,13 +82,6 @@ export function FinancialSetupHub({
           Review gaps, then open a section to edit the details.
         </p>
       </header>
-
-      <SetupTabsNav
-        tabs={setupTabs}
-        activeTab="overview"
-        overviewHref={SETUP_OVERVIEW_PATH}
-        buildHref={(tabId) => setupTabPath(tabId, {})}
-      />
 
       <section className="grid gap-5 rounded-xl border border-slate-200/90 bg-white/90 px-4 py-4 shadow-sm ring-1 ring-slate-100 dark:border-slate-700/80 dark:bg-slate-900 dark:shadow-none dark:ring-slate-700/70 sm:px-5 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,0.95fr)] lg:items-center">
         <SetupProgressCard progress={snapshot.progress} />
@@ -137,6 +142,23 @@ export function FinancialSetupHub({
           </section>
         );
       })}
+
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-lg font-semibold tracking-tight text-[#0c192f] dark:text-slate-50">
+            Roadmap visibility
+          </h2>
+          <p className="mt-1 max-w-2xl text-sm text-slate-500 dark:text-slate-400">
+            Upcoming intelligence layers stay visible here so product direction is
+            honest — nothing in this row changes your stored numbers.
+          </p>
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <AdvisorWorkspaceRoadmapCard />
+          <AiInsightsRoadmapCard />
+        </div>
+      </section>
+      </div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { DashboardPayload } from "@/data/dashboard";
 import { yearFromYearMonth, formatYearMonthLong } from "@/lib/dates";
-import { planningCashFlowBudgetPath } from "@/lib/setup-urls";
+import { setupBudgetPath } from "@/lib/setup-urls";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { appBrandNavyTextStyle } from "@/ui/app-tab-styles";
 import { InfoTooltip } from "@/ui/InfoTooltip";
@@ -26,14 +26,14 @@ export function DashboardOverviewSection({
     ? { href: "/expenses", label: "View expenses" }
     : hasBudgetForecast
       ? {
-          href: planningCashFlowBudgetPath(
+          href: setupBudgetPath(
             payload.month,
             yearFromYearMonth(payload.month)
           ),
           label: "Edit budget",
         }
       : {
-          href: planningCashFlowBudgetPath(
+          href: setupBudgetPath(
             payload.month,
             yearFromYearMonth(payload.month)
           ),

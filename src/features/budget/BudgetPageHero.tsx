@@ -269,7 +269,7 @@ export function BudgetPageHero({
                       )}
                     </span>
                     /mo —{" "}
-                    <Link href="/planning/future" className={appInlineLinkClass}>
+                    <Link href="/setup?tab=goals" className={appInlineLinkClass}>
                       Setup → Goals
                     </Link>
                   </p>

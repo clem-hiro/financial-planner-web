@@ -12,17 +12,29 @@ describe("CLIENT_MAIN_NAV activeMatch", () => {
     expect(activeIds("/setup/overview")).toEqual(["financial_setup"]);
   });
 
-  it("does not highlight planning on legacy hub redirect path", () => {
+  it("highlights financial_setup on legacy planning redirect paths", () => {
     expect(activeIds("/planning/setup")).toEqual(["financial_setup"]);
+    expect(activeIds("/planning/wealth")).toEqual(["financial_setup"]);
+    expect(activeIds("/planning/overview")).toEqual(["financial_setup"]);
   });
 
-  it("highlights only planning on section workspaces", () => {
-    expect(activeIds("/planning/wealth")).toEqual(["planning"]);
-    expect(activeIds("/planning/overview")).toEqual(["planning"]);
+  it("highlights financial_setup on classic aliases", () => {
+    expect(activeIds("/goals")).toEqual(["financial_setup"]);
+    expect(activeIds("/balances")).toEqual(["financial_setup"]);
+    expect(activeIds("/budget")).toEqual(["financial_setup"]);
   });
 
   it("highlights financial_setup on classic /setup", () => {
     expect(activeIds("/setup")).toEqual(["financial_setup"]);
     expect(activeIds("/setup/cpf")).toEqual(["financial_setup"]);
+  });
+
+  it("does not include a planning nav item", () => {
+    expect(CLIENT_MAIN_NAV.map((item) => item.id)).toEqual([
+      "home",
+      "financial_setup",
+      "activity",
+      "more",
+    ]);
   });
 });

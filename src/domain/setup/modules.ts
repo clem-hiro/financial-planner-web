@@ -76,11 +76,11 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     title: "Insurance",
     description: "Policies and coverage gaps for protection analysis.",
     icon: "🛡️",
-    href: "/planning/protection",
+    href: "/setup?tab=protection",
     priority: 50,
     recommendReason:
       "Your protection analysis may be inaccurate without insurance data.",
-    ctaLabel: "View protection workspace",
+    ctaLabel: "View protection",
   },
   {
     id: "dependents",
@@ -88,7 +88,7 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     title: "Dependents",
     description: "Family members, education timelines, and caregiver obligations.",
     icon: "👨‍👩‍👧",
-    href: "/planning/protection",
+    href: "/setup?tab=protection",
     priority: 110,
     recommendReason:
       "Dependents affect coverage needs and long-term cash-flow planning.",
@@ -100,7 +100,7 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     title: "Estate Planning",
     description: "Wills, LPAs, and liquidity for estate charges — structured, not legal advice.",
     icon: "📜",
-    href: "/planning/protection",
+    href: "/setup?tab=protection",
     priority: 120,
     recommendReason:
       "Estate readiness helps advisors align liquidity and beneficiary intent.",
@@ -127,7 +127,7 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     href: "/setup?tab=goals",
     priority: 70,
     recommendReason:
-      "Retirement targets unlock long-horizon charts on Home and Future planning.",
+      "Retirement targets unlock long-horizon charts on Home and Goals.",
     ctaLabel: "Set retirement goals",
   },
   {
@@ -185,7 +185,7 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     title: "Documents",
     description: "Statements, policies, and deeds in one secure place.",
     icon: "🗄️",
-    href: "/planning/future",
+    href: "/setup?tab=goals",
     priority: 130,
     recommendReason:
       "Uploading key documents speeds up advisor reviews when the vault ships.",

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { DashboardPayload } from "@/data/dashboard";
 import { yearFromYearMonth } from "@/lib/dates";
-import { planningCashFlowBudgetPath } from "@/lib/setup-urls";
+import { setupBudgetPath } from "@/lib/setup-urls";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { PageSection } from "@/ui/PageSection";
@@ -30,7 +30,7 @@ export function DashboardMonthSection({
             </span>
           }
           actions={
-            <Link href="/planning/future" className={`text-xs ${appInlineLinkClass}`}>
+            <Link href="/setup?tab=goals" className={`text-xs ${appInlineLinkClass}`}>
               Edit goals
             </Link>
           }
@@ -113,7 +113,7 @@ export function DashboardMonthSection({
         }
         actions={
           <Link
-            href={planningCashFlowBudgetPath(
+            href={setupBudgetPath(
               payload.month,
               yearFromYearMonth(payload.month)
             )}

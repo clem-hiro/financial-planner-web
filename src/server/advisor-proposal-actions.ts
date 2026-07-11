@@ -37,7 +37,6 @@ function revalidateProposalViews(clientId: string, proposalId: string) {
   revalidatePath(`/setup/advisor-proposals/${proposalId}`);
   revalidatePath("/dashboard");
   revalidatePath("/budget");
-  revalidatePath("/planning/future");
   revalidateSetupAndPlanning();
 }
 

@@ -17,17 +17,21 @@ export function setupBudgetPath(month: string, calendarYear: number): string {
   return `/setup?${setupBudgetSearch(month, calendarYear)}`;
 }
 
-/** Planning workspace → Cash Flow (same budget UI, modular shell). */
+/**
+ * @deprecated Planning cash-flow folded into Setup — alias of `setupBudgetPath`.
+ * Prefer `setupBudgetPath` at call sites.
+ */
 export function planningCashFlowBudgetPath(
   month: string,
   calendarYear: number
 ): string {
-  return `/planning/cash-flow?month=${encodeURIComponent(month)}&year=${String(calendarYear)}`;
+  return setupBudgetPath(month, calendarYear);
 }
 
 /**
  * Serializable budget URL mode for Server → Client boundaries.
  * Use `budgetMonthHref(variant, …)` in both RSC and client components instead of passing path functions as props.
+ * `"planning"` is kept as a deprecated alias of `"setup"`.
  */
 export type BudgetPathVariant = "setup" | "planning";
 
@@ -36,9 +40,8 @@ export function budgetMonthHref(
   month: string,
   calendarYear: number
 ): string {
-  return variant === "planning"
-    ? planningCashFlowBudgetPath(month, calendarYear)
-    : setupBudgetPath(month, calendarYear);
+  void variant;
+  return setupBudgetPath(month, calendarYear);
 }
 
 /** Resolves the setup URL for a tab, including default month/year for Budget. */

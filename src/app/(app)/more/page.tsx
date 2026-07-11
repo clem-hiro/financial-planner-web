@@ -82,22 +82,6 @@ export default async function MorePage() {
         </Link>
 
         <Link
-          href="/planning/overview"
-          className="rounded-2xl bg-linear-to-br from-white via-slate-50/50 to-emerald-50/15 p-5 ring-1 ring-slate-200/70 transition hover:ring-slate-300/90 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/30 dark:ring-slate-700/80 dark:hover:ring-slate-500/80"
-        >
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-            Planning
-          </p>
-          <p className="mt-2 text-lg font-semibold text-[#0c192f] dark:text-slate-50">
-            Workspace overview
-          </p>
-          <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
-            Jump back into modular planning without hunting tabs.
-          </p>
-          <p className={`mt-4 text-sm font-semibold ${appInlineLinkClass}`}>Open →</p>
-        </Link>
-
-        <Link
           href="/expenses"
           className="rounded-2xl bg-linear-to-br from-white via-slate-50/50 to-sky-50/20 p-5 ring-1 ring-slate-200/70 transition hover:ring-slate-300/90 dark:from-slate-950 dark:via-slate-900 dark:to-sky-950/30 dark:ring-slate-700/80 dark:hover:ring-slate-500/80"
         >

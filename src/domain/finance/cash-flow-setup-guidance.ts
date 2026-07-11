@@ -17,6 +17,7 @@ export type CashFlowSetupGuidanceInput = {
   profile: ProfileRow | null;
   monthlyIncome: number | null;
   activeMonthlyBudgetLineCount: number;
+  /** @deprecated Always resolves to Setup paths; kept for call-site compatibility. */
   pathVariant: BudgetPathVariant;
   month: string;
   calendarYear: number;
@@ -31,28 +32,6 @@ function hasBudgetLensSaved(profile: ProfileRow | null): boolean {
     profile.budgeting_strategy != null &&
     String(profile.budgeting_strategy).trim() !== "";
   return lifestyle && strategy;
-}
-
-function incomeAnchor(
-  pathVariant: BudgetPathVariant,
-  month: string,
-  calendarYear: number
-): string {
-  if (pathVariant === "planning") {
-    return "#planning-cashflow-profile";
-  }
-  return setupTabPath("profile", { month, year: String(calendarYear) });
-}
-
-function budgetLensAnchor(
-  pathVariant: BudgetPathVariant,
-  month: string,
-  calendarYear: number
-): string {
-  if (pathVariant === "planning") {
-    return "#planning-cashflow-lens";
-  }
-  return `${setupTabPath("budget", { month, year: String(calendarYear) })}#budget-plan-lens`;
 }
 
 /**
@@ -76,11 +55,10 @@ export function cashFlowSetupGaps(
       title: "Add monthly take-home income",
       detail:
         "Safe-to-spend, surplus charts, and income-aware quick-add presets stay approximate until income is saved.",
-      ctaHref: incomeAnchor(
-        input.pathVariant,
-        input.month,
-        input.calendarYear
-      ),
+      ctaHref: setupTabPath("profile", {
+        month: input.month,
+        year: String(input.calendarYear),
+      }),
       ctaLabel: "Set income",
     });
   }
@@ -102,11 +80,10 @@ export function cashFlowSetupGaps(
       title: "Use a starter budget lens (optional)",
       detail:
         "Pick a lifestyle and savings style to generate Singapore-oriented starter lines — helpful when you are not sure what to allocate yet.",
-      ctaHref: budgetLensAnchor(
-        input.pathVariant,
-        input.month,
-        input.calendarYear
-      ),
+      ctaHref: `${setupTabPath("budget", {
+        month: input.month,
+        year: String(input.calendarYear),
+      })}#budget-plan-lens`,
       ctaLabel: "Open budget lens",
     });
   }

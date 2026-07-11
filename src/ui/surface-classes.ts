@@ -1,6 +1,6 @@
 /** Default elevated surface — crisp white on slate border, calm depth. */
 export const appCardClass =
-  "rounded-2xl border border-slate-200/90 bg-white shadow-[0_1px_2px_rgba(12,25,47,0.04),0_16px_48px_-20px_rgba(12,25,47,0.07)] dark:border-slate-800/90 dark:bg-slate-950/88 dark:shadow-[0_1px_2px_rgba(0,0,0,0.2),0_16px_48px_-20px_rgba(0,0,0,0.7)]";
+  "rounded-2xl border border-slate-200/90 bg-white shadow-[0_1px_2px_rgba(12,25,47,0.04),0_16px_48px_-20px_rgba(12,25,47,0.07)] dark:border-slate-700/80 dark:bg-slate-800/95 dark:shadow-[0_1px_2px_rgba(0,0,0,0.15),0_16px_48px_-20px_rgba(0,0,0,0.45)]";
 
 /** Standard inner padding for card surfaces. */
 export const appCardPadding = "p-6 sm:p-8";

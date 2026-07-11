@@ -207,7 +207,6 @@ export async function createInvestmentAction(
   revalidatePath("/balances");
   revalidatePath("/dashboard");
   revalidateSetupAndPlanning();
-  revalidatePath("/planning/future");
   return { error: null as string | null };
 }
 
@@ -286,7 +285,6 @@ export async function updateInvestmentAction(
   revalidatePath("/balances");
   revalidatePath("/dashboard");
   revalidateSetupAndPlanning();
-  revalidatePath("/planning/future");
   return { error: null as string | null };
 }
 
@@ -318,7 +316,6 @@ export async function deleteInvestmentAction(
   revalidatePath("/balances");
   revalidatePath("/dashboard");
   revalidateSetupAndPlanning();
-  revalidatePath("/planning/future");
   return { error: null as string | null };
 }
 
@@ -342,7 +339,6 @@ export async function confirmInvestmentReviewAction(): Promise<{
   revalidatePath("/balances");
   revalidatePath("/dashboard");
   revalidateSetupAndPlanning();
-  revalidatePath("/planning/future");
   return { error: null };
 }
 
@@ -777,7 +773,6 @@ export async function createGoalAction(
     expected_annual_return: expectedAnnualReturn,
   });
 
-  revalidatePath("/planning/future");
   revalidateSetupAndPlanning();
   revalidatePath("/dashboard");
   return { error: null as string | null };
@@ -809,7 +804,6 @@ export async function reorderFinancialGoalAction(
     return { error: "Could not reorder goal" };
   }
 
-  revalidatePath("/planning/future");
   revalidateSetupAndPlanning();
   revalidatePath("/dashboard");
   return { error: null };
@@ -881,7 +875,6 @@ export async function updateGoalAction(
     return { error: "Could not update goal" };
   }
 
-  revalidatePath("/planning/future");
   revalidateSetupAndPlanning();
   revalidatePath("/dashboard");
   return { error: null as string | null };
@@ -1484,7 +1477,7 @@ function revalidateHousingPaths() {
   revalidatePath("/balances");
   revalidatePath("/budget");
   revalidatePath("/setup");
-  revalidatePath("/planning/wealth");
+  revalidatePath("/setup/overview");
 }
 
 function parseOptionalMoneyField(

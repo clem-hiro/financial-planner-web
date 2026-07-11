@@ -38,6 +38,17 @@ import { profileRetirementTargetsProps } from "@/features/goals/profile-retireme
 import { VehiclesPanel } from "@/features/goals/VehiclesPanel";
 import { BudgetPlanningView } from "@/features/budget/BudgetPlanningView";
 import { loadSetupTabBundle } from "@/features/planning/load-setup-tab-bundle";
+import { ProtectionPlanningSection } from "@/features/planning/sections/ProtectionPlanningSection";
+import {
+  AccountSyncingRoadmapCard,
+  AdvisorWorkspaceRoadmapCard,
+  AiInsightsRoadmapCard,
+  DocumentsVaultRoadmapCard,
+  ReportsRoadmapCard,
+  RetirementRoadmapCard,
+  ScenarioSimulatorRoadmapCard,
+  TaxEstimationRoadmapCard,
+} from "@/features/planning/roadmap-modules";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { SetupTabsNav } from "@/features/setup/SetupTabsNav";
 import { BudgetLensProfileForm } from "@/features/setup/BudgetLensProfileForm";
@@ -208,102 +219,112 @@ export default async function SetupPage({ searchParams }: PageProps) {
   }));
   const cashHistoryByAccountId = buildCashHistoryByAccountId(cashSnapshots);
 
+  const sectionPurpose: Record<string, string> = {
+    profile: "Income, birth date, and budgeting style that anchor projections.",
+    "add-account": "Balances and return assumptions for wealth projections.",
+    cpf: "OA, SA, MA and CPF investment entries for Singapore projections.",
+    income_tax: "Estimate annual tax from your saved income assumptions.",
+    housing: "Properties you own and optional linked mortgages.",
+    vehicles: "Vehicle loans and running costs that feed budget and net worth.",
+    "cash-liabilities": "Cash buffers and debts outside housing and vehicle loans.",
+    protection: "Resilience roadmap — insurance, dependents, and estate placeholders.",
+    budget: "Plan monthly categories and compare to logged spend.",
+    goals: "Savings targets, retirement assumptions, and monthly contributions.",
+    "advisor-proposals": "Review plan suggestions from your linked advisor.",
+  };
+
   return (
-    <div className="flex flex-col gap-5 sm:gap-8">
-      <div className="order-1 rounded-2xl border border-slate-200 bg-white px-4 py-4 shadow-sm dark:border-slate-700/80 dark:bg-slate-900 dark:shadow-none sm:px-6 sm:py-5">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
-              Financial setup
-            </p>
-            <h1 className="mt-1 text-xl font-semibold tracking-tight text-zinc-900 dark:text-slate-50 sm:text-2xl">
-              Edit {activeTabLabel}
-            </h1>
-            <p className="mt-1 text-sm text-zinc-600 dark:text-slate-300">
-              This is one setup section. Use Overview to see progress and the
-              next recommended step.
-            </p>
-          </div>
-          <Link
-            href={SETUP_OVERVIEW_PATH}
-            className="inline-flex shrink-0 items-center text-sm font-semibold text-slate-600 transition hover:text-slate-900 dark:text-slate-300 dark:hover:text-slate-50"
-          >
-            Back to overview →
-          </Link>
-        </div>
-        <p className="mt-3 flex flex-wrap gap-x-3 text-xs text-zinc-600 dark:text-slate-400">
-          <MethodologyOpenLink topicId="net-worth" className={appInlineLinkClass}>
-            Net worth methodology →
-          </MethodologyOpenLink>
-        </p>
-      </div>
+    <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:gap-8">
+      <SetupTabsNav
+        tabs={setupTabs}
+        activeTab={activeTab}
+        overviewHref={SETUP_OVERVIEW_PATH}
+        buildHref={(tabId) => setupTabPath(tabId, sp)}
+        badges={{ "advisor-proposals": pendingProposalCount }}
+      />
 
-      <div className="order-2 sm:order-3">
-        <SetupTabsNav
-          tabs={setupTabs}
-          activeTab={activeTab}
-          overviewHref={SETUP_OVERVIEW_PATH}
-          buildHref={(tabId) => setupTabPath(tabId, sp)}
-          badges={{ "advisor-proposals": pendingProposalCount }}
-        />
-      </div>
+      <div className="min-w-0 flex-1 space-y-5 sm:space-y-8">
+      <header className="space-y-1">
+        <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-slate-50 sm:text-[1.65rem]">
+          {activeTabLabel}
+        </h1>
+        {sectionPurpose[activeTab] ? (
+          <p className="max-w-2xl text-sm text-slate-600 dark:text-slate-300">
+            {sectionPurpose[activeTab]}
+            {activeTab === "profile" ||
+            activeTab === "add-account" ||
+            activeTab === "cash-liabilities" ||
+            activeTab === "housing" ||
+            activeTab === "vehicles" ? (
+              <>
+                {" "}
+                <MethodologyOpenLink
+                  topicId="net-worth"
+                  className={`text-sm ${appInlineLinkClass}`}
+                >
+                  How net worth uses this →
+                </MethodologyOpenLink>
+              </>
+            ) : null}
+          </p>
+        ) : null}
+      </header>
 
-      <div className="order-3 flex flex-col gap-5 sm:order-4 sm:gap-8">
+      <div className="flex flex-col gap-5 sm:gap-8">
       {activeTab === "profile" ? (
-        <div className="transition-opacity duration-150 ease-out">
-          <PageSection id="profile-assumptions" title="Profile basics">
-            <div className="space-y-6">
-              <ProfileIncomeForm
-                key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.salary_increment_month ?? ""}-${financialProfile?.onboarding_completed_at ?? ""}`}
-                initialIncome={income}
-                initialGross={gross}
-                initialCpfAgeBand={cpfBand}
-                initialAnnualBonus={
-                  financialProfile?.annual_bonus != null &&
-                  String(financialProfile.annual_bonus).trim() !== ""
-                    ? num(financialProfile.annual_bonus)
-                    : null
-                }
-                initialAnnualBonusMonths={
-                  financialProfile?.annual_bonus_months != null &&
-                  String(financialProfile.annual_bonus_months).trim() !== ""
-                    ? num(financialProfile.annual_bonus_months)
-                    : null
-                }
-                initialAnnualSalaryGrowthPercent={
-                  financialProfile?.annual_salary_growth_nominal != null &&
-                  String(financialProfile.annual_salary_growth_nominal).trim() !== ""
-                    ? num(financialProfile.annual_salary_growth_nominal) * 100
-                    : null
-                }
-                initialBirthDate={financialProfile?.birth_date ?? null}
-                initialSalaryIncrementMonth={
-                  financialProfile?.salary_increment_month ?? null
-                }
-                onboardingCompletedAt={
-                  financialProfile?.onboarding_completed_at ?? null
-                }
-                cpfYearMonth={formatYearMonth(new Date())}
-                currencyCode={currency}
-              />
-              <BudgetLensProfileForm
-                initialLifestyle={financialProfile?.lifestyle_profile ?? null}
-                initialStrategy={financialProfile?.budgeting_strategy ?? null}
-                initialConfidence={
-                  financialProfile?.onboarding_confidence_level ?? null
-                }
-                initialFoodSpendBand={financialProfile?.food_spend_band ?? null}
-                monthlyIncome={income}
-                currency={currency}
-                replaceableMonthlyLineCount={replaceableMonthlyLineCount}
-              />
-            </div>
-          </PageSection>
+        <div
+          id="profile-assumptions"
+          className="transition-opacity duration-150 ease-out space-y-6"
+        >
+          <ProfileIncomeForm
+            key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.salary_increment_month ?? ""}-${financialProfile?.onboarding_completed_at ?? ""}`}
+            initialIncome={income}
+            initialGross={gross}
+            initialCpfAgeBand={cpfBand}
+            initialAnnualBonus={
+              financialProfile?.annual_bonus != null &&
+              String(financialProfile.annual_bonus).trim() !== ""
+                ? num(financialProfile.annual_bonus)
+                : null
+            }
+            initialAnnualBonusMonths={
+              financialProfile?.annual_bonus_months != null &&
+              String(financialProfile.annual_bonus_months).trim() !== ""
+                ? num(financialProfile.annual_bonus_months)
+                : null
+            }
+            initialAnnualSalaryGrowthPercent={
+              financialProfile?.annual_salary_growth_nominal != null &&
+              String(financialProfile.annual_salary_growth_nominal).trim() !== ""
+                ? num(financialProfile.annual_salary_growth_nominal) * 100
+                : null
+            }
+            initialBirthDate={financialProfile?.birth_date ?? null}
+            initialSalaryIncrementMonth={
+              financialProfile?.salary_increment_month ?? null
+            }
+            onboardingCompletedAt={
+              financialProfile?.onboarding_completed_at ?? null
+            }
+            cpfYearMonth={formatYearMonth(new Date())}
+            currencyCode={currency}
+          />
+          <BudgetLensProfileForm
+            initialLifestyle={financialProfile?.lifestyle_profile ?? null}
+            initialStrategy={financialProfile?.budgeting_strategy ?? null}
+            initialConfidence={
+              financialProfile?.onboarding_confidence_level ?? null
+            }
+            initialFoodSpendBand={financialProfile?.food_spend_band ?? null}
+            monthlyIncome={income}
+            currency={currency}
+            replaceableMonthlyLineCount={replaceableMonthlyLineCount}
+          />
         </div>
       ) : null}
 
       {activeTab === "add-account" ? (
-        <div className="transition-opacity duration-150 ease-out">
+        <div className="transition-opacity duration-150 ease-out space-y-6">
           <PageSection
             id="add-investment"
             title="Investments"
@@ -326,6 +347,12 @@ export default async function SetupPage({ searchParams }: PageProps) {
               ) : null}
             </div>
           </PageSection>
+          <section className="space-y-3">
+            <h3 className="text-sm font-semibold text-zinc-900 dark:text-slate-50">
+              Coming soon
+            </h3>
+            <AccountSyncingRoadmapCard />
+          </section>
         </div>
       ) : null}
 
@@ -421,6 +448,12 @@ export default async function SetupPage({ searchParams }: PageProps) {
         </div>
       ) : null}
 
+      {activeTab === "protection" ? (
+        <div className="transition-opacity duration-150 ease-out">
+          <ProtectionPlanningSection />
+        </div>
+      ) : null}
+
       {activeTab === "budget" ? (
         <div className="transition-opacity duration-150 ease-out">
           <BudgetPlanningView
@@ -431,7 +464,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
       ) : null}
 
       {activeTab === "goals" ? (
-        <div className="transition-opacity duration-150 ease-out">
+        <div className="transition-opacity duration-150 ease-out space-y-8">
           <FinancialGoalsPanels
             goals={goals}
             investments={investments}
@@ -439,6 +472,18 @@ export default async function SetupPage({ searchParams }: PageProps) {
             userId={user.id}
             {...profileRetirementTargetsProps(financialProfile)}
           />
+          <section className="space-y-4">
+            <h3 className="text-lg font-semibold tracking-tight text-[#0c192f] dark:text-slate-50">
+              Coming modules
+            </h3>
+            <div className="grid gap-4 md:grid-cols-2">
+              <RetirementRoadmapCard />
+              <ScenarioSimulatorRoadmapCard />
+              <TaxEstimationRoadmapCard />
+              <ReportsRoadmapCard />
+              <DocumentsVaultRoadmapCard />
+            </div>
+          </section>
         </div>
       ) : null}
 
@@ -463,6 +508,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           </PageSection>
         </div>
       ) : null}
+      </div>
       </div>
     </div>
   );

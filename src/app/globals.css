@@ -28,17 +28,18 @@
   --exec-navy: #dbeafe;
   --exec-navy-soft: #bfdbfe;
   --exec-navy-tint: #93c5fd;
-  --exec-surface: #020617;
-  --exec-white: #0f172a;
+  /* Lifted from near-black slate-950 so dark mode feels less oppressive. */
+  --exec-surface: #111827;
+  --exec-white: #1e293b;
   --exec-ink: #e5e7eb;
   --exec-muted: #94a3b8;
   --exec-emerald: #34d399;
-  --exec-emerald-soft: #052e2b;
-  --exec-sky-soft: #082f49;
+  --exec-emerald-soft: #064e3b;
+  --exec-sky-soft: #0c4a6e;
   --theme-active-pill-from: #6ee7b7;
   --theme-active-pill-mid: #7dd3fc;
   --theme-active-pill-to: #5eead4;
-  --chart-grid: #334155;
+  --chart-grid: #475569;
   --background: var(--exec-surface);
   --foreground: var(--exec-ink);
 }
@@ -93,7 +94,7 @@ dialog::backdrop {
   background-color: var(--exec-navy-soft);
 }
 .dark .exec-navy-btn {
-  color: rgb(2 6 23);
+  color: rgb(17 24 39);
 }
 
 /*
@@ -102,13 +103,17 @@ dialog::backdrop {
    keeps older feature surfaces legible while the codebase is migrated.
 */
 .dark :is(.bg-white, .bg-white\/88, .bg-white\/90, .bg-white\/95, .bg-white\/98) {
-  background-color: rgb(15 23 42 / 0.92);
+  background-color: rgb(30 41 59 / 0.96);
 }
 .dark :is(.bg-white\/55, .bg-white\/60, .bg-white\/70, .bg-white\/80, .bg-white\/85) {
-  background-color: rgb(15 23 42 / 0.78);
+  background-color: rgb(30 41 59 / 0.84);
 }
 .dark :is(.bg-slate-50, .bg-slate-50\/40, .bg-slate-50\/50, .bg-slate-50\/60, .bg-slate-50\/80, .bg-slate-50\/90, .bg-slate-50\/95, .bg-slate-100, .bg-slate-100\/80, .bg-slate-100\/90, .bg-zinc-50, .bg-zinc-50\/40, .bg-zinc-50\/50, .bg-zinc-50\/60, .bg-zinc-50\/80, .bg-zinc-50\/90, .bg-zinc-100, .bg-zinc-100\/90) {
-  background-color: rgb(30 41 59 / 0.72);
+  background-color: rgb(51 65 85 / 0.68);
+}
+/* Near-black slate-950 cards → slate-800 so they sit above the lifted canvas. */
+.dark :is(.bg-slate-950, .bg-slate-950\/80, .bg-slate-950\/88, .bg-slate-950\/90, .bg-slate-950\/95, .bg-slate-950\/98) {
+  background-color: rgb(30 41 59 / 0.96);
 }
 .dark :is(.bg-amber-50, .bg-amber-50\/40, .bg-amber-50\/60, .bg-amber-50\/70, .bg-amber-50\/80, .bg-amber-50\/95, .bg-amber-100) {
   background-color: rgb(69 26 3 / 0.62);
@@ -183,16 +188,16 @@ dialog::backdrop {
   color-scheme: dark;
 }
 .dark :is(.from-white, .from-slate-50\/90, .from-slate-50\/95, .from-zinc-100\/90) {
-  --tw-gradient-from: rgb(15 23 42 / 0.96);
+  --tw-gradient-from: rgb(30 41 59 / 0.98);
   --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
 }
 .dark :is(.via-white, .via-slate-50, .via-slate-50\/40, .via-zinc-50\/60) {
-  --tw-gradient-via: rgb(15 23 42 / 0.9);
+  --tw-gradient-via: rgb(30 41 59 / 0.92);
   --tw-gradient-via-stops: var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-via) var(--tw-gradient-via-position), var(--tw-gradient-to) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-via-stops);
 }
 .dark :is(.to-slate-50, .to-slate-50\/50, .to-slate-50\/90, .to-zinc-50, .to-zinc-50\/60, .to-zinc-50\/90, .to-zinc-100\/90) {
-  --tw-gradient-to: rgb(30 41 59 / 0.82);
+  --tw-gradient-to: rgb(51 65 85 / 0.78);
 }
 .dark :is(.from-amber-50\/95, .via-amber-50, .via-amber-50\/80, .to-amber-50) {
   --tw-gradient-from: rgb(69 26 3 / 0.62);

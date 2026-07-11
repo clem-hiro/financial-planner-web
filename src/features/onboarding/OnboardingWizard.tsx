@@ -745,7 +745,7 @@ export function OnboardingWizard(props: Props) {
           </ul>
           <div className="flex flex-wrap gap-3 text-sm">
             <Link
-              href="/planning/future"
+              href="/setup?tab=goals"
               className="font-medium text-emerald-800 underline decoration-emerald-600/40 underline-offset-2"
             >
               Open Goals

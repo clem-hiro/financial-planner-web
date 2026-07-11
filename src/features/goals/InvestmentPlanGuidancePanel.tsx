@@ -65,7 +65,7 @@ export function InvestmentPlanGuidancePanel({
         <p className="rounded-lg border border-emerald-200 bg-emerald-50/80 px-3 py-2.5 text-xs leading-relaxed text-emerald-950 dark:border-emerald-400/50 dark:bg-emerald-400/12 dark:text-emerald-100">
           <strong className="font-semibold">Investments is the right place.</strong>{" "}
           Enter fund value and premiums here for wealth projections. When{" "}
-          <Link href="/planning/protection" className="font-medium underline">
+          <Link href="/setup?tab=protection" className="font-medium underline">
             Protection → Insurance
           </Link>{" "}
           ships, you will not need to duplicate the same dollars there.
@@ -77,7 +77,7 @@ export function InvestmentPlanGuidancePanel({
           <strong className="font-semibold">Use both sections for different facts.</strong>{" "}
           Record <em>investment value and premiums</em> here for net worth and
           retirement charts. When insurance tracking is available under{" "}
-          <Link href="/planning/protection" className="font-medium underline">
+          <Link href="/setup?tab=protection" className="font-medium underline">
             Protection
           </Link>
           , add <em>coverage sums and riders</em> there — not the same fields twice.

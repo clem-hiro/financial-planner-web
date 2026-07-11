@@ -23,7 +23,7 @@ The **client** product surface is tracked as a **UI / information-architecture g
 | Generation | Summary |
 |------------|---------|
 | **Version 1** | Earlier shell: fuller top navigation (e.g. Profile as a primary tab), planning centered on **Financial setup** tabs and related redirects without modular **`/planning/**`** workspaces. |
-| **Version 2** (current) | **Major UI / IA change:** compact top nav (**Home**, **Planning**, **Activity**, **More**), **`/planning/**`** section workspaces (Overview, Cash Flow, Wealth, Protection, Future), **`/more`** hub + account menu for secondary actions, roadmap **placeholder** cards, and Home framed as a **command center**. Business logic, APIs, and most routes were kept compatible using **adapters** and redirects. |
+| **Version 2** (current) | **Major UI / IA change:** compact top nav (**Home**, **Financial setup**, **Activity**, **More**). Financial setup is the single editor + progress hub (including Protection roadmap and goals coming-modules). Legacy **`/planning/**`** routes redirect into Setup. Home framed as a **command center**. Business logic kept compatible via adapters and redirects. |
 
 **Where it is defined in code:** `src/lib/client-release.ts` (`CLIENT_UI_VERSION`, `CLIENT_UI_VERSION_LABEL`). Shown on **`/more`**. Optional override: **`NEXT_PUBLIC_CLIENT_UI_VERSION`** (e.g. `2.1`) in env at build time.
 
@@ -31,18 +31,18 @@ The **client** product surface is tracked as a **UI / information-architecture g
 
 ## Information architecture & navigation philosophy
 
-**Top navigation (client shell)** is intentionally small: **Home**, **Planning**, **Activity**, **More**. Deep or secondary destinations (profile assumptions, methodology, sign out) live in the **account menu** and the **More** hub so the header stays quiet and scalable.
+**Top navigation (client shell)** is intentionally small: **Home**, **Financial setup**, **Activity**, **More**. Deep or secondary destinations (profile assumptions, methodology, sign out) live in the **account menu** and the **More** hub so the header stays quiet and scalable.
 
-**Home vs Planning vs Activity vs More**
+**Home vs Financial setup vs Activity vs More**
 
 | Surface | Role |
 |--------|------|
 | **Home** (`/dashboard`) | **Today’s financial command center**: overview metrics (safe to spend, net worth, savings rate, spend basis), projected wealth, and this-month budget check — prioritized signals, not every module. |
-| **Planning** (`/planning/...`) | **Modular planning workspaces** composed by section: Overview, Cash Flow, Wealth, Protection, Future. Uses the **same business logic and forms** as Financial setup where real data exists; adds **roadmap placeholder cards** for upcoming modules. |
+| **Financial setup** (`/setup`, `/setup/overview`) | **Single editor + progress hub**: profile, investments, CPF, housing, vehicles, cash & debts, protection roadmap, budget, goals, income tax, advisor proposals. Roadmap placeholder cards live here (hub + Goals / Investments / Protection tabs) — not a second form surface. |
 | **Activity** (`/expenses`) | **Cash activity & spending**: expenses, charts, and month-scoped guidance tied to the budget model. |
-| **More** (`/more`) | **Secondary destinations**: profile deep link, planning entry, activity hub, methodology launcher — keeps the top bar from becoming a junk drawer. |
+| **More** (`/more`) | **Secondary destinations**: setup hub, activity, methodology launcher — keeps the top bar from becoming a junk drawer. |
 
-**Classic routes** (`/setup` with tabs, `/goals`, `/balances`, `/budget`, `/financial-profile`) remain valid: many redirect into the new IA for continuity and bookmarks.
+**Classic / legacy routes** (`/goals`, `/balances`, `/budget`, `/financial-profile`, `/planning/**`) redirect into Financial setup for continuity and bookmarks.
 
 ---
 
@@ -71,8 +71,8 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | Contact advisor (WhatsApp) | **Shipped** | Client shell **Contact advisor**; `get_my_advisor_contact()` after advisor phone verification. |
 | `/account-issue` when client `advisor_user_id` missing | **Shipped** | Data-integrity / support path. |
 | **Consent-gated advisor access** + client consent control | **Shipped** | Advisor reads of client financial data require **active client consent**, enforced in-DB via SECURITY DEFINER `advisor_read_*` RPCs (chokepoint; legacy direct-advisor `financial_*` RLS dropped). Client grants/withdraws via reusable **`AdvisorConsentDialog`** only on `/more` (callout or “Manage access” opens modal; inbox/account-menu `#privacy-advisor-access` deep-link opens same modal). Inbox `advisor_consent_request` + account-menu amber cue until active. Separate consent gate on **Contact advisor** (`ContactAdvisorButton`). Append-only `advisor_client_consents` ledger, latest-event-wins with monotonic `seq`; per-event verbatim `consent_text`/`consent_version` (`2026-05-18.option-b`). Migration `20260529000000`; ship gate `verify_consent_gated_access()` = `OK` on prod. |
-| **Client UI v2** shell: Home, Planning, Activity, More | **Shipped** | `AppShell`, `AppShellNav` (`AppShellMobileNav` / `AppShellDesktopNav`); mobile header + scrollable setup tabs; version label `src/lib/client-release.ts`, shown on `/more`. |
-| Classic URL redirects to v2 IA | **Shipped** | `/balances` → wealth, `/budget` → cash-flow, etc. |
+| **Client UI v2** shell: Home, Financial setup, Activity, More | **Shipped** | `AppShell`, `AppShellNav` (`AppShellMobileNav` / `AppShellDesktopNav`); mobile header + scrollable setup tabs; version label `src/lib/client-release.ts`, shown on `/more`. Planning removed from top nav — `/planning/**` redirects into Setup. |
+| Classic URL redirects to v2 IA | **Shipped** | `/balances` → Setup investments; `/budget` → Setup budget; `/goals` → Setup goals; `/planning/**` → matching Setup hub/tabs. |
 | Email confirmation redirect `/auth/callback` | **Shipped** | `src/app/auth/callback/route.ts` — exchanges the one-time `code` for a session via `supabase.auth.exchangeCodeForSession`, then redirects (default `/`; root page routes by role). Required when Supabase **Confirm Email** is ON. Doubles as the landing for magic-link / OAuth flows if those are added later. |
 | Review advisor-proposed plan changes | **Shipped** | Full-page **`/review/proposal/[id]`** — before/after by section, advisor note, accept/reject. Canonical tracker updates only on accept. |
 | Financial inbox notifications (bell) | **Shipped** | `financial_inbox_notifications`; salary-review + advisor-proposal producers. |
@@ -90,30 +90,29 @@ Use this as the source of truth for **what exists today** versus **UI placeholde
 | **CPF retirement projection + CPF Investments** (OA/SA investment entries, FRS/BRS/ERS estimates, age-55 RA simulation, educational scenarios) | **Shipped** | Setup/Wealth → CPF & CPF Investments supports **CPF balance as-of month** (projection starts the following month), multiple OA/SA investment entries with purchase month, single vs regular premium, amount, growth, and maturity month. Home **Projected wealth** shows the CPF-by-age chart with a one-line year-end total (no standalone year-end card); RA-at-55 panel below chart. If no CPF balance row exists, forward projections start from virtual $0 CPF buckets while current net worth still only counts saved CPF balances. `buildCpfMonthlyProjectionSeries` uses the 2026 CPF allocation ratios, caps MA at the applicable Basic Healthcare Sum (official values through 2026; future years estimated at 4% p.a. until CPF releases figures), overflows MA excess to SA, deducts future CPF investment premiums, carries notional CPF investment value, and routes maturity proceeds: OA → OA; SA before 55 → SA; SA after SA closure → RA first, then OA. |
 | Embedded “AI insights” as generative product | **Planned** | Roadmap card only; static `InsightCard` / copy where used. |
 
-### Client — Planning (`/planning/...`)
+### Client — Planning (folded into Financial setup)
 
 | Section | Status | Notes |
 |---------|--------|--------|
-| **Overview** | **Partial** | Live snapshot metrics from dashboard payload; roadmap cards for advisor collaboration extensions and AI layer are **planned**. |
-| **Cash flow** | **Shipped** | Budget workspace + progressive income/assumptions (`CashFlowPlanningSection`, `BudgetPlanningView`). Hero shows take-home, monthly planned total, and **Free Cash Flow** (unallocated cash plus Savings / future-you budget lines). The visible Investments budget row is sourced from active Setup → Investments monthly contributions; manual budget lines named “Investments” are ignored so setup stays the source of truth. Goal monthly commitments remain separate footnotes (`budget-cash-flow-allocation.ts`). Incomplete-setup checklist banner when income or monthly plan is missing (`cash-flow-setup-guidance.ts`, `CashFlowSetupGuidanceBanner`). |
-| **Wealth** | **Shipped** | Same underlying data as Setup: investments, CPF, cash/debts, housing, vehicles. Debts support loan categories, repayment estimates (amortized / flat / revolving), budget sync, and payoff-aware projections (`DebtPlanningPanels`, `debt-repayment.ts`). |
-| **Protection** | **Partial** | Emergency-fund **recommendation** + link to Wealth for cash; insurance, dependents, estate, risk cards are **planned** (`ProtectionPlanningSection`). |
-| **Future** | **Partial** | **Goals** CRUD is **shipped** (`FinancialGoalsPanels`); per-goal **feasibility** (deadline math vs priority-funded surplus — extend date or free cash) is **shipped** (`goal-feasibility.ts`, `GoalFeasibilityNotice`). Dedicated “retirement studio”, scenario compare, tax lens, exports, vault are **planned** cards (Home already shows projection **charts**). |
+| **Modular `/planning/**` workspaces** | **Folded** | Top-nav Planning removed. Routes redirect: overview → `/setup/overview`; cash-flow → Setup budget; wealth → investments; protection → Setup `?tab=protection`; future → goals. Editors are not duplicated. |
+| **Protection roadmap** | **Shipped** | Lives under Setup **Protection** tab (`ProtectionPlanningSection`) + hub protection modules. |
+| **Roadmap placeholder cards** | **Shipped** | Mounted on Setup hub (Advisor/AI), Investments (account syncing), Goals (coming modules), and Protection — not a second Planning shell. |
+| **Cash flow / Wealth / Future editors** | **Shipped** | Canonical under Setup tabs (budget, wealth tabs, goals). |
 
 ### Client — Activity & setup
 
 | Capability | Status | Notes |
 |------------|--------|--------|
 | Expenses list / add / charts / month guidance | **Shipped** | `/expenses` (and `/activity` alias); APIs under `src/app/api/expenses/`. |
-| Spending guidance (budget vs actual) | **Shipped** | `SpendGuidancePanel` on Activity (expenses) and Cash flow budget workspace — not on Home dashboard. |
+| Spending guidance (budget vs actual) | **Shipped** | `SpendGuidancePanel` on Activity (expenses) and Setup budget tab — not on Home dashboard. |
 | Profile income / CPF assumptions | **Shipped** | Setup **profile** tab — income, bonus, birth date, CPF salary path; onboarding sync banner. No retirement fields. |
 | CPF balance tracking (Setup) | **Shipped** | Setup → CPF; captures OA / SA / MA plus balance-as-of month, feeds Home year-end CPF projection and Wealth. If absent, Home can still project future CPF salary inflows from $0 without adding CPF to current net worth. |
 | Cash account balances | **Shipped** | Setup cash/debts; net worth and emergency-fund context. Liquidity **buckets** (emergency fund, everyday spending, short-term savings, other) per account; **balance history** snapshots on create/save (`financial_cash_account_snapshots`, migration `20260601020000_*`). |
 | Vehicle planning (loan + running costs) | **Shipped** | Setup → vehicles; loan feeds net worth / debt projections; instalment, petrol, insurance, road tax, and maintenance auto-sync to budget lines. Simplified form — no COE/PARF/resale modelling. |
-| Financial goals (targets, contributions) | **Shipped** | Setup goals tab + Future workspace; **Retirement targets** (`RetirementTargetsForm`: age, spend, expense growth, dividend yield, withdrawal rate); savings goals CRUD; priority order and monthly trade-off panel. |
+| Financial goals (targets, contributions) | **Shipped** | Setup goals tab; **Retirement targets** (`RetirementTargetsForm`: age, spend, expense growth, dividend yield, withdrawal rate); savings goals CRUD; priority order and monthly trade-off panel; coming-modules roadmap cards below goals. |
 | Income tax estimation lens | **Partial** | Setup → Income tax tab + `/api/income-tax`; review assumptions and known gaps. |
 | **Financial Setup Hub** (progress, section status, recommended next step) | **Shipped** | `/setup/overview` and bare `/setup` as the stable Financial setup landing experience; config in `src/domain/setup/modules.ts`, evaluators in `src/domain/setup/evaluators.ts`, loader `src/data/setup-status.ts`. Legacy `/planning/setup` redirects here. |
-| Financial Setup tabs (profile → goals) | **Shipped** | `/setup?tab=…` (focused editors); `SetupTabsNav` scrollable pills on mobile and includes Overview so users can move between progress hub and editor sections without feeling they changed products. Housing and Vehicles precede Cash and debts so source-owned loans are entered at their asset setup point before the consolidated debt register. Mirrored in Planning where noted; hub links into each tab/workspace. |
+| Financial Setup tabs (profile → goals) | **Shipped** | `/setup?tab=…` (focused editors); **desktop** grouped sticky side nav (Progress / Core / Wealth / Protection / Future / Advisor); **mobile** horizontal scroll rail. Includes **Protection** (roadmap). Housing and Vehicles precede Cash and debts in the flat tab list for loan-register ordering. Hub links into each tab. |
 | Budget lines, overrides, strategy insights, recurring budget review, irregular expense reserves | **Shipped** | Repositories + `src/domain/finance/budget*.ts`; budget workspace now includes a month-by-month review workflow for planned categories, actual spend, temporary overrides, unbudgeted spend, scheduled/inactive lines, and annual / irregular expense reserve planning with quarterly, semi-annual, annual, and monthly set-aside helpers. |
 | SG-oriented guided budget templates (onboarding + domain) | **Shipped** | `budget-guided-setup.ts`, onboarding actions. |
 | Investments with contribution phase, step-ups, component income, and withdrawals | **Shipped** | DB migrations `20260516000000_*` + `20260601010000_*` + `20260624000000_*` + `20260627000000_investment_income_and_yearly_withdrawal.sql`; Setup/Wealth → Investments; FV helpers support until-retirement / fixed-duration / **calendar premium end** contributions, ILP guidance (pure investment vs bundled cover, double-count reminder), annual contribution step-ups, per-component `investment_income_rate_annual` (pure-investment dividends or ILP post-maturity cash income), planned yearly withdrawals with legacy monthly fallback, ILP plan-start/maturity validation, withdrawal start age entry when profile age is known, assumption banners, and annual review reminders via `last_investment_review_at` + `investment-review.ts`. |
@@ -174,7 +173,7 @@ These match `roadmap-modules.tsx` — all **Planned** as standalone modules unle
 
 **Recommended next step:** Highest-priority incomplete module from `SETUP_RECOMMENDATION_PRIORITY` (configurable order in `modules.ts`). Rendered as a compact action strip so it nudges the next action without pushing module cards far down the page.
 
-**Card destinations:** Modules that already have Financial setup editors link to `/setup?tab=…` so users stay in the same nav area. Planning workspace links are reserved for sections without a setup editor yet (for example protection modules) or for richer planning/roadmap workspaces. Financial modules should not point to **More**; More stays account/help/admin.
+**Card destinations:** Modules that already have Financial setup editors link to `/setup?tab=…`. Protection / documents roadmap modules also stay under Setup (`?tab=protection` / `?tab=goals`). Financial modules should not point to **More**; More stays account/help/admin.
 
 **Checklist hierarchy:** Module groups include short descriptions and completion counts. Four-card groups use a four-column desktop grid where space allows, reducing orphan rows and making the hub read like a grouped checklist rather than a long wall of cards. “Records & Readiness” covers risk profile and future document vault items.
 
@@ -210,7 +209,7 @@ Card badges describe product **intent**, not implementation depth — use **[Fea
 
 - **Registry-friendly modules:** new domains should plug in as **section cards** + optional **repository** layers, not new top-level tabs by default.
 - **Adapter-first migration:** prefer **URL adapters**, **shared loaders** (e.g. `loadSetupTabBundle`), and **href builders** (`setupBudgetPath` vs `planningCashFlowBudgetPath`) over destructive rewrites.
-- **Revalidation:** `revalidateSetupAndPlanning()` (`src/lib/planning-revalidate.ts`) keeps `/setup` and `/planning/**` coherent after mutations.
+- **Revalidation:** `revalidateSetupAndPlanning()` (`src/lib/planning-revalidate.ts`) keeps `/setup` (and legacy `/planning/**` redirect routes) coherent after mutations.
 
 ---
 
@@ -246,12 +245,12 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 | `/login` | Standalone sign-in / sign-up (`src/app/login/page.tsx`, `LoginForm`). Not wrapped in `(app)` shell. |
 | `/dashboard` | **Client Home / command center**: net worth, savings, month activity, retirement/CPF (`(app)/dashboard`). Advisors hitting client routes are redirected to `/advisor`. |
 | `/home` | **Client alias** → `/dashboard` (`(app)/(client)/home/page.tsx`). |
-| `/planning` | Redirect → `/planning/overview` (`(app)/planning/page.tsx`). |
-| `/planning/overview` | Planning workspace: snapshot-style overview + dashboard overview reuse + roadmap card(s). |
-| `/planning/cash-flow` | Budget workspace + progressive “Advanced” income & assumptions (`BudgetPlanningView` + profile forms). |
-| `/planning/wealth` | Balance sheet workspace: investments, CPF, cash/debts, housing, vehicles (same components as Setup). |
-| `/planning/protection` | **Partial:** emergency-fund recommendation + roadmap placeholder cards; edit cash under Wealth. |
-| `/planning/future` | **Partial:** goals (CRUD) **shipped**; retirement/scenario/tax/report/vault cards are placeholders (Home has projection charts). |
+| `/planning` | Redirect → `/setup/overview`. |
+| `/planning/overview` | Redirect → `/setup/overview`. |
+| `/planning/cash-flow` | Redirect → `/setup?tab=budget` (preserves month/year). |
+| `/planning/wealth` | Redirect → `/setup?tab=add-account`. |
+| `/planning/protection` | Redirect → `/setup?tab=protection`. |
+| `/planning/future` | Redirect → `/setup?tab=goals`. |
 | `/activity` | **Client alias** → `/expenses` (`(app)/(client)/activity/page.tsx`). |
 | `/profile` | **Client alias** → `/setup?tab=profile` (`(app)/(client)/profile/page.tsx`). |
 | `/more` | Secondary hub: profile, planning entry, activity, methodology, and **Client UI version** strip (`(app)/more/page.tsx`, `src/lib/client-release.ts`). |
@@ -267,10 +266,10 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 | `/expenses` | **Activity / spending** hub: add/list expenses, charts, spend guidance (`(app)/expenses`). |
 | `/spending` | **Alias**: server redirect to `/expenses`. |
 | `/setup` | Redirects to the **Financial setup overview** (`/setup/overview`). Focused editors remain at `/setup?tab=profile`, `/setup?tab=housing`, etc. |
-| `/balances` | Redirect → `/planning/wealth` (wealth workspace). |
-| `/budget` | Redirect → `/planning/cash-flow` with month/year query (same budget UI). |
+| `/balances` | Redirect → `/setup?tab=add-account`. |
+| `/budget` | Redirect → `/setup?tab=budget` with month/year query. |
 | `/financial-profile` | Redirect → `/setup?tab=profile`. |
-| `/goals` | Redirect → `/planning/future` (goals live in Future workspace). |
+| `/goals` | Redirect → `/setup?tab=goals`. |
 | `/onboarding` | Post-auth wizard when profile requires onboarding (`OnboardingWizard`). |
 | `/account-issue` | Shown when a **client** profile has no `advisor_user_id` (data integrity / support path). |
 
@@ -311,12 +310,12 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 **`src/features/app-shell/AppShell.tsx`**
 
 - Header: brand link ( **`/dashboard`** for clients, **`/advisor`** for advisors ), subtitle (“Private wealth clarity” vs “Advisor workspace”), optional **main nav**, client **Contact advisor**, advisor phone prompt, **How it works** button, **account menu** (signed-in) or **Sign in**.
-- **`AppShellNav`** (**client** only): **Home** → `/dashboard`; **Planning** → `/planning/overview` (active on `/planning/**`, `/setup/**`, `/balances`, `/budget`, `/financial-profile`, `/goals`); **Activity** → `/expenses` (active on `/expenses`, `/spending`); **More** → `/more` (active on `/more`, `/account-issue`). Split into **`AppShellMobileNav`** (hamburger + full-screen drawer) and **`AppShellDesktopNav`** (centered pill rail) so layout can differ by breakpoint without duplicating route logic.
+- **`AppShellNav`** (**client** only): **Home** → `/dashboard`; **Financial setup** → `/setup/overview` (active on `/setup/**`, `/planning/**`, `/balances`, `/budget`, `/financial-profile`, `/goals`); **Activity** → `/expenses` (active on `/expenses`, `/spending`); **More** → `/more` (active on `/more`, `/account-issue`). Split into **`AppShellMobileNav`** (hamburger + full-screen drawer) and **`AppShellDesktopNav`** (centered pill rail) so layout can differ by breakpoint without duplicating route logic.
 - **`AppShellUserMenu`**: avatar + email, links to profile (`/setup?tab=profile`), **More**, **How it works** (methodology sheet), **Sign out**.
 - Advisor navigation is rendered in a dedicated sidebar under `src/app/(app)/advisor/layout.tsx` using `AdvisorWorkspaceSidebar`, including Workspace, Clients, Opportunities, Activity, Access keys, and Buy keys.
 - **Main app nav is shown only when** the user is signed in **and** the path does **not** start with `/onboarding`.
 
-**`AppShellNav.tsx`**: Prefetches `/dashboard`, `/expenses`, `/planning/overview`, and `/more`.
+**`AppShellNav.tsx`**: Prefetches `/dashboard`, `/expenses`, `/setup/overview`, and `/more`.
 
 ### Mobile navigation & setup UX (2026-05)
 
@@ -324,7 +323,7 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
 **Mobile header (< `sm`):** `[☰] BYOFA Planner` left-aligned with the account menu on the right; ~56px row height and reduced vertical padding. Desktop/tablet header is unchanged (brand + tagline, centered nav rail, account menu).
 
-**Financial setup tabs:** `SetupTabsNav` uses a **horizontally scrollable pill rail** on mobile (hidden scrollbar via `.scrollbar-hide` in `globals.css`); desktop keeps the existing bordered rail. The rail now starts with **Overview**, so `/setup/overview` and `/setup?tab=…` read as one setup area rather than two unrelated pages. Sticky offset follows the shorter mobile header (`top-14`). Tab `?tab=` routing and server bundle loading are unchanged.
+**Financial setup tabs:** `SetupTabsNav` uses a **horizontally scrollable pill rail** below `lg`, and a **grouped sticky side menu** from `lg` up (`SETUP_NAV_GROUPS` in `src/lib/setup-tabs.ts`). The rail/side nav starts with **Overview**, so `/setup/overview` and `/setup?tab=…` read as one setup area. Sticky offset follows the app header. Tab `?tab=` routing and server bundle loading are unchanged.
 
 **Setup page hierarchy (< `sm`):** flex `order-*` — focused editor intro → **tabs** → **tab content**. The earlier roadmap/coming-soon cards were removed from the editor page to reduce setup clutter; planned modules remain represented on the overview hub.
 
@@ -338,7 +337,7 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 |------|-----------|
 | Pages (RSC-heavy) | `src/app/(app)/`, `src/app/(app)/(client)/` (IA alias redirects), `src/app/login/`, `src/app/page.tsx` |
 | App chrome | `src/features/app-shell/` (`AppShell`, `AppShellNav`, `AppShellUserMenu`) |
-| Planning workspace | `src/app/(app)/planning/**`, `src/features/planning/` (`load-setup-tab-bundle`, `PlanningSectionNav`, `sections/*`, `roadmap-modules`) |
+| Planning (legacy redirects + shared helpers) | `src/app/(app)/planning/**` (redirects), `src/features/planning/` (`load-setup-tab-bundle`, `ProtectionPlanningSection`, `roadmap-modules`; unused section shells retained for now) |
 | Shared planning constants | `src/lib/planning-sections.ts`, `src/lib/planning-revalidate.ts` |
 | Client UI generation label | `src/lib/client-release.ts` (shown on `/more`; optional `NEXT_PUBLIC_CLIENT_UI_VERSION`) |
 | Placeholder & insight surfaces | `src/components/placeholders/`, `src/components/insights/` |
@@ -351,7 +350,7 @@ Public env (client): `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 | Dashboard | `src/features/dashboard/`, `src/data/dashboard.ts` |
 | Expenses / spending UI | `src/features/expenses/`, `src/features/spend/`, `src/data/repositories/expenses.ts`, spend recommendations data |
 | Budget | `src/features/budget/` (`BudgetPlanningView`, `BudgetStrategyInsightPanel` for target vs line mix + placeholders), `src/data/repositories/budget-lines.ts`, overrides, `src/domain/finance/budget.ts` |
-| Setup tabs | `src/features/setup/SetupTabsNav.tsx`, `src/lib/setup-urls.ts` (`setupBudgetPath` for classic `/setup` budget tab; `planningCashFlowBudgetPath` for `/planning/cash-flow`) |
+| Setup tabs | `src/features/setup/SetupTabsNav.tsx`, `src/lib/setup-urls.ts` (`setupBudgetPath`; `planningCashFlowBudgetPath` is a deprecated alias) |
 | Goals / balances / loans / vehicles / CPF | `src/features/goals/`, related `src/data/repositories/*` |
 | Debt planning UI + budget sync | `src/features/debts/`, `src/domain/finance/debt-repayment.ts`, `src/domain/finance/loan-source-registry.ts` (source-owned loan setup registry), `src/domain/finance/loan-register.ts`, `src/data/loan-register-read-model.ts`, `src/server/liability-form.ts` (loan tenure form parsing), `src/data/liability-budget-sync.ts` |
 | Help / methodology | `src/features/help/`, `src/content/methodology-topics.ts`, `OpenMethodologyButton.tsx` |
@@ -426,4 +425,4 @@ When you add a table, policy, or column: **update this doc’s “Routes” or �
 - **Not in scope:** live CPF APIs, actuarial CPF LIFE, exhaustive withdrawal rules.
 - **Future:** persist advisor/client assumption presets; tie RA balance into retirement sustainability / spend coverage; inflation on payouts.
 
-_Last reviewed (2026-07-11): **Home declutter** — removed standalone CPF year-end card; year-end total is one line on the CPF-by-age chart. Prior same day: **Home Overview polish** — slimmer hero, sticky on-page subnav, unified monthly KPI cards, visible net-worth breakdown. Prior (2026-07-10): **App canvas** — flat `bg-background` shell + removed body scroll gradient to stop patchy section banding on Home; emerald retirement panel unchanged. Prior same day: **Home hero** — removed spend guidance panel from This month (kept on Activity and Budget); prior removals: Insights card, Investments 36 mo preview. Prior (2026-07-09): **Consent pending UI** — removed persistent header strip; pending consent surfaces via account-menu amber cue, inbox notification, and `/more` callout only. Prior same day: **Vehicle tab simplified** — loan + running costs only (no COE/PARF/resale); auto-synced budget lines for instalment, petrol, insurance, road tax, and maintenance; net worth counts vehicle loan liability only. — sandbox ships consolidated `financial_loans` register with source-owned Housing/Vehicle loan cards in Cash and debts, unified debt ledger for retirement runway projections, and Setup disclosure UX for saved housing/vehicle rows; main keeps option fee / BSD / legal fee as separate editable payment events with per-event paid months, HDB vs bank lender selection, and migration `20260628000000_housing_option_fee_bsd_legal_split.sql`. Prior (2026-06-15): **Housing planning form aligned to BTO upfront flow** — Add HDB home splits option fee, BSD, and legal fees into separate editable payment events with per-event paid months for CPF OA timing; HDB loan defaults to 2.6% with optional bank rate entry. Prior same day: **Onboarding shortened to three UI steps** — removed lifestyle/food-band picker from the wizard (defaults apply; Budget lens in Setup still edits `lifestyle_profile` / `food_spend_band`). Prior (2026-06-21): **Setup housing / vehicle disclosure UX + debt follow-up visibility** — Cash and debts shows source-owned loans and Housing property follow-up rows; property follow-ups are visible without being counted as debt. Prior (2026-06-04): **Advisor compose default-visible fields are fully editable** — `view=compose` now exposes proposal controls for profile income, salary growth, retirement assumptions, existing goal name / target / monthly contribution, and existing monthly budget category / amount; investment editing remains full-scope, submitted pending proposals no longer lock a separate draft, and cash / liabilities / vehicles / property / housing loans stay client category-gated._
+_Last reviewed (2026-07-11): **Setup side nav** — desktop grouped sticky side menu for Financial setup sections; mobile keeps horizontal scroll rail. Prior same day: **Fold Planning into Financial setup** — removed Planning from top nav; `/planning/**` and classic `/budget` `/balances` `/goals` redirect into Setup; Protection tab + roadmap cards absorbed into Setup hub/Goals/Investments; single editor surface. Prior same day: **Home declutter** — removed standalone CPF year-end card; year-end total is one line on the CPF-by-age chart. Prior same day: **Home Overview polish** — slimmer hero, sticky on-page subnav, unified monthly KPI cards, visible net-worth breakdown. Prior (2026-07-10): **App canvas** — flat `bg-background` shell + removed body scroll gradient to stop patchy section banding on Home; emerald retirement panel unchanged. Prior same day: **Home hero** — removed spend guidance panel from This month (kept on Activity and Budget); prior removals: Insights card, Investments 36 mo preview. Prior (2026-07-09): **Consent pending UI** — removed persistent header strip; pending consent surfaces via account-menu amber cue, inbox notification, and `/more` callout only. Prior same day: **Vehicle tab simplified** — loan + running costs only (no COE/PARF/resale); auto-synced budget lines for instalment, petrol, insurance, road tax, and maintenance; net worth counts vehicle loan liability only. — sandbox ships consolidated `financial_loans` register with source-owned Housing/Vehicle loan cards in Cash and debts, unified debt ledger for retirement runway projections, and Setup disclosure UX for saved housing/vehicle rows; main keeps option fee / BSD / legal fee as separate editable payment events with per-event paid months, HDB vs bank lender selection, and migration `20260628000000_housing_option_fee_bsd_legal_split.sql`. Prior (2026-06-15): **Housing planning form aligned to BTO upfront flow** — Add HDB home splits option fee, BSD, and legal fees into separate editable payment events with per-event paid months for CPF OA timing; HDB loan defaults to 2.6% with optional bank rate entry. Prior same day: **Onboarding shortened to three UI steps** — removed lifestyle/food-band picker from the wizard (defaults apply; Budget lens in Setup still edits `lifestyle_profile` / `food_spend_band`). Prior (2026-06-21): **Setup housing / vehicle disclosure UX + debt follow-up visibility** — Cash and debts shows source-owned loans and Housing property follow-up rows; property follow-ups are visible without being counted as debt. Prior (2026-06-04): **Advisor compose default-visible fields are fully editable** — `view=compose` now exposes proposal controls for profile income, salary growth, retirement assumptions, existing goal name / target / monthly contribution, and existing monthly budget category / amount; investment editing remains full-scope, submitted pending proposals no longer lock a separate draft, and cash / liabilities / vehicles / property / housing loans stay client category-gated._
