@@ -28,37 +28,38 @@ function BudgetRingProgress({
   ratio: number;
   overBudget: boolean;
 }) {
-  const r = 44;
+  const r = 36;
   const c = 2 * Math.PI * r;
   const clamped = Math.min(1, Math.max(0, ratio));
   const dash = clamped * c;
   const stroke = overBudget ? "#dc2626" : "#0d9488";
   return (
     <svg
-      width="112"
-      height="112"
-      viewBox="0 0 112 112"
+      width="96"
+      height="96"
+      viewBox="0 0 96 96"
       className="shrink-0"
       aria-hidden
     >
       <circle
-        cx="56"
-        cy="56"
+        cx="48"
+        cy="48"
         r={r}
         fill="none"
-        stroke="#e4e4e7"
-        strokeWidth="10"
+        stroke="currentColor"
+        className="text-zinc-200 dark:text-slate-700"
+        strokeWidth="8"
       />
       <circle
-        cx="56"
-        cy="56"
+        cx="48"
+        cy="48"
         r={r}
         fill="none"
         stroke={stroke}
-        strokeWidth="10"
+        strokeWidth="8"
         strokeDasharray={`${dash} ${c}`}
         strokeLinecap="round"
-        transform="rotate(-90 56 56)"
+        transform="rotate(-90 48 48)"
       />
     </svg>
   );
@@ -109,14 +110,14 @@ export function BudgetPageHero({
     plannedBucketTotal > 0 ? bucket.savings / plannedBucketTotal : 0;
   let savingsHealth: { label: string; tone: "good" | "ok" | "low" };
   if (plannedBucketTotal <= 0) {
-    savingsHealth = { label: "Add lines to see savings balance", tone: "ok" };
+    savingsHealth = { label: "Add categories to see your savings mix", tone: "ok" };
   } else if (savingsShare >= 0.18) {
     savingsHealth = { label: "Savings mix looks strong", tone: "good" };
   } else if (savingsShare >= 0.1) {
-    savingsHealth = { label: "Savings mix is healthy", tone: "ok" };
+    savingsHealth = { label: "Savings mix is on track", tone: "ok" };
   } else {
     savingsHealth = {
-      label: "Room to grow your savings slice",
+      label: "Room to grow savings in this plan",
       tone: "low",
     };
   }
@@ -126,267 +127,255 @@ export function BudgetPageHero({
       ? "text-emerald-800 dark:text-emerald-200"
       : savingsHealth.tone === "low"
         ? "text-amber-800 dark:text-amber-200"
-        : "text-zinc-700 dark:text-slate-200";
+        : "text-zinc-600 dark:text-slate-300";
 
   const { freeCashFlow, unallocatedAfterCommitments } = cashFlow;
   const hasOtherCommitments = cashFlow.plannedGoalContributions > 0;
   const showCommitmentsFootnote =
     hasOtherCommitments && unallocatedAfterCommitments != null;
 
-  function freeCashFlowClass(value: number): string {
-    if (value < 0) {
-      return "mt-0.5 font-semibold tabular-nums text-amber-900 dark:text-amber-200";
-    }
-    return "mt-0.5 font-semibold tabular-nums text-teal-900 dark:text-teal-100";
-  }
+  const metricClass =
+    "min-w-0 space-y-0.5 border-l border-zinc-200/90 pl-3 first:border-l-0 first:pl-0 dark:border-slate-700/80 sm:pl-4 sm:first:pl-0";
 
   return (
     <section
       id="budget-hero"
-      className="scroll-mt-4 overflow-hidden rounded-3xl border border-zinc-200/80 bg-linear-to-br from-white via-teal-50/30 to-zinc-50/90 p-6 shadow-sm dark:border-slate-800 dark:from-slate-950 dark:via-slate-950 dark:to-slate-900 dark:shadow-black/25 sm:p-8"
+      className="scroll-mt-4 space-y-6 rounded-3xl border border-zinc-200/80 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-950 dark:shadow-black/25 sm:p-7"
     >
-      <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-        <div className="min-w-0 flex-1 space-y-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-teal-700/80 dark:text-teal-300">
-            Monthly spending plan
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 space-y-1.5">
+          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-teal-700/80 dark:text-teal-300">
+            This month
           </p>
-          <h1 className="text-3xl font-semibold tracking-tight text-zinc-900 dark:text-slate-50 sm:text-4xl">
-            Your plan for {title}
+          <h1 className="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-slate-50 sm:text-[1.75rem]">
+            {title}
           </h1>
-          <p className="max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-slate-300">
-            A calm view of what you intended to spend, what is left, and how
-            your essentials, lifestyle, and savings balance out — no spreadsheet
-            required.
+          <p className="max-w-lg text-sm leading-relaxed text-zinc-500 dark:text-slate-400">
+            Planned spend, what&apos;s left, and room for savings.
           </p>
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-zinc-600 dark:text-slate-300">
-            <Link
-              className={`${appInlineLinkClass} font-medium`}
-              href={budgetMonthHref(
-                budgetPathVariant,
-                prevMonth,
-                yearFromYearMonth(prevMonth)
-              )}
-            >
-              Previous month
-            </Link>
-            <span className="font-mono text-xs text-zinc-400 dark:text-slate-500">{month}</span>
-            <Link
-              className={`${appInlineLinkClass} font-medium`}
-              href={budgetMonthHref(
-                budgetPathVariant,
-                nextMonth,
-                yearFromYearMonth(nextMonth)
-              )}
-            >
-              Next month
-            </Link>
-            <BudgetMonthJump
-              month={month}
-              budgetPathVariant={budgetPathVariant}
-            />
+        </div>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-zinc-600 dark:text-slate-300">
+          <Link
+            className={`${appInlineLinkClass} font-medium`}
+            href={budgetMonthHref(
+              budgetPathVariant,
+              prevMonth,
+              yearFromYearMonth(prevMonth)
+            )}
+          >
+            Prev
+          </Link>
+          <Link
+            className={`${appInlineLinkClass} font-medium`}
+            href={budgetMonthHref(
+              budgetPathVariant,
+              nextMonth,
+              yearFromYearMonth(nextMonth)
+            )}
+          >
+            Next
+          </Link>
+          <BudgetMonthJump
+            month={month}
+            budgetPathVariant={budgetPathVariant}
+          />
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-6 border-t border-zinc-100 pt-6 dark:border-slate-800 sm:flex-row sm:items-center sm:gap-8">
+        <div className="relative mx-auto sm:mx-0">
+          <BudgetRingProgress ratio={ratio} overBudget={!agg.onTrack} />
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+            <span className="text-[10px] font-medium uppercase tracking-wide text-zinc-400 dark:text-slate-500">
+              Used
+            </span>
+            <span className="text-base font-semibold tabular-nums text-zinc-900 dark:text-slate-50">
+              {planned > 0
+                ? `${Math.min(100, Math.round(ratio * 100))}%`
+                : "—"}
+            </span>
           </div>
         </div>
 
-        <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-center sm:gap-8">
-          <div className="relative">
-            <BudgetRingProgress ratio={ratio} overBudget={!agg.onTrack} />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <span className="text-[10px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-slate-400">
-                Used
-              </span>
-              <span className="text-lg font-semibold tabular-nums text-zinc-900 dark:text-slate-50">
-                {planned > 0
-                  ? `${Math.min(100, Math.round(ratio * 100))}%`
-                  : "—"}
-              </span>
+        <dl className="grid min-w-0 flex-1 grid-cols-2 gap-y-4 sm:grid-cols-4 sm:gap-y-0">
+          {cashFlow.takeHome != null ? (
+            <div className={metricClass}>
+              <dt className="text-[11px] text-zinc-500 dark:text-slate-400">
+                Take-home
+              </dt>
+              <dd className="text-sm font-semibold tabular-nums text-zinc-900 dark:text-slate-50">
+                {formatCurrency(cashFlow.takeHome, currency)}
+              </dd>
             </div>
-          </div>
-          <dl className="grid w-full max-w-xs grid-cols-2 gap-x-4 gap-y-3 text-sm sm:max-w-md">
-            {cashFlow.takeHome != null ? (
-              <div className="rounded-2xl bg-white/80 px-3 py-2 shadow-sm ring-1 ring-zinc-100 dark:bg-slate-900/75 dark:ring-slate-700/70">
-                <dt className="text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-slate-400">
-                  Take-home
-                </dt>
-                <dd className="mt-0.5 font-semibold tabular-nums text-zinc-900 dark:text-slate-50">
-                  {formatCurrency(cashFlow.takeHome, currency)}
-                </dd>
-              </div>
-            ) : (
-              <div className="col-span-2 rounded-2xl border border-dashed border-zinc-200 bg-white/80 px-3 py-2 text-xs text-zinc-600 dark:border-slate-700 dark:bg-slate-900/75 dark:text-slate-300">
+          ) : (
+            <div className={`${metricClass} col-span-2 sm:col-span-4`}>
+              <dt className="text-[11px] text-zinc-500 dark:text-slate-400">
+                Take-home
+              </dt>
+              <dd className="text-sm text-zinc-600 dark:text-slate-300">
                 <Link href="/setup?tab=profile" className={appInlineLinkClass}>
-                  Set take-home
-                </Link>{" "}
-                on your profile to see free cash flow after your plan.
-              </div>
-            )}
-            <div className="rounded-2xl bg-white/80 px-3 py-2 shadow-sm ring-1 ring-zinc-100 dark:bg-slate-900/75 dark:ring-slate-700/70">
-              <dt className="text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-slate-400">
-                Monthly planned
-              </dt>
-              <dd className="mt-0.5 font-semibold tabular-nums text-zinc-900 dark:text-slate-50">
-                {formatCurrency(planned, currency)}
+                  Set income in Profile
+                </Link>
               </dd>
             </div>
-            {freeCashFlow != null && (
-              <div className="col-span-2 rounded-2xl border border-teal-200/90 bg-teal-50/60 px-3 py-2 shadow-sm dark:border-teal-400/35 dark:bg-teal-950/35">
-                <dt className="flex flex-wrap items-center gap-x-2 text-[11px] font-medium uppercase tracking-wide text-teal-900 dark:text-teal-100">
-                  <span>Free cash flow</span>
-                  <MethodologyOpenLink
-                    topicId="budget-cash-flow-allocation"
-                    className="normal-case tracking-normal"
-                  >
-                    How calculated
-                  </MethodologyOpenLink>
-                </dt>
-                <dd className={freeCashFlowClass(freeCashFlow)}>
-                  {formatCurrency(freeCashFlow, currency)}
-                </dd>
-                {freeCashFlow < 0 ? (
-                  <p className="mt-1 text-xs text-amber-900/90 dark:text-amber-100">
-                    Your planned spending leaves no free cash flow — trim
-                    categories or check income.
-                  </p>
-                ) : (
-                  <p className="mt-1 text-xs text-teal-900/80 dark:text-teal-100/85">
-                    You have {formatCurrency(freeCashFlow, currency)} in free
-                    cash flow.{" "}
-                    <Link
-                      href="/setup?tab=investments#add-investment"
-                      className={appInlineLinkClass}
-                    >
-                      Add or adjust an investment
-                    </Link>{" "}
-                    to see how projections change.
-                  </p>
-                )}
-              </div>
-            )}
-            {showCommitmentsFootnote && (
-              <div className="col-span-2 space-y-1.5 rounded-2xl border border-zinc-200/80 bg-zinc-50/80 px-3 py-2 text-xs text-zinc-700 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300">
-                <p className="font-medium text-zinc-800 dark:text-slate-100">
-                  Other monthly commitments (not in budget lines)
-                </p>
-                {cashFlow.plannedGoalContributions > 0 && (
-                  <p>
-                    Goals:{" "}
-                    <span className="font-medium tabular-nums text-zinc-900 dark:text-slate-50">
-                      {formatCurrency(
-                        cashFlow.plannedGoalContributions,
-                        currency
-                      )}
-                    </span>
-                    /mo —{" "}
-                    <Link href="/setup?tab=goals" className={appInlineLinkClass}>
-                      Setup → Goals
-                    </Link>
-                  </p>
-                )}
-                <p>
-                  After goals:{" "}
-                  <span
-                    className={
-                      unallocatedAfterCommitments! < 0
-                        ? "font-semibold tabular-nums text-amber-900 dark:text-amber-200"
-                        : "font-semibold tabular-nums text-zinc-900 dark:text-slate-50"
-                    }
-                  >
-                    {formatCurrency(unallocatedAfterCommitments!, currency)}
-                  </span>
-                </p>
-              </div>
-            )}
-            <div className="rounded-2xl bg-white/80 px-3 py-2 shadow-sm ring-1 ring-zinc-100 dark:bg-slate-900/75 dark:ring-slate-700/70">
-              <dt className="text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-slate-400">
-                Logged
-              </dt>
-              <dd className="mt-0.5 font-semibold tabular-nums text-zinc-900 dark:text-slate-50">
-                {formatCurrency(spent, currency)}
-              </dd>
-            </div>
-            <div className="rounded-2xl bg-white/80 px-3 py-2 shadow-sm ring-1 ring-zinc-100 dark:bg-slate-900/75 dark:ring-slate-700/70">
-              <dt className="text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-slate-400">
-                Left in plan
-              </dt>
-              <dd
+          )}
+          <div className={metricClass}>
+            <dt className="text-[11px] text-zinc-500 dark:text-slate-400">
+              Planned
+            </dt>
+            <dd className="text-sm font-semibold tabular-nums text-zinc-900 dark:text-slate-50">
+              {formatCurrency(planned, currency)}
+            </dd>
+          </div>
+          <div className={metricClass}>
+            <dt className="text-[11px] text-zinc-500 dark:text-slate-400">
+              Logged
+            </dt>
+            <dd className="text-sm font-semibold tabular-nums text-zinc-900 dark:text-slate-50">
+              {formatCurrency(spent, currency)}
+            </dd>
+          </div>
+          <div className={metricClass}>
+            <dt className="text-[11px] text-zinc-500 dark:text-slate-400">
+              Left
+            </dt>
+            <dd
+              className={
+                totals.remaining < 0
+                  ? "text-sm font-semibold tabular-nums text-red-600 dark:text-red-300"
+                  : "text-sm font-semibold tabular-nums text-emerald-800 dark:text-emerald-200"
+              }
+            >
+              {formatCurrency(totals.remaining, currency)}
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      {freeCashFlow != null && (
+        <div className="rounded-2xl bg-teal-50/70 px-4 py-3.5 dark:bg-teal-950/30">
+          <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-wide text-teal-800/80 dark:text-teal-200/90">
+                Free cash flow
+              </p>
+              <p
                 className={
-                  totals.remaining < 0
-                    ? "mt-0.5 font-semibold tabular-nums text-red-600 dark:text-red-300"
-                    : "mt-0.5 font-semibold tabular-nums text-emerald-800 dark:text-emerald-200"
+                  freeCashFlow < 0
+                    ? "mt-0.5 text-xl font-semibold tabular-nums text-amber-900 dark:text-amber-200"
+                    : "mt-0.5 text-xl font-semibold tabular-nums text-teal-950 dark:text-teal-50"
                 }
               >
-                {formatCurrency(totals.remaining, currency)}
-              </dd>
+                {formatCurrency(freeCashFlow, currency)}
+              </p>
             </div>
-            <div className="col-span-2 rounded-2xl border border-dashed border-teal-200/80 bg-teal-50/40 px-3 py-2 dark:border-teal-400/30 dark:bg-teal-950/25">
-              <dt className="text-[11px] font-medium uppercase tracking-wide text-teal-800 dark:text-teal-200">
-                Savings shape
-              </dt>
-              <dd className={`mt-0.5 text-sm font-medium ${healthClass}`}>
-                {savingsHealth.label}
-              </dd>
-            </div>
-            {assumptions ? (
-              <details className="col-span-2 group rounded-2xl border border-zinc-200/70 bg-white/60 px-3 py-2 dark:border-slate-700/80 dark:bg-slate-900/50">
-                <summary className="cursor-pointer list-none text-[11px] font-medium uppercase tracking-wide text-zinc-500 marker:content-none dark:text-slate-400 [&::-webkit-details-marker]:hidden">
-                  <span className="inline-flex items-center gap-1.5">
-                    Assumptions in play
-                    <span
-                      className="inline-block text-zinc-400 transition-transform group-open:rotate-180 dark:text-slate-500"
-                      aria-hidden
-                    >
-                      ▾
-                    </span>
-                  </span>
-                </summary>
-                <div className="mt-2 space-y-1.5 text-xs leading-relaxed text-zinc-600 dark:text-slate-300">
-                  {cashFlow.takeHome != null ? (
-                    <p>
-                      Monthly take-home:{" "}
-                      <span className="font-medium tabular-nums text-zinc-900 dark:text-slate-50">
-                        {formatCurrency(cashFlow.takeHome, currency)}
-                      </span>
-                    </p>
-                  ) : (
-                    <p>Monthly take-home not set yet.</p>
-                  )}
-                  {assumptions.annualBonusTakeHome != null &&
-                  assumptions.annualBonusTakeHome > 0 ? (
-                    <p>
-                      Annual bonus (after CPF):{" "}
-                      <span className="font-medium tabular-nums text-zinc-900 dark:text-slate-50">
-                        {formatCurrency(
-                          assumptions.annualBonusTakeHome,
-                          currency
-                        )}
-                      </span>
-                      <span className="text-zinc-500 dark:text-slate-400">
-                        {" "}
-                        · once a year
-                      </span>
-                    </p>
-                  ) : null}
-                  <p>
-                    Expected pay rises:{" "}
-                    <span className="font-medium text-zinc-900 dark:text-slate-50">
-                      {assumptions.yearlyPayRisePercent != null &&
-                      assumptions.yearlyPayRisePercent > 0
-                        ? `${assumptions.yearlyPayRisePercent}% / year`
-                        : "None"}
-                    </span>
-                  </p>
-                  <p>
-                    <Link
-                      href={assumptions.profileHref}
-                      className={appInlineLinkClass}
-                    >
-                      Edit in Profile
-                    </Link>
-                  </p>
-                </div>
-              </details>
-            ) : null}
-          </dl>
+            <MethodologyOpenLink
+              topicId="budget-cash-flow-allocation"
+              className="text-xs"
+            >
+              How calculated
+            </MethodologyOpenLink>
+          </div>
+          {freeCashFlow < 0 ? (
+            <p className="mt-2 text-xs text-amber-900/90 dark:text-amber-100">
+              Planned spend leaves no spare cash — trim categories or check
+              income.
+            </p>
+          ) : (
+            <p className="mt-2 text-xs text-teal-900/75 dark:text-teal-100/80">
+              Spare after this plan.{" "}
+              <Link
+                href="/setup?tab=investments#add-investment"
+                className={appInlineLinkClass}
+              >
+                Direct it to investments
+              </Link>{" "}
+              if you like.
+            </p>
+          )}
+          {showCommitmentsFootnote ? (
+            <p className="mt-2 text-xs text-teal-900/70 dark:text-teal-100/70">
+              Goals still take{" "}
+              <span className="font-medium tabular-nums">
+                {formatCurrency(cashFlow.plannedGoalContributions, currency)}
+              </span>
+              /mo outside budget lines —{" "}
+              <Link href="/setup?tab=goals" className={appInlineLinkClass}>
+                Goals
+              </Link>
+              . After that:{" "}
+              <span
+                className={
+                  unallocatedAfterCommitments! < 0
+                    ? "font-medium tabular-nums text-amber-900 dark:text-amber-200"
+                    : "font-medium tabular-nums"
+                }
+              >
+                {formatCurrency(unallocatedAfterCommitments!, currency)}
+              </span>
+              .
+            </p>
+          ) : null}
         </div>
+      )}
+
+      <div className="flex flex-col gap-3 border-t border-zinc-100 pt-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between">
+        <p className={`text-sm ${healthClass}`}>{savingsHealth.label}</p>
+        {assumptions ? (
+          <details className="group text-sm text-zinc-500 dark:text-slate-400">
+            <summary className="cursor-pointer list-none marker:content-none [&::-webkit-details-marker]:hidden">
+              <span className="inline-flex items-center gap-1.5 hover:text-zinc-700 dark:hover:text-slate-200">
+                From Profile
+                <span
+                  className="text-[10px] transition-transform group-open:rotate-180"
+                  aria-hidden
+                >
+                  ▾
+                </span>
+              </span>
+            </summary>
+            <div className="mt-2 space-y-1 text-xs leading-relaxed text-zinc-600 dark:text-slate-300 sm:text-right">
+              {cashFlow.takeHome != null ? (
+                <p>
+                  Take-home{" "}
+                  <span className="font-medium tabular-nums text-zinc-900 dark:text-slate-50">
+                    {formatCurrency(cashFlow.takeHome, currency)}
+                  </span>
+                </p>
+              ) : null}
+              {assumptions.annualBonusTakeHome != null &&
+              assumptions.annualBonusTakeHome > 0 ? (
+                <p>
+                  Bonus{" "}
+                  <span className="font-medium tabular-nums text-zinc-900 dark:text-slate-50">
+                    {formatCurrency(
+                      assumptions.annualBonusTakeHome,
+                      currency
+                    )}
+                  </span>
+                  <span className="text-zinc-400"> / year</span>
+                </p>
+              ) : null}
+              <p>
+                Pay rises{" "}
+                <span className="font-medium text-zinc-900 dark:text-slate-50">
+                  {assumptions.yearlyPayRisePercent != null &&
+                  assumptions.yearlyPayRisePercent > 0
+                    ? `${assumptions.yearlyPayRisePercent}%`
+                    : "None"}
+                </span>
+              </p>
+              <p>
+                <Link
+                  href={assumptions.profileHref}
+                  className={appInlineLinkClass}
+                >
+                  Edit in Profile
+                </Link>
+              </p>
+            </div>
+          </details>
+        ) : null}
       </div>
     </section>
   );

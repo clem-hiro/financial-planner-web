@@ -219,7 +219,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
     vehicles: "Vehicle loans and running costs that feed budget and net worth.",
     "cash-liabilities": "Cash buffers and debts outside housing and vehicle loans.",
     protection: "Resilience roadmap — insurance, dependents, and estate placeholders.",
-    budget: "Plan monthly categories and compare to logged spend.",
+    budget: "Your monthly plan and what's left to spend.",
     goals: "Savings targets, retirement assumptions, and monthly contributions.",
     "advisor-proposals": "Review plan suggestions from your linked advisor.",
   };

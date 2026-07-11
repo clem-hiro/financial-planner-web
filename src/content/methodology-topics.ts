@@ -74,18 +74,17 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     id: "budget-cash-flow-allocation",
     title: "Free cash flow (budget hero)",
     summary:
-      "How much take-home remains available for savings, investing, goals, or choices after planned monthly spending.",
+      "What’s left of take-home after this month’s planned spending — money you can still choose to save, invest, or use.",
     bullets: [
-      "Take-home uses salary-only employee CPF when gross and age band are set on your profile; otherwise stored monthly income.",
-      "Monthly planned is the sum of active monthly budget lines for the month you are viewing, with the Investments line sourced from Setup → Investments when active monthly contributions exist.",
-      "Manual budget lines named Investments are ignored here so the Investments setup tab stays the source of truth.",
-      "Free cash flow = take-home − monthly planned + the Savings / future-you bucket. This includes planned savings, setup-sourced investment contributions, and cash not assigned to any monthly budget line.",
-      "Goal contributions keep their own monthly fields. After goals = free cash flow − goal monthly amounts.",
-      "Left in plan is different: planned minus logged spend within budgeted categories only.",
+      "Take-home comes from your Profile income (after employee CPF when gross salary is set).",
+      "Planned spending is the sum of your active monthly budget categories.",
+      "Amounts already labelled as savings or investments in your plan are treated as kept, not “spent”, so they stay in free cash flow.",
+      "Goal contributions are tracked separately. After goals = free cash flow minus those monthly goal amounts.",
+      "Left in plan is different: planned categories minus what you’ve logged so far.",
     ],
     formulas: [
-      "free cash flow = take-home − Σ(monthly planned) + Σ(Savings / future-you planned)",
-      "after goals = free cash flow − Σ(goal monthly contributions)",
+      "Free cash flow ≈ take-home − planned spending + planned savings & investments",
+      "After goals ≈ free cash flow − monthly goal contributions",
     ],
   },
   {
