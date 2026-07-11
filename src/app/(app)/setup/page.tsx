@@ -273,12 +273,6 @@ export default async function SetupPage({ searchParams }: PageProps) {
                 ? num(financialProfile.annual_bonus)
                 : null
             }
-            initialAnnualBonusMonths={
-              financialProfile?.annual_bonus_months != null &&
-              String(financialProfile.annual_bonus_months).trim() !== ""
-                ? num(financialProfile.annual_bonus_months)
-                : null
-            }
             initialAnnualSalaryGrowthPercent={
               financialProfile?.annual_salary_growth_nominal != null &&
               String(financialProfile.annual_salary_growth_nominal).trim() !== ""
@@ -288,9 +282,6 @@ export default async function SetupPage({ searchParams }: PageProps) {
             initialBirthDate={financialProfile?.birth_date ?? null}
             initialSalaryIncrementMonth={
               financialProfile?.salary_increment_month ?? null
-            }
-            onboardingCompletedAt={
-              financialProfile?.onboarding_completed_at ?? null
             }
             cpfYearMonth={formatYearMonth(new Date())}
             currencyCode={currency}

@@ -11,10 +11,6 @@ import {
 } from "@/domain/finance/sg-cpf";
 import { sgCpfAgeBandForCompletedAge } from "@/domain/finance/sg-cpf-contribution-buckets";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
-import {
-  formatOnboardingBonusCaption,
-  profileHasOnboardingIncomeLink,
-} from "@/features/onboarding/onboarding-profile-hints";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import {
   fpInputClass,
@@ -61,9 +57,7 @@ export function ProfileIncomeForm({
   initialBirthDate,
   initialAnnualSalaryGrowthPercent = null,
   initialAnnualBonus = null,
-  initialAnnualBonusMonths = null,
   initialSalaryIncrementMonth = null,
-  onboardingCompletedAt = null,
   cpfYearMonth,
   currencyCode = DEFAULT_BASE_CURRENCY,
 }: {
@@ -72,12 +66,6 @@ export function ProfileIncomeForm({
   initialCpfAgeBand: string | null;
   /** `YYYY-MM-DD` for age-based projections; empty in DB means not set. */
   initialBirthDate: string | null;
-  /**
-   * Months-of-salary multiplier from onboarding bonus preset; null when custom/legacy.
-   */
-  initialAnnualBonusMonths?: number | null;
-  /** ISO timestamp when onboarding finished; drives sync banner in Income & CPF. */
-  onboardingCompletedAt?: string | null;
   /**
    * Nominal annual salary growth as a percent (e.g. 2 for 2% each January in CPF projection).
    * Null/blank means no raise path.
@@ -127,17 +115,6 @@ export function ProfileIncomeForm({
   );
   const [showCpfSalaryPath, setShowCpfSalaryPath] = useState(
     () => salaryGrowthPctRaw.trim() !== ""
-  );
-
-  const showOnboardingIncomeBanner = profileHasOnboardingIncomeLink({
-    onboardingCompletedAt: onboardingCompletedAt ?? null,
-    grossMonthly: initialGross,
-    takeHomeMonthly: initialIncome,
-    annualBonus: initialAnnualBonus ?? null,
-  });
-  const onboardingBonusCaption = formatOnboardingBonusCaption(
-    initialAnnualBonusMonths ?? null,
-    initialAnnualBonus ?? null
   );
 
   useEffect(() => {
@@ -315,44 +292,6 @@ export function ProfileIncomeForm({
             <p className="mt-1 text-emerald-900/85 dark:text-emerald-100/90">
               Update your salary if it changed, otherwise confirm unchanged.
               Either action clears the reminder.
-            </p>
-          </div>
-        ) : null}
-        {showOnboardingIncomeBanner ? (
-          <div className="rounded-lg border border-sky-200/80 bg-sky-50/70 px-3.5 py-3 text-sm text-sky-950 dark:border-sky-400/40 dark:bg-sky-400/10 dark:text-sky-50">
-            <p className="font-semibold">Synced from onboarding</p>
-            <p className="mt-1 text-sky-950/85 dark:text-sky-100/90">
-              {initialGross != null && initialGross > 0 ? (
-                <>
-                  Gross salary from onboarding:{" "}
-                  <span className="font-mono tabular-nums font-semibold">
-                    {currencyCode}{" "}
-                    {initialGross.toLocaleString(undefined, {
-                      maximumFractionDigits: 2,
-                    })}
-                  </span>
-                  /month
-                </>
-              ) : initialIncome != null && initialIncome > 0 ? (
-                <>
-                  Take-home from onboarding:{" "}
-                  <span className="font-mono tabular-nums font-semibold">
-                    {currencyCode}{" "}
-                    {initialIncome.toLocaleString(undefined, {
-                      maximumFractionDigits: 2,
-                    })}
-                  </span>
-                  /month — enter gross below for CPF estimates
-                </>
-              ) : onboardingBonusCaption ? (
-                <>Bonus from onboarding ({onboardingBonusCaption})</>
-              ) : null}
-              {onboardingBonusCaption &&
-              initialGross != null &&
-              initialGross > 0 ? (
-                <> · Bonus: {onboardingBonusCaption}</>
-              ) : null}
-              . Edits here update your budget and projections everywhere.
             </p>
           </div>
         ) : null}
