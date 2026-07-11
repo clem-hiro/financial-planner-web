@@ -302,10 +302,9 @@ export function ProfileIncomeForm({
                   Monthly gross salary ({currencyCode})
                   <InfoTooltip ariaLabel="When to use gross salary">
                     <p className="text-[11px] leading-snug">
-                      Uses <strong>employee</strong> CPF on ordinary wages up to the OW
-                      ceiling for{" "}
-                      <span className="font-mono">{cpfYearMonth}</span>. Excludes employer
-                      CPF, tax, and other deductions.
+                      We estimate monthly take-home after employee CPF for your
+                      budget. Leave empty only if you want to enter take-home
+                      elsewhere.
                     </p>
                   </InfoTooltip>
                 </span>
@@ -325,11 +324,8 @@ export function ProfileIncomeForm({
                   Annual bonus ({currencyCode}, optional)
                   <InfoTooltip ariaLabel="How bonus is used in the app">
                     <p className="text-[11px] leading-snug">
-                      Gross bonus before employee CPF. Your <strong>monthly</strong> plan
-                      uses salary take-home only. Bonus is modeled as{" "}
-                      <strong>cash savings</strong> once per year (December), after
-                      employee CPF on additional wages (same AW ceiling logic as the CPF
-                      chart). Not tax advice.
+                      Optional. Your monthly budget uses salary take-home only;
+                      bonus is applied once a year after employee CPF.
                     </p>
                   </InfoTooltip>
                 </span>
@@ -346,55 +342,6 @@ export function ProfileIncomeForm({
                 />
               </label>
             </div>
-            {breakdown &&
-              annualBonusRaw.trim() !== "" &&
-              Number.isFinite(Number(annualBonusRaw.trim())) &&
-              Number(annualBonusRaw.trim()) > 0 && (
-              <div className="rounded-lg border border-sky-200/70 bg-sky-50/50 px-3 py-2.5 text-xs leading-relaxed text-slate-700 dark:border-sky-400/35 dark:bg-sky-400/10 dark:text-slate-200">
-                <p className="font-medium text-slate-800 dark:text-slate-50">
-                  Estimated take-home
-                </p>
-                <p className="mt-1">
-                  <span className="text-slate-500 dark:text-slate-400">
-                    Salary (monthly):{" "}
-                  </span>
-                  <span className="font-mono tabular-nums font-semibold text-slate-900 dark:text-slate-50">
-                    {currencyCode}{" "}
-                    {breakdown.takeHomeFromSalaryMonthly.toLocaleString("en-SG", {
-                      maximumFractionDigits: 2,
-                    })}
-                  </span>
-                  <span className="text-slate-500 dark:text-slate-400">
-                    {" "}
-                    — used for your monthly budget.
-                  </span>
-                </p>
-                <p className="mt-1">
-                  <span className="text-slate-500 dark:text-slate-400">
-                    Bonus (once per year, after employee CPF on AW):{" "}
-                  </span>
-                  <span className="font-mono tabular-nums font-semibold text-slate-900 dark:text-slate-50">
-                    {currencyCode}{" "}
-                    {breakdown.takeHomeFromBonusNetAnnual.toLocaleString("en-SG", {
-                      maximumFractionDigits: 2,
-                    })}
-                  </span>
-                  <span className="text-slate-500 dark:text-slate-400">
-                    {" "}
-                    — added to projected cash (not spread into monthly income).
-                  </span>
-                </p>
-                {breakdown.employeeCpfOnAwAnnual > 0 && (
-                  <p className="mt-1 text-slate-500 dark:text-slate-400">
-                    Employee CPF on bonus (annual): {currencyCode}{" "}
-                    {breakdown.employeeCpfOnAwAnnual.toLocaleString("en-SG", {
-                      maximumFractionDigits: 2,
-                    })}{" "}
-                    — also reflected in the CPF projection with your monthly contributions.
-                  </p>
-                )}
-              </div>
-            )}
         <label className="block text-sm">
           <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700 dark:text-slate-200">
             Birth date
@@ -445,10 +392,6 @@ export function ProfileIncomeForm({
               </svg>
             </span>
           </button>
-          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-            Used only for long-term CPF charts. Leave blank if you prefer to assume
-            pay stays the same.
-          </p>
           {showCpfSalaryPath && (
             <div id="income-cpf-projection" className="mt-3 max-w-md">
               <label className="text-sm sm:min-w-0">

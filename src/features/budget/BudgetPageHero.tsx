@@ -73,6 +73,12 @@ type Props = {
   prevMonth: string;
   nextMonth: string;
   budgetPathVariant?: BudgetPathVariant;
+  /** Quiet Profile assumptions review — collapsed so Budget stays uncluttered. */
+  assumptions?: {
+    annualBonusTakeHome: number | null;
+    yearlyPayRisePercent: number | null;
+    profileHref: string;
+  } | null;
 };
 
 export function BudgetPageHero({
@@ -84,6 +90,7 @@ export function BudgetPageHero({
   prevMonth,
   nextMonth,
   budgetPathVariant = "setup",
+  assumptions = null,
 }: Props) {
   const title = formatPlanMonthTitle(month);
   const agg = monthlyBudgetAggregateOverspend(totals);
@@ -318,6 +325,66 @@ export function BudgetPageHero({
                 {savingsHealth.label}
               </dd>
             </div>
+            {assumptions ? (
+              <details className="col-span-2 group rounded-2xl border border-zinc-200/70 bg-white/60 px-3 py-2 dark:border-slate-700/80 dark:bg-slate-900/50">
+                <summary className="cursor-pointer list-none text-[11px] font-medium uppercase tracking-wide text-zinc-500 marker:content-none dark:text-slate-400 [&::-webkit-details-marker]:hidden">
+                  <span className="inline-flex items-center gap-1.5">
+                    Assumptions in play
+                    <span
+                      className="inline-block text-zinc-400 transition-transform group-open:rotate-180 dark:text-slate-500"
+                      aria-hidden
+                    >
+                      ▾
+                    </span>
+                  </span>
+                </summary>
+                <div className="mt-2 space-y-1.5 text-xs leading-relaxed text-zinc-600 dark:text-slate-300">
+                  {cashFlow.takeHome != null ? (
+                    <p>
+                      Monthly take-home:{" "}
+                      <span className="font-medium tabular-nums text-zinc-900 dark:text-slate-50">
+                        {formatCurrency(cashFlow.takeHome, currency)}
+                      </span>
+                    </p>
+                  ) : (
+                    <p>Monthly take-home not set yet.</p>
+                  )}
+                  {assumptions.annualBonusTakeHome != null &&
+                  assumptions.annualBonusTakeHome > 0 ? (
+                    <p>
+                      Annual bonus (after CPF):{" "}
+                      <span className="font-medium tabular-nums text-zinc-900 dark:text-slate-50">
+                        {formatCurrency(
+                          assumptions.annualBonusTakeHome,
+                          currency
+                        )}
+                      </span>
+                      <span className="text-zinc-500 dark:text-slate-400">
+                        {" "}
+                        · once a year
+                      </span>
+                    </p>
+                  ) : null}
+                  <p>
+                    Expected pay rises:{" "}
+                    <span className="font-medium text-zinc-900 dark:text-slate-50">
+                      {assumptions.yearlyPayRisePercent != null &&
+                      assumptions.yearlyPayRisePercent > 0
+                        ? `${assumptions.yearlyPayRisePercent}% / year`
+                        : "None"}
+                    </span>
+                  </p>
+                  <p>
+                    <Link
+                      href={assumptions.profileHref}
+                      className={appInlineLinkClass}
+                    >
+                      Edit in Profile
+                    </Link>
+                  </p>
+                </div>
+              </details>
+            ) : null}
           </dl>
         </div>
       </div>

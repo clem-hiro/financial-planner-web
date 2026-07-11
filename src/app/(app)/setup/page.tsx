@@ -210,7 +210,8 @@ export default async function SetupPage({ searchParams }: PageProps) {
   const cashHistoryByAccountId = buildCashHistoryByAccountId(cashSnapshots);
 
   const sectionPurpose: Record<string, string> = {
-    profile: "Income, birth date, and budgeting style that anchor projections.",
+    profile:
+      "Tell us about yourself so we can personalise your financial plan.",
     "add-account": "Balances and return assumptions for wealth projections.",
     cpf: "OA, SA, MA and CPF investment entries for Singapore projections.",
     income_tax: "Estimate annual tax from your saved income assumptions.",
@@ -241,16 +242,11 @@ export default async function SetupPage({ searchParams }: PageProps) {
         {sectionPurpose[activeTab] ? (
           <p className="max-w-2xl text-sm text-slate-600 dark:text-slate-300">
             {sectionPurpose[activeTab]}
-            {activeTab === "profile" ||
-            activeTab === "add-account" ||
+            {activeTab === "add-account" ||
             activeTab === "cash-liabilities" ||
             activeTab === "housing" ||
             activeTab === "vehicles" ? (
-              <>
-                {" "}
-                Net worth on Home combines investments, cash, optional CPF and
-                vehicles, minus debts—CPF can be excluded from some headlines.
-              </>
+              <> These details also feed into the net worth view on Home.</>
             ) : null}
           </p>
         ) : null}

@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { getBudgetPageModel } from "@/data/budget-summary";
 import { spendRecommendationsForUserMonth } from "@/data/spend-recommendations-from-month";
-import { num, sumPlannedMonthlyGoalContributions, profileSalaryTakeHomeMonthly } from "@/data/mappers";
+import {
+  num,
+  profileAnnualBonusTakeHomeCash,
+  profileAnnualSalaryGrowthNominal,
+  profileSalaryTakeHomeMonthly,
+  sumPlannedMonthlyGoalContributions,
+} from "@/data/mappers";
 import { listFinancialGoals } from "@/data/repositories/goals";
 import { listInvestments } from "@/data/repositories/investments";
 import { getProfileById } from "@/data/repositories/profiles";
@@ -229,6 +235,17 @@ export async function BudgetPlanningView({
         prevMonth={prevMonth}
         nextMonth={nextMonth}
         budgetPathVariant={budgetPathVariant}
+        assumptions={{
+          annualBonusTakeHome: profileAnnualBonusTakeHomeCash(profile, month),
+          yearlyPayRisePercent: (() => {
+            const g = profileAnnualSalaryGrowthNominal(profile);
+            return g > 0 ? Math.round(g * 1000) / 10 : null;
+          })(),
+          profileHref: setupTabPath("profile", {
+            month,
+            year: String(calendarYear),
+          }),
+        }}
       />
 
       <nav aria-label="On this page" className="scroll-mt-4 sm:mx-0">
