@@ -49,6 +49,7 @@ export async function updateProfile(
   patch: {
     display_name?: string | null;
     monthly_income?: number | null;
+    other_monthly_income?: number | null;
     salary_frequency?: "monthly" | "biweekly" | "weekly" | "annual" | null;
     annual_bonus?: number | null;
     annual_bonus_months?: number | null;

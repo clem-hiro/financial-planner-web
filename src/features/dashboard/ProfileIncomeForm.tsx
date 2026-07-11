@@ -57,6 +57,7 @@ export function ProfileIncomeForm({
   initialBirthDate,
   initialAnnualSalaryGrowthPercent = null,
   initialAnnualBonus = null,
+  initialOtherMonthlyIncome = null,
   initialSalaryIncrementMonth = null,
   cpfYearMonth,
   currencyCode = DEFAULT_BASE_CURRENCY,
@@ -73,6 +74,8 @@ export function ProfileIncomeForm({
   initialAnnualSalaryGrowthPercent?: number | null;
   /** Annual bonus before employee CPF (optional). */
   initialAnnualBonus?: number | null;
+  /** Optional non-salary monthly take-home (side hustle, freelance, etc.). */
+  initialOtherMonthlyIncome?: number | null;
   /** Calendar month (1-12) the user expects their salary review; null = opt-out. */
   initialSalaryIncrementMonth?: number | null;
   /** `YYYY-MM` for OW ceiling / rates used in the estimate. */
@@ -112,6 +115,9 @@ export function ProfileIncomeForm({
   );
   const [annualBonusRaw, setAnnualBonusRaw] = useState(
     initialAnnualBonus != null ? String(initialAnnualBonus) : ""
+  );
+  const [otherMonthlyIncomeRaw, setOtherMonthlyIncomeRaw] = useState(
+    initialOtherMonthlyIncome != null ? String(initialOtherMonthlyIncome) : ""
   );
   const [showCpfSalaryPath, setShowCpfSalaryPath] = useState(
     () => salaryGrowthPctRaw.trim() !== ""
@@ -202,6 +208,19 @@ export function ProfileIncomeForm({
       patchBody.annual_bonus = annualBonus;
       patchBody.cpf_age_band = band;
       patchBody.monthly_income = breakdown.takeHomeFromSalaryMonthly;
+
+      const otherTrim = otherMonthlyIncomeRaw.trim();
+      if (otherTrim === "") {
+        patchBody.other_monthly_income = null;
+      } else {
+        const otherN = Number(otherTrim);
+        if (!Number.isFinite(otherN) || otherN < 0 || otherN > 10_000_000) {
+          setStatus("Other monthly income must be between 0 and 10,000,000, or blank.");
+          setSubmitting(false);
+          return;
+        }
+        patchBody.other_monthly_income = otherN;
+      }
 
       const growthTrim = salaryGrowthPctRaw.trim();
       let annual_salary_growth_nominal: number | null = null;
@@ -338,6 +357,29 @@ export function ProfileIncomeForm({
                   className={fpInputClass}
                   value={annualBonusRaw}
                   onChange={(e) => setAnnualBonusRaw(e.target.value)}
+                  placeholder="0"
+                />
+              </label>
+              <label className="text-sm sm:min-w-0 sm:col-span-2">
+                <span className="mb-1 flex flex-wrap items-center gap-1 font-medium text-slate-700 dark:text-slate-200">
+                  Other monthly income ({currencyCode}, optional)
+                  <InfoTooltip ariaLabel="What to put in other monthly income">
+                    <p className="text-[11px] leading-snug">
+                      One take-home total for side hustles, freelance, or similar.
+                      Leave blank if none. Rental stays on Housing if you track it
+                      there.
+                    </p>
+                  </InfoTooltip>
+                </span>
+                <input
+                  name="other_monthly_income"
+                  type="number"
+                  min={0}
+                  max={10_000_000}
+                  step="0.01"
+                  className={fpInputClass}
+                  value={otherMonthlyIncomeRaw}
+                  onChange={(e) => setOtherMonthlyIncomeRaw(e.target.value)}
                   placeholder="0"
                 />
               </label>

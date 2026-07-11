@@ -48,6 +48,7 @@ export async function PATCH(request: Request) {
   const patch: {
     display_name?: string | null;
     monthly_income?: number | null;
+    other_monthly_income?: number | null;
     salary_frequency?: "monthly" | "biweekly" | "weekly" | "annual" | null;
     annual_bonus?: number | null;
     annual_bonus_months?: number | null;
@@ -161,6 +162,10 @@ export async function PATCH(request: Request) {
     }
   } else if (data.monthly_income !== undefined) {
     patch.monthly_income = data.monthly_income;
+  }
+
+  if (data.other_monthly_income !== undefined) {
+    patch.other_monthly_income = data.other_monthly_income;
   }
 
   if (data.birth_date !== undefined) {

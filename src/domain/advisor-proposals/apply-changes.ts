@@ -78,6 +78,7 @@ function toNumOrNull(raw: string | null | undefined): number | null {
 
 const PROFILE_NUM_FIELDS = [
   "monthly_income",
+  "other_monthly_income",
   "monthly_gross_salary",
   "savings_target_monthly",
   "fixed_expenses_monthly",

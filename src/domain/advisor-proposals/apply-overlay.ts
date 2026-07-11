@@ -126,6 +126,7 @@ function fieldMap(changes: AdvisorProposalChangeRow[]): Map<string, string | nul
 /** ProfileRow numeric columns carried as strings (declared `string | null`). */
 const PROFILE_NUM_STR_FIELDS = [
   "monthly_income",
+  "other_monthly_income",
   "monthly_gross_salary",
   "savings_target_monthly",
   "fixed_expenses_monthly",

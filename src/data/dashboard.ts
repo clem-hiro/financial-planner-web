@@ -60,7 +60,7 @@ import {
   profileAnnualSalaryGrowthNominal,
   profileExpenseGrowthNominal,
   profileMonthlyGross,
-  profileSalaryTakeHomeMonthly,
+  profileMonthlyCashIncome,
   profileRetirementWithdrawalRateAnnual,
   profileCpfAgeBand,
   sumExpenseAmounts,
@@ -232,6 +232,11 @@ export type DashboardPayload = {
   /** True when a `financial_cpf_balances` row exists (even if all buckets are zero). */
   hasCpfBalanceRecord: boolean;
   savingsRate: number | null;
+  /**
+   * Profile monthly cash income for the dashboard month: salary take-home plus
+   * optional other monthly take-home. Null when neither is set.
+   */
+  monthlyTakeHome: number | null;
   /** Sum of expense rows in the dashboard month (all spend types). */
   monthlyExpensesLoggedTotal: number;
   /** Planned monthly budget: active monthly lines in that month, with overrides. */
@@ -1012,7 +1017,7 @@ export async function getDashboardPayload(
       ? monthlyExpensesLoggedTotal
       : monthlyPlannedMonthlyBudgetTotal;
 
-  const income = profileSalaryTakeHomeMonthly(profile, yearMonth);
+  const income = profileMonthlyCashIncome(profile, yearMonth);
   const annualBonusTakeHomeNet = profileAnnualBonusTakeHomeCash(
     profile,
     yearMonth
@@ -1842,6 +1847,7 @@ export async function getDashboardPayload(
     netWorthExcludingCpf,
     netWorthBreakdown,
     savingsRate,
+    monthlyTakeHome: income,
     monthlyExpensesLoggedTotal,
     monthlyPlannedMonthlyBudgetTotal,
     monthlyExpensesTotal,

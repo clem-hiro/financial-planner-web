@@ -8,6 +8,11 @@ export type ProfileRow = {
   advisor_user_id: string | null;
   display_name: string | null;
   monthly_income: string | null;
+  /**
+   * Optional monthly take-home outside salary (side hustle, freelance, etc.).
+   * Null/absent = none. Home Income = salary take-home + this amount.
+   */
+  other_monthly_income?: string | null;
   salary_frequency: "monthly" | "biweekly" | "weekly" | "annual" | null;
   annual_bonus: string | null;
   /** Months of gross salary used for onboarding bonus presets; null when custom/legacy. */

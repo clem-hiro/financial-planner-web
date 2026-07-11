@@ -259,7 +259,7 @@ export default async function SetupPage({ searchParams }: PageProps) {
           className="transition-opacity duration-150 ease-out space-y-6"
         >
           <ProfileIncomeForm
-            key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.salary_increment_month ?? ""}-${financialProfile?.onboarding_completed_at ?? ""}`}
+            key={`${income ?? ""}-${gross ?? ""}-${cpfBand ?? ""}-${profileAnnualSalaryGrowthNominal(financialProfile)}-${financialProfile?.annual_bonus ?? ""}-${financialProfile?.other_monthly_income ?? ""}-${financialProfile?.birth_date ?? ""}-${financialProfile?.salary_increment_month ?? ""}-${financialProfile?.onboarding_completed_at ?? ""}`}
             initialIncome={income}
             initialGross={gross}
             initialCpfAgeBand={cpfBand}
@@ -267,6 +267,12 @@ export default async function SetupPage({ searchParams }: PageProps) {
               financialProfile?.annual_bonus != null &&
               String(financialProfile.annual_bonus).trim() !== ""
                 ? num(financialProfile.annual_bonus)
+                : null
+            }
+            initialOtherMonthlyIncome={
+              financialProfile?.other_monthly_income != null &&
+              String(financialProfile.other_monthly_income).trim() !== ""
+                ? num(financialProfile.other_monthly_income)
                 : null
             }
             initialAnnualSalaryGrowthPercent={

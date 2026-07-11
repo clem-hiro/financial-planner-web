@@ -67,6 +67,12 @@ export function birthDateIsValidPast(iso: string): boolean {
 export const profilePatchSchema = z
   .object({
     monthly_income: z.number().nonnegative().nullable().optional(),
+    other_monthly_income: z
+      .number()
+      .nonnegative()
+      .max(10_000_000)
+      .nullable()
+      .optional(),
     salary_frequency: z
       .enum(["monthly", "biweekly", "weekly", "annual"])
       .nullable()

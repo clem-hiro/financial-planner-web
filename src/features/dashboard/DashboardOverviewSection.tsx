@@ -6,7 +6,7 @@ import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { appBrandNavyTextStyle } from "@/ui/app-tab-styles";
 import { InfoTooltip } from "@/ui/InfoTooltip";
 import { appCardClass } from "@/ui/surface-classes";
-import { formatCurrency, formatPercent } from "@/ui/lib/format";
+import { formatCurrency } from "@/ui/lib/format";
 
 const labelClass =
   "text-xs font-medium text-slate-600 dark:text-slate-300";
@@ -22,7 +22,7 @@ export function DashboardOverviewSection({
   const monthLabel = formatYearMonthLong(payload.month);
   const hasLoggedSpend = payload.monthlyExpensesLoggedTotal > 0;
   const hasBudgetForecast = payload.monthlyPlannedMonthlyBudgetTotal > 0;
-  const spendBasisAction = hasLoggedSpend
+  const expensesAction = hasLoggedSpend
     ? { href: "/expenses", label: "View expenses" }
     : hasBudgetForecast
       ? {
@@ -40,6 +40,7 @@ export function DashboardOverviewSection({
           label: "Set up budget",
         };
   const showSetupPrompt = payload.investmentSummary.count === 0;
+  const leftAfterExpenses = payload.takeHomeMinusExpenses;
 
   return (
     <div className="space-y-4">
@@ -48,7 +49,7 @@ export function DashboardOverviewSection({
           {monthLabel}
         </p>
         <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-          Monthly cash position and balance sheet snapshot
+          This month&apos;s income and planned spend
         </p>
       </div>
 
@@ -57,44 +58,40 @@ export function DashboardOverviewSection({
           className={`${monthlyCardShell} border-l-[3px] border-l-emerald-600 ring-1 ring-emerald-100/80 dark:ring-emerald-900/40`}
         >
           <div className="flex flex-wrap items-center gap-1">
-            <p className={`${labelClass} font-semibold text-emerald-800 dark:text-emerald-200`}>
-              Safe to spend
+            <p
+              className={`${labelClass} font-semibold text-emerald-800 dark:text-emerald-200`}
+            >
+              Income
             </p>
-            <InfoTooltip variant="emerald" ariaLabel="How safe to spend is calculated">
-              Take-home minus this month&apos;s spend basis and planned monthly goal
-              contributions. Shown as zero when negative.
+            <InfoTooltip
+              variant="emerald"
+              ariaLabel="How monthly income is calculated"
+            >
+              Salary take-home from Setup → Profile, plus any other monthly
+              take-home you added there (side hustle, freelance, etc.). Rental on
+              Housing is separate and not included here.
             </InfoTooltip>
           </div>
           <p className={`${figureClass} text-emerald-950 dark:text-emerald-50`}>
-            {payload.discretionaryAfterGoals != null
-              ? formatCurrency(
-                  Math.max(0, payload.discretionaryAfterGoals),
-                  payload.baseCurrency
-                )
+            {payload.monthlyTakeHome != null
+              ? formatCurrency(payload.monthlyTakeHome, payload.baseCurrency)
               : "Set income"}
           </p>
+          {payload.monthlyTakeHome == null ? (
+            <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
+              <Link href="/setup?tab=profile" className={appInlineLinkClass}>
+                Edit profile
+              </Link>
+            </p>
+          ) : null}
         </div>
 
         <div className={monthlyCardShell}>
           <div className="flex flex-wrap items-center gap-1">
-            <p className={labelClass}>Savings rate</p>
-            <InfoTooltip ariaLabel="How savings rate is calculated">
-              Share of take-home left after this month&apos;s expenses and planned
-              monthly goal contributions. Spend uses logged expenses when present,
-              otherwise planned monthly budget.
-            </InfoTooltip>
-          </div>
-          <p className={figureClass} style={appBrandNavyTextStyle}>
-            {formatPercent(payload.savingsRate)}
-          </p>
-        </div>
-
-        <div className={monthlyCardShell}>
-          <div className="flex flex-wrap items-center gap-1">
-            <p className={labelClass}>Spend basis</p>
-            <InfoTooltip ariaLabel="How monthly spend basis is calculated">
-              Monthly take-home used to calculate budgets and savings rate; uses
-              logged expenses when present.
+            <p className={labelClass}>Expenses</p>
+            <InfoTooltip ariaLabel="How monthly expenses are calculated">
+              Uses your monthly budget by default. Switches to logged expenses
+              when any expense exists for this month.
             </InfoTooltip>
           </div>
           <p className={figureClass} style={appBrandNavyTextStyle}>
@@ -111,9 +108,36 @@ export function DashboardOverviewSection({
             ) : (
               <>No budget or expenses yet.</>
             )}{" "}
-            <Link href={spendBasisAction.href} className={appInlineLinkClass}>
-              {spendBasisAction.label}
+            <Link href={expensesAction.href} className={appInlineLinkClass}>
+              {expensesAction.label}
             </Link>
+          </p>
+        </div>
+
+        <div className={monthlyCardShell}>
+          <div className="flex flex-wrap items-center gap-1">
+            <p className={labelClass}>Left after expenses</p>
+            <InfoTooltip ariaLabel="How left after expenses is calculated">
+              Income minus this month&apos;s expenses. Goal contributions are not
+              subtracted here — see Goals &amp; cash flow below when you have
+              planned goal amounts.
+            </InfoTooltip>
+          </div>
+          <p
+            className={
+              leftAfterExpenses != null && leftAfterExpenses < 0
+                ? `${figureClass} text-amber-900 dark:text-amber-200`
+                : figureClass
+            }
+            style={
+              leftAfterExpenses != null && leftAfterExpenses < 0
+                ? undefined
+                : appBrandNavyTextStyle
+            }
+          >
+            {leftAfterExpenses != null
+              ? formatCurrency(leftAfterExpenses, payload.baseCurrency)
+              : "Set income"}
           </p>
         </div>
       </div>

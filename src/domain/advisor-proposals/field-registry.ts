@@ -12,6 +12,11 @@ export type ProposalFieldMeta = {
 const PROFILE_FIELDS: Record<string, ProposalFieldMeta> = {
   display_name: { label: "Display name", section: "profile_assumptions" },
   monthly_income: { label: "Monthly income (take-home)", section: "profile_assumptions", currency: true },
+  other_monthly_income: {
+    label: "Other monthly income (take-home)",
+    section: "profile_assumptions",
+    currency: true,
+  },
   monthly_gross_salary: { label: "Monthly gross salary", section: "profile_assumptions", currency: true },
   savings_target_monthly: { label: "Monthly savings target", section: "profile_assumptions", currency: true },
   fixed_expenses_monthly: { label: "Fixed expenses (monthly)", section: "profile_assumptions", currency: true },

@@ -68,6 +68,27 @@ export function profileSalaryTakeHomeMonthly(
   return profileMonthlyIncome(profile);
 }
 
+/** Optional non-salary monthly take-home; 0 when unset. */
+export function profileOtherMonthlyIncome(profile: ProfileRow | null): number {
+  if (!profile?.other_monthly_income) return 0;
+  const n = num(profile.other_monthly_income);
+  return n > 0 ? n : 0;
+}
+
+/**
+ * Monthly cash income for Home / budget leftover: salary take-home plus optional
+ * other monthly take-home. Null only when neither is set.
+ */
+export function profileMonthlyCashIncome(
+  profile: ProfileRow | null,
+  cpfReferenceYearMonth: string
+): number | null {
+  const salary = profileSalaryTakeHomeMonthly(profile, cpfReferenceYearMonth);
+  const other = profileOtherMonthlyIncome(profile);
+  if (salary != null) return salary + other;
+  return other > 0 ? other : null;
+}
+
 /**
  * Annual bonus as cash after employee CPF on AW (lump). When gross/CPF band are
  * missing, returns gross bonus unchanged (no AW CPF estimate).
