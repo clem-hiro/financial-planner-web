@@ -179,20 +179,6 @@ export function BudgetStrategyInsightPanel({
         </div>
       )}
 
-      <div className="grid gap-3 border-t border-zinc-100 pt-4 dark:border-slate-800 sm:grid-cols-2">
-        <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50/50 p-3 text-xs text-zinc-600 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300">
-          <p className="font-semibold text-zinc-800 dark:text-slate-100">Auto rebalance</p>
-          <p className="mt-1">Coming soon — gentle nudges when categories drift.</p>
-        </div>
-        <div className="rounded-xl border border-dashed border-zinc-200 bg-zinc-50/50 p-3 text-xs text-zinc-600 dark:border-slate-700 dark:bg-slate-900/70 dark:text-slate-300">
-          <p className="font-semibold text-zinc-800 dark:text-slate-100">Advisor insights</p>
-          <p className="mt-1">Coming soon — patterns your advisor can discuss without spreadsheet detail.</p>
-        </div>
-      </div>
-
-      <p className="text-[11px] text-zinc-500 dark:text-slate-400">
-        AI suggestions: Coming soon · Predictive cashflow: Coming soon
-      </p>
     </section>
   );
 }

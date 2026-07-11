@@ -70,11 +70,6 @@ import {
 } from "@/domain/finance/cash-flow-setup-guidance";
 import { CashFlowSetupGuidanceBanner } from "@/features/planning/CashFlowSetupGuidanceBanner";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
-import {
-  appTabPillClass,
-  appTabPillInactiveClass,
-  appTabRailClass,
-} from "@/ui/app-tab-styles";
 import { PageSection } from "@/ui/PageSection";
 import { formatCurrency } from "@/ui/lib/format";
 
@@ -248,127 +243,6 @@ export async function BudgetPlanningView({
         }}
       />
 
-      <nav aria-label="On this page" className="scroll-mt-4 sm:mx-0">
-        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
-          Jump to
-        </p>
-        <div className="-mx-1 overflow-x-auto px-1 pb-0.5 scroll-smooth sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0">
-          <div className={appTabRailClass}>
-            <a
-              href="#budget-review"
-              className={`${appTabPillClass} ${appTabPillInactiveClass}`}
-            >
-              Monthly review
-            </a>
-            <a
-              href="#budget-plan-lens"
-              className={`${appTabPillClass} ${appTabPillInactiveClass}`}
-            >
-              Needs / wants / savings
-            </a>
-            <a
-              href="#budget-quick-add"
-              className={`${appTabPillClass} ${appTabPillInactiveClass}`}
-            >
-              Quick add
-            </a>
-            <a
-              href="#budget-monthly"
-              className={`${appTabPillClass} ${appTabPillInactiveClass}`}
-            >
-              Your categories
-            </a>
-            <a
-              href="#budget-recommended"
-              className={`${appTabPillClass} ${appTabPillInactiveClass}`}
-            >
-              Recommended
-            </a>
-            <a
-              href="#budget-guidance"
-              className={`${appTabPillClass} ${appTabPillInactiveClass}`}
-            >
-              Guidance
-            </a>
-            <a
-              href="#budget-unbudgeted"
-              className={`${appTabPillClass} ${appTabPillInactiveClass}`}
-            >
-              Unbudgeted
-            </a>
-            <a
-              href="#budget-annual"
-              className={`${appTabPillClass} ${appTabPillInactiveClass}`}
-            >
-              Yearly plan
-            </a>
-            {inactiveMonthly.length > 0 && (
-              <a
-                href="#budget-inactive"
-                className={`${appTabPillClass} ${appTabPillInactiveClass}`}
-              >
-                Paused lines
-              </a>
-            )}
-            <a
-              href="#budget-advanced-add"
-              className={`${appTabPillClass} ${appTabPillInactiveClass}`}
-            >
-              Advanced add
-            </a>
-          </div>
-        </div>
-      </nav>
-
-      <BudgetStrategyInsightPanel
-        profile={profile}
-        currency={currency}
-        month={month}
-        monthlyLines={displayLineRows}
-      />
-
-      <BudgetReviewWorkflowPanel
-        review={buildBudgetReviewWorkflow({
-          month,
-          monthly: displayMonthly,
-          activeMonthlyLines: activeMonthly.map(
-            (line): BudgetReviewLineInput => ({
-              id: line.id,
-              category: line.category,
-              baseAmount: num(line.amount),
-              startYearMonth: line.start_year_month,
-              endYearMonth: line.end_year_month,
-            })
-          ),
-          inactiveMonthlyLines: inactiveMonthly.map(
-            (line): BudgetReviewLineInput => ({
-              id: line.id,
-              category: line.category,
-              baseAmount: num(line.amount),
-              startYearMonth: line.start_year_month,
-              endYearMonth: line.end_year_month,
-            })
-          ),
-          overrideByLineId: model.overridesThisMonth,
-          unbudgetedMonthlyCount: displayUnbudgetedMonthlyExpenses.length,
-          unbudgetedMonthlyTotal,
-        })}
-        currency={currency}
-        expensesHref={expensesHref}
-      />
-
-      <section
-        id="budget-quick-add"
-        className="scroll-mt-4 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]"
-      >
-        <BudgetQuickAddPresets
-          defaultCalendarYear={calendarYear}
-          monthlyIncome={monthlyIncome}
-          currency={currency}
-        />
-        <BudgetRecommendationHints monthlyIncome={monthlyIncome} />
-      </section>
-
       <PageSection
         id="budget-monthly"
         className="scroll-mt-4 space-y-6"
@@ -376,8 +250,7 @@ export async function BudgetPlanningView({
         title="Your monthly categories"
         description={
           <span className="text-xs text-zinc-600">
-            Totals use expenses marked monthly; categories match your lines
-            (case insensitive).
+            Edit amounts, then compare with what you logged this month.
           </span>
         }
         actions={
@@ -468,11 +341,11 @@ export async function BudgetPlanningView({
                 </li>
                 {unbudgetedMonthlyTotal > 0 && (
                   <li className="text-amber-900 dark:text-amber-200">
-                    Unbudgeted monthly spend (below):{" "}
+                    Unbudgeted monthly spend:{" "}
                     <span className="font-medium">
                       {formatCurrency(unbudgetedMonthlyTotal, currency)}
                     </span>{" "}
-                    — not in the verdict above.
+                    — see below.
                   </li>
                 )}
               </ul>
@@ -494,45 +367,41 @@ export async function BudgetPlanningView({
         })}
       />
 
-      <PageSection
-        id="budget-unbudgeted"
-        className="scroll-mt-4 space-y-3"
-        title="Spend without a matching line"
-        description="Monthly expenses in categories you have not planned for this month."
-        actions={
-          <Link href={expensesHref} className={`text-xs font-medium ${appInlineLinkClass}`}>
-            Log an expense
-          </Link>
-        }
-      >
-        {displayUnbudgetedMonthlyExpenses.length === 0 ? (
-          <div className="rounded-2xl border border-emerald-100 bg-linear-to-br from-emerald-50/80 to-white p-6 text-center shadow-sm dark:border-emerald-400/30 dark:from-slate-950 dark:to-emerald-950/35 dark:shadow-black/25">
-            <p className="text-lg" aria-hidden>
-              ✨
-            </p>
-            <p className="mt-2 text-sm font-semibold text-emerald-950 dark:text-emerald-100">
-              Nothing unbudgeted this month
-            </p>
-            <p className="mt-1 text-xs text-emerald-900/80 dark:text-emerald-100/80">
-              Every monthly expense lines up with a category in your plan — or
-              you have not logged spend yet. Either way, you are all caught up
-              here.
-            </p>
-          </div>
-        ) : (
-          <>
-            <div className="overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950">
-              <div className="max-h-[min(65vh,42rem)] overflow-x-auto overflow-y-auto">
-                <table className="min-w-full text-left text-sm">
-                  <thead className="sticky top-0 z-10 border-b border-zinc-200 bg-zinc-50/95 text-[11px] font-semibold uppercase tracking-wide text-zinc-500 shadow-sm backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/95 dark:text-slate-300">
-                    <tr>
-                      <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">Category</th>
-                      <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">Date</th>
-                      <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">Amount</th>
-                      <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">Note</th>
-                    </tr>
-                  </thead>
-                  <tbody>
+      {displayUnbudgetedMonthlyExpenses.length > 0 ? (
+        <PageSection
+          id="budget-unbudgeted"
+          className="scroll-mt-4 space-y-3"
+          title="Spend without a matching line"
+          description="Logged expenses that do not match a category in this month's plan."
+          actions={
+            <Link
+              href={expensesHref}
+              className={`text-xs font-medium ${appInlineLinkClass}`}
+            >
+              Log an expense
+            </Link>
+          }
+        >
+          <div className="overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-950">
+            <div className="max-h-[min(65vh,42rem)] overflow-x-auto overflow-y-auto">
+              <table className="min-w-full text-left text-sm">
+                <thead className="sticky top-0 z-10 border-b border-zinc-200 bg-zinc-50/95 text-[11px] font-semibold uppercase tracking-wide text-zinc-500 shadow-sm backdrop-blur-sm dark:border-slate-700 dark:bg-slate-900/95 dark:text-slate-300">
+                  <tr>
+                    <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">
+                      Category
+                    </th>
+                    <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">
+                      Date
+                    </th>
+                    <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">
+                      Amount
+                    </th>
+                    <th className="bg-zinc-50/95 px-3 py-3 dark:bg-slate-900/95">
+                      Note
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
                   {displayUnbudgetedMonthlyExpenses.map((e) => (
                     <tr
                       key={e.id}
@@ -544,7 +413,9 @@ export async function BudgetPlanningView({
                         </span>
                         {e.category}
                       </td>
-                      <td className="px-3 py-2 text-zinc-600 dark:text-slate-300">{e.spent_at}</td>
+                      <td className="px-3 py-2 text-zinc-600 dark:text-slate-300">
+                        {e.spent_at}
+                      </td>
                       <td className="px-3 py-2 text-zinc-800 dark:text-slate-200">
                         {formatCurrency(num(e.amount), currency)}
                       </td>
@@ -553,219 +424,288 @@ export async function BudgetPlanningView({
                       </td>
                     </tr>
                   ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-            <p className="text-xs text-zinc-500 dark:text-slate-400">
-              Subtotal:{" "}
-              <span className="font-medium text-zinc-800 dark:text-slate-200">
-                {formatCurrency(unbudgetedMonthlyTotal, currency)}
-              </span>
-              . Tip: quick-add a line above, then expenses will map here
-              automatically.
-            </p>
-          </>
-        )}
-      </PageSection>
-
-      {inactiveMonthly.length > 0 && (
-        <PageSection
-          id="budget-inactive"
-          className="scroll-mt-4 space-y-3"
-          title="Lines not active this month"
-          description="These lines start later or already ended (for example after a loan payoff). You can adjust the schedule or remove the line."
-        >
-          <ul className="space-y-4 rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-950">
-            {inactiveMonthly.map((line) => (
-              <li
-                key={line.id}
-                className="border-b border-zinc-100 pb-4 last:border-0 last:pb-0 dark:border-slate-800"
-              >
-                <p className="flex items-center gap-2 font-medium capitalize text-zinc-800 dark:text-slate-50">
-                  <span aria-hidden>{budgetCategoryEmoji(line.category)}</span>
-                  {line.category}{" "}
-                  <span className="text-xs font-normal text-zinc-500 dark:text-slate-400">
-                    Base {formatCurrency(num(line.amount), currency)}
-                    {line.start_year_month
-                      ? ` · from ${line.start_year_month}`
-                      : ""}
-                    {line.end_year_month
-                      ? ` · through ${line.end_year_month}`
-                      : ""}
-                  </span>
-                </p>
-                <div className="mt-2 flex flex-wrap gap-3">
-                  <BudgetLineScheduleForm
-                    lineId={line.id}
-                    startYearMonth={line.start_year_month}
-                    endYearMonth={line.end_year_month}
-                  />
-                  <form action={deleteBudgetLineAction} className="self-end">
-                    <input type="hidden" name="id" value={line.id} />
-                    <button
-                      type="submit"
-                      className="text-xs text-red-600 hover:underline"
-                    >
-                      Remove line
-                    </button>
-                  </form>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </PageSection>
-      )}
-
-      <PageSection
-        id="budget-annual"
-        className="scroll-mt-4 space-y-3"
-        title={`Annual & irregular expenses (${calendarYear})`}
-        description={
-          <span className="text-xs text-zinc-600 dark:text-slate-300">
-            For insurance, holidays, road tax, gifts, school fees, quarterly
-            bills, and other non-monthly costs. Totals use annual-tagged
-            expenses dated in {calendarYear}.
-          </span>
-        }
-        actions={
-          <div className="flex flex-wrap items-center gap-3 text-xs">
-            <Link
-              className="font-medium text-zinc-600 hover:text-zinc-900 dark:text-slate-400 dark:hover:text-slate-100"
-              href={budgetMonthHref(
-                budgetPathVariant,
-                month,
-                calendarYear - 1
-              )}
-            >
-              Previous year
-            </Link>
-            <Link
-              className="font-medium text-zinc-600 hover:text-zinc-900 dark:text-slate-400 dark:hover:text-slate-100"
-              href={budgetMonthHref(
-                budgetPathVariant,
-                month,
-                calendarYear + 1
-              )}
-            >
-              Next year
-            </Link>
-          </div>
-        }
-      >
-        <BudgetIrregularExpenseReservePanel
-          annual={model.annual}
-          currency={currency}
-          month={month}
-        />
-
-        {annualRows.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-violet-200/80 bg-linear-to-br from-violet-50/50 to-white p-6 text-sm text-zinc-700 shadow-sm dark:border-violet-400/30 dark:from-slate-950 dark:to-violet-950/35 dark:text-slate-200 dark:shadow-black/25">
-            <p className="font-semibold text-zinc-900 dark:text-slate-50">No yearly lines yet</p>
-            <p className="mt-2 text-xs leading-relaxed text-zinc-600 dark:text-slate-300">
-              Add categories such as insurance premiums, travel, vehicle tax,
-              school fees, quarterly bills, or annual subscriptions — then tag
-              matching expenses as annual in {calendarYear}.
-            </p>
-            <p className="mt-3 text-xs">
-              <a href="#budget-advanced-add" className={appInlineLinkClass}>
-                Add an annual line
-              </a>
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-sm">
-            <div className="max-h-[min(65vh,42rem)] overflow-x-auto overflow-y-auto">
-              <table className="min-w-full text-left text-sm">
-                <thead className="sticky top-0 z-10 border-b border-zinc-200 bg-zinc-50/95 text-[11px] font-semibold uppercase tracking-wide text-zinc-500 shadow-sm backdrop-blur-sm">
-                  <tr>
-                    <th className="bg-zinc-50/95 px-3 py-3">Category</th>
-                    <th className="bg-zinc-50/95 px-3 py-3">Budget</th>
-                    <th className="bg-zinc-50/95 px-3 py-3">Spent</th>
-                    <th className="bg-zinc-50/95 px-3 py-3">Remaining</th>
-                    <th className="bg-zinc-50/95 px-3 py-3">Details</th>
-                  </tr>
-                </thead>
-                <tbody>
-                {annualRows.map((line) => {
-                  const v = varianceForLine(model.annual, line);
-                  const budget = num(line.amount);
-                  const spent = v?.spent ?? 0;
-                  const remaining = v?.remaining ?? budget;
-                  const over = v?.over ?? false;
-                  return (
-                    <tr
-                      key={line.id}
-                      className="border-b border-zinc-100 transition-colors hover:bg-violet-50/20 last:border-0"
-                    >
-                      <td className="px-3 py-2 font-medium capitalize text-zinc-800">
-                        <span className="mr-1.5" aria-hidden>
-                          {budgetCategoryEmoji(line.category)}
-                        </span>
-                        {line.category}
-                      </td>
-                      <td className="px-3 py-2 text-zinc-700">
-                        {formatCurrency(budget, currency)}
-                      </td>
-                      <td
-                        className={
-                          over ? "px-3 py-2 font-medium text-red-700" : "px-3 py-2"
-                        }
-                      >
-                        {formatCurrency(spent, currency)}
-                      </td>
-                      <td
-                        className={
-                          remaining < 0
-                            ? "px-3 py-2 text-red-600"
-                            : "px-3 py-2 text-zinc-700"
-                        }
-                      >
-                        {formatCurrency(remaining, currency)}
-                      </td>
-                      <td className="px-3 py-2 align-top">
-                        <BudgetLineActionsCollapsible
-                          variant="annual"
-                          currency={currency}
-                          lineId={line.id}
-                          budgetAmount={budget}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })}
                 </tbody>
               </table>
             </div>
           </div>
-        )}
-        {annualRows.length > 0 && (
-          <p className="text-xs text-zinc-500">
-            Annual planned total:{" "}
-            <span className="font-medium text-zinc-800">
-              {formatCurrency(model.annual.totals.budget, currency)}
+          <p className="text-xs text-zinc-500 dark:text-slate-400">
+            Subtotal:{" "}
+            <span className="font-medium text-zinc-800 dark:text-slate-200">
+              {formatCurrency(unbudgetedMonthlyTotal, currency)}
             </span>
-            {" · "}
-            Spent:{" "}
-            <span className="font-medium text-zinc-800">
-              {formatCurrency(model.annual.totals.spent, currency)}
-            </span>
+            . Add a matching category under More → Quick add if needed.
           </p>
-        )}
-      </PageSection>
+        </PageSection>
+      ) : null}
 
-      <PageSection
-        id="budget-advanced-add"
-        className="scroll-mt-4"
-        title="Advanced — full budget line form"
-        description={
-          <span className="text-xs text-zinc-600">
-            For precise schedules, annual amounts, or loan payoff months.
-          </span>
-        }
-      >
-        <BudgetAddForm defaultYear={calendarYear} />
-      </PageSection>
+      <details className="group rounded-2xl border border-zinc-200/80 bg-white open:shadow-sm dark:border-slate-700/80 dark:bg-slate-950">
+        <summary className="cursor-pointer list-none px-5 py-4 marker:content-none [&::-webkit-details-marker]:hidden">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <p className="text-sm font-semibold text-zinc-900 dark:text-slate-50">
+                More on Budget
+              </p>
+              <p className="mt-0.5 text-xs text-zinc-500 dark:text-slate-400">
+                Style mix, monthly review, quick add, yearly lines, and advanced
+                forms.
+              </p>
+            </div>
+            <span
+              className="text-xs text-zinc-400 transition-transform group-open:rotate-180 dark:text-slate-500"
+              aria-hidden
+            >
+              ▾
+            </span>
+          </div>
+        </summary>
+        <div className="space-y-10 border-t border-zinc-100 px-5 py-6 dark:border-slate-800">
+          <BudgetStrategyInsightPanel
+            profile={profile}
+            currency={currency}
+            month={month}
+            monthlyLines={displayLineRows}
+          />
+
+          <BudgetReviewWorkflowPanel
+            review={buildBudgetReviewWorkflow({
+              month,
+              monthly: displayMonthly,
+              activeMonthlyLines: activeMonthly.map(
+                (line): BudgetReviewLineInput => ({
+                  id: line.id,
+                  category: line.category,
+                  baseAmount: num(line.amount),
+                  startYearMonth: line.start_year_month,
+                  endYearMonth: line.end_year_month,
+                })
+              ),
+              inactiveMonthlyLines: inactiveMonthly.map(
+                (line): BudgetReviewLineInput => ({
+                  id: line.id,
+                  category: line.category,
+                  baseAmount: num(line.amount),
+                  startYearMonth: line.start_year_month,
+                  endYearMonth: line.end_year_month,
+                })
+              ),
+              overrideByLineId: model.overridesThisMonth,
+              unbudgetedMonthlyCount: displayUnbudgetedMonthlyExpenses.length,
+              unbudgetedMonthlyTotal,
+            })}
+            currency={currency}
+            expensesHref={expensesHref}
+          />
+
+          <section
+            id="budget-quick-add"
+            className="scroll-mt-4 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]"
+          >
+            <BudgetQuickAddPresets
+              defaultCalendarYear={calendarYear}
+              monthlyIncome={monthlyIncome}
+              currency={currency}
+            />
+            <BudgetRecommendationHints monthlyIncome={monthlyIncome} />
+          </section>
+
+          {inactiveMonthly.length > 0 && (
+            <PageSection
+              id="budget-inactive"
+              className="scroll-mt-4 space-y-3"
+              title="Lines not active this month"
+              description="These lines start later or already ended. Adjust the schedule or remove them."
+            >
+              <ul className="space-y-4 rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-950">
+                {inactiveMonthly.map((line) => (
+                  <li
+                    key={line.id}
+                    className="border-b border-zinc-100 pb-4 last:border-0 last:pb-0 dark:border-slate-800"
+                  >
+                    <p className="flex items-center gap-2 font-medium capitalize text-zinc-800 dark:text-slate-50">
+                      <span aria-hidden>
+                        {budgetCategoryEmoji(line.category)}
+                      </span>
+                      {line.category}{" "}
+                      <span className="text-xs font-normal text-zinc-500 dark:text-slate-400">
+                        Base {formatCurrency(num(line.amount), currency)}
+                        {line.start_year_month
+                          ? ` · from ${line.start_year_month}`
+                          : ""}
+                        {line.end_year_month
+                          ? ` · through ${line.end_year_month}`
+                          : ""}
+                      </span>
+                    </p>
+                    <div className="mt-2 flex flex-wrap gap-3">
+                      <BudgetLineScheduleForm
+                        lineId={line.id}
+                        startYearMonth={line.start_year_month}
+                        endYearMonth={line.end_year_month}
+                      />
+                      <form action={deleteBudgetLineAction} className="self-end">
+                        <input type="hidden" name="id" value={line.id} />
+                        <button
+                          type="submit"
+                          className="text-xs text-red-600 hover:underline"
+                        >
+                          Remove line
+                        </button>
+                      </form>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </PageSection>
+          )}
+
+          <PageSection
+            id="budget-annual"
+            className="scroll-mt-4 space-y-3"
+            title={`Annual & irregular expenses (${calendarYear})`}
+            description={
+              <span className="text-xs text-zinc-600 dark:text-slate-300">
+                Insurance, travel, road tax, and other non-monthly costs for{" "}
+                {calendarYear}.
+              </span>
+            }
+            actions={
+              <div className="flex flex-wrap items-center gap-3 text-xs">
+                <Link
+                  className="font-medium text-zinc-600 hover:text-zinc-900 dark:text-slate-400 dark:hover:text-slate-100"
+                  href={budgetMonthHref(
+                    budgetPathVariant,
+                    month,
+                    calendarYear - 1
+                  )}
+                >
+                  Previous year
+                </Link>
+                <Link
+                  className="font-medium text-zinc-600 hover:text-zinc-900 dark:text-slate-400 dark:hover:text-slate-100"
+                  href={budgetMonthHref(
+                    budgetPathVariant,
+                    month,
+                    calendarYear + 1
+                  )}
+                >
+                  Next year
+                </Link>
+              </div>
+            }
+          >
+            <BudgetIrregularExpenseReservePanel
+              annual={model.annual}
+              currency={currency}
+              month={month}
+            />
+
+            {annualRows.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-violet-200/80 bg-linear-to-br from-violet-50/50 to-white p-6 text-sm text-zinc-700 shadow-sm dark:border-violet-400/30 dark:from-slate-950 dark:to-violet-950/35 dark:text-slate-200 dark:shadow-black/25">
+                <p className="font-semibold text-zinc-900 dark:text-slate-50">
+                  No yearly lines yet
+                </p>
+                <p className="mt-2 text-xs leading-relaxed text-zinc-600 dark:text-slate-300">
+                  Add insurance, travel, or other annual costs with the advanced
+                  form below.
+                </p>
+              </div>
+            ) : (
+              <div className="overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-sm">
+                <div className="max-h-[min(65vh,42rem)] overflow-x-auto overflow-y-auto">
+                  <table className="min-w-full text-left text-sm">
+                    <thead className="sticky top-0 z-10 border-b border-zinc-200 bg-zinc-50/95 text-[11px] font-semibold uppercase tracking-wide text-zinc-500 shadow-sm backdrop-blur-sm">
+                      <tr>
+                        <th className="bg-zinc-50/95 px-3 py-3">Category</th>
+                        <th className="bg-zinc-50/95 px-3 py-3">Budget</th>
+                        <th className="bg-zinc-50/95 px-3 py-3">Spent</th>
+                        <th className="bg-zinc-50/95 px-3 py-3">Remaining</th>
+                        <th className="bg-zinc-50/95 px-3 py-3">Details</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {annualRows.map((line) => {
+                        const v = varianceForLine(model.annual, line);
+                        const budget = num(line.amount);
+                        const spentAmt = v?.spent ?? 0;
+                        const remaining = v?.remaining ?? budget;
+                        const over = v?.over ?? false;
+                        return (
+                          <tr
+                            key={line.id}
+                            className="border-b border-zinc-100 transition-colors hover:bg-violet-50/20 last:border-0"
+                          >
+                            <td className="px-3 py-2 font-medium capitalize text-zinc-800">
+                              <span className="mr-1.5" aria-hidden>
+                                {budgetCategoryEmoji(line.category)}
+                              </span>
+                              {line.category}
+                            </td>
+                            <td className="px-3 py-2 text-zinc-700">
+                              {formatCurrency(budget, currency)}
+                            </td>
+                            <td
+                              className={
+                                over
+                                  ? "px-3 py-2 font-medium text-red-700"
+                                  : "px-3 py-2"
+                              }
+                            >
+                              {formatCurrency(spentAmt, currency)}
+                            </td>
+                            <td
+                              className={
+                                remaining < 0
+                                  ? "px-3 py-2 text-red-600"
+                                  : "px-3 py-2 text-zinc-700"
+                              }
+                            >
+                              {formatCurrency(remaining, currency)}
+                            </td>
+                            <td className="px-3 py-2 align-top">
+                              <BudgetLineActionsCollapsible
+                                variant="annual"
+                                currency={currency}
+                                lineId={line.id}
+                                budgetAmount={budget}
+                              />
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+            {annualRows.length > 0 && (
+              <p className="text-xs text-zinc-500">
+                Annual planned total:{" "}
+                <span className="font-medium text-zinc-800">
+                  {formatCurrency(model.annual.totals.budget, currency)}
+                </span>
+                {" · "}
+                Spent:{" "}
+                <span className="font-medium text-zinc-800">
+                  {formatCurrency(model.annual.totals.spent, currency)}
+                </span>
+              </p>
+            )}
+          </PageSection>
+
+          <PageSection
+            id="budget-advanced-add"
+            className="scroll-mt-4"
+            title="Advanced — full budget line form"
+            description={
+              <span className="text-xs text-zinc-600">
+                For precise schedules, annual amounts, or loan payoff months.
+              </span>
+            }
+          >
+            <BudgetAddForm defaultYear={calendarYear} />
+          </PageSection>
+        </div>
+      </details>
     </div>
   );
 }
