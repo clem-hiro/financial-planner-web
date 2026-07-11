@@ -158,12 +158,12 @@ export const SETUP_MODULES: readonly SetupModuleDefinition[] = [
     id: "risk_profile",
     group: "advisor_system",
     title: "Risk Profile",
-    description: "Lifestyle and budgeting style that calibrate guidance.",
+    description: "Lifestyle and money-management preferences that calibrate budget guidance.",
     icon: "⚖️",
     href: "/setup?tab=profile",
     priority: 100,
     recommendReason:
-      "A risk and budgeting profile helps align portfolio and insurance conversations.",
+      "A lifestyle and budgeting profile helps align recommended budgets and advisor conversations.",
     ctaLabel: "Complete profile",
   },
   {

@@ -13,7 +13,7 @@
  * | Retirement targets (all fields)   | `target_retirement_age`, `retirement_monthly_spend_goal`, `expense_growth_nominal`, `retirement_dividend_yield_annual`, `retirement_withdrawal_rate_annual` | Goals → Retirement targets |
  * | Savings target                  | `savings_target_monthly`       | Setup hub emergency funds evaluator  |
  * | Debt payments                   | `debt_obligations_monthly`     | Profile commitments (not liability rows) |
- * | Allocation style                | `budgeting_strategy`           | Guided budget + Budget lens form     |
+ * | Allocation style                | `budgeting_strategy`           | Guided budget + Lifestyle Profile form |
  * | Lifestyle + food band           | `lifestyle_profile`, `food_spend_band` | Guided budget generator        |
  * | Currency                        | `base_currency`                | Profile / display                    |
  * | Optional guided lines           | `financial_budget_lines`       | Budget, Activity, dashboard          |

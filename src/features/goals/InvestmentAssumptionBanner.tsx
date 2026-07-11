@@ -1,5 +1,3 @@
-import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
-import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { appAmberBannerClass } from "@/ui/surface-classes";
 
 /** Shared copy: projections use stated balances and returns only. */
@@ -16,15 +14,8 @@ export function InvestmentAssumptionBanner({
       <p className="mt-1">
         Balances and expected returns you enter drive net worth and retirement charts—they
         are not live portfolio data, performance tracking, or financial advice. Update
-        figures when your situation changes.
-      </p>
-      <p className="mt-2">
-        <MethodologyOpenLink
-          topicId="investment-projection-36m"
-          className={appInlineLinkClass}
-        >
-          How investment projections work
-        </MethodologyOpenLink>
+        figures when your situation changes. Short forward curves use only stated monthly
+        contributions and blended expected returns—no automatic invest of leftover take-home.
       </p>
     </div>
   );

@@ -15,7 +15,6 @@ import { GoalForm } from "@/features/goals/GoalForm";
 import { GoalPriorityTradeoffPanel } from "@/features/goals/GoalPriorityTradeoffPanel";
 import { GoalReorderButtons } from "@/features/goals/GoalReorderButtons";
 import { RetirementTargetsForm } from "@/features/goals/RetirementTargetsForm";
-import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { formatMonthsApprox } from "@/ui/lib/duration";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { PageSection } from "@/ui/PageSection";
@@ -144,13 +143,10 @@ export async function FinancialGoalsPanels({
             </Link>
             .
         </p>
-        <p className="mt-2 flex flex-wrap gap-x-3 text-xs text-zinc-600 dark:text-slate-300">
-          <MethodologyOpenLink topicId="goals-eta" className={appInlineLinkClass}>
-            How goal progress & timing work →
-          </MethodologyOpenLink>
-          <MethodologyOpenLink topicId="net-worth" className={appInlineLinkClass}>
-            How net worth uses Setup →
-          </MethodologyOpenLink>
+        <p className="mt-2 text-xs text-zinc-600 dark:text-slate-300">
+          Progress uses saved amount vs target; time estimates use your contribution
+          and return assumptions. With Profile income, higher-priority goals are funded
+          first from monthly surplus.
         </p>
       </div>
 
@@ -174,10 +170,7 @@ export async function FinancialGoalsPanels({
         description={
           <span className="text-xs text-zinc-600 dark:text-slate-300">
             Higher priority goals are funded first in the trade-off view above.
-            Use ↑ / ↓ to reorder.{" "}
-            <MethodologyOpenLink topicId="goals-eta" className={appInlineLinkClass}>
-              How estimates work →
-            </MethodologyOpenLink>
+            Use ↑ / ↓ to reorder.
           </span>
         }
       >

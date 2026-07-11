@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { DashboardPayload } from "@/data/dashboard";
 import { yearFromYearMonth } from "@/lib/dates";
 import { setupBudgetPath } from "@/lib/setup-urls";
-import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { PageSection } from "@/ui/PageSection";
 import { formatCurrency } from "@/ui/lib/format";
@@ -18,15 +17,10 @@ export function DashboardMonthSection({
         <PageSection
           title="Goals & cash flow"
           description={
-            <span className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-600 dark:text-slate-300">
-              <span>
-                Take-home minus spend basis (logged when any expense in the month,
-                else planned monthly budget), then minus each goal&apos;s planned monthly
-                amount (from Setup → Goals—not from your expense list).
-              </span>
-              <MethodologyOpenLink topicId="goal-surplus" className={`text-xs ${appInlineLinkClass}`}>
-                How calculated
-              </MethodologyOpenLink>
+            <span className="text-xs text-zinc-600 dark:text-slate-300">
+              Take-home minus spend basis (logged when any expense in the month,
+              else planned monthly budget), then minus each goal&apos;s planned monthly
+              amount (from Setup → Goals—not from your expense list).
             </span>
           }
           actions={
@@ -103,14 +97,6 @@ export function DashboardMonthSection({
 
       <PageSection
         title="Budget check"
-        description={
-          <span className="flex flex-wrap items-center gap-x-2 text-xs text-zinc-600 dark:text-slate-300">
-            <span>Budget lines vs monthly-tagged expenses.</span>
-            <MethodologyOpenLink topicId="monthly-budget-check" className={`text-xs ${appInlineLinkClass}`}>
-              How calculated
-            </MethodologyOpenLink>
-          </span>
-        }
         actions={
           <Link
             href={setupBudgetPath(
@@ -133,33 +119,33 @@ export function DashboardMonthSection({
             }
           >
             {payload.monthlyBudgetAggregate.onTrack
-              ? `On plan for ${payload.month}: budgeted categories are within the planned total (remaining ${formatCurrency(
+              ? `On plan for ${payload.month} · ${formatCurrency(
                   payload.monthlyBudgetTotals.remaining,
                   payload.baseCurrency
-                )}).`
-              : `Over planned total by ${formatCurrency(
+                )} left`
+              : `Over by ${formatCurrency(
                   payload.monthlyBudgetAggregate.overBy,
                   payload.baseCurrency
-                )} for budgeted categories in ${payload.month} (${formatCurrency(
+                )} for ${payload.month} (${formatCurrency(
                   payload.monthlyBudgetTotals.spent,
                   payload.baseCurrency
                 )} spent vs ${formatCurrency(
                   payload.monthlyBudgetTotals.budget,
                   payload.baseCurrency
-                )} planned).`}
+                )} planned)`}
           </p>
         )}
         {payload.monthlyBudgetOver.length === 0 ? (
-          <p className="mt-3 text-sm text-zinc-600 dark:text-slate-300">
-            {payload.monthlyBudgetTotals.budget > 0 ||
-            payload.monthlyBudgetTotals.spent > 0
-              ? "No single category is over its own budget cap (top overs would appear here)."
-              : "No monthly budget activity yet—add lines under Setup → Budget."}
-          </p>
+          payload.monthlyBudgetTotals.budget > 0 ||
+          payload.monthlyBudgetTotals.spent > 0 ? null : (
+            <p className="text-sm text-zinc-600 dark:text-slate-300">
+              No monthly budget activity yet — add lines under Setup → Budget.
+            </p>
+          )
         ) : (
           <ul className="mt-3 space-y-2 text-sm">
             <li className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-slate-400">
-              Top categories over their own cap
+              Over cap
             </li>
             {payload.monthlyBudgetOver.map((row) => (
               <li

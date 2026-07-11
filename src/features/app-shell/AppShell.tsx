@@ -87,11 +87,11 @@ export function AppShell({
               </div>
             </div>
             {showMainAppNav ? (
-              <div className="hidden min-h-0 min-w-0 flex-1 justify-center overflow-x-auto sm:flex">
+              <div className="hidden min-h-0 min-w-0 flex-1 items-center justify-start overflow-x-auto sm:flex sm:pl-2 lg:pl-4">
                 <AppShellDesktopNav />
               </div>
             ) : null}
-            <div className="flex shrink-0 items-center gap-2">
+            <div className="ml-auto flex shrink-0 items-center gap-2">
               {workspace === "advisor" ? (
                 <span className="inline-flex items-center rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-400">
                   Operations

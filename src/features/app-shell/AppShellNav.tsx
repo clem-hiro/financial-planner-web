@@ -123,7 +123,7 @@ export function AppShellDesktopNav() {
 
   return (
     <nav
-      className="relative mx-auto w-max min-w-0"
+      className="relative w-max min-w-0"
       aria-label="Main"
     >
       <div className={appShellMainNavRailClass}>

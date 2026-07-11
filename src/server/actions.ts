@@ -1038,7 +1038,7 @@ export async function applyGuidedBudgetLinesAction(
   if (replaceable.length > 0 && !replaceExisting) {
     return {
       error:
-        "You already have monthly budget lines. Confirm replace on Budget lens to rebuild from your current settings.",
+        "You already have monthly budget lines. Use Apply Recommendation on Budget to rebuild from your current settings.",
     };
   }
 

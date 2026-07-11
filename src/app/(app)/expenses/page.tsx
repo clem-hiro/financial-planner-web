@@ -14,7 +14,6 @@ import { CategoryBarChart } from "@/features/expenses/CategoryBarChart";
 import { ExpenseEditRow } from "@/features/expenses/ExpenseEditRow";
 import { ExpenseForm } from "@/features/expenses/ExpenseForm";
 import { ExpenseMonthJump } from "@/features/expenses/ExpenseMonthJump";
-import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { SpendGuidancePanel } from "@/features/spend/SpendGuidancePanel";
 import { isMonthlyBudgetLineApplicable, normalizeCategory } from "@/domain/finance/budget";
 import {
@@ -159,14 +158,6 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
             Custom categories first (any name, multiple entries). Budget
             shortcuts below are optional for planned lines.
           </p>
-          <p className="mt-2 text-xs text-zinc-500 dark:text-slate-400">
-            <MethodologyOpenLink
-              topicId="expenses-month"
-              className="text-zinc-500 underline decoration-zinc-300/90 underline-offset-2 transition-colors hover:text-zinc-700 dark:text-slate-400 dark:decoration-slate-600 dark:hover:text-slate-200"
-            >
-              How this month view works
-            </MethodologyOpenLink>
-          </p>
         </div>
         <div className="flex flex-wrap items-center gap-3 text-sm">
           <Link
@@ -276,10 +267,7 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
               One end-of-month entry per budget category (monthly spend type).
               After you log actuals, use Edit or Delete here; add again only after
               deleting. For anything else, use <strong>Custom expenses</strong>{" "}
-              above.{" "}
-              <MethodologyOpenLink topicId="monthly-budget-check" className={appInlineLinkClass}>
-                How budget lock works →
-              </MethodologyOpenLink>
+              above.
             </span>
           }
         >
@@ -397,10 +385,7 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
         description={
           <span className="text-xs text-zinc-600 dark:text-slate-300">
             Edit or delete any row. Budget categories allow at most one monthly
-            entry per month.{" "}
-            <MethodologyOpenLink topicId="expenses-month" className={appInlineLinkClass}>
-              Month filter details →
-            </MethodologyOpenLink>
+            entry per month.
           </span>
         }
       >
@@ -430,11 +415,7 @@ export default async function ExpensesPage({ searchParams }: PageProps) {
           id="expenses-guidance"
           className="scroll-mt-4"
           title="Spending guidance"
-          description={
-            <MethodologyOpenLink topicId="spend-guidance" className={appInlineLinkClass}>
-              How spending guidance is built →
-            </MethodologyOpenLink>
-          }
+          description="Rule-based hints for this month—not predictions."
         >
           <SpendGuidancePanel month={month} lines={spendRecommendations} />
         </PageSection>

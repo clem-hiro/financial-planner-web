@@ -27,8 +27,8 @@ import {
   partitionMonthlyLines,
 } from "@/features/budget/BudgetMonthlyCategoriesSection";
 import { BudgetRecommendationHints } from "@/features/budget/BudgetRecommendationHints";
+import { BudgetRecommendedPlanCard } from "@/features/budget/BudgetRecommendedPlanCard";
 import { budgetCategoryEmoji } from "@/features/budget/budget-category-icons";
-import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { SpendGuidancePanel } from "@/features/spend/SpendGuidancePanel";
 import {
   addMonthsToYearMonth,
@@ -40,6 +40,7 @@ import {
 import {
   type BudgetPathVariant,
   budgetMonthHref,
+  setupTabPath,
 } from "@/lib/setup-urls";
 import { DEFAULT_BASE_CURRENCY } from "@/lib/currency";
 import { deleteBudgetLineAction } from "@/server/actions";
@@ -47,7 +48,10 @@ import {
   buildBudgetReviewWorkflow,
   type BudgetReviewLineInput,
 } from "@/domain/finance/budget-review";
-import { sumBucketAmounts } from "@/domain/finance/budget-guided-setup";
+import {
+  countReplaceableMonthlyBudgetLines,
+  sumBucketAmounts,
+} from "@/domain/finance/budget-guided-setup";
 import {
   isMonthlyBudgetLineApplicable,
   monthlyBudgetAggregateOverspend,
@@ -161,6 +165,8 @@ export async function BudgetPlanningView({
   });
 
   const monthlyAll = model.lineRows.filter((l) => l.cadence === "monthly");
+  const replaceableMonthlyLineCount =
+    countReplaceableMonthlyBudgetLines(monthlyAll);
   const activeMonthlyBudgetLineCount = monthlyAll.filter((l) =>
     isMonthlyBudgetLineApplicable(
       month,
@@ -256,6 +262,12 @@ export async function BudgetPlanningView({
               Your categories
             </a>
             <a
+              href="#budget-recommended"
+              className={`${appTabPillClass} ${appTabPillInactiveClass}`}
+            >
+              Recommended
+            </a>
+            <a
               href="#budget-guidance"
               className={`${appTabPillClass} ${appTabPillInactiveClass}`}
             >
@@ -348,10 +360,7 @@ export async function BudgetPlanningView({
         description={
           <span className="text-xs text-zinc-600">
             Totals use expenses marked monthly; categories match your lines
-            (case insensitive).{" "}
-            <MethodologyOpenLink topicId="monthly-budget-check" className={appInlineLinkClass}>
-              How this is calculated
-            </MethodologyOpenLink>
+            (case insensitive).
           </span>
         }
         actions={
@@ -363,13 +372,6 @@ export async function BudgetPlanningView({
           </Link>
         }
       >
-        {spendRecommendations.length > 0 && (
-          <div className="mb-1 flex justify-end">
-            <MethodologyOpenLink topicId="spend-guidance" className="text-xs">
-              How guidance is built
-            </MethodologyOpenLink>
-          </div>
-        )}
         <div id="budget-guidance" className="scroll-mt-4 space-y-4">
           <SpendGuidancePanel month={month} lines={spendRecommendations} />
         </div>
@@ -461,6 +463,19 @@ export async function BudgetPlanningView({
           </div>
         )}
       </PageSection>
+
+      <BudgetRecommendedPlanCard
+        monthlyIncome={monthlyIncome}
+        currency={currency}
+        lifestyle={profile?.lifestyle_profile ?? null}
+        strategy={profile?.budgeting_strategy ?? null}
+        foodSpendBand={profile?.food_spend_band ?? null}
+        replaceableMonthlyLineCount={replaceableMonthlyLineCount}
+        profileHref={setupTabPath("profile", {
+          month,
+          year: String(calendarYear),
+        })}
+      />
 
       <PageSection
         id="budget-unbudgeted"
@@ -593,10 +608,7 @@ export async function BudgetPlanningView({
           <span className="text-xs text-zinc-600 dark:text-slate-300">
             For insurance, holidays, road tax, gifts, school fees, quarterly
             bills, and other non-monthly costs. Totals use annual-tagged
-            expenses dated in {calendarYear}.{" "}
-            <MethodologyOpenLink topicId="budget-lines" className={appInlineLinkClass}>
-              How annual lines work
-            </MethodologyOpenLink>
+            expenses dated in {calendarYear}.
           </span>
         }
         actions={
@@ -731,10 +743,7 @@ export async function BudgetPlanningView({
         title="Advanced — full budget line form"
         description={
           <span className="text-xs text-zinc-600">
-            For precise schedules, annual amounts, or loan payoff months.{" "}
-            <MethodologyOpenLink topicId="budget-lines" className={appInlineLinkClass}>
-              How budget lines work
-            </MethodologyOpenLink>
+            For precise schedules, annual amounts, or loan payoff months.
           </span>
         }
       >

@@ -68,23 +68,23 @@ export function cashFlowSetupGaps(
       id: "budget_lines",
       title: "Create your monthly spending plan",
       detail:
-        "Add a few categories (or use the starter lens below) so monthly review and guidance can compare plan vs actual spend.",
-      ctaHref: "#budget-quick-add",
-      ctaLabel: "Quick-add categories",
+        "Add a few categories, or apply the Recommended Budget below, so monthly review and guidance can compare plan vs actual spend.",
+      ctaHref: "#budget-recommended",
+      ctaLabel: "See recommended budget",
     });
   }
 
   if (lensMissing && (incomeMissing || noMonthlyPlan)) {
     gaps.push({
       id: "budget_lens",
-      title: "Use a starter budget lens (optional)",
+      title: "Set your lifestyle profile (optional)",
       detail:
-        "Pick a lifestyle and savings style to generate Singapore-oriented starter lines — helpful when you are not sure what to allocate yet.",
-      ctaHref: `${setupTabPath("budget", {
+        "Tell us how you live and manage money so Budget can recommend a monthly allocation that fits you.",
+      ctaHref: setupTabPath("profile", {
         month: input.month,
         year: String(input.calendarYear),
-      })}#budget-plan-lens`,
-      ctaLabel: "Open budget lens",
+      }),
+      ctaLabel: "Open profile",
     });
   }
 

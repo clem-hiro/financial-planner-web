@@ -5,14 +5,14 @@ import { setupBudgetPath } from "@/lib/setup-urls";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { appBrandNavyTextStyle } from "@/ui/app-tab-styles";
 import { InfoTooltip } from "@/ui/InfoTooltip";
-import { appCardClass, appCardPadding } from "@/ui/surface-classes";
+import { appCardClass } from "@/ui/surface-classes";
 import { formatCurrency, formatPercent } from "@/ui/lib/format";
 
 const labelClass =
   "text-xs font-medium text-slate-600 dark:text-slate-300";
-const monthlyCardShell = `${appCardClass} ${appCardPadding} flex h-full flex-col bg-linear-to-br from-white via-white to-slate-50/50 transition-[box-shadow,transform] duration-200 hover:-translate-y-px hover:shadow-md hover:shadow-slate-900/8 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900/60`;
+const monthlyCardShell = `${appCardClass} flex h-full flex-col bg-linear-to-br from-white via-white to-slate-50/50 p-4 transition-[box-shadow,transform] duration-200 hover:-translate-y-px hover:shadow-md hover:shadow-slate-900/8 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900/60 sm:p-5`;
 const figureClass =
-  "mt-2 font-mono text-2xl font-semibold tracking-tight tabular-nums sm:text-[1.65rem]";
+  "mt-1.5 font-mono text-xl font-semibold tracking-tight tabular-nums sm:text-2xl";
 
 export function DashboardOverviewSection({
   payload,
@@ -42,7 +42,7 @@ export function DashboardOverviewSection({
   const showSetupPrompt = payload.investmentSummary.count === 0;
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       <div>
         <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
           {monthLabel}
@@ -52,7 +52,7 @@ export function DashboardOverviewSection({
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-3">
         <div
           className={`${monthlyCardShell} border-l-[3px] border-l-emerald-600 ring-1 ring-emerald-100/80 dark:ring-emerald-900/40`}
         >
@@ -103,7 +103,7 @@ export function DashboardOverviewSection({
               payload.baseCurrency
             )}
           </p>
-          <p className="mt-auto pt-3 text-xs text-slate-500 dark:text-slate-400">
+          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
             {hasLoggedSpend ? (
               <>Based on logged expenses.</>
             ) : hasBudgetForecast ? (
@@ -122,8 +122,8 @@ export function DashboardOverviewSection({
         className={`${monthlyCardShell} relative overflow-hidden border-l-[3px] border-l-emerald-600`}
       >
         <div className="pointer-events-none absolute -right-8 -top-12 h-32 w-32 rounded-full bg-emerald-500/5 blur-2xl" />
-        <div className="relative space-y-4">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="relative space-y-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-1">
                 <p className={labelClass}>Net worth</p>
@@ -133,13 +133,13 @@ export function DashboardOverviewSection({
                 </InfoTooltip>
               </div>
               <p
-                className="mt-1 font-mono text-3xl font-semibold tracking-tight tabular-nums sm:text-4xl"
+                className="mt-1 font-mono text-2xl font-semibold tracking-tight tabular-nums sm:text-3xl"
                 style={appBrandNavyTextStyle}
               >
                 {formatCurrency(payload.netWorth, payload.baseCurrency)}
               </p>
               {payload.netWorthBreakdown.cpf > 0 ? (
-                <p className="mt-2 flex flex-wrap items-center gap-1 text-sm text-slate-600 dark:text-slate-300">
+                <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-slate-600 dark:text-slate-300">
                   <span>
                     Net excluding CPF:{" "}
                     <span className="font-mono font-semibold tabular-nums text-slate-800 dark:text-slate-100">
@@ -170,7 +170,7 @@ export function DashboardOverviewSection({
           </div>
 
           {showSetupPrompt ? (
-            <p className="rounded-lg border border-slate-200/80 bg-slate-50/80 px-3.5 py-2.5 text-xs leading-relaxed text-slate-600 dark:border-slate-700/80 dark:bg-slate-900/50 dark:text-slate-300">
+            <p className="rounded-lg border border-slate-200/80 bg-slate-50/80 px-3 py-2 text-xs leading-relaxed text-slate-600 dark:border-slate-700/80 dark:bg-slate-900/50 dark:text-slate-300">
               Add investments or cash accounts in{" "}
               <Link
                 href="/setup?tab=add-account#add-investment"
@@ -182,7 +182,7 @@ export function DashboardOverviewSection({
             </p>
           ) : null}
 
-          <ul className="grid gap-x-6 gap-y-1 border-t border-slate-100/80 pt-4 font-mono text-sm tabular-nums text-slate-700 dark:border-slate-700/80 dark:text-slate-200 sm:grid-cols-2">
+          <ul className="grid gap-x-8 gap-y-1 border-t border-slate-100/80 pt-3 font-mono text-sm tabular-nums text-slate-700 dark:border-slate-700/80 dark:text-slate-200 sm:grid-cols-2 sm:max-w-xl">
             <li>
               Investments{" "}
               {formatCurrency(

@@ -292,19 +292,103 @@ export type GuidedBudgetLineDraft = {
   cadence: "monthly";
 };
 
-export type GenerateGuidedBudgetParams = {
+/**
+ * Pluggable recommendation signals. Active signals drive today's allocator;
+ * future signals are reserved so the Budget recommendation UI and engine can
+ * expand without redesigning the card.
+ */
+export type BudgetRecommendationSignalId =
+  | "income"
+  | "lifestyle_profile"
+  | "money_management_style"
+  | "food_spend"
+  | "housing"
+  | "vehicles"
+  | "goals"
+  | "investments"
+  | "cash_flow"
+  | "debt"
+  | "cpf";
+
+export type BudgetRecommendationSignalMeta = {
+  id: BudgetRecommendationSignalId;
+  label: string;
+};
+
+/** Signals currently consumed by `generateGuidedMonthlyBudgetLines`. */
+export const ACTIVE_BUDGET_RECOMMENDATION_SIGNALS: ReadonlyArray<BudgetRecommendationSignalMeta> =
+  [
+    { id: "income", label: "Income" },
+    { id: "lifestyle_profile", label: "Lifestyle Profile" },
+    { id: "money_management_style", label: "Money Management Style" },
+    { id: "food_spend", label: "Typical food spending" },
+  ];
+
+/** Reserved for a richer recommendation engine — shown as informational only. */
+export const FUTURE_BUDGET_RECOMMENDATION_SIGNALS: ReadonlyArray<BudgetRecommendationSignalMeta> =
+  [
+    { id: "housing", label: "Housing" },
+    { id: "vehicles", label: "Vehicles" },
+    { id: "goals", label: "Goals" },
+    { id: "investments", label: "Investments" },
+    { id: "cash_flow", label: "Cash flow" },
+    { id: "debt", label: "Debt commitments" },
+    { id: "cpf", label: "CPF assumptions" },
+  ];
+
+/**
+ * Extensible context bag for budget recommendations. Today only income +
+ * lifestyle preferences are used; optional future fields can be added here
+ * without changing call sites that only pass active signals.
+ */
+export type BudgetRecommendationContext = {
   monthlyIncome: number;
   lifestyle: LifestyleProfileId;
   strategy: BudgetingStrategyId;
   foodSpendBand?: FoodSpendBandId | null;
 };
 
+/** @deprecated Prefer `BudgetRecommendationContext` — kept as a stable alias. */
+export type GenerateGuidedBudgetParams = BudgetRecommendationContext;
+
+/**
+ * Which active signals are meaningfully present for explanation UI.
+ * Food spend is listed when a concrete band (not `unknown`) is set.
+ */
+export function resolveActiveRecommendationSignals(
+  ctx: Pick<
+    BudgetRecommendationContext,
+    "monthlyIncome" | "foodSpendBand"
+  > & {
+    hasLifestyle?: boolean;
+    hasStrategy?: boolean;
+  }
+): BudgetRecommendationSignalId[] {
+  const used: BudgetRecommendationSignalId[] = [];
+  if (Number.isFinite(ctx.monthlyIncome) && ctx.monthlyIncome > 0) {
+    used.push("income");
+  }
+  if (ctx.hasLifestyle !== false) used.push("lifestyle_profile");
+  if (ctx.hasStrategy !== false) used.push("money_management_style");
+  if (
+    ctx.foodSpendBand != null &&
+    ctx.foodSpendBand !== "unknown"
+  ) {
+    used.push("food_spend");
+  }
+  return used;
+}
+
 /**
  * Heuristic monthly budget lines for Singapore-oriented starter plans.
  * Amounts sum to `monthlyIncome` when income &gt; 0 (within rounding).
+ *
+ * Allocation math currently uses income, lifestyle, money-management style,
+ * and optional food band. Additional fields on `BudgetRecommendationContext`
+ * can be wired in later without changing the Budget recommendation card.
  */
 export function generateGuidedMonthlyBudgetLines(
-  params: GenerateGuidedBudgetParams
+  params: BudgetRecommendationContext
 ): GuidedBudgetLineDraft[] {
   const income = params.monthlyIncome;
   if (!Number.isFinite(income) || income <= 0) return [];

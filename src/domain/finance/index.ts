@@ -260,8 +260,10 @@ export type {
   IrregularExpenseReserve,
 } from "./irregular-expenses";
 export {
+  ACTIVE_BUDGET_RECOMMENDATION_SIGNALS,
   BUDGET_STRATEGY_PRESETS,
   FOOD_SPEND_BAND_PRESETS,
+  FUTURE_BUDGET_RECOMMENDATION_SIGNALS,
   LIFESTYLE_PRESETS,
   ONBOARDING_LIFESTYLE_PRESETS,
   listOnboardingLifestylePresets,
@@ -269,10 +271,14 @@ export {
   countReplaceableMonthlyBudgetLines,
   generateGuidedMonthlyBudgetLines,
   isPreservedOnGuidedBudgetReplace,
+  resolveActiveRecommendationSignals,
   strategyNeedsWantsSavings,
   sumBucketAmounts,
 } from "./budget-guided-setup";
 export type {
+  BudgetRecommendationContext,
+  BudgetRecommendationSignalId,
+  BudgetRecommendationSignalMeta,
   BudgetSpendBucket,
   BudgetingStrategyId,
   FoodSpendBandId,

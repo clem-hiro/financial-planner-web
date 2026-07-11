@@ -2,16 +2,7 @@ export type MethodologyTopicId =
   | "retirement-fv"
   | "retirement-dividends"
   | "retirement-four-percent"
-  | "net-worth"
-  | "savings-rate"
-  | "monthly-budget-check"
   | "budget-cash-flow-allocation"
-  | "spend-guidance"
-  | "investment-projection-36m"
-  | "goal-surplus"
-  | "goals-eta"
-  | "expenses-month"
-  | "budget-lines"
   | "cpf-projection"
   | "cpf-retirement-projection"
   | "cpf-housing-mortgage"
@@ -27,6 +18,7 @@ export type MethodologyTopic = {
   footnote?: string;
 };
 
+/** Trust / math notes only — UI how-tos live as inline copy or short (?) tooltips. */
 export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
   {
     id: "retirement-fv",
@@ -79,36 +71,6 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     formulas: ["sustainable / month ≈ net worth × rate ÷ 12"],
   },
   {
-    id: "net-worth",
-    title: "Net worth",
-    summary:
-      "Net worth here is investments + cash + optional CPF and vehicle equity minus debts, while the dashboard headline shows the same figure excluding CPF.",
-    bullets: [],
-  },
-  {
-    id: "savings-rate",
-    title: "Savings rate",
-    summary:
-      "Share of take-home left after this month’s expenses and your planned monthly goal contributions.",
-    bullets: [
-      "Uses your profile monthly take-home (net) when set.",
-      "Spend side matches by-age cash: **logged** expenses for the dashboard month when you have entered any; otherwise the **planned** total from active monthly budget lines (forecast until expenses confirm).",
-      "Subtracts the sum of **monthly contribution** on each financial goal (Setup → Goals tab). Those amounts are commitments, not read from the expense list—if you also log the same transfer as an expense, you double-count in real life; here goals always reduce the rate when set.",
-    ],
-  },
-  {
-    id: "monthly-budget-check",
-    title: "Monthly budget check (dashboard)",
-    summary:
-      "For the selected month, compares active monthly budget caps to monthly-tagged spending by category.",
-    bullets: [
-      "Includes only monthly budget lines that are in effect that month.",
-      "Spending is expenses tagged monthly and tied to those categories.",
-      "Over cap means that category’s actuals beat its planned amount.",
-      "Travel and trips: this view is monthly-only—add a monthly line (with dates around the trip) so those costs roll in; annual-tagged spend is not part of this check.",
-    ],
-  },
-  {
     id: "budget-cash-flow-allocation",
     title: "Free cash flow (budget hero)",
     summary:
@@ -124,61 +86,6 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     formulas: [
       "free cash flow = take-home − Σ(monthly planned) + Σ(Savings / future-you planned)",
       "after goals = free cash flow − Σ(goal monthly contributions)",
-    ],
-  },
-  {
-    id: "budget-lines",
-    title: "Budget lines and overrides",
-    summary:
-      "Planned caps by category: monthly or yearly amounts, optional active ranges, and one-off month tweaks.",
-    bullets: [
-      "Each line is a category plus an amount on a monthly or annual schedule. Monthly lines can start and stop in specific months (YYYY-MM); annual lines attach to one calendar year.",
-      "For monthly lines only, you can set a different amount for a single month without changing the default.",
-      "The month screen shows monthly lines that are active that month. The annual area compares yearly lines to annual-tagged expenses in the same categories for that year.",
-      "Trips: a monthly travel line with start/end around the trip usually fits normal monthly expenses. Use an annual line only if you record that spend as annual. Date-based savings targets live under Setup → Goals (you can still pair them with budget caps).",
-    ],
-  },
-  {
-    id: "spend-guidance",
-    title: "Spending guidance (blue panel)",
-    summary: "Rule-based hints for the selected month.",
-    bullets: [
-      "Uses the same monthly spend basis as the dashboard (logged when any expense in the month, else planned monthly budget), budget lines, and your stated take-home when set.",
-      "Lines are plain-text suggestions, not predictions of the future.",
-    ],
-  },
-  {
-    id: "investment-projection-36m",
-    title: "Investment projection (36 months)",
-    summary: "Short forward curve for investment accounts only.",
-    bullets: [
-      "Excludes cash and debt.",
-      "End-of-month contributions; blended expected return weighted by current value across accounts.",
-      "Uses only stated monthly contributions on each investment account—no automatic add of take-home minus expenses.",
-    ],
-  },
-  {
-    id: "goal-surplus",
-    title: "Goals & monthly cash flow",
-    summary:
-      "Take-home, minus that month’s spending, minus the monthly amounts you set on each goal.",
-    bullets: [
-      "Goal contributions are the monthly figures on Setup → Goals—not inferred from expenses.",
-      "Month spending is whatever you logged (same basis as savings rate on the dashboard).",
-      "Surplus for the month = take-home − spending − all goal monthly amounts. It can be negative.",
-      "The by-age cash line repeats that each month: if you logged any expense, spend uses actuals; if not, it uses your planned monthly budget. Months below zero add nothing to the running total.",
-      "Don’t log a transfer as an expense and also count it on a goal—you’d double-count. Use one or the other.",
-    ],
-  },
-  {
-    id: "goals-eta",
-    title: "Goal progress and time-to-goal",
-    summary: "Standalone goal math on the Setup → Goals tab.",
-    bullets: [
-      "Progress uses current saved amount vs target where applicable.",
-      "Time estimates use your entered contributions and return assumptions on that goal—simplified and not guaranteed.",
-      "With income in Profile, each goal compares your plan to what monthly surplus can fund after higher-priority goals (same basis as Home).",
-      "If a target date needs more per month than surplus allows, you'll see either a later achievable date at your funded amount or how much monthly spend to free up to keep the date.",
     ],
   },
   {
@@ -265,17 +172,6 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     ],
     footnote:
       "IRAS bracket table YA 2024+ stays in force for YA 2025 and YA 2026. Not tax advice.",
-  },
-  {
-    id: "expenses-month",
-    title: "Expenses by month",
-    summary: "The Expenses page is scoped to one calendar month at a time.",
-    bullets: [
-      "Pick a month—totals and charts follow it.",
-      "Each budget category allows one monthly expense row per month; edit or delete it instead of duplicating.",
-      "Monthly expenses attach to budget lines when categories match.",
-      "Add any real outflow (tax instalments, fees, etc.) so reported spend matches cash leaving your accounts.",
-    ],
   },
 ];
 

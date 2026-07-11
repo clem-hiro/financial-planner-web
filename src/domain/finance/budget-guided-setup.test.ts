@@ -3,6 +3,7 @@ import {
   generateGuidedMonthlyBudgetLines,
   isPreservedOnGuidedBudgetReplace,
   listOnboardingLifestylePresets,
+  resolveActiveRecommendationSignals,
   strategyNeedsWantsSavings,
   sumBucketAmounts,
 } from "./budget-guided-setup";
@@ -69,5 +70,29 @@ describe("generateGuidedMonthlyBudgetLines", () => {
     });
     const buckets = sumBucketAmounts(lines);
     expect(buckets.savings).toBeGreaterThan(buckets.wants);
+  });
+});
+
+describe("resolveActiveRecommendationSignals", () => {
+  it("lists income, lifestyle, and style when income is set", () => {
+    expect(
+      resolveActiveRecommendationSignals({
+        monthlyIncome: 5000,
+        foodSpendBand: "unknown",
+      })
+    ).toEqual([
+      "income",
+      "lifestyle_profile",
+      "money_management_style",
+    ]);
+  });
+
+  it("includes food spend only for a concrete band", () => {
+    expect(
+      resolveActiveRecommendationSignals({
+        monthlyIncome: 5000,
+        foodSpendBand: "range_300_600",
+      })
+    ).toContain("food_spend");
   });
 });

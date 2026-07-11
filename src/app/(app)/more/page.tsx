@@ -10,7 +10,6 @@ import {
 import type { AdvisorCategoryVisibility } from "@/lib/advisor-visibility";
 import { getMyAdvisorContact } from "@/data/repositories/coupons";
 import { ClientConsentMorePrompt } from "@/features/more/ClientConsentMorePrompt";
-import { OpenMethodologyButton } from "@/features/help/OpenMethodologyButton";
 import { CLIENT_UI_VERSION_LABEL } from "@/lib/client-release";
 import { isClient } from "@/lib/profile-role";
 import { renderConsentText } from "@/server/advisor-consent";
@@ -94,22 +93,6 @@ export default async function MorePage() {
           </p>
           <p className={`mt-4 text-sm font-semibold ${appInlineLinkClass}`}>Open →</p>
         </Link>
-
-        <div className="rounded-2xl bg-linear-to-br from-[#0c192f] via-[#10213a] to-[#123355] p-5 text-white ring-1 ring-white/10">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-200/90">
-            Methodology
-          </p>
-          <p className="mt-2 text-lg font-semibold">How numbers are built</p>
-          <p className="mt-1 text-sm text-slate-200">
-            Transparent explanations for net worth, CPF, housing, and budgets.
-          </p>
-          <div className="mt-4">
-            <OpenMethodologyButton
-              label="Open methodology"
-              className="inline-flex w-full items-center justify-center rounded-full bg-white/10 px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-white/25 transition hover:bg-white/15 sm:w-auto"
-            />
-          </div>
-        </div>
       </div>
 
       <div className="space-y-2 border-t border-slate-200/80 pt-8 dark:border-slate-700/80">

@@ -396,39 +396,7 @@ export function CpfRetirementProjectionPanel({
         </div>
       </div>
 
-      {/* Section 3: Educational */}
-      <details className="group rounded-xl border border-slate-200/80 bg-slate-50/40 open:bg-white open:shadow-sm dark:border-slate-700/80 dark:bg-slate-900/70 dark:open:bg-slate-900">
-        <summary className="cursor-pointer list-none px-4 py-3.5 text-sm font-medium text-slate-800 dark:text-slate-100 [&::-webkit-details-marker]:hidden">
-          <span className="inline-flex items-center gap-2">
-            What does this mean?
-            <span className="text-slate-400 dark:text-slate-500 group-open:hidden">+</span>
-            <span className="hidden text-slate-400 dark:text-slate-500 group-open:inline">−</span>
-          </span>
-        </summary>
-        <div className="space-y-3 border-t border-slate-200/70 px-4 pb-4 pt-3 text-sm leading-relaxed text-slate-700 dark:border-slate-700/80 dark:text-slate-300">
-          <p>
-            At age {CPF_RA_FORMATION_AGE}, CPF creates a <strong>Retirement Account (RA)</strong>{" "}
-            and sets aside money for your later payouts (typically from age{" "}
-            {assumptions.cpfLifeStartAge} under CPF LIFE).
-          </p>
-          <p>
-            <strong>SA funds RA first</strong> — because SA is already meant for retirement.
-            If that is not enough, <strong>OA is used next</strong> until you reach your chosen
-            retirement sum (BRS, FRS, or ERS).
-          </p>
-          <p>
-            Many people assume their CPF balances remain fully flexible. In reality, CPF first
-            sets aside your retirement sums before excess balances become withdrawable or usable
-            for other purposes.
-          </p>
-          <p className="text-slate-600 dark:text-slate-300">
-            Any <strong>remaining OA</strong> after RA is funded can stay more flexible for
-            housing or other approved uses — this model does not include every withdrawal rule.
-          </p>
-        </div>
-      </details>
-
-      {/* Section 4: Scenarios */}
+      {/* Scenarios */}
       <div className="rounded-xl border border-slate-200/80 bg-white/90 p-4 shadow-sm dark:border-slate-700/80 dark:bg-slate-900 dark:shadow-none sm:p-5">
         <h4 className="text-sm font-semibold text-slate-900 dark:text-slate-50">Learn with examples</h4>
         <p className="mt-1 text-xs text-slate-600 dark:text-slate-300">

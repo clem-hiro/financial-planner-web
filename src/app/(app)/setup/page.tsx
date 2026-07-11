@@ -15,9 +15,7 @@ import {
   countPendingProposalsForClient,
   listProposalsForClient,
 } from "@/data/repositories/advisor-proposals";
-import { listBudgetLines } from "@/data/repositories/budget-lines";
 import { getIncomeTaxConfig } from "@/data/repositories/income-tax-configs";
-import { countReplaceableMonthlyBudgetLines } from "@/domain/finance/budget-guided-setup";
 import { getRequestAuth } from "@/data/supabase/request-context";
 import { ProfileIncomeForm } from "@/features/dashboard/ProfileIncomeForm";
 import { IncomeTaxSection } from "@/features/income-tax/IncomeTaxSection";
@@ -132,7 +130,6 @@ export default async function SetupPage({ searchParams }: PageProps) {
   const [
     tabBundle,
     incomeTaxConfig,
-    budgetLinesForLens,
     advisorProposals,
     advisorVisibility,
     pendingProposalCount,
@@ -141,9 +138,6 @@ export default async function SetupPage({ searchParams }: PageProps) {
     activeTab === "income_tax"
       ? getIncomeTaxConfig(supabase, user.id)
       : Promise.resolve(null),
-    activeTab === "profile"
-      ? listBudgetLines(supabase, user.id)
-      : Promise.resolve([]),
     activeTab === "advisor-proposals"
       ? listProposalsForClient(supabase, user.id, 25)
       : Promise.resolve([]),
@@ -158,10 +152,6 @@ export default async function SetupPage({ searchParams }: PageProps) {
     // Pending-proposal badge — fetched on every load (cheap head count).
     countPendingProposalsForClient(supabase, user.id),
   ]);
-  const replaceableMonthlyLineCount =
-    activeTab === "profile"
-      ? countReplaceableMonthlyBudgetLines(budgetLinesForLens)
-      : 0;
   const {
     investments,
     cashAccounts,
@@ -258,12 +248,8 @@ export default async function SetupPage({ searchParams }: PageProps) {
             activeTab === "vehicles" ? (
               <>
                 {" "}
-                <MethodologyOpenLink
-                  topicId="net-worth"
-                  className={`text-sm ${appInlineLinkClass}`}
-                >
-                  How net worth uses this →
-                </MethodologyOpenLink>
+                Net worth on Home combines investments, cash, optional CPF and
+                vehicles, minus debts—CPF can be excluded from some headlines.
               </>
             ) : null}
           </p>
@@ -316,9 +302,6 @@ export default async function SetupPage({ searchParams }: PageProps) {
               financialProfile?.onboarding_confidence_level ?? null
             }
             initialFoodSpendBand={financialProfile?.food_spend_band ?? null}
-            monthlyIncome={income}
-            currency={currency}
-            replaceableMonthlyLineCount={replaceableMonthlyLineCount}
           />
         </div>
       ) : null}

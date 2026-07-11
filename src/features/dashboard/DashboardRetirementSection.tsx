@@ -612,9 +612,9 @@ export function DashboardRetirementSection({
                       <InfoTooltip
                         variant="emerald"
                         ariaLabel="Net excluding CPF"
-                        methodologyTopicId="net-worth"
                       >
-                        <span className="sr-only">Net excluding CPF</span>
+                        Same as net after debts, but without projected CPF—matches
+                        the dashboard headline that treats CPF separately.
                       </InfoTooltip>
                     </span>
                   </th>
