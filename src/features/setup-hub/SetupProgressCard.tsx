@@ -40,7 +40,7 @@ export function SetupProgressCard({ progress }: { progress: SetupProgressSummary
           aria-valuenow={completionPercent}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label="Financial setup completion"
+          aria-label="Setup completion"
         >
           <div
             className="h-full rounded-full bg-linear-to-r from-emerald-500 to-teal-500 transition-[width] duration-500 ease-out dark:from-emerald-300 dark:to-teal-300"

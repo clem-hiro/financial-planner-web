@@ -60,7 +60,7 @@ export const CLIENT_MAIN_NAV: readonly ClientMainNavItem[] = [
   {
     id: "financial_setup",
     href: SETUP_OVERVIEW_PATH,
-    label: "Financial setup",
+    label: "Setup",
     activeMatch: matchesFinancialSetup,
   },
   {

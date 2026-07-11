@@ -10,7 +10,7 @@ export default async function SetupOverviewPage() {
   if (!isSupabaseConfigured()) {
     return (
       <p className="text-sm text-zinc-600 dark:text-slate-300">
-        Configure Supabase to view your financial setup progress.
+        Configure Supabase to view your setup progress.
       </p>
     );
   }
@@ -21,7 +21,7 @@ export default async function SetupOverviewPage() {
     return (
       <div className="space-y-4">
         <h1 className="text-2xl font-semibold text-[#0c192f] dark:text-slate-50">
-          Financial Setup
+          Setup
         </h1>
         <Link href="/login" className={`text-sm ${appInlineLinkClass}`}>
           Sign in

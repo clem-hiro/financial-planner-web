@@ -111,7 +111,7 @@ Use these **Task name** values. Map inventory capability → task(s); create all
 | Wealth planning | Planning | Client | High | wealth,assets,debts | Planning **Wealth** |
 | Protection planning | Planning | Client | Medium | protection,insurance,estate | Planning **Protection** |
 | Future planning | Planning | Client | High | future,goals,retirement | Planning **Future** |
-| Financial setup | Setup | Client | High | setup,profile,data-entry | Financial Setup tabs |
+| Setup | Setup | Client | High | setup,profile,data-entry | Setup Hub / Setup tabs |
 | Profile assumptions | Setup | Client | High | profile,assumptions,income | Profile income / CPF / retirement assumptions |
 | Budget lines | Budget | Client | High | budget,cash-flow | Budget lines |
 | Guided budget templates | Budget | Client | Medium | budget,onboarding,templates | SG-oriented guided budget templates |

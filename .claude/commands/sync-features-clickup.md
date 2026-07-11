@@ -54,7 +54,7 @@ Also update **description** and custom fields (**What it does**, **Next step**, 
 |--------------|---------------------|
 | `src/features/dashboard/`, `src/data/dashboard.ts` | Client home dashboard, Monthly spending view, Net worth summary, Long-term projections |
 | `src/features/goals/`, housing loans | Housing planning |
-| `src/features/planning/`, `src/features/setup/` | Financial setup, Wealth planning, Cash flow planning |
+| `src/features/planning/`, `src/features/setup/` | Setup, Wealth planning, Cash flow planning |
 | `src/features/budget/` | Budget lines, Guided budget templates, Cash flow planning |
 | `src/features/debts/` | Debt planning |
 | `src/features/advisor/` | Advisor client list, Advisor client workspace, Advisor proposal flow |

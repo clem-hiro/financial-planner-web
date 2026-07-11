@@ -13,7 +13,7 @@ type PageProps = {
 };
 
 /**
- * Legacy Planning workspace routes — redirect into Financial setup so bookmarks
+ * Legacy Planning workspace routes — redirect into Setup so bookmarks
  * and classic aliases keep working without a second editor surface.
  */
 export default async function PlanningSectionPage({

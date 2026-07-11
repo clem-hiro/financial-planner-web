@@ -7,12 +7,12 @@ import {
 /** Setup hub — progress cards and recommended next step (not a `?tab=` route). */
 export const SETUP_OVERVIEW_PATH = "/setup/overview";
 
-/** Query string for the budget editor under Financial setup (classic tab URL). */
+/** Query string for the budget editor under Setup (classic tab URL). */
 export function setupBudgetSearch(month: string, calendarYear: number): string {
   return `tab=budget&month=${encodeURIComponent(month)}&year=${String(calendarYear)}`;
 }
 
-/** Classic Financial setup → Budget tab (keeps the tab rail on `/setup`). */
+/** Classic Setup → Budget tab (keeps the tab rail on `/setup`). */
 export function setupBudgetPath(month: string, calendarYear: number): string {
   return `/setup?${setupBudgetSearch(month, calendarYear)}`;
 }

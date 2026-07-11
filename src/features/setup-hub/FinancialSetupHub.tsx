@@ -72,11 +72,8 @@ export function FinancialSetupHub({
 
       <div className="min-w-0 flex-1 space-y-6 sm:space-y-8">
       <header className="max-w-2xl space-y-2">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
-          Financial setup
-        </p>
         <h1 className="text-3xl font-semibold tracking-tight text-[#0c192f] dark:text-slate-50 sm:text-4xl">
-          Financial Setup
+          Setup
         </h1>
         <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
           Review gaps, then open a section to edit the details.

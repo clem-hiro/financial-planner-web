@@ -1,5 +1,5 @@
 import { MainSectionLoading } from "@/ui/MainSectionLoading";
 
 export default function SetupLoading() {
-  return <MainSectionLoading label="Loading financial setup…" />;
+  return <MainSectionLoading label="Loading setup…" />;
 }

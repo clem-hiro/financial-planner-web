@@ -71,7 +71,7 @@ export async function OverviewPlanningSection() {
               Home command center →
             </Link>
             <Link href="/setup/overview" className={appInlineLinkClass}>
-              Financial setup hub →
+              Setup hub →
             </Link>
           </div>
         </div>

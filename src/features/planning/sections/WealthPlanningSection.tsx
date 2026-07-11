@@ -111,7 +111,7 @@ export async function WealthPlanningSection() {
           Investments, CPF, property, vehicles, debts
         </h2>
         <p className="text-sm leading-relaxed text-slate-600">
-          The same editors as Financial setup — reorganized as modular cards for faster
+          The same editors as Setup — reorganized as modular cards for faster
           scanning.
         </p>
       </header>
@@ -218,7 +218,7 @@ export async function WealthPlanningSection() {
             <p className="mt-2 leading-relaxed">
               Deep links still resolve: use{" "}
               <Link href="/setup?tab=add-account" className={appInlineLinkClass}>
-                Financial setup
+                Setup
               </Link>{" "}
               if you prefer the original tab layout.
             </p>
