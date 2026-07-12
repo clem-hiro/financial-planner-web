@@ -90,7 +90,7 @@ export function BudgetStrategyInsightPanel({
             <Link href="/setup?tab=profile" className={appInlineLinkClass}>
               Setup → Profile
             </Link>{" "}
-            under <span className="font-medium">Lifestyle Profile</span> to see
+            under <span className="font-medium">Budget preferences</span> to see
             your target mix alongside your lines.
           </p>
         </div>

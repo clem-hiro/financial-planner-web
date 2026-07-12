@@ -93,7 +93,7 @@ export async function CashFlowPlanningSection({
               currencyCode={currency}
             />
           </PageSection>
-          <PageSection id="planning-cashflow-lens" title="Lifestyle Profile">
+          <PageSection id="planning-cashflow-lens" title="Budget preferences">
             <BudgetLensProfileForm
               initialLifestyle={financialProfile?.lifestyle_profile ?? null}
               initialStrategy={financialProfile?.budgeting_strategy ?? null}

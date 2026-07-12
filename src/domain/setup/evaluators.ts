@@ -294,10 +294,10 @@ function evaluateRiskProfile(ctx: SetupEvaluationContext): SetupModuleEvaluation
   if (hasLifestyle && hasStrategy) status = "complete";
   else if (hasLifestyle || hasStrategy) {
     status = "partial";
-    if (!hasLifestyle) missing.push("lifestyle profile");
+    if (!hasLifestyle) missing.push("budget preferences");
     if (!hasStrategy) missing.push("budgeting strategy");
   } else {
-    missing.push("lifestyle profile", "budgeting strategy");
+    missing.push("budget preferences", "budgeting strategy");
   }
   return {
     moduleId: "risk_profile",

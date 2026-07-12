@@ -86,6 +86,7 @@ export function BudgetRecommendedPlanCard(props: Props) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  const [confirmReplace, setConfirmReplace] = useState(false);
 
   const incomeNum =
     props.monthlyIncome != null &&
@@ -98,6 +99,7 @@ export function BudgetRecommendedPlanCard(props: Props) {
     props.lifestyle != null && props.lifestyle.trim() !== "";
   const hasStrategy =
     props.strategy != null && props.strategy.trim() !== "";
+  const hasExistingBudget = props.replaceableMonthlyLineCount > 0;
 
   const context = useMemo(
     () => ({
@@ -129,12 +131,12 @@ export function BudgetRecommendedPlanCard(props: Props) {
     usedSignalIds.includes(s.id)
   );
 
-  async function onApply() {
+  async function onApply(replaceExisting: boolean) {
     setPending(true);
     setStatus(null);
     try {
       const fd = new FormData();
-      if (props.replaceableMonthlyLineCount > 0) {
+      if (replaceExisting) {
         fd.set("replaceExisting", "true");
       }
       const result = await applyGuidedBudgetLinesAction({ error: null }, fd);
@@ -142,7 +144,12 @@ export function BudgetRecommendedPlanCard(props: Props) {
         setStatus(result.error);
         return;
       }
-      setStatus("Recommended budget applied.");
+      setStatus(
+        replaceExisting
+          ? "Recommended budget applied — previous monthly categories replaced."
+          : "Recommended budget applied."
+      );
+      setConfirmReplace(false);
       router.refresh();
     } catch {
       setStatus("Could not apply recommendation. Try again.");
@@ -167,8 +174,9 @@ export function BudgetRecommendedPlanCard(props: Props) {
           Recommended Budget
         </h2>
         <p className="max-w-2xl text-sm leading-relaxed text-zinc-600 dark:text-slate-300">
-          Based on your income, lifestyle, financial goals and current financial
-          setup, BYOFA recommends the following monthly allocation.
+          {hasExistingBudget
+            ? "Starter plan from your income and Budget preferences — for comparison only unless you replace below."
+            : "A starter monthly plan based on your income and Budget preferences. Apply it to create your first category lines."}
         </p>
       </div>
 
@@ -240,25 +248,59 @@ export function BudgetRecommendedPlanCard(props: Props) {
       )}
 
       <div className="space-y-3 border-t border-slate-100 pt-6 dark:border-slate-700/70">
-        <div>
-          <h3 className="text-sm font-semibold text-zinc-900 dark:text-slate-50">
-            Apply Recommended Budget
-          </h3>
-          <p className="mt-1 max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-slate-300">
-            This will update your monthly budget categories while preserving
-            debt repayments and income tax entries.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            disabled={pending || incomeNum <= 0}
-            className={fpPrimaryButtonClass}
-            onClick={() => void onApply()}
-          >
-            {pending ? "Applying…" : "Apply Recommendation"}
-          </button>
-        </div>
+        {incomeNum <= 0 ? null : hasExistingBudget ? (
+          <details className="rounded-xl border border-amber-200/80 bg-amber-50/50 px-4 py-3 dark:border-amber-400/30 dark:bg-amber-950/20">
+            <summary className="cursor-pointer text-sm font-medium text-amber-950 dark:text-amber-100">
+              Replace existing budget…
+            </summary>
+            <div className="mt-3 space-y-3 border-t border-amber-200/60 pt-3 dark:border-amber-400/20">
+              <label className="flex items-start gap-2 text-sm text-zinc-700 dark:text-slate-200">
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={confirmReplace}
+                  onChange={(e) => setConfirmReplace(e.target.checked)}
+                />
+                <span>
+                  Replace {props.replaceableMonthlyLineCount} categor
+                  {props.replaceableMonthlyLineCount === 1 ? "y" : "ies"}{" "}
+                  (keeps debt &amp; tax).
+                </span>
+              </label>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  disabled={pending || !confirmReplace}
+                  className={`${fpPrimaryButtonClass} disabled:cursor-not-allowed disabled:opacity-50`}
+                  onClick={() => void onApply(true)}
+                >
+                  {pending ? "Replacing…" : "Replace budget"}
+                </button>
+              </div>
+            </div>
+          </details>
+        ) : (
+          <>
+            <div>
+              <h3 className="text-sm font-semibold text-zinc-900 dark:text-slate-50">
+                Apply Recommended Budget
+              </h3>
+              <p className="mt-1 max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-slate-300">
+                Creates your first monthly category lines. Edit anytime after.
+              </p>
+            </div>
+            <div className="flex justify-end">
+              <button
+                type="button"
+                disabled={pending}
+                className={fpPrimaryButtonClass}
+                onClick={() => void onApply(false)}
+              >
+                {pending ? "Applying…" : "Apply Recommendation"}
+              </button>
+            </div>
+          </>
+        )}
         {status && (
           <p
             className={

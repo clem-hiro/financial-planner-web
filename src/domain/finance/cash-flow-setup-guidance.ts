@@ -77,9 +77,9 @@ export function cashFlowSetupGaps(
   if (lensMissing && (incomeMissing || noMonthlyPlan)) {
     gaps.push({
       id: "budget_lens",
-      title: "Set your lifestyle profile (optional)",
+      title: "Set budget preferences (optional)",
       detail:
-        "Tell us how you live and manage money so Budget can recommend a monthly allocation that fits you.",
+        "Life stage, food spend, and money style shape the Recommended Budget when you apply it — they do not change your lines until then.",
       ctaHref: setupTabPath("profile", {
         month: input.month,
         year: String(input.calendarYear),

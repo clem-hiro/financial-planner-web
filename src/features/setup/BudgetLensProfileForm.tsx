@@ -44,7 +44,7 @@ function isFoodBand(s: string | null): s is FoodSpendBandId {
 }
 
 /**
- * Profile preferences that personalise budget recommendations.
+ * Profile preferences that personalise Budget → Recommended Budget.
  * Allocation numbers live on Setup → Budget (Recommended Budget card).
  */
 export function BudgetLensProfileForm(props: Props) {
@@ -105,17 +105,21 @@ export function BudgetLensProfileForm(props: Props) {
       />
       <div>
         <h2 className="text-base font-semibold text-zinc-900 dark:text-slate-50">
-          Lifestyle Profile
+          Budget preferences
         </h2>
         <p className="mt-1 max-w-2xl text-sm leading-relaxed text-zinc-600 dark:text-slate-300">
-          Tell us about yourself so we can personalise your financial plan.
-          These preferences shape the recommended monthly budget on the Budget
-          tab — no allocation numbers are set here.
+          Used only when you apply the{" "}
+          <span className="font-medium text-zinc-800 dark:text-slate-100">
+            Recommended Budget
+          </span>{" "}
+          on the Budget tab — for example food amount and needs / wants /
+          savings mix. Saving here does not change your income, logged expenses,
+          or existing budget lines until you apply a recommendation.
         </p>
       </div>
       <label className="block max-w-md space-y-1 text-sm">
         <span className="text-zinc-600 dark:text-slate-200">
-          Lifestyle Profile
+          Life stage
         </span>
         <select
           className={fpSelectClass}
@@ -177,25 +181,25 @@ export function BudgetLensProfileForm(props: Props) {
           <option value="detailed">Prefer detail</option>
         </select>
       </label>
-      <div className="space-y-2 pt-1">
-        <button
-          type="submit"
-          disabled={pending}
-          className={fpPrimaryButtonClass}
-        >
-          {pending ? "Saving…" : "Save preferences"}
-        </button>
-        {status && (
+      <div className="flex flex-col-reverse gap-2 border-t border-zinc-100 pt-4 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-end sm:gap-3">
+        {status ? (
           <p
             className={
               status.startsWith("Saved")
-                ? "text-sm text-emerald-800 dark:text-emerald-100"
-                : "text-sm text-red-700 dark:text-red-200"
+                ? "text-sm text-emerald-800 dark:text-emerald-100 sm:mr-auto"
+                : "text-sm text-red-700 dark:text-red-200 sm:mr-auto"
             }
           >
             {status}
           </p>
-        )}
+        ) : null}
+        <button
+          type="submit"
+          disabled={pending}
+          className={`${fpPrimaryButtonClass} w-full sm:w-auto`}
+        >
+          {pending ? "Saving…" : "Save preferences"}
+        </button>
       </div>
     </form>
   );

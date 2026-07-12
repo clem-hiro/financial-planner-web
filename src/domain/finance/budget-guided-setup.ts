@@ -319,7 +319,7 @@ export type BudgetRecommendationSignalMeta = {
 export const ACTIVE_BUDGET_RECOMMENDATION_SIGNALS: ReadonlyArray<BudgetRecommendationSignalMeta> =
   [
     { id: "income", label: "Income" },
-    { id: "lifestyle_profile", label: "Lifestyle Profile" },
+    { id: "lifestyle_profile", label: "Budget preferences" },
     { id: "money_management_style", label: "Money Management Style" },
     { id: "food_spend", label: "Typical food spending" },
   ];
