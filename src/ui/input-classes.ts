@@ -10,7 +10,21 @@ export const fpInputClass = `w-full max-w-xs ${base} ${fpNumberNoSpinnerClass}`;
 /** Full-width fields for stacked forms (auth, onboarding) — no `max-w-xs` cap. */
 export const fpInputFullClass = `w-full ${base} ${fpNumberNoSpinnerClass}`;
 export const fpInputNarrowClass = `w-full max-w-[8rem] ${base} ${fpNumberNoSpinnerClass}`;
-export const fpSelectClass = `w-full max-w-xs ${base} cursor-pointer bg-white`;
+
+/**
+ * Native `<select>` with balanced padding and a custom chevron so the browser
+ * arrow does not crush right padding / inflate left inset.
+ * Does not reuse `base`’s `px-3` — uses explicit `pl-3 pr-9` instead.
+ */
+export const fpSelectClass =
+  "w-full max-w-xs cursor-pointer appearance-none rounded-xl border border-slate-200/90 bg-white py-2.5 pl-3 pr-9 text-sm text-slate-900 shadow-sm outline-none transition-[border-color,box-shadow,background-color] " +
+  "bg-size-[1rem] bg-position-[right_0.75rem_center] bg-no-repeat " +
+  "bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 16 16%22%3E%3Cpath stroke=%22%2371717a%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%221.5%22 d=%22M4 6l4 4 4-4%22/%3E%3C/svg%3E')] " +
+  "focus:border-emerald-500/50 focus:ring-2 focus:ring-emerald-500/15 " +
+  "disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500 " +
+  "dark:border-slate-600/80 dark:bg-slate-900/90 dark:text-slate-100 " +
+  "dark:bg-[url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 fill=%22none%22 viewBox=%220 0 16 16%22%3E%3Cpath stroke=%22%23a1a1aa%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22 stroke-width=%221.5%22 d=%22M4 6l4 4 4-4%22/%3E%3C/svg%3E')] " +
+  "dark:focus:border-emerald-400/60 dark:focus:ring-emerald-400/20 dark:disabled:bg-slate-900/50 dark:disabled:text-slate-500";
 
 export const fpPrimaryButtonClass =
   "rounded-full bg-linear-to-r from-[#0c192f] via-[#133359] to-[#047857] px-5 py-2.5 text-sm font-semibold tracking-tight text-white shadow-md shadow-slate-900/20 transition hover:brightness-105 active:scale-[0.99] motion-reduce:active:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/35 dark:from-emerald-300 dark:via-sky-300 dark:to-teal-300 dark:text-slate-950 dark:shadow-black/25";

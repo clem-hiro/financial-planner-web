@@ -4,10 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import {
-  ACTIVE_BUDGET_RECOMMENDATION_SIGNALS,
-  FUTURE_BUDGET_RECOMMENDATION_SIGNALS,
   generateGuidedMonthlyBudgetLines,
-  resolveActiveRecommendationSignals,
   type BudgetingStrategyId,
   type FoodSpendBandId,
   type LifestyleProfileId,
@@ -15,7 +12,8 @@ import {
 import { applyGuidedBudgetLinesAction } from "@/server/actions";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
-import { fpPrimaryButtonClass } from "@/ui/input-classes";
+import { ConfirmDialog } from "@/ui/ConfirmDialog";
+import { fpPrimaryButtonClass, fpSecondaryButtonClass } from "@/ui/input-classes";
 import { formatCurrency } from "@/ui/lib/format";
 import { appCardClass, appCardPadding } from "@/ui/surface-classes";
 
@@ -78,15 +76,14 @@ function coerceFoodBand(raw: string | null): FoodSpendBandId {
 }
 
 /**
- * Advisor-style recommended monthly allocation on the Budget tab.
- * Generator stays modular via `BudgetRecommendationContext` so housing,
- * goals, investments, and other signals can plug in later.
+ * Starter monthly allocation on Budget. Numbers first; apply only when empty.
+ * Replace is a quiet confirm — no signal checklist for clients.
  */
 export function BudgetRecommendedPlanCard(props: Props) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
-  const [confirmReplace, setConfirmReplace] = useState(false);
+  const [replaceOpen, setReplaceOpen] = useState(false);
 
   const incomeNum =
     props.monthlyIncome != null &&
@@ -95,10 +92,6 @@ export function BudgetRecommendedPlanCard(props: Props) {
       ? props.monthlyIncome
       : 0;
 
-  const hasLifestyle =
-    props.lifestyle != null && props.lifestyle.trim() !== "";
-  const hasStrategy =
-    props.strategy != null && props.strategy.trim() !== "";
   const hasExistingBudget = props.replaceableMonthlyLineCount > 0;
 
   const context = useMemo(
@@ -116,24 +109,10 @@ export function BudgetRecommendedPlanCard(props: Props) {
     [context]
   );
 
-  const usedSignalIds = useMemo(
-    () =>
-      resolveActiveRecommendationSignals({
-        monthlyIncome: incomeNum,
-        foodSpendBand: context.foodSpendBand,
-        hasLifestyle: hasLifestyle || incomeNum > 0,
-        hasStrategy: hasStrategy || incomeNum > 0,
-      }),
-    [incomeNum, context.foodSpendBand, hasLifestyle, hasStrategy]
-  );
-
-  const usedSignals = ACTIVE_BUDGET_RECOMMENDATION_SIGNALS.filter((s) =>
-    usedSignalIds.includes(s.id)
-  );
-
   async function onApply(replaceExisting: boolean) {
     setPending(true);
     setStatus(null);
+    setReplaceOpen(false);
     try {
       const fd = new FormData();
       if (replaceExisting) {
@@ -149,7 +128,6 @@ export function BudgetRecommendedPlanCard(props: Props) {
           ? "Recommended budget applied — previous monthly categories replaced."
           : "Recommended budget applied."
       );
-      setConfirmReplace(false);
       router.refresh();
     } catch {
       setStatus("Could not apply recommendation. Try again.");
@@ -158,10 +136,12 @@ export function BudgetRecommendedPlanCard(props: Props) {
     }
   }
 
+  const replaceCount = props.replaceableMonthlyLineCount;
+
   return (
     <section
       id="budget-recommended"
-      className={`scroll-mt-4 ${appCardClass} ${appCardPadding} space-y-8`}
+      className={`scroll-mt-4 ${appCardClass} ${appCardPadding} space-y-5`}
       {...(pending ? { inert: true } : {})}
     >
       <BlockingSubmitOverlay
@@ -169,56 +149,38 @@ export function BudgetRecommendedPlanCard(props: Props) {
         message="Applying recommended budget…"
       />
 
-      <div className="space-y-2">
+      <ConfirmDialog
+        open={replaceOpen}
+        title="Replace your budget?"
+        body={
+          <>
+            This replaces {replaceCount} monthly categor
+            {replaceCount === 1 ? "y" : "ies"} with the plan above. Debt
+            repayments and income tax lines are kept.
+          </>
+        }
+        confirmLabel="Replace budget"
+        cancelLabel="Keep my budget"
+        tone="danger"
+        confirmDisabled={pending}
+        onConfirm={() => void onApply(true)}
+        onCancel={() => setReplaceOpen(false)}
+      />
+
+      <div className="space-y-1.5">
         <h2 className="text-lg font-semibold tracking-tight text-zinc-900 dark:text-slate-50">
           Recommended Budget
         </h2>
         <p className="max-w-2xl text-sm leading-relaxed text-zinc-600 dark:text-slate-300">
+          Built from your{" "}
+          <Link href={props.profileHref} className={appInlineLinkClass}>
+            Profile
+          </Link>{" "}
+          income and Budget preferences
           {hasExistingBudget
-            ? "Starter plan from your income and Budget preferences — for comparison only unless you replace below."
-            : "A starter monthly plan based on your income and Budget preferences. Apply it to create your first category lines."}
+            ? " — shown for comparison. Edit categories above to change your plan."
+            : "."}
         </p>
-      </div>
-
-      <div className="space-y-4 rounded-2xl bg-slate-50/80 px-4 py-4 dark:bg-slate-800/50 sm:px-5">
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-slate-400">
-          Recommended using
-        </p>
-        <ul className="space-y-2">
-          {usedSignals.map((s) => (
-            <li
-              key={s.id}
-              className="flex items-center gap-2 text-sm text-zinc-800 dark:text-slate-100"
-            >
-              <span
-                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-[11px] font-semibold text-emerald-800 dark:bg-emerald-900/50 dark:text-emerald-100"
-                aria-hidden
-              >
-                ✓
-              </span>
-              {s.label}
-            </li>
-          ))}
-        </ul>
-        <div className="border-t border-slate-200/80 pt-4 dark:border-slate-700/80">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-zinc-500 dark:text-slate-400">
-            Future versions will also include
-          </p>
-          <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-zinc-600 dark:text-slate-300">
-            {FUTURE_BUDGET_RECOMMENDATION_SIGNALS.map((s) => (
-              <li key={s.id} className="before:mr-1.5 before:content-['•']">
-                {s.label}
-              </li>
-            ))}
-          </ul>
-          <p className="mt-3 text-xs text-zinc-500 dark:text-slate-400">
-            This is informational only. Refine preferences in{" "}
-            <Link href={props.profileHref} className={appInlineLinkClass}>
-              Profile
-            </Link>
-            .
-          </p>
-        </div>
       </div>
 
       {incomeNum <= 0 ? (
@@ -247,72 +209,48 @@ export function BudgetRecommendedPlanCard(props: Props) {
         </ul>
       )}
 
-      <div className="space-y-3 border-t border-slate-100 pt-6 dark:border-slate-700/70">
-        {incomeNum <= 0 ? null : hasExistingBudget ? (
-          <details className="rounded-xl border border-amber-200/80 bg-amber-50/50 px-4 py-3 dark:border-amber-400/30 dark:bg-amber-950/20">
-            <summary className="cursor-pointer text-sm font-medium text-amber-950 dark:text-amber-100">
-              Replace existing budget…
-            </summary>
-            <div className="mt-3 space-y-3 border-t border-amber-200/60 pt-3 dark:border-amber-400/20">
-              <label className="flex items-start gap-2 text-sm text-zinc-700 dark:text-slate-200">
-                <input
-                  type="checkbox"
-                  className="mt-1"
-                  checked={confirmReplace}
-                  onChange={(e) => setConfirmReplace(e.target.checked)}
-                />
-                <span>
-                  Replace {props.replaceableMonthlyLineCount} categor
-                  {props.replaceableMonthlyLineCount === 1 ? "y" : "ies"}{" "}
-                  (keeps debt &amp; tax).
-                </span>
-              </label>
-              <div className="flex justify-end">
-                <button
-                  type="button"
-                  disabled={pending || !confirmReplace}
-                  className={`${fpPrimaryButtonClass} disabled:cursor-not-allowed disabled:opacity-50`}
-                  onClick={() => void onApply(true)}
-                >
-                  {pending ? "Replacing…" : "Replace budget"}
-                </button>
-              </div>
-            </div>
-          </details>
-        ) : (
-          <>
-            <div>
-              <h3 className="text-sm font-semibold text-zinc-900 dark:text-slate-50">
-                Apply Recommended Budget
-              </h3>
-              <p className="mt-1 max-w-xl text-sm leading-relaxed text-zinc-600 dark:text-slate-300">
-                Creates your first monthly category lines. Edit anytime after.
-              </p>
-            </div>
-            <div className="flex justify-end">
+      {incomeNum > 0 ? (
+        <div className="space-y-3 border-t border-slate-100 pt-5 dark:border-slate-700/70">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <Link
+              href={props.profileHref}
+              className={`text-xs font-medium ${appInlineLinkClass}`}
+            >
+              Edit Budget preferences
+            </Link>
+            {hasExistingBudget ? (
               <button
                 type="button"
                 disabled={pending}
-                className={fpPrimaryButtonClass}
+                className={`${fpSecondaryButtonClass} w-full sm:w-auto`}
+                onClick={() => setReplaceOpen(true)}
+              >
+                Replace my budget with this plan
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled={pending}
+                className={`${fpPrimaryButtonClass} w-full sm:w-auto`}
                 onClick={() => void onApply(false)}
               >
                 {pending ? "Applying…" : "Apply Recommendation"}
               </button>
-            </div>
-          </>
-        )}
-        {status && (
-          <p
-            className={
-              status.startsWith("Recommended")
-                ? "text-sm text-emerald-800 dark:text-emerald-100"
-                : "text-sm text-red-700 dark:text-red-200"
-            }
-          >
-            {status}
-          </p>
-        )}
-      </div>
+            )}
+          </div>
+          {status ? (
+            <p
+              className={
+                status.startsWith("Recommended")
+                  ? "text-sm text-emerald-800 dark:text-emerald-100"
+                  : "text-sm text-red-700 dark:text-red-200"
+              }
+            >
+              {status}
+            </p>
+          ) : null}
+        </div>
+      ) : null}
     </section>
   );
 }
