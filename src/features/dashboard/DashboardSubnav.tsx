@@ -75,16 +75,15 @@ export function DashboardSubnav() {
   return (
     <nav
       aria-label="Dashboard sections"
-      className="sticky top-14 z-20 -mx-4 border-b border-slate-200/70 bg-background/95 px-4 py-2 backdrop-blur-md dark:border-slate-800/80 sm:-mx-8 sm:px-8 sm:top-[5.5rem]"
+      className="sticky top-14 z-20 -mx-4 border-b border-slate-200/70 bg-background/95 px-4 py-1.5 backdrop-blur-md dark:border-slate-800/80 sm:-mx-8 sm:px-8 sm:top-[5.5rem]"
     >
-      <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
-        On this page
-      </p>
       <div
         data-dashboard-subnav-scroll
-        className="-mx-1 overflow-x-auto px-1 pb-0.5 scroll-smooth sm:mx-0 sm:overflow-visible sm:px-0 sm:pb-0"
+        className="-mx-1 overflow-x-auto px-1 scroll-smooth sm:mx-0 sm:overflow-visible sm:px-0"
       >
-        <ul className={`list-none ${appTabRailClass} sm:max-w-full`}>
+        <ul
+          className={`list-none ${appTabRailClass} w-max max-w-none sm:w-fit sm:max-w-none sm:flex-nowrap`}
+        >
           {items.map(({ id, label }) => (
             <li key={id} className="snap-start">
               <a

@@ -18,7 +18,10 @@ export function MethodologyOpenLink({
     <button
       type="button"
       className={className ?? `text-left text-sm ${appInlineLinkClass}`}
-      onClick={() => openMethodology(topicId)}
+      onClick={(event) => {
+        event.stopPropagation();
+        openMethodology(topicId);
+      }}
     >
       {children}
     </button>

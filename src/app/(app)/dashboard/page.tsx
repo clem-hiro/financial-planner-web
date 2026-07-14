@@ -65,19 +65,19 @@ export default async function DashboardPage() {
   const profileIncomplete = isFinancialProfileIncomplete(profile);
 
   return (
-    <div className="space-y-6 sm:space-y-8">
-      <header className="border-b border-slate-200/80 pb-3 dark:border-slate-800/80 sm:pb-4">
+    <div className="space-y-4 sm:space-y-5">
+      <header>
         <div
-          className="rounded-xl border border-slate-200/80 px-4 py-3.5 text-white dark:border-sky-400/20 sm:px-5 sm:py-4"
+          className="rounded-xl border border-slate-200/80 px-4 py-2.5 text-white dark:border-sky-400/20 sm:px-5 sm:py-3"
           style={appBrandHeaderCompactStyle}
         >
-          <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2">
-            <div className="min-w-0 space-y-1">
-              <h1 className="text-xl font-semibold tracking-tight sm:text-2xl">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+            <div className="min-w-0">
+              <h1 className="text-lg font-semibold tracking-tight sm:text-xl">
                 Home
               </h1>
-              <p className="max-w-xl text-sm leading-relaxed text-slate-200/90">
-                Key numbers for {monthLabel} — deeper planning in Planning.
+              <p className="mt-0.5 text-xs leading-snug text-slate-200/90 sm:text-sm">
+                Key numbers for {monthLabel} — deeper editing in Setup.
               </p>
             </div>
             <p className="shrink-0 font-mono text-[11px] font-medium tabular-nums text-white/75">
@@ -88,14 +88,14 @@ export default async function DashboardPage() {
         </div>
       </header>
 
-      <div className="space-y-5">
+      <div className="space-y-4">
         <DashboardSubnav />
 
         {profileIncomplete ? (
-          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-950 dark:border-amber-300/45 dark:bg-amber-950/45 dark:text-amber-100">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950 dark:border-amber-300/45 dark:bg-amber-950/45 dark:text-amber-100">
             Complete your financial profile to improve savings rate and projection
             quality.
-            <div className="mt-2">
+            <div className="mt-1.5">
               <Link href="/setup?tab=profile#profile-assumptions" className="underline">
                 Complete your financial profile
               </Link>
@@ -114,7 +114,7 @@ export default async function DashboardPage() {
         <DashboardRetirementSection payload={payload} profile={profile} />
       </section>
 
-      <section id="month" className="scroll-mt-28 space-y-6 sm:scroll-mt-32">
+      <section id="month" className="scroll-mt-28 sm:scroll-mt-32">
         <h2 className="sr-only">This month</h2>
         <DashboardMonthSection payload={payload} />
       </section>

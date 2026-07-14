@@ -263,47 +263,51 @@ export function CpfRetirementProjectionPanel({
   }
 
   return (
-    <div
+    <details
       id="cpf-retirement-projection"
-      className="mt-6 scroll-mt-28 space-y-6 rounded-2xl border border-indigo-100/90 bg-linear-to-br from-indigo-50/40 via-white to-slate-50/30 p-4 shadow-sm ring-1 ring-indigo-100/40 dark:border-indigo-300/35 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/25 dark:ring-indigo-300/20 sm:p-5 md:p-6"
+      className="group mt-6 scroll-mt-28 rounded-2xl border border-indigo-100/90 bg-linear-to-br from-indigo-50/40 via-white to-slate-50/30 p-4 shadow-sm ring-1 ring-indigo-100/40 open:space-y-0 dark:border-indigo-300/35 dark:from-slate-950 dark:via-slate-900 dark:to-indigo-950/25 dark:ring-indigo-300/20 sm:p-5 md:p-6"
     >
-      <header className="max-w-2xl space-y-2">
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <div className="min-w-0 space-y-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-indigo-600/90 dark:text-indigo-300">
-              Retirement planning
-            </p>
-            <h3 className="text-lg font-semibold tracking-tight text-indigo-950 dark:text-indigo-50 sm:text-xl">
-              CPF Retirement Projection
-            </h3>
-          </div>
-          <div className="flex shrink-0 items-center gap-1.5">
-            <InfoTooltip
-              variant="zinc"
-              ariaLabel="Open methodology: CPF retirement projection"
-              methodologyTopicId="cpf-retirement-projection"
-            >
-              <span className="sr-only">CPF retirement projection methodology</span>
-            </InfoTooltip>
-            <MethodologyOpenLink
-              topicId="cpf-retirement-projection"
-              className="text-xs font-medium text-indigo-900 underline decoration-indigo-300/60 underline-offset-2 dark:text-indigo-200 dark:decoration-indigo-300/40"
-            >
-              Assumptions →
-            </MethodologyOpenLink>
-          </div>
+      <summary className="flex cursor-pointer list-none flex-wrap items-start justify-between gap-2 [&::-webkit-details-marker]:hidden">
+        <div className="min-w-0 max-w-2xl space-y-1.5">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-indigo-600/90 dark:text-indigo-300">
+            Retirement planning
+          </p>
+          <h3 className="text-lg font-semibold tracking-tight text-indigo-950 dark:text-indigo-50 sm:text-xl">
+            CPF Retirement Projection
+          </h3>
+          <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
+            FRS / BRS / ERS, age-{CPF_RA_FORMATION_AGE} RA set-aside, and a simple CPF
+            LIFE band —{" "}
+            <strong className="font-medium text-slate-700 dark:text-slate-200">
+              illustrative only
+            </strong>
+            . Expand for detail; the chart above already includes projected RA.
+          </p>
         </div>
-        <p className="text-sm leading-relaxed text-slate-600 dark:text-slate-300">
-          See how CPF typically sets aside money at age {CPF_RA_FORMATION_AGE}, what
-          your retirement sums might look like, and how SA and OA combine to form your
-          Retirement Account (RA).{" "}
-          <strong className="font-medium text-slate-700 dark:text-slate-200">
-            Illustrative only
-          </strong>{" "}
-          — not guaranteed CPF LIFE income or financial advice.
-        </p>
-      </header>
+        <div className="flex shrink-0 items-center gap-1.5 pt-1">
+          <InfoTooltip
+            variant="zinc"
+            ariaLabel="Open methodology: CPF retirement projection"
+            methodologyTopicId="cpf-retirement-projection"
+          >
+            <span className="sr-only">CPF retirement projection methodology</span>
+          </InfoTooltip>
+          <MethodologyOpenLink
+            topicId="cpf-retirement-projection"
+            className="text-xs font-medium text-indigo-900 underline decoration-indigo-300/60 underline-offset-2 dark:text-indigo-200 dark:decoration-indigo-300/40"
+          >
+            Assumptions →
+          </MethodologyOpenLink>
+          <span
+            aria-hidden
+            className="ml-1 text-indigo-400 transition group-open:rotate-90 dark:text-indigo-300"
+          >
+            ›
+          </span>
+        </div>
+      </summary>
 
+      <div className="mt-5 space-y-6 border-t border-indigo-100/70 pt-5 dark:border-indigo-300/20">
       {/* Section 1: Retirement sum projection */}
       <div className="rounded-xl border border-white/80 bg-white/90 p-4 shadow-sm dark:border-slate-700/80 dark:bg-slate-900 sm:p-5">
         <h4 className="text-sm font-semibold text-indigo-950 dark:text-indigo-50">
@@ -559,6 +563,7 @@ export function CpfRetirementProjectionPanel({
           </div>
         ) : null}
       </div>
-    </div>
+      </div>
+    </details>
   );
 }

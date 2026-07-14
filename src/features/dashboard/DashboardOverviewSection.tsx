@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { DashboardPayload } from "@/data/dashboard";
-import { yearFromYearMonth, formatYearMonthLong } from "@/lib/dates";
+import { yearFromYearMonth } from "@/lib/dates";
 import { setupBudgetPath } from "@/lib/setup-urls";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import { appBrandNavyTextStyle } from "@/ui/app-tab-styles";
@@ -19,7 +19,6 @@ export function DashboardOverviewSection({
 }: {
   payload: DashboardPayload;
 }) {
-  const monthLabel = formatYearMonthLong(payload.month);
   const hasLoggedSpend = payload.monthlyExpensesLoggedTotal > 0;
   const hasBudgetForecast = payload.monthlyPlannedMonthlyBudgetTotal > 0;
   const expensesAction = hasLoggedSpend
@@ -43,15 +42,10 @@ export function DashboardOverviewSection({
   const leftAfterExpenses = payload.takeHomeMinusExpenses;
 
   return (
-    <div className="space-y-4">
-      <div>
-        <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
-          {monthLabel}
-        </p>
-        <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400">
-          This month&apos;s income and planned spend
-        </p>
-      </div>
+    <div className="space-y-3">
+      <p className="text-xs text-slate-500 dark:text-slate-400">
+        This month&apos;s income and planned spend
+      </p>
 
       <div className="grid gap-3 sm:grid-cols-3">
         <div
@@ -119,7 +113,7 @@ export function DashboardOverviewSection({
             <p className={labelClass}>Left after expenses</p>
             <InfoTooltip ariaLabel="How left after expenses is calculated">
               Income minus this month&apos;s expenses. Goal contributions are not
-              subtracted here — see Goals &amp; cash flow below when you have
+              subtracted here — see Goals this month below when you have
               planned goal amounts.
             </InfoTooltip>
           </div>
