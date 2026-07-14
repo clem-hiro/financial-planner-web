@@ -43,7 +43,7 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     id: "retirement-dividends",
     title: "Dividends vs monthly spend goal",
     summary:
-      "At your target retirement age, we compare dividend income on investments only to your optional monthly spend goal.",
+      "Domain math used when you set retirement dividend yield and spend goal in Setup → Goals. Home no longer shows a separate dividend-check card—Projected wealth (runway) is the primary sustainability view.",
     bullets: [
       "No salary after retirement in this check.",
       "Dividends apply only to projected investment value at retirement—not cash.",
@@ -64,7 +64,7 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     summary:
       "A second check: constant annual withdrawal rate on total projected net worth at retirement.",
     bullets: [
-      "Unlike the dividend block, this uses investments + cash − debt plus projected CPF when modeled (whole projected net worth at retirement).",
+      "Unlike a dividends-only lens, this uses investments + cash − debt plus projected CPF when modeled (whole projected net worth at retirement).",
       "We show implied sustainable monthly spend ≈ balance × rate ÷ 12, and compare to your goal if set.",
       "The rate comes from your profile assumption (often around 4% as a rule-of-thumb).",
     ],
