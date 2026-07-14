@@ -89,11 +89,13 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
   },
   {
     id: "cpf-projection",
-    title: "CPF projection (OA / SA / MA)",
+    title: "CPF projection (OA / SA / MA / RA)",
     summary:
-      "This is a simplified CPF forecast using your entered balances, salary assumptions, and contribution settings to project OA/SA/MA over time.",
+      "This is a simplified CPF forecast using your entered balances, salary assumptions, and contribution settings to project OA/SA/MA/RA over time.",
     bullets: [
-      "MA is capped at the applicable Basic Healthcare Sum (BHS). If MA reaches the cap, MA inflows above the cap are routed into SA in this MVP model.",
+      "In the month you turn 55, accumulated SA then OA are set aside into RA up to the projected Full Retirement Sum target (same SA-first order as the educational RA panel).",
+      "After 55, new CPF contributions follow the age-band allocation into OA/RA/MA; RA earns the same illustrative floor crediting rate as SA in this MVP model.",
+      "MA is capped at the applicable Basic Healthcare Sum (BHS). If MA reaches the cap, MA inflows above the cap are routed into SA before 55, and into RA from age 55.",
       "The app stores official BHS values through 2026 ($79,000 for the 2026 prevailing / age-65 cohort amount). Future BHS values use a 4% p.a. estimate until CPF releases official figures.",
       "For members who have turned 65, the BHS uses the cohort year they turned 65; otherwise it uses the prevailing projection year.",
     ],
@@ -107,8 +109,8 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     bullets: [
       "FRS at 55 starts from the published Full Retirement Sum for your cohort year (app baseline), then compounds by the FRS growth % until you reach 55 unless you override it manually.",
       "BRS is 50% of projected FRS; ERS is 200% of projected FRS. Your retirement target (BRS, FRS, or ERS) sets how much OA+SA must be set aside at 55 in the RA flow.",
-      "Your personalised age-55 OA/SA come from the blue CPF-by-age chart above (same salary, contribution, and housing assumptions).",
-      "RA simulation: SA funds RA first, then OA tops up to the target; remaining OA stays in the illustration. Shortfalls mean total CPF is below the chosen sum.",
+      "Your personalised pre–age-55 OA/SA come from the monthly CPF projection (balances immediately before the chart’s RA set-aside).",
+      "RA simulation: SA funds RA first, then OA tops up to the target; remaining OA stays in the illustration. Shortfalls mean total CPF is below the chosen sum. The blue chart already applies an FRS-target set-aside for the projection path.",
       "CPF LIFE monthly range is a simplified band (annual payout % of RA ÷ 12, ±10%)—not plan-specific actuarial payouts.",
       "Example scenarios (high SA, mostly OA, below FRS) are fixed teaching numbers and do not change your saved data.",
     ],

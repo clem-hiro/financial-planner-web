@@ -209,6 +209,7 @@ export {
   DEFAULT_CPF_OA_CREDITING_ANNUAL,
   DEFAULT_CPF_SA_CREDITING_ANNUAL,
   DEFAULT_CPF_MA_CREDITING_ANNUAL,
+  DEFAULT_CPF_RA_CREDITING_ANNUAL,
 } from "./cpf-monthly-projection";
 export {
   buildCpfRetirementProjection,

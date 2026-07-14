@@ -5,6 +5,7 @@ import {
   analyzeRetirementSpendVsPortfolio,
   buildAmortizationSchedule,
   buildCpfMonthlyProjectionSeries,
+  buildCpfRetirementProjection,
   buildNetWorthByAgeProjection,
   buildRetirementCashflowProjection,
   calculateNetWorth,
@@ -205,6 +206,13 @@ export type DashboardPayload = {
     ra: number;
     totalCpf: number;
   }> | null;
+  /**
+   * OA/SA balances immediately before the age-55 RA set-aside in the monthly
+   * series. Used by the educational RA panel so it can re-simulate with a
+   * chosen BRS/FRS/ERS target without double-counting a transfer already in
+   * the chart.
+   */
+  cpfRaBeforeAt55: { oa: number; sa: number } | null;
   cpfYearEndProjection: {
     balanceAsOfMonth: string;
     startYearMonth: string | null;
@@ -1079,6 +1087,14 @@ export async function getDashboardPayload(
           12
       )
     : null;
+  const ageForCpfRaTarget = birthValidForAge
+    ? ageCompletedOnDate(birthRaw as string, dashboardAsOf)
+    : null;
+  const cpfRaTargetAt55 =
+    ageForCpfRaTarget != null
+      ? buildCpfRetirementProjection({ currentAge: ageForCpfRaTarget })
+          .requiredTargetAt55
+      : undefined;
   const grossMonthlyForCpf = profileMonthlyGross(profile);
   const bandStrForCpf = profileCpfAgeBand(profile);
   const fixedCpfBand: SgCpfAgeBand | undefined =
@@ -1172,6 +1188,7 @@ export async function getDashboardPayload(
         housingLoans: housingLoanRows.map(housingLoanToProjection),
         deductRecurringHousingPayments: false,
         cpfInvestments: cpfInvestmentRows.map(cpfInvestmentToProjection),
+        cpfRaTargetAt55,
       });
       const yearEndRow =
         cpfMonthlySeriesForProjection[cpfMonthlySeriesForProjection.length - 1];
@@ -1241,6 +1258,7 @@ export async function getDashboardPayload(
 
   let ageProjection: DashboardPayload["ageProjection"] = null;
   let cpfProjectionByAge: DashboardPayload["cpfProjectionByAge"] = null;
+  let cpfRaBeforeAt55: DashboardPayload["cpfRaBeforeAt55"] = null;
   let cpfHousingMarkers: DashboardPayload["cpfHousingMarkers"] = [];
   if (
     birthRaw &&
@@ -1306,8 +1324,12 @@ export async function getDashboardPayload(
               housingLoans: housingLoanRows.map(housingLoanToProjection),
               deductRecurringHousingPayments: false,
               cpfInvestments: cpfInvestmentRows.map(cpfInvestmentToProjection),
+              cpfRaTargetAt55,
             });
       cpfMonthlySeriesForProjection = monthlySeries;
+      cpfRaBeforeAt55 =
+        monthlySeries.find((row) => row.raFormation)?.raFormation
+          ?.beforeAge55 ?? null;
       cpfProjectionByAge = nwAgePoints.map((p) => {
         const targetYearMonth = addMonthsToYearMonth(
           yearMonth,
@@ -1859,6 +1881,7 @@ export async function getDashboardPayload(
     },
     ageProjection,
     cpfProjectionByAge,
+    cpfRaBeforeAt55,
     cpfYearEndProjection,
     cpfProjectionMissingInputs,
     cpfHousingMarkers,

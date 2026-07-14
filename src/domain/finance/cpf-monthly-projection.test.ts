@@ -63,6 +63,8 @@ describe("buildCpfMonthlyProjectionSeries", () => {
       horizonMonths: 2,
       birthDate: "1971-05-01",
       grossMonthly: 7_000,
+      /** Isolate age-band contribution timing from RA stock set-aside. */
+      cpfRaTargetAt55: 0,
       initial: {
         oa: 0,
         sa: 0,
@@ -83,7 +85,45 @@ describe("buildCpfMonthlyProjectionSeries", () => {
     expect(series[0].sa).toBeCloseTo(804.97, 2);
     expect(series[0].ra).toBe(0);
     expect(series[1].yearMonth).toBe("2026-06");
-    expect(series[1].ra).toBeCloseTo(804.92, 2);
+    // Target 0 → post-55 RA allocation share overflows to OA (band timing unchanged).
+    expect(series[1].ra).toBe(0);
+    expect(series[1].oa).toBeCloseTo(2_695.31, 2);
+    expect(series[1].sa).toBeCloseTo(804.97, 2);
+  });
+
+  it("sets aside OA/SA into RA in the month the member turns 55", () => {
+    const series = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-04",
+      horizonMonths: 3,
+      birthDate: "1971-05-15",
+      grossMonthly: 0,
+      cpfRaTargetAt55: 220_400,
+      initial: {
+        oa: 150_000,
+        sa: 100_000,
+        ma: 10_000,
+        ra: 0,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [],
+    });
+
+    const apr = series.find((p) => p.yearMonth === "2026-04");
+    const may = series.find((p) => p.yearMonth === "2026-05");
+    expect(apr?.ra).toBe(0);
+    expect(apr?.sa).toBe(100_000);
+    expect(may?.raFormation).toBeDefined();
+    expect(may?.raFormation?.transferFromSa).toBe(100_000);
+    expect(may?.raFormation?.transferFromOa).toBe(120_400);
+    expect(may?.ra).toBeCloseTo(220_400, 2);
+    expect(may?.sa).toBe(0);
+    expect(may?.oa).toBeCloseTo(29_600, 2);
+    expect(may?.ma).toBe(10_000);
   });
 
   it("reduces OA by downpayment in completion month", () => {

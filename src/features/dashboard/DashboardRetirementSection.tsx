@@ -56,9 +56,11 @@ export function DashboardRetirementSection({
   const cpfAt55Row = payload.cpfProjectionByAge?.find(
     (r) => r.age === CPF_RA_FORMATION_AGE
   );
-  const cpfAtAge55 = cpfAt55Row
-    ? { oa: cpfAt55Row.oa, sa: cpfAt55Row.sa }
-    : null;
+  const cpfAtAge55 = payload.cpfRaBeforeAt55
+    ? payload.cpfRaBeforeAt55
+    : cpfAt55Row
+      ? { oa: cpfAt55Row.oa, sa: cpfAt55Row.sa }
+      : null;
   const hasCpfBalances =
     cpfAtAge55 != null &&
     (cpfAtAge55.oa > 0 || cpfAtAge55.sa > 0 || (payload.cpfProjectionByAge?.length ?? 0) > 0);
@@ -102,7 +104,7 @@ export function DashboardRetirementSection({
               <div className="mt-5 rounded-lg border border-indigo-200/60 bg-white/60 p-3 dark:border-indigo-300/35 dark:bg-slate-950/75">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="text-sm font-semibold text-indigo-950 dark:text-indigo-50">
-                    Projected CPF by age (OA / SA / MA)
+                    Projected CPF by age (OA / SA / MA / RA)
                   </h3>
                   {payload.cpfHousingLoanCountInProjection > 0 ? (
                     <span

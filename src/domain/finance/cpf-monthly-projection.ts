@@ -12,13 +12,18 @@ import {
   DEFAULT_ANNUAL_BONUS_PAYOUT_MONTH,
 } from "./sg-cpf";
 import {
+  CPF_RA_FORMATION_AGE,
   CURRENT_FRS_SG,
   routeCpfSaInvestmentMaturityProceeds,
+  simulateRaFormationAt55,
+  type CpfRaSimulation,
 } from "./cpf-retirement-projection";
 
 export const DEFAULT_CPF_OA_CREDITING_ANNUAL = 0.025;
 export const DEFAULT_CPF_SA_CREDITING_ANNUAL = 0.04;
 export const DEFAULT_CPF_MA_CREDITING_ANNUAL = 0.04;
+/** RA uses the same floor crediting rate as SA in this MVP model. */
+export const DEFAULT_CPF_RA_CREDITING_ANNUAL = DEFAULT_CPF_SA_CREDITING_ANNUAL;
 
 export const CPF_BHS_ESTIMATED_ANNUAL_GROWTH_SG = 0.04;
 export const CPF_BHS_OFFICIAL_BY_YEAR_SG = {
@@ -84,6 +89,8 @@ export type CpfMonthPoint = {
   ra: number;
   cpfis: number;
   totalCpf: number;
+  /** Present on the month the age-55 OA/SA → RA set-aside runs. */
+  raFormation?: CpfRaSimulation;
 };
 
 export type BasicHealthcareSumProjection = {
@@ -163,19 +170,30 @@ function applicableBasicHealthcareSumForMonthSg(
   return basicHealthcareSumForYearSg(policyYear);
 }
 
-function overflowMediSaveAboveBhsToSpecialAccount(params: {
+function overflowMediSaveAboveBhs(params: {
   ma: number;
   sa: number;
+  ra: number;
   bhs: number;
-}): { ma: number; sa: number } {
+  /** After RA formation / age 55, SA is closed — overflow goes to RA. */
+  overflowToRa: boolean;
+}): { ma: number; sa: number; ra: number } {
   const cap = Math.max(0, params.bhs);
   const excessMa = round2(Math.max(0, params.ma - cap));
   if (excessMa <= 0) {
-    return { ma: params.ma, sa: params.sa };
+    return { ma: params.ma, sa: params.sa, ra: params.ra };
+  }
+  if (params.overflowToRa) {
+    return {
+      ma: cap,
+      sa: params.sa,
+      ra: round2(params.ra + excessMa),
+    };
   }
   return {
     ma: cap,
     sa: round2(params.sa + excessMa),
+    ra: params.ra,
   };
 }
 
@@ -189,9 +207,10 @@ function fixedBandAgeProxy(ageBand: SgCpfAgeBand | undefined): number {
 }
 
 /**
- * Month-step CPF projection: crediting on OA/SA/MA, OW-based contributions with
- * annual OW cap and monthly ceiling, housing lumps + amortized payments from OA,
- * optional monthly OA→CPFIS transfer and notional CPFIS growth.
+ * Month-step CPF projection: crediting on OA/SA/MA/RA, OW-based contributions with
+ * annual OW cap and monthly ceiling, age-55 RA set-aside (SA then OA up to the
+ * retirement-sum target), housing lumps + amortized payments from OA, optional
+ * monthly OA→CPFIS transfer and notional CPFIS growth.
  */
 export function buildCpfMonthlyProjectionSeries(params: {
   startYearMonth: string;
@@ -264,6 +283,8 @@ export function buildCpfMonthlyProjectionSeries(params: {
   const roa = initial.oaAnnualRate ?? DEFAULT_CPF_OA_CREDITING_ANNUAL;
   const rsa = initial.saAnnualRate ?? DEFAULT_CPF_SA_CREDITING_ANNUAL;
   const rma = initial.maAnnualRate ?? DEFAULT_CPF_MA_CREDITING_ANNUAL;
+  /** RA tracks the SA floor rate in this MVP (no separate user override yet). */
+  const rRa = rsa;
   const rCpfis = Math.max(0, initial.cpfisAnnualReturn);
   const cpfInvestmentStates = cpfInvestments
     .filter(
@@ -309,6 +330,8 @@ export function buildCpfMonthlyProjectionSeries(params: {
     Number.isFinite(employmentContributionEndMonth)
       ? Math.max(0, Math.trunc(employmentContributionEndMonth))
       : null;
+  /** Skip stock set-aside when a starting RA balance is already modelled. */
+  let raSetAsideDone = round2(initial.ra ?? 0) > 0.5;
 
   for (let i = 0; i < horizonMonths; i++) {
     const ym = addMonthsToYearMonth(startYearMonth, i);
@@ -324,6 +347,7 @@ export function buildCpfMonthlyProjectionSeries(params: {
     oa += round2((oa * roa) / 12);
     sa += round2((sa * rsa) / 12);
     ma += round2((ma * rma) / 12);
+    ra += round2((ra * rRa) / 12);
     cpfis += round2((cpfis * rCpfis) / 12);
     for (const state of cpfInvestmentStates) {
       if (!state.matured && state.balance > 0) {
@@ -335,9 +359,36 @@ export function buildCpfMonthlyProjectionSeries(params: {
       birthDate != null
         ? ageCompletedOnDate(birthDate, endOfPreviousYearMonthDate(ym))
         : fixedBandAgeProxy(fixedCpfAgeBand);
+    const ageAtMonthEnd =
+      birthDate != null
+        ? ageCompletedOnDate(birthDate, endOfYearMonthDate(ym))
+        : fixedBandAgeProxy(fixedCpfAgeBand);
     const band: SgCpfAgeBand = sgCpfAgeBandForCompletedAge(
       completedAgeForCpfMonth
     );
+
+    let raFormation: CpfRaSimulation | undefined;
+    /**
+     * Members already past 55: set aside opening stock once before salary
+     * inflows so post-55 OA contributions stay in OA. Members turning 55 this
+     * month: set aside after contributions (below) so birthday-month SA/OA
+     * inflows are included in the transfer.
+     */
+    if (
+      !raSetAsideDone &&
+      ageAtMonthEnd >= CPF_RA_FORMATION_AGE &&
+      completedAgeForCpfMonth >= CPF_RA_FORMATION_AGE
+    ) {
+      raFormation = simulateRaFormationAt55({
+        oa,
+        sa,
+        targetRetirementSum: cpfRaTargetAt55,
+      });
+      oa = raFormation.afterRaCreation.remainingOa;
+      sa = round2(sa - raFormation.transferFromSa);
+      ra = round2(ra + raFormation.afterRaCreation.ra);
+      raSetAsideDone = true;
+    }
 
     if (employmentContributionsActive && effectiveGross > 750) {
       const { subject, ytdOwSubjectAfter } = ordinaryWagesSubjectWithYtd(
@@ -379,12 +430,31 @@ export function buildCpfMonthlyProjectionSeries(params: {
       }
     }
 
+    const memberPastRaFormationAge = ageAtMonthEnd >= CPF_RA_FORMATION_AGE;
     const bhs = applicableBasicHealthcareSumForMonthSg(ym, birthDate);
-    ({ ma, sa } = overflowMediSaveAboveBhsToSpecialAccount({
+    ({ ma, sa, ra } = overflowMediSaveAboveBhs({
       ma,
       sa,
+      ra,
       bhs: bhs.amount,
+      overflowToRa: memberPastRaFormationAge || raSetAsideDone,
     }));
+
+    if (
+      !raSetAsideDone &&
+      ageAtMonthEnd >= CPF_RA_FORMATION_AGE &&
+      completedAgeForCpfMonth < CPF_RA_FORMATION_AGE
+    ) {
+      raFormation = simulateRaFormationAt55({
+        oa,
+        sa,
+        targetRetirementSum: cpfRaTargetAt55,
+      });
+      oa = raFormation.afterRaCreation.remainingOa;
+      sa = round2(sa - raFormation.transferFromSa);
+      ra = round2(ra + raFormation.afterRaCreation.ra);
+      raSetAsideDone = true;
+    }
 
     for (const { loan } of paymentByYmByLoan) {
       const explicitEvents = loan.upfrontOaEvents?.filter(
@@ -486,6 +556,7 @@ export function buildCpfMonthlyProjectionSeries(params: {
       ra,
       cpfis: round2(cpfis + cpfInvestmentsNotional),
       totalCpf: round2(oa + sa + ma + ra + cpfis + cpfInvestmentsNotional),
+      ...(raFormation ? { raFormation } : {}),
     });
   }
 

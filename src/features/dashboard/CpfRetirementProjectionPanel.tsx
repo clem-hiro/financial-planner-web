@@ -371,8 +371,8 @@ export function CpfRetirementProjectionPanel({
         <p className="mt-1 text-xs leading-relaxed text-slate-600 dark:text-slate-300">
           {hasCpfBalances && cpfAtAge55 ? (
             <>
-              Using your projected OA and SA at age {CPF_RA_FORMATION_AGE} from the
-              chart above, targeting{" "}
+              Using your projected OA and SA just before the age{" "}
+              {CPF_RA_FORMATION_AGE} set-aside (from the chart above), targeting{" "}
               <span className="font-medium text-indigo-900 dark:text-indigo-200">{targetLabel}</span>.
             </>
           ) : (
