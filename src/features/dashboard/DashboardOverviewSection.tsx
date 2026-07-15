@@ -38,7 +38,6 @@ export function DashboardOverviewSection({
           ),
           label: "Set up budget",
         };
-  const showSetupPrompt = payload.investmentSummary.count === 0;
   const leftAfterExpenses = payload.takeHomeMinusExpenses;
 
   return (
@@ -179,68 +178,61 @@ export function DashboardOverviewSection({
                 href="/setup?tab=add-account#add-investment"
                 className={appInlineLinkClass}
               >
-                Setup
+                {payload.investmentSummary.count} linked account
+                {payload.investmentSummary.count === 1 ? "" : "s"}
               </Link>
-              <span className="text-slate-400 dark:text-slate-500"> · </span>
-              {payload.investmentSummary.count} linked account
-              {payload.investmentSummary.count === 1 ? "" : "s"}
             </p>
           </div>
 
-          {showSetupPrompt ? (
-            <p className="rounded-lg border border-slate-200/80 bg-slate-50/80 px-3 py-2 text-xs leading-relaxed text-slate-600 dark:border-slate-700/80 dark:bg-slate-900/50 dark:text-slate-300">
-              Add investments or cash accounts in{" "}
-              <Link
-                href="/setup?tab=add-account#add-investment"
-                className={appInlineLinkClass}
-              >
-                Setup
-              </Link>{" "}
-              to refine this total.
-            </p>
-          ) : null}
-
-          <ul className="grid gap-x-8 gap-y-1 border-t border-slate-100/80 pt-3 font-mono text-sm tabular-nums text-slate-700 dark:border-slate-700/80 dark:text-slate-200 sm:grid-cols-2 sm:max-w-xl">
-            <li>
-              Investments{" "}
-              {formatCurrency(
-                payload.netWorthBreakdown.investments,
-                payload.baseCurrency
-              )}
-            </li>
-            <li>
-              Cash{" "}
-              {formatCurrency(
-                payload.netWorthBreakdown.cash,
-                payload.baseCurrency
-              )}
-            </li>
-            {payload.hasCpfBalanceRecord && (
-              <li>
-                CPF{" "}
+          <ul className="grid gap-x-8 gap-y-1 border-t border-slate-100/80 pt-3 text-sm text-slate-700 dark:border-slate-700/80 dark:text-slate-200 sm:grid-cols-2 sm:max-w-xl">
+            <li className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+              <span>Investments</span>
+              <span className="font-mono tabular-nums">
                 {formatCurrency(
-                  payload.netWorthBreakdown.cpf,
+                  payload.netWorthBreakdown.investments,
                   payload.baseCurrency
                 )}
+              </span>
+            </li>
+            <li className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+              <span>Cash</span>
+              <span className="font-mono tabular-nums">
+                {formatCurrency(
+                  payload.netWorthBreakdown.cash,
+                  payload.baseCurrency
+                )}
+              </span>
+            </li>
+            {payload.hasCpfBalanceRecord && (
+              <li className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                <span>CPF</span>
+                <span className="font-mono tabular-nums">
+                  {formatCurrency(
+                    payload.netWorthBreakdown.cpf,
+                    payload.baseCurrency
+                  )}
+                </span>
               </li>
             )}
             {payload.netWorthBreakdown.propertyCount > 0 && (
-              <li className="flex flex-wrap items-baseline gap-x-1.5">
-                <span>
-                  Property equity{" "}
+              <li className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                <span className="inline-flex items-center gap-1">
+                  Property equity
+                  <InfoTooltip ariaLabel="How property equity is estimated">
+                    Current owned valuation less linked mortgage balances.
+                  </InfoTooltip>
+                </span>
+                <span className="font-mono tabular-nums">
                   {formatCurrency(
                     payload.netWorthBreakdown.propertiesNet,
                     payload.baseCurrency
                   )}
                 </span>
-                <InfoTooltip ariaLabel="How property equity is estimated">
-                  Current owned valuation less linked mortgage balances.
-                </InfoTooltip>
               </li>
             )}
-            <li>
-              Debts (Cash &amp; liabilities){" "}
-              <span className="text-rose-600 dark:text-rose-300">
+            <li className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+              <span>Debts (Cash &amp; liabilities)</span>
+              <span className="font-mono tabular-nums text-rose-600 dark:text-rose-300">
                 −
                 {formatCurrency(
                   payload.netWorthBreakdown.liabilities,
@@ -249,17 +241,19 @@ export function DashboardOverviewSection({
               </span>
             </li>
             {payload.netWorthBreakdown.vehicleCount > 0 && (
-              <li className="flex flex-wrap items-baseline gap-x-1.5">
-                <span>
-                  Vehicles (est.){" "}
+              <li className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
+                <span className="inline-flex items-center gap-1">
+                  Vehicles (est.)
+                  <InfoTooltip ariaLabel="How vehicle value is estimated">
+                    Estimated market value less loan.
+                  </InfoTooltip>
+                </span>
+                <span className="font-mono tabular-nums">
                   {formatCurrency(
                     payload.netWorthBreakdown.vehiclesGrossAsset,
                     payload.baseCurrency
                   )}
                 </span>
-                <InfoTooltip ariaLabel="How vehicle value is estimated">
-                  Estimated market value less loan.
-                </InfoTooltip>
               </li>
             )}
           </ul>
