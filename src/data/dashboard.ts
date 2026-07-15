@@ -26,6 +26,7 @@ import {
   DEFAULT_CPF_LIFE_START_AGE,
   effectiveLoanBalance,
   futureValueInvestmentPortfolioAtMonth,
+  loanMonthsRemainingResolved,
   monthlyBudgetAggregateOverspend,
   monthlyBudgetVsActual,
   topOverBudgetCategories,
@@ -131,6 +132,7 @@ import type {
   HousingLoanRow,
   LiabilityRow,
   BudgetLineRow,
+  VehicleRow,
 } from "@/data/supabase/types";
 import { projectionSnapshotFromInvestmentRows } from "@/data/projection";
 import { isProjectionLivingExpenseBudgetCategory } from "@/domain/finance/budget-cash-flow-allocation";
@@ -397,6 +399,31 @@ function liabilityBudgetRepaymentById(
   return map;
 }
 
+function vehicleBudgetRepaymentById(
+  budgetLineRows: BudgetLineRow[],
+  amountOverrideByLineId: Record<string, number>
+): Map<string, number> {
+  const map = new Map<string, number>();
+  for (const row of budgetLineRows) {
+    if (!isVehicleLoanRepaymentBudgetLine(row) || row.cadence !== "monthly") {
+      continue;
+    }
+    const vehicleId = row.source_vehicle_id;
+    if (!vehicleId) continue;
+    const amount =
+      amountOverrideByLineId[row.id] != null
+        ? amountOverrideByLineId[row.id]
+        : num(row.amount);
+    if (amount > 0) map.set(vehicleId, amount);
+  }
+  return map;
+}
+
+function asOfDateFromYearMonth(yearMonth: string): Date {
+  const [y, m] = yearMonth.split("-").map(Number);
+  return new Date(y, m - 1, 1, 12, 0, 0, 0);
+}
+
 function liabilityToDebtObligation(
   row: LiabilityRow,
   startYearMonth: string,
@@ -496,20 +523,84 @@ function housingLoanToDebtObligation(
   };
 }
 
+function vehicleLoanToDebtObligation(
+  row: VehicleRow,
+  startYearMonth: string,
+  budgetRepayment?: number | null
+): DebtObligationInput | null {
+  if (row.vehicle_status !== "active") return null;
+
+  const valuation = vehicleRowToValuationInput(row);
+  const asOf = asOfDateFromYearMonth(startYearMonth);
+  const balance = effectiveLoanBalance(valuation, asOf);
+  if (balance <= 0) return null;
+
+  const paymentFromVehicle = Math.max(0, num(row.loan_monthly_payment));
+  const repayment =
+    budgetRepayment != null && budgetRepayment > 0
+      ? budgetRepayment
+      : paymentFromVehicle;
+  const termMonths = loanMonthsRemainingResolved(valuation, asOf);
+  // Need a schedule signal — payment override and/or remaining term.
+  if (repayment <= 0 && termMonths == null) return null;
+
+  const rateRaw = row.loan_annual_nominal_rate;
+  const annualInterestRate =
+    rateRaw != null && String(rateRaw).trim() !== ""
+      ? Math.max(0, num(rateRaw))
+      : 0;
+
+  // Explicit instalments keep paying until the stored balance clears (loan_end_ym
+  // can undershoot when balance/instalment diverge). Term-only rows amortize.
+  if (repayment > 0) {
+    return {
+      id: `vehicle-${row.id}`,
+      label: row.label,
+      kind: "vehicle",
+      balance,
+      annualInterestRate,
+      loanType: "revolving",
+      termMonths: null,
+      monthlyPayment: repayment,
+      startMonth: 0,
+      fundingSource: "cash",
+    };
+  }
+
+  return {
+    id: `vehicle-${row.id}`,
+    label: row.label,
+    kind: "vehicle",
+    balance,
+    annualInterestRate,
+    loanType: "amortized",
+    termMonths,
+    monthlyPayment: null,
+    startMonth: 0,
+    fundingSource: "cash",
+  };
+}
+
 function buildProjectionDebtObligations({
   liabilities,
   housingLoans,
+  vehicles,
   budgetLineRows,
   amountOverrideByLineId,
   startYearMonth,
 }: {
   liabilities: LiabilityRow[];
   housingLoans: HousingLoanRow[];
+  vehicles: VehicleRow[];
   budgetLineRows: BudgetLineRow[];
   amountOverrideByLineId: Record<string, number>;
   startYearMonth: string;
 }): DebtObligationInput[] {
   const budgetRepaymentByLiabilityId = liabilityBudgetRepaymentById(
+    budgetLineRows,
+    amountOverrideByLineId
+  );
+  const budgetRepaymentByVehicleId = vehicleBudgetRepaymentById(
     budgetLineRows,
     amountOverrideByLineId
   );
@@ -525,6 +616,15 @@ function buildProjectionDebtObligations({
       .filter((row): row is DebtObligationInput => row != null),
     ...housingLoans
       .map((row) => housingLoanToDebtObligation(row, startYearMonth))
+      .filter((row): row is DebtObligationInput => row != null),
+    ...vehicles
+      .map((row) =>
+        vehicleLoanToDebtObligation(
+          row,
+          startYearMonth,
+          budgetRepaymentByVehicleId.get(row.id)
+        )
+      )
       .filter((row): row is DebtObligationInput => row != null),
   ];
 }
@@ -1645,6 +1745,19 @@ export async function getDashboardPayload(
         cpfCpfis: initial.cpfisNotionalBalance,
       };
     };
+    const debtObligations = buildProjectionDebtObligations({
+      liabilities: liabilityRows,
+      housingLoans: housingLoanRows,
+      vehicles: vehicleRows,
+      budgetLineRows,
+      amountOverrideByLineId,
+      startYearMonth: yearMonth,
+    });
+    const vehicleIdsInDebtLedger = new Set(
+      debtObligations
+        .filter((obligation) => obligation.kind === "vehicle")
+        .map((obligation) => obligation.id.replace(/^vehicle-/, ""))
+    );
     const externalAssetSnapshots: ProjectionAssetSnapshot[] = Array.from(
       { length: horizonMonths + 1 },
       (_, month) => {
@@ -1654,16 +1767,27 @@ export async function getDashboardPayload(
           housingLoans: housingLoanRows,
           asOfYearMonth: formatYearMonth(asOfHorizon),
         });
+        // Vehicles on the debt ledger amortize via vehiclesNet in the engine;
+        // orphan vehicles (no payment/term) keep the static snapshot path.
+        const orphanVehiclesNet = vehicleRows
+          .filter(
+            (row) =>
+              row.vehicle_status === "active" &&
+              !vehicleIdsInDebtLedger.has(row.id)
+          )
+          .reduce(
+            (sum, row) =>
+              sum +
+              vehicleNetListedBeforeLiquidation(
+                vehicleRowToValuationInput(row),
+                asOfHorizon
+              ),
+            0
+          );
         return {
           month,
           ...cpfSnapshotForProjectionMonth(month),
-          vehiclesNet: vehicleValuationInputs
-            .filter((v) => v.vehicleStatus === "active")
-            .reduce(
-              (sum, vehicle) =>
-                sum + vehicleNetListedBeforeLiquidation(vehicle, asOfHorizon),
-              0
-            ),
+          vehiclesNet: orphanVehiclesNet,
           propertyGross: propertyEquity.propertiesGrossAsset,
         };
       }
@@ -1698,13 +1822,6 @@ export async function getDashboardPayload(
         };
       }
     );
-    const debtObligations = buildProjectionDebtObligations({
-      liabilities: liabilityRows,
-      housingLoans: housingLoanRows,
-      budgetLineRows,
-      amountOverrideByLineId,
-      startYearMonth: yearMonth,
-    });
     const cashflowProjectionInput = {
       startYearMonth: yearMonth,
       horizonMonths,

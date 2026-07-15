@@ -484,4 +484,42 @@ describe("buildRetirementCashflowProjection", () => {
     expect(row.goalsGap).toBe(30);
     expect(row.unfundedOutflow).toBe(30);
   });
+
+  it("amortizes vehicle debt into vehiclesNet without double-counting liabilities", () => {
+    const result = buildRetirementCashflowProjection({
+      ...base,
+      horizonMonths: 12,
+      initialCash: 5_000,
+      investmentComponents: [],
+      ledger: [
+        monthlyEntry({ id: "income", direction: "inflow", amount: 500 }),
+      ],
+      liabilities: 0,
+      debtObligations: [
+        debt({
+          id: "vehicle-car",
+          label: "Car loan",
+          kind: "vehicle",
+          balance: 1_200,
+          annualInterestRate: 0,
+          termMonths: 12,
+          monthlyPayment: 100,
+        }),
+      ],
+      externalAssetSnapshots: Array.from({ length: 13 }, (_, month) => ({
+        month,
+        vehiclesNet: 0,
+      })),
+    });
+
+    const start = result.periods[0];
+    expect(start.vehiclesNet).toBe(-1_200);
+    expect(start.liabilities).toBe(0);
+    expect(start.projectedNonHousingLiabilities).toBe(0);
+
+    const afterOneYear = result.periods[12];
+    expect(afterOneYear.vehiclesNet).toBe(0);
+    expect(afterOneYear.liabilities).toBe(0);
+    expect(afterOneYear.projectedLiabilities).toBe(0);
+  });
 });

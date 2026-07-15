@@ -1,4 +1,4 @@
-export type DebtProjectionKind = "liability" | "housing";
+export type DebtProjectionKind = "liability" | "housing" | "vehicle";
 export type DebtFundingSource = "cash" | "cpf_oa" | "split";
 export type DebtLoanType = "amortized" | "flat_rate" | "revolving";
 

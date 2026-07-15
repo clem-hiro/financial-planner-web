@@ -5,6 +5,7 @@ import {
   settleDebtPayment,
   type DebtObligationInput,
   type DebtPaymentDue,
+  type DebtProjectionKind,
   type DebtProjectionState,
 } from "./debt-cashflow";
 
@@ -440,7 +441,7 @@ function addDebtOutflowBreakdown(
 
 function debtBalanceTotal(
   states: DebtProjectionState[],
-  kind?: "housing" | "liability"
+  kind?: DebtProjectionKind
 ): number {
   return roundMoney(
     states.reduce((sum, state) => {
@@ -641,13 +642,20 @@ export function buildRetirementCashflowProjection(
       cpfAssetAdjustment,
       cpfOaDebtAdjustment
     );
-    const vehiclesNet = snap.vehiclesNet ?? 0;
     const projectedLiabilities = hasDebtObligations
       ? debtBalanceTotal(debtStates)
       : nonNegativeFinite(input.liabilities);
     const projectedHousingLiabilities = hasDebtObligations
       ? debtBalanceTotal(debtStates, "housing")
       : 0;
+    const projectedVehicleLiabilities = hasDebtObligations
+      ? debtBalanceTotal(debtStates, "vehicle")
+      : 0;
+    // Vehicle loan balances live in vehiclesNet (like housing in propertyNet),
+    // not the standalone liabilities line — avoid double-counting.
+    const vehiclesNet = roundMoney(
+      (snap.vehiclesNet ?? 0) - projectedVehicleLiabilities
+    );
     const propertyNet =
       snap.propertyGross != null
         ? snap.propertyGross - projectedHousingLiabilities
@@ -658,7 +666,8 @@ export function buildRetirementCashflowProjection(
       ? Math.max(
           0,
           projectedLiabilities -
-            (housingDebtEmbeddedInProperty ? projectedHousingLiabilities : 0)
+            (housingDebtEmbeddedInProperty ? projectedHousingLiabilities : 0) -
+            projectedVehicleLiabilities
         )
       : nonNegativeFinite(input.liabilities);
     const investmentPrincipal = investmentPrincipalTotal(investmentComponents);
