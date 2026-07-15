@@ -104,7 +104,7 @@ export function DashboardRetirementSection({
               <div className="mt-5 rounded-lg border border-indigo-200/60 bg-white/60 p-3 dark:border-indigo-300/35 dark:bg-slate-950/75">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="text-sm font-semibold text-indigo-950 dark:text-indigo-50">
-                    Projected CPF by age (OA / SA / MA / RA)
+                    Projected CPF by age
                   </h3>
                   {payload.cpfHousingLoanCountInProjection > 0 ? (
                     <span
@@ -123,16 +123,15 @@ export function DashboardRetirementSection({
                   </InfoTooltip>
                   <MethodologyOpenLink
                     topicId="cpf-projection"
-                    className="text-xs font-medium text-indigo-900 underline decoration-indigo-300/60 underline-offset-2 dark:text-indigo-200 dark:decoration-indigo-300/40"
+                    className="ml-auto text-xs font-medium text-indigo-900 underline decoration-indigo-300/60 underline-offset-2 dark:text-indigo-200 dark:decoration-indigo-300/40"
                   >
-                    Assumptions →
+                    Assumptions
                   </MethodologyOpenLink>
                 </div>
                 {payload.cpfYearEndProjection ? (
                   <p className="mt-1 text-xs text-indigo-900/90 dark:text-indigo-100/85">
-                    Projected{" "}
                     {formatYearMonthLong(payload.cpfYearEndProjection.targetYearMonth)}{" "}
-                    total:{" "}
+                    total{" "}
                     <span className="font-mono font-semibold tabular-nums">
                       {formatCurrency(
                         payload.cpfYearEndProjection.totalCpf,
@@ -141,72 +140,19 @@ export function DashboardRetirementSection({
                     </span>
                   </p>
                 ) : null}
-                <p className="mt-1 text-xs text-indigo-900/85 dark:text-indigo-100/80 sm:hidden">
-                  One line per bucket + total; dashed markers = housing milestones.
-                  Housing OA only if saved under{" "}
-                  <Link
-                    href="/setup?tab=housing"
-                    className={appInlineLinkClass}
-                  >
-                    Setup → Housing
-                  </Link>
-                  . Full rules: <strong>Assumptions →</strong>
-                </p>
-                <p className="mt-1 hidden text-xs text-indigo-900/85 dark:text-indigo-100/80 sm:block">
-                  Separate trend lines per account, plus total. Vertical markers
-                  show keys / repayment start from your housing loan rows. Uses
-                  gross salary, CPF Investments, and{" "}
-                  <strong>OA for housing</strong> only when you have loan rows
-                  under{" "}
-                  <Link
-                    href="/setup?tab=housing"
-                    className={appInlineLinkClass}
-                  >
-                    Setup → Housing
-                  </Link>
-                  .
-                </p>
-                {payload.cpfHousingLoanCountInProjection > 0 ? (
-                  <>
-                    <p className="mt-2 text-xs text-indigo-900/90 dark:text-indigo-100/85 sm:hidden">
-                      <strong>OA includes your loan(s):</strong> instalment share
-                      + OA lumps in the completion month (see methodology).
-                    </p>
-                    <p className="mt-2 hidden text-xs text-indigo-900/90 dark:text-indigo-100/85 sm:block">
-                      <strong>Yes — OA here reflects your loan(s):</strong> each
-                      month the model subtracts your configured share of the
-                      amortized instalment from OA (and any OA downpayment / fees
-                      in the completion month). Your spouse&apos;s OA share is not
-                      modeled if you set less than 100%.
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="mt-2 text-xs text-indigo-900/90 dark:text-indigo-100/85 sm:hidden">
-                      <strong>No housing loan in this run</strong> — add one under{" "}
-                      <Link
-                        href="/setup?tab=housing"
-                        className={appInlineLinkClass}
-                      >
-                        Setup → Housing
-                      </Link>{" "}
-                      to model OA after instalments.
-                    </p>
-                    <p className="mt-2 hidden text-xs text-indigo-900/90 dark:text-indigo-100/85 sm:block">
-                      <strong>No housing loan in this run</strong> — the OA line
-                      does not include mortgage payments yet. Add or enable a loan
-                      under{" "}
-                      <Link
-                        href="/setup?tab=housing"
-                        className={appInlineLinkClass}
-                      >
-                        Setup → Housing
-                      </Link>{" "}
-                      to project OA after CPF-funded instalments.
-                    </p>
-                  </>
-                )}
-                <div className="mt-2 h-56 min-h-[200px] sm:h-72 sm:min-h-0">
+                {payload.cpfHousingLoanCountInProjection === 0 ? (
+                  <p className="mt-1 text-xs text-indigo-900/80 dark:text-indigo-100/75">
+                    No housing loan —{" "}
+                    <Link
+                      href="/setup?tab=housing"
+                      className={appInlineLinkClass}
+                    >
+                      add under Housing
+                    </Link>{" "}
+                    to model OA repayments.
+                  </p>
+                ) : null}
+                <div className="mt-3 h-56 min-h-[200px] sm:h-72 sm:min-h-0">
                   <CpfProjectionByAgeChart
                     data={payload.cpfProjectionByAge}
                     currency={payload.baseCurrency}
