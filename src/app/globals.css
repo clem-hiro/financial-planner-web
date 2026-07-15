@@ -228,3 +228,101 @@ dialog::backdrop {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* Home opening composition — staggered futuristic entrance. */
+@keyframes home-hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+@keyframes home-hero-stagger-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes home-hero-shimmer-sweep {
+  from {
+    transform: translateX(-130%);
+  }
+  to {
+    transform: translateX(130%);
+  }
+}
+@keyframes home-composition-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.home-hero-animate {
+  animation: home-hero-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.home-hero-stagger {
+  animation: home-hero-stagger-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.home-hero-stagger-1 {
+  animation-delay: 0.05s;
+}
+.home-hero-stagger-2 {
+  animation-delay: 0.12s;
+}
+.home-hero-stagger-3 {
+  animation-delay: 0.22s;
+}
+.home-hero-stagger-4 {
+  animation-delay: 0.32s;
+}
+
+.home-hero-shimmer::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgb(255 255 255 / 0.1) 50%,
+    transparent 62%
+  );
+  animation: home-hero-shimmer-sweep 1.15s cubic-bezier(0.22, 1, 0.36, 1) 0.25s
+    both;
+}
+
+.home-composition-track {
+  transform-origin: left center;
+  animation: home-composition-grow 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.4s both;
+}
+.home-composition-segment {
+  transform-origin: left center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero-animate,
+  .home-hero-stagger,
+  .home-hero-stagger-1,
+  .home-hero-stagger-2,
+  .home-hero-stagger-3,
+  .home-hero-stagger-4,
+  .home-composition-track {
+    animation: none;
+  }
+  .home-hero-shimmer::after {
+    display: none;
+  }
+}

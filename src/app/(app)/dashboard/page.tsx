@@ -6,12 +6,9 @@ import { DashboardMonthSection } from "@/features/dashboard/DashboardMonthSectio
 import { DashboardOverviewSection } from "@/features/dashboard/DashboardOverviewSection";
 import { DashboardRetirementSection } from "@/features/dashboard/DashboardRetirementSection";
 import { DashboardSubnav } from "@/features/dashboard/DashboardSubnav";
-import { formatYearMonth, formatYearMonthLong } from "@/lib/dates";
+import { formatYearMonth } from "@/lib/dates";
 import { isSupabaseConfigured } from "@/lib/env";
-import {
-  appBrandHeaderCompactStyle,
-  appBrandNavyTextStyle,
-} from "@/ui/app-tab-styles";
+import { appBrandNavyTextStyle } from "@/ui/app-tab-styles";
 
 export default async function DashboardPage() {
   if (!isSupabaseConfigured()) {
@@ -60,54 +57,28 @@ export default async function DashboardPage() {
   }
 
   const month = formatYearMonth(new Date());
-  const monthLabel = formatYearMonthLong(month);
   const payload = await getDashboardPayload(supabase, user.id, month);
   const profileIncomplete = isFinancialProfileIncomplete(profile);
 
   return (
     <div className="space-y-4 sm:space-y-5">
-      <header>
-        <div
-          className="rounded-xl border border-slate-200/80 px-4 py-2.5 text-white dark:border-sky-400/20 sm:px-5 sm:py-3"
-          style={appBrandHeaderCompactStyle}
-        >
-          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
-            <div className="min-w-0">
-              <h1 className="text-lg font-semibold tracking-tight sm:text-xl">
-                Home
-              </h1>
-              <p className="mt-0.5 text-xs leading-snug text-slate-200/90 sm:text-sm">
-                Key numbers for {monthLabel} — deeper editing in Setup.
-              </p>
-            </div>
-            <p className="shrink-0 font-mono text-[11px] font-medium tabular-nums text-white/75">
-              <span className="sr-only">Period </span>
-              {month}
-            </p>
+      <section id="overview" className="scroll-mt-28 sm:scroll-mt-32">
+        <DashboardOverviewSection payload={payload} />
+      </section>
+
+      <DashboardSubnav />
+
+      {profileIncomplete ? (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950 dark:border-amber-300/45 dark:bg-amber-950/45 dark:text-amber-100">
+          Complete your financial profile to improve savings rate and projection
+          quality.
+          <div className="mt-1.5">
+            <Link href="/setup?tab=profile#profile-assumptions" className="underline">
+              Complete your financial profile
+            </Link>
           </div>
         </div>
-      </header>
-
-      <div className="space-y-4">
-        <DashboardSubnav />
-
-        {profileIncomplete ? (
-          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-950 dark:border-amber-300/45 dark:bg-amber-950/45 dark:text-amber-100">
-            Complete your financial profile to improve savings rate and projection
-            quality.
-            <div className="mt-1.5">
-              <Link href="/setup?tab=profile#profile-assumptions" className="underline">
-                Complete your financial profile
-              </Link>
-            </div>
-          </div>
-        ) : null}
-
-        <section id="overview" className="scroll-mt-28 sm:scroll-mt-32">
-          <h2 className="sr-only">Overview</h2>
-          <DashboardOverviewSection payload={payload} />
-        </section>
-      </div>
+      ) : null}
 
       <section id="retirement" className="scroll-mt-28 sm:scroll-mt-32">
         <h2 className="sr-only">Projected wealth</h2>

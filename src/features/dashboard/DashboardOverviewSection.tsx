@@ -1,269 +1,397 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import type { DashboardPayload } from "@/data/dashboard";
-import { yearFromYearMonth } from "@/lib/dates";
+import { formatYearMonthLong, yearFromYearMonth } from "@/lib/dates";
 import { setupBudgetPath } from "@/lib/setup-urls";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
-import { appBrandNavyTextStyle } from "@/ui/app-tab-styles";
-import { InfoTooltip } from "@/ui/InfoTooltip";
-import { appCardClass } from "@/ui/surface-classes";
+import { appBrandHeaderCompactStyle } from "@/ui/app-tab-styles";
 import { formatCurrency } from "@/ui/lib/format";
 
-const labelClass =
-  "text-xs font-medium text-slate-600 dark:text-slate-300";
-const monthlyCardShell = `${appCardClass} flex h-full flex-col bg-linear-to-br from-white via-white to-slate-50/50 p-4 transition-[box-shadow,transform] duration-200 hover:-translate-y-px hover:shadow-md hover:shadow-slate-900/8 dark:from-slate-950 dark:via-slate-900 dark:to-slate-900/60 sm:p-5`;
-const figureClass =
-  "mt-1.5 font-mono text-xl font-semibold tracking-tight tabular-nums sm:text-2xl";
+type CompositionSegment = {
+  key: string;
+  label: string;
+  value: number;
+  fill: string;
+};
+
+function buildCompositionSegments(
+  breakdown: DashboardPayload["netWorthBreakdown"],
+  hasCpf: boolean
+): CompositionSegment[] {
+  const segments: CompositionSegment[] = [
+    {
+      key: "investments",
+      label: "Investments",
+      value: breakdown.investments,
+      fill: "bg-emerald-600",
+    },
+    {
+      key: "cash",
+      label: "Cash",
+      value: breakdown.cash,
+      fill: "bg-sky-500",
+    },
+  ];
+  if (hasCpf && breakdown.cpf > 0) {
+    segments.push({
+      key: "cpf",
+      label: "CPF",
+      value: breakdown.cpf,
+      fill: "bg-indigo-400",
+    });
+  }
+  if (breakdown.propertyCount > 0 && breakdown.propertiesNet > 0) {
+    segments.push({
+      key: "property",
+      label: "Property",
+      value: breakdown.propertiesNet,
+      fill: "bg-slate-700 dark:bg-slate-300",
+    });
+  }
+  if (breakdown.vehicleCount > 0 && breakdown.vehiclesGrossAsset > 0) {
+    segments.push({
+      key: "vehicles",
+      label: "Vehicles",
+      value: breakdown.vehiclesGrossAsset,
+      fill: "bg-teal-600",
+    });
+  }
+  return segments.filter((segment) => segment.value > 0);
+}
+
+function usePrefersReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const sync = () => setReduced(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, []);
+  return reduced;
+}
+
+function useCountUp(
+  target: number,
+  durationMs: number,
+  enabled: boolean,
+  delayMs = 0
+): number {
+  const [value, setValue] = useState(enabled ? 0 : target);
+
+  useEffect(() => {
+    if (!enabled) {
+      setValue(target);
+      return;
+    }
+
+    let frame = 0;
+    let startAt = 0;
+    const timeout = window.setTimeout(() => {
+      startAt = performance.now();
+      const tick = (now: number) => {
+        const progress = Math.min(1, (now - startAt) / durationMs);
+        const eased = 1 - (1 - progress) ** 3;
+        setValue(target * eased);
+        if (progress < 1) {
+          frame = requestAnimationFrame(tick);
+        }
+      };
+      frame = requestAnimationFrame(tick);
+    }, delayMs);
+
+    return () => {
+      window.clearTimeout(timeout);
+      cancelAnimationFrame(frame);
+    };
+  }, [target, durationMs, enabled, delayMs]);
+
+  return value;
+}
 
 export function DashboardOverviewSection({
   payload,
 }: {
   payload: DashboardPayload;
 }) {
+  const reducedMotion = usePrefersReducedMotion();
+  const animate = !reducedMotion;
+
   const hasLoggedSpend = payload.monthlyExpensesLoggedTotal > 0;
   const hasBudgetForecast = payload.monthlyPlannedMonthlyBudgetTotal > 0;
   const expensesAction = hasLoggedSpend
-    ? { href: "/expenses", label: "View expenses" }
+    ? { href: "/expenses", label: "View" }
     : hasBudgetForecast
       ? {
           href: setupBudgetPath(
             payload.month,
             yearFromYearMonth(payload.month)
           ),
-          label: "Edit budget",
+          label: "Budget",
         }
       : {
           href: setupBudgetPath(
             payload.month,
             yearFromYearMonth(payload.month)
           ),
-          label: "Set up budget",
+          label: "Set up",
         };
   const leftAfterExpenses = payload.takeHomeMinusExpenses;
+  const leftNegative =
+    leftAfterExpenses != null && leftAfterExpenses < 0;
+  const segments = buildCompositionSegments(
+    payload.netWorthBreakdown,
+    payload.hasCpfBalanceRecord
+  );
+  const compositionTotal = segments.reduce(
+    (sum, segment) => sum + segment.value,
+    0
+  );
+  const debts = payload.netWorthBreakdown.liabilities;
+  const accountCount = payload.investmentSummary.count;
+
+  const netWorthDisplay = useCountUp(payload.netWorth, 900, animate, 120);
+  const incomeDisplay = useCountUp(
+    payload.monthlyTakeHome ?? 0,
+    700,
+    animate && payload.monthlyTakeHome != null,
+    280
+  );
+  const expensesDisplay = useCountUp(
+    payload.monthlyExpensesTotal,
+    700,
+    animate,
+    340
+  );
+  const leftDisplay = useCountUp(
+    leftAfterExpenses ?? 0,
+    700,
+    animate && leftAfterExpenses != null,
+    400
+  );
 
   return (
-    <div className="space-y-3">
-      <p className="text-xs text-slate-500 dark:text-slate-400">
-        This month&apos;s income and planned spend
-      </p>
+    <div
+      className={`home-hero-shell overflow-hidden rounded-[1.35rem] shadow-[0_20px_50px_-28px_rgba(12,25,47,0.45)] ring-1 ring-slate-900/10 dark:ring-white/10 ${
+        animate ? "home-hero-animate" : ""
+      }`}
+    >
+      <div
+        className={`relative overflow-hidden px-5 pb-5 pt-5 text-white sm:px-7 sm:pb-6 sm:pt-6 ${
+          animate ? "home-hero-shimmer" : ""
+        }`}
+        style={appBrandHeaderCompactStyle}
+      >
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(52,211,153,0.16),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(125,211,252,0.12),transparent_50%)]" />
+        <div className="pointer-events-none absolute -right-10 top-0 h-full w-1/3 bg-linear-to-l from-white/4 to-transparent" />
 
-      <div className="grid gap-3 sm:grid-cols-3">
-        <div
-          className={`${monthlyCardShell} border-l-[3px] border-l-emerald-600 ring-1 ring-emerald-100/80 dark:ring-emerald-900/40`}
-        >
-          <div className="flex flex-wrap items-center gap-1">
-            <p
-              className={`${labelClass} font-semibold text-emerald-800 dark:text-emerald-200`}
-            >
-              Income
-            </p>
-            <InfoTooltip
-              variant="emerald"
-              ariaLabel="How monthly income is calculated"
-            >
-              Salary take-home from Setup → Profile, plus any other monthly
-              take-home you added there (side hustle, freelance, etc.). Rental on
-              Housing is separate and not included here.
-            </InfoTooltip>
-          </div>
-          <p className={`${figureClass} text-emerald-950 dark:text-emerald-50`}>
-            {payload.monthlyTakeHome != null
-              ? formatCurrency(payload.monthlyTakeHome, payload.baseCurrency)
-              : "Set income"}
-          </p>
-          {payload.monthlyTakeHome == null ? (
-            <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-              <Link href="/setup?tab=profile" className={appInlineLinkClass}>
-                Edit profile
-              </Link>
-            </p>
-          ) : null}
-        </div>
-
-        <div className={monthlyCardShell}>
-          <div className="flex flex-wrap items-center gap-1">
-            <p className={labelClass}>Expenses</p>
-            <InfoTooltip ariaLabel="How monthly expenses are calculated">
-              Uses your monthly budget by default. Switches to logged expenses
-              when any expense exists for this month.
-            </InfoTooltip>
-          </div>
-          <p className={figureClass} style={appBrandNavyTextStyle}>
-            {formatCurrency(
-              payload.monthlyExpensesTotal,
-              payload.baseCurrency
-            )}
-          </p>
-          <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
-            {hasLoggedSpend ? (
-              <>Based on logged expenses.</>
-            ) : hasBudgetForecast ? (
-              <>Based on monthly budget.</>
-            ) : (
-              <>No budget or expenses yet.</>
-            )}{" "}
-            <Link href={expensesAction.href} className={appInlineLinkClass}>
-              {expensesAction.label}
-            </Link>
-          </p>
-        </div>
-
-        <div className={monthlyCardShell}>
-          <div className="flex flex-wrap items-center gap-1">
-            <p className={labelClass}>Left after expenses</p>
-            <InfoTooltip ariaLabel="How left after expenses is calculated">
-              Income minus this month&apos;s expenses. Goal contributions are not
-              subtracted here — see Goals this month below when you have
-              planned goal amounts.
-            </InfoTooltip>
-          </div>
-          <p
-            className={
-              leftAfterExpenses != null && leftAfterExpenses < 0
-                ? `${figureClass} text-amber-900 dark:text-amber-200`
-                : figureClass
-            }
-            style={
-              leftAfterExpenses != null && leftAfterExpenses < 0
-                ? undefined
-                : appBrandNavyTextStyle
-            }
+        <div className="relative z-[2] space-y-6 sm:space-y-7">
+          <div
+            className={`flex items-start justify-between gap-4 ${
+              animate ? "home-hero-stagger home-hero-stagger-1" : ""
+            }`}
           >
-            {leftAfterExpenses != null
-              ? formatCurrency(leftAfterExpenses, payload.baseCurrency)
-              : "Set income"}
-          </p>
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-slate-300/85">
+                Position
+              </p>
+              <h1 className="sr-only">Home</h1>
+            </div>
+            <p className="shrink-0 text-sm font-medium text-slate-300/90">
+              {formatYearMonthLong(payload.month)}
+            </p>
+          </div>
+
+          <div className={animate ? "home-hero-stagger home-hero-stagger-2" : ""}>
+            <p className="font-mono text-[2.35rem] font-semibold leading-none tracking-tight tabular-nums sm:text-5xl sm:tracking-[-0.03em]">
+              {formatCurrency(Math.round(netWorthDisplay), payload.baseCurrency)}
+            </p>
+            <div className="mt-2.5 flex flex-wrap items-baseline gap-x-3 gap-y-1 text-sm text-slate-300/90">
+              <span className="font-medium text-white/88">Net worth</span>
+              {payload.netWorthBreakdown.cpf > 0 ? (
+                <>
+                  <span className="text-white/25" aria-hidden>
+                    ·
+                  </span>
+                  <span>
+                    {formatCurrency(
+                      payload.netWorthExcludingCpf,
+                      payload.baseCurrency
+                    )}{" "}
+                    excl. CPF
+                  </span>
+                </>
+              ) : null}
+              {accountCount > 0 ? (
+                <>
+                  <span className="text-white/25" aria-hidden>
+                    ·
+                  </span>
+                  <Link
+                    href="/setup?tab=add-account#add-investment"
+                    className="text-emerald-200/95 underline decoration-emerald-300/35 underline-offset-2 transition hover:text-emerald-100"
+                  >
+                    {accountCount} account
+                    {accountCount === 1 ? "" : "s"}
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <span className="text-white/25" aria-hidden>
+                    ·
+                  </span>
+                  <Link
+                    href="/setup?tab=add-account#add-investment"
+                    className="text-slate-300/90 underline decoration-white/20 underline-offset-2 transition hover:text-white"
+                  >
+                    Add investments
+                  </Link>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div
+            className={`grid grid-cols-1 gap-px overflow-hidden rounded-2xl bg-white/10 sm:grid-cols-3 ${
+              animate ? "home-hero-stagger home-hero-stagger-3" : ""
+            }`}
+          >
+            <div className="bg-white/5 px-4 py-3.5 sm:px-5">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-emerald-200/80">
+                Income
+              </p>
+              <p className="mt-1.5 font-mono text-xl font-semibold tracking-tight tabular-nums text-white">
+                {payload.monthlyTakeHome != null
+                  ? formatCurrency(
+                      Math.round(incomeDisplay),
+                      payload.baseCurrency
+                    )
+                  : "—"}
+              </p>
+              {payload.monthlyTakeHome == null ? (
+                <p className="mt-1.5 text-xs text-slate-300/85">
+                  <Link
+                    href="/setup?tab=profile"
+                    className="underline decoration-white/25 underline-offset-2 hover:text-white"
+                  >
+                    Set in Profile
+                  </Link>
+                </p>
+              ) : null}
+            </div>
+            <div className="bg-white/5 px-4 py-3.5 sm:px-5">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-300/80">
+                Expenses
+              </p>
+              <p className="mt-1.5 font-mono text-xl font-semibold tracking-tight tabular-nums text-white">
+                {formatCurrency(
+                  Math.round(expensesDisplay),
+                  payload.baseCurrency
+                )}
+              </p>
+              <p className="mt-1.5 text-xs text-slate-300/85">
+                {hasLoggedSpend
+                  ? "Logged"
+                  : hasBudgetForecast
+                    ? "Budget"
+                    : "Not set"}{" "}
+                <Link
+                  href={expensesAction.href}
+                  className="underline decoration-white/25 underline-offset-2 hover:text-white"
+                >
+                  {expensesAction.label}
+                </Link>
+              </p>
+            </div>
+            <div className="bg-white/5 px-4 py-3.5 sm:px-5">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-300/80">
+                Left
+              </p>
+              <p
+                className={`mt-1.5 font-mono text-xl font-semibold tracking-tight tabular-nums ${
+                  leftNegative ? "text-amber-200" : "text-white"
+                }`}
+              >
+                {leftAfterExpenses != null
+                  ? formatCurrency(Math.round(leftDisplay), payload.baseCurrency)
+                  : "—"}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
       <div
-        className={`${monthlyCardShell} relative overflow-hidden border-l-[3px] border-l-emerald-600`}
+        className={`border-t border-slate-200/70 bg-white px-5 py-4 dark:border-slate-700/70 dark:bg-slate-900/95 sm:px-7 sm:py-5 ${
+          animate ? "home-hero-stagger home-hero-stagger-4" : ""
+        }`}
       >
-        <div className="pointer-events-none absolute -right-8 -top-12 h-32 w-32 rounded-full bg-emerald-500/5 blur-2xl" />
-        <div className="relative space-y-3">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-1">
-                <p className={labelClass}>Net worth</p>
-                <InfoTooltip ariaLabel="How net worth is calculated">
-                  Investments + cash + property and vehicle equity + optional CPF,
-                  minus debts.
-                </InfoTooltip>
-              </div>
-              <p
-                className="mt-1 font-mono text-2xl font-semibold tracking-tight tabular-nums sm:text-3xl"
-                style={appBrandNavyTextStyle}
-              >
-                {formatCurrency(payload.netWorth, payload.baseCurrency)}
-              </p>
-              {payload.netWorthBreakdown.cpf > 0 ? (
-                <p className="mt-1 flex flex-wrap items-center gap-1 text-sm text-slate-600 dark:text-slate-300">
-                  <span>
-                    Net excluding CPF:{" "}
-                    <span className="font-mono font-semibold tabular-nums text-slate-800 dark:text-slate-100">
-                      {formatCurrency(
-                        payload.netWorthExcludingCpf,
-                        payload.baseCurrency
-                      )}
-                    </span>
-                  </span>
-                  <InfoTooltip ariaLabel="How net excluding CPF relates to full net worth">
-                    Liquid picture: investments, cash, property and vehicles minus
-                    debts; CPF omitted.
-                  </InfoTooltip>
-                </p>
-              ) : null}
+        {compositionTotal > 0 ? (
+          <div className="space-y-3">
+            <div
+              className={`flex h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800 ${
+                animate ? "home-composition-track" : ""
+              }`}
+              role="img"
+              aria-label="Net worth composition"
+            >
+              {segments.map((segment) => (
+                <div
+                  key={segment.key}
+                  className={`${segment.fill} min-w-0 ${
+                    animate ? "home-composition-segment" : ""
+                  }`}
+                  style={{
+                    width: `${Math.max(
+                      2,
+                      (segment.value / compositionTotal) * 100
+                    )}%`,
+                  }}
+                  title={`${segment.label}: ${formatCurrency(
+                    segment.value,
+                    payload.baseCurrency
+                  )}`}
+                />
+              ))}
             </div>
-            <p className="shrink-0 text-xs text-slate-500 dark:text-slate-400">
-              <Link
-                href="/setup?tab=add-account#add-investment"
-                className={appInlineLinkClass}
-              >
-                {payload.investmentSummary.count} linked account
-                {payload.investmentSummary.count === 1 ? "" : "s"}
-              </Link>
-            </p>
+            <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-600 dark:text-slate-300">
+              {segments.map((segment) => (
+                <li key={segment.key} className="inline-flex items-baseline gap-2">
+                  <span
+                    className={`mt-1 size-1.5 shrink-0 rounded-full ${segment.fill}`}
+                    aria-hidden
+                  />
+                  <span>{segment.label}</span>
+                  <span className="font-mono tabular-nums text-slate-900 dark:text-slate-100">
+                    {formatCurrency(segment.value, payload.baseCurrency)}
+                  </span>
+                </li>
+              ))}
+              {debts > 0 ? (
+                <li className="inline-flex items-baseline gap-2">
+                  <span
+                    className="mt-1 size-1.5 shrink-0 rounded-full bg-rose-400"
+                    aria-hidden
+                  />
+                  <span>Debts</span>
+                  <span className="font-mono tabular-nums text-rose-600 dark:text-rose-300">
+                    −{formatCurrency(debts, payload.baseCurrency)}
+                  </span>
+                </li>
+              ) : null}
+            </ul>
           </div>
-
-          <ul className="grid gap-x-8 gap-y-1 border-t border-slate-100/80 pt-3 text-sm text-slate-700 dark:border-slate-700/80 dark:text-slate-200 sm:grid-cols-2 sm:max-w-xl">
-            <li className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-              <span>Investments</span>
-              <span className="font-mono tabular-nums">
-                {formatCurrency(
-                  payload.netWorthBreakdown.investments,
-                  payload.baseCurrency
-                )}
-              </span>
-            </li>
-            <li className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-              <span>Cash</span>
-              <span className="font-mono tabular-nums">
-                {formatCurrency(
-                  payload.netWorthBreakdown.cash,
-                  payload.baseCurrency
-                )}
-              </span>
-            </li>
-            {payload.hasCpfBalanceRecord && (
-              <li className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-                <span>CPF</span>
-                <span className="font-mono tabular-nums">
-                  {formatCurrency(
-                    payload.netWorthBreakdown.cpf,
-                    payload.baseCurrency
-                  )}
-                </span>
-              </li>
-            )}
-            {payload.netWorthBreakdown.propertyCount > 0 && (
-              <li className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-                <span className="inline-flex items-center gap-1">
-                  Property equity
-                  <InfoTooltip ariaLabel="How property equity is estimated">
-                    Current owned valuation less linked mortgage balances.
-                  </InfoTooltip>
-                </span>
-                <span className="font-mono tabular-nums">
-                  {formatCurrency(
-                    payload.netWorthBreakdown.propertiesNet,
-                    payload.baseCurrency
-                  )}
-                </span>
-              </li>
-            )}
-            <li className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-              <span>Debts (Cash &amp; liabilities)</span>
-              <span className="font-mono tabular-nums text-rose-600 dark:text-rose-300">
-                −
-                {formatCurrency(
-                  payload.netWorthBreakdown.liabilities,
-                  payload.baseCurrency
-                )}
-              </span>
-            </li>
-            {payload.netWorthBreakdown.vehicleCount > 0 && (
-              <li className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5">
-                <span className="inline-flex items-center gap-1">
-                  Vehicles (est.)
-                  <InfoTooltip ariaLabel="How vehicle value is estimated">
-                    Estimated market value less loan.
-                  </InfoTooltip>
-                </span>
-                <span className="font-mono tabular-nums">
-                  {formatCurrency(
-                    payload.netWorthBreakdown.vehiclesGrossAsset,
-                    payload.baseCurrency
-                  )}
-                </span>
-              </li>
-            )}
-          </ul>
-          {payload.investmentSummary.count > 0 ? (
-            <p className="text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
-              Investment totals use balances and return assumptions you entered —
-              not live portfolio data.
-            </p>
-          ) : null}
-        </div>
+        ) : (
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Add cash, investments, or property in{" "}
+            <Link href="/setup" className={appInlineLinkClass}>
+              Setup
+            </Link>{" "}
+            to build this picture.
+          </p>
+        )}
       </div>
     </div>
   );

@@ -124,7 +124,7 @@ export function AppShell({
           ) : null}
         </header>
         <main
-          className={`mx-auto w-full flex-1 px-4 py-6 sm:px-8 sm:py-14 lg:py-16 ${
+          className={`mx-auto w-full flex-1 px-4 py-4 sm:px-8 sm:py-6 lg:py-8 ${
             workspace === "advisor" ? "max-w-7xl" : "max-w-6xl"
           }`}
         >
