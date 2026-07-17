@@ -330,6 +330,9 @@ export function DashboardOverviewSection({
       >
         {compositionTotal > 0 ? (
           <div className="space-y-3">
+            <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-400 dark:text-slate-500">
+              What makes up your net worth
+            </p>
             <div
               className={`flex h-1.5 overflow-hidden rounded-full bg-slate-100 dark:bg-slate-800 ${
                 animate ? "home-composition-track" : ""
@@ -366,6 +369,9 @@ export function DashboardOverviewSection({
                   <span>{segment.label}</span>
                   <span className="font-mono tabular-nums text-slate-900 dark:text-slate-100">
                     {formatCurrency(segment.value, payload.baseCurrency)}
+                  </span>
+                  <span className="font-mono tabular-nums text-xs text-slate-400 dark:text-slate-500">
+                    {Math.round((segment.value / compositionTotal) * 100)}%
                   </span>
                 </li>
               ))}
