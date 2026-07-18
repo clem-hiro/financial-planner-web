@@ -3,8 +3,10 @@ import type { DashboardPayload } from "@/data/dashboard";
 import type { ProfileRow } from "@/data/supabase/types";
 import { RetirementRunwayLedgerChart } from "@/features/dashboard/RetirementRunwayLedgerChart";
 import { CpfProjectionByAgeChart } from "@/features/dashboard/CpfProjectionByAgeChart";
-import { CpfRetirementProjectionPanel } from "@/features/dashboard/CpfRetirementProjectionPanel";
-import { CPF_RA_FORMATION_AGE } from "@/domain/finance/cpf-retirement-projection";
+import {
+  buildCpfRetirementProjection,
+  CPF_RA_FORMATION_AGE,
+} from "@/domain/finance/cpf-retirement-projection";
 import { formatYearMonthLong } from "@/lib/dates";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { formatCurrency } from "@/ui/lib/format";
@@ -52,17 +54,24 @@ export function DashboardRetirementSection({
     birthRaw && typeof birthRaw === "string"
       ? payload.ageProjection?.currentAge ?? null
       : null;
-  const cpfAt55Row = payload.cpfProjectionByAge?.find(
-    (r) => r.age === CPF_RA_FORMATION_AGE
-  );
-  const cpfAtAge55 = payload.cpfRaBeforeAt55
-    ? payload.cpfRaBeforeAt55
-    : cpfAt55Row
-      ? { oa: cpfAt55Row.oa, sa: cpfAt55Row.sa }
+  const retirementSums =
+    currentAge != null
+      ? buildCpfRetirementProjection({ currentAge })
       : null;
-  const hasCpfBalances =
-    cpfAtAge55 != null &&
-    (cpfAtAge55.oa > 0 || cpfAtAge55.sa > 0 || (payload.cpfProjectionByAge?.length ?? 0) > 0);
+  const retirementSumTargets = retirementSums
+    ? {
+        brs: retirementSums.estimatedBrsAt55,
+        frs: retirementSums.estimatedFrsAt55,
+        ers: retirementSums.estimatedErsAt55,
+      }
+    : null;
+  const raAt55 = payload.cpfProjectionByAge?.find(
+    (r) => r.age === CPF_RA_FORMATION_AGE
+  )?.ra;
+  const frsGap =
+    retirementSums != null && raAt55 != null
+      ? raAt55 - retirementSums.estimatedFrsAt55
+      : null;
 
   return (
     <div
@@ -151,25 +160,86 @@ export function DashboardRetirementSection({
                     data={payload.cpfProjectionByAge}
                     currency={payload.baseCurrency}
                     markers={payload.cpfHousingMarkers}
+                    retirementSumTargets={retirementSumTargets}
+                    raFormationAge={CPF_RA_FORMATION_AGE}
                   />
                 </div>
-                <CpfRetirementProjectionPanel
-                  currency={payload.baseCurrency}
-                  currentAge={currentAge}
-                  cpfAtAge55={cpfAtAge55}
-                  hasCpfBalances={hasCpfBalances}
-                />
+                {retirementSums ? (
+                  <div className="mt-3 space-y-1.5 border-t border-indigo-100/80 pt-3 dark:border-indigo-300/20">
+                    <p className="text-xs leading-relaxed text-indigo-900/90 dark:text-indigo-100/85">
+                      Est. retirement sums at {CPF_RA_FORMATION_AGE} — BRS{" "}
+                      <span className="font-mono font-semibold tabular-nums">
+                        {formatCurrency(
+                          retirementSums.estimatedBrsAt55,
+                          payload.baseCurrency
+                        )}
+                      </span>
+                      {" · "}FRS{" "}
+                      <span className="font-mono font-semibold tabular-nums">
+                        {formatCurrency(
+                          retirementSums.estimatedFrsAt55,
+                          payload.baseCurrency
+                        )}
+                      </span>
+                      {" · "}ERS{" "}
+                      <span className="font-mono font-semibold tabular-nums">
+                        {formatCurrency(
+                          retirementSums.estimatedErsAt55,
+                          payload.baseCurrency
+                        )}
+                      </span>
+                      {retirementSums.yearsToAge55 > 0 ? (
+                        <>
+                          {" "}
+                          ({retirementSums.yearsToAge55}{" "}
+                          {retirementSums.yearsToAge55 === 1 ? "year" : "years"}{" "}
+                          out; FRS grown from today&apos;s published figure).
+                        </>
+                      ) : (
+                        <> (using today&apos;s published FRS).</>
+                      )}
+                    </p>
+                    {frsGap != null && raAt55 != null ? (
+                      <p className="text-xs leading-relaxed text-indigo-900/80 dark:text-indigo-100/75">
+                        Projected RA at {CPF_RA_FORMATION_AGE}:{" "}
+                        <span className="font-mono font-semibold tabular-nums">
+                          {formatCurrency(raAt55, payload.baseCurrency)}
+                        </span>
+                        {frsGap >= 0 ? (
+                          <>
+                            {" "}
+                            — about{" "}
+                            <span className="font-mono tabular-nums">
+                              {formatCurrency(frsGap, payload.baseCurrency)}
+                            </span>{" "}
+                            above estimated FRS.
+                          </>
+                        ) : (
+                          <>
+                            {" "}
+                            — about{" "}
+                            <span className="font-mono tabular-nums">
+                              {formatCurrency(-frsGap, payload.baseCurrency)}
+                            </span>{" "}
+                            below estimated FRS.
+                          </>
+                        )}
+                      </p>
+                    ) : null}
+                    <p className="text-[11px] leading-relaxed text-indigo-900/70 dark:text-indigo-100/65">
+                      Guides on the chart are illustrative BRS / FRS / ERS
+                      targets —{" "}
+                      <MethodologyOpenLink
+                        topicId="cpf-retirement-projection"
+                        className={appInlineLinkClass}
+                      >
+                        how retirement sums work
+                      </MethodologyOpenLink>
+                      .
+                    </p>
+                  </div>
+                ) : null}
               </div>
-            )}
-          {payload.ageProjection &&
-            (!payload.cpfProjectionByAge ||
-              payload.cpfProjectionByAge.length === 0) && (
-              <CpfRetirementProjectionPanel
-                currency={payload.baseCurrency}
-                currentAge={currentAge}
-                cpfAtAge55={cpfAtAge55}
-                hasCpfBalances={hasCpfBalances}
-              />
             )}
         </>
       ) : (

@@ -29,21 +29,36 @@ export type CpfAgePoint = {
   totalCpf: number;
 };
 
+export type CpfRetirementSumTargets = {
+  brs: number;
+  frs: number;
+  ers: number;
+};
+
 const OA = "#4f46e5";
 const SA = "#7c3aed";
 const MA = "#059669";
 const RA = "#0f766e";
 const CPFIS = "#d97706";
 const TOTAL = "#64748b";
+const BRS = "#94a3b8";
+const FRS = "#64748b";
+const ERS = "#475569";
 
 export function CpfProjectionByAgeChart({
   data,
   currency,
   markers = [],
+  retirementSumTargets,
+  raFormationAge,
 }: {
   data: CpfAgePoint[];
   currency: string;
   markers?: Array<{ age: number; label: string }>;
+  /** Estimated BRS / FRS / ERS at age 55 — drawn as horizontal guides. */
+  retirementSumTargets?: CpfRetirementSumTargets | null;
+  /** Vertical marker for RA set-aside (default 55). */
+  raFormationAge?: number | null;
 }) {
   const narrow = useNarrowScreen();
 
@@ -58,6 +73,21 @@ export function CpfProjectionByAgeChart({
 
   const showCpfis = data.some((d) => d.cpfis > 0.5);
   const showRa = data.some((d) => d.ra > 0.5);
+  const targets =
+    retirementSumTargets != null &&
+    retirementSumTargets.frs > 0 &&
+    Number.isFinite(retirementSumTargets.frs)
+      ? retirementSumTargets
+      : null;
+  const ages = data.map((d) => d.age);
+  const minAge = Math.min(...ages);
+  const maxAge = Math.max(...ages);
+  const showRaAgeMarker =
+    raFormationAge != null &&
+    Number.isFinite(raFormationAge) &&
+    raFormationAge >= minAge &&
+    raFormationAge <= maxAge &&
+    !markers.some((m) => m.age === raFormationAge);
 
   return (
     <ChartFrame
@@ -68,7 +98,7 @@ export function CpfProjectionByAgeChart({
         <ResponsiveContainer width="100%" height="100%" minWidth={0}>
         <LineChart
           data={data}
-          margin={{ top: 4, right: 4, left: 0, bottom: 26 }}
+          margin={{ top: 4, right: targets ? 36 : 4, left: 0, bottom: 26 }}
         >
           <CartesianGrid
             strokeDasharray="3 6"
@@ -143,6 +173,77 @@ export function CpfProjectionByAgeChart({
               }
             />
           ))}
+          {showRaAgeMarker ? (
+            <ReferenceLine
+              x={raFormationAge}
+              stroke="#0f766e"
+              strokeDasharray="3 3"
+              strokeOpacity={0.55}
+              label={
+                narrow
+                  ? false
+                  : {
+                      value: `Age ${raFormationAge}`,
+                      position: "insideTopLeft",
+                      fill: "currentColor",
+                      fontSize: 9,
+                      className: "fill-teal-700 dark:fill-teal-300",
+                    }
+              }
+            />
+          ) : null}
+          {targets ? (
+            <>
+              <ReferenceLine
+                y={targets.brs}
+                stroke={BRS}
+                strokeDasharray="2 4"
+                strokeOpacity={0.85}
+                label={
+                  narrow
+                    ? false
+                    : {
+                        value: "BRS",
+                        position: "insideTopRight",
+                        fill: BRS,
+                        fontSize: 9,
+                      }
+                }
+              />
+              <ReferenceLine
+                y={targets.frs}
+                stroke={FRS}
+                strokeDasharray="4 3"
+                strokeOpacity={0.9}
+                label={
+                  narrow
+                    ? false
+                    : {
+                        value: "FRS",
+                        position: "insideTopRight",
+                        fill: FRS,
+                        fontSize: 9,
+                      }
+                }
+              />
+              <ReferenceLine
+                y={targets.ers}
+                stroke={ERS}
+                strokeDasharray="6 3"
+                strokeOpacity={0.85}
+                label={
+                  narrow
+                    ? false
+                    : {
+                        value: "ERS",
+                        position: "insideTopRight",
+                        fill: ERS,
+                        fontSize: 9,
+                      }
+                }
+              />
+            </>
+          ) : null}
           <Line
             type="monotone"
             dataKey="oa"
