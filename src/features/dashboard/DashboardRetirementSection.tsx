@@ -9,7 +9,6 @@ import { formatYearMonthLong } from "@/lib/dates";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { formatCurrency } from "@/ui/lib/format";
 import { appEmeraldPanelClass } from "@/ui/surface-classes";
-import { InfoTooltip } from "@/ui/InfoTooltip";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 
 function CpfProjectionMissingInputsBanner({
@@ -81,14 +80,16 @@ export function DashboardRetirementSection({
         </MethodologyOpenLink>
       </div>
       <p className="mt-1 text-[11px] text-emerald-900/80 dark:text-emerald-100/70">
-        Illustrative only.
+        Illustrative only — not advice.
       </p>
       {payload.ageProjection ? (
         <>
           {payload.investmentSummary.count === 0 && (
             <p className="mt-2 text-xs text-amber-900 dark:text-amber-200">
-              You have no investment rows yet — growth is mainly projected cash
-              (surplus) minus debts until you add accounts with value and assumptions.
+              You haven&apos;t added any investment accounts yet, so this growth is
+              mainly your projected monthly surplus building up as cash minus what
+              you owe — it gets more personalised once you add accounts with
+              balances and growth assumptions.
             </p>
           )}
           <div className="mt-3">
@@ -114,18 +115,11 @@ export function DashboardRetirementSection({
                       Mortgage from OA included
                     </span>
                   ) : null}
-                  <InfoTooltip
-                    variant="zinc"
-                    ariaLabel="Open methodology: CPF projection"
-                    methodologyTopicId="cpf-projection"
-                  >
-                    <span className="sr-only">CPF projection methodology</span>
-                  </InfoTooltip>
                   <MethodologyOpenLink
                     topicId="cpf-projection"
                     className="ml-auto text-xs font-medium text-indigo-900 underline decoration-indigo-300/60 underline-offset-2 dark:text-indigo-200 dark:decoration-indigo-300/40"
                   >
-                    Assumptions
+                    Assumptions →
                   </MethodologyOpenLink>
                 </div>
                 {payload.cpfYearEndProjection ? (

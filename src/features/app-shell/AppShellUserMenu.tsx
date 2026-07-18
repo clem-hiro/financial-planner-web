@@ -125,7 +125,7 @@ export function AppShellUserMenu({
           <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
           <div className="px-0 py-0.5">
             <OpenMethodologyButton
-              label="How it works"
+              label="How we calculate this"
               onBeforeOpen={() => setOpen(false)}
               className={`${menuRowClass} w-full justify-start text-left font-medium`}
             />

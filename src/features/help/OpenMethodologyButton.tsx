@@ -3,7 +3,7 @@
 import { useMethodology } from "@/features/help/methodology-context";
 
 export function OpenMethodologyButton({
-  label = "How it works",
+  label = "How we calculate this",
   className,
   onBeforeOpen,
 }: {

@@ -18,7 +18,6 @@ import {
 import { CPF_RULES_VERSION } from "@/domain/finance/cpf-rules-review";
 import { MethodologyOpenLink } from "@/features/help/MethodologyOpenLink";
 import { formatCurrency } from "@/ui/lib/format";
-import { InfoTooltip } from "@/ui/InfoTooltip";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
 import {
   fpInputClass,
@@ -285,13 +284,6 @@ export function CpfRetirementProjectionPanel({
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-1.5 pt-1">
-          <InfoTooltip
-            variant="zinc"
-            ariaLabel="Open methodology: CPF retirement projection"
-            methodologyTopicId="cpf-retirement-projection"
-          >
-            <span className="sr-only">CPF retirement projection methodology</span>
-          </InfoTooltip>
           <MethodologyOpenLink
             topicId="cpf-retirement-projection"
             className="text-xs font-medium text-indigo-900 underline decoration-indigo-300/60 underline-offset-2 dark:text-indigo-200 dark:decoration-indigo-300/40"

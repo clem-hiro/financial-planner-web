@@ -25,7 +25,7 @@ export function InfoTooltip({
   children: React.ReactNode;
   variant?: Variant;
   ariaLabel?: string;
-  /** When set, click opens “How numbers work” scrolled to this topic. */
+  /** When set, click opens “How we calculate this” scrolled to this topic. */
   methodologyTopicId?: MethodologyTopicId;
 }) {
   const [open, setOpen] = useState(false);

@@ -55,7 +55,7 @@ export function MethodologySheet() {
             id={titleId}
             className="text-base font-semibold tracking-tight text-slate-900 dark:text-slate-50"
           >
-            How numbers work
+            How we calculate this
           </h2>
           <button
             ref={closeBtnRef}
@@ -68,8 +68,8 @@ export function MethodologySheet() {
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-4 sm:px-5 sm:py-5">
           <p className="text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-            Plain-language notes on how this app computes what you see. Not
-            financial advice.
+            Simple, plain-English explanations of how we work out the numbers you
+            see. For learning, not financial advice.
           </p>
           <nav className="mt-5 border-b border-slate-100 pb-5 dark:border-slate-800">
             <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 dark:text-slate-500">
