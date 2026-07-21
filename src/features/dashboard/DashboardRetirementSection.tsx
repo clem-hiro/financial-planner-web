@@ -155,7 +155,7 @@ export function DashboardRetirementSection({
                     to model OA repayments.
                   </p>
                 ) : null}
-                <div className="mt-3 h-56 min-h-[200px] sm:h-72 sm:min-h-0">
+                <div className="mt-3 h-64 min-h-[220px] sm:h-80 sm:min-h-0">
                   <CpfProjectionByAgeChart
                     data={payload.cpfProjectionByAge}
                     currency={payload.baseCurrency}

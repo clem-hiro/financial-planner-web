@@ -89,16 +89,20 @@ export function CpfProjectionByAgeChart({
     raFormationAge <= maxAge &&
     !markers.some((m) => m.age === raFormationAge);
 
+  const seriesStroke = narrow ? 2.5 : 3;
+  const totalStroke = narrow ? 2 : 2.5;
+  const activeDotR = narrow ? 4 : 5;
+
   return (
     <ChartFrame
-      className="h-56 min-h-[200px] sm:h-full sm:min-h-[220px]"
+      className="h-64 min-h-[220px] sm:h-full sm:min-h-[260px]"
       clipContent={false}
     >
-      <div className="h-full w-full min-h-[200px] min-w-0 sm:min-h-0">
+      <div className="h-full w-full min-h-[220px] min-w-0 sm:min-h-0">
         <ResponsiveContainer width="100%" height="100%" minWidth={0}>
         <LineChart
           data={data}
-          margin={{ top: 4, right: targets ? 36 : 4, left: 0, bottom: 26 }}
+          margin={{ top: 6, right: targets ? 40 : 6, left: 0, bottom: 28 }}
         >
           <CartesianGrid
             strokeDasharray="3 6"
@@ -146,11 +150,11 @@ export function CpfProjectionByAgeChart({
             verticalAlign="top"
             align="left"
             wrapperStyle={{
-              fontSize: narrow ? 9 : 10,
-              paddingBottom: 6,
+              fontSize: narrow ? 10 : 11,
+              paddingBottom: 8,
               width: "100%",
               maxWidth: "100%",
-              lineHeight: 1.25,
+              lineHeight: 1.3,
             }}
             formatter={(value) => <span className="text-slate-600 dark:text-slate-300">{value}</span>}
           />
@@ -249,27 +253,42 @@ export function CpfProjectionByAgeChart({
             dataKey="oa"
             name="OA"
             stroke={OA}
-            strokeWidth={2}
+            strokeWidth={seriesStroke}
             dot={false}
-            activeDot={{ r: 4, fill: OA, stroke: "#fff", strokeWidth: 1 }}
+            activeDot={{
+              r: activeDotR,
+              fill: OA,
+              stroke: "#fff",
+              strokeWidth: 1.5,
+            }}
           />
           <Line
             type="monotone"
             dataKey="sa"
             name="SA"
             stroke={SA}
-            strokeWidth={2}
+            strokeWidth={seriesStroke}
             dot={false}
-            activeDot={{ r: 4, fill: SA, stroke: "#fff", strokeWidth: 1 }}
+            activeDot={{
+              r: activeDotR,
+              fill: SA,
+              stroke: "#fff",
+              strokeWidth: 1.5,
+            }}
           />
           <Line
             type="monotone"
             dataKey="ma"
             name="MA"
             stroke={MA}
-            strokeWidth={2}
+            strokeWidth={seriesStroke}
             dot={false}
-            activeDot={{ r: 4, fill: MA, stroke: "#fff", strokeWidth: 1 }}
+            activeDot={{
+              r: activeDotR,
+              fill: MA,
+              stroke: "#fff",
+              strokeWidth: 1.5,
+            }}
           />
           {showRa && (
             <Line
@@ -277,9 +296,14 @@ export function CpfProjectionByAgeChart({
               dataKey="ra"
               name="RA"
               stroke={RA}
-              strokeWidth={2}
+              strokeWidth={seriesStroke}
               dot={false}
-              activeDot={{ r: 4, fill: RA, stroke: "#fff", strokeWidth: 1 }}
+              activeDot={{
+                r: activeDotR,
+                fill: RA,
+                stroke: "#fff",
+                strokeWidth: 1.5,
+              }}
             />
           )}
           {showCpfis && (
@@ -288,10 +312,15 @@ export function CpfProjectionByAgeChart({
               dataKey="cpfis"
               name="CPFIS (notional)"
               stroke={CPFIS}
-              strokeWidth={2}
+              strokeWidth={seriesStroke}
               dot={false}
               strokeDasharray="4 2"
-              activeDot={{ r: 4, fill: CPFIS, stroke: "#fff", strokeWidth: 1 }}
+              activeDot={{
+                r: activeDotR,
+                fill: CPFIS,
+                stroke: "#fff",
+                strokeWidth: 1.5,
+              }}
             />
           )}
           <Line
@@ -299,10 +328,15 @@ export function CpfProjectionByAgeChart({
             dataKey="totalCpf"
             name="Total CPF"
             stroke={TOTAL}
-            strokeWidth={1.5}
+            strokeWidth={totalStroke}
             dot={false}
             strokeDasharray="6 4"
-            activeDot={{ r: 3, fill: TOTAL, stroke: "#fff", strokeWidth: 1 }}
+            activeDot={{
+              r: activeDotR - 1,
+              fill: TOTAL,
+              stroke: "#fff",
+              strokeWidth: 1.5,
+            }}
           />
         </LineChart>
         </ResponsiveContainer>
