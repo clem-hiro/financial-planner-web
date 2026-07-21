@@ -54,7 +54,9 @@ export type CpfRaSimulation = {
   requiredTarget: number;
   transferFromSa: number;
   transferFromOa: number;
-  afterRaCreation: { ra: number; remainingOa: number };
+  /** Remaining SA after RA set-aside — moved to OA because SA closes at 55. */
+  transferExcessSaToOa: number;
+  afterRaCreation: { ra: number; remainingOa: number; remainingSa: number };
   fullyFunded: boolean;
   shortfall: number;
 };
@@ -198,7 +200,8 @@ export function buildCpfRetirementProjection(params: {
 }
 
 /**
- * At age 55: SA funds RA first; OA tops up if needed; remaining OA stays liquid.
+ * At age 55: SA funds RA first; OA tops up if needed; SA is then closed and any
+ * leftover SA moves to OA (CPFB SA-closure rule from Jan 2025).
  */
 export function simulateRaFormationAt55(params: {
   oa: number;
@@ -213,16 +216,53 @@ export function simulateRaFormationAt55(params: {
   const transferFromOa = Math.min(oa, remaining);
   remaining -= transferFromOa;
   const ra = round2(transferFromSa + transferFromOa);
-  const remainingOa = round2(oa - transferFromOa);
+  const transferExcessSaToOa = round2(Math.max(0, sa - transferFromSa));
+  const remainingOa = round2(oa - transferFromOa + transferExcessSaToOa);
   const shortfall = round2(Math.max(0, remaining));
   return {
     beforeAge55: { oa, sa },
     requiredTarget: target,
     transferFromSa: round2(transferFromSa),
     transferFromOa: round2(transferFromOa),
-    afterRaCreation: { ra, remainingOa },
+    transferExcessSaToOa,
+    afterRaCreation: { ra, remainingOa, remainingSa: 0 },
     fullyFunded: shortfall === 0,
     shortfall,
+  };
+}
+
+/**
+ * After SA is closed (age 55+): apply any leftover SA to RA up to the retirement
+ * sum target, then to OA. Used when a member already has an RA but still holds SA
+ * (e.g. opening balances), or as a belt-and-suspenders drain after formation.
+ */
+export function closeSpecialAccountBalance(params: {
+  sa: number;
+  oa: number;
+  ra: number;
+  targetRetirementSum: number;
+}): { sa: number; oa: number; ra: number; toRa: number; toOa: number } {
+  const sa = Math.max(0, params.sa);
+  if (sa <= 0) {
+    return {
+      sa: 0,
+      oa: round2(Math.max(0, params.oa)),
+      ra: round2(Math.max(0, params.ra)),
+      toRa: 0,
+      toOa: 0,
+    };
+  }
+  const oa = Math.max(0, params.oa);
+  const ra = Math.max(0, params.ra);
+  const target = Math.max(0, params.targetRetirementSum);
+  const toRa = round2(Math.min(sa, Math.max(0, target - ra)));
+  const toOa = round2(sa - toRa);
+  return {
+    sa: 0,
+    oa: round2(oa + toOa),
+    ra: round2(ra + toRa),
+    toRa,
+    toOa,
   };
 }
 

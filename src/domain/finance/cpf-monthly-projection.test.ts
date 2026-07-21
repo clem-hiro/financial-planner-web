@@ -57,6 +57,63 @@ describe("buildCpfMonthlyProjectionSeries", () => {
     expect(series[0].ma).toBeCloseTo(734.94, 2);
   });
 
+  it("routes employed post-55 retirement share to RA up to FRS, then OA", () => {
+    const series = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-06",
+      horizonMonths: 1,
+      birthDate: "1970-01-15",
+      grossMonthly: 7_000,
+      cpfRaTargetAt55: 220_400,
+      initial: {
+        oa: 0,
+        sa: 0,
+        ma: 0,
+        /** Already at FRS — further RA allocation share must overflow to OA. */
+        ra: 220_400,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [],
+    });
+
+    // Total contribution 7k × 34% = 2,380; OA base 35.3% + RA share 33.82% → OA.
+    expect(series[0].sa).toBe(0);
+    expect(series[0].ra).toBe(220_400);
+    expect(series[0].oa).toBeCloseTo(840.14 + 804.92, 2);
+    expect(series[0].ma).toBeCloseTo(734.94, 2);
+  });
+
+  it("closes leftover SA into RA/OA when member is already past 55 with an RA", () => {
+    const series = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-06",
+      horizonMonths: 1,
+      birthDate: "1970-01-15",
+      grossMonthly: 0,
+      cpfRaTargetAt55: 220_400,
+      initial: {
+        oa: 10_000,
+        sa: 100_000,
+        ma: 0,
+        ra: 180_000,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [],
+    });
+
+    expect(series[0].sa).toBe(0);
+    expect(series[0].ra).toBe(220_400);
+    expect(series[0].oa).toBe(69_600);
+  });
+
   it("applies the next CPF age band from the month after the birthday month", () => {
     const series = buildCpfMonthlyProjectionSeries({
       startYearMonth: "2026-05",
@@ -81,14 +138,16 @@ describe("buildCpfMonthlyProjectionSeries", () => {
     });
 
     expect(series[0].yearMonth).toBe("2026-05");
-    expect(series[0].oa).toBeCloseTo(1_050.25, 2);
-    expect(series[0].sa).toBeCloseTo(804.97, 2);
+    // Birthday month still uses pre-55 contribution rates, then SA closes
+    // (target 0 → entire SA share moves to OA).
+    expect(series[0].oa).toBeCloseTo(1_855.22, 2);
+    expect(series[0].sa).toBe(0);
     expect(series[0].ra).toBe(0);
     expect(series[1].yearMonth).toBe("2026-06");
-    // Target 0 → post-55 RA allocation share overflows to OA (band timing unchanged).
+    // Post-55 band: RA allocation share overflows to OA when target is 0.
     expect(series[1].ra).toBe(0);
-    expect(series[1].oa).toBeCloseTo(2_695.31, 2);
-    expect(series[1].sa).toBeCloseTo(804.97, 2);
+    expect(series[1].oa).toBeCloseTo(3_500.28, 2);
+    expect(series[1].sa).toBe(0);
   });
 
   it("sets aside OA/SA into RA in the month the member turns 55", () => {
@@ -513,7 +572,8 @@ describe("buildCpfMonthlyProjectionSeries", () => {
       grossMonthly: 0,
       initial: {
         oa: 1_000,
-        sa: 100_000,
+        /** SA already closed in opening balances; maturity proceeds still route RA→OA. */
+        sa: 0,
         ma: 0,
         ra: 180_000,
         oaAnnualRate: 0,
@@ -538,10 +598,54 @@ describe("buildCpfMonthlyProjectionSeries", () => {
     });
 
     const feb = series.find((p) => p.yearMonth === "2026-02");
-    expect(feb?.sa).toBe(100_000);
+    expect(feb?.sa).toBe(0);
     expect(feb?.ra).toBe(220_400);
     expect(feb?.oa).toBe(60_600);
     expect(feb?.cpfis).toBe(0);
+  });
+
+  it("closes leftover opening SA before SA investment maturity after 55", () => {
+    const series = buildCpfMonthlyProjectionSeries({
+      startYearMonth: "2026-01",
+      horizonMonths: 2,
+      birthDate: "1970-01-15",
+      grossMonthly: 0,
+      initial: {
+        oa: 1_000,
+        sa: 100_000,
+        ma: 0,
+        ra: 180_000,
+        oaAnnualRate: 0,
+        saAnnualRate: 0,
+        maAnnualRate: 0,
+        cpfisMonthlyFromOa: 0,
+        cpfisNotionalBalance: 0,
+        cpfisAnnualReturn: 0,
+      },
+      housingLoans: [],
+      cpfRaTargetAt55: 220_400,
+      cpfInvestments: [
+        {
+          account: "sa",
+          purchaseMonth: "2025-01",
+          premiumType: "single",
+          amount: 50_000,
+          projectedGrowthAnnual: 0,
+          maturityMonth: "2026-02",
+        },
+      ],
+    });
+
+    const jan = series.find((p) => p.yearMonth === "2026-01");
+    const feb = series.find((p) => p.yearMonth === "2026-02");
+    // Opening SA closed immediately: 40.4k to RA (to FRS), 59.6k to OA.
+    expect(jan?.sa).toBe(0);
+    expect(jan?.ra).toBe(220_400);
+    expect(jan?.oa).toBe(60_600);
+    // Maturity proceeds: RA already at FRS → all to OA.
+    expect(feb?.sa).toBe(0);
+    expect(feb?.ra).toBe(220_400);
+    expect(feb?.oa).toBe(110_600);
   });
 
   it("returns SA investment maturity to SA before age 55", () => {

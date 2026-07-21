@@ -60,8 +60,12 @@ export function totalCpfContributionRateSg(ageBand: SgCpfAgeBand): number {
 }
 
 /**
- * Monthly OA/SA/MA inflows from OW subject (same dollars as CPF uses for rates),
+ * Monthly OA/SA/MA/RA inflows from OW subject (same dollars as CPF uses for rates),
  * before bucket interest and withdrawals.
+ *
+ * After age 55, SA is closed: the retirement allocation share is credited to RA
+ * (not SA). While the member is still employed, that RA share tops up RA only up
+ * to `cpfRaTarget` (typically FRS); any excess is redirected to OA.
  */
 export function monthlyCpfInflowsFromOwSubject(
   owSubject: number,
@@ -69,6 +73,7 @@ export function monthlyCpfInflowsFromOwSubject(
   options?: {
     completedAge?: number | null;
     currentRaBalance?: number;
+    /** Retirement-sum ceiling for post-55 RA contributions (usually FRS). */
     cpfRaTarget?: number;
   }
 ): {
@@ -87,6 +92,8 @@ export function monthlyCpfInflowsFromOwSubject(
   const sa = totalContribution * allocation.sa;
   let ra = totalContribution * allocation.ra;
   const ma = totalContribution * allocation.ma;
+  // Post-55: SA share is already modelled as `ra` in the allocation table (sa=0).
+  // Cap RA at the retirement sum; overflow to OA (CPFB employed-after-55 rule).
   if (ra > 0) {
     const currentRa = Math.max(0, options?.currentRaBalance ?? 0);
     const targetRa = Math.max(0, options?.cpfRaTarget ?? 0);

@@ -14,6 +14,7 @@ import {
 import {
   CPF_RA_FORMATION_AGE,
   CURRENT_FRS_SG,
+  closeSpecialAccountBalance,
   routeCpfSaInvestmentMaturityProceeds,
   simulateRaFormationAt55,
   type CpfRaSimulation,
@@ -385,9 +386,21 @@ export function buildCpfMonthlyProjectionSeries(params: {
         targetRetirementSum: cpfRaTargetAt55,
       });
       oa = raFormation.afterRaCreation.remainingOa;
-      sa = round2(sa - raFormation.transferFromSa);
+      sa = raFormation.afterRaCreation.remainingSa;
       ra = round2(ra + raFormation.afterRaCreation.ra);
       raSetAsideDone = true;
+    } else if (
+      ageAtMonthEnd >= CPF_RA_FORMATION_AGE &&
+      sa > 0 &&
+      raSetAsideDone
+    ) {
+      // Opening balances can include SA after RA already exists — SA is closed.
+      ({ oa, sa, ra } = closeSpecialAccountBalance({
+        sa,
+        oa,
+        ra,
+        targetRetirementSum: cpfRaTargetAt55,
+      }));
     }
 
     if (employmentContributionsActive && effectiveGross > 750) {
@@ -451,7 +464,7 @@ export function buildCpfMonthlyProjectionSeries(params: {
         targetRetirementSum: cpfRaTargetAt55,
       });
       oa = raFormation.afterRaCreation.remainingOa;
-      sa = round2(sa - raFormation.transferFromSa);
+      sa = raFormation.afterRaCreation.remainingSa;
       ra = round2(ra + raFormation.afterRaCreation.ra);
       raSetAsideDone = true;
     }

@@ -214,6 +214,7 @@ export {
 export {
   buildCpfRetirementProjection,
   simulateRaFormationAt55,
+  closeSpecialAccountBalance,
   routeCpfSaInvestmentMaturityProceeds,
   estimateFutureFrs,
   CURRENT_FRS_SG,

@@ -93,8 +93,9 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
     summary:
       "A simple forecast of your CPF savings over the years, based on your current balances, salary, and settings. CPF has four pots: OA (housing and general use), SA (retirement), MA (healthcare), and RA (created at 55 for retirement payouts).",
     bullets: [
-      "The year you turn 55, we move money from your SA first, then your OA, into a new Retirement Account (RA), up to your retirement target.",
-      "After 55, new CPF contributions are split between OA, RA, and MA based on your age. In this simple model, RA grows at the same illustrative rate as SA.",
+      "The year you turn 55, we move money from your SA first, then your OA, into a new Retirement Account (RA), up to your retirement target. SA is then closed — any leftover SA moves to OA.",
+      "If you keep working after 55, the old SA share of contributions goes to RA up to your retirement target (usually the Full Retirement Sum); anything above that goes to OA. New contributions are otherwise split between OA, RA, and MA by age band.",
+      "In this simple model, RA grows at the same illustrative rate as SA.",
       "Your MA (healthcare pot) has a yearly ceiling called the Basic Healthcare Sum. Once it's full, extra money flows into SA (before 55) or RA (from 55).",
       "We use the official healthcare ceilings up to 2026 ($79,000 for 2026). After that, we estimate a 4% rise each year until the official figures are announced.",
       "If you've already turned 65, we lock in the ceiling from the year you turned 65; otherwise we use the current year's estimate.",
@@ -110,7 +111,7 @@ export const METHODOLOGY_TOPICS: MethodologyTopic[] = [
       "There are three targets: the Full Retirement Sum (FRS), the Basic (BRS, half of FRS), and the Enhanced (ERS, double the FRS). The one you pick decides how much is set aside in your RA at 55.",
       "We start from the published FRS for your age group, then grow it a little each year until you turn 55 — unless you type in your own figure.",
       "Your OA and SA balances just before 55 come from the CPF-over-time forecast above.",
-      "At 55, your SA fills the RA first, then your OA tops it up to your target. Anything left in OA stays put. A 'shortfall' means your CPF is below the target you chose.",
+      "At 55, your SA fills the RA first, then your OA tops it up to your target. SA closes and any leftover SA moves to OA; anything left in OA stays put. A 'shortfall' means your CPF is below the target you chose.",
       "The estimated monthly CPF LIFE payout is a rough range (a yearly payout rate on your RA, divided by 12, give or take 10%) — not an exact quote.",
       "The example scenarios are just teaching numbers — they don't change your own saved data.",
     ],

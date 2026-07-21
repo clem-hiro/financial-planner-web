@@ -4,6 +4,7 @@ import {
   CURRENT_FRS_SG,
   DEFAULT_FRS_ANNUAL_GROWTH_RATE,
   estimateFutureFrs,
+  closeSpecialAccountBalance,
   routeCpfSaInvestmentMaturityProceeds,
   simulateRaFormationAt55,
   buildCpfRetirementProjection,
@@ -49,9 +50,25 @@ describe("simulateRaFormationAt55", () => {
     });
     expect(sim.transferFromSa).toBe(280_000);
     expect(sim.transferFromOa).toBe(220_000);
+    expect(sim.transferExcessSaToOa).toBe(0);
     expect(sim.afterRaCreation.ra).toBe(500_000);
     expect(sim.afterRaCreation.remainingOa).toBe(100_000);
+    expect(sim.afterRaCreation.remainingSa).toBe(0);
     expect(sim.fullyFunded).toBe(true);
+  });
+
+  it("closes SA and moves excess SA above the target into OA", () => {
+    const sim = simulateRaFormationAt55({
+      oa: 50_000,
+      sa: 300_000,
+      targetRetirementSum: 220_400,
+    });
+    expect(sim.transferFromSa).toBe(220_400);
+    expect(sim.transferFromOa).toBe(0);
+    expect(sim.transferExcessSaToOa).toBeCloseTo(79_600, 2);
+    expect(sim.afterRaCreation.ra).toBe(220_400);
+    expect(sim.afterRaCreation.remainingSa).toBe(0);
+    expect(sim.afterRaCreation.remainingOa).toBeCloseTo(129_600, 2);
   });
 
   it("records shortfall when balances are below target", () => {
@@ -61,8 +78,27 @@ describe("simulateRaFormationAt55", () => {
       targetRetirementSum: 500_000,
     });
     expect(sim.afterRaCreation.ra).toBe(120_000);
+    expect(sim.afterRaCreation.remainingSa).toBe(0);
     expect(sim.shortfall).toBe(380_000);
     expect(sim.fullyFunded).toBe(false);
+  });
+});
+
+describe("closeSpecialAccountBalance", () => {
+  it("tops up RA from leftover SA then routes the rest to OA", () => {
+    const closed = closeSpecialAccountBalance({
+      sa: 100_000,
+      oa: 10_000,
+      ra: 180_000,
+      targetRetirementSum: 220_400,
+    });
+    expect(closed).toEqual({
+      sa: 0,
+      oa: 69_600,
+      ra: 220_400,
+      toRa: 40_400,
+      toOa: 59_600,
+    });
   });
 });
 
