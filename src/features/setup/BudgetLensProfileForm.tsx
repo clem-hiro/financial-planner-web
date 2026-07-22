@@ -8,7 +8,6 @@ import {
   type BudgetingStrategyId,
   type FoodSpendBandId,
   type LifestyleProfileId,
-  type OnboardingConfidenceLevel,
 } from "@/domain/finance/budget-guided-setup";
 import { BlockingSubmitOverlay } from "@/ui/BlockingSubmitOverlay";
 import { fpPrimaryButtonClass, fpSelectClass } from "@/ui/input-classes";
@@ -17,7 +16,6 @@ import { appCardClass } from "@/ui/surface-classes";
 type Props = {
   initialLifestyle: string | null;
   initialStrategy: string | null;
-  initialConfidence: string | null;
   initialFoodSpendBand: string | null;
 };
 
@@ -33,10 +31,6 @@ function isStrategyId(s: string | null): s is BudgetingStrategyId {
     s != null &&
     BUDGET_STRATEGY_PRESETS.some((p) => p.id === (s as BudgetingStrategyId))
   );
-}
-
-function isConfidence(s: string | null): s is OnboardingConfidenceLevel {
-  return s === "rough" || s === "moderate" || s === "detailed";
 }
 
 function isFoodBand(s: string | null): s is FoodSpendBandId {
@@ -58,9 +52,6 @@ export function BudgetLensProfileForm(props: Props) {
   const [strategy, setStrategy] = useState<BudgetingStrategyId>(
     isStrategyId(props.initialStrategy) ? props.initialStrategy : "balanced"
   );
-  const [confidence, setConfidence] = useState<OnboardingConfidenceLevel>(
-    isConfidence(props.initialConfidence) ? props.initialConfidence : "moderate"
-  );
   const [foodBand, setFoodBand] = useState<FoodSpendBandId>(
     isFoodBand(props.initialFoodSpendBand)
       ? props.initialFoodSpendBand
@@ -81,8 +72,6 @@ export function BudgetLensProfileForm(props: Props) {
         body: JSON.stringify({
           lifestyle_profile: lifestyle,
           budgeting_strategy: strategy,
-          onboarding_confidence_level: confidence,
-          estimated_budget_mode: confidence === "rough",
           food_spend_band: foodBand,
         }),
       });
@@ -162,22 +151,6 @@ export function BudgetLensProfileForm(props: Props) {
                 {p.label}
               </option>
             ))}
-          </select>
-        </label>
-        <label className="flex min-w-0 flex-col gap-1 text-sm">
-          <span className="block text-xs font-medium text-zinc-600 dark:text-slate-300">
-            Preference for detail
-          </span>
-          <select
-            className={fieldSelectClass}
-            value={confidence}
-            onChange={(e) =>
-              setConfidence(e.target.value as OnboardingConfidenceLevel)
-            }
-          >
-            <option value="rough">Rough estimates ok</option>
-            <option value="moderate">Balanced</option>
-            <option value="detailed">Prefer detail</option>
           </select>
         </label>
       </div>

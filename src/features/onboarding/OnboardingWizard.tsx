@@ -7,7 +7,6 @@ import {
   BUDGET_STRATEGY_PRESETS,
   strategyNeedsWantsSavings,
   type BudgetingStrategyId,
-  type OnboardingConfidenceLevel,
 } from "@/domain/finance/budget-guided-setup";
 import {
   BONUS_MONTH_PRESETS,
@@ -34,7 +33,6 @@ import {
 import { OnboardingProgress } from "@/features/onboarding/OnboardingProgress";
 import {
   onboardingCardClass,
-  onboardingChoiceChipClass,
   onboardingStrategyCardClass,
 } from "@/features/onboarding/onboarding-ui";
 import { appInlineLinkClass } from "@/ui/app-link-styles";
@@ -54,9 +52,7 @@ type Props = {
   initialStep: number;
   initialLifestyleProfile: string | null;
   initialBudgetingStrategy: string | null;
-  initialConfidenceLevel: string | null;
   initialFoodSpendBand: string | null;
-  initialEstimatedBudgetMode: boolean;
 };
 
 function isStrategyId(s: string | null): s is BudgetingStrategyId {
@@ -64,12 +60,6 @@ function isStrategyId(s: string | null): s is BudgetingStrategyId {
     s != null &&
     BUDGET_STRATEGY_PRESETS.some((p) => p.id === (s as BudgetingStrategyId))
   );
-}
-
-function isConfidence(
-  s: string | null
-): s is OnboardingConfidenceLevel {
-  return s === "rough" || s === "moderate" || s === "detailed";
 }
 
 function parsePositive(raw: string): number | null {
@@ -152,13 +142,6 @@ export function OnboardingWizard(props: Props) {
     isStrategyId(props.initialBudgetingStrategy)
       ? props.initialBudgetingStrategy
       : "balanced"
-  );
-  const [confidence, setConfidence] = useState<OnboardingConfidenceLevel>(
-    isConfidence(props.initialConfidenceLevel)
-      ? props.initialConfidenceLevel
-      : props.initialEstimatedBudgetMode
-        ? "rough"
-        : "moderate"
   );
 
   const grossNum = useMemo(
@@ -281,8 +264,6 @@ export function OnboardingWizard(props: Props) {
             annual_bonus_months: bonus.annual_bonus_months,
             base_currency: currency.trim().toUpperCase(),
             salary_frequency: "monthly",
-            onboarding_confidence_level: confidence,
-            estimated_budget_mode: confidence === "rough",
             onboarding_step: onboardingStepToStore(2),
           });
         } else if (props.initialLegacyTakeHomeMonthly != null) {
@@ -293,8 +274,6 @@ export function OnboardingWizard(props: Props) {
             annual_bonus_months: bonus.annual_bonus_months,
             base_currency: currency.trim().toUpperCase(),
             salary_frequency: "monthly",
-            onboarding_confidence_level: confidence,
-            estimated_budget_mode: confidence === "rough",
             onboarding_step: onboardingStepToStore(2),
           });
         } else {
@@ -305,8 +284,6 @@ export function OnboardingWizard(props: Props) {
             annual_bonus_months: bonus.annual_bonus_months,
             base_currency: currency.trim().toUpperCase(),
             salary_frequency: "monthly",
-            onboarding_confidence_level: confidence,
-            estimated_budget_mode: confidence === "rough",
             onboarding_step: onboardingStepToStore(2),
           });
         }
@@ -540,30 +517,6 @@ export function OnboardingWizard(props: Props) {
               onCustomAmountChange={setBonusCustomAmount}
               disabled={pending}
             />
-          </div>
-
-          <div className="space-y-3 border-t border-slate-100 pt-6">
-            <span className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
-              How precise do you want to be right now?
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {(
-                [
-                  ["rough", "Rough is fine"],
-                  ["moderate", "Balanced"],
-                  ["detailed", "More detail"],
-                ] as const
-              ).map(([id, label]) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => setConfidence(id)}
-                  className={onboardingChoiceChipClass(confidence === id, "md")}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
           </div>
 
           <p className="rounded-xl border border-dashed border-slate-200/90 bg-slate-50/60 px-4 py-3 text-xs leading-relaxed text-slate-600">

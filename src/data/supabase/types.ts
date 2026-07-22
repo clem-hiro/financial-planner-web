@@ -42,11 +42,11 @@ export type ProfileRow = {
   lifestyle_profile: string | null;
   /** Needs / wants / savings style; see domain `BudgetingStrategyId`. */
   budgeting_strategy: string | null;
-  /** How precise the user wants to be during onboarding (rough estimates ok). */
+  /** Reserved: how precise the user wants estimates (UI not exposed until wired). */
   onboarding_confidence_level: string | null;
   /** Where monthly budget lines came from (manual vs guided, etc.). */
   budget_generation_source: string | null;
-  /** When true, UI may emphasize ranges and estimates over exact figures. */
+  /** Reserved: when true, UI may emphasize ranges over exact figures. */
   estimated_budget_mode: boolean;
   /** Optional rough monthly food spend band (SGD-oriented labels in UI). */
   food_spend_band: string | null;

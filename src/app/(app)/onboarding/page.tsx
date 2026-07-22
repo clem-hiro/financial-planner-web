@@ -57,9 +57,7 @@ export default async function OnboardingPage() {
         initialStep={profile?.onboarding_step ?? 1}
         initialLifestyleProfile={profile?.lifestyle_profile ?? null}
         initialBudgetingStrategy={profile?.budgeting_strategy ?? null}
-        initialConfidenceLevel={profile?.onboarding_confidence_level ?? null}
         initialFoodSpendBand={profile?.food_spend_band ?? null}
-        initialEstimatedBudgetMode={profile?.estimated_budget_mode ?? false}
       />
     </div>
   );

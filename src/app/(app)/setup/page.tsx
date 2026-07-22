@@ -291,9 +291,6 @@ export default async function SetupPage({ searchParams }: PageProps) {
           <BudgetLensProfileForm
             initialLifestyle={financialProfile?.lifestyle_profile ?? null}
             initialStrategy={financialProfile?.budgeting_strategy ?? null}
-            initialConfidence={
-              financialProfile?.onboarding_confidence_level ?? null
-            }
             initialFoodSpendBand={financialProfile?.food_spend_band ?? null}
           />
         </div>
