@@ -518,11 +518,6 @@ export function OnboardingWizard(props: Props) {
               disabled={pending}
             />
           </div>
-
-          <p className="rounded-xl border border-dashed border-slate-200/90 bg-slate-50/60 px-4 py-3 text-xs leading-relaxed text-slate-600">
-            <span className="font-semibold text-slate-700">Coming soon:</span>{" "}
-            household income and shared budgets — add more detail later in Setup.
-          </p>
         </div>
       )}
 
